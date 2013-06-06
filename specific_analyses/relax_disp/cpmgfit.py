@@ -28,7 +28,7 @@ import dep_check
 # Python module imports.
 from math import pi
 from os import F_OK, access, chmod, sep
-from string import lower
+from stat import S_IEXEC
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -75,7 +75,7 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
 
     # The directory.
     if dir == None:
-        dir = lower(cdp.model)
+        dir = cdp.model.lower()
     if not access(dir, F_OK):
         raise RelaxDirError('CPMGFit', dir)
 
@@ -152,7 +152,7 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Directory creation.
     if dir == None:
-        dir = lower(cdp.model)
+        dir = cdp.model.lower()
     mkdir_nofail(dir, verbosity=0)
 
     # The 'run.sh' script.
@@ -172,7 +172,7 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Close the batch script, then make it executable.
     batch.close()
-    chmod(dir + sep + 'batch_run.sh', 0755)
+    chmod(dir + sep + 'batch_run.sh', S_IEXEC)
 
 
 def create_spin_input(function=None, spin=None, spin_id=None, dir=None):

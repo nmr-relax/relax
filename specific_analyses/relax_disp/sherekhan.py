@@ -28,7 +28,6 @@ import dep_check
 # Python module imports.
 from math import pi
 from os import F_OK, access, chmod, sep
-from string import lower
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
