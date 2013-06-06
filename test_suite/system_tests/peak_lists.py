@@ -64,6 +64,22 @@ class Peak_lists(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'bug_17276_peak_lists.py')
 
 
+    def test_bug_20873_peak_lists(self):
+        """Test catching U{bug #20873<https://gna.org/bugs/?20873>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
+
+        # The path to the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
+
+        # First create a data pipe.
+        self.interpreter.pipe.create(pipe_name='origin rx', pipe_type='relax_fit', bundle='rx')
+
+        # Load the spin systems.
+        self.interpreter.sequence.read(file='test.seq', dir=path, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None)
+
+        # Load the intensities.
+        self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=[2,0], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None) 
+
+
     def test_ccpn_analysis(self):
         """Test U{bug #17341<https://gna.org/bugs/index.php?17341>}, the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
 
