@@ -1,0 +1,12 @@
+# This is from the bug report #20873 (http://gna.org/bugs/?20873).
+
+protein 10 L 10 N 3.377659e+05 6.362446e+05
+protein 6 V 6 N 1.697771e+06 3.015788e+06
+protein 63 Y 63 N 8.673898e+05 1.726064e+06
+protein 4 Y 4 N 2.339480e+06 4.039142e+06
+protein 67 M 67 N 2.574062e+06 4.313824e+06
+protein 5 E 5 N 1.609356e+06 2.927111e+06
+protein 65 V 65 N 2.179341e+06 4.067343e+06
+protein 38 E 38 N 1.563795e+06 2.921316e+06
+protein 7 N 7 N 1.535896e+06 3.005234e+06
+protein 75 L 75 N 3.578841e+06 6.352595e+06
