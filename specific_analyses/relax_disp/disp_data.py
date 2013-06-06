@@ -177,8 +177,15 @@ def find_intensity_keys(frq=None, point=None, time=None):
         if hasattr(cdp, 'spectrometer_frq'):
             frq2 = cdp.spectrometer_frq[id]
 
-        if frq2 == frq and disp_data[id] == point and cdp.relax_times[id] == time:
-            ids.append(id)
+        # Matching frequency and dispersion point.
+        if frq2 == frq and disp_data[id] == point:
+            # The reference point, so checking the time is pointless (and can fail as specifying the time should not be necessary).
+            if point == None:
+                ids.append(id)
+
+            # Matching time.
+            elif cdp.relax_times[id] == time:
+                ids.append(id)
 
     # Check for missing IDs.
     if len(ids) == 0:
