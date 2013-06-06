@@ -407,10 +407,6 @@ class Relax_disp(API_base, API_common):
         for i in range(n):
             grid_size *= inc[i]
 
-        # Test if the grid is too large.
-        if isinstance(grid_size, long):
-            raise RelaxError("A grid search of size %s is too large." % grid_size)
-
         # Diagonal scaling of minimisation options.
         lower_new = []
         upper_new = []
