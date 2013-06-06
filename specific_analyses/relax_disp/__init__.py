@@ -776,17 +776,6 @@ class Relax_disp(API_base, API_common):
         add_result_file(type='grace', label='Grace', file=file_path)
 
 
-    def _r2eff_setup(self, sim_num=100000):
-        """Setup the R2eff/R1rho model.
-
-        @keyword sim_num:   The number of Bootstrapping simulations for error propagation for the fixed relaxation time period experiments.
-        @type sim_num:      int
-        """
-
-        # Set the value.
-        cdp.bootstrap_sim_num = sim_num
-
-
     def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
@@ -958,13 +947,8 @@ class Relax_disp(API_base, API_common):
         if cdp.exp_type not in FIXED_TIME_EXP:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
 
-        # Check the simulation number.
-        if not hasattr(cdp, 'bootstrap_sim_num'):
-            raise RelaxError("The Bootstrapping simulation number has not been specified, please use the R2eff/R1rho setup user function first.")
-
         # Printouts.
         print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
-        print("Error propagation using Bootstrapping with %i simulations." % cdp.bootstrap_sim_num)
 
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
