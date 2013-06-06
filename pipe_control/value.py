@@ -553,8 +553,7 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
                 error_names = []
 
             # Sort the keys.
-            keys = value.keys()
-            keys.sort()
+            keys = sorted(value.keys())
 
             # Loop over the keys.
             for key in keys:

@@ -1060,7 +1060,7 @@ class Frame_order(API_base, API_common):
             else:
                 axes = zeros((3, 3), float64)
                 euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
-                axis = axes[:,2]
+                axis = axes[:, 2]
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
             com = pipe_centre_of_mass(verbosity=0)
