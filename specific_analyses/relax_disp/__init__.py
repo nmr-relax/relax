@@ -1215,7 +1215,7 @@ class Relax_disp(API_base, API_common):
         # Number of spectrometer fields.
         fields = [None]
         field_count = 1
-        if hasattr(cdp, 'spectrometer_frqs'):
+        if hasattr(cdp, 'spectrometer_frq'):
             fields = cdp.spectrometer_frq_list
             field_count = cdp.spectrometer_frq_count
 
