@@ -428,6 +428,10 @@ def return_index_from_frq(value):
     @rtype:         int
     """
 
+    # No frequency present.
+    if value == None:
+        return None
+
     # Return the index.
     return cdp.spectrometer_frq_list.index(value)
 
