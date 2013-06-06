@@ -47,7 +47,7 @@ spin_cont.chi2 = 0.0
 spin_cont.warning = None
 
 # Monte Carlo simulations.
-monte_carlo.setup(number=100000)
+monte_carlo.setup(number=1000000)
 monte_carlo.create_data()
 monte_carlo.initial_values()
 minimise('simplex', constraints=False)
