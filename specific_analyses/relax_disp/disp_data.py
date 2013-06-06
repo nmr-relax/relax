@@ -430,7 +430,7 @@ def return_index_from_frq(value):
 
     # No frequency present.
     if value == None:
-        return None
+        return 0
 
     # Return the index.
     return cdp.spectrometer_frq_list.index(value)
@@ -595,7 +595,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             key = return_param_key_from_data(frq=frq, point=point)
 
             # The Larmor frequency for this spin and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
-            frqs[spin_index, frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+            if frq != None:
+                frqs[spin_index, frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
             # Missing data.
             if key not in spin.r2eff:
