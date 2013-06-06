@@ -28,7 +28,7 @@ import dep_check
 # Python module imports.
 from math import pi
 from os import F_OK, access, chmod, sep
-from stat import S_IEXEC
+from stat import S_IRGRP, S_IROTH, S_IRWXU
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -172,7 +172,7 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Close the batch script, then make it executable.
     batch.close()
-    chmod(dir + sep + 'batch_run.sh', S_IEXEC)
+    chmod(dir + sep + 'batch_run.sh', S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
