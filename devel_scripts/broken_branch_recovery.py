@@ -16,7 +16,7 @@ revisions = []
 
 # Loop over the lines, extracting all revision numbers which were not created by svnmerge.
 index = 0
-while 1:
+while True:
     # All done.
     if index == len(lines) - 1:
         break
