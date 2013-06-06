@@ -419,7 +419,6 @@ class Relax_disp(SystemTestCase):
             print("\nResidue number %s." % (i+1))
 
             # Check the fitted parameters.
-            print cdp.mol[0].res[i].spin[0].r2eff
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['1000.0'], res_data[i][0], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['2000.0'], res_data[i][1], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['1000.0']/10000, res_data[i][2]/10000, places=3)
@@ -486,7 +485,6 @@ class Relax_disp(SystemTestCase):
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
             print("\nSpin %s." % spin_id)
-            print spin
 
             # Check the fitted parameters.
             for key in keys:
@@ -534,7 +532,6 @@ class Relax_disp(SystemTestCase):
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
             print("\nSpin %s." % spin_id)
-            print spin
 
             # Check the fitted parameters.
             for key in keys:
