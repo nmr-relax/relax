@@ -139,7 +139,15 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     # The unique curves for the R2eff fitting (CPMG).
     if cdp.cpmg_frqs[spectrum_id] not in cdp.cpmg_frqs_list:
         cdp.cpmg_frqs_list.append(cdp.cpmg_frqs[spectrum_id])
+
+    # Sort the list (handling None for Python 3).
+    flag = False
+    if None in cdp.cpmg_frqs_list:
+        cdp.cpmg_frqs_list.pop(cdp.cpmg_frqs_list.index(None))
+        flag = True
     cdp.cpmg_frqs_list.sort()
+    if flag:
+        cdp.cpmg_frqs_list.insert(0, None)
 
     # Update the exponential curve count (skipping the reference if present).
     cdp.dispersion_points = len(cdp.cpmg_frqs_list)
@@ -711,7 +719,15 @@ def spin_lock_field(spectrum_id=None, field=None):
     # The unique curves for the R2eff fitting (R1rho).
     if cdp.spin_lock_nu1[spectrum_id] not in cdp.spin_lock_nu1_list:
         cdp.spin_lock_nu1_list.append(cdp.spin_lock_nu1[spectrum_id])
+
+    # Sort the list (handling None for Python 3).
+    flag = False
+    if None in cdp.spin_lock_nu1_list:
+        cdp.spin_lock_nu1_list.pop(cdp.spin_lock_nu1_list.index(None))
+        flag = True
     cdp.spin_lock_nu1_list.sort()
+    if flag:
+        cdp.spin_lock_nu1_list.insert(0, None)
 
     # Update the exponential curve count (skipping the reference if present).
     cdp.dispersion_points = len(cdp.spin_lock_nu1_list)
