@@ -79,6 +79,20 @@ class Peak_lists(SystemTestCase):
         # Load the intensities.
         self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=['2', '0'], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None) 
 
+        # The peak intensities.
+        data_2 = [337765.90000000002, 1697771.0, 867389.80000000005, 2339480.0, 2574062.0, 1609356.0, 2179341.0, 1563795.0, 1535896.0, 3578841.0]
+        data_0 = [636244.59999999998, 3015788.0, 1726064.0, 4039142.0, 4313824.0, 2927111.0, 4067343.0, 2921316.0, 3005234.0, 6352595.0]
+
+        # Data checks.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias the spin.
+            spin = cdp.mol[0].res[i].spin[0]
+
+            # The intensities.
+            print spin
+            self.assertEqual(spin.intensities['0'], data_0[i])
+            self.assertEqual(spin.intensities['2'], data_2[i])
+
 
     def test_ccpn_analysis(self):
         """Test U{bug #17341<https://gna.org/bugs/index.php?17341>}, the CCPN Analysis 2.1 peak list reading submitted by Madeleine Strickland."""
