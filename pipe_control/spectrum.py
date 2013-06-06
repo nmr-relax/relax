@@ -498,7 +498,7 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     @keyword spin_num_col:  The column containing the spin number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
     @type spin_num_col:     int or None
     @keyword data_col:      The column containing the peak intensities.
-    @type data_col:         int
+    @type data_col:         int or list of int
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
     @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
@@ -515,21 +515,38 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     # Strip the data.
     file_data = strip(file_data)
 
-    # Loop over the data.
+    # Convert the the data_col argument to a list if needed.
+    if not isinstance(data_col, list):
+        data_col = [data_col]
+
+    # Loop over the data columns.
     data = []
-    for values in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, sep=sep, spin_id=spin_id):
-        # Check the values.
-        if len(values) != 6:
-            raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
+    for i in range(len(data_col)):
+        # Loop over the data.
+        row_index = 0
+        for values in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id):
+            # Check the values.
+            if len(values) != 6:
+                raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
 
-        # Unpack.
-        mol_name, res_num, res_name, spin_num, spin_name, value = values
+            # Unpack.
+            mol_name, res_num, res_name, spin_num, spin_name, value = values
 
-        # Create the unique spin ID.
-        id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+            # Create the unique spin ID.
+            id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
 
-        # Store the necessary data.
-        data.append([None, None, id, value, id])
+            # Store the necessary data.
+            if i == 0:
+                # Convert the value to a list if multiple columns are present.
+                if len(data_col) > 1:
+                    data.append([None, None, id, [value], id])
+                else:
+                    data.append([None, None, id, value, id])
+            else:
+                data[row_index][3].append(value)
+
+            # Go to the next row.
+            row_index += 1
 
     # Return the data.
     return data
@@ -607,6 +624,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Print out.
         print("Generic formatted data file.\n")
 
+        # Checks.
+        if isinstance(spectrum_id, list) and not isinstance(int_col, list):
+            raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
+        if not isinstance(spectrum_id, list) and isinstance(int_col, list):
+            raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
+        if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
+
         # Extract the data.
         intensity_data = intensity_generic(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
 
@@ -675,41 +700,49 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         H_name, X_name, spin_id, intensity, line = intensity_data[i]
 
-        # Sanity check.
-        if intensity == 0.0:
-            warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
+        # Convert the intensity data and spectrum IDs to lists if needed.
+        if not isinstance(intensity, list):
+            intensity = [intensity]
+        if not isinstance(spectrum_id, list):
+            spectrum_id = [spectrum_id]
 
-        # Skip data.
-        if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-            warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
-            continue
+        # Loop over the data.
+        for i in range(len(intensity)):
+            # Sanity check.
+            if intensity[i] == 0.0:
+                warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
 
-        # Get the spin container.
-        spin = return_spin(spin_id)
-        if not spin:
-            warn(RelaxNoSpinWarning(spin_id))
-            continue
+            # Skip data.
+            if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
+                warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
+                continue
 
-        # Skip deselected spins.
-        if not spin.select:
-            continue
+            # Get the spin container.
+            spin = return_spin(spin_id)
+            if not spin:
+                warn(RelaxNoSpinWarning(spin_id))
+                continue
 
-        # Initialise.
-        if not hasattr(spin, 'intensities'):
-            spin.intensities = {}
+            # Skip deselected spins.
+            if not spin.select:
+                continue
 
-        # Intensity scaling.
-        if ncproc != None:
-            intensity = intensity / float(2**ncproc)
+            # Initialise.
+            if not hasattr(spin, 'intensities'):
+                spin.intensities = {}
 
-        # Add the data.
-        spin.intensities[spectrum_id] = intensity
+            # Intensity scaling.
+            if ncproc != None:
+                intensity[i] = intensity[i] / float(2**ncproc)
 
-        # Switch the flag.
-        data_flag = True
+            # Add the data.
+            spin.intensities[spectrum_id[i]] = intensity[i]
 
-        # Append the data for printing out.
-        data.append([spin_id, repr(intensity)])
+            # Switch the flag.
+            data_flag = True
+
+            # Append the data for printing out.
+            data.append([spin_id, repr(intensity[i])])
 
     # No data.
     if not data_flag:
