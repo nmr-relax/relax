@@ -89,7 +89,6 @@ class Peak_lists(SystemTestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # The intensities.
-            print spin
             self.assertEqual(spin.intensities['0'], data_0[i])
             self.assertEqual(spin.intensities['2'], data_2[i])
 
