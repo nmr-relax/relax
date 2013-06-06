@@ -44,38 +44,38 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 from math import pi, sin
 
 
-def r2eff_M61(r1rho0=None, phi_ex=None, kex=None, theta=pi/2, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.
 
     See the module docstring for details.
 
 
-    @keyword r1rho0:        The R1rho0 parameter value (R1rho with no exchange).
-    @type r1rho0:           float
-    @keyword phi_ex:        The phi_ex parameter value (pA * pB * delta_omega^2).
-    @type phi_ex:           float
-    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
-    @type kex:              float
-    @keyword theta:         The rotating frame tilt angle.
-    @type theta:            float
-    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_poinst:       int
+    @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
+    @type r1rho_prime:          float
+    @keyword phi_ex:            The phi_ex parameter value (pA * pB * delta_omega^2).
+    @type phi_ex:               float
+    @keyword kex:               The kex parameter value (the exchange rate in rad/s).
+    @type kex:                  float
+    @keyword theta:             The rotating frame tilt angle.
+    @type theta:                float
+    @keyword spin_lock_fields:  The CPMG nu1 frequencies.
+    @type spin_lock_fields:     numpy rank-1 float array
+    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
+    @type back_calc:            numpy rank-1 float array
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @type num_poinst:           int
     """
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # Catch zeros (to avoid pointless mathematical operations).
         if phi_ex == 0.0 or kex == 0.0:
-            back_calc[i] = r20
+            back_calc[i] = r1rho_prime
 
         # Avoid divide by zero.
-        elif kex == 0.0 and cpmg_frqs[i] == 0.0:
+        elif kex == 0.0 and spin_lock_fields[i] == 0.0:
             back_calc[i] = 1e100
 
         # The full formula.
         else:
-            back_calc[i] = r1rho0 + sin(theta) * phi_ex * kex / (kex**2 + cpmg_frqs[i]**2)
+            back_calc[i] = r1rho_prime + sin(theta) * phi_ex * kex / (kex**2 + spin_lock_fields[i]**2)
