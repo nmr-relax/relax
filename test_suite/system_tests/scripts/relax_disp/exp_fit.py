@@ -80,22 +80,13 @@ for i in range(len(data)):
 relax_disp.cluster(cluster_id='test', spin_id=':1')
 relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N')
 
-# Error analysis.
-spectrum.error_analysis(subset=['nu_1kHz_relaxT_0.01', 'nu_1kHz_relaxT_0.02', 'nu_1kHz_relaxT_0.04', 'nu_1kHz_relaxT_0.06', 'nu_1kHz_relaxT_0.08', 'nu_1kHz_relaxT_0.10', 'nu_1kHz_relaxT_0.12', 'nu_2kHz_relaxT_0.01', 'nu_2kHz_relaxT_0.02', 'nu_2kHz_relaxT_0.04', 'nu_2kHz_relaxT_0.06', 'nu_2kHz_relaxT_0.08', 'nu_2kHz_relaxT_0.10', 'nu_2kHz_relaxT_0.12'])
 
-# Set the model.
-relax_disp.select_model(model='R2eff')
 
-# Low precision optimisation.
-grid_search(inc=3, constraints=True, verbosity=1)
-minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+# Auto-analysis execution.
+##########################
 
-# Monte Carlo simulations.
-monte_carlo.setup(number=3)
-monte_carlo.create_data(method='back_calc')
-monte_carlo.initial_values()
-minimise(min_algor='simplex', func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
-monte_carlo.error_analysis()
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
 # Save the program state.
 state.save('devnull', force=True)
