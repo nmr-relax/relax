@@ -30,7 +30,7 @@ from re import search
 # relax module imports.
 from lib.errors import RelaxError
 from lib.mathematics import round_to_next_order
-from specific_analyses.relax_disp.disp_data import loop_frq_point
+from specific_analyses.relax_disp.disp_data import loop_frq, loop_frq_point
 from specific_analyses.relax_disp.variables import MODEL_R2EFF, VAR_TIME_EXP
 
 
@@ -335,11 +335,11 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
             if 'r2' in spin.params:
                 if sim_index != None:
                     spin.r2_sim[sim_index] = []
-                    for i in range(cdp.spectrometer_frq_count):
+                    for frq in loop_frq():
                         spin.r2_sim[sim_index].append(None)
                 else:
                     spin.r2 = []
-                    for i in range(cdp.spectrometer_frq_count):
+                    for frq in loop_frq():
                         spin.r2.append(None)
 
             # Loop over each parameter.
