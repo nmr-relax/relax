@@ -43,7 +43,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, bootstrap_sim_num=100000):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, bootstrap_sim_num=100000, modsel='AIC'):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
@@ -60,6 +60,8 @@ class Relax_disp:
         @type mc_sim_num:           int
         @keyword bootstrap_sim_num: The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type bootstrap_sim_num:    int
+        @keyword modsel:            The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
+        @type modsel:               str
         """
 
         # Printout.
@@ -80,6 +82,7 @@ class Relax_disp:
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.bootstrap_sim_num = bootstrap_sim_num
+        self.modsel = modsel
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -108,6 +111,11 @@ class Relax_disp:
         # The pipe name.
         if not has_pipe(self.pipe_name):
             raise RelaxNoPipeError(self.pipe_name)
+
+        # Check the model selection.
+        allowed = ['AIC', 'AICc', 'BIC']
+        if self.modsel not in allowed:
+            raise RelaxError("The model selection technique '%s' is not in the allowed list of %s." % (self.modsel, allowed))
 
 
     def error_analysis(self):
@@ -192,7 +200,7 @@ class Relax_disp:
             self.write_results(path=self.results_dir+sep+model)
 
         # Perform model selection.
-        self.interpreter.model_selection(method='AIC', modsel_pipe='final', pipes=model_pipes)
+        self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=model_pipes)
 
         # Write out the final results.
         self.write_results(path=self.results_dir+sep+'final')
