@@ -816,14 +816,14 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NOREX:
             print("The model for no chemical exchange relaxation.")
             params = []
-            for i in range(cdp.spectrometer_frq_count):
+            for frq in loop_frq():
                 params.append('r2')
 
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = []
-            for i in range(cdp.spectrometer_frq_count):
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -831,7 +831,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72:
             print("The Carver and Richards (1972) 2-site model for all time scales.")
             params = []
-            for i in range(cdp.spectrometer_frq_count):
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -839,7 +839,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_M61:
             print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
             params = []
-            for i in range(cdp.spectrometer_frq_count):
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
