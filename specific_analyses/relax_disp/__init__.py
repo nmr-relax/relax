@@ -1472,15 +1472,16 @@ class Relax_disp(API_base, API_common):
         spin_ids = model_info
         spins = spin_ids_to_containers(spin_ids)
 
-        # Take the number of parameters from the first spin.
-        k = len(spins[0].params)
+        # The number of parameters for the cluster.
+        k = param_num(spins=spins)
 
-        # The number of points and chi-squared is the sum from all spins.
+        # The number of points from all spins.
         n = 0
-        chi2 = 0.0
         for spin in spins:
             n += len(spin.r2eff)
-            chi2 += spin.chi2
+
+        # Take the chi-squared from the first spin of the cluster.
+        chi2 = spins[0].chi2
 
         # Return the values.
         return k, n, chi2
