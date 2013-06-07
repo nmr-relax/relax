@@ -63,7 +63,6 @@ class Test_sparky(TestCase):
 
         # Check the file data.
         lines = file.readlines()
-        print lines
         self.assertEqual(len(lines), len(file_data))
         for i in range(len(lines)):
             self.assertEqual(lines[i], file_data[i])
