@@ -39,8 +39,9 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 # Load the sequence.
 sequence.read('fake_sequence.in', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen', res_num_col=1, res_name_col=2)
 
-# Name the spins so they can be matched to the assignments.
+# Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
 spin.name(name='N')
+spin.isotope(isotope='15N')
 
 # Set the relaxation dispersion experiment type.
 relax_disp.exp_type('cpmg fixed')
