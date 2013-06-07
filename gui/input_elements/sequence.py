@@ -263,7 +263,9 @@ class Sequence:
                         if isinstance(value, int):
                             value_set = True
                     elif self.value_type == 'str':
-                        if isinstance(value, str):
+                        if self.seq_type == 'list' and value[0] != '[':
+                            value_set = True
+                        elif self.seq_type == 'tuple' and value[0] != '(':
                             value_set = True
                 except:
                     pass
