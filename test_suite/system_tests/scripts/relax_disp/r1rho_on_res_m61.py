@@ -77,6 +77,9 @@ if ds.fixed:
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref', field=None)
 
+    # Set the spectrometer frequency.
+    spectrometer.frequency(id='ref', frq=800, units='MHz')
+
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
     # Load the peak intensities and set the errors.
@@ -89,6 +92,9 @@ for i in range(len(data)):
 
     # Set the relaxation times.
     relax_disp.relax_time(spectrum_id=data[i][0], time=data[i][3])
+
+    # Set the spectrometer frequency.
+    spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
 
 # Clustering.
 relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
