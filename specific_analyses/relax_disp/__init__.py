@@ -1240,6 +1240,10 @@ class Relax_disp(API_base, API_common):
             elif cdp.exp_type == 'r1rho':
                 raise RelaxError("The spin-lock field strengths have not been set up.")
 
+        # Test if the spectrometer frequencies have been set.
+        if cdp.model in [MODEL_LM63, MODEL_CR72, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
+            raise RelaxError("The spectrometer frequency information has not been specified.")
+
         # Initialise some empty data pipe structures so that the target function set up does not fail.
         if not hasattr(cdp, 'cpmg_frqs_list'):
             cdp.cpmg_frqs_list = []
