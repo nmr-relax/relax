@@ -505,9 +505,9 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0], r1rho_prime[spin_index], 2)
-            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index])
-            self.assertAlmostEqual(spin.kex, kex)
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
 
             # Increment the spin index.
             spin_index += 1
@@ -556,9 +556,9 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0], r1rho_prime[spin_index], 2)
-            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index])
-            self.assertAlmostEqual(spin.kex, kex)
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
 
             # Increment the spin index.
             spin_index += 1
