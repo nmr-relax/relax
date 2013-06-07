@@ -691,6 +691,27 @@ def spin_has_frq_data(spin=None, frq=None):
     return False
 
 
+def spin_ids_to_containers(spin_ids):
+    """Take the list of spin IDs and return the corresponding spin containers.
+
+    This is useful for handling the data from the model_loop() method.
+
+
+    @param spin_ids:    The list of spin ID strings.
+    @type spin_ids:     list of str
+    @return:            The list of spin containers.
+    @rtype:             list of SpinContainer instances
+    """
+
+    # Loop over the IDs and fetch the container.
+    spins = []
+    for id in spin_ids:
+        spins.append(return_spin(id))
+
+    # Return the containers.
+    return spins
+
+
 def spin_lock_field(spectrum_id=None, field=None):
     """Set the spin-lock field strength (nu1) for the given spectrum.
 

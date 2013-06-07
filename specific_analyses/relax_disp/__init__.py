@@ -57,7 +57,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -919,27 +919,6 @@ class Relax_disp(API_base, API_common):
         self._model_setup(model, params)
 
 
-    def _spin_ids_to_containers(self, spin_ids):
-        """Take the list of spin IDs and return the corresponding spin containers.
-
-        This is useful for handling the data from the model_loop() method.
-
-
-        @param spin_ids:    The list of spin ID strings.
-        @type spin_ids:     list of str
-        @return:            The list of spin containers.
-        @rtype:             list of SpinContainer instances
-        """
-
-        # Loop over the IDs and fetch the container.
-        spins = []
-        for id in spin_ids:
-            spins.append(return_spin(id))
-
-        # Return the containers.
-        return spins
-
-
     def base_data_loop(self):
         """Custom generator method for looping over the base data.
 
@@ -1294,7 +1273,7 @@ class Relax_disp(API_base, API_common):
         # Loop over the spin blocks.
         for spin_ids in self.model_loop():
             # The spin containers.
-            spins = self._spin_ids_to_containers(spin_ids)
+            spins = spin_ids_to_containers(spin_ids)
 
             # The R2eff/R1rho data.
             values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
@@ -1476,7 +1455,7 @@ class Relax_disp(API_base, API_common):
 
         # Unpack the data.
         spin_ids = model_info
-        spins = self._spin_ids_to_containers(spin_ids)
+        spins = spin_ids_to_containers(spin_ids)
 
         # Take the number of parameters from the first spin.
         k = len(spins[0].params)
@@ -1598,7 +1577,7 @@ class Relax_disp(API_base, API_common):
 
         # Unpack the data.
         spin_ids = model_info
-        spins = self._spin_ids_to_containers(spin_ids)
+        spins = spin_ids_to_containers(spin_ids)
 
         # Convert the parameter index.
         param_name, spin_index = param_index_to_param_info(index=index, spins=spins, names=self.data_names(set='params'))
@@ -1632,7 +1611,7 @@ class Relax_disp(API_base, API_common):
 
         # Unpack the data.
         spin_ids = model_info
-        spins = self._spin_ids_to_containers(spin_ids)
+        spins = spin_ids_to_containers(spin_ids)
 
         # Loop over the spins, storing the structure for each spin.
         for spin in spins:
@@ -1701,7 +1680,7 @@ class Relax_disp(API_base, API_common):
 
         # Unpack the data.
         spin_ids = model_info
-        spins = self._spin_ids_to_containers(spin_ids)
+        spins = spin_ids_to_containers(spin_ids)
 
         # The number of parameters.
         total_param_num = param_num(spins=spins)
@@ -1745,7 +1724,7 @@ class Relax_disp(API_base, API_common):
 
         # Unpack the data.
         spin_ids = model_info
-        spins = self._spin_ids_to_containers(spin_ids)
+        spins = spin_ids_to_containers(spin_ids)
 
         # Return the array from the first spin, as this array will be identical for all spins in the cluster.
         return spins[0].select_sim
