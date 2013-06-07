@@ -584,6 +584,10 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
                 data_names.append('value_%s' % i)
                 error_names.append('error_%s' % i)
 
+        # None.
+        elif value == None:
+            pass
+
         # Simple values.
         else:
             # Sanity check.
@@ -612,11 +616,11 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             # Loop over the keys.
             for key in data_names:
                 # Append the scaled values and errors.
-                if key not in value:
+                if value == None or key not in value:
                     values[-1].append(None)
                 else:
                     values[-1].append(scale(value[key], scaling))
-                if key not in error:
+                if error == None or key not in error:
                     errors[-1].append(None)
                 else:
                     errors[-1].append(scale(error[key], scaling))
@@ -630,8 +634,25 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
             # Loop over the data.
             for i in range(len(data_names)):
                 # Append the scaled values and errors.
-                values[-1].append(scale(value[i], scaling))
-                errors[-1].append(scale(error[i], scaling))
+                if value == None:
+                    values[-1].append(None)
+                else:
+                    values[-1].append(scale(value[i], scaling))
+                if error == None:
+                    errors[-1].append(None)
+                else:
+                    errors[-1].append(scale(error[i], scaling))
+
+        # None.
+        elif value == None:
+            # Initialise the lists.
+            values.append([])
+            errors.append([])
+
+            # Loop over the data.
+            for i in range(len(data_names)):
+                values[-1].append(None)
+                errors[-1].append(None)
 
         # Simple values.
         else:
