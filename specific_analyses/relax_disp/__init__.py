@@ -644,6 +644,15 @@ class Relax_disp(API_base, API_common):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
+                # Add a new label.
+                if cdp.exp_type in CPMG_EXP:
+                    label = "R\\s2eff\\N"
+                else:
+                    label = "R\\s1\\xr\\B\\N"
+                if frq != None:
+                    label += " (%.6f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
                 # Loop over the dispersion points.
                 for disp_point in loop_point():
                     # The data key.
@@ -666,6 +675,15 @@ class Relax_disp(API_base, API_common):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
+                # Add a new label.
+                if cdp.exp_type in CPMG_EXP:
+                    label = "Back-calculated R\\s2eff\\N"
+                else:
+                    label = "Back-calculated R\\s1\\xr\\B\\N"
+                if frq != None:
+                    label += " (%.6f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
                 # Loop over the dispersion points.
                 for disp_point in loop_point():
                     # The data key.
@@ -687,6 +705,12 @@ class Relax_disp(API_base, API_common):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
+                # Add a new label.
+                label = "Residuals"
+                if frq != None:
+                    label += " (%.6f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
                 # Loop over the dispersion points.
                 for disp_point in loop_point():
                     # The data key.
@@ -701,7 +725,8 @@ class Relax_disp(API_base, API_common):
 
                     # Handle the errors.
                     if err:
-                        data[-1][-1].append(None)
+                        err = True
+                        data[-1][-1].append(spin.r2eff_err[key])
 
             # The axis labels.
             if cdp.exp_type == 'CPMG':
@@ -710,7 +735,8 @@ class Relax_disp(API_base, API_common):
                 axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
 
             # Write the header.
-            write_xy_header(sets=len(data), file=file, set_names=set_labels, axis_labels=axis_labels)
+            title = "Relaxation dispersion plot"
+            write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels)
 
             # Write the data.
             graph_type = 'xy'
