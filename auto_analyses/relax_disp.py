@@ -192,7 +192,7 @@ class Relax_disp:
                 self.optimise()
 
             # Write out the results.
-            self.write_results(path=self.results_dir+sep+model)
+            self.write_results(path=self.results_dir+sep+model, model=model)
 
         # Perform model selection, writing out the final results.
         if len(model_pipes) >= 2:
@@ -204,7 +204,7 @@ class Relax_disp:
             warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
 
 
-    def write_results(self, path=None):
+    def write_results(self, path=None, model=None):
         """Create a set of results, text and Grace files for the current data pipe.
 
         @keyword path:  The directory to place the files into.
@@ -215,7 +215,7 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Exponential curves.
-        if cdp.model == MODEL_R2EFF and cdp.exp_type not in FIXED_TIME_EXP:
+        if cdp.model_type == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
             self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
 
@@ -223,20 +223,20 @@ class Relax_disp:
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
 
         # The R2eff parameter.
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
 
         # The I0 parameter.
-        if cdp.model == MODEL_R2EFF and cdp.exp_type not in FIXED_TIME_EXP:
+        if cdp.model_type == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         # The Phi_ex parameter.
-        if cdp.model in [MODEL_LM63]:
+        if model in [None, MODEL_LM63]:
             self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
 
         # Minimisation statistics.
-        if not (cdp.model == MODEL_R2EFF and cdp.exp_type in FIXED_TIME_EXP):
+        if not (cdp.model_type == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)

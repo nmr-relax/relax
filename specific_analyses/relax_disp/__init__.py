@@ -135,7 +135,7 @@ class Relax_disp(API_base, API_common):
         values, errors, missing, frqs = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=cdp.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -356,7 +356,7 @@ class Relax_disp(API_base, API_common):
             upper = []
 
             # The R2eff model.
-            if cdp.model == MODEL_R2EFF:
+            if cdp.model_type == 'R2eff':
                 for spin_index in range(len(spins)):
                     # Alias the spin.
                     spin = spins[spin_index]
@@ -588,15 +588,14 @@ class Relax_disp(API_base, API_common):
         @type params:   list of str
         """
 
-        # Set the model.
-        cdp.model = model
+        # The model group.
+        if model == MODEL_R2EFF:
+            cdp.model_type = 'R2eff'
+        else:
+            cdp.model_type = 'disp'
 
         # Loop over the sequence.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
+        for spin in spin_loop(skip_desel=True):
             # The model and parameter names.
             spin.model = model
             spin.params = params
@@ -930,7 +929,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model data (the base data is peak intensities).
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             # Loop over the sequence.
             for spin in spin_loop():
                 # Skip deselected spins.
@@ -984,7 +983,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
         # Test if the model has been set.
-        if not hasattr(cdp, 'model'):
+        if not hasattr(cdp, 'model_type'):
             raise RelaxError("The relaxation dispersion model has not been specified.")
 
         # Test if the curve count exists.
@@ -1070,7 +1069,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             # Unpack the data.
             spin, frq, point = data_id
 
@@ -1115,7 +1114,11 @@ class Relax_disp(API_base, API_common):
         # Duplicate all non-sequence specific data.
         for data_name in dir(dp_from):
             # Skip the container objects.
-            if data_name in ['mol', 'interatomic', 'structure', 'exp_info']:
+            if data_name in ['mol', 'interatomic', 'structure', 'exp_info', 'result_files']:
+                continue
+
+            # Skip dispersion specific parameters.
+            if data_name in ['model']:
                 continue
 
             # Skip special objects.
@@ -1230,7 +1233,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
         # Test if the model has been set.
-        if not hasattr(cdp, 'model'):
+        if not hasattr(cdp, 'model_type'):
             raise RelaxError("The relaxation dispersion model has not been specified.")
 
         # Test if the curve count exists.
@@ -1240,10 +1243,6 @@ class Relax_disp(API_base, API_common):
             elif cdp.exp_type == 'r1rho':
                 raise RelaxError("The spin-lock field strengths have not been set up.")
 
-        # Test if the spectrometer frequencies have been set.
-        if cdp.model in [MODEL_LM63, MODEL_CR72, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
-            raise RelaxError("The spectrometer frequency information has not been specified.")
-
         # Initialise some empty data pipe structures so that the target function set up does not fail.
         if not hasattr(cdp, 'cpmg_frqs_list'):
             cdp.cpmg_frqs_list = []
@@ -1251,7 +1250,7 @@ class Relax_disp(API_base, API_common):
             cdp.spin_lock_nu1_list = []
 
         # Special exponential curve-fitting for the 'R2eff' model.
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             # Sanity checks.
             if cdp.exp_type in FIXED_TIME_EXP:
                 raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")
@@ -1278,6 +1277,10 @@ class Relax_disp(API_base, API_common):
         for spin_ids in self.model_loop():
             # The spin containers.
             spins = spin_ids_to_containers(spin_ids)
+
+            # Test if the spectrometer frequencies have been set.
+            if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
+                raise RelaxError("The spectrometer frequency information has not been specified.")
 
             # The R2eff/R1rho data.
             values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
@@ -1313,7 +1316,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=cdp.model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
+            model = Dispersion(model=spins[0].model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
@@ -1543,7 +1546,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model.
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             # Unpack the data.
             spin, frq, point = data_id
 
@@ -1632,7 +1635,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The R2eff model (with peak intensity base data).
-        if cdp.model == MODEL_R2EFF:
+        if cdp.model_type == 'R2eff':
             # Unpack the data.
             spin, frq, point = data_id
 

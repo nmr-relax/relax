@@ -60,7 +60,7 @@ def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
         raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
     # Test if the model has been set.
-    if not hasattr(cdp, 'model'):
+    if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
     # Directory creation.

@@ -64,7 +64,7 @@ def sherekhan_input(spin_id=None, force=False):
         raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
     # Test if the model has been set.
-    if not hasattr(cdp, 'model'):
+    if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
     # Test that this is a fixed time period experiment.

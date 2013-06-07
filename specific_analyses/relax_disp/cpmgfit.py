@@ -67,20 +67,18 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
         raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
     # Test if the model has been set.
-    if not hasattr(cdp, 'model'):
+    if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
-    # Translate the model.
-    function = translate_model()
-
     # The directory.
-    if dir == None:
-        dir = cdp.model.lower()
-    if not access(dir, F_OK):
+    if dir != None and not access(dir, F_OK):
         raise RelaxDirError('CPMGFit', dir)
 
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Translate the model.
+        function = translate_model(spin.model)
+
         # The spin input file name.
         file_in = dir + sep + spin_file_name(spin_id=spin_id)
         if not access(file_in, F_OK):
@@ -144,16 +142,12 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
         raise RelaxError("The relaxation dispersion experiment type has not been specified.")
 
     # Test if the model has been set.
-    if not hasattr(cdp, 'model'):
+    if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
-    # Translate the model.
-    function = translate_model()
-
     # Directory creation.
-    if dir == None:
-        dir = cdp.model.lower()
-    mkdir_nofail(dir, verbosity=0)
+    if dir != None:
+        mkdir_nofail(dir, verbosity=0)
 
     # The 'run.sh' script.
     batch = open_write_file('batch_run.sh', dir, force)
@@ -161,6 +155,9 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Generate the input files for each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Translate the model.
+        function = translate_model(spin.model)
+
         # Create the input file.
         file_in = create_spin_input(function=function, spin=spin, spin_id=spin_id, dir=dir)
 
@@ -279,7 +276,7 @@ def spin_file_name(spin_id=None, output=False):
     return name
 
 
-def translate_model():
+def translate_model(model):
     """Translate the dispersion model from relax notation to CPMGFit notation.
 
     @return:    The CPMGFit model name.
@@ -293,11 +290,11 @@ def translate_model():
     }
 
     # No translation, so fail.
-    if cdp.model not in translation:
-        raise RelaxError("The conversion of the relax model '%s' to a CPMGFit model is not supported." % cdp.model)
+    if model not in translation:
+        raise RelaxError("The conversion of the relax model '%s' to a CPMGFit model is not supported." % model)
 
     # Printout.
-    print("Translating the relax '%s' model to the CPMGFit '%s' model." % (cdp.model, translation[cdp.model]))
+    print("Translating the relax '%s' model to the CPMGFit '%s' model." % (model, translation[model]))
 
     # Return the translated name.
-    return translation[cdp.model]
+    return translation[model]

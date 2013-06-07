@@ -51,7 +51,7 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     param_vector = []
 
     # The R2eff model parameters.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -197,7 +197,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         return scaling_matrix
 
     # The R2eff model.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -272,7 +272,7 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
     param_index = 0
 
     # The R2eff model.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         for spin_index in range(len(spins)):
             # Alias the spin.
             spin = spins[spin_index]
@@ -454,7 +454,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
     j = 0
 
     # The R2eff model.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         # Only use the parameters of the first spin of the cluster.
         spin = spins[0]
         for i in range(n):
@@ -549,7 +549,7 @@ def param_index_to_param_info(index=None, spins=None, names=None):
     spin_index = 0
 
     # The R2eff model.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         # The number of spin specific parameters (R2eff and I0 per spin).
         num = len(spins) * 2
 
@@ -582,7 +582,7 @@ def param_num(spins=None):
     """
 
     # The R2eff model.
-    if cdp.model == MODEL_R2EFF:
+    if cdp.model_type == 'R2eff':
         # Exponential curves (with clustering).
         if cdp.exp_type in VAR_TIME_EXP:
             return 2 * len(spins)
