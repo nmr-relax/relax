@@ -78,4 +78,4 @@ def r2eff_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
 
         # The full formula.
         else:
-            back_calc[i] = r1rho_prime + sin(theta) * phi_ex * kex / (kex**2 + spin_lock_fields[i]**2)
+            back_calc[i] = r1rho_prime + sin(theta)**2 * phi_ex * kex / (kex**2 + (2.0*pi*spin_lock_fields[i])**2)
