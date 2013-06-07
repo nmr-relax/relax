@@ -97,7 +97,7 @@ for i in range(len(data)):
     spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
 
 # Clustering.
-#relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
+relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 
 
 
