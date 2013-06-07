@@ -257,19 +257,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 7.01155339809216)
-        self.assertAlmostEqual(spin70.r2[1], 9.46442835200306)
-        self.assertAlmostEqual(spin70.pA, 0.989902989352694)
-        self.assertAlmostEqual(spin70.dw, 5.57732933273956)
-        self.assertAlmostEqual(spin70.kex, 1765.90725820329)
-        self.assertAlmostEqual(spin70.chi2, 18.4500380435222)
+        self.assertAlmostEqual(spin70.r2[0], 7.01155339809216, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.46442835200306, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989902989352694, 4)
+        self.assertAlmostEqual(spin70.dw, 5.57732933273956, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1765.90725820329/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.4500380435222, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.97810633804386)
-        self.assertAlmostEqual(spin71.pA, 0.996745738175374)
-        self.assertAlmostEqual(spin71.dw, 4.4520953297668)
-        self.assertAlmostEqual(spin71.kex, 1883.01233923508)
-        self.assertAlmostEqual(spin71.chi2, 1.37893904307118)
+        self.assertAlmostEqual(spin71.r2[0], 4.97810633804386, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996745738175374, 4)
+        self.assertAlmostEqual(spin71.dw, 4.4520953297668, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1883.01233923508/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37893904307118, 4)
 
 
     def test_hansen_cpmgfit_input(self):
