@@ -40,7 +40,7 @@ from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue, spin_loop
-from specific_analyses.relax_disp.disp_data import loop_cluster, loop_frq, loop_point, return_param_key_from_data
+from specific_analyses.relax_disp.disp_data import loop_cluster, loop_frq, loop_point, return_param_key_from_data, spin_ids_to_containers
 
 
 def sherekhan_input(spin_id=None, force=False):
@@ -73,7 +73,10 @@ def sherekhan_input(spin_id=None, force=False):
 
     # Loop over the spin blocks.
     cluster_index = 0
-    for spins, spin_ids in loop_cluster():
+    for spin_ids in loop_cluster():
+        # The spin containers.
+        spins = spin_ids_to_containers(spin_ids)
+
         # Loop over the magnetic fields.
         frq_index = 0
         for frq in loop_frq():
