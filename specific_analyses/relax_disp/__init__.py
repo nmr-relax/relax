@@ -377,11 +377,29 @@ class Relax_disp(API_base, API_common):
 
             # All other models.
             else:
-                # Only use the parameters of the first spin of the cluster.
+                # The spin specific parameters.
+                for spin in spins:
+                    for i in range(len(spin.params)):
+                        # R2 relaxation rates (from 1 to 40 s^-1).
+                        if spin.params[i] == 'r2':
+                            lower.append(1.0)
+                            upper.append(40.0)
+
+                        # The pA.pB.dw**2 parameter.
+                        elif spin.params[i] == 'phi_ex':
+                            lower.append(0.0)
+                            upper.append(10.0)
+
+                        # Chemical shift difference between states A and B.
+                        elif spin.params[i] == 'dw':
+                            lower.append(0.0)
+                            upper.append(10.0)
+
+                # The cluster specific parameters (only use the values from the first spin of the cluster).
                 spin = spins[0]
                 for i in range(len(spin.params)):
                     # R2 relaxation rates (from 1 to 40 s^-1).
-                    if spin.params[i] in ['r2', 'r2a']:
+                    if spin.params[i] == 'r2a':
                         lower.append(1.0)
                         upper.append(40.0)
 
@@ -389,16 +407,6 @@ class Relax_disp(API_base, API_common):
                     elif spin.params[i] == 'pA':
                         lower.append(0.5)
                         upper.append(1.0)
-
-                    # The pA.pB.dw**2 parameter.
-                    elif spin.params[i] == 'phi_ex':
-                        lower.append(0.0)
-                        upper.append(10.0)
-
-                    # Chemical shift difference between states A and B.
-                    elif spin.params[i] == 'dw':
-                        lower.append(0.0)
-                        upper.append(10.0)
 
                     # Exchange rates.
                     elif spin.params[i] in ['kex', 'ka']:
@@ -1587,7 +1595,7 @@ class Relax_disp(API_base, API_common):
         spins = spin_ids_to_containers(spin_ids)
 
         # Convert the parameter index.
-        param_name, spin_index = param_index_to_param_info(index=index, spins=spins, names=self.data_names(set='params'))
+        param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
 
         # The parameter error name.
         err_name = param_name + "_err"
@@ -1697,7 +1705,7 @@ class Relax_disp(API_base, API_common):
             return
 
         # Convert the parameter index.
-        param_name, spin_index = param_index_to_param_info(index=index, spins=spins, names=self.data_names(set='params'))
+        param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
 
         # The exponential curve parameters.
         sim_data = []

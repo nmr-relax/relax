@@ -30,7 +30,7 @@ from re import search
 # relax module imports.
 from lib.errors import RelaxError
 from lib.mathematics import round_to_next_order
-from specific_analyses.relax_disp.disp_data import loop_frq, loop_frq_point
+from specific_analyses.relax_disp.disp_data import count_frq, loop_frq, loop_frq_point
 from specific_analyses.relax_disp.variables import MODEL_R2EFF, VAR_TIME_EXP
 
 
@@ -50,125 +50,59 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     # Initialise.
     param_vector = []
 
-    # The R2eff model parameters.
-    if cdp.model_type == 'R2eff':
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
+    # Loop over the parameters of the cluster.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Spin specific parameters.
+        if spin_index != None:
+            # Set the simulation value.
+            if sim_index != None:
+                # Get the simulation structure.
+                sim_obj = getattr(spins[spin_index], param_name+'_sim')
 
-            # A specific exponential curve.
-            if key:
-                # Loop over the model parameters.
-                for i in range(len(spin.params)):
-                    # Effective transversal relaxation rate.
-                    if spin.params[i] == 'r2eff':
-                        if sim_index != None:
-                            param_vector.append(spin.r2eff_sim[sim_index][key])
-                        elif spin.r2eff == None or key not in spin.r2eff:
-                            param_vector.append(0.0)
-                        else:
-                            param_vector.append(spin.r2eff[key])
+                # Frequency specific parameter.
+                if frq_index != None:
+                    value = sim_obj[sim_index][frq_index]
 
-                    # Initial intensity.
-                    elif spin.params[i] == 'i0':
-                        if sim_index != None:
-                            param_vector.append(spin.i0_sim[sim_index][key])
-                        elif spin.i0 == None or key not in spin.i0:
-                            param_vector.append(0.0)
-                        else:
-                            param_vector.append(spin.i0[key])
+                # Set the normal value.
+                else:
+                    value = sim_obj[sim_index]
 
+            # Frequency specific parameter.
+            elif frq_index != None:
+                obj = getattr(spins[spin_index], param_name)
+                if obj == []:
+                    value = 0.0
+                else:
+                    value = obj[frq_index]
 
-            # Loop over each spectrometer frequency and dispersion point.
+            # Set the normal value.
             else:
-                for key in loop_frq_point_key():
-                    # Loop over the model parameters.
-                    for i in range(len(spin.params)):
-                        # Effective transversal relaxation rate.
-                        if spin.params[i] == 'r2eff':
-                            if sim_index != None:
-                                param_vector.append(spin.r2eff_sim[sim_index][key])
-                            elif spin.r2eff == None or key not in spin.r2eff:
-                                param_vector.append(0.0)
-                            else:
-                                param_vector.append(spin.r2eff[key])
+                value = getattr(spins[spin_index], param_name)
 
-                        # Initial intensity.
-                        elif spin.params[i] == 'i0':
-                            if sim_index != None:
-                                param_vector.append(spin.i0_sim[sim_index][key])
-                            elif spin.i0 == None or key not in spin.i0:
-                                param_vector.append(0.0)
-                            else:
-                                param_vector.append(spin.i0[key])
+        # Cluster specific parameters - use the parameter value from the first spin.
+        else:
+            # Set the simulation value.
+            if sim_index != None:
+                value = getattr(spins[0], param_name+'_sim')[sim_index]
 
-    # All other model parameters.
-    else:
-        # Only use the values from the first spin of the cluster.
-        spin = spins[0]
-        for i in range(len(spin.params)):
-            # Transversal relaxation rate.
-            if spin.params[i] == 'r2':
-                if sim_index != None:
-                    param_vector.append(spin.r2_sim[sim_index][i])
-                elif spin.r2 == [] or spin.r2[i] == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2[i])
+            # Set the normal value.
+            else:
+                value = getattr(spins[0], param_name)
 
-            # Transversal relaxation rate for state A.
-            elif spin.params[i] == 'r2a':
-                if sim_index != None:
-                    param_vector.append(spin.r2a_sim[sim_index])
-                elif spin.r2a == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.r2a)
+        # The R2eff model parameters.
+        if key != None:
+            if not key in value:
+                value = 0.0
+            else:
+                value = value[key]
 
-            # The pA parameter.
-            elif spin.params[i] == 'pA':
-                if sim_index != None:
-                    param_vector.append(spin.pA_sim[sim_index])
-                elif spin.pA == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.pA)
+        # Add to the vector.
+        param_vector.append(value)
 
-            # The pA.pB.dw**2 parameter.
-            elif spin.params[i] == 'phi_ex':
-                if sim_index != None:
-                    param_vector.append(spin.phi_ex_sim[sim_index])
-                elif spin.phi_ex == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.phi_ex)
-
-            # Chemical shift difference between states A and B.
-            elif spin.params[i] == 'dw':
-                if sim_index != None:
-                    param_vector.append(spin.dw_sim[sim_index])
-                elif spin.dw == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.dw)
-
-            # Exchange rate.
-            elif spin.params[i] == 'kex':
-                if sim_index != None:
-                    param_vector.append(spin.kex_sim[sim_index])
-                elif spin.kex == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.kex)
-
-            # Exchange rate from state A to state B.
-            elif spin.params[i] == 'ka':
-                if sim_index != None:
-                    param_vector.append(spin.ka_sim[sim_index])
-                elif spin.ka == None:
-                    param_vector.append(0.0)
-                else:
-                    param_vector.append(spin.ka)
+    # Convert all None values to 0.0.
+    for i in range(len(param_vector)):
+        if param_vector[i] == None:
+            param_vector[i] = 0.0
 
     # Return a numpy array.
     return array(param_vector, float64)
@@ -196,60 +130,31 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
     if not scaling:
         return scaling_matrix
 
-    # The R2eff model.
-    if cdp.model_type == 'R2eff':
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
+    # Loop over the parameters of the cluster.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Transversal relaxation rate scaling.
+        if param_name == 'r2':
+            scaling_matrix[param_index, param_index] = 10
 
-            # A specific exponential curve.
-            if key:
-                # Effective transversal relaxation rate scaling.
-                scaling_matrix[param_index, param_index] = 10
-                param_index += 1
+        # The pA.pB.dw**2 parameter.
+        elif param_name == 'phi_ex':
+            scaling_matrix[param_index, param_index] = 1
 
-                # Initial intensity scaling.
-                scaling_matrix[param_index, param_index] = round_to_next_order(max(spin.intensities.values()))
-                param_index += 1
+        # Chemical shift difference between states A and B scaling.
+        elif param_name == 'dw':
+            scaling_matrix[param_index, param_index] = 1
 
-            # Loop over each spectrometer frequency and dispersion point.
-            else:
-                for frq, point in loop_frq_point():
-                    # Effective transversal relaxation rate scaling.
-                    scaling_matrix[param_index, param_index] = 10
-                    param_index += 1
+        # Transversal relaxation rate scaling.
+        elif param_name == 'r2a':
+            scaling_matrix[param_index, param_index] = 10
 
-                    # Initial intensity scaling.
-                    scaling_matrix[param_index, param_index] = round_to_next_order(max(spin.intensities.values()))
-                    param_index += 1
+        # The population of state A.
+        elif param_name == 'pA':
+            scaling_matrix[param_index, param_index] = 1
 
-    # All other models.
-    else:
-        # Only use the parameters of the first spin of the cluster.
-        spin = spins[0]
-        for i in range(len(spin.params)):
-            # Transversal relaxation rate scaling.
-            if spin.params[i] in ['r2', 'r2a']:
-                scaling_matrix[param_index, param_index] = 10
-
-            # The population of state A.
-            elif spin.params[i] == 'pA':
-                scaling_matrix[param_index, param_index] = 1
-
-            # The pA.pB.dw**2 parameter.
-            elif spin.params[i] == 'phi_ex':
-                scaling_matrix[param_index, param_index] = 1
-
-            # Chemical shift difference between states A and B scaling.
-            elif spin.params[i] == 'dw':
-                scaling_matrix[param_index, param_index] = 1
-
-            # Exchange rate scaling.
-            elif spin.params[i] in ['kex', 'ka']:
-                scaling_matrix[param_index, param_index] = 10000
-
-            # Increment the parameter index.
-            param_index += 1
+        # Exchange rate scaling.
+        elif param_name in ['kex', 'ka']:
+            scaling_matrix[param_index, param_index] = 10000
 
     # Return the scaling matrix.
     return scaling_matrix
@@ -268,133 +173,71 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
     @type sim_index:        int
     """
 
-    # Initialise.
-    param_index = 0
-
-    # The R2eff model.
-    if cdp.model_type == 'R2eff':
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
-
-            # A specific exponential curve.
-            if key:
-                param_index += 2
-
-                # Loop over the model parameters.
-                for i in range(len(spin.params)):
-                    # Effective transversal relaxation rate.
-                    if spin.params[i] == 'r2eff':
-                        if sim_index != None:
-                            spin.r2eff_sim[sim_index][key] = param_vector[0]
-                        else:
-                            spin.r2eff[key] = param_vector[0]
-
-                    # Initial intensity.
-                    elif spin.params[i] == 'i0':
-                        if sim_index != None:
-                            spin.i0_sim[sim_index][key] = param_vector[1]
-                        else:
-                            spin.i0[key] = param_vector[1]
-
-            # Loop over each spectrometer frequency and dispersion point.
+    # Initialise parameters if needed.
+    for spin in spins:
+        if 'r2' in spin.params:
+            if sim_index != None:
+                spin.r2_sim[sim_index] = []
+                for frq in loop_frq():
+                    spin.r2_sim[sim_index].append(None)
             else:
-                data_index = 0
-                for key in loop_frq_point_key():
-                    index = spin_index * 2 * cdp.dispersion_points + data_index * cdp.dispersion_points
-                    data_index += 1
-                    param_index += 2
+                spin.r2 = []
+                for frq in loop_frq():
+                    spin.r2.append(None)
 
-                    # Loop over the model parameters.
-                    for i in range(len(spin.params)):
-                        # Effective transversal relaxation rate.
-                        if spin.params[i] == 'r2eff':
-                            if sim_index != None:
-                                spin.r2eff_sim[sim_index][key] = param_vector[index]
-                            else:
-                                spin.r2eff[key] = param_vector[index]
+    # Loop over the parameters of the cluster.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Spin specific parameters.
+        if spin_index != None:
+            # Get the object.
+            if sim_index != None:
+                obj = getattr(spins[spin_index], param_name+'_sim')
+            else:
+                obj = getattr(spins[spin_index], param_name)
 
-                        # Initial intensity.
-                        elif spin.params[i] == 'i0':
-                            if sim_index != None:
-                                spin.i0_sim[sim_index][key] = param_vector[index+1]
-                            else:
-                                spin.i0[key] = param_vector[index+1]
+            # Set the simulation value.
+            if sim_index != None:
+                # Frequency specific parameter.
+                if frq_index != None:
+                    if key != None:
+                        obj[sim_index][frq_index][key] = param_vector[param_index]
+                    else:
+                        obj[sim_index][frq_index] = param_vector[param_index]
 
-    # All other models.
-    else:
-        # Set the values for all spins.
-        for spin_index in range(len(spins)):
-            # Alias the spin.
-            spin = spins[spin_index]
-
-            # Reset the parameter index.
-            param_index = 0
-
-            # Initialise the parameter if needed.
-            if 'r2' in spin.params:
-                if sim_index != None:
-                    spin.r2_sim[sim_index] = []
-                    for frq in loop_frq():
-                        spin.r2_sim[sim_index].append(None)
+                # Set the normal value.
                 else:
-                    spin.r2 = []
-                    for frq in loop_frq():
-                        spin.r2.append(None)
-
-            # Loop over each parameter.
-            for i in range(len(spin.params)):
-                # Transversal relaxation rate.
-                if spin.params[i] == 'r2':
-                    if sim_index != None:
-                        spin.r2_sim[sim_index][i] = param_vector[param_index]
+                    if key != None:
+                        obj[sim_index][key] = param_vector[param_index]
                     else:
-                        spin.r2[i] = param_vector[param_index]
+                        obj[sim_index] = param_vector[param_index]
 
-                # Transversal relaxation rate for state A.
-                if spin.params[i] == 'r2a':
-                    if sim_index != None:
-                        spin.r2a_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.r2a = param_vector[param_index]
+            # Frequency specific parameter.
+            elif frq_index != None:
+                obj = getattr(spins[spin_index], param_name)
+                if key != None:
+                    obj[frq_index][key] = param_vector[param_index]
+                else:
+                    obj[frq_index] = param_vector[param_index]
 
-                # The population of state A.
-                if spin.params[i] == 'pA':
-                    if sim_index != None:
-                        spin.pA_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.pA = param_vector[param_index]
+            # Set the normal value.
+            else:
+                if key != None:
+                    obj[key] = param_vector[param_index]
+                else:
+                    setattr(spins[spin_index], param_name, param_vector[param_index])
 
-                # The pA.pB.dw**2 parameter.
-                if spin.params[i] == 'phi_ex':
-                    if sim_index != None:
-                        spin.phi_ex_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.phi_ex = param_vector[param_index]
+        # Cluster specific parameters.
+        else:
+            # Set the same parameter value for all spins in the cluster.
+            for spin in spins:
+                # Set the simulation value.
+                if sim_index != None:
+                    sim_obj = getattr(spin, param_name+'_sim')
+                    sim_obj[sim_index] = param_vector[param_index]
 
-                # Chemical shift difference between states A and B.
-                if spin.params[i] == 'dw':
-                    if sim_index != None:
-                        spin.dw_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.dw = param_vector[param_index]
-
-                # Exchange rate.
-                elif spin.params[i] == 'kex':
-                    if sim_index != None:
-                        spin.kex_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.kex = param_vector[param_index]
-
-                # Exchange rate from state A to state B.
-                if spin.params[i] == 'ka':
-                    if sim_index != None:
-                        spin.ka_sim[sim_index] = param_vector[param_index]
-                    else:
-                        spin.ka = param_vector[param_index]
-
-                # Increment the parameter index.
-                param_index = param_index + 1
+                # Set the normal value.
+                else:
+                    setattr(spin, param_name, param_vector[param_index])
 
 
 def linear_constraints(spins=None, scaling_matrix=None):
@@ -453,73 +296,75 @@ def linear_constraints(spins=None, scaling_matrix=None):
     zero_array = zeros(n, float64)
     j = 0
 
-    # The R2eff model.
-    if cdp.model_type == 'R2eff':
-        # Only use the parameters of the first spin of the cluster.
-        spin = spins[0]
-        for i in range(n):
-            # Effective transversal relaxation rate.
-            if spin.params[i] == 'r2eff':
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-200.0 / scaling_matrix[i, i])
-                j += 2
+    # Loop over the parameters of the cluster.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Effective transversal relaxation rate.
+        if param_name == 'r2eff':
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
 
-            # Initial intensity.
-            elif spin.params[i] == 'i0':
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j += 1
+        # Initial intensity.
+        elif param_name == 'i0':
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            b.append(0.0)
+            j += 1
 
-    # All other models.
-    else:
-        # Only use the parameters of the first spin of the cluster.
-        spin = spins[0]
-        for i in range(n):
-            # The transversal relaxation rates (0 <= r2 <= 200).
-            if spin.params[i] in ['r2', 'r2a']:
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-200.0 / scaling_matrix[i, i])
-                j += 2
+        # The transversal relaxation rates (0 <= r2 <= 200).
+        elif param_name == 'r2':
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
 
-            # The population of state A (pA >= 0 and pA >= pB).
-            elif spin.params[i] == 'pA':
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = 1.0
-                b.append(0.0)
-                b.append(0.5 / scaling_matrix[i, i])
-                j += 2
+        # The pA.pB.dw**2 parameter (phi_ex >= 0).
+        elif param_name == 'phi_ex':
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            b.append(0.0)
+            j += 1
 
-            # The pA.pB.dw**2 parameter (phi_ex >= 0).
-            elif spin.params[i] == 'phi_ex':
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j += 1
+        # Chemical exchange difference (dw >= 0).
+        elif param_name == 'dw':
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            b.append(0.0)
+            j += 1
 
-            # Chemical exchange difference (dw >= 0).
-            elif spin.params[i] == 'dw':
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j += 1
+        # The transversal relaxation rates (0 <= r2 <= 200).
+        elif param_name == 'r2a':
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            j += 2
 
-            # Exchange rates (k >= 0).
-            elif spin.params[i] in ['kex', 'ka']:
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                b.append(0.0)
-                j += 1
+        # The population of state A (pA >= 0 and pA >= pB).
+        elif param_name == 'pA':
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = 1.0
+            b.append(0.0)
+            b.append(0.5 / scaling_matrix[param_index, param_index])
+            j += 2
+
+        # Exchange rates (k >= 0).
+        elif param_name in ['kex', 'ka']:
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            b.append(0.0)
+            j += 1
 
     # Convert to numpy data structures.
     A = array(A, float64)
@@ -529,7 +374,65 @@ def linear_constraints(spins=None, scaling_matrix=None):
     return A, b
 
 
-def param_index_to_param_info(index=None, spins=None, names=None):
+def loop_parameters(spins=None):
+    """Generator function for looping of the parameters of the cluster.
+
+    @keyword spins: The list of spin data containers for the block.
+    @type spins:    list of SpinContainer instances
+    @return:        The parameter name, the parameter index (for the parameter vector), the spin index (for the cluster), and the frequency index (for parameters with different values per spectrometer field strength).
+    @rtype:         str, int, int, int
+    """
+
+    # The parameter index.
+    param_index = -1
+
+    # The R2eff model.
+    if cdp.model_type == 'R2eff':
+        # Loop over the spins.
+        for spin_index in range(len(spins)):
+            # Yield the two parameters.
+            params = ['r2eff', 'i0']
+            for i in range(2):
+                # First increment the indices.
+                param_index += 1
+
+                # Yield the data.
+                yield params[i], param_index, spin_index, None
+
+    # All other models.
+    else:
+        # First the R2 parameters (one per spin per field strength).
+        for spin_index in range(len(spins)):
+            # Reset the frequency index.
+            frq_index = -1
+
+            # Loop over the spectrometer frequencies.
+            for frq in loop_frq():
+                # First increment the indices.
+                frq_index += 1
+                param_index += 1
+
+                # Yield the data.
+                yield 'r2', param_index, spin_index, frq_index
+
+        # Then the chemical shift difference parameters 'phi_ex' and 'dw' (one per spin).
+        for spin_index in range(len(spins)):
+            # Yield the data.
+            if 'phi_ex' in spins[spin_index].params:
+                param_index += 1
+                yield 'phi_ex', param_index, spin_index, None
+            if 'dw' in spins[spin_index].params:
+                param_index += 1
+                yield 'dw', param_index, spin_index, None
+
+        # All other parameters (one per spin cluster).
+        for param in spins[0].params:
+            if not param in ['r2', 'phi_ex', 'dw']:
+                param_index += 1
+                yield param, param_index, None, None
+
+
+def param_index_to_param_info(index=None, spins=None):
     """Convert the given parameter array index to parameter identifying information.
     
     The parameter index will be converted to the parameter name, the relevant spin index in the cluster, and relevant exponential curve key.
@@ -538,38 +441,14 @@ def param_index_to_param_info(index=None, spins=None, names=None):
     @type index:    int
     @keyword spins: The list of spin data containers for the block.
     @type spins:    list of SpinContainer instances
-    @keyword names: The list of all parameter names for the given spin block.
-    @type names:    list of str
-    @return:        The parameter name and spin cluster index
-    @rtype:         str, int
+    @return:        The parameter name, the spin index (for the cluster), and the frequency index (for parameters with different values per spectrometer field strength).
+    @rtype:         str, int, int
     """
 
-    # Initialise.
-    param_name = None
-    spin_index = 0
-
-    # The R2eff model.
-    if cdp.model_type == 'R2eff':
-        # The number of spin specific parameters (R2eff and I0 per spin).
-        num = len(spins) * 2
-
-        # The exponential curve parameters.
-        if index < num:
-            # Even indices are R2eff, odd are I0.
-            if index % 2:
-                param_name = 'i0'
-            else:
-                param_name = 'r2eff'
-
-            # The spin index.
-            spin_index = int(index / 2)
-
-    # All other parameters.
-    else:
-        param_name = spins[0].params[index]
-
-    # Return the data.
-    return param_name, spin_index
+    # Loop over the parameters, yielding when a match is found.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        if param_index == index:
+            return param_name, spin_index, frq_index
 
 
 def param_num(spins=None):
@@ -591,13 +470,23 @@ def param_num(spins=None):
         else:
             return 1 * len(spins)
 
-    # The number of parameters for the cluster.
-    num = len(spins[0].params)
-
     # Check the spin cluster.
     for spin in spins:
-        if len(spin.params) != num:
+        if len(spin.params) != len(spins[0].params):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
+
+    # Count the number of spin specific parameters for all spins.
+    spin_params = ['r2', 'phi_ex', 'dw']
+    num = 0
+    for spin in spins:
+        for i in range(len(spin.params)):
+            if spin.params[i] in spin_params:
+                num += 1
+
+    # Count all other parameters, but only for a single spin.
+    for i in range(len(spins[0].params)):
+        if not spins[0].params[i] in spin_params:
+            num += 1
 
     # Return the number.
     return num

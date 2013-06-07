@@ -107,6 +107,11 @@ class Dispersion:
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
 
+        # The post spin parameter indices.
+        self.end_index = []
+        self.end_index.append(self.num_spins * self.num_frq)
+        self.end_index.append(self.end_index[-1] + self.num_spins)
+
         # Set up the model.
         if model == MODEL_NOREX:
             self.func = self.func_NOREX
@@ -135,11 +140,10 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        index = self.num_frq - 1
-        R20 = params[:index+1]
-        pA = params[index+1]
-        dw = params[index+2]
-        kex = params[index+3]
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
 
         # Initialise.
         chi2_sum = 0.0
@@ -148,11 +152,14 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_CR72(r20=R20[frq_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_CR72(r20=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -180,10 +187,9 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        index = self.num_frq - 1
-        R20 = params[:index+1]
-        phi_ex = params[index+1]
-        kex = params[index+2]
+        R20 = params[:self.end_index[0]]
+        phi_ex = params[self.end_index[0]:self.end_index[1]]
+        kex = params[self.end_index[1]]
 
         # Initialise.
         chi2_sum = 0.0
@@ -192,11 +198,14 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
                 # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex * self.frqs[spin_index, frq_index]**2
+                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
 
                 # Back calculate the R2eff values.
-                r2eff_LM63(r20=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -224,10 +233,9 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        index = self.num_frq - 1
-        R20 = params[:index+1]
-        phi_ex = params[index+1]
-        kex = params[index+2]
+        R20 = params[:self.end_index[0]]
+        phi_ex = params[self.end_index[0]:self.end_index[1]]
+        kex = params[self.end_index[1]]
 
         # Initialise.
         chi2_sum = 0.0
@@ -236,11 +244,14 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
                 # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex * self.frqs[spin_index, frq_index]**2
+                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
 
                 # Back calculate the R2eff values.
-                r2eff_M61(r1rho_prime=R20[frq_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -277,9 +288,12 @@ class Dispersion:
         for spin_index in range(self.num_spins):
             # Loop over the spectrometer frequencies.
             for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
                 # The R2eff values as R20 values.
                 for i in range(self.num_disp_points):
-                    self.back_calc[spin_index, frq_index, i] = R20[frq_index]
+                    self.back_calc[spin_index, frq_index, i] = R20[r20_index]
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
