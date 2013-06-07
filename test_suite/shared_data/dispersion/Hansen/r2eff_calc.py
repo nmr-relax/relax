@@ -19,9 +19,8 @@ MODELS = ['R2eff']
 # The grid search size (the number of increments per dimension).
 GRID_INC = 5
 
-# The number of Monte Carlo and Bootstrap simulations to be used for the error analyses.
+# The number of Monte Carlo simulations to be used for the error analyses.
 MC_NUM = 3
-BOOT_NUM = 1000000
 
 # The results directory.
 RESULTS_DIR = 'temp'
@@ -124,7 +123,7 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, bootstrap_sim_num=BOOT_NUM)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
 # Strip out all of the simulation data.
 for spin in spin_loop():
