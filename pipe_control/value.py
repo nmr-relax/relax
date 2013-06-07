@@ -608,7 +608,7 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
         spin_names.append(spin.name)
 
         # Dictionary type data.
-        if isinstance(value, dict):
+        if data_type == 'dict':
             # Initialise the lists.
             values.append([])
             errors.append([])
@@ -626,7 +626,7 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
                     errors[-1].append(scale(error[key], scaling))
 
         # List type data.
-        elif isinstance(value, list):
+        elif data_type == 'list':
             # Initialise the lists.
             values.append([])
             errors.append([])
@@ -642,17 +642,6 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
                     errors[-1].append(None)
                 else:
                     errors[-1].append(scale(error[i], scaling))
-
-        # None.
-        elif value == None:
-            # Initialise the lists.
-            values.append([])
-            errors.append([])
-
-            # Loop over the data.
-            for i in range(len(data_names)):
-                values[-1].append(None)
-                errors[-1].append(None)
 
         # Simple values.
         else:
