@@ -637,13 +637,13 @@ class Relax_disp(API_base, API_common):
             x_err_flag = False
             y_err_flag = False
 
-            # Add a new set for the measured data.
-            data.append([])
-
             # Loop over the spectrometer frequencies.
             graph_index = 0
             err = False
             for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
+
                 # Loop over the dispersion points.
                 for disp_point in loop_point():
                     # The data key.
