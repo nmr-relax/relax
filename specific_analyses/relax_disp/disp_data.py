@@ -111,6 +111,21 @@ def average_intensity(spin=None, frq=None, point=None, time=None, sim_index=None
     return intensity
 
 
+def count_frq():
+    """Count the number of spectrometer frequencies present.
+
+    @return:    The spectrometer frequency count
+    @rtype:     int
+    """
+
+    # Handle missing frequency data.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        return 1
+
+    # The normal count variable.
+    return cdp.spectrometer_frq_count
+
+
 def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     """Set the CPMG frequency associated with a given spectrum.
 
