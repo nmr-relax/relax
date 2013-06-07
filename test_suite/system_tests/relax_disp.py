@@ -477,7 +477,11 @@ class Relax_disp(SystemTestCase):
         pA = 0.7
         kex = 1000.0
         delta_omega = [1.0, 2.0]
-        keys = ['1000.0', '1500.0', '2000.0', '2500.0', '3000.0', '3500.0', '4000.0', '4500.0', '5000.0', '5500.0', '6000.0']
+        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
 
         # Switch to the 'R2eff' model data pipe, then check for each spin.
         self.interpreter.pipe.switch('R2eff')
@@ -487,8 +491,8 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            for key in keys:
-                self.assertAlmostEqual(spin.r2eff[key], r1rho_prime[spin_index])
+            for i in range(len(keys)):
+                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
 
             # Increment the spin index.
             spin_index += 1
@@ -501,9 +505,9 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(spin.pA, pA)
+            self.assertAlmostEqual(spin.r2[0], r1rho_prime[spin_index], 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index])
             self.assertAlmostEqual(spin.kex, kex)
-            self.assertAlmostEqual(spin.delta_omega, delta_omega[spin_index])
 
             # Increment the spin index.
             spin_index += 1
@@ -524,7 +528,11 @@ class Relax_disp(SystemTestCase):
         pA = 0.7
         kex = 1000.0
         delta_omega = [1.0, 2.0]
-        keys = ['1000.0', '1500.0', '2000.0', '2500.0', '3000.0', '3500.0', '4000.0', '4500.0', '5000.0', '5500.0', '6000.0']
+        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
 
         # Switch to the 'R2eff' model data pipe, then check for each spin.
         self.interpreter.pipe.switch('R2eff')
@@ -534,8 +542,8 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            for key in keys:
-                self.assertAlmostEqual(spin.r2eff[key], r1rho_prime[spin_index])
+            for i in range(len(keys)):
+                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
 
             # Increment the spin index.
             spin_index += 1
@@ -548,9 +556,9 @@ class Relax_disp(SystemTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(spin.pA, pA)
+            self.assertAlmostEqual(spin.r2[0], r1rho_prime[spin_index], 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index])
             self.assertAlmostEqual(spin.kex, kex)
-            self.assertAlmostEqual(spin.delta_omega, delta_omega[spin_index])
 
             # Increment the spin index.
             spin_index += 1
