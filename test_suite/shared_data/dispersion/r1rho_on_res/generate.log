@@ -47,7 +47,7 @@ from lib.software.sparky import write_list
 
 
 # Setup for 2 spin systems.
-i0 = [100000.0, 20000.0]    # Initial peak intensities.
+i0 = [100000000.0, 20000000.0]    # Initial peak intensities.
 times = [0.00, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]    # The relaxation delay times in seconds.
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]    # The spin-lock field strengths in Hz.
 r1rho_prime = [2.25, 24.0]    # The R1rho' value per spin.
@@ -109,12 +109,12 @@ Opening the file 'nu_1000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  1.34768160399
 Rate:  3.59768160399
-Intensity:  58295.0943799
+Intensity:  58295094.3799
 
 Phi_ex:  218208.075056
 Rex:  5.39072641595
 Rate:  29.390726416
-Intensity:  243.441968112
+Intensity:  243441.968112
 
 Creating the Sparky list file.
 Opening the file 'nu_1000_ncyc9.list' for writing.
@@ -137,12 +137,12 @@ Opening the file 'nu_1500_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.607304697825
 Rate:  2.85730469783
-Intensity:  65142.3243322
+Intensity:  65142324.3322
 
 Phi_ex:  218208.075056
 Rex:  2.4292187913
 Rate:  26.4292187913
-Intensity:  379.594938867
+Intensity:  379594.938867
 
 Creating the Sparky list file.
 Opening the file 'nu_1500_ncyc9.list' for writing.
@@ -165,12 +165,12 @@ Opening the file 'nu_2000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.343280843119
 Rate:  2.59328084312
-Intensity:  67773.9606198
+Intensity:  67773960.6198
 
 Phi_ex:  218208.075056
 Rex:  1.37312337247
 Rate:  25.3731233725
-Intensity:  444.752988783
+Intensity:  444752.988783
 
 Creating the Sparky list file.
 Opening the file 'nu_2000_ncyc9.list' for writing.
@@ -193,12 +193,12 @@ Opening the file 'nu_2500_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.220198573247
 Rate:  2.47019857325
-Intensity:  69036.8486186
+Intensity:  69036848.6186
 
 Phi_ex:  218208.075056
 Rex:  0.880794292986
 Rate:  24.880794293
-Intensity:  478.84090798
+Intensity:  478840.90798
 
 Creating the Sparky list file.
 Opening the file 'nu_2500_ncyc9.list' for writing.
@@ -221,12 +221,12 @@ Opening the file 'nu_3000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.153104510584
 Rate:  2.40310451058
-Intensity:  69735.1510176
+Intensity:  69735151.0176
 
 Phi_ex:  218208.075056
 Rex:  0.612418042334
 Rate:  24.6124180423
-Intensity:  498.510596619
+Intensity:  498510.596619
 
 Creating the Sparky list file.
 Opening the file 'nu_3000_ncyc9.list' for writing.
@@ -249,12 +249,12 @@ Opening the file 'nu_3500_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.112568765524
 Rate:  2.36256876552
-Intensity:  70160.4576619
+Intensity:  70160457.6619
 
 Phi_ex:  218208.075056
 Rex:  0.450275062096
 Rate:  24.4502750621
-Intensity:  510.783741016
+Intensity:  510783.741016
 
 Creating the Sparky list file.
 Opening the file 'nu_3500_ncyc9.list' for writing.
@@ -277,12 +277,12 @@ Opening the file 'nu_4000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.08622716364
 Rate:  2.33622716364
-Intensity:  70438.2268935
+Intensity:  70438226.8935
 
 Phi_ex:  218208.075056
 Rex:  0.34490865456
 Rate:  24.3449086546
-Intensity:  518.920791691
+Intensity:  518920.791691
 
 Creating the Sparky list file.
 Opening the file 'nu_4000_ncyc9.list' for writing.
@@ -305,12 +305,12 @@ Opening the file 'nu_4500_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.0681527135511
 Rate:  2.31815271355
-Intensity:  70629.4558357
+Intensity:  70629455.8357
 
 Phi_ex:  218208.075056
 Rex:  0.272610854204
 Rate:  24.2726108542
-Intensity:  524.578941391
+Intensity:  524578.941391
 
 Creating the Sparky list file.
 Opening the file 'nu_4500_ncyc9.list' for writing.
@@ -333,12 +333,12 @@ Opening the file 'nu_5000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.0552168047922
 Rate:  2.30521680479
-Intensity:  70766.6373147
+Intensity:  70766637.3147
 
 Phi_ex:  218208.075056
 Rex:  0.220867219169
 Rate:  24.2208672192
-Intensity:  528.666326276
+Intensity:  528666.326276
 
 Creating the Sparky list file.
 Opening the file 'nu_5000_ncyc9.list' for writing.
@@ -361,12 +361,12 @@ Opening the file 'nu_5500_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.0456417407937
 Rate:  2.29564174079
-Intensity:  70868.349602
+Intensity:  70868349.602
 
 Phi_ex:  218208.075056
 Rex:  0.182566963175
 Rate:  24.1825669632
-Intensity:  531.712275792
+Intensity:  531712.275792
 
 Creating the Sparky list file.
 Opening the file 'nu_5500_ncyc9.list' for writing.
@@ -389,12 +389,12 @@ Opening the file 'nu_6000_ncyc8.list' for writing.
 Phi_ex:  54552.018764
 Rex:  0.0383568663066
 Rate:  2.28835686631
-Intensity:  70945.8319828
+Intensity:  70945831.9828
 
 Phi_ex:  218208.075056
 Rex:  0.153427465226
 Rate:  24.1534274652
-Intensity:  534.041436693
+Intensity:  534041.436693
 
 Creating the Sparky list file.
 Opening the file 'nu_6000_ncyc9.list' for writing.

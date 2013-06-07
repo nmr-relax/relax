@@ -25,7 +25,7 @@ from lib.software.sparky import write_list
 
 
 # Setup for 2 spin systems.
-i0 = [100000.0, 20000.0]    # Initial peak intensities.
+i0 = [100000000.0, 20000000.0]    # Initial peak intensities.
 times = [0.00, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]    # The relaxation delay times in seconds.
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]    # The spin-lock field strengths in Hz.
 r1rho_prime = [2.25, 24.0]    # The R1rho' value per spin.
