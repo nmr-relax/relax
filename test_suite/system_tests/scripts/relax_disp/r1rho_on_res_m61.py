@@ -65,7 +65,7 @@ if ds.fixed:
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]
 for spin_lock_index in range(len(spin_lock)):
     for time_index in range(len(times)):
-        data.append(["nu_%s_ncyc%s" % (spin_lock[spin_lock_index], ncyc[time_index]), "nu_%s_ncyc%s.list" % (spin_lock[spin_lock_index], ncyc[time_index]), spin_lock[spin_lock_index], times[time_index], 200.0])
+        data.append(["nu_%s_ncyc%s" % (spin_lock[spin_lock_index], ncyc[time_index]), "nu_%s_ncyc%s.list" % (spin_lock[spin_lock_index], ncyc[time_index]), spin_lock[spin_lock_index], times[time_index], 200000.0])
 
 # Load the reference spectrum.
 if ds.fixed:
@@ -97,12 +97,16 @@ for i in range(len(data)):
     spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
 
 # Clustering.
-relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
+#relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 
 
 
 # Auto-analysis execution.
 ##########################
+
+# Run faster.
+Relax_disp.opt_func_tol = 1e-10
+Relax_disp.opt_max_iterations = 10000
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
