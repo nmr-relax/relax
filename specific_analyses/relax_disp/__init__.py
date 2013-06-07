@@ -634,6 +634,7 @@ class Relax_disp(API_base, API_common):
             # Initialise some data structures.
             data = []
             set_labels = []
+            axis_max = [0, 0]
             x_err_flag = False
             y_err_flag = False
 
@@ -664,6 +665,12 @@ class Relax_disp(API_base, API_common):
 
                     # Add the data.
                     data[-1].append([disp_point, spin.r2eff[key]])
+
+                    # Extend the Grace world.
+                    if disp_point > axis_max[0]:
+                        axis_max[0] = disp_point
+                    if spin.r2eff[key] > axis_max[1]:
+                        axis_max[1] = spin.r2eff[key]
 
                     # Add the error.
                     if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
@@ -736,7 +743,7 @@ class Relax_disp(API_base, API_common):
 
             # Write the header.
             title = "Relaxation dispersion plot"
-            write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels)
+            write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels, axis_max=axis_max)
 
             # Write the data.
             graph_type = 'xy'
