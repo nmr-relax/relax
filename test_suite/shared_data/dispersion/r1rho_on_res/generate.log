@@ -1,0 +1,401 @@
+
+
+
+                                  relax repository checkout r19950
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'generate.py'
+----------------------------------------------------------------------------------------------------
+"""Simulate relaxation curves for an on resonance R1rho-type experiment using the M61 model.
+
+This is the Meiboom 1961 model for 2-site fast exchange.  The equation is:
+
+                       phi_ex * kex
+    R1rho = R1rho' + ----------------- ,
+                     kex^2 + omega_e^2
+
+where R1rho' is the R1rho value in the absence of exchange,
+
+    phi_ex = pA * pB * delta_omega^2 ,
+
+kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states (in rad/s), and omega_e is the effective field in the rotating frame.
+
+To run the script, simply type:
+
+$ ../../../../relax generate.py --tee generate.log
+"""
+
+# Python module imports.
+from math import exp, pi
+
+# relax module imports.
+from lib.software.sparky import write_list
+
+
+# Setup for 2 spin systems.
+i0 = [100000.0, 20000.0]    # Initial peak intensities.
+times = [0.00, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]    # The relaxation delay times in seconds.
+spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]    # The spin-lock field strengths in Hz.
+r1rho_prime = [2.25, 24.0]    # The R1rho' value per spin.
+pA = 0.7
+kex = 1000.0
+delta_omega = [1.0, 2.0]    # The chemical shift difference in ppm.
+frq = -81.1177503272
+
+# Setup for the Sparky peak list.
+res_names = ['Trp', 'Trp']
+res_nums = [1, 1]
+atom1_names = ['N', 'NE1']
+atom2_names = ['HN', 'HE1']
+w1 = [122.454, 111.978]
+w2 = [8.397, 8.720]
+
+# Loop over the spin-lock fields.
+for spin_lock_index in range(len(spin_lock)):
+    # Loop over the relaxation times.
+    for time_index in range(len(times)):
+        # Loop over the spins.
+        intensities = []
+        for spin_index in range(len(r1rho_prime)):
+            # Phi of exchange.
+            phi_ex = pA * (1.0 - pA) * (delta_omega[spin_index]*frq*2*pi)**2
+
+            # The rate.
+            rx = r1rho_prime[spin_index] + (phi_ex * kex) / (kex**2 + (2*pi*spin_lock[spin_lock_index])**2)
+
+            # The peak intensity.
+            intensities.append(i0[spin_index] * exp(-rx*times[time_index]))
+
+            # Printout.
+            if time_index == 8:
+                print("Phi_ex:  %s" % phi_ex)
+                print("Rex:  %s" % ((phi_ex * kex) / (kex**2 + (2*pi*spin_lock[spin_lock_index])**2)))
+                print("Rate:  %s" % rx)
+                print("Intensity:  %s\n" % intensities[spin_index])
+
+        # Create a Sparky .list file.
+        write_list(file_prefix='nu_%s_ncyc%s' % (spin_lock[spin_lock_index], time_index+1), dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
+----------------------------------------------------------------------------------------------------
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  1.34768160399
+Rate:  3.59768160399
+Intensity:  58295.0943799
+
+Phi_ex:  218208.075056
+Rex:  5.39072641595
+Rate:  29.390726416
+Intensity:  243.441968112
+
+Creating the Sparky list file.
+Opening the file 'nu_1000_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.607304697825
+Rate:  2.85730469783
+Intensity:  65142.3243322
+
+Phi_ex:  218208.075056
+Rex:  2.4292187913
+Rate:  26.4292187913
+Intensity:  379.594938867
+
+Creating the Sparky list file.
+Opening the file 'nu_1500_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.343280843119
+Rate:  2.59328084312
+Intensity:  67773.9606198
+
+Phi_ex:  218208.075056
+Rex:  1.37312337247
+Rate:  25.3731233725
+Intensity:  444.752988783
+
+Creating the Sparky list file.
+Opening the file 'nu_2000_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.220198573247
+Rate:  2.47019857325
+Intensity:  69036.8486186
+
+Phi_ex:  218208.075056
+Rex:  0.880794292986
+Rate:  24.880794293
+Intensity:  478.84090798
+
+Creating the Sparky list file.
+Opening the file 'nu_2500_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.153104510584
+Rate:  2.40310451058
+Intensity:  69735.1510176
+
+Phi_ex:  218208.075056
+Rex:  0.612418042334
+Rate:  24.6124180423
+Intensity:  498.510596619
+
+Creating the Sparky list file.
+Opening the file 'nu_3000_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.112568765524
+Rate:  2.36256876552
+Intensity:  70160.4576619
+
+Phi_ex:  218208.075056
+Rex:  0.450275062096
+Rate:  24.4502750621
+Intensity:  510.783741016
+
+Creating the Sparky list file.
+Opening the file 'nu_3500_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.08622716364
+Rate:  2.33622716364
+Intensity:  70438.2268935
+
+Phi_ex:  218208.075056
+Rex:  0.34490865456
+Rate:  24.3449086546
+Intensity:  518.920791691
+
+Creating the Sparky list file.
+Opening the file 'nu_4000_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.0681527135511
+Rate:  2.31815271355
+Intensity:  70629.4558357
+
+Phi_ex:  218208.075056
+Rex:  0.272610854204
+Rate:  24.2726108542
+Intensity:  524.578941391
+
+Creating the Sparky list file.
+Opening the file 'nu_4500_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.0552168047922
+Rate:  2.30521680479
+Intensity:  70766.6373147
+
+Phi_ex:  218208.075056
+Rex:  0.220867219169
+Rate:  24.2208672192
+Intensity:  528.666326276
+
+Creating the Sparky list file.
+Opening the file 'nu_5000_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.0456417407937
+Rate:  2.29564174079
+Intensity:  70868.349602
+
+Phi_ex:  218208.075056
+Rex:  0.182566963175
+Rate:  24.1825669632
+Intensity:  531.712275792
+
+Creating the Sparky list file.
+Opening the file 'nu_5500_ncyc9.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc1.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc2.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc3.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc4.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc5.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc6.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc7.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc8.list' for writing.
+Phi_ex:  54552.018764
+Rex:  0.0383568663066
+Rate:  2.28835686631
+Intensity:  70945.8319828
+
+Phi_ex:  218208.075056
+Rex:  0.153427465226
+Rate:  24.1534274652
+Intensity:  534.041436693
+
+Creating the Sparky list file.
+Opening the file 'nu_6000_ncyc9.list' for writing.
+

@@ -14,7 +14,7 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 
 To run the script, simply type:
 
-$ ../../../../relax generate.py
+$ ../../../../relax generate.py --tee generate.log
 """
 
 # Python module imports.
