@@ -661,7 +661,47 @@ class Relax_disp(API_base, API_common):
                         err = True
                         data[-1][-1].append(spin.r2eff_err[key])
 
-            # FIXME:  Add the back-calculated data as a second set.
+            # Add the back-calculated data.
+            for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
+
+                # Loop over the dispersion points.
+                for disp_point in loop_point():
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff_bc[key]])
+
+                    # Handle the errors.
+                    if err:
+                        data[-1][-1].append(None)
+
+            # Add the residuals for statistical comparison.
+            for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
+
+                # Loop over the dispersion points.
+                for disp_point in loop_point():
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff[key] - spin.r2eff_bc[key]])
+
+                    # Handle the errors.
+                    if err:
+                        data[-1][-1].append(None)
 
             # The axis labels.
             if cdp.exp_type == 'CPMG':
