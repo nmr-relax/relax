@@ -45,13 +45,13 @@ MODEL_NOREX = 'No Rex'
 """The model for no chemical exchange relaxation."""
 
 MODEL_LM63 = 'LM63'
-"""The Luz and Meiboom (1963) 2-site fast exchange model."""
+"""The CPMG 2-site fast exchange model of Luz and Meiboom (1963)."""
 
 MODEL_CR72 = 'CR72'
-"""The Carver and Richards (1972) 2-site model for all time scales."""
+"""The CPMG 2-site model for all time scales of Carver and Richards (1972)."""
 
 MODEL_M61 = 'M61'
-"""The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments."""
+"""The R1rho 2-site fast exchange model of Meiboom (1961)."""
 
 
 # The model lists.
