@@ -551,7 +551,7 @@ uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-
 uf.desc[-1].add_verbatim("""\
                                       phi_ex * kex
     R1rho = R1rho' + sin^2(theta) * ----------------- ,
-                                    kex^2 + omega_e^2
+                                    kex^2 + omega_e^2\
 """)
 uf.desc[-1].add_paragraph("where R1rho' is the R1rho value in the absence of exchange, theta is the rotating frame tilt angle,")
 uf.desc[-1].add_verbatim("""\
@@ -566,7 +566,7 @@ uf.desc[-1].add_paragraph("This is the Meiboom 1961 model for 2-site exchange on
 uf.desc[-1].add_verbatim("""\
                            pA^2.pB.delta_omega^2.kex
     R1rho = R1rho' + -------------------------------------- ,
-                     kex^2 + pA^2.delta_omega^2 + omega_1^2
+                     kex^2 + pA^2.delta_omega^2 + omega_1^2\
 """)
 uf.desc[-1].add_paragraph("where omega_1 = omega_e.")
 uf.desc[-1].add_paragraph("The reference for this equation is:")
