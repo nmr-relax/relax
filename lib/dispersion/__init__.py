@@ -24,8 +24,8 @@
 
 __all__ = [
     'cr72',
-    'equations',
     'lm63',
     'm61',
-    'm61b'
+    'm61b',
+    'two_point'
 ]
