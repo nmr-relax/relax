@@ -39,7 +39,7 @@ from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -440,14 +440,16 @@ uf.add_keyarg(
         "%s: {R20, ...}" % MODEL_NOREX,
         "%s: {R20, ..., phi_ex, kex}" % MODEL_LM63,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_CR72,
-        "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61
+        "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61,
+        "%s: {R1rho', ..., pA, dw, kex}" % MODEL_M61B
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
         MODEL_NOREX,
         MODEL_LM63,
         MODEL_CR72,
-        MODEL_M61
+        MODEL_M61,
+        MODEL_M61B
     ],
     wiz_read_only = True
 )
@@ -462,6 +464,7 @@ uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supporte
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with parameters {R1rho', pA, dw, kex},")
 uf.desc[-1].add_paragraph("Except for '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  The models are described in more detail below." % MODEL_R2EFF)
 # R2eff model.
 uf.desc.append(Desc_container("The R2eff model"))
@@ -555,6 +558,17 @@ uf.desc[-1].add_verbatim("""\
     phi_ex = pA * pB * delta_omega^2 ,\
 """)
 uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_e is the effective field in the rotating frame.")
+uf.desc[-1].add_paragraph("The reference for this equation is:")
+uf.desc[-1].add_list_element("Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (DOI: 10.1063/1.1700960).")
+# M61 skew model.
+uf.desc.append(Desc_container("The M61 2-site, skewed, on-resonance R1rho model"))
+uf.desc[-1].add_paragraph("This is the Meiboom 1961 model for 2-site exchange on all time scales for R1rho-type experiments.  It only holds for on-resonance experiments and when the populations are significantly skewed (pA >> pB).  It is selected by setting the model to '%s'.  The equation for the exchange process is:" % MODEL_M61B)
+uf.desc[-1].add_verbatim("""\
+                           pA^2.pB.delta_omega^2.kex
+    R1rho = R1rho' + -------------------------------------- ,
+                     kex^2 + pA^2.delta_omega^2 + omega_1^2
+""")
+uf.desc[-1].add_paragraph("where omega_1 = omega_e.")
 uf.desc[-1].add_paragraph("The reference for this equation is:")
 uf.desc[-1].add_list_element("Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (DOI: 10.1063/1.1700960).")
 # Prompt examples.
