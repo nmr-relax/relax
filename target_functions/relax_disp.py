@@ -29,7 +29,7 @@ from numpy import dot, float64, zeros
 # relax module imports.
 from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.lm63 import r2eff_LM63
-from lib.dispersion.m61 import r2eff_M61
+from lib.dispersion.m61 import r1rho_M61
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
@@ -251,7 +251,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
 
                 # Back calculate the R2eff values.
-                r2eff_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

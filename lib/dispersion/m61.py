@@ -44,7 +44,7 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 from math import pi, sin
 
 
-def r2eff_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.
 
     See the module docstring for details.
