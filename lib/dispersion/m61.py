@@ -66,16 +66,20 @@ def r2eff_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
     @type num_poinst:           int
     """
 
-    # Loop over the time points, back calculating the R2eff values.
+    # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # Catch zeros (to avoid pointless mathematical operations).
         if phi_ex == 0.0 or kex == 0.0:
             back_calc[i] = r1rho_prime
+            continue
+
+        # Denominator.
+        denom = kex**2 + (2.0*pi*spin_lock_fields[i])**2
 
         # Avoid divide by zero.
-        elif kex == 0.0 and spin_lock_fields[i] == 0.0:
+        if denom == 0.0:
             back_calc[i] = 1e100
+            continue
 
-        # The full formula.
-        else:
-            back_calc[i] = r1rho_prime + sin(theta)**2 * phi_ex * kex / (kex**2 + (2.0*pi*spin_lock_fields[i])**2)
+        # R1rho calculation.
+        back_calc[i] = r1rho_prime + sin(theta)**2 * phi_ex * kex / denom
