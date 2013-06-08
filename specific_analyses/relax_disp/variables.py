@@ -53,12 +53,15 @@ MODEL_CR72 = 'CR72'
 MODEL_M61 = 'M61'
 """The R1rho 2-site fast exchange model of Meiboom (1961)."""
 
+MODEL_M61B = 'M61 skew'
+"""The R1rho 2-site model for all time scales with pA >> pB of Meiboom (1961)."""
+
 
 # The model lists.
-MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_M61]
+MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_M61B]
 """The list of all dispersion models (excluding the R2eff model)."""
 
-MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_M61]
+MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_M61B]
 """The list of the R2eff model together with all dispersion models."""
 
 MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_CR72]
@@ -67,8 +70,8 @@ MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_CR72]
 MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72]
 """The list of the R2eff model together with all dispersion models specifically for CPMG-type experiments."""
 
-MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_M61]
+MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_M61, MODEL_M61B]
 """The list of all dispersion models specifically for R1rho-type experiments (excluding the R2eff model)."""
 
-MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61]
+MODEL_LIST_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_M61, MODEL_M61B]
 """The list of the R2eff model together with all dispersion models specifically for R1rho-type experiments."""
