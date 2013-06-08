@@ -86,6 +86,7 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
+    r20_kex = r20 + 0.5*kex
 
     # The Psi value.
     Psi = kex**2 - dw2
@@ -119,9 +120,9 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
 
         # Part of the equation (catch values < 1 to prevent math domain errors).
         part = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-        if part < 1:
+        if part < 1.0:
             back_calc[i] = 1e100
             continue
 
         # The full formula.
-        back_calc[i] = r20 + 0.5*kex - cpmg_frqs[i] * acosh(part)
+        back_calc[i] = r20_kex - cpmg_frqs[i] * acosh(part)

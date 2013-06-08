@@ -66,15 +66,21 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
     @type num_poinst:           int
     """
 
+    # Repetitive calculations (to speed up calculations).
+    kex2 = kex**2
+
+    # The numerator.
+    numer = sin(theta)**2 * phi_ex * kex
+
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # Catch zeros (to avoid pointless mathematical operations).
-        if phi_ex == 0.0 or kex == 0.0:
+        if numer == 0.0:
             back_calc[i] = r1rho_prime
             continue
 
         # Denominator.
-        denom = kex**2 + (2.0*pi*spin_lock_fields[i])**2
+        denom = kex2 + (2.0*pi*spin_lock_fields[i])**2
 
         # Avoid divide by zero.
         if denom == 0.0:
@@ -82,4 +88,4 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
             continue
 
         # R1rho calculation.
-        back_calc[i] = r1rho_prime + sin(theta)**2 * phi_ex * kex / denom
+        back_calc[i] = r1rho_prime + numer / denom

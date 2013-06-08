@@ -64,6 +64,10 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
     @type num_poinst:       int
     """
 
+    # Repetitive calculations (to speed up calculations).
+    rex = phi_ex / kex
+    kex_4 = 4.0 / kex
+
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # Catch zeros.
@@ -76,4 +80,4 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
 
         # The full formula.
         else:
-            back_calc[i] = r20 + phi_ex / kex * (1.0 - (4.0 * cpmg_frqs[i] / kex) * tanh(kex / (4 * cpmg_frqs[i])))
+            back_calc[i] = r20 + rex * (1.0 - kex_4 * cpmg_frqs[i] * tanh(kex / (4.0 * cpmg_frqs[i])))
