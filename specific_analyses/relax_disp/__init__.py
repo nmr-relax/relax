@@ -858,7 +858,7 @@ class Relax_disp(API_base, API_common):
     def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'M61'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'M61', 'M61 skew'.
         @type model:    str
         """
 
@@ -917,6 +917,14 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
+
+        # M61 skew model.
+        elif model == MODEL_M61B:
+            print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['pA', 'dw', 'kex']
 
         # Invalid model.
         else:
