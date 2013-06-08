@@ -31,7 +31,7 @@ from re import search
 from lib.errors import RelaxError
 from lib.mathematics import round_to_next_order
 from specific_analyses.relax_disp.disp_data import count_frq, loop_frq, loop_frq_point
-from specific_analyses.relax_disp.variables import MODEL_R2EFF, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_M61B, VAR_TIME_EXP
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -246,13 +246,14 @@ def linear_constraints(spins=None, scaling_matrix=None):
     Standard notation
     =================
 
-    The different constraints are::
+    The different constraints used within different models are::
 
         R2 >= 0
         R2 <= -200
         R2A >= 0
         pA >= 0
         pA >= pB
+        pA >= 0.85 (the skewed condition, pA >> pB)
         phi_ex >= 0
         dw >= 0
         kex >= 0
@@ -273,6 +274,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         | 1  0  0 |     |   pA   |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |  .  |   pA   |  >=  |   0.5   |
+        |         |     |        |      |         |
+        | 1  0  0 |     |   pA   |      |   0.85  |
         |         |     |        |      |         |
         | 1  0  0 |     | phi_ex |      |    0    |
         |         |     |        |      |         |
@@ -358,6 +361,13 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(0.0)
             b.append(0.5 / scaling_matrix[param_index, param_index])
             j += 2
+
+            # The skewed condition (pA >> pB).
+            if spins[0].model == MODEL_M61B:
+                A.append(zero_array * 0.0)
+                A[j][param_index] = 1.0
+                b.append(0.85 / scaling_matrix[param_index, param_index])
+                j += 1
 
         # Exchange rates (k >= 0).
         elif param_name in ['kex', 'ka']:
