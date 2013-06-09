@@ -59,7 +59,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
