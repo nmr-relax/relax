@@ -66,9 +66,8 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=No
     pB = 1.0 - pA
 
     # Repetitive calculations (to speed up calculations).
-    pA2dw2 = pA**2 * delta_omega**2
-    kex2 = kex**2
-    kex2_pA2dw2 = kex2 + pA2dw2
+    pA2dw2 = pA**2 * dw**2
+    kex2_pA2dw2 = kex**2 + pA2dw2
 
     # The numerator.
     numer = pA2dw2 * pB * kex
