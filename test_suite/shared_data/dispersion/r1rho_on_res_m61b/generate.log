@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r19967
+                                  relax repository checkout r19992
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -44,9 +44,9 @@ from lib.software.sparky import write_list
 
 # Setup for 2 spin systems.
 i0 = [100000000.0, 20000000.0]    # Initial peak intensities.
-times = [0.00, 0.1]    # The relaxation delay times in seconds.
+times = [0.0, 0.1]    # The relaxation delay times in seconds.
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]    # The spin-lock field strengths in Hz.
-r1rho_prime = [2.25, 24.0]    # The R1rho' value per spin.
+r1rho_prime = [10.0, 24.0]    # The R1rho' value per spin.
 pA = 0.95
 kex = 2000.0
 delta_omega = [1.0, 2.0]    # The chemical shift difference in ppm.
