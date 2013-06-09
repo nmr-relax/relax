@@ -405,7 +405,10 @@ class Relax_disp(API_base, API_common):
 
                     # The population of state A.
                     elif spin.params[i] == 'pA':
-                        lower.append(0.5)
+                        if spin.model == MODEL_M61B:
+                            lower.append(0.85)
+                        else:
+                            lower.append(0.5)
                         upper.append(1.0)
 
                     # Exchange rates.
