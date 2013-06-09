@@ -251,8 +251,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         R2 >= 0
         R2 <= -200
         R2A >= 0
-        pA >= 0
-        pA >= pB
+        pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
         phi_ex >= 0
         dw >= 0
@@ -271,10 +270,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |        |      |         |
         | 1  0  0 |     |  R2A   |      |    0    |
         |         |     |        |      |         |
-        | 1  0  0 |     |   pA   |      |    0    |
+        | 1  0  0 |     |   pA   |      |   0.5   |
         |         |     |        |      |         |
-        | 1  0  0 |  .  |   pA   |  >=  |   0.5   |
-        |         |     |        |      |         |
+        |-1  0  0 |     |   pA   |      |   -1    |
+        |         |  .  |        |  >=  |         |
         | 1  0  0 |     |   pA   |      |   0.85  |
         |         |     |        |      |         |
         | 1  0  0 |     | phi_ex |      |    0    |
@@ -352,21 +351,26 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(-200.0 / scaling_matrix[param_index, param_index])
             j += 2
 
-        # The population of state A (pA >= 0 and pA >= pB).
+        # The population of state A.
         elif param_name == 'pA':
+            # First the pA <= 1 constraint
             A.append(zero_array * 0.0)
-            A.append(zero_array * 0.0)
-            A[j][param_index] = 1.0
-            A[j+1][param_index] = 1.0
-            b.append(0.0)
-            b.append(0.5 / scaling_matrix[param_index, param_index])
-            j += 2
+            A[j][param_index] = -1.0
+            b.append(-1.0 / scaling_matrix[param_index, param_index])
+            j += 1
 
             # The skewed condition (pA >> pB).
             if spins[0].model == MODEL_M61B:
                 A.append(zero_array * 0.0)
                 A[j][param_index] = 1.0
                 b.append(0.85 / scaling_matrix[param_index, param_index])
+                j += 1
+
+            # Otherwise use the pA >= pB constraint.
+            else:
+                A.append(zero_array * 0.0)
+                A[j][param_index] = 1.0
+                b.append(0.5 / scaling_matrix[param_index, param_index])
                 j += 1
 
         # Exchange rates (k >= 0).
