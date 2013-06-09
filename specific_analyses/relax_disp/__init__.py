@@ -57,8 +57,8 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
-from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
+from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -1431,6 +1431,21 @@ class Relax_disp(API_base, API_common):
 
                         # Store the back-calculated data.
                         spin.r2eff_bc[key] = model.back_calc[spin_index, frq_index, disp_pt_index]
+
+            # Optimisation printout.
+            if verbosity:
+                print("\nOptimised parameter values:")
+                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+                    # The parameter with additional details.
+                    param_text = param_name
+                    if param_name == 'r2':
+                        frq = return_value_from_frq_index(frq_index)
+                        if frq:
+                            param_text += " (%.3f MHz)" % (frq / 1e6) 
+                    param_text += ":"
+
+                    # The printout.
+                    print("%-20s %20.15g" % (param_text, param_vector[param_index]))
 
 
     def model_desc(self, model_info):
