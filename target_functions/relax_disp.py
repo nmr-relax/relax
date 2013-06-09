@@ -270,7 +270,7 @@ class Dispersion:
 
 
     def func_M61b(self, params):
-        """Target function for the Meiboom (1961) fast 2-site exchange model for R1rho-type experiments.
+        """Target function for the Meiboom (1961) R1rho on-resonance 2-site model for skewed populations (pA >> pB).
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -286,7 +286,7 @@ class Dispersion:
         R20 = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
-        kex = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
 
         # Initialise.
         chi2_sum = 0.0
