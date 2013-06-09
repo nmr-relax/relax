@@ -40,7 +40,7 @@ pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 # The path to the data files.
-data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_on_res'
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_on_res_m61'
 
 # Create the sequence data.
 spin.create(res_name='Trp', res_num=1, spin_name='N')
