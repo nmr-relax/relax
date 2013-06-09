@@ -41,10 +41,10 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 """
 
 # Python module imports.
-from math import pi, sin
+from math import cos, pi, sin
 
 
-def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.
 
     See the module docstring for details.
@@ -58,6 +58,8 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
     @type kex:                  float
     @keyword theta:             The rotating frame tilt angle.
     @type theta:                float
+    @keyword R1:                The R1 relaxation rate.
+    @type R1:                   float
     @keyword spin_lock_fields:  The CPMG nu1 frequencies.
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
@@ -68,15 +70,17 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
 
     # Repetitive calculations (to speed up calculations).
     kex2 = kex**2
+    sin_theta2 = sin(theta)**2
+    R1_R2 = R1 * cos(theta)**2  +  r1rho_prime * sin(theta)**2
 
     # The numerator.
-    numer = sin(theta)**2 * phi_ex * kex
+    numer = sin_theta2 * phi_ex * kex
 
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # Catch zeros (to avoid pointless mathematical operations).
         if numer == 0.0:
-            back_calc[i] = r1rho_prime
+            back_calc[i] = R1_R2
             continue
 
         # Denominator.
@@ -88,4 +92,4 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, spin_lock_fie
             continue
 
         # R1rho calculation.
-        back_calc[i] = r1rho_prime + numer / denom
+        back_calc[i] = R1_R2 + numer / denom
