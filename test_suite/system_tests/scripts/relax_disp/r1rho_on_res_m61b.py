@@ -14,10 +14,10 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'M61 skew']
+MODELS = ['R2eff', 'M61 skew']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 3
+GRID_INC = 4
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
@@ -53,7 +53,7 @@ relax_disp.exp_type('r1rho fixed')
 data = []
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]
 for spin_lock_index in range(len(spin_lock)):
-    data.append(["nu_%s_time_0.1" % spin_lock[spin_lock_index], "nu_%s_time_0.1.list" % spin_lock[spin_lock_index], spin_lock[spin_lock_index], 0.1, 200000.0])
+    data.append(["nu_%s_time_0.1" % spin_lock[spin_lock_index], "nu_%s_time_0.1.list" % spin_lock[spin_lock_index], spin_lock[spin_lock_index], 0.1, 100000.0])
 
 # Load the reference spectrum.
 spectrum.read_intensities(file="nu_%s_ref.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', heteronuc='N', proton='HN')
@@ -83,7 +83,7 @@ for i in range(len(data)):
     spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
 
 # Clustering.
-relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
+#relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 
 
 
@@ -91,8 +91,8 @@ relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 ##########################
 
 # Run faster.
-Relax_disp.opt_func_tol = 1e-10
-Relax_disp.opt_max_iterations = 10000
+#Relax_disp.opt_func_tol = 1e-5
+#Relax_disp.opt_max_iterations = 10000
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
