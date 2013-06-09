@@ -1445,7 +1445,7 @@ class Relax_disp(API_base, API_common):
                     param_text += ":"
 
                     # The printout.
-                    print("%-20s %20.15g" % (param_text, param_vector[param_index]))
+                    print("%-20s %25.15f" % (param_text, param_vector[param_index]))
 
 
     def model_desc(self, model_info):
