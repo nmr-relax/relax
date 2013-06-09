@@ -59,7 +59,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_DPL94, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -861,7 +861,7 @@ class Relax_disp(API_base, API_common):
     def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'M61', 'M61 skew'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'M61', 'DPL94', 'M61 skew'.
         @type model:    str
         """
 
@@ -916,6 +916,14 @@ class Relax_disp(API_base, API_common):
         # M61 model.
         elif model == MODEL_M61:
             print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['phi_ex', 'kex']
+
+        # DPL94 model.
+        elif model == MODEL_DPL94:
+            print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
             params = []
             for frq in loop_frq():
                 params.append('r2')
