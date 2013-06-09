@@ -679,11 +679,11 @@ def return_value_from_frq_index(frq_index=None):
     """
 
     # No data.
-    if not hasattr(cdp, 'spectrometer_frq'):
+    if not hasattr(cdp, 'spectrometer_frq_list'):
         return None
 
     # Return the field.
-    return cdp.spectrometer_frq[frq_index]
+    return cdp.spectrometer_frq_list[frq_index]
 
 
 def spin_has_frq_data(spin=None, frq=None):
