@@ -84,7 +84,7 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
             continue
 
         # Denominator.
-        omega_a2 = sqrt((2.0*pi*cpmg_frqs[i])**4 + pa2dw4
+        omega_a2 = sqrt((2.0*pi*cpmg_frqs[i])**4 + pa2dw4)
         denom = 1.0 + omega_a2 * tex2
 
         # Avoid divide by zero.
