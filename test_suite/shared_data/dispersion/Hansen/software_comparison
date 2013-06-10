@@ -5,17 +5,17 @@ Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)       10.563      11.400           -           -
-R2 (800)       16.141      16.823           -           -
-chi2         3427.907     860.148           -           -
+R2 (500)       10.563      11.400         N/A         N/A
+R2 (800)       16.141      16.823         N/A         N/A
+chi2         3427.907     860.148         N/A         N/A
 
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        5.830           -           -           -
-chi2           47.357           -           -           -
+R2 (500)        5.830           -         N/A         N/A
+chi2           47.357           -         N/A         N/A
 
 
 
@@ -80,22 +80,22 @@ Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        7.253           -           -           -
-R2 (800)       10.071           -           -           -
-phi_ex          0.236           -           -           -
-pA.dw^2        22.065           -           -           -
-tex          6.971e-5           -           -           -
-kex           717.208           -           -           -
-chi2           31.687           -           -           -
+R2 (500)        7.253         N/A           -         N/A
+R2 (800)       10.071         N/A           -         N/A
+phi_ex          0.236         N/A           -         N/A
+pA.dw^2        22.065         N/A           -         N/A
+tex          6.971e-5         N/A           -         N/A
+kex           717.208         N/A           -         N/A
+chi2           31.687         N/A           -         N/A
 
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        5.097           -           -           -
-phi_ex      1.303e+12           -           -           -
-pA.dw^2        32.577           -           -           -
-tex         2.284e+10           -           -           -
-kex         2.190e-11           -           -           -
-chi2            1.379           -           -           -
+R2 (500)        5.097         N/A           -         N/A
+phi_ex      1.303e+12         N/A           -         N/A
+pA.dw^2        32.577         N/A           -         N/A
+tex         2.284e+10         N/A           -         N/A
+kex         2.190e-11         N/A           -         N/A
+chi2            1.379         N/A           -         N/A
