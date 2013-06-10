@@ -97,6 +97,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('pA', scope='spin', default=0.5, desc='The population for state A', set='params', py_type=float, grace_string='\\qp\\sA\\N\\Q', err=True, sim=True)
         self.PARAMS.add('pB', scope='spin', default=0.5, desc='The population for state B', set='params', py_type=float, grace_string='\\qp\\sB\\N\\Q', err=True, sim=True)
         self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The phi_ex = pA.pB.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N = \\q p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
+        self.PARAMS.add('padw2', scope='spin', default=1.0, desc='The pA.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\qp\\sA\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
         self.PARAMS.add('dw', scope='spin', default=0.0, desc='The chemical shift difference between states A and B (in ppm)', set='params', py_type=float, grace_string='\\q\\xDw\f{}\\Q (ppm)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -385,8 +386,8 @@ class Relax_disp(API_base, API_common):
                             lower.append(1.0)
                             upper.append(40.0)
 
-                        # The pA.pB.dw**2 parameter.
-                        elif spin.params[i] == 'phi_ex':
+                        # The pA.pB.dw**2 and pA.dw**2 parameters.
+                        elif spin.params[i] in ['phi_ex', 'padw2']:
                             lower.append(0.0)
                             upper.append(10.0)
 
@@ -1571,6 +1572,7 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Population of state A", "'pA'"])
     _table.add_row(["Population of state B", "'pB'"])
     _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'"])
+    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'"])
     _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
     _table.add_row(["Exchange rate (rad/s)", "'kex'"])
     _table.add_row(["Exchange rate from state A to state B (rad/s)", "'ka'"])

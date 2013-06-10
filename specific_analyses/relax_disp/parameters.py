@@ -136,8 +136,8 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         if param_name == 'r2':
             scaling_matrix[param_index, param_index] = 10
 
-        # The pA.pB.dw**2 parameter.
-        elif param_name == 'phi_ex':
+        # The pA.pB.dw**2 and pA.dw**2 parameters.
+        elif param_name in ['phi_ex', 'padw2']:
             scaling_matrix[param_index, param_index] = 1
 
         # Chemical shift difference between states A and B scaling.
@@ -254,6 +254,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
         phi_ex >= 0
+        padw2 >= 0
         dw >= 0
         kex >= 0
         kA >= 0
@@ -277,6 +278,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         | 1  0  0 |     |   pA   |      |   0.85  |
         |         |     |        |      |         |
         | 1  0  0 |     | phi_ex |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     | padw2  |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     |   dw   |      |    0    |
         |         |     |        |      |         |
@@ -327,8 +330,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(-200.0 / scaling_matrix[param_index, param_index])
             j += 2
 
-        # The pA.pB.dw**2 parameter (phi_ex >= 0).
-        elif param_name == 'phi_ex':
+        # The pA.pB.dw**2 and pA.dw**2 parameters (phi_ex >= 0 and padw2 >= 0).
+        elif param_name in ['phi_ex', 'padw2']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             b.append(0.0)
@@ -429,19 +432,22 @@ def loop_parameters(spins=None):
                 # Yield the data.
                 yield 'r2', param_index, spin_index, frq_index
 
-        # Then the chemical shift difference parameters 'phi_ex' and 'dw' (one per spin).
+        # Then the chemical shift difference parameters 'phi_ex', 'padw2' and 'dw' (one per spin).
         for spin_index in range(len(spins)):
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
                 param_index += 1
                 yield 'phi_ex', param_index, spin_index, None
+            if 'padw2' in spins[spin_index].params:
+                param_index += 1
+                yield 'padw2', param_index, spin_index, None
             if 'dw' in spins[spin_index].params:
                 param_index += 1
                 yield 'dw', param_index, spin_index, None
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'phi_ex', 'dw']:
+            if not param in ['r2', 'phi_ex', 'padw2', 'dw']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -490,7 +496,7 @@ def param_num(spins=None):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['r2', 'phi_ex', 'dw']
+    spin_params = ['r2', 'phi_ex', 'padw2', 'dw']
     num = 0
     for spin in spins:
         for i in range(len(spin.params)):
