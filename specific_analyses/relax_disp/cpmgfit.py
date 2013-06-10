@@ -214,7 +214,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
         # Parameters.
         file.write("R2 1 10 20\n")
         file.write("Rex 0 100.0 100\n")
-        file.write("tex 0 10.0 100\n")
+        file.write("Tau 0 10.0 100\n")
 
     # The function and parameters.
     elif function == 'Full_CPMG':
