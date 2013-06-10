@@ -297,7 +297,7 @@ def translate_model(model):
     # A translation table (relax to CPMGFit models).
     translation = {
         'LM63': 'CPMG',
-        'CR72': 'Full_CPMG'
+        'CR72': 'Full_CPMG',
         'IT99': "Ishima'"
     }
 
