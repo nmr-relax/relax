@@ -169,7 +169,10 @@ def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
 
     # Close the batch script, then make it executable.
     batch.close()
-    chmod(dir + sep + 'batch_run.sh', S_IRWXU|S_IRGRP|S_IROTH)
+    if dir:
+        chmod(dir + sep + 'batch_run.sh', S_IRWXU|S_IRGRP|S_IROTH)
+    else:
+        chmod('batch_run.sh', S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
