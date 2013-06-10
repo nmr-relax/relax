@@ -117,6 +117,8 @@ class Dispersion:
         self.end_index = []
         self.end_index.append(self.num_spins * self.num_frq)
         self.end_index.append(self.end_index[-1] + self.num_spins)
+        if model == MODEL_IT99:
+            self.end_index.append(self.end_index[-1] + self.num_spins)
 
         # Set up the model.
         if model == MODEL_NOREX:
