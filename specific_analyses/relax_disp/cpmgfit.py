@@ -228,9 +228,9 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
         file.write("kex 0.1 1.0 100\n")
 
     # The function and parameters.
-    elif function == "Ishima'":
+    elif function == "Ishima":
         # Function.
-        file.write("function Ishima'\n")
+        file.write("function Ishima\n")
 
         # Parameters.
         file.write("R2 1 10 20\n")
@@ -301,7 +301,7 @@ def translate_model(model):
     translation = {
         'LM63': 'CPMG',
         'CR72': 'Full_CPMG',
-        'IT99': "Ishima'"
+        'IT99': "Ishima"
     }
 
     # No translation, so fail.
