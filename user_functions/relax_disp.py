@@ -39,7 +39,7 @@ from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -440,6 +440,7 @@ uf.add_keyarg(
         "%s: {R20, ...}" % MODEL_NOREX,
         "%s: {R20, ..., phi_ex, kex}" % MODEL_LM63,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_CR72,
+        "%s: {R20, ..., phi_ex, padw2, kex}" % MODEL_IT99,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_DPL94,
         "%s: {R1rho', ..., pA, dw, kex}" % MODEL_M61B
@@ -449,6 +450,7 @@ uf.add_keyarg(
         MODEL_NOREX,
         MODEL_LM63,
         MODEL_CR72,
+        MODEL_IT99,
         MODEL_M61,
         MODEL_DPL94,
         MODEL_M61B
@@ -462,6 +464,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used 
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R2A, kA, dw}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, phi_ex, padw2, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
@@ -548,6 +551,20 @@ uf.desc[-1].add_verbatim("""\
 
     zeta = -2delta_omega (pA.kex - pB.kex).\
 """)
+# IT99 model.
+uf.desc.append(Desc_container("The IT99 2-site CPMG model"))
+uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales (with the constraint that pA >> pB), named after Ishima and Torchia 1999.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_IT99)
+uf.desc[-1].add_verbatim("""\
+              phi_ex * tex
+    Rex ~= ------------------- ,
+           1 + omega_a^2*tex^2
+
+    phi_ex = pA * pB * delta_omega^2 ,
+    
+    omega_a^2 = sqrt(omega_1^4 + pB^2*delta_omega^2)\
+""")
+uf.desc[-1].add_paragraph("The reference for this equation is:")
+uf.desc[-1].add_list_element("Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (DOI: 10.1023/A:1008324025406).")
 # M61 model.
 uf.desc.append(Desc_container("The M61 2-site fast exchange R1rho model"))
 uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-type experiments.  It is selected by setting the model to '%s', here named after Meiboom 1961.  The equation for the exchange process is:" % MODEL_M61)
