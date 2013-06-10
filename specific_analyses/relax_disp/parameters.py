@@ -156,6 +156,10 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         elif param_name in ['kex', 'ka']:
             scaling_matrix[param_index, param_index] = 10000
 
+        # Time of exchange scaling.
+        elif param_name == 'tex':
+            scaling_matrix[param_index, param_index] = 1e4
+
     # Return the scaling matrix.
     return scaling_matrix
 
@@ -257,6 +261,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         padw2 >= 0
         dw >= 0
         kex >= 0
+        tex >= 0
         kA >= 0
 
 
@@ -274,9 +279,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
         | 1  0  0 |     |   pA   |      |   0.5   |
         |         |     |        |      |         |
         |-1  0  0 |     |   pA   |      |   -1    |
-        |         |  .  |        |  >=  |         |
-        | 1  0  0 |     |   pA   |      |   0.85  |
         |         |     |        |      |         |
+        | 1  0  0 |     |   pA   |      |   0.85  |
+        |         |  .  |        |  >=  |         |
         | 1  0  0 |     | phi_ex |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     | padw2  |      |    0    |
@@ -284,6 +289,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         | 1  0  0 |     |   dw   |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     |  kex   |      |    0    |
+        |         |     |        |      |         |
+        | 1  0  0 |     |  tex   |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     |   kA   |      |    0    |
 
@@ -376,8 +383,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.5 / scaling_matrix[param_index, param_index])
                 j += 1
 
-        # Exchange rates (k >= 0).
-        elif param_name in ['kex', 'ka']:
+        # Exchange rates and times (k >= 0 and t >= 0).
+        elif param_name in ['kex', 'ka', 'tex']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             b.append(0.0)

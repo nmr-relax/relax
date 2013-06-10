@@ -100,6 +100,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('padw2', scope='spin', default=1.0, desc='The pA.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\qp\\sA\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
         self.PARAMS.add('dw', scope='spin', default=0.0, desc='The chemical shift difference between states A and B (in ppm)', set='params', py_type=float, grace_string='\\q\\xDw\f{}\\Q (ppm)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('tex', scope='spin', default=1.0/20000.0, desc='The time of exchange (tex = 1/(2kex))', set='params', py_type=float, grace_string='\\q\\xt\\B\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
@@ -416,6 +417,11 @@ class Relax_disp(API_base, API_common):
                     elif spin.params[i] in ['kex', 'ka']:
                         lower.append(1.0)
                         upper.append(100000.0)
+
+                    # Time of exchange.
+                    elif spin.params[i] in ['tex']:
+                        lower.append(1/200000.0)
+                        upper.append(0.5)
 
         # The full grid size.
         grid_size = 1
@@ -1584,6 +1590,7 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
     _table.add_row(["Exchange rate (rad/s)", "'kex'"])
     _table.add_row(["Exchange rate from state A to state B (rad/s)", "'ka'"])
+    _table.add_row(["Time of exchange (s/rad)", "'tex'"])
     _table.add_row(["Peak intensities (series)", "'intensities'"])
     _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
     return_data_name_doc.add_table(_table.label)
