@@ -561,8 +561,9 @@ uf.desc[-1].add_verbatim("""\
 
     phi_ex = pA * pB * delta_omega^2 ,
     
-    omega_a^2 = sqrt(omega_1^4 + pB^2*delta_omega^2)\
+    omega_a^2 = sqrt(omega_1^4 + pA^2*delta_omega^4) ,\
 """)
+uf.desc[-1].add_paragraph("where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.")
 uf.desc[-1].add_paragraph("The reference for this equation is:")
 uf.desc[-1].add_list_element("Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (DOI: 10.1023/A:1008324025406).")
 # M61 model.
