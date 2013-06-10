@@ -46,7 +46,7 @@ from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp import VAR_TIME_EXP
-from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
 from status import Status; status = Status()
 
 
@@ -512,13 +512,15 @@ class Disp_model_list_cpmg(Model_list):
         MODEL_R2EFF,
         MODEL_NOREX,
         MODEL_LM63,
-        MODEL_CR72
+        MODEL_CR72,
+        MODEL_IT99
     ]
     params = [
         u"{R2eff, I\u2080}",
         u"{R\u2082, ...}",
         u"{R\u2082, ..., phi_ex, kex}",
-        u"{R\u2082, ..., R2a, kA, d\u03C9}"
+        u"{R\u2082, ..., pA, d\u03C9, kex}",
+        u"{R\u2082, ..., phi_ex, pA.d\u03C9^2, kex}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
@@ -534,11 +536,15 @@ class Disp_model_list_r1rho(Model_list):
         MODEL_R2EFF,
         MODEL_NOREX,
         MODEL_M61,
+        MODEL_DPL94,
+        MODEL_M61B
     ]
     params = [
         u"{R\u2081\u1D68, I\u2080}",
         u"{R\u2081\u1D68', ...}",
         u"{R\u2081\u1D68', ..., phi_ex, kex}",
+        u"{R\u2081\u1D68', ..., phi_ex, kex}",
+        u"{R\u2081\u1D68', ..., pA, d\u03C9, kex}",
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
