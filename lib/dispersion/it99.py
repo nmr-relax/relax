@@ -69,7 +69,6 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
     """
 
     # Repetitive calculations (to speed up calculations).
-    kex = 0.5 / tex
     tex2 = tex**2
     pa2dw4 = padw2**2
 
