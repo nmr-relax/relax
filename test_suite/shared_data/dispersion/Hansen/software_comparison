@@ -71,3 +71,31 @@ dw              4.460           -       0.757       4.461
 kex          1879.584           -       0.896    1879.618
 chi2            1.379           -       1.382       1.379
 
+
+
+The IT99 model
+==============
+
+Residue :70
+-----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        7.253           -           -           -
+R2 (800)       10.071           -           -           -
+phi_ex          0.236           -           -           -
+pA.dw^2        22.065           -           -           -
+tex          6.971e-5           -           -           -
+kex           717.208           -           -           -
+chi2           31.687           -           -           -
+
+
+Residue :71
+-----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        5.097           -           -           -
+phi_ex      1.303e+12           -           -           -
+pA.dw^2        32.577           -           -           -
+tex         2.284e+10           -           -           -
+kex         2.190e-11           -           -           -
+chi2            1.379           -           -           -
