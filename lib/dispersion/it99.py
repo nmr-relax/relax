@@ -43,7 +43,7 @@ where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are 
 """
 
 # Python module imports.
-from math import sqrt
+from math import pi, sqrt
 
 
 def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
@@ -93,4 +93,4 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
             continue
 
         # R2eff calculation.
-        back_calc[i] = r20 + numer / demon
+        back_calc[i] = r20 + numer / denom
