@@ -862,7 +862,7 @@ class Relax_disp(API_base, API_common):
     def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'M61', 'DPL94', 'M61 skew'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'M61', 'DPL94', 'M61 skew'.
         @type model:    str
         """
 
@@ -913,6 +913,14 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
+
+        # IT99 model.
+        elif model == MODEL_IT99:
+            print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['phi_ex', 'padw2', 'tex']
 
         # M61 model.
         elif model == MODEL_M61:
