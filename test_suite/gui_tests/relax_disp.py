@@ -117,7 +117,6 @@ class Relax_disp(GuiTestCase):
         # Set the RMSD.
         page = wizard.get_page(wizard.page_indices['rmsd'])
         page.uf_args['error'].SetValue(float_to_gui(3000.0))
-        page.uf_args['spectrum_id'].SetValue('1_0')
         wizard._go_next(None)
 
         # The peak intensities.
@@ -135,6 +134,7 @@ class Relax_disp(GuiTestCase):
             self.assertEqual(spin.intensities['0_2'], data_2[i])
 
             # The errors.
+            self.assert_(hasattr(spin, 'intensity_err'))
             self.assertEqual(spin.intensity_err['1_0'], 3000.0)
             self.assertEqual(spin.intensity_err['0_2'], 3000.0)
 
