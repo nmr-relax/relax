@@ -231,7 +231,10 @@ class GuiTestRunner(TextTestRunner):
         """
 
         # Execute the base method.
-        super(GuiTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity, failfast=failfast, buffer=buffer, resultclass=resultclass)
+        if (sys.version_info[0] == 3 and sys.version_info[1] == 1) or (sys.version_info[0] == 2 and sys.version_info[1] <= 6):
+            super(GuiTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity)
+        else:
+            super(GuiTestRunner, self).__init__(stream=stream, descriptions=descriptions, verbosity=verbosity, failfast=failfast, buffer=buffer, resultclass=resultclass)
 
         # Store the flag.
         self.timing_flag = timing

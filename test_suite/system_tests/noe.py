@@ -79,8 +79,6 @@ class Noe(SystemTestCase):
             '@page size 842, 595\n',
             '@with g0\n',
             '@    view 0.15, 0.15, 1.28, 0.85\n',
-            '@    world xmin 0\n',
-            '@    world xmax 166\n',
             '@    xaxis  label "Residue number"\n',
             '@    xaxis  label char size 1.48\n',
             '@    xaxis  tick major size 0.75\n',
@@ -121,7 +119,8 @@ class Noe(SystemTestCase):
             '@target G0.S1\n',
             '@type xydy\n',
             '40                             -0.670738797320466             0.014260663438353             \n',
-            '&\n'
+            '&\n',
+            '@autoscale\n'
         ]
 
         # Check the Grace file.
