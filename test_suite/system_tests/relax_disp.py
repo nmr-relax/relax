@@ -272,6 +272,78 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37893858617467, 4)
 
 
+    def test_hansen_cpmg_data_IT99(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the IT99 dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(data_path+sep+'base_pipe')
+
+        # Set the nuclear isotope data.
+        self.interpreter.spin.isotope('15N')
+
+        # Create the R2eff data pipe and load the results.
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+
+        # The IT99 model data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='IT99', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='IT99')
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model='IT99')
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='IT99', param='r2eff')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [7, 10]
+        spin70.phi_ex = 0.8
+        spin70.padw2 = 260.0
+        spin70.tex = 2e-4
+        spin71.r2 = [5, 9]
+        spin71.phi_ex = 0.1
+        spin71.padw2 = 0.0001
+        spin71.tex = 1e-4
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-10, grad_tol=None, max_iter=10000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.15g %20.15g" % ("padw2", spin70.padw2, spin71.padw2))
+        print("%-20s %20.15g %20.15g" % ("tex", spin70.tex, spin71.tex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 7.25346540336468, 4)
+        self.assertAlmostEqual(spin70.r2[1], 10.0710045752701, 4)
+        self.assertAlmostEqual(spin70.phi_ex, 0.81630607654933, 4)
+        self.assertAlmostEqual(spin70.padw2, 264.776853414923, 4)
+        self.assertAlmostEqual(spin70.tex*1000, 0.00020124896313586*1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 31.6877220010011, 4)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.96050986847081, 4)
+        self.assertAlmostEqual(spin71.phi_ex, 0.164811231728966, 4)
+        self.assertAlmostEqual(spin71.padw2, 0.00113652645563722, 4)
+        self.assertAlmostEqual(spin71.tex*1000, 0.000125611470803158*1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.45010375234816, 4)
+
+
     def test_hansen_cpmgfit_input(self):
         """Conversion of Dr. Flemming Hansen's CPMG R2eff values into input files for CPMGFit.
 
