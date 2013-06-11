@@ -234,9 +234,9 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
 
         # Parameters.
         file.write("R2 1 10 20\n")
-        file.write("Rex 0.01 0.49 20\n")
+        file.write("Rex 0 100.0 50\n")
         file.write("PaDw 2 10.0 50\n")
-        file.write("Tau 0.1 1.0 50\n")
+        file.write("Tau 0.1 10.0 50\n")
 
     # The Grace setup.
     file.write("xmgr\n")
