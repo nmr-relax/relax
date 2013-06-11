@@ -599,7 +599,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_r1rho_on_res_fixed_time_m61b(self):
+    def xxx_test_r1rho_on_res_fixed_time_m61b(self):
         """Test the relaxation dispersion 'M61 skew' model curve fitting to fixed time synthetic data."""
 
         # Execute the script.
