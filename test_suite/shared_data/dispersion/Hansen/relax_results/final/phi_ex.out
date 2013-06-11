@@ -2,4 +2,4 @@
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                   error                   
 None          70         GLY         None        N            None                    None                    
-None          71         GLY         None        N              0.0592786807766638    7.71027546675068e-17    
+None          71         GLY         None        N              0.0592786805121212    3.50467066670485e-17    
