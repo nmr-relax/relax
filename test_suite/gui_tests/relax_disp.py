@@ -117,7 +117,7 @@ class Relax_disp(GuiTestCase):
         # Set the RMSD.
         page = wizard.get_page(wizard.page_indices['rmsd'])
         page.uf_args['error'].SetValue(float_to_gui(3000.0))
-        wizard._go_next(None)
+        wizard._ok(None)
 
         # The peak intensities.
         data_2 = [337765.90000000002, 1697771.0, 867389.80000000005, 2339480.0, 2574062.0, 1609356.0, 2179341.0, 1563795.0, 1535896.0, 3578841.0]
