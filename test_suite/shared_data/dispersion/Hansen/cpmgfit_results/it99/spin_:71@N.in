@@ -4,7 +4,7 @@ function Ishima
 R2 1 10 20
 Rex 0 100.0 50
 PaDw 2 10.0 50
-tex 0 10.0 50
+Tau 0.1 10.0 50
 xmgr
 @ xaxis label "1/tcp (1/ms)"
 @ yaxis label "R2(tcp) (rad/s)"

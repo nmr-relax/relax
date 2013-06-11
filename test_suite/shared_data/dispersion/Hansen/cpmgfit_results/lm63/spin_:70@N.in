@@ -3,7 +3,7 @@ fields 2 11.7432964915 18.7892743865
 function CPMG
 R2 1 10 20
 Rex 0 100.0 100
-tex 0 10.0 100
+Tau 0 10.0 100
 xmgr
 @ xaxis label "1/tcp (1/ms)"
 @ yaxis label "R2(tcp) (rad/s)"
