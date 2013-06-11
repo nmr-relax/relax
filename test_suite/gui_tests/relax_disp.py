@@ -55,6 +55,90 @@ class Relax_disp(GuiTestCase):
             status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
 
+    def test_bug_20889_multi_col_peak_list(self):
+        """Test catching U{bug #20889<https://gna.org/bugs/?20889>}, the custom peak intensity reading with a list of spectrum_ids submitted by Troels E. Linnet."""
+
+        # The path to the files.
+        path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        page.uf_args['exp_type'].SetValue(str_to_gui('cpmg fixed'))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Load the sequence.
+        file = path + 'test.seq'
+        self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=1, res_name_col=3, res_num_col=2, spin_name_col=5, spin_num_col=4)
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope()
+        uf_store['spin.isotope'].page.SetValue('spin_id', '')
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Set up the peak intensity wizard.
+        analysis.peak_wizard_launch(None)
+        wizard = analysis.peak_wizard
+
+        # The spectrum.
+        page = wizard.get_page(wizard.page_indices['read'])
+        page.uf_args['file'].SetValue(str_to_gui("%stest.seq" % path))
+        page.uf_args['spectrum_id'].SetValue(['0_2', '1_0'])
+        page.uf_args['heteronuc'].SetValue(str_to_gui('N'))
+        page.uf_args['proton'].SetValue(str_to_gui('HN'))
+        page.uf_args['int_col'].SetValue([6, 7])
+        wizard._go_next(None)
+
+        # The error type.
+        page = wizard.get_page(wizard.page_indices['err_type'])
+        page.selection = 'rmsd'
+        wizard._go_next(None)
+
+        # Set the RMSD.
+        page = wizard.get_page(wizard.page_indices['rmsd'])
+        page.uf_args['error'].SetValue(float_to_gui(3000.0))
+        page.uf_args['spectrum_id'].SetValue('1_0')
+        wizard._go_next(None)
+
+        # The peak intensities.
+        data_2 = [337765.90000000002, 1697771.0, 867389.80000000005, 2339480.0, 2574062.0, 1609356.0, 2179341.0, 1563795.0, 1535896.0, 3578841.0]
+        data_0 = [636244.59999999998, 3015788.0, 1726064.0, 4039142.0, 4313824.0, 2927111.0, 4067343.0, 2921316.0, 3005234.0, 6352595.0]
+
+        # Data checks.
+        for i in range(len(cdp.mol[0].res)):
+            # Alias the spin.
+            spin = cdp.mol[0].res[i].spin[0]
+            print spin
+
+            # The intensities.
+            self.assertEqual(spin.intensities['1_0'], data_0[i])
+            self.assertEqual(spin.intensities['0_2'], data_2[i])
+
+            # The errors.
+            self.assertEqual(spin.intensity_err['1_0'], 3000.0)
+            self.assertEqual(spin.intensity_err['0_2'], 3000.0)
+
+
     def test_hansen_trunc_data(self):
         """Test the GUI analysis with Flemming Hansen's CPMG data truncated to residues 70 and 71."""
 
