@@ -80,22 +80,22 @@ Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        7.253         N/A           -         N/A
-R2 (800)       10.071         N/A           -         N/A
-phi_ex          0.236         N/A           -         N/A
-pA.dw^2        22.065         N/A           -         N/A
-tex          6.971e-5         N/A           -         N/A
-kex           717.208         N/A           -         N/A
-chi2           31.687         N/A           -         N/A
+R2 (500)        7.253         N/A       7.140         N/A
+R2 (800)       10.071         N/A       7.140         N/A
+phi_ex          0.236         N/A   1.217e-04         N/A
+pA.dw^2        22.065         N/A       0.400         N/A
+tex          6.971e-5         N/A       0.459         N/A
+kex           717.208         N/A       1.089         N/A
+chi2           31.687         N/A     101.690         N/A
 
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        5.097         N/A           -         N/A
-phi_ex      1.303e+12         N/A           -         N/A
-pA.dw^2        32.577         N/A           -         N/A
-tex         2.284e+10         N/A           -         N/A
-kex         2.190e-11         N/A           -         N/A
-chi2            1.379         N/A           -         N/A
+R2 (500)        5.097         N/A       5.093         N/A
+phi_ex      1.303e+12         N/A   1.539e-05         N/A
+pA.dw^2        32.577         N/A       0.978         N/A
+tex         2.284e+10         N/A       3.697         N/A
+kex         2.190e-11         N/A       0.135         N/A
+chi2            1.379         N/A       1.774         N/A
