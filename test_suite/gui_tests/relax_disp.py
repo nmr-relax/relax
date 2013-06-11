@@ -127,16 +127,14 @@ class Relax_disp(GuiTestCase):
         for i in range(len(cdp.mol[0].res)):
             # Alias the spin.
             spin = cdp.mol[0].res[i].spin[0]
-            print spin
 
             # The intensities.
             self.assertEqual(spin.intensities['1_0'], data_0[i])
             self.assertEqual(spin.intensities['0_2'], data_2[i])
 
             # The errors.
-            self.assert_(hasattr(spin, 'intensity_err'))
-            self.assertEqual(spin.intensity_err['1_0'], 3000.0)
-            self.assertEqual(spin.intensity_err['0_2'], 3000.0)
+            self.assert_(hasattr(spin, 'baseplane_rmsd'))
+            self.assertEqual(spin.baseplane_rmsd['0_2'], 3000.0)
 
 
     def test_hansen_trunc_data(self):
