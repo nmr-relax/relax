@@ -246,11 +246,11 @@ class Exec_lock:
         self._status = Status()
 
         # The name and mode of the locker.
-        self._name = None
-        self._mode = None
+        self._name = []
+        self._mode = []
 
         # Script nesting level.
-        self._script_nest = 0
+        self._nest = 0
 
         # Auto-analysis from script launch.
         self._auto_from_script = False
@@ -273,39 +273,26 @@ class Exec_lock:
         if self._status.debug:
             sys.stdout.write("debug> Execution lock:  Acquisition by '%s' ('%s' mode).\n" % (name, mode))
 
-        # Do not acquire if lunching a script from a script.
-        if mode == 'script' and self._mode == 'script' and self.locked():
-            # Increment the nesting counter.
-            self._script_nest += 1
-
-            # Debugging.
-            if self._fake_lock:
-                self.log.write("Nested by %s (to level %s)\n" % (name, self._script_nest))
-                self.log.flush()
-
-            # Return without doing anything.
-            return
-
-        # Skip locking if an auto-analysis is called from a script.
-        if self.locked() and self._mode == 'script' and mode == 'auto-analysis':
-            # Debugging.
-            if self._fake_lock:
-                self.log.write("Skipped unlocking of '%s' lock by '%s'\n" % (self._name, name))
-                self.log.flush()
-
-            # Switch the flag.
-            self._auto_from_script = True
-
-            # Return without doing anything.
-            return
-
         # Store the new name and mode.
-        self._name = name
-        self._mode = mode
+        self._name.append(name)
+        self._mode.append(mode)
+
+        # Nested locking.
+        if self.locked():
+            # Increment the nesting counter.
+            self._nest += 1
+
+            # Debugging.
+            if self._fake_lock:
+                self.log.write("Nested by %s (to level %s)\n" % (name, self._nest))
+                self.log.flush()
+
+            # Return without doing anything.
+            return
 
         # Debugging.
         if self._fake_lock:
-            self.log.write("Acquired by %s\n" % self._name)
+            self.log.write("Acquired by %s\n" % self._name[-1])
             self.log.flush()
             return
 
@@ -325,7 +312,7 @@ class Exec_lock:
 
         # Debugging (pseudo-locking based on _name).
         if self._fake_lock:
-            if self._name:
+            if len(self._name):
                 return True
             else:
                 return False
@@ -339,37 +326,24 @@ class Exec_lock:
 
         # Debugging.
         if self._status.debug:
-            sys.stdout.write("debug> Execution lock:  Release by '%s' ('%s' mode).\n" % (self._name, self._mode))
+            sys.stdout.write("debug> Execution lock:  Release by '%s' ('%s' mode).\n" % (self._name[-1], self._mode[-1]))
 
-        # Nested scripting.
-        if self._script_nest:
+        # Pop the name and mode.
+        self._name.pop(-1)
+        self._mode.pop(-1)
+
+        # Nested locking.
+        if self._nest:
             # Debugging.
             if self._fake_lock:
-                self.log.write("Script termination, nest decrement (%s -> %s)\n" % (self._script_nest, self._script_nest-1))
+                self.log.write("Nested locking decrement (%s -> %s)\n" % (self._nest, self._nest-1))
                 self.log.flush()
 
             # Decrement.
-            self._script_nest -= 1
+            self._nest -= 1
 
             # Return without releasing the lock.
             return
-
-        # Auto-analysis launched from script.
-        if self._auto_from_script:
-            # Debugging.
-            if self._fake_lock:
-                self.log.write("Auto-analysis launched from script, skipping release.\n")
-                self.log.flush()
-
-            # Unset the flag.
-            self._auto_from_script = False
-
-            # Return without releasing the lock.
-            return
-
-        # Reset the name and mode.
-        self._name = None
-        self._mode = None
 
         # Debugging.
         if self._fake_lock:
