@@ -265,10 +265,6 @@ class Peak_intensity_wizard(Wiz_window):
         # Set the spectrum ID.
         id = page.uf_args['spectrum_id'].GetValue()
 
-        # Handle list arguments.
-        if isinstance(id, list):
-            id = id[0]
-
         # Set the ID in the page.
         page = self.get_page(self.page_indices[page_key])
         if index == None:
