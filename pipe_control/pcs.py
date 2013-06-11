@@ -442,7 +442,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=set_names, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], axis_min=[-0.5, -0.5], axis_max=[0.5, 0.5], legend_pos=[1, 0.5])
+        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=set_names, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], legend_pos=[1, 0.5])
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)

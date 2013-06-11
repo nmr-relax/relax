@@ -418,8 +418,8 @@ class Stereochem_analysis:
                 dist.append(self.generate_distribution(noe_viols, inc=self.bucket_num, upper=self.upper_lim_noe, lower=self.lower_lim_noe))
 
             # Headers.
-            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\\S2\\N)'], axis_min=[0, 0], axis_max=[self.num_ens, 200], legend_pos=[0.3, 0.8])
-            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', 'Frequency'], axis_min=[0, 0], axis_max=[200, 0.2], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_curve, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', 'NOE violation (Angstrom\\S2\\N)'], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='NOE violation comparison', subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', 'Frequency'], legend_pos=[1.1, 0.8])
 
             # Write the data.
             write_xy_data([data], file=grace_curve, graph_type='xy')
@@ -464,8 +464,8 @@ class Stereochem_analysis:
                 dist.append(self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc))
 
             # Headers.
-            write_xy_header(file=grace_curve, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[self.num_ens, 2], legend_pos=[0.3, 0.8])
-            write_xy_header(file=grace_dist, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['%s RDC Q-factor (pales format)' % self.rdc_name, 'Frequency'], axis_min=[0, 0], axis_max=[2, 0.2], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_curve, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[0]*n, axis_labels=['Ensemble (sorted)', '%s RDC Q-factor (pales format)' % self.rdc_name], legend_pos=[0.3, 0.8])
+            write_xy_header(file=grace_dist, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[1]*n, symbol_sizes=[0.5]*n, linestyle=[3]*n, axis_labels=['%s RDC Q-factor (pales format)' % self.rdc_name, 'Frequency'], legend_pos=[1.1, 0.8])
 
             # Write the data.
             write_xy_data([data], file=grace_curve, graph_type='xy')
@@ -513,8 +513,8 @@ class Stereochem_analysis:
                     data_scaled[i].append([sqrt(noe_viol/self.noe_norm), q_factor])
 
             # Write the data.
-            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[noe_viols[-1]+10, values[-1]+0.1], legend_pos=[1.1, 0.8])
-            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name], axis_min=[0, 0], axis_max=[1, 1], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['NOE violation (Angstrom\\S2\\N)', '%s RDC Q-factor (pales format)' % self.rdc_name], legend_pos=[1.1, 0.8])
+            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=n, set_names=self.configs, set_colours=colours, symbols=[9]*n, symbol_sizes=[0.24]*n, linetype=[0]*n, axis_labels=['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name], legend_pos=[1.1, 0.8])
             write_xy_data([data], file=grace_file, graph_type='xy')
             write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
 

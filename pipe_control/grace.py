@@ -54,8 +54,6 @@ def axis_setup(data_type=None, norm=True):
 
     # Axis specific settings.
     axes = ['x', 'y']
-    axis_min = [None, None]
-    axis_max = [None, None]
     seq_type = [None, None]
     axis_labels = [None, None]
     for i in range(2):
@@ -82,24 +80,12 @@ def axis_setup(data_type=None, norm=True):
         if data_type[i] == 'res_num':
             # Residue only data.
             if seq_type[i] == 'res':
-                # Axis limits.
-                if not axis_min[i]:
-                    axis_min[i] = repr(cdp.mol[0].res[0].num - 1)
-                if not axis_max[i]:
-                    axis_max[i] = repr(cdp.mol[0].res[-1].num + 1)
-
                 # X-axis label.
                 if not axis_labels[i]:
                     axis_labels[i] = "Residue number"
 
             # Spin only data.
             if seq_type[i] == 'spin':
-                # Axis limits.
-                if not axis_min[i]:
-                    axis_min[i] = repr(cdp.mol[0].res[0].spin[0].num - 1)
-                if not axis_max[i]:
-                    axis_max[i] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
-
                 # X-axis label.
                 if not axis_labels[i]:
                     axis_labels[i] = "Spin number"
@@ -129,7 +115,7 @@ def axis_setup(data_type=None, norm=True):
                     axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
 
     # Return the data.
-    return seq_type, axis_min, axis_max, axis_labels
+    return seq_type, axis_labels
 
 
 def determine_seq_type(spin_id=None):
@@ -287,10 +273,10 @@ def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='valu
 
     # Get the axis information.
     data_type = [x_data_type, y_data_type]
-    seq_type, axis_min, axis_max, axis_labels = axis_setup(data_type=data_type, norm=norm)
+    seq_type, axis_labels = axis_setup(data_type=data_type, norm=norm)
 
     # Write the header.
-    write_xy_header(sets=len(data[0]), file=file, data_type=data_type, seq_type=seq_type, set_names=set_names, axis_labels=axis_labels, axis_min=axis_min, axis_max=axis_max, norm=norm)
+    write_xy_header(sets=len(data[0]), file=file, data_type=data_type, seq_type=seq_type, set_names=set_names, axis_labels=axis_labels, norm=norm)
 
     # Write the data.
     write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
