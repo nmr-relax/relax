@@ -27,7 +27,7 @@ This module is for the function, gradient and Hessian of the IT99 model.  The mo
 
     Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (U{DOI: 10.1023/A:1008324025406<http://dx.doi.org/10.1023/A:1008324025406>}).
 
-The equation used is:
+The equation used is::
 
               phi_ex * tex
     Rex ~= ------------------- ,
@@ -35,11 +35,17 @@ The equation used is:
 
     phi_ex = pA * pB * delta_omega^2 ,
     
-    omega_a^2 = sqrt(omega_1^4 + pA^2*delta_omega^4) ,
+    omega_a^2 = sqrt(omega_1eff^4 + pA^2*delta_omega^4) ,
 
     R2eff = R20 + Rex ,
 
-where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.
+where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.  The effective rotating frame field for a CPMG-type experiment is given by::
+
+    omega_1eff = 2*sqrt(3) * nu_cpmg
+
+and therefore::
+
+    omega_1eff^4 = 144 * nu_cpmg^4
 """
 
 # Python module imports.
@@ -82,8 +88,11 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
             back_calc[i] = r20
             continue
 
+        # The effective rotating frame field.
+        omega_1eff4 = 144 * (2.0*pi*cpmg_frqs[i])**4
+
         # Denominator.
-        omega_a2 = sqrt((2.0*pi*cpmg_frqs[i])**4 + pa2dw4)
+        omega_a2 = sqrt(omega_1eff4 + pa2dw4)
         denom = 1.0 + omega_a2 * tex2
 
         # Avoid divide by zero.
