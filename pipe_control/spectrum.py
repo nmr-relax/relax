@@ -560,7 +560,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @keyword dir:           The directory where the file is located.
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
-    @type spectrum_id:      str
+    @type spectrum_id:      str or list of str
     @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
     @type heteronuc:        str
     @keyword proton:        The name of the proton as specified in the peak intensity file.
@@ -684,14 +684,18 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             intensity_data[i][2] = spin_id
 
     # Add the spectrum id (and ncproc) to the relax data store.
+    spectrum_ids = spectrum_id
+    if isinstance(spectrum_id, str):
+        spectrum_ids = [spectrum_id]
     if not hasattr(cdp, 'spectrum_ids'):
         cdp.spectrum_ids = []
         if ncproc != None:
             cdp.ncproc = {}
-    if not spectrum_id in cdp.spectrum_ids:
-        cdp.spectrum_ids.append(spectrum_id)
-        if ncproc != None:
-            cdp.ncproc[spectrum_id] = ncproc
+    for i in range(len(spectrum_ids)):
+        if not spectrum_ids[i] in cdp.spectrum_ids:
+            cdp.spectrum_ids.append(spectrum_ids[i])
+            if ncproc != None:
+                cdp.ncproc[spectrum_ids[i]] = ncproc
 
     # Loop over the peak intensity data.
     data = []
