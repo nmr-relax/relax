@@ -116,8 +116,11 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             # End of the data set i.
             file.write("&\n")
 
+    # Autoscaling of all graphs to avoid user confusion.
+    file.write("@autoscale\n")
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, axis_min=None, axis_max=None, legend_pos=None, legend=False, norm=False):
+
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=False, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -157,10 +160,6 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     @type seq_type:                 None or list of str
     @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
     @type axis_labels:              None or list of str
-    @keyword axis_min:              The minimum values for specifying the graph ranges (in the [X, Y] list format).
-    @type axis_min:                 None or list of str
-    @keyword axis_max:              The maximum values for specifying the graph ranges (in the [X, Y] list format).
-    @type axis_max:                 None or list of str
     @keyword legend_pos:            The position of the legend, e.g. [0.3, 0.8].
     @type legend_pos:               None or list of float
     @keyword legend:                If True, the legend will be visible.
@@ -176,10 +175,6 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         seq_type = [None, None]
     if not axis_labels:
         axis_labels = [None, None]
-    if not axis_min:
-        axis_min = [None, None]
-    if not axis_max:
-        axis_max = [None, None]
 
     # Set the Grace version number of the header's formatting for compatibility.
     file.write("@version 50121\n")
@@ -224,24 +219,12 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         if data_type[i] == 'spin':
             # Residue only data.
             if seq_type[i] == 'res':
-                # Axis limits.
-                if not axis_min[i]:
-                    axis_min[i] = repr(cdp.mol[0].res[0].num - 1)
-                if not axis_max[i]:
-                    axis_max[i] = repr(cdp.mol[0].res[-1].num + 1)
-
                 # X-axis label.
                 if not axis_labels[i]:
                     axis_labels[i] = "Residue number"
 
             # Spin only data.
             if seq_type[i] == 'spin':
-                # Axis limits.
-                if not axis_min[i]:
-                    axis_min[i] = repr(cdp.mol[0].res[0].spin[0].num - 1)
-                if not axis_max[i]:
-                    axis_max[i] = repr(cdp.mol[0].res[0].spin[-1].num + 1)
-
                 # X-axis label.
                 if not axis_labels[i]:
                     axis_labels[i] = "Spin number"
@@ -271,10 +254,6 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
                     axis_labels[i] = axis_labels[i] + " \\N\\q(normalised)\\Q"
 
         # Write out the data.
-        if axis_min[i] != None:
-            file.write("@    world %smin %s\n" % (axes[i], axis_min[i]))
-        if axis_max[i] != None:
-            file.write("@    world %smax %s\n" % (axes[i], axis_max[i]))
         if axis_labels[i]:
             file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[i]))
         file.write("@    %saxis  label char size 1.48\n" % axes[i])
