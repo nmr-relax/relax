@@ -158,7 +158,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
 
         # Time of exchange scaling.
         elif param_name == 'tex':
-            scaling_matrix[param_index, param_index] = 1e4
+            scaling_matrix[param_index, param_index] = 1e-4
 
     # Return the scaling matrix.
     return scaling_matrix
