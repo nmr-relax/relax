@@ -459,22 +459,22 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  These models are dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the models currently supported are:")
+uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  These models are dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff values and errors required as the base data for all other models,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, phi_ex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R2A, kA, dw}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, phi_ex, padw2, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R20, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., phi_ex, padw2, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', phi_ex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', phi_ex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with parameters {R1rho', pA, dw, kex},")
-uf.desc[-1].add_paragraph("Except for '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  The models are described in more detail below." % MODEL_R2EFF)
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
+uf.desc[-1].add_paragraph("Except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  The models are described in more detail below." % (MODEL_R2EFF, MODEL_NOREX))
 # R2eff model.
 uf.desc.append(Desc_container("The R2eff model"))
-uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion part is not modelled.  It is used to determine the R2eff or R1rho values and errors which are required as the base data for all other models.  It can be selected by setting the model to '%s'.  Depending on the experiment type, this model will be handled differently.  The R2eff/R1rho values determined can be later copied to the data pipes of the other dispersion models using the appropriate value user function." % MODEL_R2EFF)
+uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion component of the data is not modelled.  It is used to determine either the R2eff or R1rho values and errors which are required as the base data for all other models.  It can be selected by setting the model to '%s'.  Depending on the experiment type, this model will be handled differently.  The R2eff/R1rho values determined can be later copied to the data pipes of the other dispersion models using the appropriate user functions." % MODEL_R2EFF)
 uf.desc[-1].add_paragraph("For the fixed relaxation time period CPMG-type experiments, the R2eff values are determined by direct calculation using the formula:")
 uf.desc[-1].add_verbatim("""\
                        -1         / I1(nu_CPMG) \ 
@@ -499,10 +499,10 @@ uf.desc[-1].add_verbatim("""\
     sigma_R2 = sqrt | ------------------------------------------ | ,
                     \                  relax_T                   /\
 """)
-uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff/R1rho values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analyses.  Both R2eff/R1rho and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the parameter errors.")
+uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff/R1rho values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analysis.  Both R2eff/R1rho and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the parameter errors.")
 # The no exchange model.
 uf.desc.append(Desc_container("The model for no chemical exchange relaxation"))
-uf.desc[-1].add_paragraph("This model is provided for model selection purposes.  In combination with frequentist methods such as AIC or Bayesian methods, it can show if the presence of chemical exchange is statistically significant.  Optimisation is still required as one R20 value per magnetic field strength will be fit to the measured data for each spin system.  It is selected by setting the model to '%s'." % MODEL_NOREX)
+uf.desc[-1].add_paragraph("This model is provided for model selection purposes.  In combination with frequentist methods, such as AIC, or Bayesian methods it can show if the presence of chemical exchange is statistically significant.  Optimisation is still required as one R20 value per magnetic field strength will be fit to the measured data for each spin system.  It is selected by setting the model to '%s'." % MODEL_NOREX)
 # LM63 model.
 uf.desc.append(Desc_container("The LM63 2-site fast exchange CPMG model"))
 uf.desc[-1].add_paragraph("This is the original model for 2-site fast exchange for CPMG-type experiments.  It is selected by setting the model to '%s', here named after Luz and Meiboom 1963.  The equation for the exchange process is:" % MODEL_LM63)
@@ -583,7 +583,7 @@ uf.desc[-1].add_paragraph("The reference for this equation is:")
 uf.desc[-1].add_list_element("Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (DOI: 10.1063/1.1700960).")
 # DPL94 model.
 uf.desc.append(Desc_container("The DPL94 2-site fast exchange R1rho model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-type experiments.  It is selected by setting the model to '%s', here named after Meiboom 1961.  The equation for the exchange process is:" % MODEL_DPL94)
+uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-type experiments.  It is selected by setting the model to '%s', here named after Davis, Perlman and London 1994.  The equation for the exchange process is:" % MODEL_DPL94)
 uf.desc[-1].add_verbatim("""\
                                       phi_ex * kex
     R1rho = R1rho' + sin^2(theta) * ----------------- ,
