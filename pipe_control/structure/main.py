@@ -976,6 +976,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
 
         # Get the bond info.
         bond_vectors, attached_name, warnings = cdp.structure.bond_vectors(attached_atom=attached, model_num=model, res_num=res_num, spin_name=spin.name, spin_num=spin.num, return_name=True, return_warnings=True)
+        id2 = generate_spin_id_unique(res_num=res_num, res_name=None, spin_name=spin.name)
 
         # No attached atom.
         if not bond_vectors:
@@ -1005,7 +1006,7 @@ def vectors(spin_id1=None, spin_id2=None, model=None, verbosity=1, ave=True, uni
 
                 # Test for zero length.
                 if norm_factor == 0.0:
-                    warn(RelaxZeroVectorWarning(id))
+                    warn(RelaxZeroVectorWarning(spin_id1=id, spin_id2=id2))
 
                 # Calculate the normalised vector.
                 else:
