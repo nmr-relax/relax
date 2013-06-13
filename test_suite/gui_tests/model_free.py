@@ -119,11 +119,11 @@ class Mf(GuiTestCase):
         analysis.setup_dipole_pair()        # Initialisation.
         analysis.dipole_wizard._skip()      # Skip the structure.read_pdb user function.
         analysis.dipole_wizard._skip()      # Skip the structure.get_pos user function.
-        analysis.dipole_wizard._go_next()   # The dipole_pair.define user function.
+        analysis.dipole_wizard._go_next()   # The interatom.define user function.
         interpreter.flush()                 # Required because of the asynchronous uf call.
-        analysis.dipole_wizard._go_next()   # The dipole_pair.set_dist user function.
+        analysis.dipole_wizard._go_next()   # The interatom.set_dist user function.
         interpreter.flush()                 # Required because of the asynchronous uf call.
-        analysis.dipole_wizard._skip()      # Skip the dipole_pair.unit_vectors user function.
+        analysis.dipole_wizard._skip()      # Skip the interatom.unit_vectors user function.
 
         # Set up the CSA interaction.
         analysis.value_set_csa()
@@ -268,7 +268,7 @@ class Mf(GuiTestCase):
         # Dipole-dipole interaction wizard:  Initialisation.
         analysis.setup_dipole_pair()
 
-        # Dipole-dipole interaction wizard:  The dipole_pair.define, dipole_pair.set_dist, and dipole_pair.unit_vectors user functions.
+        # Dipole-dipole interaction wizard:  The interatom.define, interatom.set_dist, and interatom.unit_vectors user functions.
         analysis.dipole_wizard._apply()
         interpreter.flush()    # Required because of the asynchronous uf call.
         page = analysis.dipole_wizard.get_page(0)

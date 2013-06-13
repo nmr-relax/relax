@@ -33,9 +33,9 @@ self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H17')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H18')
 
 ## Define the magnetic dipole-dipole relaxation interaction.
-#self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-#self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
-#self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+#self._execute_uf(uf_name='interatom.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+#self._execute_uf(uf_name='interatom.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+#self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 #
 ## Set the nuclear isotope type.
 #self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')
@@ -64,7 +64,7 @@ self._execute_uf(uf_name='pipe.create', pipe_name='new', pipe_type='N-state')
 
 # Copy the data.
 self._execute_uf(uf_name='sequence.copy', pipe_from='orig', pipe_to='new')
-self._execute_uf(uf_name='interatomic.copy', pipe_from='orig', pipe_to='new')
+self._execute_uf(uf_name='interatom.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='rdc.copy', pipe_from='orig', pipe_to='new')
 self._execute_uf(uf_name='pcs.copy', pipe_from='orig', pipe_to='new')
 

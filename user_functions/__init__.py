@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,14 +41,13 @@ __all__ += [
     'dasha',
     'deselect',
     'diffusion_tensor',
-    'dipole_pair',
     'domain',
     'dx',
     'eliminate',
     'fix',
     'frame_order',
     'grace',
-    'interatomic',
+    'interatom',
     'jw_mapping',
     'minimisation',
     'model_free',
@@ -92,14 +91,13 @@ import user_functions.consistency_tests
 import user_functions.dasha
 import user_functions.deselect
 import user_functions.diffusion_tensor
-import user_functions.dipole_pair
 import user_functions.domain
 import user_functions.dx
 import user_functions.eliminate
 import user_functions.fix
 import user_functions.frame_order
 import user_functions.grace
-import user_functions.interatomic
+import user_functions.interatom
 import user_functions.jw_mapping
 import user_functions.minimisation
 import user_functions.model_free

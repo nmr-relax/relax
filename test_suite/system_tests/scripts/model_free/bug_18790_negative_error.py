@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -53,8 +53,8 @@ spin.element('N')
 sequence.attach_protons()
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 
 # Set up the CSA value.
 value.set(-172 * 1e-6, 'csa')

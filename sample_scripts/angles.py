@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,8 +33,8 @@ structure.load_spins('@N')
 structure.load_spins('@H')
 
 # Define the NH vectors.
-dipole_pair.define(spin_id1='@N', spin_id2='@H')
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H')
+interatom.unit_vectors()
 
 # Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)

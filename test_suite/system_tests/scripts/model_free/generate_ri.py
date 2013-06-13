@@ -41,9 +41,9 @@ structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+interatom.unit_vectors()
 
 # Define the CSA relaxation interaction.
 value.set(val=-172e-6, param='csa')

@@ -372,8 +372,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
         # Extract a N-Ca vector.
-        self.interpreter.dipole_pair.define(spin_id1='@CA', spin_id2='#1F35_N_H_molmol_mol1:3@N')
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@CA', spin_id2='#1F35_N_H_molmol_mol1:3@N')
+        self.interpreter.interatom.unit_vectors()
         print(cdp.interatomic[0])
         self.assert_(hasattr(cdp.interatomic[0], 'vector'))
 
@@ -983,8 +983,8 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins()
 
         # Extract a vector between first two spins.
-        self.interpreter.dipole_pair.define(spin_id1='@2', spin_id2='@10')
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@2', spin_id2='@10')
+        self.interpreter.interatom.unit_vectors()
         self.assertAlmostEqual(cdp.interatomic[0].vector[0], -0.4102707)
         self.assertAlmostEqual(cdp.interatomic[0].vector[1], 0.62128879)
         self.assertAlmostEqual(cdp.interatomic[0].vector[2], -0.6675913)

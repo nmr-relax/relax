@@ -31,9 +31,9 @@ bruker.read(ri_id='r2_500', file='T2 dhp 500.txt', dir=path)
 bruker.read(ri_id='noe_500', file='NOE dhp 500.txt', dir=path)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+interatom.unit_vectors()
 
 # Define the CSA relaxation interaction.
 value.set(-172 * 1e-6, 'csa')

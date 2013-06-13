@@ -24,5 +24,5 @@ self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@C1', ave_pos=Fals
 self._execute_uf(uf_name='structure.load_spins', spin_id=':UNK@H1', ave_pos=False)
 
 # Load the CH vectors for the C atoms.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C1', spin_id2='@H1', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='interatom.define', spin_id1='@C1', spin_id2='@H1', direct_bond=True)
+self._execute_uf(uf_name='interatom.unit_vectors', ave=False)

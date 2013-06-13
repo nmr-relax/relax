@@ -209,8 +209,8 @@ class Main:
             spin.element('H', spin_id='@H')
 
             # Define the magnetic dipole-dipole relaxation interaction.
-            dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-            dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+            interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+            interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 
             # Set all the necessary values.
             value.set(CSA, 'csa')

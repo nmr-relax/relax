@@ -68,8 +68,8 @@ structure.read_pdb('sphere.pdb', dir=path)
 structure.load_spins()
 
 # Load the NH vectors.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.unit_vectors(ave=False)
 
 # Set the Ln3+ position 10 Angstrom away.
 centre = [10.0, 0.0, 0.0]

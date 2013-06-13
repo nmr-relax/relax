@@ -37,8 +37,8 @@ self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@Q*')
 self._execute_uf(uf_name='rdc.read', align_id='Gel', file='long_range_rdc', dir=DATA_PATH, spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, absolute=True)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.read_dist', file='long_range_rdc', dir=DATA_PATH, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=5)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='interatom.read_dist', file='long_range_rdc', dir=DATA_PATH, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=5)
+self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
 # Set up the model.
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')

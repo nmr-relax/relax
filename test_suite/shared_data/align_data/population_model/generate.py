@@ -35,8 +35,8 @@ deselect.spin(spin_id=':UNK@H17')
 deselect.spin(spin_id=':UNK@H18')
 
 # Load the CH vectors.
-dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+interatom.unit_vectors(ave=False)
 
 # Deselect the CH2 carbon-proton pairs.
 deselect.interatom(spin_id1=':UNK@C6', spin_id2=':UNK@H6')

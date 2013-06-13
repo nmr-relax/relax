@@ -17,8 +17,8 @@ structure.load_spins('@N')
 structure.load_spins('@H')
 
 # Set the NH vector.
-dipole_pair.define('@N', '@H')
-dipole_pair.unit_vectors()
+interatom.define('@N', '@H')
+interatom.unit_vectors()
 
 # Initialise a diffusion tensor.
 diffusion_tensor.init((1.698e7, 1.417e7, 67.174, -83.718), param_types=3)

@@ -30,8 +30,7 @@ import sys
 
 # relax module imports.
 import pipe_control
-from pipe_control import dipole_pair
-from pipe_control.interatomic import return_interatom, return_interatom_list
+from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.spectrometer import set_frequency
 from pipe_control import pipes
@@ -712,7 +711,7 @@ class Results:
                 h_spin.element = 'H'
                 h_spin.isotope = '1H'
                 spin_id2 = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name='H')
-                dipole_pair.define(spin_id, spin_id2, verbose=False)
+                define(spin_id, spin_id2, verbose=False)
 
             # Backwards compatibility for the reading of the results file from versions 1.2.0 to 1.2.9.
             if len(file_line) == 4:

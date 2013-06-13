@@ -71,8 +71,8 @@ structure.load_spins()
 deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
 
 # Load the NH vectors.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.unit_vectors(ave=False)
 
 # Get the first calcium position.
 spin = return_spin(':1000@CA')

@@ -49,8 +49,8 @@ structure.load_spins("@N")
 structure.load_spins("@H")
 
 # Create the NH vector containers.
-dipole_pair.define('@N', '@H')
-dipole_pair.unit_vectors()
+interatom.define('@N', '@H')
+interatom.unit_vectors()
 
 # Set up some alignment tensors (from the random_tensors.py script).
 align_tensor.init(tensor='tensor 0', params=(0.0006157864417437287, -0.00027914923898849156, 0.0002715095515843512, 0.0009842872030009584, -0.00031390384563948447), scale=1.0, angle_units='deg', param_types=2, errors=False)

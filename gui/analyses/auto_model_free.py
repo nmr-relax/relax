@@ -439,7 +439,7 @@ class Auto_model_free(Base_analysis):
 
             # Test if the unit vectors have been loaded.
             if vector_check and (not hasattr(interatom, 'vector') or interatom.vector == None):
-                missing.append(msg % ("unit vectors", "dipole_pair.unit_vectors"))
+                missing.append(msg % ("unit vectors", "interatom.unit_vectors"))
 
         # Return the container and list of missing data.
         return data, missing
@@ -693,21 +693,21 @@ class Auto_model_free(Base_analysis):
             page = uf_store['structure.get_pos'].create_page(self.dipole_wizard)
             self.dipole_wizard.add_page(page, skip_button=True)
 
-        # Create the dipole_pair.define page.
-        page = uf_store['dipole_pair.define'].create_page(self.dipole_wizard)
+        # Create the interatom.define page.
+        page = uf_store['interatom.define'].create_page(self.dipole_wizard)
         page.SetValue('spin_id1', '@N')
         page.SetValue('spin_id2', '@H')
         self.dipole_wizard.add_page(page)
 
-        # Create the dipole_pair.set_dist page.
-        page = uf_store['dipole_pair.set_dist'].create_page(self.dipole_wizard)
+        # Create the interatom.set_dist page.
+        page = uf_store['interatom.set_dist'].create_page(self.dipole_wizard)
         page.SetValue('spin_id1', '@N*')
         page.SetValue('spin_id2', '@H*')
         page.SetValue('ave_dist', NH_BOND_LENGTH)
         self.dipole_wizard.add_page(page)
 
-        # Create the dipole_pair.unit_vectors page.
-        page = uf_store['dipole_pair.unit_vectors'].create_page(self.dipole_wizard)
+        # Create the interatom.unit_vectors page.
+        page = uf_store['interatom.unit_vectors'].create_page(self.dipole_wizard)
         self.dipole_wizard.add_page(page)
 
         # Reset the cursor.

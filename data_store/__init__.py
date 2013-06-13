@@ -253,7 +253,7 @@ class Relax_data_store(dict):
                                     pipe_control.mol_res_spin.set_spin_element(spin_id=spin_id2, element='H', pipe=pipe_name)
                                 if not hasattr(h_spin, 'isotope'):
                                     pipe_control.mol_res_spin.set_spin_isotope(spin_id=spin_id2, isotope='1H', pipe=pipe_name)
-                                pipe_control.dipole_pair.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
+                                pipe_control.interatomic.define(spin_id1, spin_id2, verbose=False, pipe=pipe_name)
 
                                 # Get the interatomic data container.
                                 interatom = pipe_control.interatomic.return_interatom(spin_id1=spin_id1, spin_id2=spin_id2, pipe=pipe_name)

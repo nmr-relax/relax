@@ -148,9 +148,9 @@ Regular expression can, in some instances, be used to select spins.  For example
 \includegraphics[width=3cm, bb=0 0 1701 1701]{graphics/wizards/dipole_pair/NH_dipole_pair_600x600}
 \end{figure*}
 
-Separate from the spin containers, yet strongly linked to them, are the interatomic data containers.  These containers are grouped together within the same data pipe as the spins they point to.  These define interactions between two spins located anywhere within the molecule, residue and spin nested data structure.  These are automatically created when reading in data defined between two spins such as RDCs and NOE distance constraints.  They can also be created using the \uf{dipole\_pair.define} user function:
+Separate from the spin containers, yet strongly linked to them, are the interatomic data containers.  These containers are grouped together within the same data pipe as the spins they point to.  These define interactions between two spins located anywhere within the molecule, residue and spin nested data structure.  These are automatically created when reading in data defined between two spins such as RDCs and NOE distance constraints.  They can also be created using the \uf{interatom.define} user function:
 
-\example{dipole\_pair.define(spin\_id1=`:2@N', spin\_id2=`:2@H')}
+\example{interatom.define(spin\_id1=`:2@N', spin\_id2=`:2@H')}
 
 As the interatomic data container concept is relatively new, how they are created and handled is likely to evolve and change in the future.
 

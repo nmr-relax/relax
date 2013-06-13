@@ -37,7 +37,7 @@ class Interatomic(SystemTestCase):
     """Class for testing the interatomic functions."""
 
     def test_copy(self):
-        """Test the operation of the interatomic.copy user function."""
+        """Test the operation of the interatom.copy user function."""
 
         # Create an initial data pipe.
         self.interpreter.pipe.create(pipe_name="orig", pipe_type='N-state')
@@ -52,8 +52,8 @@ class Interatomic(SystemTestCase):
         self.interpreter.spin.create(res_num=2, spin_name='H')
 
         # Define the interatomic interaction.
-        self.interpreter.interatomic.create(spin_id1=':1@N', spin_id2=':1@H')
-        self.interpreter.interatomic.create(spin_id1=':2@N', spin_id2=':2@H')
+        self.interpreter.interatom.create(spin_id1=':1@N', spin_id2=':1@H')
+        self.interpreter.interatom.create(spin_id1=':2@N', spin_id2=':2@H')
 
         # Add some test data.
         cdp.interatomic[0].x = 1
@@ -64,19 +64,19 @@ class Interatomic(SystemTestCase):
 
         # Copy the data.
         self.interpreter.sequence.copy(pipe_from='orig')
-        self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':2@N', spin_id2=':2@H')
-        self.interpreter.interatomic.copy(pipe_from='orig', spin_id1=':1@H', spin_id2=':1@N')
+        self.interpreter.interatom.copy(pipe_from='orig', spin_id1=':2@N', spin_id2=':2@H')
+        self.interpreter.interatom.copy(pipe_from='orig', spin_id1=':1@H', spin_id2=':1@N')
 
         # Create a new data pipe to copy the data to.
         self.interpreter.pipe.create(pipe_name="new 2", pipe_type='N-state')
 
         # Copy the data.
         try:
-            self.interpreter.interatomic.copy(pipe_from='orig')
+            self.interpreter.interatom.copy(pipe_from='orig')
         except RelaxNoSpinError:
             print("Correct RelaxError encountered.")
         self.interpreter.sequence.copy(pipe_from='orig')
-        self.interpreter.interatomic.copy(pipe_from='orig')
+        self.interpreter.interatom.copy(pipe_from='orig')
 
         # Loop over the two new pipes.
         interatom_index = [[0, 1], [1, 0]]

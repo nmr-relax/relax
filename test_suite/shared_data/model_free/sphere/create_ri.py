@@ -46,10 +46,10 @@ spin.isotope('1H', spin_id='@H*')
 diffusion_tensor.init(10e-9)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
+interatom.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
+interatom.unit_vectors()
 
 # Define the chemical shift relaxation interaction.
 value.set(-172 * 1e-6, 'csa', spin_id='@N*')
