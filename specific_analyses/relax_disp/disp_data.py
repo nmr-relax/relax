@@ -37,9 +37,13 @@ from numpy import float64, int32, ones, zeros
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
+from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
-from pipe_control.mol_res_spin import return_spin, spin_loop
+from lib.software.grace import write_xy_data, write_xy_header
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.result_files import add_result_file
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
 
 
@@ -354,6 +358,242 @@ def loop_time():
     # Loop over the time points.
     for time in cdp.relax_time_list:
         yield time
+
+
+def plot_disp_curves(dir=None, force=None):
+    """Custom 2D Grace plotting function for the dispersion curves.
+
+    One file will be created per spin system.
+
+
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the files to be overwritten if it already exists.
+    @type force:            bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Loop over each spin.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Open the file for writing.
+        file_name = "disp_%s.agr" % spin_id
+        file_path = get_file_path(file_name, dir)
+        file = open_write_file(file_name, dir, force)
+
+        # Initialise some data structures.
+        data = []
+        set_labels = []
+        x_err_flag = False
+        y_err_flag = False
+
+        # Loop over the spectrometer frequencies.
+        graph_index = 0
+        err = False
+        for frq in loop_frq():
+            # Add a new set for the data at each frequency.
+            data.append([])
+
+            # Add a new label.
+            if cdp.exp_type in CPMG_EXP:
+                label = "R\\s2eff\\N"
+            else:
+                label = "R\\s1\\xr\\B\\N"
+            if frq != None:
+                label += " (%.6f MHz)" % (frq / 1e6)
+            set_labels.append(label)
+
+            # Loop over the dispersion points.
+            for disp_point in loop_point():
+                # The data key.
+                key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                # No data present.
+                if key not in spin.r2eff:
+                    continue
+
+                # Add the data.
+                data[-1].append([disp_point, spin.r2eff[key]])
+
+                # Add the error.
+                if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
+                    err = True
+                    data[-1][-1].append(spin.r2eff_err[key])
+
+        # Add the back-calculated data.
+        for frq in loop_frq():
+            # Add a new set for the data at each frequency.
+            data.append([])
+
+            # Add a new label.
+            if cdp.exp_type in CPMG_EXP:
+                label = "Back-calculated R\\s2eff\\N"
+            else:
+                label = "Back-calculated R\\s1\\xr\\B\\N"
+            if frq != None:
+                label += " (%.6f MHz)" % (frq / 1e6)
+            set_labels.append(label)
+
+            # Loop over the dispersion points.
+            for disp_point in loop_point():
+                # The data key.
+                key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                # No data present.
+                if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                    continue
+
+                # Add the data.
+                data[-1].append([disp_point, spin.r2eff_bc[key]])
+
+                # Handle the errors.
+                if err:
+                    data[-1][-1].append(None)
+
+        # Add the residuals for statistical comparison.
+        for frq in loop_frq():
+            # Add a new set for the data at each frequency.
+            data.append([])
+
+            # Add a new label.
+            label = "Residuals"
+            if frq != None:
+                label += " (%.6f MHz)" % (frq / 1e6)
+            set_labels.append(label)
+
+            # Loop over the dispersion points.
+            for disp_point in loop_point():
+                # The data key.
+                key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                # No data present.
+                if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                    continue
+
+                # Add the data.
+                data[-1].append([disp_point, spin.r2eff[key] - spin.r2eff_bc[key]])
+
+                # Handle the errors.
+                if err:
+                    err = True
+                    data[-1][-1].append(spin.r2eff_err[key])
+
+        # The axis labels.
+        if cdp.exp_type == 'CPMG':
+            axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
+        else:
+            axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
+
+        # Write the header.
+        title = "Relaxation dispersion plot"
+        write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels)
+
+        # Write the data.
+        graph_type = 'xy'
+        if err:
+            graph_type = 'xydy'
+        write_xy_data([data], file=file, graph_type=graph_type)
+
+        # Close the file.
+        file.close()
+
+        # Add the file to the results file list.
+        add_result_file(type='grace', label='Grace', file=file_path)
+
+
+def plot_exp_curves(file=None, dir=None, force=None, norm=None):
+    """Custom 2D Grace plotting function for the exponential curves.
+
+    @keyword file:          The name of the Grace file to create.
+    @type file:             str
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
+    @type force:            bool
+    @keyword norm:          The normalisation flag which if set to True will cause all graphs to be normalised to a starting value of 1.
+    @type norm:             bool
+    """
+
+    # Test if the current pipe exists.
+    pipes.test()
+
+    # Test if the sequence data is loaded.
+    if not exists_mol_res_spin_data():
+        raise RelaxNoSequenceError
+
+    # Open the file for writing.
+    file_path = get_file_path(file, dir)
+    file = open_write_file(file, dir, force)
+
+    # Initialise some data structures.
+    data = []
+    set_labels = []
+    x_err_flag = False
+    y_err_flag = False
+
+    # Loop over the spectrometer frequencies.
+    graph_index = 0
+    err = False
+    for frq in loop_frq():
+        # Loop over the dispersion points.
+        for disp_point in loop_point():
+            # Create a new graph.
+            data.append([])
+
+            # Loop over each spin.
+            for spin, id in spin_loop(return_id=True, skip_desel=True):
+                # No data present.
+                if not hasattr(spin, 'intensities'):
+                    continue
+
+                # Append a new set structure and set the name to the spin ID.
+                data[graph_index].append([])
+                if graph_index == 0:
+                    set_labels.append("Spin %s" % id)
+
+                # Loop over the relaxation time periods.
+                for time in cdp.relax_time_list:
+                    # The key.
+                    keys = find_intensity_keys(frq=frq, point=disp_point, time=time)
+
+                    # Loop over each key.
+                    for key in keys:
+                        # No key present.
+                        if key not in spin.intensities:
+                            continue
+
+                        # Add the data.
+                        if hasattr(spin, 'intensity_err'):
+                            data[graph_index][-1].append([time, spin.intensities[key], spin.intensity_err[key]])
+                            err = True
+                        else:
+                            data[graph_index][-1].append([time, spin.intensities[key]])
+
+            # Increment the frq index.
+            graph_index += 1
+
+    # The axis labels.
+    axis_labels = ['Relaxation time period (s)', 'Peak intensities']
+
+    # Write the header.
+    write_xy_header(sets=len(data[0]), file=file, set_names=set_labels, axis_labels=axis_labels, norm=norm)
+
+    # Write the data.
+    graph_type = 'xy'
+    if err:
+        graph_type = 'xydy'
+    write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
+
+    # Close the file.
+    file.close()
+
+    # Add the file to the results file list.
+    add_result_file(type='grace', label='Grace', file=file_path)
 
 
 def relax_time(time=0.0, spectrum_id=None):

@@ -36,7 +36,7 @@ from pipe_control import spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, relax_time, spin_lock_field
+from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
@@ -340,7 +340,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the dispersion curves of the spin-lock field strength or nu_CPMG frequencies verses R2eff/R1rho.  One file will be created per spin system with the name 'disp_x.agr', where x is the spin ID string.")
-uf.backend = relax_disp_obj._plot_disp_curves
+uf.backend = plot_disp_curves
 uf.menu_text = "&plot_disp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (700, 500)
@@ -386,7 +386,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the individual exponential curves used to find the R2eff or R1rho values.  This supplements the grace.write user function which is not capable of generating these curves in a reasonable format.")
-uf.backend = relax_disp_obj._plot_exp_curves
+uf.backend = plot_exp_curves
 uf.menu_text = "&plot_exp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (800, 600)
