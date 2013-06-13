@@ -36,7 +36,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control import pipes
 from lib.errors import RelaxError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
-from lib.io import extract_data, write_data
+from lib.io import extract_data, strip, write_data
 from lib.warnings import RelaxWarning, RelaxZeroVectorWarning
 
 
@@ -152,7 +152,7 @@ def consistent_interatomic_data(pipe1=None, pipe2=None):
             raise RelaxInteratomInconsistentError(pipe1, pipe2)
 
 
-def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
+def create_interatom(spin_id1=None, spin_id2=None, pipe=None, verbose=False):
     """Create and return the interatomic data container for the two spins.
 
     @keyword spin_id1:  The spin ID string of the first atom.
@@ -161,9 +161,15 @@ def create_interatom(spin_id1=None, spin_id2=None, pipe=None):
     @type spin_id2:     str
     @keyword pipe:      The data pipe to create the interatomic data container for.  This defaults to the current data pipe if not supplied.
     @type pipe:         str or None
+    @keyword verbose:   A flag which if True will result printouts.
+    @type verbose:      bool
     @return:            The newly created interatomic data container.
     @rtype:             data.interatomic.InteratomContainer instance
     """
+
+    # Printout.
+    if verbose:
+        print("Creating an interatomic data container between the spins '%s' and '%s'." % (spin_id1, spin_id2))
 
     # The data pipe.
     if pipe == None:
@@ -451,8 +457,9 @@ def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Extract the data from the file.
+    # Extract the data from the file, and clean it up.
     file_data = extract_data(file, dir, sep=sep)
+    file_data = strip(file_data)
 
     # Loop over the RDC data.
     data = []
@@ -490,9 +497,9 @@ def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
 
-        # No container found.
+        # No container found, so create it.
         if interatom == None:
-            raise RelaxNoInteratomError(spin_id1=spin_id1, spin_id2=spin_id2)
+            interatom = create_interatom(spin_id1=spin_id1, spin_id2=spin_id2, verbose=True)
 
         # Store the averaged distance.
         interatom.r = ave_dist
