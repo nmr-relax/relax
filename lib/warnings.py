@@ -113,10 +113,10 @@ class RelaxNoSpinWarning(BaseWarning):
 # PDB warnings.
 ###############
 
-# Zero length XH bond vector.
+# Zero length interactomic vector.
 class RelaxZeroVectorWarning(BaseWarning):
-    def __init__(self, res):
-        self.text = "The XH bond vector for residue " + repr(res) + " is of zero length."
+    def __init__(self, spin_id1, spin_id2):
+        self.text = "The interatomic vector between the spins '%s' and '%s' is of zero length." % (spin_id1, spin_id2)
 
 
 # The atom is missing from the PDB file.

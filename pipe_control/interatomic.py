@@ -710,7 +710,7 @@ def unit_vectors(ave=True):
 
             # Test for zero length.
             if norm_factor == 0.0:
-                warn(RelaxZeroVectorWarning(id))
+                warn(RelaxZeroVectorWarning(spin_id1=interatom.spin_id1, spin_id2=interatom.spin_id2))
 
             # Calculate the normalised vector.
             else:
