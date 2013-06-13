@@ -409,9 +409,9 @@ diffusion\_tensor.init((2e-8, 1.3, 60, 290), param\_types=1, axial\_type=`prolat
 sequence.attach\_protons() \\
  \\
 \# Define the magnetic dipole-dipole relaxation interaction. \\
-dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
-dipole\_pair.unit\_vectors() \\
+interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+interatom.unit\_vectors() \\
  \\
 \# Define the CSA relaxation interaction. \\
 value.set(-172 * 1e-6, `csa') \\

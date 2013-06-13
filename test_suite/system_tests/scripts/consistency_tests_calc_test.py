@@ -32,8 +32,8 @@ self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH)
+self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=NH_BOND_LENGTH)
 
 # Define the chemical shift relaxation interaction.
 self._execute_uf(uf_name='value.set', val=N15_CSA, param='csa')

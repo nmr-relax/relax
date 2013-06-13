@@ -38,8 +38,8 @@ relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600
 sequence.attach\_protons() \\
  \\
 \# Define the magnetic dipole-dipole relaxation interaction. \\
-dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
+interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
  \\
 \# Define the chemical shift relaxation interaction. \\
 value.set(val=-172 * 1e-6, param=`csa') \\
@@ -137,8 +137,8 @@ jw\_mapping.set\_frq(frq=600.0 * 1e6) \\
 Prior to calculating the $J(\omega)$ values, the physical interactions which govern relaxation of the spins must be defined.  For the magnetic dipole-dipole relaxation interaction, the user functions are:
 
 \begin{exampleenv}
-dipole\_pair.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-dipole\_pair.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10)
+interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
+interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10)
 \end{exampleenv}
 
 For the chemical shift relaxation interaction, the user function call is:

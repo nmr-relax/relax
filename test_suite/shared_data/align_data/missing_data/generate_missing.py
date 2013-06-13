@@ -26,8 +26,8 @@ structure.read_pdb(file='LE_trunc.pdb', dir=str_path, set_mol_name='LE')
 structure.load_spins()
 
 # Load the CH vectors.
-dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+interatom.unit_vectors(ave=False)
 
 # Init the alignment tensors.
 A_5D = []

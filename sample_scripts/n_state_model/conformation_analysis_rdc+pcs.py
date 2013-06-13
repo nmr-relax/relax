@@ -58,9 +58,9 @@ spin.isotope(isotope='13C', spin_id='@C*')
 spin.isotope(isotope='1H', spin_id='@H*')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+interatom.unit_vectors(ave=False)
 
 # Deselect the CH2 protons (the rotation of these doesn't work in the model, but the carbon doesn't move).
 deselect.spin(spin_id=':900@H6')

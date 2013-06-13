@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008 Edward d'Auvergne                                        #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,8 +40,8 @@ structure.load_spins(spin_id='@H')
 select.read(file=pardir+sep+'rates.txt', change_all=True, res_num_col=2)
 
 # Set up the NH vectors.
-dipole_pair.define(spin_id1='@N', spin_id2='@H')
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H')
+interatom.unit_vectors()
 
 # Create the PDB file representing the vector distribution.
 structure.create_vector_dist(file='vect_dist.pdb', force=True)

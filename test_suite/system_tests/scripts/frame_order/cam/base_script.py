@@ -184,9 +184,9 @@ class Base_script:
         self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H')
 
         # Define the magnetic dipole-dipole relaxation interaction.
-        self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
-        self._execute_uf(uf_name='dipole_pair.unit_vectors')
+        self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        self._execute_uf(uf_name='interatom.unit_vectors')
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']

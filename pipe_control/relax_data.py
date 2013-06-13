@@ -32,8 +32,8 @@ from warnings import warn
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.exp_info import ExpInfo
-from pipe_control import bmrb, dipole_pair
-from pipe_control.interatomic import create_interatom, return_interatom, return_interatom_list
+from pipe_control import bmrb
+from pipe_control.interatomic import create_interatom, define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import Selection, create_spin, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from pipe_control import pipes
 from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
@@ -190,7 +190,7 @@ def bmrb_read(star, sample_conditions=None):
                     continue
 
                 # Define.
-                dipole_pair.define(spin_id1=spin_id1, spin_id2=spin_id2, verbose=False)
+                define(spin_id1=spin_id1, spin_id2=spin_id2, verbose=False)
 
         # The data and error.
         vals = data['data']

@@ -29,8 +29,8 @@ self._execute_uf(uf_name='bruker.read', ri_id='r2_700', file='T2 dhp 700.txt', d
 self._execute_uf(uf_name='bruker.read', ri_id='noe_700', file='NOE dhp 700.txt', dir=path)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 
 # Define the chemical shift relaxation interaction.
 self._execute_uf(uf_name='value.set', val=-172 * 1e-6, param='csa')

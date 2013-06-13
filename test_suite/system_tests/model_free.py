@@ -1052,9 +1052,9 @@ class Mf(SystemTestCase):
 
         # Define the magnetic dipole-dipole relaxation interaction.
         self.interpreter.structure.load_spins('@H')
-        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+        self.interpreter.interatom.unit_vectors()
 
         # Set up the spin parameters.
         self.interpreter.value.set(N15_CSA, 'csa')
@@ -1096,8 +1096,8 @@ class Mf(SystemTestCase):
         self.interpreter.sequence.attach_protons()
 
         # Define the magnetic dipole-dipole relaxation interaction.
-        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
 
         # Set up the CSA value.
         self.interpreter.value.set(N15_CSA, 'csa')

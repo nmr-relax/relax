@@ -36,8 +36,8 @@ deselect.spin(spin_id=':UNK@H17')
 deselect.spin(spin_id=':UNK@H18')
 
 # Load the CH vectors.
-dipole_pair.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-dipole_pair.unit_vectors(ave=False)
+interatom.define(spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+interatom.unit_vectors(ave=False)
 
 
 # Init the alignment tensors.

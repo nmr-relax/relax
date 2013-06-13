@@ -50,8 +50,8 @@ class Unit_vectors(SystemTestCase):
         self.interpreter.structure.load_spins(spin_id='@H')
 
         # Calculate the unit vectors.
-        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.interatom.unit_vectors()
 
         # Leu 3.
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, 24)
@@ -77,8 +77,8 @@ class Unit_vectors(SystemTestCase):
         self.interpreter.spin.number(force=True)
 
         # Calculate the unit vectors.
-        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.interatom.unit_vectors()
 
         # Leu 3.
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)

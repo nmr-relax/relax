@@ -33,9 +33,9 @@ self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H17')
 self._execute_uf(uf_name='deselect.spin', spin_id=':UNK@H18')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='interatom.define', spin_id1='@C*', spin_id2='@H*', direct_bond=True)
+self._execute_uf(uf_name='interatom.set_dist', spin_id1='@C*', spin_id2='@H*', ave_dist=1.10 * 1e-10)
+self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
 # Set the nuclear isotope type.
 self._execute_uf(uf_name='spin.isotope', isotope='13C', spin_id='@C*')

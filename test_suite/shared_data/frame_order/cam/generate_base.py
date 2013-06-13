@@ -148,9 +148,9 @@ class Main:
         self.interpreter.spin.isotope(isotope='1H', spin_id='@H')
 
         # Define the magnetic dipole-dipole relaxation interaction.
-        self.interpreter.dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
-        self.interpreter.dipole_pair.unit_vectors()
+        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        self.interpreter.interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        self.interpreter.interatom.unit_vectors()
 
         # Back up the original positional data.
         self._backup_pos()

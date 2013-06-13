@@ -22,8 +22,8 @@ structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@H')
 
 # Set up the XH vectors.
-dipole_pair.define(spin_id1='@N', spin_id2='@H')
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H')
+interatom.unit_vectors()
 
 # Create the PDB file.
 structure.create_vector_dist(file='devnull', force=True)

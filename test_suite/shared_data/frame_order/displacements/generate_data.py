@@ -17,9 +17,9 @@ spin.isotope(isotope='1H', spin_id='@H')
 
 
 # Define the magnetic dipole-dipole interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
-dipole_pair.unit_vectors()
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+interatom.unit_vectors()
 
 # Initialise some random tensors.
 align_tensor.init(tensor='Dy', align_id='dy', params=(-0.000283041921495, 0.00017331020651, 0.000348144461756, 0.00109678563394, -0.000261126459214), param_types=2)

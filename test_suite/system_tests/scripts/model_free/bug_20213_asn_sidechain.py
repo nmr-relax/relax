@@ -64,9 +64,9 @@ relax_data.read(ri_id='R2_750',  ri_type='R2',  frq=750.04990*1e6, file='./750/r
 relax_data.read(ri_id='NOE_750', ri_type='NOE', frq=750.04990*1e6, file='./750/750_noe.out', dir=data_path, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=5, data_col=3, error_col=4, sep=None, spin_id=None)
 
 # Define the magnetic dipole-dipole relaxation interaction.
-dipole_pair.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-dipole_pair.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02e-10)
-dipole_pair.unit_vectors(ave=True)
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02e-10)
+interatom.unit_vectors(ave=True)
 
 # Define the chemical shift relaxation interaction.
 value.set(val=-0.000172, param='csa', spin_id=None)

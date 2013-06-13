@@ -648,8 +648,8 @@ class Stereochem_analysis:
             self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id1_col=self.rdc_spin_id1_col, spin_id2_col=self.rdc_spin_id2_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
             # Define the magnetic dipole-dipole relaxation interaction.
-            self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
-            self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@Q*', ave_dist=self.bond_length)
+            self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+            self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@Q*', ave_dist=self.bond_length)
 
             # Set the nuclear isotope.
             self.interpreter.spin.isotope(isotope='13C', spin_id='@C*')
@@ -678,8 +678,8 @@ class Stereochem_analysis:
 
                 # Get the positional information, then load the CH vectors.
                 self.interpreter.structure.get_pos(ave_pos=False)
-                self.interpreter.dipole_pair.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
-                self.interpreter.dipole_pair.unit_vectors(ave=False)
+                self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+                self.interpreter.interatom.unit_vectors(ave=False)
 
                 # Minimisation.
                 #grid_search(inc=4)

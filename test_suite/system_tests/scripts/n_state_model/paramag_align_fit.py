@@ -24,9 +24,9 @@ self._execute_uf(uf_name='structure.read_pdb', file='bax_C_1J7P_N_H_Ca', dir=STR
 self._execute_uf(uf_name='structure.load_spins')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='dipole_pair.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
-self._execute_uf(uf_name='dipole_pair.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
-self._execute_uf(uf_name='dipole_pair.unit_vectors', ave=False)
+self._execute_uf(uf_name='interatom.define', spin_id1='@N', spin_id2='@H', direct_bond=True)
+self._execute_uf(uf_name='interatom.set_dist', spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
 # Set the nuclear isotope.
 self._execute_uf(uf_name='spin.isotope', isotope='15N', spin_id='@N')
