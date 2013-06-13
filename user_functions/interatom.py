@@ -115,7 +115,6 @@ uf.add_keyarg(
     arg_type = "spin ID",
     desc_short = "first spin ID string",
     desc = "The spin ID string for the first spin of the interatomic interaction.",
-    wiz_combo_iter = get_spin_ids,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -125,7 +124,6 @@ uf.add_keyarg(
     arg_type = "spin ID",
     desc_short = "second spin ID string",
     desc = "The spin ID string for the second spin of the interatomic interaction.",
-    wiz_combo_iter = get_spin_ids,
     can_be_none = True
 )
 uf.add_keyarg(
