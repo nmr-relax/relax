@@ -152,8 +152,9 @@ class Auto_relax_disp(Base_analysis):
         self.opt_func_tol = 1e-25
         self.opt_max_iterations = int(1e7)
 
-        # Update the isotope information.
+        # Update the isotope and cluster information.
         self.update_isotopes()
+        self.update_clusters()
 
 
     def activate(self):
@@ -168,6 +169,7 @@ class Auto_relax_disp(Base_analysis):
         wx.CallAfter(self.field_results_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
         wx.CallAfter(self.field_isotope.Enable, enable)
+        wx.CallAfter(self.field_cluster.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
         wx.CallAfter(self.model_field.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
@@ -271,6 +273,9 @@ class Auto_relax_disp(Base_analysis):
             self.model_field = Disp_model_list_r1rho(self, box)
         self.model_field.set_value(self.data.disp_models)
 
+        # Spin cluster setup.
+        self.field_cluster = Text_ctrl(box, self, text="Spin cluster IDs:", button_text=" Cluster", icon=fetch_icon("relax.cluster", "16x16"), tooltip="The list of currently defined spin clusters.  A spin cluster will share the same the dispersion parameters during the optimisation of the dispersion model.  The special 'free spins' cluster ID refers to all non-clustered spins.", tooltip_button="Define clusters of spins using the relax_disp.cluster user function.", fn=self.relax_disp_cluster, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
         # The optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
@@ -350,6 +355,7 @@ class Auto_relax_disp(Base_analysis):
             status.observers.gui_uf.register('spin count - %s' % self.data.pipe_bundle, self.update_spin_count, method_name='update_spin_count')
             status.observers.exec_lock.register(self.data.pipe_bundle, self.activate, method_name='activate')
             status.observers.gui_uf.register('isotopes - %s' % self.data.pipe_bundle, self.update_isotopes, method_name='update_isotopes')
+            status.observers.gui_uf.register('clusters - %s' % self.data.pipe_bundle, self.update_clusters, method_name='update_clusters')
 
         # Unregister.
         else:
@@ -357,6 +363,7 @@ class Auto_relax_disp(Base_analysis):
             status.observers.gui_uf.unregister('spin count - %s' % self.data.pipe_bundle)
             status.observers.exec_lock.unregister(self.data.pipe_bundle)
             status.observers.gui_uf.unregister('isotopes - %s' % self.data.pipe_bundle)
+            status.observers.gui_uf.unregister('clusters - %s' % self.data.pipe_bundle)
 
             # The embedded objects methods.
             self.peak_intensity.observer_register(remove=True)
@@ -371,6 +378,17 @@ class Auto_relax_disp(Base_analysis):
 
         # A new wizard instance.
         self.peak_wizard = Peak_intensity_wizard(relax_disp=True, relax_disp_cpmg=self.relax_disp_cpmg, relax_disp_times=self.relax_times_flag)
+
+
+    def relax_disp_cluster(self, event=None):
+        """Set up spin clustering via the relax_disp.cluster user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['relax_disp.cluster'](wx_wizard_modal=True)
 
 
     def relax_disp_exp_type(self, event):
@@ -423,7 +441,7 @@ class Auto_relax_disp(Base_analysis):
         """
 
         # Call the user function.
-        uf_store['spin.isotope'](isotope='15N', spin_id='@N*')
+        uf_store['spin.isotope'](wx_wizard_modal=True, isotope='15N', spin_id='@N*')
 
 
     def sync_ds(self, upload=False):
@@ -458,6 +476,33 @@ class Auto_relax_disp(Base_analysis):
             self.data.disp_models = self.model_field.GetValue()
         else:
             self.model_field.set_value(self.data.disp_models)
+
+
+    def update_clusters(self):
+        """Update the cluster field."""
+
+        # Assemble a list of all unique isotope types.
+        cluster_keys = []
+        if hasattr(cdp, 'clustering'):
+            cluster_keys = sorted(cdp.clustering.keys())
+
+        # Nothing yet.
+        if not len(cluster_keys):
+            self.field_cluster.SetValue("free spins")
+
+        # List the clusters.
+        else:
+            # Build the text to show.
+            if "free spins" in cluster_keys:
+                text = "free spins"
+            else:
+                text = cluster_keys[0]
+            for i in range(1, len(cluster_keys)):
+                if cluster_keys[i] != "free spins":
+                    text += ", %s" % cluster_keys[i]
+
+            # Update the text.
+            self.field_cluster.SetValue(text)
 
 
     def update_isotopes(self):
