@@ -52,8 +52,8 @@ class Interatomic(SystemTestCase):
         self.interpreter.spin.create(res_num=2, spin_name='H')
 
         # Define the interatomic interaction.
-        self.interpreter.interatom.create(spin_id1=':1@N', spin_id2=':1@H')
-        self.interpreter.interatom.create(spin_id1=':2@N', spin_id2=':2@H')
+        self.interpreter.interatom.define(spin_id1=':1@N', spin_id2=':1@H', direct_bond=False)
+        self.interpreter.interatom.define(spin_id1=':2@N', spin_id2=':2@H', direct_bond=False)
 
         # Add some test data.
         cdp.interatomic[0].x = 1
@@ -95,11 +95,11 @@ class Interatomic(SystemTestCase):
             self.assertEqual(cdp.mol[0].res[1].spin[1].name, 'H')
 
             # Check the interatomic data.
-            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id1, ':2@N')
-            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id2, ':2@H')
+            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id1, '#Test mol:2@N')
+            self.assertEqual(cdp.interatomic[interatom_index[i][0]].spin_id2, '#Test mol:2@H')
             self.assertEqual(cdp.interatomic[interatom_index[i][0]].y, 2)
-            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id1, ':1@N')
-            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id2, ':1@H')
+            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id1, '#Test mol:1@N')
+            self.assertEqual(cdp.interatomic[interatom_index[i][1]].spin_id2, '#Test mol:1@H')
             self.assertEqual(cdp.interatomic[interatom_index[i][1]].x, 1)
 
 

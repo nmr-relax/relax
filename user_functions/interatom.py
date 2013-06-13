@@ -104,28 +104,36 @@ uf.wizard_size = (700, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 
-# The interatom.create user function.
-uf = uf_info.add_uf('interatom.create')
-uf.title = "Create a new spin."
-uf.title_short = "Spin creation."
-uf.display = True
+# The interatom.define user function.
+uf = uf_info.add_uf('interatom.define')
+uf.title = "Define interatomic interactions between pairs of spins."
+uf.title_short = "Interatomic interaction setup."
 uf.add_keyarg(
     name = "spin_id1",
+    default = "@N",
     py_type = "str",
     arg_type = "spin ID",
-    desc_short = "first spin ID",
-    desc = "The spin ID of the first spin.",
+    desc_short = "first spin ID string",
+    desc = "The spin ID string for the first spin of the interatomic interaction.",
     wiz_combo_iter = get_spin_ids,
     can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_id2",
+    default = "@H",
     py_type = "str",
     arg_type = "spin ID",
-    desc_short = "second spin ID",
-    desc = "The spin ID of the first spin.",
+    desc_short = "second spin ID string",
+    desc = "The spin ID string for the second spin of the interatomic interaction.",
     wiz_combo_iter = get_spin_ids,
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "direct_bond",
+    default = True,
+    py_type = "bool",
+    desc_short = "directly bonded atoms flag",
+    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
 )
 uf.add_keyarg(
     name = "pipe",
@@ -139,52 +147,13 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will add a new interatomic data container connecting two existing spins to the relax data storage object.")
+uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, for example, pairs of spins which are coupled via the magnetic dipole-dipole interaction need to be defined.  This function will create an interatomic data object connecting two existing spins.  This data container will be used to store all all information about the interactomic interaction including interatomic vectors and distances.")
+uf.desc[-1].add_paragraph("For analyses which use relaxation data, simply defining the interatomic interaction will indicate that there is a dipolar relaxation mechanism operating between the two spins.  Note that for model-free analyses or reduced spectral density mapping, only a single relaxation mechanism can be handled.  For RDC dependent analyses, the presence of the interatomic interaction indicates that dipolar coupling is expected between the two spins.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To connect the spins ':1@N' to ':1@H', type one of:")
-uf.desc[-1].add_prompt("relax> interatom.create(':1@N', ':1@H')")
-uf.desc[-1].add_prompt("relax> interatom.create(spin_id1=':1@N', spin_id2=':1@H')")
-uf.backend = interatomic.create_interatom
-uf.menu_text = "c&reate"
-uf.gui_icon = "oxygen.actions.list-add-relax-blue"
-uf.wizard_size = (700, 500)
-uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
-
-
-# The interatom.define user function.
-uf = uf_info.add_uf('interatom.define')
-uf.title = "Define interatomic interactions between pairs of spins."
-uf.title_short = "Interatomic interaction setup."
-uf.add_keyarg(
-    name = "spin_id1",
-    default = "@N",
-    py_type = "str",
-    arg_type = "spin ID",
-    desc_short = "first spin ID string",
-    desc = "The spin identification string for the first spin of the dipole pair."
-)
-uf.add_keyarg(
-    name = "spin_id2",
-    default = "@H",
-    py_type = "str",
-    arg_type = "spin ID",
-    desc_short = "second spin ID string",
-    desc = "The spin identification string for the second spin of the dipole pair."
-)
-uf.add_keyarg(
-    name = "direct_bond",
-    default = True,
-    py_type = "bool",
-    desc_short = "directly bonded atoms flag",
-    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
-)
-# Description.
-uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("To analyse relaxation or residual dipolar coupling (RDC) data, for example, pairs of spins which are coupled via the magnetic dipole-dipole interaction need to be defined.  This function will create an interatomic data object which will be used to store all all information about the interactomic interaction.")
-uf.desc[-1].add_paragraph("For analyses which use relaxation data, simply defining the interatomic interaction will indicate that there is a dipolar relaxation mechanism operating between the two spins.  Note that for model-free analyses or reduced spectral density mapping, only a single relaxation mechanism can be handled.  For RDC dependent analyses, this indicates that dipolar coupling is expected between the two spins.")
-# Prompt examples.
-uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_prompt("relax> interatom.define(':1@N', ':1@H')")
+uf.desc[-1].add_prompt("relax> interatom.define(spin_id1=':1@N', spin_id2=':1@H')")
 uf.desc[-1].add_paragraph("To define the protein 15N heteronuclear relaxation mechanism for a model-free analysis, type one of the following:")
 uf.desc[-1].add_prompt("relax> interatom.define('@N', '@H', True)")
 uf.desc[-1].add_prompt("relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)")

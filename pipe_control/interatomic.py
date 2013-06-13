@@ -286,7 +286,7 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
 
     # Print out.
     if verbose:
-        print("Magnetic dipole-dipole interactions are now defined for the following spins:\n")
+        print("Interatomic interactions are now defined for the following spins:\n")
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
 
