@@ -123,6 +123,3 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
-
-# Save the program state.
-state.save('state', force=True)
