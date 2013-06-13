@@ -347,7 +347,10 @@ Reference commits:
 
 \href{http://article.gmane.org/gmane.science.nmr.relax.scm/17663}{http://article.gmane.org/gmane.science.nmr.relax.scm/17663}
 
-This step is normally performed first.  This is the most important part that makes sure that the code not only works now, but will continue working for the entire lifetime of the relax project.
+This step is normally performed first.
+This is the most important part that makes sure that the code not only works now, but will continue working for the entire lifetime of the relax project.
+Note that if a code path is not tested, it will not considered to be a part of relax.
+As relax is in a continuous state of evolution, \href{http://en.wikipedia.org/wiki/Bit\_rot}{bit rot} is quite severe and the code will likely no longer function after a year or two.
 
 The idea is that synthetic data, here for example as Sparky\index{software!Sparky} peak lists, is created for the model and added to the test suite directory \directory{test\_suite/shared\_data/dispersion/}.  This is then used in a system test to check that the code in relax can reproduce the data.  It is very important that the code added to the relax library is not used to create the synthetic data!
 
