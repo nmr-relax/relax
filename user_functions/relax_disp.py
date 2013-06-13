@@ -85,6 +85,7 @@ uf.desc[-1].add_prompt("relax> relax_disp.cluster('cluster', ':1,3@N)")
 uf.desc[-1].add_prompt("relax> relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N)")
 uf.backend = relax_disp_obj._cluster
 uf.menu_text = "c&luster"
+uf.gui_icon = "relax.cluster"
 uf.wizard_height_desc = 500
 uf.wizard_size = (800, 600)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
