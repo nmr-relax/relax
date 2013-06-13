@@ -40,7 +40,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from lib.alignment.rdc import ave_rdc_tensor
 from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
-from lib.io import extract_data, open_write_file, write_data
+from lib.io import extract_data, open_write_file, strip, write_data
 from lib.warnings import RelaxWarning
 
 
@@ -586,8 +586,9 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     # Spin specific data.
     #####################
 
-    # Extract the data from the file.
+    # Extract the data from the file, and remove comments and blank lines.
     file_data = extract_data(file, dir, sep=sep)
+    file_data = strip(file_data)
 
     # Loop over the RDC data.
     data = []
