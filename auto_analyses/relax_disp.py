@@ -203,6 +203,9 @@ class Relax_disp:
         else:
             warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
 
+        # Finally save the program state.
+        self.interpreter.state.save(state='final_state', dir=self.results_dir, force=True)
+
 
     def write_results(self, path=None, model=None):
         """Create a set of results, text and Grace files for the current data pipe.
