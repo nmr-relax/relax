@@ -242,10 +242,10 @@ class Auto_relax_disp(Base_analysis):
 
         # Display the experiment type.
         table = {
-            "cpmg fixed": "Fixed relaxation time period CPMG-type experiment",
-            "cpmg exponential": "Full exponential curve CPMG-type experiment",
-            "r1rho fixed": u"Fixed relaxation time period R\u2081\u1D68-type experiment",
-            "r1rho exponential": u"Full exponential curve R\u2081\u1D68-type experiment"
+            "cpmg fixed": "CPMG-type experiment - fixed relaxation time period",
+            "cpmg exponential": "CPMG-type experiment - Full exponential curve",
+            "r1rho fixed": u"R\u2081\u1D68-type experiment - fixed relaxation time period",
+            "r1rho exponential": u"R\u2081\u1D68-type experiment - full exponential curve"
         }
         Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  The %s experiment type was selected in the new analysis wizard and can no longer be changed."%table[cdp.exp_type], editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
