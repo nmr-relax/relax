@@ -49,7 +49,7 @@ uf_class.gui_icon = "relax.dipole_pair"
 # The interatom.copy user function.
 uf = uf_info.add_uf('interatom.copy')
 uf.title = "Copy all data associated with a interatomic data container."
-uf.title_short = "Spin copying."
+uf.title_short = "Interatomic interaction copying."
 uf.display = True
 uf.add_keyarg(
     name = "pipe_from",
@@ -133,7 +133,7 @@ uf.add_keyarg(
     default = True,
     py_type = "bool",
     desc_short = "directly bonded atoms flag",
-    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simply the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
+    desc = "This is a flag which if True means that the two spins are directly bonded.  This flag is useful to simplify the set up of the main heteronuclear relaxation mechanism or one-bond residual dipolar couplings."
 )
 uf.add_keyarg(
     name = "pipe",
@@ -167,8 +167,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 # The interatom.read_dist user function.
 uf = uf_info.add_uf('interatom.read_dist')
-uf.title = "Load the inter-spin distances for the interatomic interactions from a file."
-uf.title_short = "Interatomic distance loading."
+uf.title = "Read inter-spin distances from a file."
+uf.title_short = "Interatomic distance reading."
 uf.add_keyarg(
     name = "file",
     py_type = "str",
@@ -190,7 +190,7 @@ uf.add_keyarg(
     default = "meter",
     py_type = "str",
     desc_short = "distance unit",
-    desc = "The unit of distance.  The default is 'meter', but 'Angstrom' can also be specified.",
+    desc = "The unit of distance.  The default is meter, but Angstrom can also be specified.",
     wiz_element_type = "combo",
     wiz_combo_choices = ["meter", "Angstrom"],
     wiz_read_only = True
@@ -232,8 +232,8 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows interatomic distances to be read from a file.  This is useful in the case when the distances vary, avoiding having to tediously use the interatom.set_dist user function for each spin-pair separately.  The format of the file should be columnar, with the two spin ID strings in two separate columns and the distances in any other.  The default measurement unit is 'meter' but this can be changed to 'Angstrom'.")
-uf.desc[-1].add_paragraph("For RDC and relaxation based anylses, as the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these r^-3 average distances must be explicitly defined.")
+uf.desc[-1].add_paragraph("This allows interatomic distances to be read from a file.  This is useful in the case when the distances vary, avoiding having to tediously use the interatom.set_dist user function for each spin-pair separately.  The format of the file should be columnar, with the two spin ID strings in two separate columns and the distances in any other.  The default measurement unit is meter but this can be changed to Angstrom.")
+uf.desc[-1].add_paragraph("For RDC and relaxation based analyses, as the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these r^-3 average distances must be explicitly defined.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load the distances in meters from the fifth column of the 'distances' file, and where the spin IDs are in the first and second columns, type one of the following:")
@@ -249,8 +249,8 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'dipole_pair' + sep + 'NH_dipole_pair.png'
 
 # The interatom.set_dist user function.
 uf = uf_info.add_uf('interatom.set_dist')
-uf.title = "Set the inter-spin distances for the interatomic interactions."
-uf.title_short = "Magnetic dipole-dipole distance setup."
+uf.title = "Set the inter-spin distances."
+uf.title_short = "Interatomic distance setup."
 uf.add_keyarg(
     name = "spin_id1",
     default = "@N",
@@ -286,7 +286,8 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("As the magnetic dipole-dipole interaction is averaged in NMR over the interatomic distance to the inverse third power, the interatomic distances within a 3D structural file are of no use for defining the interaction.  Therefore these average distances must be explicitly supplied.  This user function allows these distances to be set up.  The default measurement unit is 'meter' but this can be changed to 'Angstrom'.")
+uf.desc[-1].add_paragraph("For many NMR interactions, the distance between the spin of interest and another spin or atom must be defined.  This information can be extracted from a 3D structure but, in many cases, these distances are not of interest.  For example the empirical or fixed distance calculation of proton positions in X-ray crystallographic structures will often not correspond to the real interatomic distances.")
+uf.desc[-1].add_paragraph("Another example is the magnetic dipole-dipole interaction which is averaged over the interatomic distance to the inverse third power.  In this case, the interatomic distances from any 3D structural file can be of no use for defining the interaction.  The average distances must be explicitly supplied.  This user function allows these distances to be set up.  The default measurement unit is meter but this can be changed to Angstrom.  Alternatively the distances can be read from a file using other user functions in this class.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the N-H distance for protein the 15N heteronuclear relaxation mechanism to 1.02 Angstrom, type one of the following:")
