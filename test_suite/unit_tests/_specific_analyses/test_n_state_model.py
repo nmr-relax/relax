@@ -24,7 +24,7 @@ from math import pi
 from unittest import TestCase
 
 # relax module imports.
-from specific_analyses import n_state_model
+from specific_analyses.n_state_model import parameters
 from test_suite.unit_tests.n_state_model_testing_base import N_state_model_base_class
 
 
@@ -32,11 +32,11 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
     """Unit tests for the functions of the 'specific_analyses.n_state_model' module."""
 
     # Place the specific_analyses.n_state_model module into the class namespace.
-    n_state_model_fns = n_state_model.N_state_model()
+    n_state_model_fns = parameters
 
 
-    def test__assemble_param_vector(self):
-        """Test the operation of the specific_analyses.n_state_model._assemble_param_vector() method."""
+    def test_assemble_param_vector(self):
+        """Test the operation of the specific_analyses.n_state_model.parameters.assemble_param_vector() method."""
 
         # Set up the N, probabilities and Euler angles.
         cdp.N = 3
@@ -50,7 +50,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         cdp.align_tensors = None
 
         # Get the parameter vector.
-        param_vector = self.n_state_model_fns._assemble_param_vector()
+        param_vector = self.n_state_model_fns.assemble_param_vector()
 
         # The correct result.
         vector_true = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
@@ -61,8 +61,8 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
             self.assertEqual(param_vector[i], vector_true[i])
 
 
-    def test__disassemble_param_vector(self):
-        """Test the operation of the specific_analyses.n_state_model._disassemble_param_vector() method."""
+    def test_disassemble_param_vector(self):
+        """Test the operation of the specific_analyses.n_state_model.parameters.disassemble_param_vector() method."""
 
         # Set up the initial N, probabilities and Euler angles.
         cdp.N = 3
@@ -76,7 +76,7 @@ class Test_n_state_model(N_state_model_base_class, TestCase):
         param_vector = [0.1, 0.3, 0.0, pi/2, 1.0, pi/2, pi, 3*pi/2, pi, 3*pi/2, 2*pi]
 
         # Disassemble the parameter vector.
-        self.n_state_model_fns._disassemble_param_vector(param_vector, data_types=['tensor'])
+        self.n_state_model_fns.disassemble_param_vector(param_vector, data_types=['tensor'])
 
         # Check the probabilities.
         self.assertEqual(cdp.probs, [0.1, 0.3, 0.6])
