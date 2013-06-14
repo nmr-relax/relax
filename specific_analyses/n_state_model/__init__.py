@@ -56,7 +56,7 @@ from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.n_state_model.data import base_data_types, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, tensor_loop
+from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, tensor_loop
 from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_model_index, param_num, update_model
 from target_functions.n_state_model import N_state_opt
 from target_functions.potential import quad_pot
@@ -86,54 +86,6 @@ class N_state_model(API_base, API_common):
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
-
-
-    def _calc_ave_dist(self, atom1, atom2, exp=1):
-        """Calculate the average distances.
-
-        The formula used is::
-
-                      _N_
-                  / 1 \                  \ 1/exp
-            <r> = | -  > |p1i - p2i|^exp |
-                  \ N /__                /
-                       i
-
-        where i are the members of the ensemble, N is the total number of structural models, and p1
-        and p2 at the two atom positions.
-
-
-        @param atom1:   The atom identification string of the first atom.
-        @type atom1:    str
-        @param atom2:   The atom identification string of the second atom.
-        @type atom2:    str
-        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
-                        r^-6 NOE averaging.
-        @type exp:      int
-        @return:        The average distance between the two atoms.
-        @rtype:         float
-        """
-
-        # Get the spin containers.
-        spin1 = return_spin(atom1)
-        spin2 = return_spin(atom2)
-
-        # Loop over each model.
-        num_models = len(spin1.pos)
-        ave_dist = 0.0
-        for i in range(num_models):
-            # Distance to the minus sixth power.
-            dist = norm(spin1.pos[i] - spin2.pos[i])
-            ave_dist = ave_dist + dist**(exp)
-
-        # Average.
-        ave_dist = ave_dist / num_models
-
-        # The exponent.
-        ave_dist = ave_dist**(1.0/exp)
-
-        # Return the average distance.
-        return ave_dist
 
 
     def _CoM(self, pivot_point=None, centre=None):
@@ -1004,7 +956,7 @@ class N_state_model(API_base, API_common):
                 upper[i] = cdp.noe_restraints[i][3]
 
                 # Calculate the average distances, using -6 power averaging.
-                dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+                dist[i] = calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
 
             # Calculate the quadratic potential.
             quad_pot(dist, pot, lower, upper)

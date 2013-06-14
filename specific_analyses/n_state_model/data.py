@@ -23,6 +23,7 @@
 """Module for handling base data of the N-state model or structural ensemble analysis."""
 
 # Python module imports.
+from numpy.linalg import norm
 from warnings import warn
 
 # relax module imports.
@@ -30,7 +31,7 @@ from lib.errors import RelaxError, RelaxNoValueError, RelaxSpinTypeError
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import spin_loop
+from pipe_control.mol_res_spin import return_spin, spin_loop
 
 
 def base_data_types():
@@ -75,6 +76,54 @@ def base_data_types():
 
     # Return the list.
     return list
+
+
+def calc_ave_dist(atom1, atom2, exp=1):
+    """Calculate the average distances.
+
+    The formula used is::
+
+                  _N_
+              / 1 \                  \ 1/exp
+        <r> = | -  > |p1i - p2i|^exp |
+              \ N /__                /
+                   i
+
+    where i are the members of the ensemble, N is the total number of structural models, and p1
+    and p2 at the two atom positions.
+
+
+    @param atom1:   The atom identification string of the first atom.
+    @type atom1:    str
+    @param atom2:   The atom identification string of the second atom.
+    @type atom2:    str
+    @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
+                    r^-6 NOE averaging.
+    @type exp:      int
+    @return:        The average distance between the two atoms.
+    @rtype:         float
+    """
+
+    # Get the spin containers.
+    spin1 = return_spin(atom1)
+    spin2 = return_spin(atom2)
+
+    # Loop over each model.
+    num_models = len(spin1.pos)
+    ave_dist = 0.0
+    for i in range(num_models):
+        # Distance to the minus sixth power.
+        dist = norm(spin1.pos[i] - spin2.pos[i])
+        ave_dist = ave_dist + dist**(exp)
+
+    # Average.
+    ave_dist = ave_dist / num_models
+
+    # The exponent.
+    ave_dist = ave_dist**(1.0/exp)
+
+    # Return the average distance.
+    return ave_dist
 
 
 def check_rdcs(interatom, spin1, spin2):
