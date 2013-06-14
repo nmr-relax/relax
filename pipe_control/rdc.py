@@ -468,7 +468,7 @@ def q_factors(spin_id=None):
                 rdc_data = True
             if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
-            j_flag = True
+            j_flag = False
             if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
                 j_flag = True
                 if not hasattr(interatom, 'j_coupling'):
