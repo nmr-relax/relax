@@ -577,6 +577,11 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
+    # Check the data types.
+    rdc_types = ['D', '2D']
+    if data_type not in rdc_types:
+        raise RelaxError("The RDC data type '%s' must be one of %s." % (data_type, rdc_types))
+
     # Store the data type as global data (need for the conversion of RDC data).
     if not hasattr(cdp, 'rdc_data_types'):
         cdp.rdc_data_types = {}
