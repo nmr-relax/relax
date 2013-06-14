@@ -553,7 +553,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     @type dir:              str or None
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.
+    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.  If set to 'T', then the data will be marked as being J+D values.
     @keyword spin_id1_col:  The column containing the spin ID strings of the first spin.
     @type spin_id1_col:     int
     @keyword spin_id2_col:  The column containing the spin ID strings of the second spin.
@@ -578,7 +578,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         raise RelaxError("One of either the data or error column must be supplied.")
 
     # Check the data types.
-    rdc_types = ['D', '2D']
+    rdc_types = ['D', '2D', 'T']
     if data_type not in rdc_types:
         raise RelaxError("The RDC data type '%s' must be one of %s." % (data_type, rdc_types))
 
