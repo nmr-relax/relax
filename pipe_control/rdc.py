@@ -39,7 +39,7 @@ from pipe_control.interatomic import consistent_interatomic_data, create_interat
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from lib.alignment.rdc import ave_rdc_tensor
 from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
+from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.warnings import RelaxWarning
 
@@ -468,6 +468,11 @@ def q_factors(spin_id=None):
                 rdc_data = True
             if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
+            j_flag = True
+            if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+                j_flag = True
+                if not hasattr(interatom, 'j_coupling'):
+                    raise RelaxNoJError
 
             # Skip containers without RDC data.
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc or interatom.rdc[align_id] == None or not align_id in interatom.rdc_bc or interatom.rdc_bc[align_id] == None:
@@ -481,7 +486,10 @@ def q_factors(spin_id=None):
             sse = sse + (interatom.rdc[align_id] - interatom.rdc_bc[align_id])**2
 
             # Sum the RDCs squared (for one type of normalisation).
-            D2_sum = D2_sum + interatom.rdc[align_id]**2
+            if j_flag:
+                D2_sum = D2_sum + (interatom.rdc[align_id] - interatom.j_coupling)**2
+            else:
+                D2_sum = D2_sum + interatom.rdc[align_id]**2
 
             # Gyromagnetic ratios.
             g1 = return_gyromagnetic_ratio(spin1.isotope)
