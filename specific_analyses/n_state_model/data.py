@@ -293,7 +293,7 @@ def opt_uses_j_couplings():
 
     # Loop over the alignments.
     for align_id in cdp.align_ids:
-        if cdp.rdc_data_types[align_id] == 'T':
+        if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
             return True
 
     # No J values required.
