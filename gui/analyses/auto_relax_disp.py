@@ -238,7 +238,7 @@ class Auto_relax_disp(Base_analysis):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_title(box, "Setup for the relaxation dispersion analysis")
+        self.add_title(box, "Relaxation dispersion analysis")
 
         # Display the experiment type.
         table = {
