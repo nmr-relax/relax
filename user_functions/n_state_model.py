@@ -32,6 +32,7 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.setup import n_state_model_obj
+from specific_analyses.n_state_model.parameters import elim_no_prob, number_of_states, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -164,7 +165,7 @@ uf.desc[-1].add_paragraph("This will simply remove the structures from the N-sta
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("Simply type:")
 uf.desc[-1].add_prompt("relax> n_state_model.elim_no_prob(N=8)")
-uf.backend = n_state_model_obj._elim_no_prob
+uf.backend = elim_no_prob
 uf.menu_text = "&elim_no_prob"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_size = (700, 400)
@@ -190,7 +191,7 @@ uf.desc[-1].add_paragraph("Prior to optimisation, the number of states in the N-
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up an 8-state model, type:")
 uf.desc[-1].add_prompt("relax> n_state_model.number_of_states(N=8)")
-uf.backend = n_state_model_obj._number_of_states
+uf.backend = number_of_states
 uf.menu_text = "&number_of_states"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_apply_button = False
@@ -214,7 +215,7 @@ uf.desc[-1].add_paragraph("Prior to optimisation of the '2-domain' N-state model
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up a 5-state model with 'C' domain being the frame of reference, type:")
 uf.desc[-1].add_prompt("relax> n_state_model.ref_domain(ref='C')")
-uf.backend = n_state_model_obj._ref_domain
+uf.backend = ref_domain
 uf.menu_text = "&ref_domain"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'n_state_model.png'
@@ -244,7 +245,7 @@ uf.desc[-1].add_item_list_element("'2-domain'", "The N-state model for a system 
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To analyse populations of states, type:")
 uf.desc[-1].add_prompt("relax> n_state_model.select_model(model='populations')")
-uf.backend = n_state_model_obj._select_model
+uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 400
