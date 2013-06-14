@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -87,7 +87,7 @@ def ave_rdc_5D(dj, vect, N, A, weights=None):
     return dj * val
 
 
-def ave_rdc_tensor(dj, vect, N, A, weights=None, absolute=False):
+def ave_rdc_tensor(dj, vect, N, A, weights=None):
     """Calculate the ensemble average RDC, using the 3D tensor.
 
     This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC value is::
@@ -136,8 +136,6 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None, absolute=False):
     @type A:            numpy rank-2 3D tensor
     @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
     @type weights:      numpy rank-1 array or None
-    @keyword absolute:  The absolute value or signless RDC flag.
-    @type absolute:     int
     @return:            The average RDC value.
     @rtype:             float
     """
@@ -161,13 +159,10 @@ def ave_rdc_tensor(dj, vect, N, A, weights=None, absolute=False):
         val = val + weights[c] * dot(vect[c], dot(A, vect[c]))
 
     # Return the average RDC.
-    if absolute:
-        return abs(dj * val)
-    else:
-        return dj * val
+    return dj * val
 
 
-def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None, absolute=False):
+def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     """Calculate the ensemble average RDC gradient element for Amn, using the 3D tensor.
 
     This function calculates the average RDC gradient for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC gradient element is::
@@ -203,8 +198,6 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None, absolute=False
     @type dAi_dAmn:     numpy rank-2 3D tensor
     @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
     @type weights:      numpy rank-1 array
-    @keyword absolute:  The absolute value or signless RDC flag.
-    @type absolute:     int
     @return:            The average RDC gradient element.
     @rtype:             float
     """
@@ -228,13 +221,10 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None, absolute=False
         grad = grad + weights[c] * dot(vect[c], dot(dAi_dAmn, vect[c]))
 
     # Return the average RDC gradient element.
-    if absolute:
-        return dj * grad
-    else:
-        return dj * grad
+    return dj * grad
 
 
-def rdc_tensor(dj, mu, A, absolute=False):
+def rdc_tensor(dj, mu, A):
     """Calculate the RDC, using the 3D alignment tensor.
 
     The RDC value is::
@@ -274,14 +264,9 @@ def rdc_tensor(dj, mu, A, absolute=False):
     @type mu:           numpy rank-1 3D array
     @param A:           The alignment tensor.
     @type A:            numpy rank-2 3D tensor
-    @keyword absolute:  The absolute value or signless RDC flag.
-    @type absolute:     int
     @return:            The RDC value.
     @rtype:             float
     """
 
     # Return the RDC.
-    if absolute:
-        return abs(dj * dot(mu, dot(A, mu)))
-    else:
-        return dj * dot(mu, dot(A, mu))
+    return dj * dot(mu, dot(A, mu))
