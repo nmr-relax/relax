@@ -375,8 +375,6 @@ uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', sep=',')")
 uf.desc[-1].add_paragraph("If the individual spin RDC errors are located in the file 'rdc_err.txt' in column number 5, then to read these values into relax, assuming J + D was measured, type one of:")
 uf.desc[-1].add_prompt("relax> rdc.read('phage', 'rdc_err.txt', data_type='D', error_col=5)")
 uf.desc[-1].add_prompt("relax> rdc.read(align_id='phage', file='rdc_err.txt', data_type='D', error_col=5)")
-uf.desc[-1].add_paragraph("If the RDCs correspond to the 'N' spin and other spin types such as 1H, 13C, etc. are loaded into relax, then type:")
-uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')")
 uf.backend = rdc.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
