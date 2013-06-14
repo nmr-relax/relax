@@ -258,6 +258,9 @@ class Auto_relax_disp(Base_analysis):
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
 
+        # Spin cluster setup.
+        self.field_cluster = Text_ctrl(box, self, text="Spin cluster IDs:", button_text=" Cluster", icon=fetch_icon("relax.cluster", "16x16"), tooltip="The list of currently defined spin clusters.  A spin cluster will share the same the dispersion parameters during the optimisation of the dispersion model.  The special 'free spins' cluster ID refers to all non-clustered spins.", tooltip_button="Define clusters of spins using the relax_disp.cluster user function.", fn=self.relax_disp_cluster, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
         # Spin isotope setup.
         self.field_isotope = Text_ctrl(box, self, text="Spin isotopes:", button_text=" Setup", icon=fetch_icon("relax.nuclear_symbol", "16x16"), tooltip="The list of nuclear isotopes of the spins to be used in the analysis.", tooltip_button="Execute the spin.isotope user function.", fn=self.spin_isotope, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -272,9 +275,6 @@ class Auto_relax_disp(Base_analysis):
         else:
             self.model_field = Disp_model_list_r1rho(self, box)
         self.model_field.set_value(self.data.disp_models)
-
-        # Spin cluster setup.
-        self.field_cluster = Text_ctrl(box, self, text="Spin cluster IDs:", button_text=" Cluster", icon=fetch_icon("relax.cluster", "16x16"), tooltip="The list of currently defined spin clusters.  A spin cluster will share the same the dispersion parameters during the optimisation of the dispersion model.  The special 'free spins' cluster ID refers to all non-clustered spins.", tooltip_button="Define clusters of spins using the relax_disp.cluster user function.", fn=self.relax_disp_cluster, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
