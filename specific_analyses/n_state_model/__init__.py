@@ -588,7 +588,7 @@ class N_state_model(API_base, API_common):
                     continue
 
                 # Check for J couplings if the RDC data type is T = J+D.
-                if cdp.rdc_data_types[align_id] == 'T' and not hasattr(interatom, 'j_coupling'):
+                if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T' and not hasattr(interatom, 'j_coupling'):
                     continue
 
                 # Defaults of None.
