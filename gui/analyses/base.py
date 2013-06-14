@@ -325,7 +325,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         return field
 
 
-    def add_title(self, box, text):
+    def add_title(self, box, text, top_spacing=10, bottom_spacing=15):
         """Create and add the frame title.
 
         @param box:     The box element to pack the frame title into.
@@ -338,12 +338,12 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         label = wx.StaticText(self, -1, text)
 
         # The font properties.
-        label.SetFont(font.title)
+        label.SetFont(font.roman_title_italic)
 
         # Pack the title, with spacing.
-        box.AddSpacer(10)
+        box.AddSpacer(top_spacing)
         box.Add(label)
-        box.AddSpacer(5)
+        box.AddSpacer(bottom_spacing)
 
 
     def build_left_box(self):
