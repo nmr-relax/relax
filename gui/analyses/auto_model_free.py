@@ -505,7 +505,7 @@ class Auto_model_free(Base_analysis):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_title(box, "Setup for model-free analysis")
+        self.add_title(box, "Model-free analysis")
 
         # Display the data pipe.
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)

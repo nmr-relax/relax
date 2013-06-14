@@ -199,7 +199,7 @@ class Auto_rx(Base_analysis):
         box = wx.BoxSizer(wx.VERTICAL)
 
         # Add the frame title.
-        self.add_title(box, "Setup for %s relaxation analysis" % self.gui_label)
+        self.add_title(box, "%s relaxation analysis" % self.gui_label)
 
         # Display the data pipe.
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
