@@ -30,7 +30,7 @@ __all__ = [
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, cos, pi
+from math import acos, cos, pi, sqrt
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, dot, float64, ones, zeros
@@ -588,8 +588,11 @@ class N_state_model(API_base, API_common):
                     continue
 
                 # Check for J couplings if the RDC data type is T = J+D.
-                if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T' and not hasattr(interatom, 'j_coupling'):
-                    continue
+                j_flag = False
+                if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+                    j_flag = True
+                    if not hasattr(interatom, 'j_coupling'):
+                        continue
 
                 # Defaults of None.
                 value = None
@@ -611,7 +614,13 @@ class N_state_model(API_base, API_common):
 
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                        error = -3.0 * interatom.rdc_err[align_id]
+                        # T values.
+                        if j_flag:
+                            error = -3.0 * sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
+
+                        # D values.
+                        else:
+                            error = -3.0 * interatom.rdc_err[align_id]
 
                 # Normal set up.
                 elif align_id in interatom.rdc.keys():
@@ -623,7 +632,13 @@ class N_state_model(API_base, API_common):
 
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                        error = interatom.rdc_err[align_id]
+                        # T values.
+                        if j_flag:
+                            error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
+
+                        # D values.
+                        else:
+                            error = interatom.rdc_err[align_id]
 
                 # Append the RDCs to the list.
                 rdc[-1].append(value)
