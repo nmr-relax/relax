@@ -459,7 +459,7 @@ def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col
 
     # Extract the data from the file, and clean it up.
     file_data = extract_data(file, dir, sep=sep)
-    file_data = strip(file_data)
+    file_data = strip(file_data, comments=False)
 
     # Loop over the RDC data.
     data = []

@@ -593,7 +593,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
 
     # Extract the data from the file, and remove comments and blank lines.
     file_data = extract_data(file, dir, sep=sep)
-    file_data = strip(file_data)
+    file_data = strip(file_data, comments=False)
 
     # Loop over the RDC data.
     data = []
