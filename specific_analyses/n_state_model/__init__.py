@@ -24,6 +24,8 @@
 
 # The available modules.
 __all__ = [
+    'data',
+    'parameters'
 ]
 
 # Python module imports.
@@ -31,31 +33,33 @@ from copy import deepcopy
 from math import acos, cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import array, dot, float64, identity, ones, zeros
+from numpy import array, dot, float64, ones, zeros
 from numpy.linalg import inv, norm
 from re import search
 from warnings import warn
 
 # relax module imports.
 import lib.arg_check
+from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
 from lib.float import isNaN, isInf
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.io import open_write_file
+from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
+from lib.structure.cones import Iso_cone
+from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
+from lib.structure.internal.object import Internal
+from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pcs, pipes, rdc
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
-from target_functions.n_state_model import N_state_opt
-from target_functions.potential import quad_pot
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoValueError, RelaxSpinTypeError
-from lib.io import open_write_file
-from lib.structure.cones import Iso_cone
-from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
-from lib.structure.internal.object import Internal
-from lib.warnings import RelaxWarning
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, opt_uses_j_couplings, tensor_loop
+from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_model_index, param_num, update_model
+from target_functions.n_state_model import N_state_opt
+from target_functions.potential import quad_pot
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -82,241 +86,6 @@ class N_state_model(API_base, API_common):
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
-
-
-    def _assemble_param_vector(self, sim_index=None):
-        """Assemble all the parameters of the model into a single array.
-
-        @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:        None or int
-        @return:                The parameter vector used for optimisation.
-        @rtype:                 numpy array
-        """
-
-        # Test if the model is selected.
-        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
-            raise RelaxNoModelError
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Initialise the parameter vector.
-        param_vector = []
-
-        # A RDC or PCS data type requires the alignment tensors to be at the start of the parameter vector (unless the tensors are fixed).
-        if self._opt_uses_align_data():
-            for i in range(len(cdp.align_tensors)):
-                # Skip non-optimised tensors.
-                if not self._opt_tensor(cdp.align_tensors[i]):
-                    continue
-
-                # Add the parameters.
-                param_vector = param_vector + list(cdp.align_tensors[i].A_5D)
-
-        # Monte Carlo simulation data structures.
-        if sim_index != None:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs_sim[sim_index]
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha_sim[sim_index]
-                beta = cdp.beta_sim[sim_index]
-                gamma = cdp.gamma_sim[sim_index]
-
-        # Normal data structures.
-        else:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha
-                beta = cdp.beta
-                gamma = cdp.gamma
-
-        # The probabilities (exclude that of state N).
-        if cdp.model in ['2-domain', 'population']:
-            param_vector = param_vector + probs[0:-1]
-
-        # The Euler angles.
-        if cdp.model == '2-domain':
-            for i in range(cdp.N):
-                param_vector.append(alpha[i])
-                param_vector.append(beta[i])
-                param_vector.append(gamma[i])
-
-        # The paramagnetic centre.
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            if not hasattr(cdp, 'paramagnetic_centre'):
-                for i in range(3):
-                    param_vector.append(0.0)
-            elif sim_index != None:
-                if cdp.paramagnetic_centre_sim[sim_index] == None:
-                    for i in range(3):
-                        param_vector.append(0.0)
-                else:
-                    for i in range(3):
-                        param_vector.append(cdp.paramagnetic_centre_sim[sim_index][i])
-            else:
-                for i in range(3):
-                    param_vector.append(cdp.paramagnetic_centre[i])
-
-        # Convert all None values to zero (to avoid conversion to NaN).
-        for i in range(len(param_vector)):
-            if param_vector[i] == None:
-                param_vector[i] = 0.0
-
-        # Return a numpy arrary.
-        return array(param_vector, float64)
-
-
-    def _assemble_scaling_matrix(self, data_types=None, scaling=True):
-        """Create and return the scaling matrix.
-
-        @keyword data_types:    The base data types used in the optimisation.  This list can contain
-                                the elements 'rdc', 'pcs' or 'tensor'.
-        @type data_types:       list of str
-        @keyword scaling:       If False, then the identity matrix will be returned.
-        @type scaling:          bool
-        @return:                The square and diagonal scaling matrix.
-        @rtype:                 numpy rank-2 array
-        """
-
-        # Initialise.
-        scaling_matrix = identity(self._param_num(), float64)
-
-        # Return the identity matrix.
-        if not scaling:
-            return scaling_matrix
-
-        # Starting point of the populations.
-        pop_start = 0
-
-        # Loop over the alignments.
-        tensor_num = 0
-        for i in range(len(cdp.align_tensors)):
-            # Skip non-optimised tensors.
-            if not self._opt_tensor(cdp.align_tensors[i]):
-                continue
-
-            # Add the 5 alignment parameters.
-            pop_start = pop_start + 5
-
-            # The alignment parameters.
-            for j in range(5):
-                scaling_matrix[5*tensor_num + j, 5*tensor_num + j] = 1.0
-
-            # Increase the tensor number.
-            tensor_num += 1
-
-        # Loop over the populations, and set the scaling factor.
-        if cdp.model in ['2-domain', 'population']:
-            factor = 0.1
-            for i in range(pop_start, pop_start + (cdp.N-1)):
-                scaling_matrix[i, i] = factor
-
-        # The paramagnetic centre.
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            for i in range(-3, 0):
-                scaling_matrix[i, i] = 1e2
-
-        # Return the matrix.
-        return scaling_matrix
-
-
-    def _base_data_types(self):
-        """Determine all the base data types.
-
-        The base data types can include::
-            - 'rdc', residual dipolar couplings.
-            - 'pcs', pseudo-contact shifts.
-            - 'noesy', NOE restraints.
-            - 'tensor', alignment tensors.
-
-        @return:    A list of all the base data types.
-        @rtype:     list of str
-        """
-
-        # Array of data types.
-        list = []
-
-        # RDC search.
-        for interatom in interatomic_loop():
-            if hasattr(interatom, 'rdc'):
-                list.append('rdc')
-                break
-
-        # PCS search.
-        for spin in spin_loop():
-            if hasattr(spin, 'pcs'):
-                list.append('pcs')
-                break
-
-        # Alignment tensor search.
-        if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
-            list.append('tensor')
-
-        # NOESY data search.
-        if hasattr(cdp, 'noe_restraints'):
-            list.append('noesy')
-
-        # No data is present.
-        if not list:
-            raise RelaxError("Neither RDC, PCS, NOESY nor alignment tensor data is present.")
-
-        # Return the list.
-        return list
-
-
-    def _calc_ave_dist(self, atom1, atom2, exp=1):
-        """Calculate the average distances.
-
-        The formula used is::
-
-                      _N_
-                  / 1 \                  \ 1/exp
-            <r> = | -  > |p1i - p2i|^exp |
-                  \ N /__                /
-                       i
-
-        where i are the members of the ensemble, N is the total number of structural models, and p1
-        and p2 at the two atom positions.
-
-
-        @param atom1:   The atom identification string of the first atom.
-        @type atom1:    str
-        @param atom2:   The atom identification string of the second atom.
-        @type atom2:    str
-        @keyword exp:   The exponent used for the averaging, e.g. 1 for linear averaging and -6 for
-                        r^-6 NOE averaging.
-        @type exp:      int
-        @return:        The average distance between the two atoms.
-        @rtype:         float
-        """
-
-        # Get the spin containers.
-        spin1 = return_spin(atom1)
-        spin2 = return_spin(atom2)
-
-        # Loop over each model.
-        num_models = len(spin1.pos)
-        ave_dist = 0.0
-        for i in range(num_models):
-            # Distance to the minus sixth power.
-            dist = norm(spin1.pos[i] - spin2.pos[i])
-            ave_dist = ave_dist + dist**(exp)
-
-        # Average.
-        ave_dist = ave_dist / num_models
-
-        # The exponent.
-        ave_dist = ave_dist**(1.0/exp)
-
-        # Return the average distance.
-        return ave_dist
 
 
     def _CoM(self, pivot_point=None, centre=None):
@@ -405,61 +174,6 @@ class N_state_model(API_base, API_common):
         print("\n\n")
 
 
-    def _check_rdcs(self, interatom, spin1, spin2):
-        """Check if the RDCs for the given interatomic data container should be used.
-
-        @param interatom:   The interatomic data container.
-        @type interatom:    InteratomContainer instance
-        @param spin1:       The first spin container.
-        @type spin1:        SpinContainer instance
-        @param spin2:       The second spin container.
-        @type spin2:        SpinContainer instance
-        @return:            True if the RDCs should be used, False otherwise.
-        """
-
-        # Skip deselected interatomic data containers.
-        if not interatom.select:
-            return False
-
-        # Skip deselected spins.
-        # FIXME:  These checks could be fatal in the future if a user has good RDCs and one of the two spins are deselected!
-        if not spin1.select or not spin2.select:
-            return False
-
-        # Only use interatomic data containers with RDC data.
-        if not hasattr(interatom, 'rdc'):
-            return False
-
-        # RDC data exists but the interatomic vectors are missing?
-        if not hasattr(interatom, 'vector'):
-            # Throw a warning.
-            warn(RelaxWarning("RDC data exists but the interatomic vectors are missing, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-
-            # Jump to the next spin.
-            return False
-
-        # Skip non-Me pseudo-atoms for the first spin.
-        if hasattr(spin1, 'members') and len(spin1.members) != 3:
-            warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-            return False
-
-        # Skip non-Me pseudo-atoms for the second spin.
-        if hasattr(spin2, 'members') and len(spin2.members) != 3:
-            warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-            return False
-
-        # Checks.
-        if not hasattr(spin1, 'isotope'):
-            raise RelaxSpinTypeError(interatom.spin_id1)
-        if not hasattr(spin2, 'isotope'):
-            raise RelaxSpinTypeError(interatom.spin_id2)
-        if not hasattr(interatom, 'r'):
-            raise RelaxNoValueError("averaged interatomic distance")
-
-        # Everything is ok.
-        return True
-
-
     def _cone_pdb(self, cone_type=None, scale=1.0, file=None, dir=None, force=False):
         """Create a PDB file containing a geometric object representing the various cone models.
 
@@ -542,258 +256,6 @@ class N_state_model(API_base, API_common):
         pdb_file.close()
 
 
-    def _disassemble_param_vector(self, param_vector=None, data_types=None, sim_index=None):
-        """Disassemble the parameter vector and place the values into the relevant variables.
-
-        For the 2-domain N-state model, the parameters are stored in the probability and Euler angle data structures.  For the population N-state model, only the probabilities are stored.  If RDCs are present and alignment tensors are optimised, then these are stored as well.
-
-        @keyword data_types:    The base data types used in the optimisation.  This list can contain the elements 'rdc', 'pcs' or 'tensor'.
-        @type data_types:       list of str
-        @keyword param_vector:  The parameter vector returned from optimisation.
-        @type param_vector:     numpy array
-        @keyword sim_index:     The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:        None or int
-        """
-
-        # Test if the model is selected.
-        if not hasattr(cdp, 'model') or not isinstance(cdp.model, str):
-            raise RelaxNoModelError
-
-        # Unpack and strip off the alignment tensor parameters.
-        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
-            # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
-            tensor_num = 0
-            for i in range(len(cdp.align_tensors)):
-                # Skip non-optimised tensors.
-                if not self._opt_tensor(cdp.align_tensors[i]):
-                    continue
-
-                # Normal tensors.
-                if sim_index == None:
-                    cdp.align_tensors[i].set(param='Axx', value=param_vector[5*tensor_num])
-                    cdp.align_tensors[i].set(param='Ayy', value=param_vector[5*tensor_num+1])
-                    cdp.align_tensors[i].set(param='Axy', value=param_vector[5*tensor_num+2])
-                    cdp.align_tensors[i].set(param='Axz', value=param_vector[5*tensor_num+3])
-                    cdp.align_tensors[i].set(param='Ayz', value=param_vector[5*tensor_num+4])
-
-                # Monte Carlo simulated tensors.
-                else:
-                    cdp.align_tensors[i].set(param='Axx', value=param_vector[5*tensor_num], category='sim', sim_index=sim_index)
-                    cdp.align_tensors[i].set(param='Ayy', value=param_vector[5*tensor_num+1], category='sim', sim_index=sim_index)
-                    cdp.align_tensors[i].set(param='Axy', value=param_vector[5*tensor_num+2], category='sim', sim_index=sim_index)
-                    cdp.align_tensors[i].set(param='Axz', value=param_vector[5*tensor_num+3], category='sim', sim_index=sim_index)
-                    cdp.align_tensors[i].set(param='Ayz', value=param_vector[5*tensor_num+4], category='sim', sim_index=sim_index)
-
-                # Increase the tensor number.
-                tensor_num += 1
-
-            # Create a new parameter vector without the tensors.
-            param_vector = param_vector[5*tensor_num:]
-
-        # Alias the Monte Carlo simulation data structures.
-        if sim_index != None:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs_sim[sim_index]
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha_sim[sim_index]
-                beta = cdp.beta_sim[sim_index]
-                gamma = cdp.gamma_sim[sim_index]
-
-        # Alias the normal data structures.
-        else:
-            # Populations.
-            if cdp.model in ['2-domain', 'population']:
-                probs = cdp.probs
-
-            # Euler angles.
-            if cdp.model == '2-domain':
-                alpha = cdp.alpha
-                beta = cdp.beta
-                gamma = cdp.gamma
-
-        # Set the probabilities for states 0 to N-1 in the aliased structures.
-        if cdp.model in ['2-domain', 'population']:
-            for i in range(cdp.N-1):
-                probs[i] = param_vector[i]
-
-            # The probability for state N.
-            probs[-1] = 1 - sum(probs[0:-1])
-
-        # Set the Euler angles in the aliased structures.
-        if cdp.model == '2-domain':
-            for i in range(cdp.N):
-                alpha[i] = param_vector[cdp.N-1 + 3*i]
-                beta[i] = param_vector[cdp.N-1 + 3*i + 1]
-                gamma[i] = param_vector[cdp.N-1 + 3*i + 2]
-
-        # The paramagnetic centre.
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            # Create the structure if needed.
-            if not hasattr(cdp, 'paramagnetic_centre'):
-                cdp.paramagnetic_centre = zeros(3, float64)
-
-            # The position.
-            if sim_index == None:
-                cdp.paramagnetic_centre[0] = param_vector[-3]
-                cdp.paramagnetic_centre[1] = param_vector[-2]
-                cdp.paramagnetic_centre[2] = param_vector[-1]
-
-            # Monte Carlo simulated positions.
-            else:
-                if cdp.paramagnetic_centre_sim[sim_index] == None:
-                    cdp.paramagnetic_centre_sim[sim_index] = [None, None, None]
-                cdp.paramagnetic_centre_sim[sim_index][0] = param_vector[-3]
-                cdp.paramagnetic_centre_sim[sim_index][1] = param_vector[-2]
-                cdp.paramagnetic_centre_sim[sim_index][2] = param_vector[-1]
-
-
-    def _elim_no_prob(self):
-        """Remove all structures or states which have no probability."""
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Test if there are populations.
-        if not hasattr(cdp, 'probs'):
-            raise RelaxError("The N-state model populations do not exist.")
-
-        # Create the data structure if needed.
-        if not hasattr(cdp, 'select_models'):
-            cdp.state_select = [True] * cdp.N
-
-        # Loop over the structures.
-        for i in range(len(cdp.N)):
-            # No probability.
-            if cdp.probs[i] < 1e-5:
-                cdp.state_select[i] = False
-
-
-    def _linear_constraints(self, data_types=None, scaling_matrix=None):
-        """Function for setting up the linear constraint matrices A and b.
-
-        Standard notation
-        =================
-
-        The N-state model constraints are::
-
-            0 <= pc <= 1,
-
-        where p is the probability and c corresponds to state c.
-
-
-        Matrix notation
-        ===============
-
-        In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-        values, and b is a vector of scalars, these inequality constraints are::
-
-            | 1  0  0 |                   |    0    |
-            |         |                   |         |
-            |-1  0  0 |                   |   -1    |
-            |         |                   |         |
-            | 0  1  0 |                   |    0    |
-            |         |     |  p0  |      |         |
-            | 0 -1  0 |     |      |      |   -1    |
-            |         |  .  |  p1  |  >=  |         |
-            | 0  0  1 |     |      |      |    0    |
-            |         |     |  p2  |      |         |
-            | 0  0 -1 |                   |   -1    |
-            |         |                   |         |
-            |-1 -1 -1 |                   |   -1    |
-            |         |                   |         |
-            | 1  1  1 |                   |    0    |
-
-        This example is for a 4-state model, the last probability pn is not included as this
-        parameter does not exist (because the sum of pc is equal to 1).  The Euler angle parameters
-        have been excluded here but will be included in the returned A and b objects.  These
-        parameters simply add columns of zero to the A matrix and have no effect on b.  The last two
-        rows correspond to the inequality::
-
-            0 <= pN <= 1.
-
-        As::
-                    N-1
-                    \
-            pN = 1 - >  pc,
-                    /__
-                    c=1
-
-        then::
-
-            -p1 - p2 - ... - p(N-1) >= -1,
-
-             p1 + p2 + ... + p(N-1) >= 0.
-
-
-        @keyword data_types:        The base data types used in the optimisation.  This list can
-                                    contain the elements 'rdc', 'pcs' or 'tensor'.
-        @type data_types:           list of str
-        @keyword scaling_matrix:    The diagonal scaling matrix.
-        @type scaling_matrix:       numpy rank-2 square matrix
-        @return:                    The matrices A and b.
-        @rtype:                     tuple of len 2 of a numpy rank-2, size NxM matrix and numpy
-                                    rank-1, size N array
-        """
-
-        # Starting point of the populations.
-        pop_start = 0
-        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
-            # Loop over the alignments.
-            for i in range(len(cdp.align_tensors)):
-                # Skip non-optimised tensors.
-                if not self._opt_tensor(cdp.align_tensors[i]):
-                    continue
-
-                # Add 5 parameters.
-                pop_start += 5
-
-        # Initialisation (0..j..m).
-        A = []
-        b = []
-        zero_array = zeros(self._param_num(), float64)
-        i = pop_start
-        j = 0
-
-        # Probability parameters.
-        if cdp.model in ['2-domain', 'population']:
-            # Loop over the prob parameters (N - 1, because the sum of pc is 1).
-            for k in range(cdp.N - 1):
-                # 0 <= pc <= 1.
-                A.append(zero_array * 0.0)
-                A.append(zero_array * 0.0)
-                A[j][i] = 1.0
-                A[j+1][i] = -1.0
-                b.append(0.0)
-                b.append(-1.0 / scaling_matrix[i, i])
-                j = j + 2
-
-                # Increment i.
-                i = i + 1
-
-            # Add the inequalities for pN.
-            A.append(zero_array * 0.0)
-            A.append(zero_array * 0.0)
-            for i in range(pop_start, pop_start+cdp.N-1):
-                A[-2][i] = -1.0
-                A[-1][i] = 1.0
-            b.append(-1.0 / scaling_matrix[i, i])
-            b.append(0.0)
-
-        # Convert to numpy data structures.
-        A = array(A, float64)
-        b = array(b, float64)
-
-        # Return the constraint objects.
-        return A, b
-
-
     def _minimise_bc_data(self, model):
         """Extract and unpack the back calculated data.
 
@@ -809,7 +271,7 @@ class N_state_model(API_base, API_common):
         align_index = 0
         for i in range(len(cdp.align_ids)):
             # Skip non-optimised tensors.
-            if not self._opt_tensor(cdp.align_tensors[i]):
+            if not opt_tensor(cdp.align_tensors[i]):
                 continue
 
             # The alignment ID.
@@ -850,7 +312,7 @@ class N_state_model(API_base, API_common):
                 spin2 = return_spin(interatom.spin_id2)
 
                 # RDC checks.
-                if not self._check_rdcs(interatom, spin1, spin2):
+                if not check_rdcs(interatom, spin1, spin2):
                     continue
 
                 # Containers with RDC data.
@@ -950,7 +412,7 @@ class N_state_model(API_base, API_common):
             align_id = cdp.align_ids[i]
 
             # Skip non-optimised data.
-            if not self._opt_uses_align_data(align_id):
+            if not opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the PCS structures.
@@ -1034,6 +496,7 @@ class N_state_model(API_base, API_common):
                                 - vectors, the interatomic vectors.
                                 - rdc_const, the dipolar constants.
                                 - absolute, the absolute value flags (as 1's and 0's).
+                                - j_couplings, the J coupling values if the RDC data type is set to T = J+D.
         @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-3 array, numpy rank-2 array, numpy rank-2 array)
         """
 
@@ -1044,15 +507,16 @@ class N_state_model(API_base, API_common):
         unit_vect = []
         rdc_const = []
         absolute = []
+        j_couplings = []
 
-        # The unit vectors and RDC constants.
+        # The unit vectors, RDC constants, and J couplings.
         for interatom in interatomic_loop():
             # Get the spins.
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
 
             # RDC checks.
-            if not self._check_rdcs(interatom, spin1, spin2):
+            if not check_rdcs(interatom, spin1, spin2):
                 continue
 
             # Add the vectors.
@@ -1067,6 +531,10 @@ class N_state_model(API_base, API_common):
 
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
+
+            # Store the J coupling.
+            if opt_uses_j_couplings():
+                j_couplings.append(interatom.j_coupling)
 
         # Fix the unit vector data structure.
         num = None
@@ -1096,7 +564,7 @@ class N_state_model(API_base, API_common):
             align_id = cdp.align_ids[i]
 
             # Skip non-optimised data.
-            if not self._opt_uses_align_data(align_id):
+            if not opt_uses_align_data(align_id):
                 continue
 
             # Append empty arrays to the RDC structures.
@@ -1117,6 +585,10 @@ class N_state_model(API_base, API_common):
 
                 # Only use interatomic data containers with RDC and vector data.
                 if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
+                    continue
+
+                # Check for J couplings if the RDC data type is T = J+D.
+                if cdp.rdc_data_types[align_id] == 'T' and not hasattr(interatom, 'j_coupling'):
                     continue
 
                 # Defaults of None.
@@ -1178,9 +650,13 @@ class N_state_model(API_base, API_common):
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
         absolute = array(absolute, float64)
+        if opt_uses_j_couplings():
+            j_couplings = array(j_couplings, float64)
+        else:
+            j_couplings = None
 
         # Return the data structures.
-        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute, j_couplings
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -1209,7 +685,7 @@ class N_state_model(API_base, API_common):
         full_in_ref_frame = zeros(n, float64)
 
         # Loop over the full tensors.
-        for i, tensor in self._tensor_loop(red=False):
+        for i, tensor in tensor_loop(red=False):
             # The full tensor.
             full_tensors[5*i + 0] = tensor.Axx
             full_tensors[5*i + 1] = tensor.Ayy
@@ -1222,7 +698,7 @@ class N_state_model(API_base, API_common):
                 full_in_ref_frame[i] = 1
 
         # Loop over the reduced tensors.
-        for i, tensor in self._tensor_loop(red=True):
+        for i, tensor in tensor_loop(red=True):
             # The reduced tensor (simulation data).
             if sim_index != None:
                 red_tensors[5*i + 0] = tensor.Axx_sim[sim_index]
@@ -1270,7 +746,7 @@ class N_state_model(API_base, API_common):
         index = 0
         for i in range(len(cdp.align_tensors)):
             # Skip non-optimised data.
-            if not self._opt_uses_align_data(cdp.align_tensors[i].name):
+            if not opt_uses_align_data(cdp.align_tensors[i].name):
                 continue
 
             # The real tensors.
@@ -1285,329 +761,6 @@ class N_state_model(API_base, API_common):
 
         # Return the data structure.
         return tensors
-
-
-    def _num_data_points(self):
-        """Determine the number of data points used in the model.
-
-        @return:    The number, n, of data points in the model.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Init.
-        n = 0
-
-        # Spin loop.
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # PCS data (skipping array elements set to None).
-            if 'pcs' in data_types:
-                if hasattr(spin, 'pcs'):
-                    for pcs in spin.pcs:
-                        if isinstance(pcs, float):
-                            n = n + 1
-
-        # Interatomic data loop.
-        for interatom in interatomic_loop():
-            # RDC data (skipping array elements set to None).
-            if 'rdc' in data_types:
-                if hasattr(interatom, 'rdc'):
-                    for rdc in interatom.rdc:
-                        if isinstance(rdc, float):
-                            n = n + 1
-
-        # Alignment tensors.
-        if 'tensor' in data_types:
-            n = n + 5*len(cdp.align_tensors)
-
-        # Return the value.
-        return n
-
-
-    def _number_of_states(self, N=None):
-        """Set the number of states in the N-state model.
-
-        @param N:   The number of states.
-        @type N:    int
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Set the value of N.
-        cdp.N = N
-
-        # Update the model, if set.
-        if hasattr(cdp, 'model'):
-            self._update_model()
-
-
-    def _opt_tensor(self, tensor):
-        """Determine if the given tensor is to be optimised.
-
-        @param tensor:  The alignment tensor to check.
-        @type tensor:   AlignmentTensor object.
-        @return:        True if the tensor is to be optimised, False otherwise.
-        @rtype:         bool
-        """
-
-        # Combine all RDC and PCS IDs.
-        ids = []
-        if hasattr(cdp, 'rdc_ids'):
-            ids += cdp.rdc_ids
-        if hasattr(cdp, 'pcs_ids'):
-            ids += cdp.pcs_ids
-
-        # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
-        if tensor.align_id not in ids:
-            return False
-
-        # Fixed tensor.
-        if tensor.fixed:
-            return False
-
-        # The tensor is to be optimised.
-        return True
-
-
-    def _opt_uses_align_data(self, align_id=None):
-        """Determine if the PCS or RDC data for the given alignment ID is needed for optimisation.
-
-        @keyword align_id:  The optional alignment ID string.
-        @type align_id:     str
-        @return:            True if alignment data is to be used for optimisation, False otherwise.
-        @rtype:             bool
-        """
-
-        # No alignment IDs.
-        if not hasattr(cdp, 'align_ids'):
-            return False
-
-        # Convert the align IDs to an array, or take all IDs.
-        if align_id:
-            align_ids = [align_id]
-        else:
-            align_ids = cdp.align_ids
-
-        # Check the PCS and RDC.
-        for align_id in align_ids:
-            if self._opt_uses_pcs(align_id) or self._opt_uses_rdc(align_id):
-                return True
-
-        # No alignment data is used for optimisation.
-        return False
-
-
-    def _opt_uses_pcs(self, align_id):
-        """Determine if the PCS data for the given alignment ID is needed for optimisation.
-
-        @param align_id:    The alignment ID string.
-        @type align_id:     str
-        @return:            True if the PCS data is to be used for optimisation, False otherwise.
-        @rtype:             bool
-        """
-
-        # No alignment IDs.
-        if not hasattr(cdp, 'pcs_ids'):
-            return False
-
-        # No PCS data for the alignment.
-        if align_id not in cdp.pcs_ids:
-            return False
-
-        # Is the tensor optimised?
-        tensor_flag = self._opt_tensor(align_tensor.get_tensor_object(align_id))
-
-        # Is the paramagnetic position optimised?
-        pos_flag = False
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            pos_flag = True
-
-        # Are the populations optimised?
-        prob_flag = False
-        if cdp.model == 'population':
-            prob_flag = True
-
-        # Not used.
-        if not tensor_flag and not pos_flag and not prob_flag:
-            return False
-
-        # The PCS data is to be used for optimisation.
-        return True
-
-
-    def _opt_uses_rdc(self, align_id):
-        """Determine if the RDC data for the given alignment ID is needed for optimisation.
-
-        @param align_id:    The alignment ID string.
-        @type align_id:     str
-        @return:            True if the RDC data is to be used for optimisation, False otherwise.
-        @rtype:             bool
-        """
-
-        # No alignment IDs.
-        if not hasattr(cdp, 'rdc_ids'):
-            return False
-
-        # No RDC data for the alignment.
-        if align_id not in cdp.rdc_ids:
-            return False
-
-        # Is the tensor optimised?
-        tensor_flag = self._opt_tensor(align_tensor.get_tensor_object(align_id))
-
-        # Is the paramagnetic position optimised?
-        pos_flag = False
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            pos_flag = True
-
-        # Are the populations optimised?
-        prob_flag = False
-        if cdp.model == 'population':
-            prob_flag = True
-
-        # Not used.
-        if not tensor_flag and not pos_flag and not prob_flag:
-            return False
-
-        # The RDC data is to be used for optimisation.
-        return True
-
-
-    def _param_model_index(self, param):
-        """Return the N-state model index for the given parameter.
-
-        @param param:   The N-state model parameter.
-        @type param:    str
-        @return:        The N-state model index.
-        @rtype:         str
-        """
-
-        # Probability.
-        if search('^p[0-9]*$', param):
-            return int(param[1:])
-
-        # Alpha Euler angle.
-        if search('^alpha', param):
-            return int(param[5:])
-
-        # Beta Euler angle.
-        if search('^beta', param):
-            return int(param[4:])
-
-        # Gamma Euler angle.
-        if search('^gamma', param):
-            return int(param[5:])
-
-        # Model independent parameter.
-        return None
-
-
-    def _param_num(self):
-        """Determine the number of parameters in the model.
-
-        @return:    The number of model parameters.
-        @rtype:     int
-        """
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Init.
-        num = 0
-
-        # Alignment tensor params.
-        if ('rdc' in data_types or 'pcs' in data_types) and not align_tensor.all_tensors_fixed():
-            # Loop over the alignments.
-            for i in range(len(cdp.align_tensors)):
-                # Skip non-optimised tensors.
-                if not self._opt_tensor(cdp.align_tensors[i]):
-                    continue
-
-                # Add 5 tensor parameters.
-                num += 5
-
-        # Populations.
-        if cdp.model in ['2-domain', 'population']:
-            num = num + (cdp.N - 1)
-
-        # Euler angles.
-        if cdp.model == '2-domain':
-            num = num + 3*cdp.N
-
-        # The paramagnetic centre.
-        if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
-            num = num + 3
-
-         # Return the param number.
-        return num
-
-
-    def _ref_domain(self, ref=None):
-        """Set the reference domain for the '2-domain' N-state model.
-
-        @param ref: The reference domain.
-        @type ref:  str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model is setup.
-        if not hasattr(cdp, 'model'):
-            raise RelaxNoModelError('N-state')
-
-        # Test that the correct model is set.
-        if cdp.model != '2-domain':
-            raise RelaxError("Setting the reference domain is only possible for the '2-domain' N-state model.")
-
-        # Test if the reference domain exists.
-        exists = False
-        for tensor_cont in cdp.align_tensors:
-            if tensor_cont.domain == ref:
-                exists = True
-        if not exists:
-            raise RelaxError("The reference domain cannot be found within any of the loaded tensors.")
-
-        # Set the reference domain.
-        cdp.ref_domain = ref
-
-        # Update the model.
-        self._update_model()
-
-
-    def _select_model(self, model=None):
-        """Select the N-state model type.
-
-        @param model:   The N-state model type.  Can be one of '2-domain', 'population', or 'fixed'.
-        @type model:    str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the model name exists.
-        if not model in ['2-domain', 'population', 'fixed']:
-            raise RelaxError("The model name " + repr(model) + " is invalid.")
-
-        # Test if the model is setup.
-        if hasattr(cdp, 'model'):
-            warn(RelaxWarning("The N-state model has already been set up.  Switching from model '%s' to '%s'." % (cdp.model, model)))
-
-        # Set the model
-        cdp.model = model
-
-        # Initialise the list of model parameters.
-        cdp.params = []
-
-        # Update the model.
-        self._update_model()
 
 
     def _target_fn_setup(self, sim_index=None, scaling=True):
@@ -1634,13 +787,13 @@ class N_state_model(API_base, API_common):
                 raise RelaxError("The reference domain has not been set.")
 
         # Update the model parameters if necessary.
-        self._update_model()
+        update_model()
 
         # Create the initial parameter vector.
-        param_vector = self._assemble_param_vector(sim_index=sim_index)
+        param_vector = assemble_param_vector(sim_index=sim_index)
 
         # Determine if alignment tensors or RDCs are to be used.
-        data_types = self._base_data_types()
+        data_types = base_data_types()
 
         # The probabilities.
         probs = None
@@ -1650,7 +803,7 @@ class N_state_model(API_base, API_common):
         # Diagonal scaling.
         scaling_matrix = None
         if len(param_vector):
-            scaling_matrix = self._assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+            scaling_matrix = assemble_scaling_matrix(data_types=data_types, scaling=scaling)
             param_vector = dot(inv(scaling_matrix), param_vector)
 
         # Get the data structures for optimisation using the tensors as base data sets.
@@ -1664,9 +817,9 @@ class N_state_model(API_base, API_common):
             pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = None, None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, j_couplings = None, None, None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, j_couplings = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         fixed_tensors = None
@@ -1677,7 +830,7 @@ class N_state_model(API_base, API_common):
             fixed_tensors = []
             for i in range(len(cdp.align_tensors)):
                 # Skip non-optimised data.
-                if not self._opt_uses_align_data(cdp.align_tensors[i].name):
+                if not opt_uses_align_data(cdp.align_tensors[i].name):
                     continue
 
                 if cdp.align_tensors[i].fixed:
@@ -1695,102 +848,10 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, j_couplings=j_couplings, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
-
-
-    def _tensor_loop(self, red=False):
-        """Generator method for looping over the full or reduced tensors.
-
-        @keyword red:   A flag which if True causes the reduced tensors to be returned, and if False
-                        the full tensors are returned.
-        @type red:      bool
-        @return:        The tensor index and the tensor.
-        @rtype:         (int, AlignTensorData instance)
-        """
-
-        # Number of tensor pairs.
-        n = len(cdp.align_tensors.reduction)
-
-        # Alias.
-        data = cdp.align_tensors
-        list = data.reduction
-
-        # Full or reduced index.
-        if red:
-            index = 1
-        else:
-            index = 0
-
-        # Loop over the reduction list.
-        for i in range(n):
-            yield i, data[list[i][index]]
-
-
-    def _update_model(self):
-        """Update the model parameters as necessary."""
-
-        # Initialise the list of model parameters.
-        if not hasattr(cdp, 'params'):
-            cdp.params = []
-
-        # Determine the number of states (loaded as structural models), if not already set.
-        if not hasattr(cdp, 'N'):
-            # Set the number.
-            if hasattr(cdp, 'structure'):
-                cdp.N = cdp.structure.num_models()
-
-            # Otherwise return as the rest cannot be updated without N.
-            else:
-                return
-
-        # Set up the parameter arrays.
-        if not cdp.params:
-            # Add the probability or population weight parameters.
-            if cdp.model in ['2-domain', 'population']:
-                for i in range(cdp.N-1):
-                    cdp.params.append('p' + repr(i))
-
-            # Add the Euler angle parameters.
-            if cdp.model == '2-domain':
-                for i in range(cdp.N):
-                    cdp.params.append('alpha' + repr(i))
-                    cdp.params.append('beta' + repr(i))
-                    cdp.params.append('gamma' + repr(i))
-
-        # Initialise the probability and Euler angle arrays.
-        if cdp.model in ['2-domain', 'population']:
-            if not hasattr(cdp, 'probs'):
-                cdp.probs = [None] * cdp.N
-        if cdp.model == '2-domain':
-            if not hasattr(cdp, 'alpha'):
-                cdp.alpha = [None] * cdp.N
-            if not hasattr(cdp, 'beta'):
-                cdp.beta = [None] * cdp.N
-            if not hasattr(cdp, 'gamma'):
-                cdp.gamma = [None] * cdp.N
-
-        # Determine the data type.
-        data_types = self._base_data_types()
-
-        # Set up tensors for each alignment.
-        if hasattr(cdp, 'align_ids'):
-            for id in cdp.align_ids:
-                # No tensors initialised.
-                if not hasattr(cdp, 'align_tensors'):
-                    align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
-
-                # Find if the tensor corresponding to the id exists.
-                exists = False
-                for tensor in cdp.align_tensors:
-                    if id == tensor.align_id:
-                        exists = True
-
-                # Initialise the tensor.
-                if not exists:
-                    align_tensor.init(tensor=id, align_id=id, params=[0.0, 0.0, 0.0, 0.0, 0.0])
 
 
     def base_data_loop(self):
@@ -1909,7 +970,7 @@ class N_state_model(API_base, API_common):
                 upper[i] = cdp.noe_restraints[i][3]
 
                 # Calculate the average distances, using -6 power averaging.
-                dist[i] = self._calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
+                dist[i] = calc_ave_dist(cdp.noe_restraints[i][0], cdp.noe_restraints[i][1], exp=-6)
 
             # Calculate the quadratic potential.
             quad_pot(dist, pot, lower, upper)
@@ -2002,7 +1063,7 @@ class N_state_model(API_base, API_common):
 
         # Split the parameter into its base name and index.
         name = self.return_data_name(param)
-        index = self._param_model_index(param)
+        index = param_model_index(param)
 
         # The number of states as a float.
         N = float(cdp.N)
@@ -2036,7 +1097,7 @@ class N_state_model(API_base, API_common):
             raise RelaxNoModelError('N-state')
 
         # The number of parameters.
-        n = self._param_num()
+        n = param_num()
 
         # Make sure that the length of the parameter array is > 0.
         if n == 0:
@@ -2084,7 +1145,7 @@ class N_state_model(API_base, API_common):
                     upper.append(1e-3)
 
         # Determine the data type.
-        data_types = self._base_data_types()
+        data_types = base_data_types()
 
         # The number of tensors to optimise.
         tensor_num = align_tensor.num_tensors(skip_fixed=True)
@@ -2238,7 +1299,7 @@ class N_state_model(API_base, API_common):
 
         # Linear constraints.
         if constraints:
-            A, b = self._linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
+            A, b = linear_constraints(data_types=data_types, scaling_matrix=scaling_matrix)
         else:
             A, b = None, None
 
@@ -2284,7 +1345,7 @@ class N_state_model(API_base, API_common):
             param_vector = dot(scaling_matrix, param_vector)
 
         # Disassemble the parameter vector.
-        self._disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
+        disassemble_param_vector(param_vector=param_vector, data_types=data_types, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
@@ -2359,7 +1420,7 @@ class N_state_model(API_base, API_common):
         """
 
         # Return the values.
-        return self._param_num(), self._num_data_points(), cdp.chi2
+        return param_num(), num_data_points(), cdp.chi2
 
 
     def return_data(self, data_id):
@@ -2635,7 +1696,7 @@ class N_state_model(API_base, API_common):
             # Set the indexed parameter.
             if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
                 # The index.
-                index = self._param_model_index(param[i])
+                index = param_model_index(param[i])
 
                 # Set.
                 obj = getattr(cdp, obj_name)
@@ -2682,7 +1743,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in range(len(cdp.align_tensors)):
                 # Skip non-optimised tensors.
-                if not self._opt_tensor(cdp.align_tensors[i]):
+                if not opt_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Set up the number of simulations.

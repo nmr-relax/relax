@@ -299,9 +299,9 @@ uf.add_keyarg(
     default = "D",
     py_type = "str",
     desc_short = "data type",
-    desc = "Specify if the RDC data is in the D or 2D format.",
+    desc = "Specify if the RDC data is in the D or 2D format, or the T = J + D format.",
     wiz_element_type = "combo",
-    wiz_combo_choices = ["D", "2D"],
+    wiz_combo_choices = ["D", "2D", "T"],
     wiz_read_only = True
 )
 uf.add_keyarg(
@@ -362,13 +362,13 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will read RDC data from a file and associate it with an alignment ID, either a new ID or a preexisting one with no RDC data.")
-uf.desc[-1].add_paragraph("The data type is used to specify how the RDC is defined.  It can be set to two values:")
+uf.desc[-1].add_paragraph("The data type is used to specify how the RDC is defined.  It can be set to a number of values:")
 uf.desc[-1].add_list_element("'D' means that the splitting in the aligned sample was taken as J + D.")
 uf.desc[-1].add_list_element("'2D' means that the splitting in the aligned sample was assumed to be J + 2D.")
-uf.desc[-1].add_paragraph("Internally, relax uses the D notation.  Therefore if set to '2D', the values will be doubled when read in.")
+uf.desc[-1].add_list_element("'T' means that the file contains T = J + D values.")
+uf.desc[-1].add_paragraph("Internally, relax uses the D notation.  Therefore if set to '2D', the values will be doubled when read in.  If the 'T' data type is specified, then J couplings must be present for this data to be of any use.")
 uf.desc[-1].add_paragraph("If the negative gyromagnetic ratio correction flag is set, a sign inversion will be applied to all RDC values to be loaded.  This is sometimes needed for 15N if the data is not compensated for the negative gyromagnetic ratio.")
 uf.desc[-1].add_paragraph("The absolute RDCs flag is used for RDCs in which the sign is unknown.  All absolute RDCs loaded will be converted to positive values.")
-uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number and name, and spin number and name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following commands will read the RDC data out of the file 'Tb.txt' where the columns are separated by the symbol ',', and store the RDCs under the ID 'Tb':")
@@ -376,8 +376,6 @@ uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', sep=',')")
 uf.desc[-1].add_paragraph("If the individual spin RDC errors are located in the file 'rdc_err.txt' in column number 5, then to read these values into relax, assuming J + D was measured, type one of:")
 uf.desc[-1].add_prompt("relax> rdc.read('phage', 'rdc_err.txt', data_type='D', error_col=5)")
 uf.desc[-1].add_prompt("relax> rdc.read(align_id='phage', file='rdc_err.txt', data_type='D', error_col=5)")
-uf.desc[-1].add_paragraph("If the RDCs correspond to the 'N' spin and other spin types such as 1H, 13C, etc. are loaded into relax, then type:")
-uf.desc[-1].add_prompt("relax> rdc.read('Tb', 'Tb.txt', spin_id='@N')")
 uf.backend = rdc.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"

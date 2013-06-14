@@ -553,7 +553,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     @type dir:              str or None
     @keyword file_data:     An alternative to opening a file, if the data already exists in the correct format.  The format is a list of lists where the first index corresponds to the row and the second the column.
     @type file_data:        list of lists
-    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.
+    @keyword data_type:     A string which is set to 'D' means that the splitting in the aligned sample was assumed to be J + D, or if set to '2D' then the splitting was taken as J + 2D.  If set to 'T', then the data will be marked as being J+D values.
     @keyword spin_id1_col:  The column containing the spin ID strings of the first spin.
     @type spin_id1_col:     int
     @keyword spin_id2_col:  The column containing the spin ID strings of the second spin.
@@ -577,6 +577,11 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     if data_col == None and error_col == None:
         raise RelaxError("One of either the data or error column must be supplied.")
 
+    # Check the data types.
+    rdc_types = ['D', '2D', 'T']
+    if data_type not in rdc_types:
+        raise RelaxError("The RDC data type '%s' must be one of %s." % (data_type, rdc_types))
+
     # Store the data type as global data (need for the conversion of RDC data).
     if not hasattr(cdp, 'rdc_data_types'):
         cdp.rdc_data_types = {}
@@ -588,7 +593,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
 
     # Extract the data from the file, and remove comments and blank lines.
     file_data = extract_data(file, dir, sep=sep)
-    file_data = strip(file_data)
+    file_data = strip(file_data, comments=False)
 
     # Loop over the RDC data.
     data = []

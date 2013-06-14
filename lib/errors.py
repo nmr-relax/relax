@@ -776,6 +776,20 @@ class RelaxRiError(BaseError):
         self.text = "Relaxation data corresponding to the ID string '%s' already exists." % ri_id
 
 
+# J coupling errors.
+####################
+
+# No J data.
+class RelaxNoJError(BaseError):
+    def __init__(self):
+        self.text = "No J coupling data exists."
+
+# J data already exists.
+class RelaxJError(BaseError):
+    def __init__(self):
+        self.text = "J coupling data already exists."
+
+
 # RDC and PCS data errors.
 ##########################
 
