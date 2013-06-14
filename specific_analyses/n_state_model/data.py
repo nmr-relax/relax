@@ -151,6 +151,10 @@ def check_rdcs(interatom, spin1, spin2):
     if not hasattr(interatom, 'rdc'):
         return False
 
+    # Only use interatomic data containers with RDC and J coupling data.
+    if opt_uses_j_couplings() and not hasattr(interatom, 'j_coupling'):
+        return False
+
     # RDC data exists but the interatomic vectors are missing?
     if not hasattr(interatom, 'vector'):
         # Throw a warning.
@@ -277,6 +281,22 @@ def opt_uses_align_data(align_id=None):
             return True
 
     # No alignment data is used for optimisation.
+    return False
+
+
+def opt_uses_j_couplings():
+    """Determine of J couplings are needed for optimisation.
+
+    @return:    True if J couplings are required, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over the alignments.
+    for align_id in cdp.align_ids:
+        if cdp.rdc_data_types[align_id] == 'T':
+            return True
+
+    # No J values required.
     return False
 
 
