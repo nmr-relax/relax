@@ -32,7 +32,6 @@ from graphics import WIZARD_IMAGE_PATH
 from pipe_control.mol_res_spin import return_spin
 
 # GUI module imports.
-from gui import paths
 from gui.misc import bitmap_setup
 from gui.string_conv import str_to_gui
 

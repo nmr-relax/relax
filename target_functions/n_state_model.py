@@ -29,7 +29,7 @@ from lib.alignment.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAx
 from lib.alignment.paramag_centre import vectors_single_centre, vectors_centre_per_state
 from lib.alignment.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, ave_pcs_tensor_ddeltaij_dc, pcs_constant_grad, pcs_tensor
 from lib.alignment.rdc import ave_rdc_tensor, ave_rdc_tensor_dDij_dAmn, rdc_tensor
-from lib.errors import RelaxError, RelaxImplementError
+from lib.errors import RelaxError
 from lib.float import isNaN
 from lib.geometry.rotations import euler_to_R_zyz
 from lib.physical_constants import pcs_constant

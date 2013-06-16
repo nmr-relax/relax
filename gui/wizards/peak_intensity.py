@@ -37,7 +37,6 @@ from graphics import WIZARD_IMAGE_PATH
 from gui.fonts import font
 from gui.message import Question
 from gui.misc import format_table
-from gui import paths
 from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window

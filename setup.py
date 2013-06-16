@@ -35,7 +35,7 @@ hdiutil create -fs HFS+ -volname "relax" -srcfolder dist/relax.app relax.dmg
 """
 
 # Python module import.
-from os import getcwd, listdir, sep, walk
+from os import getcwd, sep, walk
 from os.path import relpath, sep
 from re import search
 try:
