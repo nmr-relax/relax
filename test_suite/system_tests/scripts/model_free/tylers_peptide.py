@@ -2,7 +2,6 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
 from status import Status; status = Status()

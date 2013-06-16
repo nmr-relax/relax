@@ -24,7 +24,7 @@ along with this program; if not, see http://www.gnu.org/licenses/
 version = '1.3'
  
  
-from math import *
+from math import atan, atan2, atanh, ceil, cos, degrees, pi, sin, sqrt
 from lxml import etree
 import scipy as sc
 import scipy.optimize as op

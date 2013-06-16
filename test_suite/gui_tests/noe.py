@@ -27,8 +27,6 @@ import wx
 from data_store import Relax_data_store; ds = Relax_data_store()
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import int_to_gui, str_to_gui
-from gui.wizards.peak_intensity import Peak_intensity_wizard
-from gui.wizards.wiz_objects import Wiz_window
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()

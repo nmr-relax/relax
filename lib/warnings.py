@@ -25,7 +25,6 @@ from __future__ import absolute_import
 
 # Python module imports.
 import inspect
-import sys
 import warnings
 
 # relax module imports.

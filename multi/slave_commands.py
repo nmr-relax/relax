@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2008-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,11 +23,8 @@
 # Module docstring.
 """Module containing command objects sent from the master to the slaves."""
 
-# Python module imports.
-import sys
-
 # multi module imports.
-from multi.misc import raise_unimplemented, Result, Result_string
+from multi.misc import raise_unimplemented
 
 
 class Slave_command(object):

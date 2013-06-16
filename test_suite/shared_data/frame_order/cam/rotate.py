@@ -3,7 +3,6 @@
 # Python module imports.
 from numpy import array, dot, float64, zeros
 from numpy.linalg import norm
-from sys import stdout
 
 # relax module imports.
 from lib.float import floatAsByteArray

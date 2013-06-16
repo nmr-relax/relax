@@ -1,7 +1,7 @@
 # Script for calculating the frame order matrix from the rotation matrices.
 
 # Python module imports.
-from numpy import array, float64, kron, zeros
+from numpy import float64, zeros
 
 # relax module imports.
 from lib.linear_algebra.kronecker_product import kron_prod

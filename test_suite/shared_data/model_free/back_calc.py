@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,6 @@
 """Functions for the back-calculation of relaxation data from model-free data."""
 
 # Python module imports.
-from copy import deepcopy
 from math import pi
 from numpy import float64, zeros
 

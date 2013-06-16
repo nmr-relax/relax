@@ -1,8 +1,7 @@
 """Script for jw_mapping testing."""
 
 # Python module imports.
-from os import devnull, sep
-import sys
+from os import sep
 
 # relax module imports.
 from status import Status; status = Status()

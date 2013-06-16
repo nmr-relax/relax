@@ -2,7 +2,6 @@
 
 # Python module imports.
 from numpy import array, float64
-from numpy.linalg import norm
 from os import sep
 
 # relax module imports.

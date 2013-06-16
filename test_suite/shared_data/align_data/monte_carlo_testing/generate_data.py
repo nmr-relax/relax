@@ -1,14 +1,13 @@
 # relax script for generating synthetic RDC and PCS data for testing Monte Carlo simulations.
 
 # Python module imports.
-from numpy import dot, float64, sum, transpose, zeros
+from numpy import dot, float64, transpose, zeros
 from numpy.linalg import eigvals, norm
 from os import sep
-import sys
 
 # relax module imports.
 from pipe_control.interatomic import return_interatom
-from pipe_control.mol_res_spin import generate_spin_id, return_spin, spin_loop
+from pipe_control.mol_res_spin import generate_spin_id, spin_loop
 from status import Status; status = Status()
 
 

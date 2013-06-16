@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,6 @@
 """GUI tests for the frame order related activities."""
 
 # relax module imports.
-import dep_check
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests

@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, eye, float64, zeros
+from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.

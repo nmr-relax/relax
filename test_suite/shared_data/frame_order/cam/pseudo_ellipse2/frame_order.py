@@ -2,7 +2,6 @@
 
 # Python module imports.
 from numpy import array, float64, transpose, zeros
-from os import sep
 
 # relax module imports.
 from lib.geometry.rotations import euler_to_R_zyz

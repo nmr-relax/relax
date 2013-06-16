@@ -32,9 +32,7 @@ The reference for this script is:
 # Python imports.
 from numpy import float64, zeros
 from numpy.linalg import norm
-from os import listdir
 from random import uniform
-from re import search
 
 # relax imports.
 from data_store import Relax_data_store; ds = Relax_data_store()

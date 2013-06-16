@@ -30,14 +30,9 @@ from tempfile import mktemp, mkdtemp
 from unittest import TestCase
 import wx
 
-# Dependency checks.
-import dep_check
-
 # relax module imports.
 from compat import queue
 from data_store import Relax_data_store; ds = Relax_data_store()
-from data_store.gui import Gui
-from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.reset import reset
 from prompt.interpreter import exec_script

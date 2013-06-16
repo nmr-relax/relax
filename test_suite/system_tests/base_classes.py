@@ -23,7 +23,6 @@
 """Base classes for the system tests."""
 
 # Python module imports.
-from os import sep
 from shutil import rmtree
 from time import sleep
 from unittest import TestCase

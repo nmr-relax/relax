@@ -2,11 +2,9 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control import pipes
 from status import Status; status = Status()
 
 

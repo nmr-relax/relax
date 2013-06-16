@@ -25,7 +25,6 @@ import platform
 import numpy
 from os import path, sep, walk
 from re import search
-from shutil import copytree
 import sys
 from tempfile import mkdtemp
 
@@ -35,7 +34,7 @@ import dep_check
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
-from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
+from lib.physical_constants import N15_CSA
 from lib.io import DummyFileObject, open_read_file
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase

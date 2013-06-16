@@ -1,10 +1,8 @@
 # relax script for generating synthetic RDC and PCS data for the bax_C_1J7P_N_H_Ca.pdb structure.
 
 # Python module imports.
-from numpy import dot, float64, sum, transpose, zeros
-from numpy.linalg import eigvals, norm
+from numpy.linalg import norm
 from os import sep
-import sys
 
 # relax module imports.
 from pipe_control.mol_res_spin import return_spin, spin_loop

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
-# Copyright (C) 2011-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,8 +36,6 @@ including, for example:
 from copy import copy
 import math
 import sys
-import threading
-import traceback
 
 # multi module imports.
 from multi.misc import raise_unimplemented, Result, Result_string, Verbosity; verbosity = Verbosity()
