@@ -38,8 +38,8 @@ from lib.errors import RelaxError, RelaxDirError, RelaxFileError, RelaxNoSequenc
 from lib.io import mkdir_nofail, open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
-from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue, spin_loop
+from pipe_control.spectrometer import get_frequencies
 from specific_analyses.relax_disp.disp_data import loop_cluster, loop_frq, loop_point, return_param_key_from_data, spin_ids_to_containers
 
 
