@@ -34,7 +34,7 @@ if dep_check.subprocess_module:
 import sys
 
 # relax module imports.
-from pipe_control import angles, diffusion_tensor, pipes, relax_data, value
+from pipe_control import angles, diffusion_tensor, pipes, value
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
 from pipe_control.spectrometer import loop_frequencies

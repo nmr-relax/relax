@@ -29,7 +29,7 @@ from re import match
 import pipe_control
 from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
-from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
+from lib.errors import RelaxFromXMLNotEmptyError, RelaxImplementError
 import specific_analyses
 
 

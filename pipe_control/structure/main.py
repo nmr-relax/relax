@@ -20,9 +20,8 @@
 ###############################################################################
 
 # Python module imports.
-from math import sqrt
 from minfx.generic import generic_minimise
-from numpy import array, dot, float64, ndarray, zeros
+from numpy import array, float64, zeros
 from numpy.linalg import norm
 from os import F_OK, access, getcwd
 from re import search
@@ -32,7 +31,7 @@ from warnings import warn
 # relax module imports.
 from pipe_control import molmol
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_molecule, return_residue, return_spin, spin_loop
+from pipe_control.mol_res_spin import create_spin, exists_mol_res_spin_data, generate_spin_id_unique, linear_ave, return_spin, spin_loop
 from pipe_control import pipes
 from pipe_control.structure.mass import pipe_centre_of_mass
 from target_functions.ens_pivot_finder import Pivot_finder
@@ -40,7 +39,6 @@ from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSeque
 from lib.io import get_file_path, open_write_file, write_data, write_spin_data
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
-from lib.structure.represent.cone import cone
 from lib.structure.represent.diffusion_tensor import diffusion_tensor
 from lib.structure.statistics import atomic_rmsd
 from lib.structure.superimpose import fit_to_first, fit_to_mean

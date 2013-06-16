@@ -9,7 +9,6 @@
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control import pipes
 from lib.errors import RelaxError
 
 
@@ -134,7 +133,6 @@ grace.write(x_data_type='te', y_data_type='s2', file='s2-te.agr', force=True)
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control import pipes
 
 #create file
 

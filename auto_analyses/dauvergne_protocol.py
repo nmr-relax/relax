@@ -29,12 +29,11 @@ from time import sleep
 from lib.float import floatAsByteArray
 from info import Info_box; info = Info_box()
 from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, return_spin, spin_index_loop, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.pipes import cdp_name, get_pipe, has_pipe, pipe_names, switch
-from pipe_control import selection, spectrometer
+from pipe_control import spectrometer
 from prompt.interpreter import Interpreter
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError
-from lib.io import DummyFileObject
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE, to_docstring
 from status import Status; status = Status()
 

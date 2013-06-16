@@ -22,16 +22,11 @@
 # Module docstring.
 """Analysis specific code for the hybridisation of different data pipes."""
 
-# Python module imports.
-from warnings import warn
-
 # relax module imports.
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.sequence import compare_sequence
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
-from lib.warnings import RelaxDeselectWarning
-import specific_analyses.setup
 
 
 class Hybrid:

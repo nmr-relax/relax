@@ -32,7 +32,7 @@ from lib.errors import RelaxError
 # relax GUI module imports.
 from gui.errors import gui_raise
 from gui.fonts import font
-from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_list, gui_to_str, int_to_gui, str_to_gui
+from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 
 
 class Value:

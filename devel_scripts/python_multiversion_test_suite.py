@@ -6,7 +6,6 @@ This assumes that there is a directory called 'bin' in your home directory conta
 """
 
 # Python module imports.
-from os import system
 from subprocess import PIPE, Popen
 import sys
 

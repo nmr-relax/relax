@@ -34,7 +34,6 @@ The functionality of this module is diverse:
 
 # Python module imports.
 from numpy import array, float64
-from re import split
 import sys
 from warnings import warn
 

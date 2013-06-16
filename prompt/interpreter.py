@@ -29,7 +29,7 @@ import dep_check
 from code import InteractiveConsole
 from lib import ansi
 from math import pi
-from os import F_OK, access, chdir, getcwd, path
+from os import chdir, getcwd, path
 from pydoc import pager
 from re import search
 if dep_check.readline_module:
@@ -45,7 +45,7 @@ from prompt.help import _Helper, _Helper_python
 if dep_check.readline_module:
     from prompt.tab_completion import Tab_completion
 from prompt.uf_objects import Class_container, Uf_object
-from lib.errors import AllRelaxErrors, RelaxBinError, RelaxError, RelaxNoneError, RelaxStrError
+from lib.errors import AllRelaxErrors, RelaxError
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 

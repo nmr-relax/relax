@@ -23,16 +23,12 @@
 """Module for the manipulation of paramagnetic data."""
 
 # Python module imports.
-from math import sqrt
 from numpy import array, float64, zeros
-import sys
-from warnings import warn
 
 # relax module imports.
-from pipe_control import grace, pipes
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoSpinError
-from lib.warnings import RelaxWarning
+from pipe_control import pipes
+from pipe_control.mol_res_spin import spin_loop
+from lib.errors import RelaxError
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=False, force=False):

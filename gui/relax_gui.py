@@ -47,6 +47,7 @@ from status import Status; status = Status()
 from version import version
 
 # relax GUI module imports.
+from graphics import IMAGE_PATH
 from gui.about import About_relax
 from gui.analyses import Analysis_controller
 from gui.spin_viewer.frame import Spin_view_window
@@ -254,7 +255,7 @@ class Main(wx.Frame):
         self.SetSizer(sizer)
 
         # The relax icon.
-        image = wx.StaticBitmap(self, -1, bitmap_setup(paths.IMAGE_PATH+'ulysses_shadowless_400x168.png'))
+        image = wx.StaticBitmap(self, -1, bitmap_setup(IMAGE_PATH+'ulysses_shadowless_400x168.png'))
 
         # Add the icon to the main spacer with spacing.
         sizer.AddStretchSpacer()

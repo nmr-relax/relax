@@ -40,7 +40,6 @@ from gui.components.software import Software
 from gui.message import Missing_data
 from gui.fonts import font
 from gui.icons import relax_icons
-from gui.input_elements.value import Value
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()

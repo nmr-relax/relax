@@ -29,6 +29,7 @@ from wx.lib import buttons
 from wx.lib import scrolledpanel
  
 # relax module imports.
+from graphics import IMAGE_PATH
 from gui import paths
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.fonts import font
@@ -148,7 +149,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
 
         # The button.
         button = buttons.ThemedGenBitmapTextButton(self, id, None, " Execute")
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'relax_start.gif', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         self.gui.Bind(wx.EVT_BUTTON, method, button)
         sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)

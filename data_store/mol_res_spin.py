@@ -23,13 +23,11 @@
 """The molecule-residue-spin containers of the relax data store."""
 
 # Python module imports.
-import numpy
-from re import match, search
+from re import match
 
 # relax module imports.
 from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, object_to_xml, xml_to_object
-from lib.float import floatAsByteArray
 import pipe_control
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError, RelaxImplementError
 import specific_analyses

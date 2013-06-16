@@ -27,7 +27,6 @@ from copy import deepcopy
 from re import search
 from math import cos, sin
 from numpy import array, float64, dot, identity, transpose, zeros
-import sys
 
 # relax module imports.
 from data_store.data_classes import Element

@@ -28,7 +28,6 @@ from os import sep
 
 # relax module imports.
 from pipe_control.pipes import cdp_name, has_pipe, switch
-import pipe_control.structure.main
 from prompt.interpreter import Interpreter
 from status import Status; status = Status()
 

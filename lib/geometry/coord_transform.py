@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import acos, atan2, cos, sin
-from numpy import array, float64, zeros
+from numpy import array, float64
 from numpy.linalg import norm
 
 

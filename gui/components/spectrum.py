@@ -35,9 +35,6 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 
 # relax GUI module imports.
 from gui.components.base_list import Base_list
-from gui.components.menu import build_menu_item
-from gui.fonts import font
-from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 
