@@ -23,11 +23,13 @@
 # Module docstring.
 """Module for the multi-processor command system."""
 
-# relax module imports.
-from target_functions.mf import Mf
+# Python module imports.
 from minfx.generic import generic_minimise
 from minfx.grid import grid, grid_point_array
+
+# relax module imports.
 from multi import Memo, Result_command, Slave_command
+from target_functions.mf import Mf
 
 
 

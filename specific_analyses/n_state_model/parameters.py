@@ -33,6 +33,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pipes
 from specific_analyses.n_state_model.data import base_data_types, opt_tensor, opt_uses_align_data
 
+
 def assemble_param_vector(sim_index=None):
     """Assemble all the parameters of the model into a single array.
 

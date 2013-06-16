@@ -27,12 +27,12 @@ from wx.lib import buttons
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import IMAGE_PATH
+from gui import paths
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
 from gui.message import Question
 from gui.misc import bitmap_setup
-from gui import paths
 from gui.string_conv import gui_to_int, int_to_gui, str_to_gui
 from gui.wizards.wiz_objects import Wiz_page
 from status import Status; status = Status()

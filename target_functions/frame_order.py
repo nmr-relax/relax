@@ -29,27 +29,27 @@ from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from lib.float import isNaN
 from extern.sobol.sobol_lib import i4_sobol
 from lib.alignment.alignment_tensor import to_5D, to_tensor
-from target_functions.chi2 import chi2
-from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.frame_order.matrix_ops import reduce_alignment_tensor
-from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
+from lib.alignment.pcs import pcs_tensor
+from lib.alignment.rdc import rdc_tensor
+from lib.errors import RelaxError
+from lib.float import isNaN
 from lib.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from lib.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint
 from lib.frame_order.iso_cone_free_rotor import compile_2nd_matrix_iso_cone_free_rotor
 from lib.frame_order.iso_cone_torsionless import compile_2nd_matrix_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless, pcs_numeric_int_iso_cone_torsionless_qrint
+from lib.frame_order.matrix_ops import reduce_alignment_tensor
 from lib.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse, pcs_numeric_int_pseudo_ellipse_qrint
 from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
 from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
-from lib.linear_algebra.kronecker_product import kron_prod
-from lib.alignment.pcs import pcs_tensor
+from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
+from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.alignment.rdc import rdc_tensor
+from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
-from lib.errors import RelaxError
+from target_functions.chi2 import chi2
 
 
 class Frame_order:

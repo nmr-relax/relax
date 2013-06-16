@@ -28,12 +28,12 @@ from warnings import warn
 
 # relax module imports.
 from lib.check_types import is_float
-from pipe_control import pipes
-from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from lib.errors import RelaxError, RelaxNoJError, RelaxNoSequenceError
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.warnings import RelaxWarning
+from pipe_control import pipes
+from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 
 
 def check_pipe_setup(pipe=None, sequence=False, j=False):

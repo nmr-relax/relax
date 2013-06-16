@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,10 +28,8 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
+from status import Status; status = Status()
 
 
 class Sequence_2D(Sequence):

@@ -31,13 +31,6 @@ import sys
 # relax module imports.
 import lib.arg_check
 from graphics import fetch_icon
-from lib.errors import AllRelaxErrors, RelaxError
-from lib.text.string import strip_lead
-from status import Status; status = Status()
-from user_functions.data import Uf_info; uf_info = Uf_info()
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-
-# relax GUI imports.
 from gui.components.free_file_format import Free_file_format
 from gui.components.menu import build_menu_item
 from gui.errors import gui_raise
@@ -52,6 +45,11 @@ from gui.input_elements.value import Value
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import format_table
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
+from lib.errors import AllRelaxErrors, RelaxError
+from lib.text.string import strip_lead
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
 
 def build_uf_menus(parent=None, menubar=None):

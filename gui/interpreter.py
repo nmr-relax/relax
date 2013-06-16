@@ -31,13 +31,11 @@ import wx
 
 # relax module imports.
 from compat import Queue
-from prompt import interpreter
+from gui.errors import gui_raise
 from lib.errors import AllRelaxErrors
+from prompt import interpreter
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
-from gui.errors import gui_raise
 
 
 class Interpreter(object):

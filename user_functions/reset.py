@@ -23,8 +23,8 @@
 """The reset user function definitions."""
 
 # relax module imports.
-import pipe_control.reset
 from graphics import WIZARD_IMAGE_PATH
+import pipe_control.reset
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

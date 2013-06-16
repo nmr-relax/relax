@@ -23,9 +23,9 @@
 """The spectrometer user function definitions for loading spectrometer information."""
 
 # relax module imports.
-import pipe_control.spectrometer
-from pipe_control import spectrum
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import spectrum
+import pipe_control.spectrometer
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

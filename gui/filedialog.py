@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,10 +28,8 @@ from os import chdir, getcwd
 import wx
 
 # relax module imports.
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.string_conv import gui_to_str, str_to_gui
+from status import Status; status = Status()
 
 
 class RelaxDirDialog(wx.DirDialog):

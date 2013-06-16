@@ -23,8 +23,8 @@
 """The monte_carlo user function definitions for Monte Carlo simulations."""
 
 # relax module imports.
-from pipe_control import monte_carlo
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import monte_carlo
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

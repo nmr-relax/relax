@@ -26,10 +26,10 @@
 from copy import deepcopy
 
 # relax module imports.
-import lib.arg_check
 from data_store.mol_res_spin import SpinContainer
-from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
+import lib.arg_check
 from lib.errors import RelaxError, RelaxLenError, RelaxNoSequenceError
+from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 
 
 class API_common:

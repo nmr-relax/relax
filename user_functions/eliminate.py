@@ -23,8 +23,8 @@
 """The eliminate user function definitions for removing failed models."""
 
 # relax module imports.
-from pipe_control import eliminate
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import eliminate
 from specific_analyses.model_free import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

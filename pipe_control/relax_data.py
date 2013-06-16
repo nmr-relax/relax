@@ -31,16 +31,14 @@ from warnings import warn
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.exp_info import ExpInfo
-from pipe_control import bmrb
-from pipe_control.interatomic import define, return_interatom, return_interatom_list
-from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
-from pipe_control import pipes
-from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
-from pipe_control import value
-from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.errors import RelaxError, RelaxMultiSpinIDError, RelaxNoRiError, RelaxNoSequenceError, RelaxNoSpinError, RelaxRiError
 from lib.io import read_spin_data, write_data
+from lib.physical_constants import element_from_isotope, number_from_isotope
 from lib.warnings import RelaxWarning
+from pipe_control import bmrb, pipes, value
+from pipe_control.interatomic import define, return_interatom, return_interatom_list
+from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
+from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
 import specific_analyses
 
 

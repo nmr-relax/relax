@@ -27,8 +27,8 @@ from numpy import ndarray
 from random import gauss
 
 # relax module imports.
-from lib.errors import RelaxError
 from lib import statistics
+from lib.errors import RelaxError
 from pipe_control import pipes
 from specific_analyses.setup import get_specific_fn
 

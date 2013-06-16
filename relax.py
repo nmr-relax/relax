@@ -52,11 +52,11 @@ import sys
 
 # relax modules.
 from info import Info_box
-from multi import Application_callback, load_multiprocessor
-from prompt import interpreter
 import lib.errors
 from lib.io import io_streams_log, io_streams_tee
 import lib.warnings
+from multi import Application_callback, load_multiprocessor
+from prompt import interpreter
 from status import Status; status = Status()
 import version
 

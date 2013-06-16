@@ -26,13 +26,13 @@
 from warnings import warn
 
 # relax module imports.
-from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
-from pipe_control import pipes
 from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
 from lib.io import read_spin_data
 from lib.selection import Selection, spin_id_to_data_list
 from lib.warnings import RelaxNoSpinWarning
+from pipe_control import pipes
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

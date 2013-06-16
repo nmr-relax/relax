@@ -27,12 +27,10 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
-from pipe_control.mol_res_spin import id_string_doc
-from lib.errors import RelaxError
-
-# relax GUI module imports.
 from gui.fonts import font
 from gui.string_conv import gui_to_str, str_to_gui
+from lib.errors import RelaxError
+from pipe_control.mol_res_spin import id_string_doc
 
 
 class Spin_id:

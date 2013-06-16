@@ -29,13 +29,11 @@ import wx
 
 # relax module imports.
 from graphics import fetch_icon
-from status import Status; status = Status()
-from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Menu:

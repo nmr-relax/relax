@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,8 +25,6 @@
 
 # relax module imports.
 from graphics import fetch_icon
-
-# relax GUI module imports.
 from gui.components.base_list import Base_list
 from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()

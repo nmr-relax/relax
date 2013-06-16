@@ -26,12 +26,7 @@
 import wx
 
 # relax module imports.
-from pipe_control.mol_res_spin import molecule_loop
-from pipe_control.pipes import cdp_name, pipe_names, switch
 from graphics import IMAGE_PATH, fetch_icon
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.components.citations import Citations
 from gui.components.molecule import Molecule
 from gui.components.relax_data_meta import Relax_data_meta_list
@@ -43,6 +38,9 @@ from gui.icons import relax_icons
 from gui.misc import add_border, bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.mol_res_spin import molecule_loop
+from pipe_control.pipes import cdp_name, pipe_names, switch
+from status import Status; status = Status()
 
 
 class Export_bmrb_window(wx.Frame):

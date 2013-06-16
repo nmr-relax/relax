@@ -27,18 +27,16 @@
 import wx
 
 # relax module imports.
-from pipe_control.selection import is_mol_selected, is_res_selected, is_spin_selected
-from pipe_control.mol_res_spin import get_molecule_ids, molecule_loop, residue_loop, return_molecule, return_residue, return_spin, spin_loop
-from pipe_control.pipes import cdp_name, get_pipe
 from graphics import fetch_icon
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.mol_res_spin import get_molecule_ids, molecule_loop, residue_loop, return_molecule, return_residue, return_spin, spin_loop
+from pipe_control.pipes import cdp_name, get_pipe
+from pipe_control.selection import is_mol_selected, is_res_selected, is_spin_selected
+from status import Status; status = Status()
 
 
 class Mol_res_spin_tree(wx.Window):

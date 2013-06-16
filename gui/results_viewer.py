@@ -29,10 +29,6 @@ from wx.lib import buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.pipes import cdp_name, pipe_names
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
@@ -40,6 +36,8 @@ from gui.misc import add_border, open_file
 from gui.paths import icon_22x22
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.pipes import cdp_name, pipe_names
+from status import Status; status = Status()
 
 
 class Results_viewer(wx.Frame):

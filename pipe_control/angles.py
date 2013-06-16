@@ -28,11 +28,11 @@ from numpy import dot
 from warnings import warn
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
+from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id, spin_loop
-from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
-from lib.warnings import RelaxWarning
 
 
 def angle_diff_frame():

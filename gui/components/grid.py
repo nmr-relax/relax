@@ -30,15 +30,13 @@ import wx.lib.buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from status import Status; status = Status()
-
-# relax GUI module imports.
+from gui import paths
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.message import error_message
 from gui.misc import add_border
 from gui.string_conv import str_to_gui
-from gui import paths
+from status import Status; status = Status()
 
 
 class Delay_num_cell_editor(wx.grid.PyGridCellEditor):

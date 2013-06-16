@@ -30,9 +30,9 @@ else:
     FD_OPEN = -1
 
 # relax module imports.
-from pipe_control import diffusion_tensor
 from graphics import WIZARD_IMAGE_PATH
 from lib.software.opendx.execute import run
+from pipe_control import diffusion_tensor
 from pipe_control.opendx import map
 from prompt.doc_string import regexp_doc
 from specific_analyses.model_free import Model_free

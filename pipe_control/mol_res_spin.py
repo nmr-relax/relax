@@ -38,11 +38,11 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from pipe_control import exp_info, pipes
 from lib.check_types import is_unicode
 from lib.errors import RelaxError, RelaxNoSpinError, RelaxMultiMolIDError, RelaxMultiResIDError, RelaxMultiSpinIDError, RelaxResSelectDisallowError, RelaxSpinSelectDisallowError
 from lib.selection import Selection, parse_token, tokenise
 from lib.warnings import RelaxWarning
+from pipe_control import exp_info, pipes
 from status import Status; status = Status()
 from user_functions.objects import Desc_container
 

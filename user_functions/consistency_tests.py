@@ -24,8 +24,8 @@
 """The consistency_tests user function definitions."""
 
 # relax module imports.
-from pipe_control import spectrometer
 from graphics import ANALYSIS_IMAGE_PATH
+from pipe_control import spectrometer
 from specific_analyses.setup import consistency_tests_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

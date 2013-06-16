@@ -32,9 +32,9 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from prompt.doc_string import regexp_doc
-from pipe_control import diffusion_tensor, pipes, value
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import diffusion_tensor, pipes, value
+from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free

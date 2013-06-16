@@ -34,12 +34,12 @@ if dep_check.subprocess_module:
 import sys
 
 # relax module imports.
+from lib.errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
+from lib.io import extract_data, mkdir_nofail, open_write_file, strip, test_binary
 from pipe_control import angles, diffusion_tensor, pipes, value
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
 from pipe_control.spectrometer import loop_frequencies
-from lib.errors import RelaxDirError, RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError
-from lib.io import extract_data, mkdir_nofail, open_write_file, strip, test_binary
 from specific_analyses.setup import model_free_obj
 
 

@@ -27,14 +27,12 @@ import wx.lib.buttons
 import wx.lib.scrolledpanel
 
 # relax module imports.
-from status import Status; status = Status()
-
-# relax GUI module imports.
+import gui
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import bitmap_setup
 from gui.paths import icon_22x22, icon_48x48
-import gui
+from status import Status; status = Status()
 
 
 def error_message(msg, caption=''):

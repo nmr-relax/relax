@@ -28,11 +28,11 @@ from numpy import float64, array, transpose
 from re import search
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxInvalidDataError
 import pipe_control
 from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.spectrometer import set_frequency
-from lib.errors import RelaxError, RelaxInvalidDataError
 
 
 

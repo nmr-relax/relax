@@ -27,10 +27,10 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
+from gui import paths
 from gui.fonts import font
 from gui.message import Question
 from gui.misc import add_border
-from gui import paths
 from gui.string_conv import list_to_gui, str_to_gui
 from status import Status; status = Status()
 

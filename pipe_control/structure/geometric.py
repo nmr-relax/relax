@@ -25,14 +25,14 @@ from numpy import arccos, array, dot, eye, float64, zeros
 from os import getcwd
 
 # relax module imports.
-from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from pipe_control import pipes
-from pipe_control.structure.mass import pipe_centre_of_mass
 from lib.errors import RelaxNoPdbError, RelaxNoSequenceError, RelaxNoVectorsError
 from lib.io import get_file_path, open_write_file
 from lib.structure.internal.object import Internal
 from lib.structure.represent.rotor import rotor_pdb
+from pipe_control import pipes
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from pipe_control.structure.mass import pipe_centre_of_mass
 from status import Status; status = Status()
 
 

@@ -32,15 +32,15 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
+from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
+from lib.geometry.vectors import random_unit_vector
+from lib.io import open_write_file, read_spin_data, write_spin_data
+from lib.physical_constants import g1H, pcs_constant
+from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_index_loop, spin_loop
-from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
-from lib.geometry.vectors import random_unit_vector
-from lib.physical_constants import g1H, pcs_constant
-from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
-from lib.io import open_write_file, read_spin_data, write_spin_data
-from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 
 
 def back_calc(align_id=None):

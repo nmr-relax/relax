@@ -28,15 +28,13 @@ from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.errors import RelaxImplementError
-from status import Status; status = Status()
-
-# relax GUI module imports.
-from gui.interpreter import Interpreter; interpreter = Interpreter()
+from gui import paths
 from gui.fonts import font
 from gui.icons import relax_icons
+from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, bitmap_setup
-from gui import paths
+from lib.errors import RelaxImplementError
+from status import Status; status = Status()
 
 
 class Wiz_page(wx.Panel):

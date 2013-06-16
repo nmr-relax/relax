@@ -23,8 +23,8 @@
 """The paramag user function definitions for paramagnetic related functions."""
 
 # relax module imports.
-from pipe_control import paramag, pipes
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import paramag, pipes
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

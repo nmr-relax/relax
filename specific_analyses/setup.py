@@ -23,6 +23,7 @@
 """Module for handling the setup of the specific analyses."""
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxFuncSetupError
 from pipe_control import pipes
 from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.frame_order import Frame_order
@@ -32,7 +33,6 @@ from specific_analyses.model_free import Model_free
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe import Noe
 from specific_analyses.relax_fit import Relax_fit
-from lib.errors import RelaxError, RelaxFuncSetupError
 
 
 # Instantiate all classes.

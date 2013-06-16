@@ -28,15 +28,13 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
-from status import Status; status = Status()
-from pipe_control.spectrum import replicated_flags, replicated_ids
 from graphics import fetch_icon
-from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
 from gui.components.base_list import Base_list
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.spectrum import replicated_flags, replicated_ids
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Spectra_list(Base_list):

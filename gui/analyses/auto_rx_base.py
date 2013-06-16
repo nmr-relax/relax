@@ -29,6 +29,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data_store import Relax_data_store; ds = Relax_data_store()
+from gui import paths
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
@@ -37,7 +38,6 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data
-from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard

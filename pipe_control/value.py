@@ -27,11 +27,11 @@ from numpy import ndarray
 import sys
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
+from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 from pipe_control import minimise, pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, spin_loop
 from pipe_control.result_files import add_result_file
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
-from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 import specific_analyses
 from status import Status; status = Status()
 

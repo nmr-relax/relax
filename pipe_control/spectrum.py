@@ -30,12 +30,12 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
-from pipe_control import pipes
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import extract_data, read_spin_data, strip, write_data
 from lib.software import nmrview, sparky, xeasy
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 
 
 def __errors_height_no_repl():

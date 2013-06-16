@@ -26,18 +26,16 @@
 import wx
 
 # relax module imports.
-from pipe_control.pipes import cdp_name, pipe_names
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
-from status import Status; status = Status()
-from lib.errors import RelaxNoPipeError
-
-# relax GUI module imports.
 from gui.icons import relax_icons
 from gui.misc import gui_raise
 from gui.spin_viewer.splitter import Tree_splitter
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
+from lib.errors import RelaxNoPipeError
+from pipe_control.pipes import cdp_name, pipe_names
+from status import Status; status = Status()
 
 
 class Spin_view_window(wx.Frame):

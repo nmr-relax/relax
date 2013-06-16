@@ -33,11 +33,11 @@ if dep_check.subprocess_module:
 from time import sleep
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.io import get_file_path, open_read_file, open_write_file, test_binary
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control import pipes
 from pipe_control.result_files import add_result_file
-from lib.errors import RelaxError, RelaxNoSequenceError
-from lib.io import get_file_path, open_read_file, open_write_file, test_binary
 from specific_analyses.setup import get_specific_fn
 from status import Status; status = Status()
 

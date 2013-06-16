@@ -23,8 +23,8 @@
 """Module implementing the mathematical modelling step of model elimination."""
 
 # relax module imports.
-from pipe_control import pipes
 from lib.errors import RelaxError
+from pipe_control import pipes
 from specific_analyses.setup import get_specific_fn
 
 

@@ -23,10 +23,10 @@
 from warnings import warn
 
 # relax module imports.
-from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
 from lib.errors import RelaxNoPdbError
 from lib.structure.mass import centre_of_mass
 from lib.warnings import RelaxWarning
+from pipe_control.mol_res_spin import return_molecule, return_residue, return_spin
 
 
 

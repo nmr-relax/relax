@@ -33,17 +33,8 @@ import wx.lib.mixins.listctrl
 # relax module imports.
 from auto_analyses import dauvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.interatomic import interatomic_loop
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
-from pipe_control.pipes import has_bundle, has_pipe
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
-from lib.physical_constants import NH_BOND_LENGTH
-from lib.errors import RelaxError
-from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
-from specific_analyses.setup import get_specific_fn
-from status import Status; status = Status()
-
-# relax GUI module imports.
+from gui import paths
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
@@ -56,10 +47,17 @@ from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Missing_data
 from gui.misc import add_border, bitmap_setup
-from gui import paths
 from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_window
+from lib.physical_constants import NH_BOND_LENGTH
+from lib.errors import RelaxError
+from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.pipes import has_bundle, has_pipe
+from specific_analyses.setup import get_specific_fn
+from status import Status; status = Status()
 
 
 class About_window(About_base):

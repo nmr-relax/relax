@@ -31,11 +31,6 @@ import wx.stc
 # relax module imports.
 from compat import Queue
 from graphics import IMAGE_PATH
-from pipe_control.pipes import cdp_name
-from lib.io import SplitIO
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
@@ -43,6 +38,9 @@ from gui.misc import add_border, bitmap_setup
 from gui.paths import icon_16x16
 from gui.string_conv import str_to_gui
 from info import Info_box
+from lib.io import SplitIO
+from pipe_control.pipes import cdp_name
+from status import Status; status = Status()
 
 
 class Controller(wx.Frame):

@@ -24,7 +24,6 @@ from math import sqrt
 from numpy import array, dot, eye, float64, ones, rank, transpose, zeros
 
 # relax module imports.
-from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 from lib.alignment.alignment_tensor import dAi_dAxx, dAi_dAyy, dAi_dAxy, dAi_dAxz, dAi_dAyz, to_tensor
 from lib.alignment.paramag_centre import vectors_single_centre, vectors_centre_per_state
 from lib.alignment.pcs import ave_pcs_tensor, ave_pcs_tensor_ddeltaij_dAmn, ave_pcs_tensor_ddeltaij_dc, pcs_constant_grad, pcs_tensor
@@ -33,6 +32,7 @@ from lib.errors import RelaxError
 from lib.float import isNaN
 from lib.geometry.rotations import euler_to_R_zyz
 from lib.physical_constants import pcs_constant
+from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 
 
 class N_state_opt:

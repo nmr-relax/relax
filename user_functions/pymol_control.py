@@ -33,8 +33,8 @@ else:
 
 # relax module imports.
 import colour
-from pipe_control import pymol_control
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import pymol_control
 from specific_analyses.model_free.pymol import Pymol
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

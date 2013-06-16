@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,13 +28,11 @@ import wx
 
 # relax module imports.
 from graphics import fetch_icon
-from status import Status; status = Status()
-from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
 from gui.components.base_list import Base_list
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Relax_data_meta_list(Base_list):
