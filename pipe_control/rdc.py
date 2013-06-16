@@ -120,7 +120,7 @@ def back_calc(align_id=None):
             interatom.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights)
 
             # T values.
-            if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+            if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
                 if not hasattr(interatom, 'j_coupling'):
                     raise RelaxNoJError
 
@@ -476,7 +476,7 @@ def q_factors(spin_id=None):
             if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
             j_flag = False
-            if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+            if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
                 j_flag = True
                 if not hasattr(interatom, 'j_coupling'):
                     raise RelaxNoJError
