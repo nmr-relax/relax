@@ -674,7 +674,7 @@ class Unit_test_runner(object):
 if __name__ == '__main__':
     # Set up the parser options.
     parser = OptionParser()
-    parser.add_option("-v", "--verbose", dest="verbose", help="verbose test ouput", default=False, action='store_true')
+    parser.add_option("-v", "--verbose", dest="verbose", help="verbose test ouput", default=True, action='store_true')
     parser.add_option("-u", "--system", dest="system_directory", help="path to relax top directory which contains test_suite", default=None)
     parser.add_option("-s", "--utest", dest="unit_test_directory", help="default unit test directory", default=None)
 
