@@ -25,19 +25,19 @@
 
 This module is for the function, gradient and Hessian of the M61 model.  The model is named after the reference:
 
-    Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
 
-The equation used is:
+The equation used is::
 
-                                      phi_ex * kex
-    R1rho = R1rho' + sin^2(theta) * ----------------- ,
-                                    kex^2 + omega_e^2
+                       phi_ex * kex
+    R1rho = R1rho' + ----------------- ,
+                     kex^2 + omega_1^2
 
-where R1rho' is the R1rho value in the absence of exchange, theta is the rotating frame tilt angle,
+where::
 
     phi_ex = pA * pB * delta_omega^2 ,
 
-kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_e is the effective field in the rotating frame.
+R1rho' is the R1rho value in the absence of exchange, kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_1 is the spin-lock field strength.
 """
 
 # Python module imports.
@@ -65,22 +65,20 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
-    @type num_poinst:           int
+    @type num_points:           int
     """
 
     # Repetitive calculations (to speed up calculations).
     kex2 = kex**2
-    sin_theta2 = sin(theta)**2
-    R1_R2 = R1 * cos(theta)**2  +  r1rho_prime * sin(theta)**2
 
     # The numerator.
-    numer = sin_theta2 * phi_ex * kex
+    numer = phi_ex * kex
 
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # Catch zeros (to avoid pointless mathematical operations).
         if numer == 0.0:
-            back_calc[i] = R1_R2
+            back_calc[i] = r1rho_prime
             continue
 
         # Denominator.
@@ -92,4 +90,4 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_
             continue
 
         # R1rho calculation.
-        back_calc[i] = R1_R2 + numer / denom
+        back_calc[i] = r1rho_prime + numer / denom

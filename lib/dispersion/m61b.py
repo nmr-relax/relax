@@ -25,9 +25,9 @@
 
 This module is for the function, gradient and Hessian of the M61 skew model.  The model is named after the reference:
 
-    Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
 
-The equation used is:
+The equation used is::
 
                            pA^2.pB.delta_omega^2.kex
     R1rho = R1rho' + -------------------------------------- ,
@@ -59,7 +59,7 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=No
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
-    @type num_poinst:           int
+    @type num_points:           int
     """
 
     # The B population.

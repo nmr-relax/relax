@@ -25,13 +25,14 @@
 
 This module is for the function, gradient and Hessian of the CR72 model.  The model is named after the reference:
 
-    Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105.  (U{DOI: 10.1016/0022-2364(72)90090-X<http://dx.doi.org/10.1016/0022-2364(72)90090-X>}).
+    - Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105.  (U{DOI: 10.1016/0022-2364(72)90090-X<http://dx.doi.org/10.1016/0022-2364(72)90090-X>}).
 
-The equation used is:
+The equation used is::
 
     R2eff = 1/2 [ R2A0 + R2B0 + kex - 2.nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ] ,
 
-where:
+where::
+
            1 /        Psi + 2delta_omega^2 \ 
     D+/- = - | +/-1 + -------------------- | ,
            2 \        sqrt(Psi^2 + zeta^2) /
@@ -44,11 +45,11 @@ where:
 
     zeta = 2delta_omega (R2A0 - R2B0 - pA.kex + pB.kex).
 
-kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states in ppm.  Importantly for the implementation of this model, it is assumed that R2A0 and R2B0 are identical.  This simplifies some of the equations to:
+kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states in ppm.  Importantly for the implementation of this model, it is assumed that R2A0 and R2B0 are identical.  This simplifies some of the equations to::
 
     R2eff = R20 + kex/2 - nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ,
 
-where:
+where::
 
     Psi = kex^2 - delta_omega^2 ,
 
@@ -78,7 +79,7 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_poinst:       int
+    @type num_points:       int
     """
 
     # The B population.

@@ -25,7 +25,7 @@
 
 This module is for the function, gradient and Hessian of the IT99 model.  The model is named after the reference:
 
-    Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (U{DOI: 10.1023/A:1008324025406<http://dx.doi.org/10.1023/A:1008324025406>}).
+    - Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (U{DOI: 10.1023/A:1008324025406<http://dx.doi.org/10.1023/A:1008324025406>}).
 
 The equation used is::
 
@@ -34,7 +34,7 @@ The equation used is::
            1 + omega_a^2*tex^2
 
     phi_ex = pA * pB * delta_omega^2 ,
-    
+
     omega_a^2 = sqrt(omega_1eff^4 + pA^2*delta_omega^4) ,
 
     R2eff = R20 + Rex ,
@@ -71,7 +71,7 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_poinst:       int
+    @type num_points:       int
     """
 
     # Repetitive calculations (to speed up calculations).

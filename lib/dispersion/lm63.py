@@ -25,15 +25,15 @@
 
 This module is for the function, gradient and Hessian of the LM63 model.  The model is named after the reference:
 
-    Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+    - Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
 
-The equation used is:
+The equation used is::
 
                   phi_ex   /     4 * nu_cpmg         /     kex     \ \ 
     R2eff = R20 + ------ * | 1 - -----------  * tanh | ----------- | | ,
                    kex     \         kex             \ 4 * nu_cpmg / /
 
-where:
+where::
 
     phi_ex = pA * pB * delta_omega^2 ,
 
@@ -61,7 +61,7 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_poinst:       int
+    @type num_points:       int
     """
 
     # Repetitive calculations (to speed up calculations).
