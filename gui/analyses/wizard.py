@@ -266,31 +266,17 @@ class New_analysis_page(Wiz_page):
         # The R2 button.
         self.button_r2 = self.create_button(id=self.button_ids['r2'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip=u"R\u2082 relaxation curve-fitting analysis", fn=self.select_r2)
 
-        # The model-free button.
-        self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer1, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
-
         # The relaxation dispersion button.
-        self.button_disp = self.create_button(id=self.button_ids['relax_disp'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"relax_disp_150x150.png", tooltip="Relaxation dispersion analysis", fn=self.select_disp)
+        self.button_disp = self.create_button(id=self.button_ids['relax_disp'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"relax_disp_150x150.png", tooltip="Relaxation dispersion analysis", fn=self.select_disp)
 
         # Consistency testing.
-<<<<<<< .working
-        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
-=======
-        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing", fn=self.select_consist_test, disabled=True)
->>>>>>> .merge-right.r20144
+        self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing (disabled)", fn=self.select_consist_test, disabled=True)
 
-<<<<<<< .working
-=======
         # The model-free button.
         self.button_mf = self.create_button(id=self.button_ids['mf'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_150x150.png", tooltip="Model-free analysis", fn=self.select_mf)
 
->>>>>>> .merge-right.r20144
         # The custom analysis button.
-<<<<<<< .working
-        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=paths.ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
-=======
-        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis", fn=self.select_custom, disabled=True)
->>>>>>> .merge-right.r20144
+        self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
 
         # The blank reserved button.
         self.button_reserved = self.create_button(id=self.button_ids['reserved'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
