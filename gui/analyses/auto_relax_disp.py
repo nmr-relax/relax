@@ -28,7 +28,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from graphics import fetch_icon
+from graphics import ANALYSIS_IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
@@ -54,7 +54,7 @@ class Auto_relax_disp(Base_analysis):
 
     # Hardcoded variables.
     analysis_type = None
-    bitmap = paths.ANALYSIS_IMAGE_PATH+"relax_disp_200x200.png"
+    bitmap = ANALYSIS_IMAGE_PATH+"relax_disp_200x200.png"
     label = 'Relax-disp'
 
     def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], data_index=None):
