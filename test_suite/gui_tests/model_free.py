@@ -20,25 +20,21 @@
 ###############################################################################
 
 # Python module imports.
-import numpy
-from os import F_OK, access, sep
-from tempfile import mkdtemp
+from os import sep
 import wx
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control.pipes import cdp_name
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
 # relax GUI imports.
 from gui.analyses import auto_model_free
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import float_to_gui, str_to_gui
+from gui.string_conv import str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
-from gui.wizards.wiz_objects import Wiz_window
 
 
 class Mf(GuiTestCase):

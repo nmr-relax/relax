@@ -33,12 +33,12 @@ from warnings import warn
 
 # relax module imports.
 from data_store.align_tensor import AlignTensorList
-from pipe_control.angles import wrap_angles
-from pipe_control import pipes
 from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.io import write_data
 from lib.warnings import RelaxWarning
+from pipe_control import pipes
+from pipe_control.angles import wrap_angles
 
 
 def align_data_exists(tensor, pipe=None):

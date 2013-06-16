@@ -31,10 +31,10 @@ else:
     FD_OPEN = -1
 
 # relax module imports.
-from pipe_control.mol_res_spin import get_spin_ids
-from pipe_control import pipes, interatomic
 from graphics import WIZARD_IMAGE_PATH
 from lib.physical_constants import NH_BOND_LENGTH
+from pipe_control.mol_res_spin import get_spin_ids
+from pipe_control import pipes, interatomic
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

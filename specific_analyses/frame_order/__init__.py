@@ -39,28 +39,26 @@ from warnings import warn
 
 # relax module imports.
 from lib.float import isNaN, isInf
+from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.io import open_write_file
+from lib.order import order_parameters
+from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
+from lib.structure.cones import Iso_cone, Pseudo_elliptic
+from lib.structure.internal.object import Internal
+from lib.structure.represent.rotor import rotor_pdb
+from lib.text.sectioning import subsection
+from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import pipe_centre_of_mass
-from lib.structure.cones import Iso_cone, Pseudo_elliptic
-from lib.structure.internal.object import Internal
-from lib.structure.represent.rotor import rotor_pdb
-from lib.text.sectioning import subsection
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
 from target_functions import frame_order
-from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.order import order_parameters
-from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError
-from lib.io import open_write_file
-from lib.warnings import RelaxWarning
-from specific_analyses.api_base import API_base
-from specific_analyses.api_common import API_common
-from specific_analyses.api_base import API_base
-from specific_analyses.api_common import API_common
 
 
 class Frame_order(API_base, API_common):

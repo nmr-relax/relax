@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010 Edward d'Auvergne                                        #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -45,7 +45,6 @@ This script is split into multiple stages:
 
 # Python module imports.
 from os import rename, sep
-import sys
 
 # relax module imports.
 from auto_analyses.stereochem_analysis import Stereochem_analysis

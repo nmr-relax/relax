@@ -27,10 +27,10 @@ from math import sqrt
 from warnings import warn
 
 # relax module imports.
-from pipe_control import pipes
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.warnings import RelaxDeselectWarning
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

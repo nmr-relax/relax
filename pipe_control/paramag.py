@@ -26,9 +26,9 @@
 from numpy import array, float64, zeros
 
 # relax module imports.
+from lib.errors import RelaxError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import spin_loop
-from lib.errors import RelaxError
 
 
 def centre(pos=None, atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=False, force=False):

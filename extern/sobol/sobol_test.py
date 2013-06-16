@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 from numpy import bitwise_xor
-from extern.sobol.sobol_lib import *
+from extern.sobol.sobol_lib import i4_bit_hi1, i4_bit_lo0, i4_sobol, i4_uniform, prime_ge
 import datetime
 def sobol_test01 ( ):
 #*****************************************************************************80

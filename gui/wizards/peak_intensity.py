@@ -29,10 +29,6 @@ import wx
 from wx.lib import scrolledpanel
 
 # relax module imports.
-from pipe_control.mol_res_spin import are_spins_named
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from graphics import WIZARD_IMAGE_PATH
 from gui.fonts import font
 from gui.message import Question
@@ -40,6 +36,8 @@ from gui.misc import format_table
 from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
+from pipe_control.mol_res_spin import are_spins_named
+from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 

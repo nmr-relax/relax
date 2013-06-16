@@ -22,7 +22,6 @@
 # Python module imports.
 from copy import deepcopy
 from os import sep
-import sys
 from tempfile import mktemp
 
 # relax module imports.

@@ -23,9 +23,9 @@
 """The residue user function definitions."""
 
 # relax module imports.
-from pipe_control.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, get_molecule_names, get_residue_ids, id_string_doc, name_residue, number_residue
-from pipe_control import pipes
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import pipes
+from pipe_control.mol_res_spin import copy_residue, create_residue, delete_residue, display_residue, get_molecule_names, get_residue_ids, id_string_doc, name_residue, number_residue
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

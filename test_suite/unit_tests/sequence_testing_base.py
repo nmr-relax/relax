@@ -31,7 +31,6 @@ except ImportError:
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import pipes
-from lib.io import delete
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 

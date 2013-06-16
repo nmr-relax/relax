@@ -23,11 +23,11 @@
 """Module containing functions for specifying the experimental details."""
 
 # relax module imports.
-from info import Info_box
 from data_store.exp_info import ExpInfo
-from pipe_control import pipes
+from info import Info_box
 from lib.errors import RelaxError
 from lib.io import open_read_file
+from pipe_control import pipes
 from version import version_full
 
 

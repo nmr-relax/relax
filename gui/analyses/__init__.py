@@ -32,12 +32,6 @@ from types import ListType
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
 import dep_check
-from pipe_control import pipes
-from pipe_control.reset import reset
-from lib.errors import RelaxError
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
@@ -45,6 +39,10 @@ from gui.analyses.auto_r2 import Auto_r2
 from gui.analyses.auto_relax_disp import Auto_relax_disp
 from gui.analyses.wizard import Analysis_wizard
 from gui.message import error_message, Question
+from lib.errors import RelaxError
+from pipe_control import pipes
+from pipe_control.reset import reset
+from status import Status; status = Status()
 
 
 # The package contents.

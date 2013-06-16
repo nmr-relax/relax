@@ -26,9 +26,9 @@
 from re import search
 
 # relax module imports.
+from lib.errors import RelaxError
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
-from lib.errors import RelaxError
 import specific_analyses
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()

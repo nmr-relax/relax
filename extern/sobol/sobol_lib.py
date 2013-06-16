@@ -1,5 +1,6 @@
 import math
-from numpy import *
+from numpy import bitwise_xor, mod, round, transpose, zeros
+
 def i4_bit_hi1 ( n ):
 #*****************************************************************************80
 #

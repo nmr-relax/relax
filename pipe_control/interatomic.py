@@ -32,12 +32,11 @@ from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float
-from pipe_control import pipes
-from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from pipe_control import pipes
 from lib.errors import RelaxError, RelaxInteratomInconsistentError, RelaxNoInteratomError, RelaxNoSpinError
 from lib.io import extract_data, strip, write_data
 from lib.warnings import RelaxWarning, RelaxZeroVectorWarning
+from pipe_control import pipes
+from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):

@@ -1,6 +1,5 @@
 # Python module imports.
 from os import sep
-import sys
 
 # relax imports.
 from status import Status; status = Status()

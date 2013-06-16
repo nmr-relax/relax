@@ -27,9 +27,7 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-import dep_check
 from pipe_control.mol_res_spin import spin_loop
-from lib.errors import RelaxError
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests

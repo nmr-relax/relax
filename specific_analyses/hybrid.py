@@ -23,10 +23,10 @@
 """Analysis specific code for the hybridisation of different data pipes."""
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.sequence import compare_sequence
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxPipeError, RelaxSequenceError
 
 
 class Hybrid:

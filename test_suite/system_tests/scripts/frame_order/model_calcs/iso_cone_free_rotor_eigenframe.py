@@ -1,13 +1,10 @@
 # Script for checking the free rotor isotropic cone frame order model.
 
 # Python module imports.
-from numpy import array, cross, float64, zeros
-from numpy.linalg import norm
 from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.geometry.rotations import R_to_euler_zyz
 from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 

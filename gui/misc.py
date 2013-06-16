@@ -32,11 +32,9 @@ from textwrap import wrap
 import wx
 
 # relax module imports.
+from gui.errors import gui_raise
 from lib.errors import AllRelaxErrors
 from status import Status; status = Status()
-
-# relax GUI module imports.
-from gui.errors import gui_raise
 
 
 def add_border(box, border=0, packing=wx.VERTICAL, debug=False):

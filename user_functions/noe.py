@@ -30,8 +30,8 @@ else:
     FD_OPEN = -1
 
 # relax module imports.
-from pipe_control import noesy, spectrum
 from graphics import ANALYSIS_IMAGE_PATH
+from pipe_control import noesy, spectrum
 from specific_analyses.setup import noe_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

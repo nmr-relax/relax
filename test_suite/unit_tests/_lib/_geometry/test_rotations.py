@@ -21,15 +21,15 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, asin, pi, sqrt
-from numpy import array, eye, float64, zeros
+from math import asin, cos, pi, sin, sqrt
+from numpy import array, dot, eye, float64, zeros
 from numpy.linalg import norm
 from random import shuffle, uniform
 from unittest import TestCase
 
 # relax module imports.
 from pipe_control.angles import wrap_angles
-from lib.geometry.rotations import *
+from lib.geometry.rotations import axis_angle_to_euler_xyx, axis_angle_to_euler_xyz, axis_angle_to_euler_xzx, axis_angle_to_euler_xzy, axis_angle_to_euler_yxy, axis_angle_to_euler_yxz, axis_angle_to_euler_yzx, axis_angle_to_euler_yzy, axis_angle_to_euler_zxy, axis_angle_to_euler_zxz, axis_angle_to_euler_zyx, axis_angle_to_euler_zyz, axis_angle_to_R, axis_angle_to_quaternion, euler_to_axis_angle_xyx, euler_to_axis_angle_xyz, euler_to_axis_angle_xzx, euler_to_axis_angle_xzy, euler_to_axis_angle_yxy, euler_to_axis_angle_yxz, euler_to_axis_angle_yzx, euler_to_axis_angle_yzy, euler_to_axis_angle_zxy, euler_to_axis_angle_zxz, euler_to_axis_angle_zyx, euler_to_axis_angle_zyz,euler_to_R_xyx, euler_to_R_xyz, euler_to_R_xzx, euler_to_R_xzy, euler_to_R_yxy, euler_to_R_yxz, euler_to_R_yzx, euler_to_R_yzy, euler_to_R_zxy, euler_to_R_zxz, euler_to_R_zyx, euler_to_R_zyz, R_random_hypersphere, R_to_axis_angle, R_to_euler_xyx, R_to_euler_xyz, R_to_euler_xzx, R_to_euler_xzy, R_to_euler_yxy, R_to_euler_yxz, R_to_euler_yzx, R_to_euler_yzy, R_to_euler_zxy, R_to_euler_zxz, R_to_euler_zyx, R_to_euler_zyz, R_to_quaternion, reverse_euler_zyz, quaternion_to_axis_angle, quaternion_to_R
 
 
 # Global variables (reusable storage).
@@ -37,7 +37,7 @@ R = zeros((3, 3), float64)
 R2 = zeros((3, 3), float64)
 
 
-class Test_rotation_matrix(TestCase):
+class Test_rotations(TestCase):
     """Unit tests for the lib.geometry.rotations relax module."""
 
     def setUp(self):

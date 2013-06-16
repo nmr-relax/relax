@@ -23,7 +23,6 @@
 # Python module imports.
 from math import pi
 from os import sep
-import sys
 from tempfile import mkdtemp
 
 # relax module imports.

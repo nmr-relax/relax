@@ -20,8 +20,6 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, eye, float64, zeros
-from sys import stdout
 from unittest import TestCase
 
 # relax module imports.

@@ -20,11 +20,12 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, zeros
+from numpy import array, float64
 from unittest import TestCase
 
 # relax module imports.
-from lib.geometry.lines import *
+from lib.geometry.lines import closest_point
+
 
 class Test_lines(TestCase):
     """Unit tests for the lib.geometry.lines relax module."""

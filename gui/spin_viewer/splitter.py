@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,7 +26,7 @@
 # Python module imports.
 import wx
 
-# GUI module imports.
+# relax module imports.
 from gui.spin_viewer.containers import Container
 from gui.spin_viewer.tree import Mol_res_spin_tree
 

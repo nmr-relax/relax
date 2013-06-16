@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,12 +29,10 @@ import wx.py
 import wx.stc as stc
 
 # relax module imports
+from gui.icons import relax_icons
 from info import Info_box
 from prompt import interpreter
 from status import Status; status = Status()
-
-# relax GUI module imports
-from gui.icons import relax_icons
 
 
 class Prompt(wx.Frame):

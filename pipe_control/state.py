@@ -24,9 +24,9 @@
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.reset import reset
 from lib.errors import RelaxError
 from lib.io import open_read_file, open_write_file
+from pipe_control.reset import reset
 from status import Status; status = Status()
 
 

@@ -2,10 +2,9 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
-from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
+from lib.physical_constants import N15_CSA
 from status import Status; status = Status()
 
 

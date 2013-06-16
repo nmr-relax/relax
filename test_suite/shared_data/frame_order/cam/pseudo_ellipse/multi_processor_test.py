@@ -8,11 +8,7 @@ $ mpirun -n 3 ../../../../../relax --multi mpi4py multi_processor_test.py
 """
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
-from os import sep
-
-# relax module imports.
-from lib.geometry.rotations import euler_to_R_zyz
+from numpy import array
 
 
 # Create the data pipe.

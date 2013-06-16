@@ -3,7 +3,6 @@
 # Python module imports.
 from numpy import array, float64
 from os import sep
-import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()

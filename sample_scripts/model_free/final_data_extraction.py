@@ -9,7 +9,6 @@
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop
-from lib.errors import RelaxError
 
 
 

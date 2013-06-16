@@ -28,12 +28,7 @@ import wx.grid
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
 from graphics import WIZARD_IMAGE_PATH, fetch_icon
-from lib.errors import RelaxError
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
@@ -42,6 +37,9 @@ from gui.misc import add_border, bitmap_setup
 from gui.paths import icon_16x16, icon_22x22
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from lib.errors import RelaxError
+from pipe_control.pipes import cdp_name, delete, get_bundle, get_type, pipe_names, switch
+from status import Status; status = Status()
 
 
 class Pipe_editor(wx.Frame):

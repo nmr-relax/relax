@@ -26,12 +26,10 @@
 import wx
 
 # relax module imports.
-from lib.errors import RelaxError
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.fonts import font
 from gui.string_conv import bool_to_gui, gui_to_bool
+from lib.errors import RelaxError
+from status import Status; status = Status()
 
 
 class Selector_bool:

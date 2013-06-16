@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxError, RelaxBoolError, RelaxFloatError, RelaxIntError, RelaxNoneIntError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxNoneIntError, RelaxNoneNumError, RelaxNoneStrError, RelaxNumError, RelaxStrError
 from test_suite.unit_tests.relax_data_testing_base import Relax_data_base_class
 
 # Unit test imports.

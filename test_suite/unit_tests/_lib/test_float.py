@@ -22,8 +22,10 @@
 
 # Python module imports.
 from unittest import TestCase
-from lib.float import *
 from copy import copy
+
+# relax module imports.
+from lib.float import CLASS_POS_DENORMAL, CLASS_POS_INF, CLASS_POS_NORMAL, CLASS_POS_ZERO, CLASS_NEG_DENORMAL, CLASS_NEG_INF, CLASS_NEG_NORMAL, CLASS_NEG_ZERO, CLASS_QUIET_NAN, getFloatClass, isPositive, isZero, nan, neg_inf, packBytesAsPyFloat, pos_inf
 
 
 # Some constants for the tests.

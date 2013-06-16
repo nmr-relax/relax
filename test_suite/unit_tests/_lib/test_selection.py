@@ -25,7 +25,7 @@ from lib.errors import RelaxError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_lib_selection(UnitTestCase):
+class Test_selection(UnitTestCase):
     """Unit tests for the functions of the 'lib.selection' module."""
 
     def test_Selection_boolean_and(self):
@@ -376,22 +376,6 @@ class Test_lib_selection(UnitTestCase):
         self.assert_(obj.contains_spin(spin_name='*C*', mol='RNA'))
 
 
-    def test_Selection_full_spin_id(self):
-        """Test the Selection object for the single spin identifier '#Ap4Aase:2@63'."""
-
-        # The Selection object.
-        obj = Selection("#Ap4Aase:2@63")
-
-        # Test if various spins are in the selection.
-        self.assert_((cdp.mol[0], cdp.mol[0].res[0], cdp.mol[0].res[0].spin[0]) not in obj)
-        self.assert_((cdp.mol[0], cdp.mol[0].res[1], cdp.mol[0].res[1].spin[0]) in obj)
-        self.assert_((cdp.mol[0], cdp.mol[0].res[2], cdp.mol[0].res[2].spin[0]) not in obj)
-        self.assert_((cdp.mol[1], cdp.mol[1].res[0], cdp.mol[1].res[0].spin[0]) not in obj)
-        self.assert_((cdp.mol[1], cdp.mol[1].res[0], cdp.mol[1].res[0].spin[1]) not in obj)
-        self.assert_((cdp.mol[1], cdp.mol[1].res[1], cdp.mol[1].res[1].spin[0]) not in obj)
-        self.assert_((cdp.mol[1], cdp.mol[1].res[1], cdp.mol[1].res[1].spin[1]) not in obj)
-
-
     def test_Selection_memory(self):
         """Test that the Selection object has no memory of previous selections."""
 
@@ -416,7 +400,7 @@ class Test_lib_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(':1' in obj)
+        self.assert_(obj.contains_spin_id(':1'))
 
 
     def test_Selection_range_contains_resid2(self):
@@ -426,7 +410,7 @@ class Test_lib_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(':71' not in obj)
+        self.assert_(not obj.contains_spin_id(':71'))
 
 
     def test_Selection_range_contains_spinid(self):
@@ -436,7 +420,7 @@ class Test_lib_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(':1@N' in obj)
+        self.assert_(obj.contains_spin_id(':1@N'))
 
 
     def test_Selection_range_contains_spinid2(self):
@@ -446,7 +430,7 @@ class Test_lib_selection(UnitTestCase):
         obj = Selection(":1-70")
 
         # Check that the residue ID is in the selection.
-        self.assert_(':71@C' not in obj)
+        self.assert_(not obj.contains_spin_id(':71@C'))
 
 
     def test_parse_token_single_element_num(self):

@@ -31,8 +31,8 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from pipe_control import grace, minimise
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import grace, minimise
 from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.jw_mapping import Jw_mapping

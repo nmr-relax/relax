@@ -31,8 +31,8 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.setup import n_state_model_obj
 from specific_analyses.n_state_model.parameters import elim_no_prob, number_of_states, ref_domain, select_model
+from specific_analyses.setup import n_state_model_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

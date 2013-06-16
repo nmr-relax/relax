@@ -23,10 +23,8 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
-from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 

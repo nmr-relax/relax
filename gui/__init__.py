@@ -35,13 +35,11 @@ if dep_check.wx_module:
     import wx
 
 # relax module imports.
-import pipe_control
 from graphics import IMAGE_PATH
-from lib.errors import RelaxError
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from lib.errors import RelaxError
+import pipe_control
+from status import Status; status = Status()
 
 
 __all__ = ['about',

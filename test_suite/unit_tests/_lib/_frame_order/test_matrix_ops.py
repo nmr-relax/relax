@@ -21,19 +21,29 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, eye, float64, zeros
+from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
+import dep_check
 from lib.frame_order.format import print_frame_order_2nd_degree
-from lib.geometry.coord_transform import cartesian_to_spherical
-from lib.frame_order import *
-from lib.linear_algebra.kronecker_product import transpose_23
+from lib.frame_order.free_rotor import compile_2nd_matrix_free_rotor
+from lib.frame_order.iso_cone import compile_2nd_matrix_iso_cone
+from lib.frame_order.iso_cone_free_rotor import compile_2nd_matrix_iso_cone_free_rotor
+from lib.frame_order.iso_cone_torsionless import compile_2nd_matrix_iso_cone_torsionless
+from lib.frame_order.pseudo_ellipse import compile_2nd_matrix_pseudo_ellipse
+from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_ellipse_free_rotor
+from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless
+from lib.frame_order.rotor import compile_2nd_matrix_rotor
+from lib.frame_order.matrix_ops import reduce_alignment_tensor
+from lib.geometry.coord_transform import cartesian_to_spherical, spherical_to_cartesian
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.linear_algebra.kronecker_product import kron_prod, transpose_23
 from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
 
-class Test_frame_order_matrix_ops(TestCase):
+class Test_matrix_ops(TestCase):
     """Unit tests for the lib.frame_order_matrix_ops relax module."""
 
     def __init__(self, methodName='runTest'):
@@ -49,7 +59,7 @@ class Test_frame_order_matrix_ops(TestCase):
             status.skipped_tests.append([methodName, 'Scipy', 'unit'])
 
         # Execute the base class method.
-        super(Test_frame_order_matrix_ops, self).__init__(methodName)
+        super(Test_matrix_ops, self).__init__(methodName)
 
 
     def setUp(self):

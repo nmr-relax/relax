@@ -23,7 +23,6 @@
 """Module containing the base class for the distribution and alignment data generation."""
 
 # Python module imports.
-from copy import deepcopy
 from math import pi
 from numpy import array, cross, dot, float16, float64, transpose, zeros
 from numpy.linalg import norm

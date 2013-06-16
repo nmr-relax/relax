@@ -30,12 +30,10 @@ from wx.lib.wordwrap import wordwrap
 
 # relax module imports.
 from graphics import IMAGE_PATH
-from info import Info_box
-from status import Status; status = Status()
-
-# relax GUI module imports.
 from gui.fonts import font
 from gui.icons import relax_icons
+from info import Info_box
+from status import Status; status = Status()
 
 
 class About_base(wx.Frame):

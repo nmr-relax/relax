@@ -23,9 +23,9 @@
 """Module for holding certain model components fixed during optimisation."""
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
 
 
 def fix(element, fixed):

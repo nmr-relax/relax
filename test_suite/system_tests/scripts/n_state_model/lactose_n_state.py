@@ -2,7 +2,6 @@
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax imports.
 from data_store import Relax_data_store; ds = Relax_data_store()

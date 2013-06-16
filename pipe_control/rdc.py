@@ -33,15 +33,15 @@ from warnings import warn
 # relax module imports.
 from lib.check_types import is_float
 from lib.float import nan
+from lib.alignment.rdc import ave_rdc_tensor
+from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
+from lib.io import extract_data, open_write_file, strip, write_data
+from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
+from lib.warnings import RelaxWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from lib.alignment.rdc import ave_rdc_tensor
-from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
-from lib.io import extract_data, open_write_file, strip, write_data
-from lib.warnings import RelaxWarning
 
 
 def back_calc(align_id=None):

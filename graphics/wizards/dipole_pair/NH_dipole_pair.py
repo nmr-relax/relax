@@ -1,8 +1,5 @@
 #!/usr/bin/python
 
-# Python module imports.
-from math import pi
-
 # Imports.
 from VectorFieldPlot import FieldplotDocument, Field, FieldLine
 

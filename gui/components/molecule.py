@@ -28,15 +28,13 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
-from pipe_control.mol_res_spin import molecule_loop, return_molecule
 from graphics import fetch_icon
-from status import Status; status = Status()
-from user_functions.data import Uf_info; uf_info = Uf_info()
-
-# relax GUI module imports.
 from gui.components.base_list import Base_list
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.mol_res_spin import molecule_loop, return_molecule
+from status import Status; status = Status()
+from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Molecule(Base_list):

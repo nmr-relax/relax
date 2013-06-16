@@ -27,7 +27,7 @@ from unittest import TestCase
 import lib.io
 
 
-class Test_lib_io(TestCase):
+class Test_io(TestCase):
     """Unit tests for the functions of the 'lib.io' module."""
 
 

@@ -7,7 +7,6 @@ sys.path.append('..')
 # Python module imports.
 from math import cos, sin, sqrt
 from numpy import dot, transpose
-from numpy.linalg import inv, norm
 
 # relax module imports.
 from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion

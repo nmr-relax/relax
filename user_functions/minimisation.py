@@ -23,8 +23,8 @@
 """The minimisation user function definitions."""
 
 # relax module imports.
-from pipe_control import minimise
 from graphics import WIZARD_IMAGE_PATH
+from pipe_control import minimise
 from user_functions.data import Uf_info, Uf_tables; uf_info = Uf_info(); uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 

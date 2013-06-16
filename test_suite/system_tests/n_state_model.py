@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import pi, sqrt
+from math import pi
 from numpy import array
 from numpy.linalg import norm
 from os import listdir, sep

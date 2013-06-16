@@ -34,11 +34,11 @@ from warnings import warn
 # relax module imports.
 if dep_check.bmrblib_module:
     import bmrblib
+from lib.errors import RelaxError
+from lib.warnings import RelaxWarning
 from pipe_control import bmrb, diffusion_tensor, exp_info, mol_res_spin, pipes, relax_data
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import get_molecule_names, spin_loop
-from lib.errors import RelaxError
-from lib.warnings import RelaxWarning
 
 
 class Bmrb:

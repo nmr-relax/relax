@@ -30,7 +30,6 @@ from wx.lib import buttons
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, WIZARD_IMAGE_PATH
-from gui import paths
 from gui.input_elements.value import Value
 from gui.misc import bitmap_setup
 from gui.string_conv import gui_to_str, str_to_gui

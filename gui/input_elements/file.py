@@ -26,15 +26,13 @@
 import wx
 
 # relax module imports.
-from lib.errors import RelaxError
-from status import Status; status = Status()
-
-# relax GUI module imports.
+from gui import paths
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.misc import open_file
-from gui import paths
 from gui.string_conv import gui_to_str, str_to_gui
+from lib.errors import RelaxError
+from status import Status; status = Status()
 
 
 class Selector_file:

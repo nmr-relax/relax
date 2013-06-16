@@ -37,17 +37,8 @@ import wx
 from lib import ansi
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
-from info import Info_box
-from pipe_control import state
-from pipe_control.pipes import cdp_name
-from pipe_control.reset import reset
-from lib.errors import RelaxNoPipeError
-from lib.io import io_streams_restore
-from status import Status; status = Status()
-from version import version
-
-# relax GUI module imports.
 from graphics import IMAGE_PATH
+from gui import paths
 from gui.about import About_relax
 from gui.analyses import Analysis_controller
 from gui.spin_viewer.frame import Spin_view_window
@@ -60,7 +51,6 @@ from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question
 from gui.misc import bitmap_setup, gui_raise, open_file, protected_exec
-from gui import paths
 from gui.pipe_editor import Pipe_editor
 from gui.references import References
 from gui.relax_prompt import Prompt
@@ -68,6 +58,14 @@ from gui.results_viewer import Results_viewer
 from gui.components.free_file_format import Free_file_format_window
 from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from info import Info_box
+from lib.errors import RelaxNoPipeError
+from lib.io import io_streams_restore
+from pipe_control import state
+from pipe_control.pipes import cdp_name
+from pipe_control.reset import reset
+from status import Status; status = Status()
+from version import version
 
 
 class Main(wx.Frame):
