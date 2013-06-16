@@ -24,7 +24,7 @@ from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
-from target_functions.chi2 import *
+from target_functions.chi2 import chi2, dchi2, dchi2_element, d2chi2, d2chi2_element
 
 
 class Test_chi2(TestCase):

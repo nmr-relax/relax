@@ -20,12 +20,11 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, eye, float64, zeros
-from sys import stdout
+from numpy import array, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
-from lib.linear_algebra.kronecker_product import *
+from lib.linear_algebra.kronecker_product import kron_prod, transpose_12, transpose_13, transpose_14, transpose_23, transpose_24, transpose_34
 
 
 class Test_kronecker_product(TestCase):
