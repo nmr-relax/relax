@@ -593,15 +593,16 @@ class Unit_test_runner(object):
 
         # Title printout.
         if self.verbose:
-            print('testing units...')
+            print('\ntesting units...')
             print('----------------')
             print('')
 
         module_paths = self.paths_from_test_module(self.test_module)
         if self.verbose:
-            print('root path:          ', self.root_path)
-            print('system directory:   ', self.system_directory)
-            print('unit test directory:', self.unit_test_directory)
+            print('test module:         %s' % self.test_module)
+            print('root path:           %s' % self.root_path)
+            print('system directory:    %s' % self.system_directory)
+            print('unit test directory: %s' % self.unit_test_directory)
             print('')
             for i, elem in enumerate(module_paths):
                 print('module path %d:  %s'  % (i, elem))
@@ -626,19 +627,20 @@ class Unit_test_runner(object):
 
         # Execute specific tests.
         if tests == None:
-            for module_path in module_paths:
-                print(module_path)
-                path_len = len(module_path)
-                if path_len <= 1:
-                    continue
-                elif path_len == 2:
-                    print('trying to load 2: ',  module_path[0], module_path[1])
-                    tests = load_test_case('', module_path[0], module_path[1])
-                else:
-                    print('trying to load 3: ', os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
-                    tests = load_test_case(os.path.join(*module_path[:-2]), module_path[-2], module_path[-1])
-                if tests != None:
-                    break
+            for module_tuple in module_paths:
+                # The package path.
+                package_path = module_tuple[0]
+                for i in range(len(module_tuple)-2):
+                    package_path = os.path.join(package_path, module_tuple[i])
+
+                # The module name.
+                module_name = module_tuple[-2]
+
+                # The class name.
+                class_name = module_tuple[-1]
+
+                # Load the tests.
+                tests = load_test_case(package_path, module_name, class_name)
 
         if runner == None:
             runner = unittest.TextTestRunner()
