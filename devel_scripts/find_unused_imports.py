@@ -23,7 +23,7 @@ for root, dirs, files in walk(getcwd()):
 
         # Full path to the file.
         path = root + sep + file
-        sys.stdout.write("File %s:\n" % path)
+        sys.stdout.write("File %s :\n" % path)
 
         # The command.
         cmd = 'pylint %s' % path
