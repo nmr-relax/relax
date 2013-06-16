@@ -25,6 +25,7 @@ from numpy import array, eye, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
+import dep_check
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.frame_order import *
