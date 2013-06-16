@@ -21,15 +21,23 @@
 
 
 __all__ = [
-    '_alignment'
-    '_auto_relaxation'
-    '_frame_order'
-    '_geometry'
-    '_linear_algebra'
-    '_spectral_densities'
-    '_text'
+    '_alignment',
+    '_auto_relaxation',
+    '_chemical_shift',
+    '_diffusion',
+    '_dispersion',
+    '_frame_order',
+    '_geometry',
+    '_linear_algebra',
+    '_order',
+    '_software',
+    '_spectral_densities',
+    '_structure',
+    '_text',
+    'test___init__',
     'test_float',
     'test_io',
+    'test_mathematics',
     'test_regex',
     'test_selection'
 ]
