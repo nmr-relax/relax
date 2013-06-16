@@ -33,7 +33,7 @@ from lib.order.order_parameters import iso_cone_theta_to_S
 from status import Status; status = Status()
 
 
-class Test_frame_order_matrix_ops(TestCase):
+class Test_matrix_ops(TestCase):
     """Unit tests for the lib.frame_order_matrix_ops relax module."""
 
     def __init__(self, methodName='runTest'):
@@ -49,7 +49,7 @@ class Test_frame_order_matrix_ops(TestCase):
             status.skipped_tests.append([methodName, 'Scipy', 'unit'])
 
         # Execute the base class method.
-        super(Test_frame_order_matrix_ops, self).__init__(methodName)
+        super(Test_matrix_ops, self).__init__(methodName)
 
 
     def setUp(self):

@@ -37,7 +37,7 @@ R = zeros((3, 3), float64)
 R2 = zeros((3, 3), float64)
 
 
-class Test_rotation_matrix(TestCase):
+class Test_rotations(TestCase):
     """Unit tests for the lib.geometry.rotations relax module."""
 
     def setUp(self):

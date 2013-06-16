@@ -25,7 +25,7 @@ from lib.errors import RelaxError
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_lib_selection(UnitTestCase):
+class Test_selection(UnitTestCase):
     """Unit tests for the functions of the 'lib.selection' module."""
 
     def test_Selection_boolean_and(self):

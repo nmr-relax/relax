@@ -27,7 +27,7 @@ from unittest import TestCase
 from lib.geometry.pec import pec
 
 
-class Test_pseudo_ellipse(TestCase):
+class Test_pec(TestCase):
     """Unit tests for the lib.geometry.pec relax module."""
 
 
