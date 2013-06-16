@@ -83,58 +83,62 @@ __all__ += [
     'vmd'
 ]
 
-# Import all the modules to set up the data.
-import user_functions.align_tensor
-import user_functions.angles
-import user_functions.bmrb
-import user_functions.bruker
-import user_functions.consistency_tests
-import user_functions.dasha
-import user_functions.deselect
-import user_functions.diffusion_tensor
-import user_functions.domain
-import user_functions.dx
-import user_functions.eliminate
-import user_functions.fix
-import user_functions.frame_order
-import user_functions.grace
-import user_functions.interatom
-import user_functions.j_coupling
-import user_functions.jw_mapping
-import user_functions.minimisation
-import user_functions.model_free
-import user_functions.model_selection
-import user_functions.molecule
-import user_functions.molmol
-import user_functions.monte_carlo
-import user_functions.n_state_model
-import user_functions.noe
-import user_functions.palmer
-import user_functions.paramag
-import user_functions.pcs
-import user_functions.pipe
-import user_functions.pymol_control
-import user_functions.rdc
-import user_functions.relax_data
-import user_functions.relax_disp
-import user_functions.relax_fit
-import user_functions.residue
-import user_functions.reset
-import user_functions.results
-import user_functions.script
-import user_functions.select
-import user_functions.sequence
-import user_functions.spectrometer
-import user_functions.spectrum
-import user_functions.spin
-import user_functions.state
-import user_functions.structure
-import user_functions.sys_info
-import user_functions.value
-import user_functions.vmd
 
-# Import the data structure.
-from user_functions.data import Uf_info; uf_info = Uf_info()
+def initialise():
+    """Initialise all of the user function definitions by importing then validating them."""
 
-# Check the validity of the data.
-uf_info.validate()
+    # Import all the modules to set up the data.
+    import user_functions.align_tensor
+    import user_functions.angles
+    import user_functions.bmrb
+    import user_functions.bruker
+    import user_functions.consistency_tests
+    import user_functions.dasha
+    import user_functions.deselect
+    import user_functions.diffusion_tensor
+    import user_functions.domain
+    import user_functions.dx
+    import user_functions.eliminate
+    import user_functions.fix
+    import user_functions.frame_order
+    import user_functions.grace
+    import user_functions.interatom
+    import user_functions.j_coupling
+    import user_functions.jw_mapping
+    import user_functions.minimisation
+    import user_functions.model_free
+    import user_functions.model_selection
+    import user_functions.molecule
+    import user_functions.molmol
+    import user_functions.monte_carlo
+    import user_functions.n_state_model
+    import user_functions.noe
+    import user_functions.palmer
+    import user_functions.paramag
+    import user_functions.pcs
+    import user_functions.pipe
+    import user_functions.pymol_control
+    import user_functions.rdc
+    import user_functions.relax_data
+    import user_functions.relax_disp
+    import user_functions.relax_fit
+    import user_functions.residue
+    import user_functions.reset
+    import user_functions.results
+    import user_functions.script
+    import user_functions.select
+    import user_functions.sequence
+    import user_functions.spectrometer
+    import user_functions.spectrum
+    import user_functions.spin
+    import user_functions.state
+    import user_functions.structure
+    import user_functions.sys_info
+    import user_functions.value
+    import user_functions.vmd
+
+    # Import the data structure.
+    from user_functions.data import Uf_info; uf_info = Uf_info()
+
+    # Check the validity of the data.
+    uf_info.validate()
