@@ -156,8 +156,8 @@ class RelaxTestResult(TextTestResult):
     def write_time(self, test_name):
         """Write the timing of the test to the stream.
 
-        @param test:    The TestCase name.
-        @type test:     str
+        @param test_name:   The TestCase name.
+        @type test_name:    str
         """
 
         # Subtract the end time from the start time.

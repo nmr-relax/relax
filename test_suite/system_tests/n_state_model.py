@@ -213,6 +213,65 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.q_rdc_norm2, 0.81262759306400001)
 
 
+    def test_absolute_T(self):
+        """Test the fitting of signless T values (J+D)."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_T.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -1.436586299657e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -5.004443735044e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -5.017832275009e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz,  1.366097786433e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -1.614772175671e-04)
+        self.assertAlmostEqual(cdp.chi2, 311.70348701353225)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0)
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.086891848854541404)
+
+        # The signless T data.
+        T = [195.2, 205.9, 109.4, 113.8, 127.4, 156.0, 92.1, 173.2, 183.0, 174.3, 152.2, 97.3, 136.0, 129.2, 145.5, 156.0, 121.6, 128.0, 154.5, 94.2]
+        T_bc = [
+            195.009353539915281,
+            205.456622836526037,
+            112.285085032859712,
+            113.628896345578610,
+            127.440986667041187,
+            155.505017063790831,
+            94.332271833299316,
+            172.408496922639102,
+            181.972859458051403,
+            173.655640981746103,
+            153.402585241137388,
+            92.115389822570464,
+            139.743303992644570,
+            131.399101601878243,
+            146.219317894376132,
+            153.945261372587538,
+            119.541444938794172,
+            126.620471670822312,
+            155.940753902549545,
+            90.813638474619523
+        ]
+
+        # Back calc.
+        self.interpreter.rdc.back_calc('Gel')
+
+        # Check the spin data.
+        i = 0
+        for interatom in interatomic_loop():
+            # No PCS.
+            if not hasattr(interatom, 'rdc'):
+                continue
+
+            # Check the loaded and back-calculated absolute values.
+            self.assertAlmostEqual(interatom.rdc['Gel'], T[i])
+            self.assertAlmostEqual(interatom.rdc_bc['Gel'], T_bc[i])
+
+            # Increment the spin index.
+            i += 1
+
+
     def test_align_fit(self):
         """Test the use of RDCs and PCSs to find the alignment tensor."""
 
