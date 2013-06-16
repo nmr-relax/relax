@@ -378,6 +378,9 @@ class Test_finder:
                 test_case = load_test_case(dir_path, module_name, class_name)
                 if test_case != None:
                     self.suite.addTest(test_case)
+                else:
+                    print("RelaxError:  Cannot find the '%s' TestCase class in the '%s' file!  Make sure it is correctly named." % (class_name, os.path.join(dir_path, file_name)))
+
 
 
 class Unit_test_runner(object):
