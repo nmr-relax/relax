@@ -38,7 +38,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id
 from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
 from lib.geometry.vectors import random_unit_vector
 from lib.physical_constants import g1H, pcs_constant
-from lib.errors import RelaxError, RelaxAlignError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError, RelaxPCSError
+from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.io import open_write_file, read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 

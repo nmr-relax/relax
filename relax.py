@@ -48,7 +48,6 @@ elif dep_check.profile_module:
     import profile
 import pstats
 from pydoc import pager
-from re import match
 import sys
 
 # relax modules.

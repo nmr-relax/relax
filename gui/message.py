@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,7 +21,6 @@
 ###############################################################################
 
 # Python module imports
-from os import sep
 import sys
 import wx
 import wx.lib.buttons
@@ -34,7 +33,7 @@ from status import Status; status = Status()
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import bitmap_setup
-from gui.paths import IMAGE_PATH, icon_22x22, icon_48x48
+from gui.paths import icon_22x22, icon_48x48
 import gui
 
 

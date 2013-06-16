@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,10 +29,9 @@ import wx.html
 
 # relax module imports.
 from info import Info_box
-
-# relax GUI module imports.
-from gui import paths
+from graphics import IMAGE_PATH
 from gui.icons import relax_icons
+
 
 # HTML header.
 HTML_HEADER = """\
@@ -101,7 +100,7 @@ class References(wx.Frame):
 
         # The reference header.
         text = text + "<center>"
-        text = text + "<img src=%s%s></img>" % (paths.IMAGE_PATH, 'ulysses_shadowless_400x168.png')
+        text = text + "<img src=%s%s></img>" % (IMAGE_PATH, 'ulysses_shadowless_400x168.png')
         text = text + "<h1>relax references</h1>"
         text = text + "</center>"
 

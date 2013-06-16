@@ -29,21 +29,18 @@ from minfx.grid import grid_split
 from numpy import array, dot, float64, int8, zeros
 from numpy.linalg import inv
 from re import match, search
-import sys
-from warnings import warn
 
 # relax module imports.
 import lib.arg_check
 from lib.float import isNaN, isInf
 from pipe_control import diffusion_tensor, pipes
 from pipe_control.diffusion_tensor import diff_data_exists
-from pipe_control.interatomic import interatomic_loop, return_interatom_list
+from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from target_functions.mf import Mf
 from multi import Processor_box
 from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
-from lib.errors import RelaxError, RelaxInfError, RelaxLenError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoResError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxNucleusError, RelaxSpinTypeError
-from lib.warnings import RelaxWarning
+from lib.errors import RelaxError, RelaxInfError, RelaxMultiVectorError, RelaxNaNError, RelaxNoModelError, RelaxNoPdbError, RelaxNoSequenceError, RelaxNoTensorError, RelaxNoValueError, RelaxNoVectorsError, RelaxSpinTypeError
 from specific_analyses.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
 
 

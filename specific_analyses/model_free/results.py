@@ -26,14 +26,12 @@
 from math import pi
 from numpy import float64, array, transpose
 from re import search
-import sys
 
 # relax module imports.
 import pipe_control
 from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.spectrometer import set_frequency
-from pipe_control import pipes
 from lib.errors import RelaxError, RelaxInvalidDataError
 
 

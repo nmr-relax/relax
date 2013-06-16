@@ -26,7 +26,6 @@
 
 # Python module imports.
 from math import sqrt
-from re import split
 import sys
 from warnings import warn
 

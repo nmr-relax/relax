@@ -24,7 +24,6 @@
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control.relax_data import num_frq
 
 
 def grace_header(file):

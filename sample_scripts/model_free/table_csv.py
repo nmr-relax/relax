@@ -24,7 +24,6 @@
 
 # relax module imports.
 from pipe_control.mol_res_spin import spin_loop
-from pipe_control import pipes
 
 
 # Name of the results file.

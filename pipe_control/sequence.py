@@ -30,10 +30,10 @@ import sys
 # relax module imports.
 from lib.arg_check import is_int
 from pipe_control.interatomic import return_interatom_list
-from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_id_to_data_list, spin_loop
+from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, create_molecule, create_residue, create_spin, exists_mol_res_spin_data, generate_spin_id, return_molecule, return_residue, return_spin, set_spin_element, set_spin_isotope, spin_loop
 from pipe_control import pipes
-from lib.errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxFileEmptyError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
-from lib.io import open_write_file, read_spin_data, write_spin_data
+from lib.errors import RelaxError, RelaxDiffMolNumError, RelaxDiffResNumError, RelaxDiffSeqError, RelaxDiffSpinNumError, RelaxInvalidSeqError, RelaxNoSequenceError, RelaxSequenceError
+from lib.io import read_spin_data, write_spin_data
 
 
 

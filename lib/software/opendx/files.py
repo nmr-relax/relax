@@ -22,9 +22,6 @@
 # Module docstring.
 """Module for generating OpenDX files."""
 
-# Python module imports.
-from numpy import float64, zeros
-
 # relax module imports.
 from lib.io import open_write_file
 

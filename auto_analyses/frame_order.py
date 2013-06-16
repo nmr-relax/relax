@@ -24,17 +24,13 @@
 
 
 # Python module imports.
-from math import pi
 from numpy import float64, zeros
 from os import F_OK, access, getcwd, sep
-from random import gauss, uniform
 import sys
-from time import localtime
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.angles import wrap_angles
-from pipe_control.pipes import cdp_name, get_pipe
+from pipe_control.pipes import get_pipe
 from lib.text.sectioning import section, subsection, title
 from lib.geometry.coord_transform import spherical_to_cartesian
 from prompt.interpreter import Interpreter

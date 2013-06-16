@@ -24,10 +24,8 @@
 
 # Python module imports.
 from re import search
-from math import cos, sin
-from numpy import array, dot, eye, float64, identity, transpose, zeros
+from numpy import eye, float64, zeros
 from numpy.linalg import det, eig, eigvals
-import sys
 
 # relax module imports.
 from data_store.data_classes import Element

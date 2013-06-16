@@ -23,13 +23,12 @@
 """Module for interfacing with Grace (also known as Xmgrace, Xmgr, and ace)."""
 
 # Python module imports.
-from numpy import array, ndarray
 from os import system
 from warnings import warn
 
 # relax module imports.
 import pipe_control
-from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data, generate_spin_id
+from pipe_control.mol_res_spin import count_molecules, count_residues, count_spins, exists_mol_res_spin_data
 from pipe_control import pipes
 from pipe_control.result_files import add_result_file
 from pipe_control.plotting import assemble_data

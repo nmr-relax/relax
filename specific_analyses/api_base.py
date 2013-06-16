@@ -22,12 +22,8 @@
 # Module docstring.
 """The module defining the analysis specific API."""
 
-# Python module imports.
-from copy import deepcopy
-
 # relax module imports.
-from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
-from lib.errors import RelaxError, RelaxImplementError, RelaxLenError, RelaxNoSequenceError
+from lib.errors import RelaxImplementError
 from specific_analyses.api_objects import Param_list
 
 

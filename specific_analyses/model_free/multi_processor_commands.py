@@ -23,10 +23,6 @@
 # Module docstring.
 """Module for the multi-processor command system."""
 
-# Python module imports.
-import sys
-from re import match
-
 # relax module imports.
 from target_functions.mf import Mf
 from minfx.generic import generic_minimise

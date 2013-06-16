@@ -22,9 +22,6 @@
 # Module docstring.
 """Module for reading and writing the relax program state."""
 
-# Python module imports.
-from re import search
-
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.reset import reset

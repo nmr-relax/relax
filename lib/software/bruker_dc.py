@@ -26,9 +26,8 @@
 from re import search, split
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError
 from lib.io import open_read_file
-from lib.physical_constants import element_from_isotope
 
 
 def convert_relax_data(data):

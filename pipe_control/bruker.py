@@ -22,19 +22,14 @@
 # Module docstring.
 """Module for the reading of Bruker Dynamics Centre (DC) files."""
 
-# Python module imports.
-from re import search, split
-
 # relax module imports.
 from pipe_control import pipes
-from pipe_control import value
 from pipe_control.exp_info import software_select
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, name_spin, set_spin_isotope, spin_loop
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, name_spin
 from pipe_control.relax_data import pack_data, peak_intensity_type
-from lib.errors import RelaxError, RelaxNoSequenceError
-from lib.io import open_read_file
+from lib.errors import RelaxNoSequenceError
 from lib.physical_constants import element_from_isotope
-from lib.software.bruker_dc import convert_relax_data, get_res_num, parse_file
+from lib.software.bruker_dc import parse_file
 
 
 def read(ri_id=None, file=None, dir=None):

@@ -34,7 +34,7 @@ import dep_check
 from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext
-from re import match, search
+from re import search
 import sys
 from sys import stdin, stdout, stderr
 from warnings import warn

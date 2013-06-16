@@ -28,6 +28,7 @@ from re import search
 import wx
 
 # relax module imports.
+from graphics import WIZARD_IMAGE_PATH
 from pipe_control.mol_res_spin import return_spin
 
 # GUI module imports.
@@ -262,9 +263,9 @@ class Molecule(Container_base):
 
         # The graphic.
         if self.select:
-            path = paths.WIZARD_IMAGE_PATH + 'molecule.png'
+            path = WIZARD_IMAGE_PATH + 'molecule.png'
         else:
-            path = paths.WIZARD_IMAGE_PATH + 'molecule_grey.png'
+            path = WIZARD_IMAGE_PATH + 'molecule_grey.png'
         image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
@@ -354,9 +355,9 @@ class Residue(Container_base):
 
         # The graphic.
         if self.select:
-            path = paths.WIZARD_IMAGE_PATH + 'residue.png'
+            path = WIZARD_IMAGE_PATH + 'residue.png'
         else:
-            path = paths.WIZARD_IMAGE_PATH + 'residue_grey.png'
+            path = WIZARD_IMAGE_PATH + 'residue_grey.png'
         image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 
@@ -460,9 +461,9 @@ class Spin(Container_base):
 
         # The graphic.
         if self.select:
-            path = paths.WIZARD_IMAGE_PATH + 'spin.png'
+            path = WIZARD_IMAGE_PATH + 'spin.png'
         else:
-            path = paths.WIZARD_IMAGE_PATH + 'spin_grey.png'
+            path = WIZARD_IMAGE_PATH + 'spin_grey.png'
         image = wx.StaticBitmap(self.parent, -1, bitmap_setup(path))
         sizer.Add(image, 0, wx.RIGHT, 0)
 

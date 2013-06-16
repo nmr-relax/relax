@@ -30,6 +30,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data_store import Relax_data_store; ds = Relax_data_store()
+from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.execute import Execute
@@ -52,8 +53,8 @@ class Auto_noe(Base_analysis):
 
     # Hardcoded variables.
     analysis_type = None
-    bitmap = [paths.ANALYSIS_IMAGE_PATH+"noe_200x200.png",
-              paths.IMAGE_PATH+'noe.png']
+    bitmap = [ANALYSIS_IMAGE_PATH+"noe_200x200.png",
+              IMAGE_PATH+'noe.png']
     label = None
 
     def __init__(self, parent, id=-1, pos=wx.Point(-1, -1), size=wx.Size(-1, -1), style=524288, name='scrolledpanel', gui=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], data_index=None):

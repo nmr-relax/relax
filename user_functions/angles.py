@@ -24,7 +24,6 @@
 
 # relax module imports.
 from pipe_control import angles
-from graphics import WIZARD_IMAGE_PATH
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 

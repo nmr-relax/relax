@@ -33,6 +33,7 @@ from pipe_control.mol_res_spin import are_spins_named
 from status import Status; status = Status()
 
 # relax GUI module imports.
+from graphics import WIZARD_IMAGE_PATH
 from gui.fonts import font
 from gui.message import Question
 from gui.misc import format_table
@@ -274,7 +275,7 @@ class Spectral_error_type_page(Wiz_page):
     """The peak intensity reading wizard page for specifying the type of error to be used."""
 
     # Class variables.
-    image_path = paths.WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+    image_path = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
     title = "Specify the type of error to be used"
     main_text = "Please specify from where the peak intensity errors will be obtained.  The is required for the execution of the spectrum.error_analysis user function which will be postponed until after clicking on the 'Execute relax' button at the end of the automatic analysis page.  To understand how the errors will be propagated and analysed, the main parts of the spectrum.error_analysis user function description are given below."
     uf_path = ['spectrum', 'error_analysis']

@@ -23,8 +23,8 @@
 """Module for the automatic R1 analysis frame."""
 
 # relax GUI module imports.
+from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 from gui.analyses.auto_rx_base import Auto_rx
-from gui.paths import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 
 
 class Auto_r1(Auto_rx):

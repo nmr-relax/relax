@@ -24,7 +24,6 @@
 
 # relax module imports.
 from pipe_control import spectrometer
-from graphics import ANALYSIS_IMAGE_PATH
 from specific_analyses.setup import jw_mapping_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

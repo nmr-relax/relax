@@ -23,7 +23,6 @@
 """A threaded version of the relax interpreter for use by the GUI."""
 
 # Python module imports.
-from re import search
 import sys
 from threading import Thread
 from time import sleep

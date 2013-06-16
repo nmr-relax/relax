@@ -24,7 +24,6 @@
 """Module containing the classes for GUI components involving spectral data."""
 
 # Python module imports.
-from os import sep
 from re import search
 import wx
 import wx.lib.buttons

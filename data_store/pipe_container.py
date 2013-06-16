@@ -24,7 +24,6 @@
 
 # Python module imports.
 from re import match
-from warnings import warn
 
 # relax module imports.
 from data_store.align_tensor import AlignTensorList
@@ -36,7 +35,6 @@ from data_store.prototype import Prototype
 from data_store.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 from lib.errors import RelaxFromXMLNotEmptyError
 from lib.structure.internal.object import Internal
-from lib.warnings import RelaxWarning
 
 
 class PipeContainer(Prototype):

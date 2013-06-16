@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,8 +22,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import uint8, zeros
-from os import sep
+from numpy import zeros
 import webbrowser
 import wx
 import wx.html

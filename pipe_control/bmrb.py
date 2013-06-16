@@ -28,10 +28,9 @@ import sys
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from data_store.exp_info import ExpInfo
 import dep_check
 from pipe_control import exp_info
-from pipe_control.mol_res_spin import create_spin, generate_spin_id, metadata_cleanup, return_residue, return_spin, set_spin_element, set_spin_isotope
+from pipe_control.mol_res_spin import create_spin, generate_spin_id, metadata_cleanup, return_spin, set_spin_element, set_spin_isotope
 from pipe_control.pipes import cdp_name
 from pipe_control.result_files import add_result_file
 from info import Info_box

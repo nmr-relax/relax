@@ -23,14 +23,12 @@
 """Module for performing Monte Carlo simulations for error analysis."""
 
 # Python module imports.
-from copy import deepcopy
 from numpy import ndarray
 from random import gauss
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.errors import RelaxError
 from lib import statistics
-from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control import pipes
 from specific_analyses.setup import get_specific_fn
 

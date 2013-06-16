@@ -36,7 +36,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from graphics import fetch_icon
+from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
 from lib.physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
@@ -456,8 +456,8 @@ class Auto_model_free(Base_analysis):
         left_box = wx.BoxSizer(wx.VERTICAL)
 
         # The images.
-        bitmaps = [paths.ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_200x200.png",
-                   paths.IMAGE_PATH+'modelfree.png']
+        bitmaps = [ANALYSIS_IMAGE_PATH+"model_free"+sep+"model_free_200x200.png",
+                   IMAGE_PATH+'modelfree.png']
 
         # Add the model-free bitmap picture.
         for i in range(len(bitmaps)):
@@ -982,7 +982,7 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The sphere button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Sphere"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'sphere.png', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'sphere.png', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model II, the spherical diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
@@ -990,7 +990,7 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The prolate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Prolate spheroid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'prolate.png', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'prolate.png', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model III, the prolate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
@@ -998,7 +998,7 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The oblate spheroid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Oblate spheroid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'oblate.png', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'oblate.png', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model IV, the oblate spheroid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
@@ -1006,7 +1006,7 @@ class Protocol_mode_sel_window(wx.Dialog):
 
         # The ellipsoid button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, str_to_gui("   Ellipsoid"))
-        button.SetBitmapLabel(wx.Bitmap(paths.IMAGE_PATH+'ellipsoid.png', wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(IMAGE_PATH+'ellipsoid.png', wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Optimise global model V, the ellipsoid diffusion model.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 1, wx.EXPAND, 0)

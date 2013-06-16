@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,7 +29,7 @@ try:
     file = None
 except ImportError:
     io_module = False
-from numpy import float32, float64, ndarray
+from numpy import float32, float64
 try:
     from numpy import float16
 except ImportError:

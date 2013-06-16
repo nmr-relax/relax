@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2011 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,10 +28,9 @@ This module allows for easy replacement of images and icons throughout the GUI.
 
 # Python module imports.
 from os import sep
-import sys
 
 # relax module imports.
-from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, WIZARD_IMAGE_PATH
+from graphics import IMAGE_PATH
 from status import Status; status = Status()
 
 
