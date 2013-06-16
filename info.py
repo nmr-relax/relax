@@ -36,7 +36,6 @@ if dep_check.ctypes_structure_module:
     from ctypes import Structure
 else:
     Structure = object
-import numpy
 from os import environ, waitpid
 import platform
 PIPE, Popen = None, None
