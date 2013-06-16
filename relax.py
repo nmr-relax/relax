@@ -58,7 +58,12 @@ import lib.warnings
 from multi import Application_callback, load_multiprocessor
 from prompt import interpreter
 from status import Status; status = Status()
+import user_functions
 import version
+
+
+# Set up the user functions.
+user_functions.initialise()
 
 # Modify the environmental variables.
 putenv('PDBVIEWER', 'vmd')
