@@ -38,7 +38,7 @@ from specific_analyses.consistency_tests import Consistency_tests
 from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.noe import Noe
-from specific_analyses.relax_disp import Relax_disp
+from specific_analyses.relax_disp.api import Relax_disp
 from specific_analyses.relax_fit import Relax_fit
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
