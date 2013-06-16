@@ -356,7 +356,7 @@ class Test_finder:
         self.suite = unittest.TestSuite()
 
         # Loop over all directories recursively.
-        for (dir_path, dir_names, file_names) in os.walk(self.root_path):
+        for dir_path, dir_names, file_names in os.walk(self.root_path):
             # Loop over the files.
             for file_name in file_names:
                 # Is the file part of the test.
@@ -378,7 +378,6 @@ class Test_finder:
                 test_case = load_test_case(dir_path, module_name, class_name)
                 if test_case != None:
                     self.suite.addTest(test_case)
-
 
 
 class Unit_test_runner(object):
@@ -428,29 +427,28 @@ class Unit_test_runner(object):
 
         # Verbose printout.
         if ((search_for_root_path) == True or (search_for_unit_test_path == True)) and verbose:
-            print('searching for paths')
+            print('\nSearching for paths')
             print('-------------------')
-            print('')
 
         # Find system directories or leave it for someone else as needed.
         if search_for_root_path:
             self.system_directory = self.get_first_instance_path(root_path, self.system_path_pattern[0], self.system_path_pattern[1])
 
             if self.system_directory == None:
-                raise Exception("can't find system directory start from %s" % root_path)
+                raise Exception("Can't find system directory start from %s" % root_path)
             else:
                 if verbose:
-                    print('search for system directory found:    %s' % self.system_directory)
+                    print('Search for system directory found:    %s' % self.system_directory)
         else:
             self.system_directory = None
 
         if search_for_unit_test_path:
             self.unit_test_directory = self.get_first_instance_path(root_path, self.unit_test_path_pattern[0], self.unit_test_path_pattern[1])
             if self.unit_test_directory == None:
-                raise Exception("can't find unit test directory start from %s" % root_path)
+                raise Exception("Can't find unit test directory start from %s" % root_path)
             else:
                 if verbose:
-                    print('search for unit test directory found: %s' % self.unit_test_directory)
+                    print('Search for unit test directory found: %s' % self.unit_test_directory)
         else:
             self.unit_test_directory = None
 
@@ -593,19 +591,18 @@ class Unit_test_runner(object):
 
         # Title printout.
         if self.verbose:
-            print('\ntesting units...')
+            print('\nTesting units...')
             print('----------------')
             print('')
 
         module_paths = self.paths_from_test_module(self.test_module)
         if self.verbose:
-            print('test module:         %s' % self.test_module)
-            print('root path:           %s' % self.root_path)
-            print('system directory:    %s' % self.system_directory)
-            print('unit test directory: %s' % self.unit_test_directory)
-            print('')
+            print("%-22s %s" % ('Test module:', self.test_module))
+            print("%-22s %s" % ('Root path', self.root_path))
+            print("%-22s %s" % ('System directory:', self.system_directory))
+            print("%-22s %s" % ('Unit test directory:', self.unit_test_directory))
             for i, elem in enumerate(module_paths):
-                print('module path %d:  %s'  % (i, elem))
+                print("%-22s %s" % ('Module path %d:' % i, elem))
             print('')
 
         # add SystemDirectory to python path
@@ -614,7 +611,7 @@ class Unit_test_runner(object):
 
         tests = None
 
-        # use search path first
+        # Load all tests from a directory.
         for module_path in module_paths:
             module_string = os.path.join(*module_path)
 
@@ -646,7 +643,7 @@ class Unit_test_runner(object):
             runner = unittest.TextTestRunner()
 
         if self.verbose:
-            print('results')
+            print('Results')
             print('-------')
             print('')
 
@@ -662,7 +659,7 @@ class Unit_test_runner(object):
             print(result_string)
         else:
             results = None
-            result_string = 'note: no tests found for input module: %s' % self.test_module
+            result_string = 'Note: no tests found for input module: %s' % self.test_module
             print(result_string)
 
         # Return the result of all the tests.
