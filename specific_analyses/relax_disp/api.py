@@ -1071,7 +1071,7 @@ class Relax_disp(API_base, API_common):
                 raise RelaxError("The spectrometer frequency information has not been specified.")
 
             # The R2eff/R1rho data.
-            values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
+            values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count, sim_index=sim_index)
 
             # Create the initial parameter vector.
             param_vector = assemble_param_vector(spins=spins)

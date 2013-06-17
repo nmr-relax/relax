@@ -869,7 +869,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             if sim_index == None:
                 values[spin_index, frq_index, disp_pt_index] = spin.r2eff[key]
             else:
-                values[spin_index, frq_index, disp_pt_index] = spin.r2eff_sim[key][sim_index]
+                values[spin_index, frq_index, disp_pt_index] = spin.r2eff_sim[sim_index][key]
 
             # The errors.
             errors[spin_index, frq_index, disp_pt_index] = spin.r2eff_err[key]
