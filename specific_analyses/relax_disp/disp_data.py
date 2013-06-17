@@ -405,7 +405,7 @@ def plot_disp_curves(dir=None, force=None):
             else:
                 label = "R\\s1\\xr\\B\\N"
             if frq != None:
-                label += " (%.6f MHz)" % (frq / 1e6)
+                label += " (%.1f MHz)" % (frq / 1e6)
             set_labels.append(label)
 
             # Loop over the dispersion points.
@@ -436,7 +436,7 @@ def plot_disp_curves(dir=None, force=None):
             else:
                 label = "Back-calculated R\\s1\\xr\\B\\N"
             if frq != None:
-                label += " (%.6f MHz)" % (frq / 1e6)
+                label += " (%.1f MHz)" % (frq / 1e6)
             set_labels.append(label)
 
             # Loop over the dispersion points.
@@ -463,7 +463,7 @@ def plot_disp_curves(dir=None, force=None):
             # Add a new label.
             label = "Residuals"
             if frq != None:
-                label += " (%.6f MHz)" % (frq / 1e6)
+                label += " (%.1f MHz)" % (frq / 1e6)
             set_labels.append(label)
 
             # Loop over the dispersion points.
