@@ -34,7 +34,7 @@ from lib.warnings import RelaxWarning
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_LM63, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_R2EFF
 from status import Status; status = Status()
 
 
@@ -235,10 +235,44 @@ class Relax_disp:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
+        # The R20 parameter.
+        if cdp.model_type in [None] + MODEL_LIST_CPMG:
+            self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
+
+        # The R1rho parameter.
+        if cdp.model_type in [None] + MODEL_LIST_R1RHO:
+            self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+
+        # The pA and pB parameters.
+        if model in [None, MODEL_CR72, MODEL_IT99, MODEL_M61B]:
+            self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
+            self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', file='pB.agr', dir=path, force=True)
+
         # The Phi_ex parameter.
-        if model in [None, MODEL_LM63]:
+        if model in [None, MODEL_LM63, MODEL_IT99, MODEL_M61, MODEL_DPL94]:
             self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
+
+        # The padw2 parameter.
+        if model in [None, MODEL_IT99]:
+            self.interpreter.value.write(param='padw2', file='padw2.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='padw2', file='padw2.agr', dir=path, force=True)
+
+        # The dw parameter.
+        if model in [None, MODEL_CR72, MODEL_M61B]:
+            self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
+
+        # The kex and tex parameters.
+        if model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B]:
+            self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
+            self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
 
         # Minimisation statistics.
         if not (cdp.model_type == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
