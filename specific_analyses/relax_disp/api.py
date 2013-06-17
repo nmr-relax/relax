@@ -47,7 +47,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
-from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -73,7 +73,6 @@ class Relax_disp(API_base, API_common):
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
         self.set_param_values = self._set_param_values_spin
-        self.sim_init_values = self._sim_init_values_spin
 
         # Set up the spin parameters.
         self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
@@ -1131,6 +1130,7 @@ class Relax_disp(API_base, API_common):
 
             # Disassemble the parameter vector.
             disassemble_param_vector(param_vector=param_vector, spins=spins, sim_index=sim_index)
+            param_conversion(spins=spins, sim_index=sim_index)
 
             # Monte Carlo minimisation statistics.
             if sim_index != None:
@@ -1429,6 +1429,92 @@ class Relax_disp(API_base, API_common):
         # Loop over the spins, storing the structure for each spin.
         for spin in spins:
             spin.select_sim = deepcopy(select_sim)
+
+
+    def sim_init_values(self):
+        """Initialise the Monte Carlo parameter values."""
+
+        # Get the parameter object names.
+        param_names = self.data_names(set='params')
+
+        # Add the names of kex-tex pair.
+        pairs = {}
+        pairs['kex'] = 'tex'
+        pairs['tex'] = 'kex'
+
+        # Add the names of pA-pB pair.
+        pairs['pA'] = 'pB'
+        pairs['pB'] = 'pA'
+
+        # Get the minimisation statistic object names.
+        min_names = self.data_names(set='min')
+
+
+        # Test if Monte Carlo parameter values have already been set.
+        #############################################################
+
+        # Loop over the spins.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Loop over all the parameter names.
+            for object_name in param_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+
+        # Set the Monte Carlo parameter values.
+        #######################################
+
+        # Loop over the residues.
+        for spin in spin_loop():
+            # Skip deselected residues.
+            if not spin.select:
+                continue
+
+            # Loop over all the data names.
+            for object_name in param_names:
+                # Not a parameter of the model.
+                if not (object_name in spin.params or (object_name in pairs and pairs[object_name] in spin.params)):
+                    continue
+
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(spin, sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(spin, sim_object_name)
+
+                # Loop over the simulations.
+                for j in range(cdp.sim_number):
+                    # The non-simulation value.
+                    if object_name not in spin.params:
+                        value = deepcopy(getattr(spin, pairs[object_name]))
+                    else:
+                        value = deepcopy(getattr(spin, object_name))
+
+                    # Copy and append the data.
+                    sim_object.append(value)
+
+            # Loop over all the minimisation object names.
+            for object_name in min_names:
+                # Name for the simulation object.
+                sim_object_name = object_name + '_sim'
+
+                # Create the simulation object.
+                setattr(spin, sim_object_name, [])
+
+                # Get the simulation object.
+                sim_object = getattr(spin, sim_object_name)
+
+                # Loop over the simulations.
+                for j in range(cdp.sim_number):
+                    # Copy and append the data.
+                    sim_object.append(deepcopy(getattr(spin, object_name)))
 
 
     def sim_pack_data(self, data_id, sim_data):

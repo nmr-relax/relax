@@ -52,49 +52,8 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
 
     # Loop over the parameters of the cluster.
     for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
-        # Spin specific parameters.
-        if spin_index != None:
-            # Set the simulation value.
-            if sim_index != None:
-                # Get the simulation structure.
-                sim_obj = getattr(spins[spin_index], param_name+'_sim')
-
-                # Frequency specific parameter.
-                if frq_index != None:
-                    value = sim_obj[sim_index][frq_index]
-
-                # Set the normal value.
-                else:
-                    value = sim_obj[sim_index]
-
-            # Frequency specific parameter.
-            elif frq_index != None:
-                obj = getattr(spins[spin_index], param_name)
-                if obj == []:
-                    value = 0.0
-                else:
-                    value = obj[frq_index]
-
-            # Set the normal value.
-            else:
-                value = getattr(spins[spin_index], param_name)
-
-        # Cluster specific parameters - use the parameter value from the first spin.
-        else:
-            # Set the simulation value.
-            if sim_index != None:
-                value = getattr(spins[0], param_name+'_sim')[sim_index]
-
-            # Set the normal value.
-            else:
-                value = getattr(spins[0], param_name)
-
-        # The R2eff model parameters.
-        if key != None:
-            if not key in value:
-                value = 0.0
-            else:
-                value = value[key]
+        # Get the value.
+        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
         # Add to the vector.
         param_vector.append(value)
@@ -189,59 +148,76 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                 for frq in loop_frq():
                     spin.r2.append(None)
 
-    # Loop over the parameters of the cluster.
+    # Loop over the parameters of the cluster, setting the values.
     for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
-        # Spin specific parameters.
-        if spin_index != None:
-            # Get the object.
-            if sim_index != None:
-                obj = getattr(spins[spin_index], param_name+'_sim')
-            else:
-                obj = getattr(spins[spin_index], param_name)
+        set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
-            # Set the simulation value.
-            if sim_index != None:
-                # Frequency specific parameter.
-                if frq_index != None:
-                    if key != None:
-                        obj[sim_index][frq_index][key] = param_vector[param_index]
-                    else:
-                        obj[sim_index][frq_index] = param_vector[param_index]
 
-                # Set the normal value.
-                else:
-                    if key != None:
-                        obj[sim_index][key] = param_vector[param_index]
-                    else:
-                        obj[sim_index] = param_vector[param_index]
+def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=None, frq_index=None):
+    """Return the value for the given parameter.
+
+    @keyword key:           The key for the R2eff and I0 parameters.
+    @type key:              str or None
+    @keyword spins:         The list of spin data containers for the block.
+    @type spins:            list of SpinContainer instances
+    @keyword sim_index:     The optional MC simulation index.
+    @type sim_index:        int
+    @keyword param_name:    The parameter name.
+    @type param_name:       str
+    @keyword spin_index:    The spin index (for the cluster).
+    @type spin_index:       int
+    @keyword frq_index:     The frequency index (for parameters with different values per spectrometer field strength).
+    @type frq_index:        int
+    @return:                The parameter value.
+    @rtype:                 float
+    """
+
+    # Spin specific parameters.
+    if spin_index != None:
+        # Set the simulation value.
+        if sim_index != None:
+            # Get the simulation structure.
+            sim_obj = getattr(spins[spin_index], param_name+'_sim')
 
             # Frequency specific parameter.
-            elif frq_index != None:
-                obj = getattr(spins[spin_index], param_name)
-                if key != None:
-                    obj[frq_index][key] = param_vector[param_index]
-                else:
-                    obj[frq_index] = param_vector[param_index]
+            if frq_index != None:
+                value = sim_obj[sim_index][frq_index]
 
             # Set the normal value.
             else:
-                if key != None:
-                    obj[key] = param_vector[param_index]
-                else:
-                    setattr(spins[spin_index], param_name, param_vector[param_index])
+                value = sim_obj[sim_index]
 
-        # Cluster specific parameters.
+        # Frequency specific parameter.
+        elif frq_index != None:
+            obj = getattr(spins[spin_index], param_name)
+            if obj == []:
+                value = 0.0
+            else:
+                value = obj[frq_index]
+
+        # Set the normal value.
         else:
-            # Set the same parameter value for all spins in the cluster.
-            for spin in spins:
-                # Set the simulation value.
-                if sim_index != None:
-                    sim_obj = getattr(spin, param_name+'_sim')
-                    sim_obj[sim_index] = param_vector[param_index]
+            value = getattr(spins[spin_index], param_name)
 
-                # Set the normal value.
-                else:
-                    setattr(spin, param_name, param_vector[param_index])
+    # Cluster specific parameters - use the parameter value from the first spin.
+    else:
+        # Set the simulation value.
+        if sim_index != None:
+            value = getattr(spins[0], param_name+'_sim')[sim_index]
+
+        # Set the normal value.
+        else:
+            value = getattr(spins[0], param_name)
+
+    # The R2eff model parameters.
+    if key != None:
+        if not key in value:
+            value = 0.0
+        else:
+            value = value[key]
+
+    # Return the value.
+    return value
 
 
 def linear_constraints(spins=None, scaling_matrix=None):
@@ -459,6 +435,43 @@ def loop_parameters(spins=None):
                 yield param, param_index, None, None
 
 
+def param_conversion(key=None, spins=None, sim_index=None):
+    """Convert Disassemble the parameter vector.
+
+    @keyword key:           The key for the R2eff and I0 parameters.
+    @type key:              str or None
+    @keyword spins:         The list of spin data containers for the block.
+    @type spins:            list of SpinContainer instances
+    @keyword sim_index:     The optional MC simulation index.
+    @type sim_index:        int
+    """
+
+    # Loop over the parameters of the cluster.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Get the value.
+        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
+
+        # The pA to pB conversion.
+        if param_name == 'pA':
+            pB = 1.0 - value
+            set_value(value=pB, key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index, frq_index=frq_index)
+
+        # The pB to pA conversion.
+        if param_name == 'pB':
+            pA = 1.0 - value
+            set_value(value=pA, key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index, frq_index=frq_index)
+
+        # The kex to tex conversion.
+        if param_name == 'kex':
+            tex = 1.0 / (2.0 * value)
+            set_value(value=tex, key=key, spins=spins, sim_index=sim_index, param_name='tex', spin_index=spin_index, frq_index=frq_index)
+
+        # The tex to kex conversion.
+        if param_name == 'tex':
+            kex = 1.0 / (2.0 * value)
+            set_value(value=kex, key=key, spins=spins, sim_index=sim_index, param_name='kex', spin_index=spin_index, frq_index=frq_index)
+
+
 def param_index_to_param_info(index=None, spins=None):
     """Convert the given parameter array index to parameter identifying information.
     
@@ -517,3 +530,75 @@ def param_num(spins=None):
 
     # Return the number.
     return num
+
+
+def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, frq_index=None):
+    """Return the value for the given parameter.
+
+    @keyword value:         The parameter value to set.
+    @type value:            float
+    @keyword key:           The key for the R2eff and I0 parameters.
+    @type key:              str or None
+    @keyword spins:         The list of spin data containers for the block.
+    @type spins:            list of SpinContainer instances
+    @keyword sim_index:     The optional MC simulation index.
+    @type sim_index:        int
+    @keyword param_name:    The parameter name.
+    @type param_name:       str
+    @keyword spin_index:    The spin index (for the cluster).
+    @type spin_index:       int
+    @keyword frq_index:     The frequency index (for parameters with different values per spectrometer field strength).
+    @type frq_index:        int
+    """
+
+    # Spin specific parameters.
+    if spin_index != None:
+        # Get the object.
+        if sim_index != None:
+            obj = getattr(spins[spin_index], param_name+'_sim')
+        else:
+            obj = getattr(spins[spin_index], param_name)
+
+        # Set the simulation value.
+        if sim_index != None:
+            # Frequency specific parameter.
+            if frq_index != None:
+                if key != None:
+                    obj[sim_index][frq_index][key] = value
+                else:
+                    obj[sim_index][frq_index] = value
+
+            # Set the normal value.
+            else:
+                if key != None:
+                    obj[sim_index][key] = value
+                else:
+                    obj[sim_index] = value
+
+        # Frequency specific parameter.
+        elif frq_index != None:
+            obj = getattr(spins[spin_index], param_name)
+            if key != None:
+                obj[frq_index][key] = value
+            else:
+                obj[frq_index] = value
+
+        # Set the normal value.
+        else:
+            if key != None:
+                obj[key] = value
+            else:
+                setattr(spins[spin_index], param_name, value)
+
+    # Cluster specific parameters.
+    else:
+        # Set the same parameter value for all spins in the cluster.
+        for spin in spins:
+            # Set the simulation value.
+            if sim_index != None:
+                sim_obj = getattr(spin, param_name+'_sim')
+                sim_obj[sim_index] = value
+
+            # Set the normal value.
+            else:
+                setattr(spin, param_name, value)
