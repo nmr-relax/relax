@@ -919,7 +919,7 @@ class Uf_page(Wiz_page):
                 choices = []
                 data = []
                 for vals in iterator():
-                    if lib.arg_check.is_tuple(vals, size=2, raise_error=False):
+                    if lib.arg_check.is_tuple(vals, size=2, raise_error=False) or lib.arg_check.is_list(vals, size=2, raise_error=False):
                         choices.append(vals[0])
                         data.append(vals[1])
                     else:
