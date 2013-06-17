@@ -61,9 +61,9 @@ For the CPMG-type experiments, the models currently supported are:
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models,
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present,
-\item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters \{$\Rtwozero$, $\dots$, $\Phiex$, $\kex$\},
-\item[`CR72':]\index{relaxation dispersion!CR72 model}  The \citet{CarverRichards72} 2-site equation for all time scales with parameters \{$\Rtwozero$, $\dots$, $\pA$, $\dw$, $\kex$\}.
-\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters \{$\Rtwozero$, $\dots$, $\Phiex$, $\pA.\dw^2$, k$_\textrm{ex}$\}.
+\item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$,
+\item[`CR72':]\index{relaxation dispersion!CR72 model}  The \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.
 \end{description}
 
 For the $\Ronerho$-type experiment, the currently supported models are:
@@ -71,18 +71,18 @@ For the $\Ronerho$-type experiment, the currently supported models are:
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the same model model as for the CPMG-type experiments except that the $\Ronerho$ and not $\Rtwoeff$ values are determined.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present,
-\item[`M61':]\index{relaxation dispersion!M61 model}  The \citet{Meiboom61} 2-site fast exchange equation with parameters \{$\mathrm{R}_{1\rho}'$, $\dots$, $\Phiex$, $\kex$\},
-\item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} 2-site fast exchange equation with parameters \{$\mathrm{R}_{1\rho}'$, $\dots$, $\Phiex$, $\kex$\},
-\item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters \{$\mathrm{R}_{1\rho}'$, $\dots$, $\pA$, $\dw$, k$_\textrm{ex}$\},
+\item[`M61':]\index{relaxation dispersion!M61 model}  The \citet{Meiboom61} 2-site fast exchange equation for on-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$,
+\item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} 2-site fast exchange equation for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$,
+\item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  This model is disabled by default in the dispersion auto-analysis.
 \end{description}
 
-Except for `R2eff' and `No Rex', these CPMG and $\Ronerho$ models can be fit to clusterings of spins, or spin blocks.
-The models are described in more detail below.
+Except for `R2eff' and `No Rex', these models can be fit to clusterings of spins, or spin blocks.
+The models are described in more detail below and summarised in Table~\ref{table: CPMG dispersion models} for CPMG-type experiments and Table~\ref{table: R1rho dispersion models} for $\Ronerho$-type experiments.
 The parameters are given in Table~\ref{table: dispersion parameters}.
 
 \begin{sidewaystable}
 \begin{center}
-\caption{The parameters of relaxation dispersion}
+\caption{The parameters of relaxation dispersion.}
 \begin{tabular}{llll}
 \toprule
 Parameter               & Equation              & Description                                                                   & Units \\
@@ -109,6 +109,45 @@ $\Phiex$                & $\pA\pB\dw^2$         & Fast exchange factor          
 \end{center}
 \end{sidewaystable}
 
+
+\begin{sidewaystable}
+\begin{center}
+\caption{The analytic models for CPMG-type experiments currently supported within relax}
+\begin{tabular}{llcll}
+\toprule
+Model code              & Parameters                                        & Number of sites   & Restriction                       & Reference \\
+\midrule
+R2eff                   & $\{\Rtwoeff, \cdots\}$                            & -                 & Fixed relaxation time period      & - \\
+R2eff                   & $\{\Rtwoeff, I_0, \cdots\}$                       & -                 & Variable relaxation time period   & - \\
+No Rex                  & $\{\Rtwozero, \cdots\}$                           & 0                 & -                                 & - \\
+LM63                    & $\{\Rtwozero, \dots, \Phiex, \kex\}$              & 2                 & Fast exchange                     & \citet{LuzMeiboom63} \\
+CR72                    & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & 2                 & $\pA > \pB$                       & \citet{CarverRichards72} \\
+IT99                    & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$   & 2                 & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+\bottomrule
+\label{table: CPMG dispersion models}
+\end{tabular}
+\end{center}
+\end{sidewaystable}
+
+
+\begin{sidewaystable}
+\begin{center}
+\caption{The analytic models for $\Ronerho$-type experiments currently supported within relax.}
+\begin{tabular}{llcll}
+\toprule
+Model code              & Parameters                                        & Number of sites   & Restriction                       & Reference \\
+\midrule
+R2eff                   & $\{\Ronerho, \cdots\}$                            & -                 & Fixed relaxation time period      & - \\
+R2eff                   & $\{\Ronerho, I_0, \cdots\}$                       & -                 & Variable relaxation time period   & - \\
+No Rex                  & $\{\Ronerhoprime, \cdots\}$                       & 0                 & -                                 & - \\
+M61                     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & 2                 & Fast exchange, on-resonance       & \citet{Meiboom61} \\
+DPL94                   & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & 2                 & Fast exchange                     & \citet{Davis94} \\
+M61 skew                & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & 2                 & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
+\bottomrule
+\label{table: R1rho dispersion models}
+\end{tabular}
+\end{center}
+\end{sidewaystable}
 
 
 % R2eff model.
@@ -241,12 +280,12 @@ The reference for this equation is:
 
 
 % M61 model.
-%~~~~~~~~~~~~
+%~~~~~~~~~~~
 
 \subsection{The M61 2-site fast exchange $\Ronerho$ model}
 \index{relaxation dispersion!M61 model|textbf}
 
-This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
+This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
 \begin{equation}
     \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
 \end{equation}
@@ -263,7 +302,7 @@ The reference for this equation is:
 \subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
 \index{relaxation dispersion!DPL94 model|textbf}
 
-This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  The equation for the exchange process is:
+This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
 \begin{equation}
     \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
 \end{equation}
@@ -272,6 +311,20 @@ The reference for this equation is:
 \begin{itemize}
 \item \bibentry{Davis94}
 \end{itemize}
+
+
+% M61 skew model.
+%~~~~~~~~~~~~~~~~
+
+\subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
+\index{relaxation dispersion!M61 model|textbf}
+
+This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
+\end{equation}
+
+Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
 
 
 % Script UI.
