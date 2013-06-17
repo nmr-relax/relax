@@ -330,6 +330,11 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         # Append a new list for this alignment.
         data.append([])
 
+        # T-type data.
+        j_flag = False
+        if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+            j_flag = True
+
         # Errors present?
         err_flag = False
         for interatom in interatomic_loop():
@@ -345,7 +350,12 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            data[-1].append([convert(interatom.rdc_bc[align_id], align_id), convert(interatom.rdc[align_id], align_id)])
+            rdc_bc = convert(interatom.rdc_bc[align_id], align_id)
+            rdc = convert(interatom.rdc[align_id], align_id)
+            if j_flag:
+                rdc_bc -= interatom.j_coupling
+                rdc -= interatom.j_coupling
+            data[-1].append([rdc_bc, rdc])
 
             # Errors.
             if err_flag:
