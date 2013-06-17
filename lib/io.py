@@ -398,6 +398,10 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
                             and the full file path)
     """
 
+    # No file name?
+    if file_name == None:
+        raise RelaxError("The name of the file must be supplied.")
+
     # A file descriptor object.
     if is_filetype(file_name):
         # Nothing to do here!
