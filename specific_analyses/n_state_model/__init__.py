@@ -496,6 +496,7 @@ class N_state_model(API_base, API_common):
                                 - vectors, the interatomic vectors.
                                 - rdc_const, the dipolar constants.
                                 - absolute, the absolute value flags (as 1's and 0's).
+                                - T_flags, the flags for T = J+D type data (as 1's and 0's).
                                 - j_couplings, the J coupling values if the RDC data type is set to T = J+D.
         @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-3 array, numpy rank-2 array, numpy rank-2 array)
         """
@@ -507,6 +508,7 @@ class N_state_model(API_base, API_common):
         unit_vect = []
         rdc_const = []
         absolute = []
+        T_flags = []
         j_couplings = []
 
         # The unit vectors, RDC constants, and J couplings.
@@ -573,6 +575,12 @@ class N_state_model(API_base, API_common):
             rdc_weight.append([])
             absolute.append([])
 
+            # T-type data.
+            if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+                T_flags.append(True)
+            else:
+                T_flags.append(False)
+
             # Interatom loop.
             for interatom in interatomic_loop():
                 # Get the spins.
@@ -588,9 +596,6 @@ class N_state_model(API_base, API_common):
                     continue
 
                 # Check for J couplings if the RDC data type is T = J+D.
-                j_flag = False
-                if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
-                    j_flag = True
                     if not hasattr(interatom, 'j_coupling'):
                         continue
 
@@ -615,7 +620,7 @@ class N_state_model(API_base, API_common):
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
                         # T values.
-                        if j_flag:
+                        if T_flags[-1]:
                             error = -3.0 * sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
 
                         # D values.
@@ -633,7 +638,7 @@ class N_state_model(API_base, API_common):
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
                         # T values.
-                        if j_flag:
+                        if T_flags[-1]:
                             error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
 
                         # D values.
@@ -665,13 +670,14 @@ class N_state_model(API_base, API_common):
         unit_vect = array(unit_vect, float64)
         rdc_const = array(rdc_const, float64)
         absolute = array(absolute, float64)
+        T_flags = array(T_flags, float64)
         if opt_uses_j_couplings():
             j_couplings = array(j_couplings, float64)
         else:
             j_couplings = None
 
         # Return the data structures.
-        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute, j_couplings
+        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute, T_flags, j_couplings
 
 
     def _minimise_setup_tensors(self, sim_index=None):
@@ -832,9 +838,9 @@ class N_state_model(API_base, API_common):
             pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, j_couplings = None, None, None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings = None, None, None, None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, j_couplings = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings = self._minimise_setup_rdcs(sim_index=sim_index)
 
         # Get the fixed tensors.
         fixed_tensors = None
@@ -863,7 +869,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, j_couplings=j_couplings, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix

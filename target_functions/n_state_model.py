@@ -38,7 +38,7 @@ from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, j_couplings=None, temp=None, frq=None, dip_const=None, absolute_rdc=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
+    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, T_flags=None, j_couplings=None, temp=None, frq=None, dip_const=None, absolute_rdc=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -97,6 +97,7 @@ class N_state_opt:
             - rdcs, the residual dipolar couplings.
             - rdc_errors, the optional residual dipolar coupling errors.
             - rdc_vect, the interatomic vectors.
+            - T_flags, the array of flags specifying if the data for the given alignment is of the T = J+D type.
             - j_couplings, the J couplings for the case when RDC data is of the type T = J+D.
             - dip_const, the dipolar constants.
             - absolute_rdc, the flags specifying whether each RDC is signless.
@@ -134,6 +135,8 @@ class N_state_opt:
         @type rdc_weights:          numpy rank-2 array
         @keyword rdc_vect:          The unit vector lists for the RDC.  The first index must correspond to the spin pair and the second index to each structure (its size being equal to the number of states).
         @type rdc_vect:             numpy rank-2 array
+        @keyword T_flags:           The array of flags specifying if the data for the given alignment is of the T = J+D type.
+        @type T_flags:              numpy rank-1 array
         @keyword j_couplings:       The J couplings list, used when the RDC data is of the type T = J+D.  The number of elements must match the second dimension of the rdcs argument.
         @type j_couplings:          numpy rank-1 array
         @keyword temp:              The temperature of each experiment, used for the PCS.
@@ -163,6 +166,7 @@ class N_state_opt:
         self.dip_vect = rdc_vect
         self.dip_const = dip_const
         self.absolute_rdc = absolute_rdc
+        self.T_flags = T_flags
         self.j_couplings = j_couplings
         self.temp = temp
         self.frq = frq
@@ -182,11 +186,6 @@ class N_state_opt:
             self.scaling_flag = True
         else:
             self.scaling_flag = False
-
-        # J coupling flag.
-        self.j_flag = True
-        if self.j_couplings == None:
-            self.j_flag = False
 
         # The 2-domain N-state model.
         if model == '2-domain':
@@ -678,7 +677,7 @@ class N_state_opt:
                         self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
 
                         # Add the J coupling to convert into the back-calculated T = J+D value.
-                        if self.j_flag:
+                        if self.T_flags[align_index]:
                             self.rdc_theta[align_index, j] += self.j_couplings[j]
 
                         # Take the absolute value.
