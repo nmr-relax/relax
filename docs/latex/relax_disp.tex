@@ -22,14 +22,41 @@ Relaxation dispersion is the experimental modulation of chemical exchange relaxa
 
 \section{The modelling of dispersion data}
 
-The modelling of relaxation dispersion data can be catergorised into two distinct methodologies:
+For a system under the influence of chemical exchange, the evolution of the transverse magnetisation is given by the \citet{Bloch46} equations as modified by \citet{McConnell58} for chemical exchange -- the Bloch-McConnell equations.
+For a two state exchange jumping between states A and B, the equation is:
 
-\begin{itemize}
-\item Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions.
-\item Optimisation of models via numerical integration of the Bloch-McConnell equations.
-\end{itemize}
+\begin{equation} \label{eq: Bloch-McConnell}
+    \frac{d}{dt} \left[ 
+        \begin{array}{c}
+            M_A^+(t) \\
+            M_B^+(t)
+        \end{array}
+    \right] = \left[
+        \begin{array}{cc}
+            -i\Omega_A-\RtwozeroA-\pB\kex & \pA\kex \\
+            \pB\kex & -i\Omega_B-\RtwozeroB-\pA\kex \\
+        \end{array}
+    \right] \left[
+        \begin{array}{c}
+            M_A^+(t) \\
+            M_B^+(t)
+        \end{array}
+    \right] .
+\end{equation}
 
-Only the optimisation of the analytic models is currently supported in relax.  These models are dependent upon whether the data originates from a CPMG-type or $\Ronerho$-type experiment.  For the CPMG-type experiments, the models currently supported are:
+The solution to this equation then Fourier transformed to produce the NMR spectrum.  However the analytic or closed-form frequency-domain solution remains intractable.
+
+Solutions can nevertheless be found by either making assumptions or restrictions about the exchange process and then analytically solving~\ref{eq: Bloch-McConnell} or by numerical simulation.
+The modelling of relaxation dispersion data can hence be catergorised into these two distinct methodologies:
+
+\begin{description}
+\item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions.
+\item[Numerical models:]\index{relaxation dispersion!Numerical model}  Optimisation of models via numerical integration of the Bloch-McConnell equations.
+\end{description}
+
+Currently only the optimisation of the analytic models is supported in relax.
+These models are dependant upon whether the data originates from a CPMG-type or $\Ronerho$-type experiment.
+For the CPMG-type experiments, the models currently supported are:
 
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models,
@@ -49,7 +76,9 @@ For the $\Ronerho$-type experiment, the currently supported models are:
 \item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters \{$\mathrm{R}_{1\rho}'$, $\dots$, $\pA$, $\dw$, k$_\textrm{ex}$\},
 \end{description}
 
-Except for `R2eff' and `No Rex', these CPMG and $\Ronerho$ models are fit to clusterings of spins, or spin blocks.  The models are described in more detail below.  The parameters are given in Table~\ref{table: dispersion parameters}.
+Except for `R2eff' and `No Rex', these CPMG and $\Ronerho$ models can be fit to clusterings of spins, or spin blocks.
+The models are described in more detail below.
+The parameters are given in Table~\ref{table: dispersion parameters}.
 
 \begin{sidewaystable}
 \begin{center}
