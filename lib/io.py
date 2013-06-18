@@ -33,7 +33,7 @@ import dep_check
 # Python module imports.
 from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
-from os.path import expanduser, basename, splitext
+from os.path import expanduser, basename, splitext, isfile
 from re import search
 import sys
 from sys import stdin, stdout, stderr
@@ -718,7 +718,7 @@ def test_binary(binary):
         path_sep = sep
 
     # The full path of the program has been given (if a directory separatory has been supplied).
-    if search(path_sep, binary):
+    if isfile(binary):
         # Test that the binary exists.
         if not access(binary, F_OK):
             raise RelaxMissingBinaryError(binary)
@@ -737,7 +737,7 @@ def test_binary(binary):
 
         # Test that the binary exists within the system path (and exit this function instantly once it has been found).
         for path in path_list:
-            if access(path + sep + binary, F_OK):
+            if access(path + sep + binary, F_OK) or access(path + sep + binary +".exe", F_OK):
                 return
 
         # The binary is not located in the system path!
