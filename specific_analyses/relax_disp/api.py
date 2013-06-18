@@ -1392,8 +1392,32 @@ class Relax_disp(API_base, API_common):
         spin_ids = model_info
         spins = spin_ids_to_containers(spin_ids)
 
+        # The number of parameters.
+        total_param_num = param_num(spins=spins)
+
+        # No more model parameters.
+        model_param = True
+        if index >= total_param_num:
+            model_param = False
+
+        # The auxiliary cluster parameters.
+        aux_params = []
+        if 'pA' in spins[0].params:
+            aux_params.append('pB')
+        if 'pB' in spins[0].params:
+            aux_params.append('pA')
+        if 'kex' in spins[0].params:
+            aux_params.append('tex')
+        if 'tex' in spins[0].params:
+            aux_params.append('kex')
+
         # Convert the parameter index.
-        param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+        if model_param:
+            param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+        else:
+            param_name = aux_params[index - total_param_num]
+            spin_index = 0
+            frq_index = 0
 
         # The parameter error name.
         err_name = param_name + "_err"
@@ -1407,7 +1431,7 @@ class Relax_disp(API_base, API_common):
             # Set the value.
             setattr(spins[spin_index], err_name, error)
 
-        # All other parameters.
+        # Model and auxiliary parameters.
         else:
             for spin in spins:
                 setattr(spin, err_name, error)
@@ -1584,12 +1608,36 @@ class Relax_disp(API_base, API_common):
         # The number of parameters.
         total_param_num = param_num(spins=spins)
 
-        # No more parameters.
+        # No more model parameters.
+        model_param = True
         if index >= total_param_num:
+            model_param = False
+
+        # The auxiliary cluster parameters.
+        aux_params = []
+        if 'pA' in spins[0].params:
+            aux_params.append('pB')
+        if 'pB' in spins[0].params:
+            aux_params.append('pA')
+        if 'kex' in spins[0].params:
+            aux_params.append('tex')
+        if 'tex' in spins[0].params:
+            aux_params.append('kex')
+
+        # No more auxiliary parameters.
+        total_aux_num = total_param_num + len(aux_params)
+        if index >= total_aux_num:
             return
 
         # Convert the parameter index.
-        param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+        if model_param:
+            param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+            if not param_name in ['r2eff', 'i0']:
+                spin_index = 0
+        else:
+            param_name = aux_params[index - total_param_num]
+            spin_index = 0
+            frq_index = 0
 
         # The exponential curve parameters.
         sim_data = []
@@ -1600,9 +1648,9 @@ class Relax_disp(API_base, API_common):
             for i in range(cdp.sim_number):
                 sim_data.append(spins[spin_index].i0_sim[i])
 
-        # All other parameters.
+        # Model and auxiliary parameters.
         else:
-            sim_data = getattr(spins[0], param_name + "_sim")
+            sim_data = getattr(spins[spin_index], param_name + "_sim")
 
         # Set the sim data to None if empty.
         if sim_data == []:
