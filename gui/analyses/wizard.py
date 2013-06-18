@@ -279,7 +279,7 @@ class New_analysis_page(Wiz_page):
         self.button_custom = self.create_button(id=self.button_ids['custom'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"custom_150x150.png", tooltip="Custom analysis (disabled)", fn=self.select_custom, disabled=True)
 
         # The blank reserved button.
-        self.button_reserved = self.create_button(id=self.button_ids['reserved'], box=sizer2, size=size, bmp=None, tooltip=None, fn=self.select_custom, disabled=True)
+        self.button_reserved = self.create_button(id=self.button_ids['reserved'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"blank_150x150.png", tooltip=None, fn=None, disabled=True)
 
         # Add the sizers.
         box.Add(sizer1, 0, wx.ALIGN_CENTER_HORIZONTAL, 0)
