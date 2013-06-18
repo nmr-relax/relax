@@ -1218,7 +1218,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.0113763520134)
+        self.assertAlmostEqual(cdp.chi2, 0.0113763520134, 5)
 
 
     def test_rigid_data_to_rotor_model(self):
