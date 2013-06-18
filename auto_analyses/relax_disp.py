@@ -246,7 +246,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        if model in [None, MODEL_CR72, MODEL_IT99, MODEL_M61B]:
+        if model in [None, MODEL_CR72, MODEL_M61B]:
             self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
             self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
