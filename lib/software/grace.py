@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,6 +27,86 @@
 import pipe_control
 from pipe_control import pipes
 import specific_analyses
+
+
+def script_grace2images(file=None):
+    """Write a python "grace to PNG/EPS/SVG..." conversion script..
+
+    The makes a conversion script to image types as PNG/EPS/SVG. The conversion is looping over a directory list of *.agr files, and making function calls to xmgrace. Successful conversion of images depends on the compilation of xmgrace. The input is a list of image types which is wanted, f.ex: PNG EPS SVG. PNG is default.
+
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    """
+
+    # Write to file
+    file.write("#!/usr/bin/env python\n")
+    file.write("\n")
+    file.write("import glob, os, sys\n")
+    file.write("import shlex,subprocess\n")
+    file.write("import argparse\n")
+    file.write("from itertools import chain\n")
+    file.write("\n")
+    file.write("# Add functioning for argument parsing\n")
+    file.write("parser = argparse.ArgumentParser(description='Process grace files to images')\n")
+    file.write("# Add argument type. Destination instance is set to types.\n")
+    file.write("parser.add_argument('-g', action='store_true', dest='relax_gui', help='Make it possible to run script through relax GUI. Run by using User-functions -> script')\n")
+    file.write("parser.add_argument('-l', nargs='+', action='append', dest='l', help='Make in possible to run scriptif relax has logfile turned on. Run by using User-functions -> script')\n")
+    file.write("parser.add_argument('-t', nargs='+', action='append', dest='types', help='List image types for conversion. Execute script with: python %s -t PNG EPS ...'%(sys.argv[0]), default=[])\n")
+    file.write("\n")
+    file.write("# Lets stop the execution and print help if no arguments are passed\n")
+    file.write("if len(sys.argv)==1:\n")
+    file.write("    print('system argument is:',sys.argv)\n")
+    file.write("    parser.print_help()\n")
+    file.write("    print('Performing a default PNG conversion')\n")
+    file.write("\n")
+    file.write("# Parse the arguments to a Class instance object\n")
+    file.write("args = parser.parse_args()\n")
+    file.write("# If we run through the GUI, we cannot pass input arguments, so we make a default PNG option\n")
+    file.write("if args.relax_gui:\n")
+    file.write("    args.types = [['PNG']]\n")
+    file.write("# If no input arguments, we make a default PNG option\n")
+    file.write("if len(args.types) == 0:\n")
+    file.write("    args.types = [['PNG']]\n")
+    file.write("\n")
+    file.write("# The instance object will contain a list of lists. We convert this to one list.\n")
+    file.write("types = list(chain.from_iterable(args.types))\n")
+    file.write("\n")
+    file.write("# A easy search for files with *.agr, is to use glob, which is pathnames matching a specified pattern according to the rules used by the Unix shell, not opening a shell\n")
+    file.write("gracefiles = glob.glob(\"*.agr\")\n")
+    file.write("\n")
+    file.write("# For png conversion, several parameters can be passed to xmgrace. These can be altered later afterwards, and the script rerun. \n")
+    file.write("# The option for transparent is good for poster or insertion in color backgrounds. The ability for this, still depends on xmgrace compilation\n")
+    file.write("if \"PNG\" in types:\n")
+    file.write("    pngpar = \"png.par\"\n")
+    file.write("    if not os.path.isfile(pngpar):\n")
+    file.write("        wpngpar = open(pngpar,\"w\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" FONT ANTIALIASING on\\n\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"transparent:on\\\"\\n\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"compression:9\\\"\\n\")\n")
+    file.write("        wpngpar.close()\n")
+    file.write("\n")
+    file.write("# Now loop over the grace files\n")
+    file.write("for grace in gracefiles:\n")
+    file.write("    # Get the filename without extension\n")
+    file.write("    fname = grace.split(\".agr\")[0]\n")
+    file.write("    if \"PNG\" in types:\n")
+    file.write("        # Produce the argument string\n")
+    file.write("        im_args = r\"xmgrace -hdevice PNG -hardcopy -param %s -printfile %s.png %s\"%(pngpar,fname,grace)\n")
+    file.write("        # Split the arguments the right way, to call xmgrace\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if \"EPS\" in types:\n")
+    file.write("        im_args = r\"xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s\"%(fname,grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if (\"JPG\" or \"JPEG\") in types:\n")
+    file.write("        im_args = r\"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s\"%(fname,grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if \"SVG\" in types:\n")
+    file.write("        im_args = r\"xmgrace -hdevice SVG -hardcopy -printfile %s.svg %s\"%(fname,grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=False):

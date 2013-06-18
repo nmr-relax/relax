@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,7 +41,7 @@ from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
 from lib.io import get_file_path, open_write_file
 from lib.list import count_unique_elements, unique_elements
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
-from lib.software.grace import write_xy_data, write_xy_header
+from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
@@ -365,6 +366,7 @@ def plot_disp_curves(dir=None, force=None):
 
     One file will be created per spin system.
 
+    A python "grace to PNG/EPS/SVG..." conversion script is created at the end
 
     @keyword dir:           The optional directory to place the file into.
     @type dir:              str
@@ -504,6 +506,17 @@ def plot_disp_curves(dir=None, force=None):
 
         # Add the file to the results file list.
         add_result_file(type='grace', label='Grace', file=file_path)
+
+    # Write a python "grace to PNG/EPS/SVG..." conversion script.
+    # Open the file for writing.
+    file_name = "grace2images.py"
+    file = open_write_file(file_name, dir, force)
+
+    # Write the file.
+    script_grace2images(file=file)
+
+    # Close the file.
+    file.close()
 
 
 def plot_exp_curves(file=None, dir=None, force=None, norm=None):
