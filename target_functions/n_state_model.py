@@ -136,7 +136,7 @@ class N_state_opt:
         @keyword rdc_vect:          The unit vector lists for the RDC.  The first index must correspond to the spin pair and the second index to each structure (its size being equal to the number of states).
         @type rdc_vect:             numpy rank-2 array
         @keyword T_flags:           The array of flags specifying if the data for the given alignment is of the T = J+D type.
-        @type T_flags:              numpy rank-1 array
+        @type T_flags:              numpy rank-2 array
         @keyword j_couplings:       The J couplings list, used when the RDC data is of the type T = J+D.  The number of elements must match the second dimension of the rdcs argument.
         @type j_couplings:          numpy rank-1 array
         @keyword temp:              The temperature of each experiment, used for the PCS.
@@ -677,7 +677,7 @@ class N_state_opt:
                         self.rdc_theta[align_index, j] = ave_rdc_tensor(self.dip_const[j], self.dip_vect[j], self.N, self.A[align_index], weights=self.probs)
 
                         # Add the J coupling to convert into the back-calculated T = J+D value.
-                        if self.T_flags[align_index]:
+                        if self.T_flags[align_index, j]:
                             self.rdc_theta[align_index, j] += self.j_couplings[j]
 
                         # Take the absolute value.

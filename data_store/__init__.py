@@ -282,6 +282,18 @@ class Relax_data_store(dict):
                             if hasattr(spin, name):
                                 delattr(spin, name)
 
+            # Conversions for the interatomic data containers.
+            if hasattr(dp, 'interatomic'):
+                for interatom in dp.interatomic:
+                    # RDC data.
+                    if hasattr(interatom, 'rdc') and not hasattr(interatom, 'rdc_data_types'):
+                        # Initialise.
+                        interatom.rdc_data_types = {}
+
+                        # Add the data type, assumed to be 'D', for each alignment ID.
+                        for id in dp.rdc_ids:
+                            interatom.rdc_data_types[id] = 'D'
+
             # Convert the alignment tensors.
             if hasattr(dp, 'align_tensors'):
                 for i in range(len(dp.align_tensors)):

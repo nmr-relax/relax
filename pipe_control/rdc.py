@@ -120,7 +120,7 @@ def back_calc(align_id=None):
             interatom.rdc_bc[id] = ave_rdc_tensor(dj, unit_vect, cdp.N, cdp.align_tensors[get_tensor_index(align_id=id)].A, weights=weights)
 
             # T values.
-            if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+            if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
                 if not hasattr(interatom, 'j_coupling'):
                     raise RelaxNoJError
 
@@ -190,11 +190,13 @@ def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxNoRDCError(rdc_id)
 
 
-def convert(value, align_id, to_intern=False):
+def convert(value, data_type, align_id, to_intern=False):
     """Convert the RDC based on the 'D' or '2D' data type.
 
     @param value:           The value or error to convert.
     @type value:            float or None
+    @param data_type:       The RDC data type.  Either 'D', '2D' or 'T'.
+    @type data_type:        str
     @param align_id:        The alignment tensor ID string.
     @type align_id:         str
     @keyword to_intern:     A flag which if True will convert to the internal D notation if needed, or if False will convert from the internal D notation to the external D or 2D format.
@@ -209,7 +211,7 @@ def convert(value, align_id, to_intern=False):
 
     # The conversion factor.
     factor = 1.0
-    if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == '2D':
+    if data_type == '2D':
         # Convert from 2D to D.
         if to_intern:
             factor = 2.0
@@ -330,11 +332,6 @@ def corr_plot(format=None, file=None, dir=None, force=False):
         # Append a new list for this alignment.
         data.append([])
 
-        # T-type data.
-        j_flag = False
-        if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
-            j_flag = True
-
         # Errors present?
         err_flag = False
         for interatom in interatomic_loop():
@@ -350,9 +347,9 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 continue
 
             # Append the data.
-            rdc_bc = convert(interatom.rdc_bc[align_id], align_id)
-            rdc = convert(interatom.rdc[align_id], align_id)
-            if j_flag:
+            rdc_bc = convert(interatom.rdc_bc[align_id], interatom.rdc_data_types[align_id], align_id)
+            rdc = convert(interatom.rdc[align_id], interatom.rdc_data_types[align_id], align_id)
+            if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
                 rdc_bc -= interatom.j_coupling
                 rdc -= interatom.j_coupling
             data[-1].append([rdc_bc, rdc])
@@ -360,7 +357,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
             # Errors.
             if err_flag:
                 if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                    data[-1][-1].append(convert(interatom.rdc_err[align_id], align_id))
+                    data[-1][-1].append(convert(interatom.rdc_err[align_id], interatom.rdc_data_types[align_id], align_id))
                 else:
                     data[-1][-1].append(None)
 
@@ -409,10 +406,6 @@ def delete(align_id=None):
         # The RDC ID.
         cdp.rdc_ids.pop(cdp.rdc_ids.index(id))
 
-        # The data type.
-        if hasattr(cdp, 'rdc_data_types') and id in cdp.rdc_data_types:
-            cdp.rdc_data_types.pop(id)
-
         # The interatomic data.
         for interatom in interatomic_loop():
             # The data.
@@ -422,6 +415,10 @@ def delete(align_id=None):
             # The error.
             if hasattr(interatom, 'rdc_err') and id in interatom.rdc_err:
                 interatom.rdc_err.pop(id)
+
+            # The data type.
+            if hasattr(interatom, 'rdc_data_types') and id in interatom.rdc_data_types:
+                interatom.rdc_data_types.pop(id)
 
         # Clean the global data.
         if not hasattr(cdp, 'pcs_ids') or id not in cdp.pcs_ids:
@@ -486,7 +483,7 @@ def q_factors(spin_id=None):
             if hasattr(interatom, 'rdc_bc') and align_id in interatom.rdc_bc:
                 rdc_bc_data = True
             j_flag = False
-            if hasattr(cdp, 'rdc_data_types') and align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
+            if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
                 j_flag = True
                 if not hasattr(interatom, 'j_coupling'):
                     raise RelaxNoJError
@@ -607,12 +604,6 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
     if data_type not in rdc_types:
         raise RelaxError("The RDC data type '%s' must be one of %s." % (data_type, rdc_types))
 
-    # Store the data type as global data (need for the conversion of RDC data).
-    if not hasattr(cdp, 'rdc_data_types'):
-        cdp.rdc_data_types = {}
-    if not align_id in cdp.rdc_data_types:
-        cdp.rdc_data_types[align_id] = data_type
-
     # Spin specific data.
     #####################
 
@@ -696,10 +687,16 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         if interatom == None:
             interatom = create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
 
+        # Store the data type as global data (need for the conversion of RDC data).
+        if not hasattr(interatom, 'rdc_data_types'):
+            interatom.rdc_data_types = {}
+        if not align_id in interatom.rdc_data_types:
+            interatom.rdc_data_types[align_id] = data_type
+
         # Convert and add the data.
         if data_col:
             # Data conversion.
-            value = convert(value, align_id, to_intern=True)
+            value = convert(value, data_type, align_id, to_intern=True)
 
             # Correction for the negative gyromagnetic ratio of 15N.
             if neg_g_corr and value != None:
@@ -725,7 +722,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         # Convert and add the error.
         if error_col:
             # Data conversion.
-            error = convert(error, align_id, to_intern=True)
+            error = convert(error, data_type, align_id, to_intern=True)
 
             # Initialise.
             if not hasattr(interatom, 'rdc_err'):
@@ -864,13 +861,13 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # The value.
         if bc:
-            data[-1].append(repr(convert(interatom.rdc_bc[align_id], align_id)))
+            data[-1].append(repr(convert(interatom.rdc_bc[align_id], interatom.rdc_data_types[align_id], align_id)))
         else:
-            data[-1].append(repr(convert(interatom.rdc[align_id], align_id)))
+            data[-1].append(repr(convert(interatom.rdc[align_id], interatom.rdc_data_types[align_id], align_id)))
 
         # The error.
         if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-            data[-1].append(repr(convert(interatom.rdc_err[align_id], align_id)))
+            data[-1].append(repr(convert(interatom.rdc_err[align_id], interatom.rdc_data_types[align_id], align_id)))
         else:
             data[-1].append(repr(None))
 
