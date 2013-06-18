@@ -249,17 +249,17 @@ class Pipe_editor(wx.Frame):
 
         # Launch the respective user functions.
         if event.GetEventObject() == self.button_bundle:
-            uf_store['pipe.bundle'](event, wx_parent=self)
+            uf_store['pipe.bundle'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
         elif event.GetEventObject() == self.button_create:
-            uf_store['pipe.create'](event, wx_parent=self)
+            uf_store['pipe.create'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
         elif event.GetEventObject() == self.button_copy:
-            uf_store['pipe.copy'](event, wx_parent=self)
+            uf_store['pipe.copy'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
         elif event.GetEventObject() == self.button_delete:
-            uf_store['pipe.delete'](event, wx_parent=self)
+            uf_store['pipe.delete'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
         elif event.GetEventObject() == self.button_hybrid:
-            uf_store['pipe.hybridise'](event, wx_parent=self)
+            uf_store['pipe.hybridise'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
         elif event.GetEventObject() == self.button_switch:
-            uf_store['pipe.switch'](event, wx_parent=self)
+            uf_store['pipe.switch'](event, wx_parent=self, wx_wizard_sync=True, wx_wizard_modal=True)
 
 
     def add_logo(self, box):
