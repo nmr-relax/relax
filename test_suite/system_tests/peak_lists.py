@@ -45,7 +45,7 @@ class Peak_lists(SystemTestCase):
         super(Peak_lists, self).__init__(methodName)
 
         # Missing module.
-        if not dep_check.C_module_exp_fn and methodName in ['test_bug_17276_peak_lists', 'test_ccpn_analysis']:
+        if not dep_check.C_module_exp_fn and methodName in ['test_bug_17276_peak_lists', 'test_bug_20873_peak_lists', 'test_ccpn_analysis']:
             # Store in the status object. 
             status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 

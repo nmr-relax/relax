@@ -266,7 +266,7 @@ class N_state_model(SystemTestCase):
 
             # Check the loaded and back-calculated absolute values.
             self.assertAlmostEqual(interatom.rdc['Gel'], T[i])
-            self.assertAlmostEqual(interatom.rdc_bc['Gel'], T_bc[i])
+            self.assertAlmostEqual(interatom.rdc_bc['Gel'], T_bc[i], 5)
 
             # Increment the spin index.
             i += 1
