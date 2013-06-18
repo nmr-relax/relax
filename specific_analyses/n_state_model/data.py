@@ -293,8 +293,9 @@ def opt_uses_j_couplings():
 
     # Loop over the alignments.
     for align_id in cdp.align_ids:
-        if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
-            return True
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
+                return True
 
     # No J values required.
     return False

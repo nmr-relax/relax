@@ -574,12 +574,7 @@ class N_state_model(API_base, API_common):
             rdc_err.append([])
             rdc_weight.append([])
             absolute.append([])
-
-            # T-type data.
-            if align_id in cdp.rdc_data_types and cdp.rdc_data_types[align_id] == 'T':
-                T_flags.append(True)
-            else:
-                T_flags.append(False)
+            T_flags.append([])
 
             # Interatom loop.
             for interatom in interatomic_loop():
@@ -595,9 +590,15 @@ class N_state_model(API_base, API_common):
                 if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
                     continue
 
+                # T-type data.
+                if align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
+                    T_flags[-1].append(True)
+                else:
+                    T_flags[-1].append(False)
+
                 # Check for J couplings if the RDC data type is T = J+D.
-                    if not hasattr(interatom, 'j_coupling'):
-                        continue
+                if T_flags[-1][-1] and not hasattr(interatom, 'j_coupling'):
+                    continue
 
                 # Defaults of None.
                 value = None
@@ -620,7 +621,7 @@ class N_state_model(API_base, API_common):
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
                         # T values.
-                        if T_flags[-1]:
+                        if T_flags[-1][-1]:
                             error = -3.0 * sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
 
                         # D values.
@@ -638,7 +639,7 @@ class N_state_model(API_base, API_common):
                     # The error.
                     if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
                         # T values.
-                        if T_flags[-1]:
+                        if T_flags[-1][-1]:
                             error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
 
                         # D values.
