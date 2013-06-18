@@ -3,7 +3,6 @@
 @with g0
 @    view 0.15, 0.15, 1.28, 0.85
 @    title "Relaxation dispersion plot"
-@    world xmax 1000.0
 @    xaxis  label "\qSpin-lock field strength (Hz)\Q"
 @    xaxis  label char size 1.48
 @    xaxis  tick major size 0.75
@@ -11,7 +10,6 @@
 @    xaxis  tick minor linewidth 0.5
 @    xaxis  tick minor size 0.45
 @    xaxis  ticklabel char size 1.00
-@    world ymax 7.04434245703
 @    yaxis  label "\qR\s1\xr\B\N\Q (rad.s\S-1\N)"
 @    yaxis  label char size 1.48
 @    yaxis  tick major size 0.75
@@ -26,42 +24,42 @@
 @    s0 errorbar size 0.5
 @    s0 errorbar linewidth 0.5
 @    s0 errorbar riser linewidth 0.5
-@    s0 legend "R\s2eff\N (500.000000 MHz)"
+@    s0 legend "R\s2eff\N (500.0 MHz)"
 @    s1 symbol 2
 @    s1 symbol size 0.45
 @    s1 symbol linewidth 0.5
 @    s1 errorbar size 0.5
 @    s1 errorbar linewidth 0.5
 @    s1 errorbar riser linewidth 0.5
-@    s1 legend "R\s2eff\N (800.000000 MHz)"
+@    s1 legend "R\s2eff\N (800.0 MHz)"
 @    s2 symbol 3
 @    s2 symbol size 0.45
 @    s2 symbol linewidth 0.5
 @    s2 errorbar size 0.5
 @    s2 errorbar linewidth 0.5
 @    s2 errorbar riser linewidth 0.5
-@    s2 legend "Back-calculated R\s2eff\N (500.000000 MHz)"
+@    s2 legend "Back-calculated R\s2eff\N (500.0 MHz)"
 @    s3 symbol 4
 @    s3 symbol size 0.45
 @    s3 symbol linewidth 0.5
 @    s3 errorbar size 0.5
 @    s3 errorbar linewidth 0.5
 @    s3 errorbar riser linewidth 0.5
-@    s3 legend "Back-calculated R\s2eff\N (800.000000 MHz)"
+@    s3 legend "Back-calculated R\s2eff\N (800.0 MHz)"
 @    s4 symbol 5
 @    s4 symbol size 0.45
 @    s4 symbol linewidth 0.5
 @    s4 errorbar size 0.5
 @    s4 errorbar linewidth 0.5
 @    s4 errorbar riser linewidth 0.5
-@    s4 legend "Residuals (500.000000 MHz)"
+@    s4 legend "Residuals (500.0 MHz)"
 @    s5 symbol 6
 @    s5 symbol size 0.45
 @    s5 symbol linewidth 0.5
 @    s5 errorbar size 0.5
 @    s5 errorbar linewidth 0.5
 @    s5 errorbar riser linewidth 0.5
-@    s5 legend "Residuals (800.000000 MHz)"
+@    s5 legend "Residuals (800.0 MHz)"
 @target G0.S0
 @type xydy
 66.6666                        7.044342457026060              0.353119268812593             
@@ -125,3 +123,4 @@
 @target G0.S5
 @type xydy
 &
+@autoscale

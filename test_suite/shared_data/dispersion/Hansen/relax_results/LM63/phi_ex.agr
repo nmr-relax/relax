@@ -2,8 +2,6 @@
 @page size 842, 595
 @with g0
 @    view 0.15, 0.15, 1.28, 0.85
-@    world xmin 69
-@    world xmax 72
 @    xaxis  label "Residue number"
 @    xaxis  label char size 1.48
 @    xaxis  tick major size 0.75
@@ -27,6 +25,7 @@
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
 @type xydy
-70                             0.310077839819486              0.000000000000000             
-71                             0.059278680512121              0.000000000000000             
+70                             0.310077839819486              0.028898500287845             
+71                             0.059278680512121              0.209678943293491             
 &
+@autoscale

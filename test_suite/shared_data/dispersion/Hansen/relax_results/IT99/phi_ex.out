@@ -1,0 +1,5 @@
+# Parameter description:  The phi_ex = pA.pB.dw**2 value (ppm^2).
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   
+None          70         GLY         None        N               0.816306333280856      0.0750673996118478    
+None          71         GLY         None        N               0.164811454231848        49595841467146.7    

@@ -2,8 +2,6 @@
 @page size 842, 595
 @with g0
 @    view 0.15, 0.15, 1.28, 0.85
-@    world xmin 69
-@    world xmax 72
 @    xaxis  label "Residue number"
 @    xaxis  label char size 1.48
 @    xaxis  tick major size 0.75
@@ -30,3 +28,4 @@
 70                             3427.907183713225095          
 71                             47.356752629683697            
 &
+@autoscale

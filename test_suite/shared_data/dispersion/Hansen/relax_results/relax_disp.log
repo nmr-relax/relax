@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20028
+                                  relax repository checkout r20188
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -1112,6 +1112,18 @@ Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/di
 relax> grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/phi_ex.agr' for writing.
 
+relax> value.write(param='kex', file='kex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/kex.out' for writing.
+
+relax> value.write(param='tex', file='tex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/tex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/kex.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/tex.agr' for writing.
+
 relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/LM63/chi2.agr' for writing.
 
@@ -1697,6 +1709,36 @@ relax> relax_disp.plot_disp_curves(dir='/data/edau/relax/branches/relax_disp/tes
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/disp_:70@N.agr' for writing.
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/disp_:71@N.agr' for writing.
 
+relax> value.write(param='pA', file='pA.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/pA.out' for writing.
+
+relax> value.write(param='pB', file='pB.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/pB.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/pA.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/pB.agr' for writing.
+
+relax> value.write(param='dw', file='dw.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/dw.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/dw.agr' for writing.
+
+relax> value.write(param='kex', file='kex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/kex.out' for writing.
+
+relax> value.write(param='tex', file='tex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/tex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/kex.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/tex.agr' for writing.
+
 relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/CR72/chi2.agr' for writing.
 
@@ -2262,6 +2304,30 @@ relax> relax_disp.plot_disp_curves(dir='/data/edau/relax/branches/relax_disp/tes
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/disp_:70@N.agr' for writing.
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/disp_:71@N.agr' for writing.
 
+relax> value.write(param='phi_ex', file='phi_ex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/phi_ex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/phi_ex.agr' for writing.
+
+relax> value.write(param='padw2', file='padw2.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/padw2.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='padw2', spin_id=None, plot_data='value', file='padw2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/padw2.agr' for writing.
+
+relax> value.write(param='kex', file='kex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/kex.out' for writing.
+
+relax> value.write(param='tex', file='tex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/tex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/kex.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/tex.agr' for writing.
+
 relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/IT99/chi2.agr' for writing.
 
@@ -2293,12 +2359,52 @@ relax> relax_disp.plot_disp_curves(dir='/data/edau/relax/branches/relax_disp/tes
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/disp_:70@N.agr' for writing.
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/disp_:71@N.agr' for writing.
 
+relax> value.write(param='pA', file='pA.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/pA.out' for writing.
+
+relax> value.write(param='pB', file='pB.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/pB.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/pA.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/pB.agr' for writing.
+
 relax> value.write(param='phi_ex', file='phi_ex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/phi_ex.out' for writing.
 
 relax> grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/phi_ex.agr' for writing.
 
+relax> value.write(param='padw2', file='padw2.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/padw2.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='padw2', spin_id=None, plot_data='value', file='padw2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/padw2.agr' for writing.
+RelaxWarning: No data could be found, creating an empty file.
+
+relax> value.write(param='dw', file='dw.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/dw.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/dw.agr' for writing.
+
+relax> value.write(param='kex', file='kex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/kex.out' for writing.
+
+relax> value.write(param='tex', file='tex.out', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/tex.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/kex.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/tex.agr' for writing.
+
 relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final', force=True, norm=False)
 Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final/chi2.agr' for writing.
+
+relax> state.save(state='final_state', dir='/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results', compress_type=1, force=True)
+Opening the file '/data/edau/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/relax_results/final_state.bz2' for writing.
 

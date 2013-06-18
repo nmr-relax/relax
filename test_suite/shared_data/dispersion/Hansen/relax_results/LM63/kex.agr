@@ -9,7 +9,7 @@
 @    xaxis  tick minor linewidth 0.5
 @    xaxis  tick minor size 0.45
 @    xaxis  ticklabel char size 1.00
-@    yaxis  label "\xc\S2"
+@    yaxis  label "\qk\sex\N\Q (rad.s\S-1\N)"
 @    yaxis  label char size 1.48
 @    yaxis  tick major size 0.75
 @    yaxis  tick major linewidth 0.5
@@ -24,8 +24,8 @@
 @    s0 errorbar linewidth 0.5
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
-@type xy
-70                             106.393361492906422           
-71                             1.442398073592998             
+@type xydy
+70                             4763.249498203445910           293.194267601759122           
+71                             2544.644789033886809           2912.968418974008728          
 &
 @autoscale
