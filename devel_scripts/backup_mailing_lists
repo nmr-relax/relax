@@ -1,0 +1,22 @@
+#! /bin/sh
+
+# Shell script for backing up the relax mailing lists.
+#
+# This will download all of the mbox files (as well as the less useful HTML files).  To run this as a cron job, a line such as the following can be added to the crontab (via 'crontab -e'):
+#
+# 5 0 * * *       /data/relax/gna/backup_mailing_lists > /dev/null 2> /dev/null
+
+
+# Target directory.
+DIR='/data/relax/gna/relax_mailing_lists/'
+
+# Log file.
+LOG=$DIR'log'
+ERR=$DIR'err'
+
+# Get the files.
+echo -e "Wget, `date`" >> $LOG 2> $ERR
+wget -np -m --no-check-certificate https://mail.gna.org/public/relax-announce/ >> $LOG 2>> $ERR
+wget -np -m --no-check-certificate https://mail.gna.org/public/relax-commits/ >> $LOG 2>> $ERR
+wget -np -m --no-check-certificate https://mail.gna.org/public/relax-users/ >> $LOG 2>> $ERR
+wget -np -m --no-check-certificate https://mail.gna.org/public/relax-devel/ >> $LOG 2>> $ERR

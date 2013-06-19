@@ -67,6 +67,9 @@ class SystemTestCase(TestCase):
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
+        # Horrible MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
+        sleep(0.03)
+
         # Remove the temporary directories.
         if hasattr(ds, 'tmpdir'):
             # Delete the directory.
@@ -85,9 +88,6 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(ds, 'tmpfile'):
-            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
-            sleep(0.01)
-
             # Delete the file.
             delete(ds.tmpfile, fail=False)
 
@@ -96,9 +96,6 @@ class SystemTestCase(TestCase):
 
         # Remove temporary files.
         if hasattr(self, 'tmpfile'):
-            # MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
-            sleep(0.01)
-
             # Delete the file.
             delete(self.tmpfile, fail=False)
 
