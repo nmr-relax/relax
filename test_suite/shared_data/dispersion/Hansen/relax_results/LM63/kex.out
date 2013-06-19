@@ -1,5 +1,5 @@
 # Parameter description:  The exchange rate.
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                   error                   
-None          70         GLY         None        N                4763.24949820345        293.194267601759    
-None          71         GLY         None        N                2544.64478903389        2912.96841897401    
+None          70         GLY         None        N                4763.24949820345        371.989501096174    
+None          71         GLY         None        N                2544.64478903389         3577.0313083355    
