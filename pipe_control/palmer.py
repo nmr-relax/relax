@@ -30,7 +30,7 @@ import dep_check
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
-from stat import S_IRWXU|S_IRGRP|S_IROTH
+from stat import S_IRWXU, S_IRGRP, S_IROTH
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
