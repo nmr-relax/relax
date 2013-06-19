@@ -1,5 +1,12 @@
 #! /bin/sh
 
+# Shell script for backing up the full relax SVN source code repository.
+#
+# Note that relax is big, so be warned - you will need 3+ Gb of free space.  To run this as a cron job, a line such as the following can be added to the crontab (via 'crontab -e'):
+#
+# 5 0 * * *       /data/relax/gna/backup_repository > /dev/null 2> /dev/null
+
+
 # Target directory.
 DIR='/data/relax/gna/repository_backup/'
 
