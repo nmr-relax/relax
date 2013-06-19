@@ -1,0 +1,23 @@
+#! /bin/sh
+
+# Target directory.
+DIR='/data/relax/gna/repository_backup/'
+
+# Log file.
+LOG=$DIR'log'
+ERR=$DIR'err'
+
+# Header.
+echo -e "\n\n\n\n\n<<< Downloading the latest relax dump >>>\n\nToday is `date`" >> $LOG 2>> $ERR
+echo -e "\n\n\n\n\n<<< Downloading the latest relax dump >>>\n\nToday is `date`" >> $ERR 2>> $ERR
+echo -e "\n\n\n" >> $LOG 2>> $ERR
+
+# Rsync the repository.
+rsync -avHS rsync://svn.gna.org/svn/relax/ $DIR'gna.repo' >> $LOG 2>> $ERR
+
+# Make a dump.
+svnadmin dump $DIR'gna.repo' > $DIR'relax.dump' 2> 'dump_log'
+
+# Compress the dump (removing the old first).
+rm -rf $DIR'relax.dump.bz2' > /dev/null 2> /dev/null
+bzip2 $DIR'relax.dump' > /dev/null 2> /dev/null
