@@ -30,7 +30,7 @@ import dep_check
 from math import pi
 from os import F_OK, access, chdir, chmod, getcwd, listdir, remove, sep, system
 from re import match, search
-from stat import S_IEXEC
+from stat import S_IRWXU|S_IRGRP|S_IROTH
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -172,7 +172,7 @@ def create(dir=None, binary=None, diff_search=None, sims=None, sim_type=None, tr
     run = open_write_file('run.sh', dir, force)
     create_run(run, binary=binary, dir=dir)
     run.close()
-    chmod(dir + sep+'run.sh', S_IEXEC)
+    chmod(dir + sep+'run.sh', S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def create_mfdata(file, spin=None, spin_id=None, num_frq=None, frq=None):
