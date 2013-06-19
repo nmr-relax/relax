@@ -85,32 +85,32 @@ Delay & P1 & FID & Spectrum\\
 
 Here is an example NMRPipe script designed for optimal relaxation rate extraction:
 
-\begin{exampleenv}
-\#!/bin/csh \\
- \\
-setenv FILEROOT \$1 \\
-set PHASE=81.4 \\
- \\
-echo "\textbackslash n\# Fourier Transform (nmrPipe fid/*.fid to ft/*.dat)" \\
-echo "\# t2 phase is set to \$PHASE" \\
-echo "\# t1 phase is set to 0.0\textbackslash n" \\
- \\
-nmrPipe -in fid/\$FILEROOT.fid \ \\
-| nmrPipe -fn SOL \ \\
-| nmrPipe -fn GM -g1 15 -g2 20 -c 0.5 \ \\
-| nmrPipe -fn ZF -size 8192 \ \\
-| nmrPipe -fn FT -auto \ \\
-| nmrPipe -fn PS -p0 \$PHASE -p1 0.0 -di -verb \ \\
-| nmrPipe -fn EXT -left -sw \ \\
-| nmrPipe -fn TP \ \\
-| nmrPipe -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5 \ \\
-| nmrPipe -fn ZF -size 8192 \ \\
-| nmrPipe -fn FT -auto \ \\
-| nmrPipe -fn PS -p0 0.0 -p1 0.0 -di -verb \ \\
-| nmrPipe -fn REV \ \\
-| nmrPipe -fn TP \ \\
-| nmrPipe -out ft/\$FILEROOT.dat -ov
-\end{exampleenv}
+\begin{lstlisting}[language=csh]
+#!/bin/csh
+
+setenv FILEROOT $1
+set PHASE=81.4
+
+echo "\n# Fourier Transform (nmrPipe fid/*.fid to ft/*.dat)"
+echo "# t2 phase is set to $PHASE"
+echo "# t1 phase is set to 0.0\n"
+
+nmrPipe -in fid/$FILEROOT.fid \
+| nmrPipe -fn SOL \
+| nmrPipe -fn GM -g1 15 -g2 20 -c 0.5 \
+| nmrPipe -fn ZF -size 8192 \
+| nmrPipe -fn FT -auto \
+| nmrPipe -fn PS -p0 $PHASE -p1 0.0 -di -verb \
+| nmrPipe -fn EXT -left -sw \
+| nmrPipe -fn TP \
+| nmrPipe -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5 \
+| nmrPipe -fn ZF -size 8192 \
+| nmrPipe -fn FT -auto \
+| nmrPipe -fn PS -p0 0.0 -p1 0.0 -di -verb \
+| nmrPipe -fn REV \
+| nmrPipe -fn TP \
+| nmrPipe -out ft/$FILEROOT.dat -ov
+\end{lstlisting}
 
 
 % Measuring peak intensities.
