@@ -47,6 +47,8 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
+from stat import S_IRWXU, S_IRGRP, S_IROTH
+from os import chmod, path, sep
 
 
 
@@ -518,8 +520,12 @@ def plot_disp_curves(dir=None, force=None):
     # Write the file.
     script_grace2images(file=file)
 
-    # Close the file.
+    # Close the batch script, then make it executable.
     file.close()
+    if dir:
+        chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
+    else:
+        chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
 def plot_exp_curves(file=None, dir=None, force=None, norm=None):
