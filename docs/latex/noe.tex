@@ -73,7 +73,7 @@ spectrum.baseplane_rmsd(error=8500, spectrum_type='sat', res_num=114)
 # Peak intensity error analysis.
 spectrum.error_analysis()
 
-# Deselect unresolved residues.
+# Deselect unresolved spins.
 deselect.read(file='unresolved', res_num_col=1, spin_name_col=2)
 
 # Calculate the NOEs.
@@ -82,12 +82,12 @@ calc()
 # Save the NOEs.
 value.write(param='noe', file='noe.out', force=True)
 
-# Create grace files.
+# Create Grace files.
 grace.write(y_data_type='ref', file='ref.agr', force=True)
 grace.write(y_data_type='sat', file='sat.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
-# View the grace files.
+# View the Grace files.
 grace.view(file='ref.agr')
 grace.view(file='sat.agr')
 grace.view(file='noe.agr')
@@ -108,7 +108,8 @@ state.save('save', force=True)
 
 The start of this sample script is very similar to that of the relaxation curve-fitting calculation on page~\pageref{Rx initialisation}.  The command
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=3]
+# Create the data pipe.
 pipe.create('NOE', 'noe')
 \end{lstlisting}
 
@@ -122,14 +123,15 @@ initialises the data pipe labelled \promptstring{NOE}.  The data pipe type is se
 
 The backbone amide nitrogen sequence is extracted from a PDB\index{PDB} file using the same commands as the relaxation curve-fitting script (Chapter~\ref{ch: relax-fit}.  The command
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=6]
+# Load the sequence from a PDB file.
 structure.read_pdb('Ap4Aase_new_3.pdb')
 \end{lstlisting}
 \index{PDB}
 
 will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=8]
 structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@NE1')
 \end{lstlisting}
@@ -142,7 +144,8 @@ structure.load_spins(spin_id='@NE1')
 
 The commands
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=11]
+# Load the reference spectrum and saturated spectrum peak intensities.
 spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='N', proton='HN')
 spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
 spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='N', proton='HN')
@@ -179,21 +182,24 @@ If you have any other format you would like read by relax please send an email t
 
 In this example the errors where measured from the base plain noise.  The Sparky\index{software!Sparky} RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=21]
+# Set the errors.
 spectrum.baseplane_rmsd(error=3600, spectrum_id='ref_ave')
 spectrum.baseplane_rmsd(error=3000, spectrum_id='sat_ave')
 \end{lstlisting}
 
 For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=25]
+# Individual residue errors.
 spectrum.baseplane_rmsd(error=122000, spectrum_type='ref', res_num=114)
 spectrum.baseplane_rmsd(error=8500, spectrum_type='sat', res_num=114)
 \end{lstlisting}
 
 There are many other ways of setting the errors, for example via spectrum duplication, triplication, etc.  See the documentation for the \uf{spectrum.error\_analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.  This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=29]
+# Peak intensity error analysis.
 spectrum.error_analysis()
 \end{lstlisting}
 
@@ -205,7 +211,8 @@ spectrum.error_analysis()
 
 As the peaks of certain spins overlap to such an extent that the heights or volumes cannot be resolved, a simple text file was created called \promptstring{unresolved} in which each line consists of the residue number followed by the atom name.  By using the command
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=32]
+# Deselect unresolved spins.
 deselect.read(name, file='unresolved', res_num_col=1, spin_name_col=2)
 \end{lstlisting}
 
@@ -220,7 +227,8 @@ all spins in the file \promptstring{unresolved} are excluded from the analysis.
 
 At this point the NOE can be calculated.  The user function
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=35]
+# Calculate the NOEs.
 calc()
 \end{lstlisting}
 
@@ -236,7 +244,8 @@ NOE = \frac{I_{sat}}{I_{ref}},
 
 \noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.  To create a file of the NOEs the command
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=38]
+# Save the NOEs.
 value.write(param='noe', file='noe.out', force=True)
 \end{lstlisting}
 
@@ -275,7 +284,8 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 
 Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \uf{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=41]
+# Create Grace files.
 grace.write(y_data_type='ref', file='ref.agr', force=True)
 grace.write(y_data_type='sat', file='sat.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
@@ -283,13 +293,14 @@ grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 will create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter the command
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 grace.write(x_data_type='ref', y_data_type='sat', file='ref_vs_sat.agr', force=True)
 \end{lstlisting}
 
 would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{./grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
 
-\begin{lstlisting}
+\begin{lstlisting}[firstnumber=46]
+# View the Grace files.
 grace.view(file='ref.agr')
 grace.view(file='sat.agr')
 grace.view(file='noe.agr')
