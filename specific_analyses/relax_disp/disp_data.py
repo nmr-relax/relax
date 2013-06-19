@@ -35,6 +35,7 @@ The dispersion data model is based on the following concepts, in order of import
 # Python module imports.
 from math import pi, sqrt
 from numpy import float64, int32, ones, zeros
+from string import replace
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
@@ -383,8 +384,10 @@ def plot_disp_curves(dir=None, force=None):
 
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # The unique file name.
+        file_name = "disp%s.agr" % replace(replace(replace(spin_id, '#', '_'), ':', '_'), '@', '_')
+
         # Open the file for writing.
-        file_name = "disp_%s.agr" % spin_id
         file_path = get_file_path(file_name, dir)
         file = open_write_file(file_name, dir, force)
 
