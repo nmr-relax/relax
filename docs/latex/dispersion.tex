@@ -332,6 +332,8 @@ Care must be taken as this model appears to have infinite lines of solutions -- 
 
 \section{Analysing dispersion in the prompt/script UI mode}
 
+Before reading this section, please read Chapter~\ref{ch: data model} covering the relax data model first.  It will explain many of the concepts used within the following example script.
+
 
 % The sample script.
 %~~~~~~~~~~~~~~~~~~~
@@ -467,6 +469,283 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 \end{lstlisting}
+
+
+% The imports.
+%~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- imports} \label{sect: dispersion script imports}
+
+At the very start of the script are two import statements.  This is simply the standard Python import system for modules.  The first will import the \pycode{sep} variable which is the operating system independent directory separator:
+
+\begin{lstlisting}[firstnumber=4]
+# Python module imports.
+from os import sep
+\end{lstlisting}
+
+This \pycode{sep} variable will be used later on in the script.  The second import is that of the automated relaxation dispersion class \pycode{Relax\_disp} which will be used at the very end of the script to perform the full analysis:
+
+\begin{lstlisting}[firstnumber=7]
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+\end{lstlisting}
+
+
+% The analysis variables.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- analysis variables} \label{sect: dispersion script variables}
+
+The next part of the script is the definition of a number of analysis variables.  As the example in this section is for CPMG-type experiments, the relaxation dispersion models which will be used in the auto-analysis are:
+
+\begin{lstlisting}[firstnumber=14]
+# The dispersion models.
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99']
+\end{lstlisting}
+
+If you have $\Ronerho$-type data, the models could be changed to:
+
+\begin{lstlisting}[numbers=none]
+# The dispersion models.
+MODELS = ['R2eff', 'No Rex', 'M61', 'DPL72']
+\end{lstlisting}
+
+The next variable affects the optimisation precision:
+
+\begin{lstlisting}[firstnumber=17]
+# The grid search size (the number of increments per dimension).
+GRID_INC = 21
+\end{lstlisting}
+
+The number of grid search increments may be decreased, but only after careful checking with a higher number of increments.  Setting this value too low may place the initial optimisation too far away from the minimum.  Although as-of-yet undetected and unpublished, if multiple local minima do exist then optimisation may not reach the global minimum.  Too little grid search increments can also cause the total optimisation time to increase as the Nelder-Mead simplex\index{optimisation!simplex algorithm}\index{optimisation!Nelder-Mead algorithm} optimisation together with the Logarithmic-barrier penalty function\index{optimisation!logarithmic-barrier penalty function} as used in the auto-analysis may require more time to reach the minimum.
+
+The Monte Carlo simulation\index{Monte Carlo simulation} number \pycode{MC\_NUM} variable affects the error estimate precision:
+
+\begin{lstlisting}[firstnumber=20]
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 500
+\end{lstlisting}
+
+For accurate parameter errors this number should not be decreased.  Ideally it should be increased however this will significantly increase the total analysis time.
+
+The last variable defines how the best dispersion model for the measured data is chosen:
+
+\begin{lstlisting}[firstnumber=23]
+# The model selection technique to use.
+MODSEL = 'AIC'
+\end{lstlisting}
+
+For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\index{model selection!AICc}, and BIC\index{model selection!BIC} are supported.  For details about these frequentist\index{model selection!frequentist} model selection techniques and their application to NMR data, see \citet{dAuvergneGooley03}.  Post-analysis comparisons can also be preformed if desired.
+
+
+% Initialisation of the data pipe.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- initialisation of the data pipe} \label{sect: dispersion initialisation}
+
+The data pipe is created using the lines:
+
+\begin{lstlisting}[firstnumber=30]
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+\end{lstlisting}
+
+The first two lines define variables for the data pipe name and the pipe bundle name.  The pipe bundle is used to group together all of the data pipes created by the automated protocol.  See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
+
+The \uf{pipe.create} user function will then create a relaxation dispersion specific data pipe labelled with the pipe and bundle names.  The third argument sets the pipe type to that of relaxation dispersion.  The rest of the script is used to fill this base data pipe with all of the data required for a dispersion analysis.  The auto-analysis will then copy the data from this pipe as it sees fit.
+
+
+% Spin systems.
+%~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- setting up the spin systems}
+
+The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure.read\_pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).  In the case of the sample script, the command:
+
+\begin{lstlisting}[firstnumber=35]
+# Load the sequence.
+sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
+\end{lstlisting}
+
+will load residue names and numbers from the \file{fake\_sequence.in} file into relax, creating one spin per residue.  Then:
+
+\begin{lstlisting}[firstnumber=38]
+# Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
+spin.name(name='N')
+spin.isotope(isotope='15N')
+\end{lstlisting}
+
+will set up the spin information required for loading the peak intensity data from Sparky peak lists and for the analysis of the dispersion data.
+
+
+% Experiment type.
+%~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- experiment type}
+
+The next step is to specify the type of dispersion experiment which was performed:
+
+\begin{lstlisting}[firstnumber=42]
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type('cpmg fixed')
+\end{lstlisting}
+
+See the \uf{relax\_disp.exp\_type} user function on page~\pageref{uf: relax_disp.exp_type} for a list of all the dispersion experiment types which are currently supported.
+
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- loading the data}
+
+To load the peak intensities\index{peak!intensity} into relax, a large data structure is first defined:
+
+\begin{lstlisting}[firstnumber=45]
+# The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
+data = [
+    ['500_reference.in',    '500_MHz'+sep+'reference.in_sparky',           None,  500e6],
+    ['500_66.667.in',       '500_MHz'+sep+'66.667.in_sparky',           66.6666,  500e6],
+    ['500_133.33.in',       '500_MHz'+sep+'133.33.in_sparky',          133.3333,  500e6],
+    ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis_sparky',      133.3333,  500e6],
+    ['500_200.in',          '500_MHz'+sep+'200.in_sparky',             200.0000,  500e6],
+    ['500_266.67.in',       '500_MHz'+sep+'266.67.in_sparky',          266.6666,  500e6],
+    ['500_333.33.in',       '500_MHz'+sep+'333.33.in_sparky',          333.3333,  500e6],
+    ['500_400.in',          '500_MHz'+sep+'400.in_sparky',             400.0000,  500e6],
+    ['500_466.67.in',       '500_MHz'+sep+'466.67.in_sparky',          466.6666,  500e6],
+    ['500_533.33.in',       '500_MHz'+sep+'533.33.in_sparky',          533.3333,  500e6],
+    ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis_sparky',      533.3333,  500e6],
+    ['500_600.in',          '500_MHz'+sep+'600.in_sparky',             600.0000,  500e6],
+    ['500_666.67.in',       '500_MHz'+sep+'666.67.in_sparky',          666.6666,  500e6],
+    ['500_733.33.in',       '500_MHz'+sep+'733.33.in_sparky',          733.3333,  500e6],
+    ['500_800.in',          '500_MHz'+sep+'800.in_sparky',             800.0000,  500e6],
+    ['500_866.67.in',       '500_MHz'+sep+'866.67.in_sparky',          866.6666,  500e6],
+    ['500_933.33.in',       '500_MHz'+sep+'933.33.in_sparky',          933.3333,  500e6],
+    ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis_sparky',      933.3333,  500e6],
+    ['500_1000.in',         '500_MHz'+sep+'1000.in_sparky',           1000.0000,  500e6],
+    ['800_reference.in',    '800_MHz'+sep+'reference.in_sparky',           None,  800e6],
+    ['800_66.667.in',       '800_MHz'+sep+'66.667.in_sparky',           66.6666,  800e6],
+    ['800_133.33.in',       '800_MHz'+sep+'133.33.in_sparky',          133.3333,  800e6],
+    ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis_sparky',      133.3333,  800e6],
+    ['800_200.in',          '800_MHz'+sep+'200.in_sparky',             200.0000,  800e6],
+    ['800_266.67.in',       '800_MHz'+sep+'266.67.in_sparky',          266.6666,  800e6],
+    ['800_333.33.in',       '800_MHz'+sep+'333.33.in_sparky',          333.3333,  800e6],
+    ['800_400.in',          '800_MHz'+sep+'400.in_sparky',             400.0000,  800e6],
+    ['800_466.67.in',       '800_MHz'+sep+'466.67.in_sparky',          466.6666,  800e6],
+    ['800_533.33.in',       '800_MHz'+sep+'533.33.in_sparky',          533.3333,  800e6],
+    ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis_sparky',      533.3333,  800e6],
+    ['800_600.in',          '800_MHz'+sep+'600.in_sparky',             600.0000,  800e6],
+    ['800_666.67.in',       '800_MHz'+sep+'666.67.in_sparky',          666.6666,  800e6],
+    ['800_733.33.in',       '800_MHz'+sep+'733.33.in_sparky',          733.3333,  800e6],
+    ['800_800.in',          '800_MHz'+sep+'800.in_sparky',             800.0000,  800e6],
+    ['800_866.67.in',       '800_MHz'+sep+'866.67.in_sparky',          866.6666,  800e6],
+    ['800_933.33.in',       '800_MHz'+sep+'933.33.in_sparky',          933.3333,  800e6],
+    ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis_sparky',      933.3333,  800e6],
+    ['800_1000.in',         '800_MHz'+sep+'1000.in_sparky',           1000.0000,  800e6]
+]
+\end{lstlisting}
+
+In Python terminology, this is a list of lists data structure.  It is essentially a matrix of information which is used in the subsequent \pycode{for} loop.  The comment explains what each element is.  For $\Ronerho$-type experiments, the CPMG frequency column can be replaced with the spin-lock field strength.  This data structure will need to be tailored to your data.  It can be seen that the \pycode{sep} variable is now being used to specify that the Sparky files are either located in the \directory{500\_MHz} or \directory{800\_MHz} directories.  It is used here to make this script independent of the operating system.
+
+The Python \pycode{for} loop starts with the lines:
+
+\begin{lstlisting}[firstnumber=87]
+# Loop over the spectra.
+for id, file, cpmg_frq, H_frq in data:
+\end{lstlisting}
+
+and includes all subsequently indented lines.  This line of code takes the elements of the \pycode{data} data structure and splits it into 4 variables.  Therefore for the first line, \pycode{id} will be set to \pycode{`500\_reference.in'}, \pycode{file} will be set to \pycode{`500\_MHz/reference.in\_sparky'} on a Linux machine, \pycode{cpmg\_frq} will be \pycode{None}, and \pycode{H\_frq} will be 500~MHz.  For $\Ronerho$-type data, you could change the \pycode{cpmg\_frq} variable to \pycode{field} for example.
+
+The first user function in the block loads the peak intensity data from the peak lists:
+
+\begin{lstlisting}[firstnumber=89]
+    # Load the peak intensities.
+    spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
+\end{lstlisting}
+
+This assumes that peak heights were measured.  All data will be tagged with the given ID string.  For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.  The next user function sets the CPMG frequencies for each spectrum:
+
+\begin{lstlisting}[firstnumber=92]
+    # Set the relaxation dispersion CPMG frequencies.
+    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+\end{lstlisting}
+
+For an $\Ronerho$-type experiment, these lines could be changed to:
+
+\begin{lstlisting}[numbers=none]
+    # Set the relaxation dispersion R1rho spin lock field strength.
+    relax_disp.spin_lock_field(spectrum_id=id, field=field)
+\end{lstlisting}
+
+Then the NMR spectrometer field strength is set:
+
+\begin{lstlisting}[firstnumber=95]
+    # Set the NMR field strength of the spectrum.
+    spectrometer.frequency(id=id, frq=H_frq)
+\end{lstlisting}
+
+And finally the relaxation time period is set with:
+
+\begin{lstlisting}[firstnumber=98]
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.030)
+\end{lstlisting}
+
+If exponential data has been collected rather than fixed time period data, then the \pycode{data} data structure can have an additional column added for the relaxation times, and then this same user function can be used.  The \pycode{for} loop will need one extra variable for the times, and this should be passed into this \uf{relax\_disp.relax\_time} user function for the time argument.
+
+Finally, once the \pycode{for} loop has completed, replicated spectra are defined with the commands:
+
+\begin{lstlisting}[firstnumber=101]
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_533.33.in', '500_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_933.33.in', '500_933.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
+\end{lstlisting}
+
+
+% The rest of the setup.
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion script mode -- the rest of the setup} \label{sect: dispersion setup fin}
+
+Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user functions:
+
+\begin{lstlisting}[firstnumber=109]
+# Peak intensity error analysis.
+spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+\end{lstlisting}
+
+Here the 500~MHz and 800~MHz peak intensity errors have been calculated separately as they should not be the same.
+
+Any spins which cannot be resolved due to peak overlap were included in a file called \file{unresolved}.  This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.  The matching spins are excluded from the analysis by the user functions:
+
+\begin{lstlisting}[firstnumber=113]
+# Deselect unresolved spins.
+deselect.read(file='unresolved', dir='500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
+\end{lstlisting}
+
+
+% Execution.
+%~~~~~~~~~~~
+\subsection{Dispersion script mode -- execution}
+
+Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\linebreak[0]{}\_disp} class.  This is the final lines of the script:
+
+\begin{lstlisting}[firstnumber=119]
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+\end{lstlisting}
+
+This will start the auto-analysis.
 
 
 
