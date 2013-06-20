@@ -298,19 +298,29 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 
 \subsection{Relax-fit script mode -- loading the data}
 
-To load the peak intensities\index{peak!intensity} into relax the user function \uf{spectrum.read\_intensities} is executed.  Important keyword arguments to this command are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
+To load the peak intensities\index{peak!intensity} into relax the \uf{spectrum.read\_intensities} and \uf{relax\_fit.relax\_times} user functions are executed.  Important keyword arguments for these user functions are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
 \begin{lstlisting}[numbers=none]
-spectrum.read_intensities('T2_ncyc1.list',   spectrum_id='1',   relax_time=0.0176, int_col=10)
-spectrum.read_intensities('T2_ncyc1b.list',  spectrum_id='1b',  relax_time=0.0176, int_col=10)
-spectrum.read_intensities('T2_ncyc2.list',   spectrum_id='2',   relax_time=0.0352, int_col=10)
-spectrum.read_intensities('T2_ncyc4.list',   spectrum_id='4',   relax_time=0.0704, int_col=10)
-spectrum.read_intensities('T2_ncyc4b.list',  spectrum_id='4b',  relax_time=0.0704, int_col=10)
-spectrum.read_intensities('T2_ncyc6.list',   spectrum_id='6',   relax_time=0.1056, int_col=10)
-spectrum.read_intensities('T2_ncyc9.list',   spectrum_id='9',   relax_time=0.1584, int_col=10)
-spectrum.read_intensities('T2_ncyc9b.list',  spectrum_id='9b',  relax_time=0.1584, int_col=10)
-spectrum.read_intensities('T2_ncyc11.list',  spectrum_id='11',  relax_time=0.1936, int_col=10)
-spectrum.read_intensities('T2_ncyc11b.list', spectrum_id='11b', relax_time=0.1936, int_col=10)
+spectrum.read_intensities('T2_ncyc1.list',   spectrum_id='1', int_col=10)
+relax_fit.relax_time(spectrum_id='1',   time=0.0176)
+spectrum.read_intensities('T2_ncyc1b.list',  spectrum_id='1b', int_col=10)
+relax_fit.relax_time(spectrum_id='1b',  time=0.0176)
+spectrum.read_intensities('T2_ncyc2.list',   spectrum_id='2', int_col=10)
+relax_fit.relax_time(spectrum_id='2',   time=0.0352)
+spectrum.read_intensities('T2_ncyc4.list',   spectrum_id='4', int_col=10)
+relax_fit.relax_time(spectrum_id='4',   time=0.0704)
+spectrum.read_intensities('T2_ncyc4b.list',  spectrum_id='4b', int_col=10)
+relax_fit.relax_time(spectrum_id='4b',  time=0.0704)
+spectrum.read_intensities('T2_ncyc6.list',   spectrum_id='6', int_col=10)
+relax_fit.relax_time(spectrum_id='6',   time=0.1056)
+spectrum.read_intensities('T2_ncyc9.list',   spectrum_id='9', int_col=10)
+relax_fit.relax_time(spectrum_id='9',   time=0.1584)
+spectrum.read_intensities('T2_ncyc9b.list',  spectrum_id='9b', int_col=10)
+relax_fit.relax_time(spectrum_id='9b',  time=0.1584)
+spectrum.read_intensities('T2_ncyc11.list',  spectrum_id='11', int_col=10)
+relax_fit.relax_time(spectrum_id='11',  time=0.1936)
+spectrum.read_intensities('T2_ncyc11b.list', spectrum_id='11b', int_col=10)
+relax_fit.relax_time(spectrum_id='11b', time=0.1936)
 \end{lstlisting}
 
 The replicated spectra a set up with the commands
