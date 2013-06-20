@@ -50,7 +50,7 @@ A study where consistency tests were used:
     Morin & Gagne (2009) NMR dynamics of PSE-4 beta-lactamase: An interplay of ps-ns order and us-ms motions in the active site. Biophys. J., 96: 4681-4691. U{http://dx.doi.org/10.1016/j.bpj.2009.02.068}
 """
 
-# Create the run.
+# Create the data pipe.
 name = 'consistency'
 pipe.create(name, 'ct')
 
