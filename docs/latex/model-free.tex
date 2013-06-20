@@ -753,62 +753,62 @@ This can be done by supplying the optimisation algorithm with the scaled rather 
 
 The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \file{model\_free/single\_model.py}.  The text of the script is:
 
-\begin{exampleenv}
-\# Script for model-free analysis. \\
- \\
-\# Create the data pipe. \\
-name = `m4' \\
-pipe.create(name, `mf') \\
- \\
-\# Set up the 15N spins. \\
-sequence.read(`noe.500.out', res\_num\_col=1, res\_name\_col=2) \\
-spin.name(`N') \\
-spin.element(element=`N', spin\_id=`@N') \\
-spin.isotope(`15N', spin\_id=`@N') \\
- \\
-\# Load the relaxation data. \\
-relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.0*1e6, file=`r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.0*1e6, file=`r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.0*1e6, file=`noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
- \\
-\# Initialise the diffusion tensor. \\
-diffusion\_tensor.init(10e-9, fixed=True) \\
- \\
-\# Create all attached protons. \\
-sequence.attach\_protons() \\
- \\
-\# Define the magnetic dipole-dipole relaxation interaction. \\
-interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
-\#interatom.unit\_vectors() \\
- \\
-\# Define the CSA relaxation interaction. \\
-value.set(-172 * 1e-6, `csa') \\
- \\
-\# Select the model-free model. \\
-model\_free.select\_model(model=name) \\
- \\
-\# Grid search. \\
-grid\_search(inc=11) \\
- \\
-\# Minimise. \\
-minimise(`newton') \\
- \\
-\# Monte Carlo simulations. \\
-monte\_carlo.setup(number=100) \\
-monte\_carlo.create\_data() \\
-monte\_carlo.initial\_values() \\
-minimise(`newton') \\
-eliminate() \\
-monte\_carlo.error\_analysis() \\
- \\
-\# Finish. \\
-results.write(file=`results', force=True) \\
-state.save(`save', force=True)
-\end{exampleenv}
+\begin{lstlisting}
+# Script for model-free analysis.
+
+# Create the data pipe.
+name = 'm4'
+pipe.create(name, 'mf')
+
+# Set up the 15N spins.
+sequence.read('noe.500.out', res_num_col=1, res_name_col=2)
+spin.name('N')
+spin.element(element='N', spin_id='@N')
+spin.isotope('15N', spin_id='@N')
+
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out',  res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out',  res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out',  res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out',  res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
+
+# Initialise the diffusion tensor.
+diffusion_tensor.init(10e-9, fixed=True)
+
+# Create all attached protons.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spinid1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+#interatom.unit_vectors()
+
+# Define the CSA relaxation interaction.
+value.set(-172 * 1e-6, 'csa')
+
+# Select the model-free model.
+model_free.select_model(model=name)
+
+# Grid search.
+grid_search(inc=11)
+
+# Minimise.
+minimise('newton')
+
+# Monte Carlo simulations.
+monte_carlo.setup(number=100)
+monte_carlo.create_data()
+monte_carlo.initial_values()
+minimise('newton')
+eliminate()
+monte_carlo.error_analysis()
+
+# Finish.
+results.write(file='results', force=True)
+state.save('save', force=True)
+\end{lstlisting}
 
 
 % The explanation.
@@ -839,61 +839,61 @@ The above script consists of three major sections:
 
 The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \file{model\_free/mf\_multimodel.py}.  The important parts of the script are:
 
-\begin{exampleenv}
-\# Set the data pipe names (also the names of preset model-free models). \\
-pipes = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
- \\
-\# Loop over the pipes. \\
-for name in pipes: \\
-\hspace*{4ex} \# Create the data pipe. \\
-\hspace*{4ex} pipe.create(name, `mf') \\
- \\
-\hspace*{4ex} \# Set up the 15N spins. \\
-\hspace*{4ex} sequence.read(`noe.500.out', res\_num\_col=1) \\
-\hspace*{4ex} spin.name(`N') \\
-\hspace*{4ex} spin.element(element=`N', spin\_id=`@N') \\
-\hspace*{4ex} spin.isotope(`15N', spin\_id=`@N') \\
- \\
-\hspace*{4ex} \# Load a PDB file. \\
-\hspace*{4ex} structure.read\_pdb(`example.pdb') \\
- \\
-\hspace*{4ex} \# Load the relaxation data. \\
-\hspace*{4ex} relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.0*1e6, file=`r1.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.0*1e6, file=`r2.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-\hspace*{4ex} relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.0*1e6, file=`noe.500.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
- \\
-\hspace*{4ex} \# Set up the diffusion tensor. \\
-\hspace*{4ex} diffusion\_tensor.init(1e-8, fixed=True) \\
- \\
-\hspace*{4ex} \# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction. \\
-\hspace*{4ex} sequence.attach\_protons() \\
- \\
-\hspace*{4ex} \# Define the magnetic dipole-dipole relaxation interaction. \\
-\hspace*{4ex} interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-\hspace*{4ex} interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
-\hspace*{4ex} structure.get\_pos(`@N') \\
-\hspace*{4ex} structure.get\_pos(`@H') \\
-\hspace*{4ex} interatom.unit\_vectors() \\
- \\
-\hspace*{4ex} \# Define the chemical shift relaxation interaction. \\
-\hspace*{4ex} value.set(-172 * 1e-6, `csa', spin\_id=`@N') \\
- \\
-\hspace*{4ex} \# Select the model-free model. \\
-\hspace*{4ex} model\_free.select\_model(model=name) \\
- \\
-\hspace*{4ex} \# Minimise. \\
-\hspace*{4ex} grid\_search(inc=11) \\
-\hspace*{4ex} minimise(`newton') \\
- \\
-\hspace*{4ex} \# Write the results. \\
-\hspace*{4ex} results.write(file=`results', force=True) \\
- \\
-\# Save the program state. \\
-state.save(`save', force=True)
-\end{exampleenv}
+\begin{lstlisting}
+# Set the data pipe names (also the names of preset model-free models).
+pipes = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+
+# Loop over the pipes.
+for name in pipes:
+    # Create the data pipe.
+    pipe.create(name, 'mf')
+    
+    # Set up the 15N spins.
+    sequence.read('noe.500.out', res_num_col=1)
+    spin.name('N')
+    spin.element(element='N', spin_id='@N')
+    spin.isotope('15N', spin_id='@N')
+    
+    # Load a PDB file.
+    structure.read_pdb('example.pdb')
+    
+    # Load the relaxation data.
+    relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out',  res_num_col=1, data_col=3, error_col=4)
+    relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out',  res_num_col=1, data_col=3, error_col=4)
+    relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
+    relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.0*1e6, file='r1.500.out',  res_num_col=1, data_col=3, error_col=4)
+    relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out',  res_num_col=1, data_col=3, error_col=4)
+    relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
+    
+    # Set up the diffusion tensor.
+    diffusion_tensor.init(1e-8, fixed=True)
+    
+    # Generate the 1H spins for the magnetic dipole-dipole relaxation interaction.
+    sequence.attach_protons()
+    
+    # Define the magnetic dipole-dipole relaxation interaction.
+    interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+    interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+    structure.get_pos('@N')
+    structure.get_pos('@H')
+    interatom.unit_vectors()
+    
+    # Define the chemical shift relaxation interaction.
+    value.set(-172 * 1e-6, 'csa', spin_id='@N')
+    
+    # Select the model-free model.
+    model_free.select_model(model=name)
+    
+    # Minimise.
+    grid_search(inc=11)
+    minimise('newton')
+    
+    # Write the results.
+    results.write(file='results', force=True)
+
+# Save the program state.
+state.save('save', force=True)
+\end{lstlisting}
 
 
 % The explanation.
@@ -918,30 +918,30 @@ The above script is very similar in spirit to the previous single model script i
 
 The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \file{model\_free/modsel.py}.  The text of the script is:
 
-\begin{exampleenv}
-\# Set the data pipe names. \\
-pipes = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
- \\
-\# Loop over the data pipe names. \\
-for name in pipes: \\
-\hspace*{4ex} print(``$\backslash$n$\backslash$n\# '' + name + `` \#'') \\
- \\
-\hspace*{4ex} \# Create the data pipe. \\
-\hspace*{4ex} pipe.create(name, `mf') \\
- \\
-\hspace*{4ex} \# Reload precalculated results from the file `m1/results', etc. \\
-\hspace*{4ex} results.read(file=`results', dir=name) \\
- \\
-\# Model elimination. \\
-eliminate() \\
- \\
-\# Model selection. \\
-model\_selection(method=`AIC', modsel\_pipe=`aic') \\
- \\
-\# Write the results. \\
-state.save(`save', force=True) \\
-results.write(file=`results', force=True)
-\end{exampleenv}
+\begin{lstlisting}
+# Set the data pipe names.
+pipes = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+
+# Loop over the data pipe names.
+for name in pipes:
+    print("\n\n# " + name + " #")
+    
+    # Create the data pipe.
+    pipe.create(name, 'mf')
+    
+    # Reload precalculated results from the file 'm1/results', etc.
+    results.read(file='results', dir=name)
+
+# Model elimination.
+eliminate()
+
+# Model selection.
+model_selection(method='AIC', modsel_pipe='aic')
+
+# Write the results.
+state.save('save', force=True)
+results.write(file='results', force=True)
+\end{lstlisting}
 
 
 % The explanation.
@@ -1129,215 +1129,215 @@ The new model-free protocol built into relax utilises the core foundation of the
 
 The sample script for performing this new analysis is \file{sample\linebreak[0]{}\_scripts\linebreak[0]{}/model\linebreak[0]{}\_free\linebreak[0]{}/dauvergne\linebreak[0]{}\_protocol\linebreak[0]{}.py}.  The full script is replicated below.  The docstring at the start of the script explains the practical implementation of the full protocol.  If your copy of the \file{dauvergne\_protocol.py} script taken from the same relax version as this manual does not match the text below, please contact the relax developers via the relax-devel mailing list\index{mailing list!relax-devel} (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  To use this script, copy it to a dedicated directory containing your PDB file and relaxation data files.  The protocol will produce many files and directories, so it is best that these are placed within a dedicated and results directory.  The contents of the script are:
 
-\begin{exampleenv}
-"""Script for black-box model-free analysis. \\
- \\
-This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial. \\
- \\
-If you have obtained this script without the program relax, please visit http://www.nmr-relax.com. \\
- \\
- \\
-References \\
-========== \\
- \\
-The model-free optimisation methodology herein is that of: \\
- \\
-    d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133 \\
- \\
-Other references for features of this script include model-free model selection using Akaike's Information Criterion: \\
- \\
-    d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39. \\
- \\
-The elimination of failed model-free models and Monte Carlo simulations: \\
- \\
-    d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135. \\
- \\
-Significant model-free optimisation improvements: \\
- \\
-    d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109. \\
- \\
-Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution: \\
- \\
-    d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494. \\
- \\
-The basic three references for the original and extended model-free theories are: \\
- \\
-    Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559. \\
- \\
-    Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570. \\
- \\
-    Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991. \\
- \\
- \\
-How to use this script \\
-====================== \\
- \\
-The value of the variable DIFF\_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are: \\
- \\
-    Model I   (MI)   - Local tm. \\
-    Model II  (MII)  - Sphere. \\
-    Model III (MIII) - Prolate spheroid. \\
-    Model IV  (MIV)  - Oblate spheroid. \\
-    Model V   (MV)   - Ellipsoid. \\
- \\
-Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable DIFF\_MODEL to the following strings: \\
- \\
-    MI   - `local\_tm' \\
-    MII  - `sphere' \\
-    MIII - `prolate' \\
-    MIV  - `oblate' \\
-    MV   - `ellipsoid' \\
- \\
-This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate. \\
- \\
-It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the MF\_MODELS and LOCAL\_TM\_MODELS variables will need to be trimmed. \\
- \\
- \\
-Model I - Local tm \\
-~~~~~~~~~~~~~~~~~~ \\
- \\
-This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model. \\
- \\
-AIC model selection is used to select the models for each spin. \\
- \\
- \\
-Model II - Sphere \\
-~~~~~~~~~~~~~~~~~ \\
- \\
-This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory `./sphere/init/', the following steps are used: \\
- \\
-The model-free models and parameter values for each spin are set to those of diffusion model MI. \\
- \\
-The local tm parameter is removed from the models. \\
- \\
-The model-free parameters are fixed and a global spherical diffusion tensor is minimised. \\
- \\
- \\
-For the repetitive optimisation, each minimisation is named from `round\_1' onwards.  The initial `round\_1' optimisation will extract the diffusion tensor from the results file in `./sphere/init/', and the results will be placed in the directory `./sphere/round\_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used: \\
- \\
-The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin. \\
- \\
-AIC model selection is used to select the models for each spin. \\
- \\
-All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out. \\
- \\
- \\
-Model III - Prolate spheroid \\
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
- \\
-The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is `./prolate/'. \\
- \\
- \\
-Model IV - Oblate spheroid \\
-~~~~~~~~~~~~~~~~~~~~~~~~~~ \\
- \\
-The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is `./oblate/'. \\
- \\
- \\
-Model V - Ellipsoid \\
-~~~~~~~~~~~~~~~~~~~ \\
- \\
-The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is `./ellipsoid/'. \\
- \\
- \\
- \\
-Final run \\
-~~~~~~~~~ \\
- \\
-Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF\_MODEL to `final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate). \\
- \\
-The final black-box model-free results will be placed in the file `final/results'. \\
-""" \\
- \\
-\# Python module imports. \\
-from time import asctime, localtime \\
- \\
-\# relax module imports. \\
-from auto\_analyses.dauvergne\_protocol import dAuvergne\_protocol \\
- \\
- \\
-\# Analysis variables. \\
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# The diffusion model. \\
-DIFF\_MODEL = `local\_tm' \\
- \\
-\# The model-free models.  Do not change these unless absolutely necessary, the protocol is likely to fail if these are changed. \\
-MF\_MODELS = [`m0', `m1', `m2', `m3', `m4', `m5', `m6', `m7', `m8', `m9'] \\
-LOCAL\_TM\_MODELS = [`tm0', `tm1', `tm2', `tm3', `tm4', `tm5', `tm6', `tm7', `tm8', `tm9'] \\
- \\
-\# The grid search size (the number of increments per dimension). \\
-GRID\_INC = 11 \\
- \\
-\# The optimisation technique. \\
-MIN\_ALGOR = `newton' \\
- \\
-\# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis. \\
-MC\_NUM = 500 \\
- \\
-\# Automatic looping over all rounds until convergence (must be a boolean value of True or False). \\
-CONV\_LOOP = True \\
- \\
- \\
- \\
-\# Set up the data pipe. \\
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# The following sequence of user function calls can be changed as needed. \\
- \\
-\# Create the data pipe. \\
-pipe\_bundle = ``mf (\%s)'' \% asctime(localtime()) \\
-name = ``origin - '' + pipe\_bundle \\
-pipe.create(name, `mf', bundle=pipe\_bundle) \\
- \\
-\# Load the PDB file. \\
-structure.read\_pdb(`1f3y.pdb', set\_mol\_name=`Ap4Aase', read\_model=3) \\
- \\
-\# Set up the 15N and 1H spins (both backbone and Trp indole sidechains). \\
-structure.load\_spins(`@N', ave\_pos=True) \\
-structure.load\_spins(`@NE1', ave\_pos=True) \\
-structure.load\_spins(`@H', ave\_pos=True) \\
-structure.load\_spins(`@HE1', ave\_pos=True) \\
-spin.isotope(`15N', spin\_id=`@N*') \\
-spin.isotope(`1H', spin\_id=`@H*') \\
- \\
-\# Set up the 15N spins (alternative to the structure-based approach). \\
-\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
-\#spin.element(element=`N', spin\_id=`@N*') \\
-\#spin.isotope(`15N', spin\_id=`@N*') \\
- \\
-\# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach). \\
-\#sequence.attach\_protons() \\
- \\
-\# Load the relaxation data. \\
-relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
-relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=599.719*1e6, file=`r2.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
-relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=599.719*1e6, file=`noe.600.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
-relax\_data.read(ri\_id=`R1\_500',  ri\_type=`R1',  frq=500.208*1e6, file=`r1.500.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
-relax\_data.read(ri\_id=`R2\_500',  ri\_type=`R2',  frq=500.208*1e6, file=`r2.500.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
-relax\_data.read(ri\_id=`NOE\_500', ri\_type=`NOE', frq=500.208*1e6, file=`noe.500.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7) \\
- \\
-\# Deselect spins to be excluded (including unresolved and specifically excluded spins). \\
-deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
-deselect.read(file=`exclude', spin\_id\_col=1) \\
- \\
-\# Define the magnetic dipole-dipole relaxation interaction. \\
-interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-interatom.define(spin\_id1=`@NE1', spin\_id2=`@HE1', direct\_bond=True) \\
-interatom.set\_dist(spin\_id1=`@N*', spin\_id2=`@H*', ave\_dist=1.02 * 1e-10) \\
-interatom.unit\_vectors() \\
- \\
-\# Define the chemical shift relaxation interaction. \\
-value.set(-172 * 1e-6, `csa', spin\_id=`@N*') \\
- \\
- \\
- \\
-\# Execution. \\
-\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# Do not change! \\
-dAuvergne\_protocol(pipe\_name=name, pipe\_bundle=pipe\_bundle, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP) \\
-\end{exampleenv}
+\begin{lstlisting}
+"""Script for black-box model-free analysis.
+
+This script is designed for those who appreciate black-boxes or those who appreciate complex code.  Importantly data at multiple magnetic field strengths is essential for this analysis.  The script will need to be heavily tailored to the molecule in question by changing the variables just below this documentation.  If you would like to change how model-free analysis is performed, the code in the class Main can be changed as needed.  For a description of object-oriented coding in python using classes, functions/methods, self, etc., see the python tutorial.
+
+If you have obtained this script without the program relax, please visit http://www.nmr-relax.com.
+
+
+References
+==========
+
+The model-free optimisation methodology herein is that of:
+
+    d'Auvergne, E. J. and Gooley, P. R. (2008b). Optimisation of NMR dynamic models II. A new methodology for the dual optimisation of the model-free parameters and the Brownian rotational diffusion tensor. J. Biomol. NMR, 40(2), 121-133
+
+Other references for features of this script include model-free model selection using Akaike's Information Criterion:
+
+    d'Auvergne, E. J. and Gooley, P. R. (2003). The use of model selection in the model-free analysis of protein dynamics. J. Biomol. NMR, 25(1), 25-39.
+
+The elimination of failed model-free models and Monte Carlo simulations:
+
+    d'Auvergne, E. J. and Gooley, P. R. (2006). Model-free model elimination: A new step in the model-free dynamic analysis of NMR relaxation data. J. Biomol. NMR, 35(2), 117-135.
+
+Significant model-free optimisation improvements:
+
+    d'Auvergne, E. J. and Gooley, P. R. (2008a). Optimisation of NMR dynamic models I. Minimisation algorithms and their performance within the model-free and Brownian rotational diffusion spaces. J. Biomol. NMR, 40(2), 107-109.
+
+Rather than searching for the lowest chi-squared value, this script searches for the model with the lowest AIC criterion.  This complex multi-universe, multi-dimensional search is formulated using set theory as the universal solution:
+
+    d'Auvergne, E. J. and Gooley, P. R. (2007). Set theory formulation of the model-free problem and the diffusion seeded model-free paradigm. 3(7), 483-494.
+
+The basic three references for the original and extended model-free theories are:
+
+    Lipari, G. and Szabo, A. (1982a). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules I. Theory and range of validity. J. Am. Chem. Soc., 104(17), 4546-4559.
+
+    Lipari, G. and Szabo, A. (1982b). Model-free approach to the interpretation of nuclear magnetic-resonance relaxation in macromolecules II. Analysis of experimental results. J. Am. Chem. Soc., 104(17), 4559-4570.
+
+    Clore, G. M., Szabo, A., Bax, A., Kay, L. E., Driscoll, P. C., and Gronenborn, A.M. (1990). Deviations from the simple 2-parameter model-free approach to the interpretation of N-15 nuclear magnetic-relaxation of proteins. J. Am. Chem. Soc., 112(12), 4989-4991.
+
+
+How to use this script
+======================
+
+The value of the variable DIFF_MODEL will determine the behaviour of this script.  The five diffusion models used in this script are:
+
+    Model I   (MI)   - Local tm.
+    Model II  (MII)  - Sphere.
+    Model III (MIII) - Prolate spheroid.
+    Model IV  (MIV)  - Oblate spheroid.
+    Model V   (MV)   - Ellipsoid.
+
+Model I must be optimised prior to any of the other diffusion models, while the Models II to V can be optimised in any order.  To select the various models, set the variable DIFF_MODEL to the following strings:
+
+    MI   - 'local_tm'
+    MII  - 'sphere'
+    MIII - 'prolate'
+    MIV  - 'oblate'
+    MV   - 'ellipsoid'
+
+This approach has the advantage of eliminating the need for an initial estimate of a global diffusion tensor and removing all the problems associated with the initial estimate.
+
+It is important that the number of parameters in a model does not exceed the number of relaxation data sets for that spin.  If this is the case, the list of models in the MF_MODELS and LOCAL_TM_MODELS variables will need to be trimmed.
+
+
+Model I - Local tm
+~~~~~~~~~~~~~~~~~~
+
+This will optimise the diffusion model whereby all spin of the molecule have a local tm value, i.e. there is no global diffusion tensor.  This model needs to be optimised prior to optimising any of the other diffusion models.  Each spin is fitted to the multiple model-free models separately, where the parameter tm is included in each model.
+
+AIC model selection is used to select the models for each spin.
+
+
+Model II - Sphere
+~~~~~~~~~~~~~~~~~
+
+This will optimise the isotropic diffusion model.  Multiple steps are required, an initial optimisation of the diffusion tensor, followed by a repetitive optimisation until convergence of the diffusion tensor.  Each of these steps requires this script to be rerun. For the initial optimisation, which will be placed in the directory './sphere/init/', the following steps are used:
+
+The model-free models and parameter values for each spin are set to those of diffusion model MI.
+
+The local tm parameter is removed from the models.
+
+The model-free parameters are fixed and a global spherical diffusion tensor is minimised.
+
+
+For the repetitive optimisation, each minimisation is named from 'round_1' onwards.  The initial 'round_1' optimisation will extract the diffusion tensor from the results file in './sphere/init/', and the results will be placed in the directory './sphere/round_1/'.  Each successive round will take the diffusion tensor from the previous round.  The following steps are used:
+
+The global diffusion tensor is fixed and the multiple model-free models are fitted to each spin.
+
+AIC model selection is used to select the models for each spin.
+
+All model-free and diffusion parameters are allowed to vary and a global optimisation of all parameters is carried out.
+
+
+Model III - Prolate spheroid
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da >= 0 is used.  The base directory containing all the results is './prolate/'.
+
+
+Model IV - Oblate spheroid
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that an axially symmetric diffusion tensor with Da <= 0 is used.  The base directory containing all the results is './oblate/'.
+
+
+Model V - Ellipsoid
+~~~~~~~~~~~~~~~~~~~
+
+The methods used are identical to those of diffusion model MII, except that a fully anisotropic diffusion tensor is used (also known as rhombic or asymmetric diffusion).  The base directory is './ellipsoid/'.
+
+
+
+Final run
+~~~~~~~~~
+
+Once all the diffusion models have converged, the final run can be executed.  This is done by setting the variable DIFF_MODEL to 'final'.  This consists of two steps, diffusion tensor model selection, and Monte Carlo simulations.  Firstly AIC model selection is used to select between the diffusion tensor models.  Monte Carlo simulations are then run solely on this selected diffusion model.  Minimisation of the model is bypassed as it is assumed that the model is already fully optimised (if this is not the case the final run is not yet appropriate).
+
+The final black-box model-free results will be placed in the file 'final/results'.
+"""
+
+# Python module imports.
+from time import asctime, localtime
+
+# relax module imports.
+from auto_analyses.dauvergne_protocol import dAuvergne_protocol
+
+
+# Analysis variables.
+#####################
+
+# The diffusion model.
+DIFF_MODEL = 'local_tm'
+
+# The model-free models.  Do not change these unless absolutely necessary, the protocol is likely to fail if these are changed.
+MF_MODELS = ['m0', 'm1', 'm2', 'm3', 'm4', 'm5', 'm6', 'm7', 'm8', 'm9']
+LOCAL_TM_MODELS = ['tm0', 'tm1', 'tm2', 'tm3', 'tm4', 'tm5', 'tm6', 'tm7', 'tm8', 'tm9']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 11
+
+# The optimisation technique.
+MIN_ALGOR = 'newton'
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 500
+
+# Automatic looping over all rounds until convergence (must be a boolean value of True or False).
+CONV_LOOP = True
+
+
+
+# Set up the data pipe.
+#######################
+
+# The following sequence of user function calls can be changed as needed.
+
+# Create the data pipe.
+pipe_bundle = "mf (%s)" % asctime(localtime())
+name = "origin - " + pipe_bundle
+pipe.create(name, 'mf', bundle=pipe_bundle)
+
+# Load the PDB file.
+structure.read_pdb('1f3y.pdb', set_mol_name='Ap4Aase', read_model=3)
+
+# Set up the 15N and 1H spins (both backbone and Trp indole sidechains).
+structure.load_spins('@N', ave_pos=True)
+structure.load_spins('@NE1', ave_pos=True)
+structure.load_spins('@H', ave_pos=True)
+structure.load_spins('@HE1', ave_pos=True)
+spin.isotope('15N', spin_id='@N*')
+spin.isotope('1H', spin_id='@H*')
+
+# Set up the 15N spins (alternative to the structure-based approach).
+#sequence.read(file='noe.500.out', dir=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+#spin.element(element='N', spin_id='@N*')
+#spin.isotope('15N', spin_id='@N*')
+
+# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach).
+#sequence.attach_protons()
+
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=599.719*1e6, file='r1.600.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=599.719*1e6, file='r2.600.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=599.719*1e6, file='noe.600.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R1_500',  ri_type='R1',  frq=500.208*1e6, file='r1.500.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.208*1e6, file='r2.500.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.208*1e6, file='noe.500.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+# Deselect spins to be excluded (including unresolved and specifically excluded spins).
+deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, boolean='AND', change_all=False)
+deselect.read(file='exclude', spin_id_col=1)
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
+interatom.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
+interatom.unit_vectors()
+
+# Define the chemical shift relaxation interaction.
+value.set(-172 * 1e-6, 'csa', spin_id='@N*')
+
+
+
+# Execution.
+############
+
+# Do not change!
+dAuvergne_protocol(pipe_name=name, pipe_bundle=pipe_bundle, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
+\end{lstlisting}
 
 
 % The analysis variables.
@@ -1370,11 +1370,12 @@ Finally the \pycode{CONV\_LOOP} variable is designed to make your life easier.  
 
 The next part of the script between the \pycode{Analysis variables} and execution sets up a data pipe with all of the spin information and relaxation data to pass into the automated protocol.  The data pipe is created in the lines:
 
-\begin{exampleenv}
-pipe\_bundle = ``mf (\%s)'' \% asctime(localtime()) \\
-name = ``origin - '' + pipe\_bundle \\
-pipe.create(name, `mf', bundle=pipe\_bundle)
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=156]
+# Create the data pipe.
+pipe_bundle = "mf (%s)" % asctime(localtime())
+name = "origin - " + pipe_bundle
+pipe.create(name, 'mf', bundle=pipe_bundle)
+\end{lstlisting}
 
 Firstly a data pipe bundle name is created containing the date and time at the point the script is first executed.  This pipe bundle is used to group together all of the data pipes created automatically by the protocol.  See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
 
@@ -1388,38 +1389,42 @@ The data pipe name used for this initial setup is set to \pycode{origin - mf (x)
 
 To see how to set up the spin system data in all possible situations, please see Chapter~\ref{ch: data model} for a thorough description.  Here two different methods are presented.  The first is by extracting the spins from a PDB file which is first loaded with:
 
-\example{structure.read\_pdb(`1f3y.pdb', set\_mol\_name=`Ap4Aase', read\_model=3)}
+\begin{lstlisting}[firstnumber=161]
+# Load the PDB file.
+structure.read_pdb('1f3y.pdb', set_mol_name='Ap4Aase', read_model=3)
+\end{lstlisting}
 \index{PDB}
 
 This will read the \nth{3} model from the 1F3Y PDB file and name the single molecule as \pystring{Ap4Aase}.  The $^{15}$N and $^1$H spins for the backbone and tryptophan indole sidechain are extracted from the structure with the user functions:
 
-\begin{exampleenv}
-structure.load\_spins(`@N', ave\_pos=True) \\
-structure.load\_spins(`@NE1', ave\_pos=True) \\
-structure.load\_spins(`@H', ave\_pos=True) \\
-structure.load\_spins(`@HE1', ave\_pos=True)
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=164]
+# Set up the 15N and 1H spins (both backbone and Trp indole sidechains).
+structure.load_spins('@N', ave_pos=True)
+structure.load_spins('@NE1', ave_pos=True)
+structure.load_spins('@H', ave_pos=True)
+structure.load_spins('@HE1', ave_pos=True)
+\end{lstlisting}
 
 As the PDB file does not contain isotope information, this is set with the user functions:
 
-\begin{exampleenv}
-spin.isotope(`15N', spin\_id=`@N*') \\
-spin.isotope(`1H', spin\_id=`@H*')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=169]
+spin.isotope('15N', spin_id='@N*')
+spin.isotope('1H', spin_id='@H*')
+\end{lstlisting}
 
 The spin ID \pystring{@N*} uses regular expression and will match both the \pystring{N} and \pystring{NE1} spins.
 
 The alternative approach is if a structure is missing.  This is the commented out code:
 
-\begin{exampleenv}
-\# Set up the 15N spins (alternative to the structure-based approach). \\
-\#sequence.read(file=`noe.500.out', dir=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
-\#spin.element(element=`N', spin\_id=`@N*') \\
-\#spin.isotope(`15N', spin\_id=`@N*') \\
- \\
-\# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach). \\
-\#sequence.attach\_protons()
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=172]
+# Set up the 15N spins (alternative to the structure-based approach).
+sequence.read(file='noe.500.out', dir=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+spin.element(element='N', spin_id='@N*')
+spin.isotope('15N', spin_id='@N*')
+
+# Generate the 1H spins for the magnetic dipole-dipole relaxation interaction (alternative to the structure-based approach).
+sequence.attach_protons()
+\end{lstlisting}
 
 To use this, you will need to place comments (the \pycode{\#} character) in front of the previous \uf{structure.read\_pdb}, \uf{structure.load\_spins} and \uf{spin.isotope} user functions.  Then uncomment the \uf{sequence.\linebreak[0]{}read}, \uf{spin.\linebreak[0]{}element}, \uf{spin.\linebreak[0]{}isotope} and \uf{sequence.\linebreak[0]{}attach\linebreak[0]{}\_protons} user functions.  The $^{15}$N spins will be extracted from the \file{noe.500.out} file.  The \uf{spin.\linebreak[0]{}element} and \uf{spin.\linebreak[0]{}isotope} user functions set the information required for relax to understand which relaxation mechanisms are active.  Finally the \uf{sequence.\linebreak[0]{}attach\linebreak[0]{}\_protons} user function will automatically attach protons to all nitrogen spin systems.  As this method is devoid of atomic positional information, the N-H bonds are absent and the diffusion models requiring structural information (the spheroids and ellipsoid) must be skipped.
 
@@ -1431,7 +1436,10 @@ To use this, you will need to place comments (the \pycode{\#} character) in fron
 
 The next step is to load the relaxation data for each spin system.  The sample script assumes that the NOE, $\Rone$ and $\Rtwo$ data was generated using relax.  One of the six user function calls is:
 
-\example{relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=599.719*1e6, file=`r1.600.out',  mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, data\_col=6, error\_col=7)}
+\begin{lstlisting}[firstnumber=180]
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=599.719*1e6, file='r1.600.out',  mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+\end{lstlisting}
 
 This pattern is repeated for all of the relaxation data files loaded.  The important points are that each relaxation data set must have its own unique identification string (\pycode{ri\_id}), the relaxation data type specified (\pycode{ri\_type}) and the frequency in Hertz (not MHz) specified.  Note that the frequency must be the exact value -- see the \pycode{sfrq} parameter in the Varian \file{procpar} file or the \pycode{SFO1} parameter in the Bruker \file{acqus} file.
 
@@ -1443,10 +1451,11 @@ This pattern is repeated for all of the relaxation data files loaded.  The impor
 
 The sample script now presents the deselection of spins using two different files:
 
-\begin{exampleenv}
-deselect.read(file=`unresolved', dir=None, spin\_id\_col=None, mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5, sep=None, spin\_id=None, boolean=`AND', change\_all=False) \\
-deselect.read(file=`exclude', spin\_id\_col=1)
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=188]
+# Deselect spins to be excluded (including unresolved and specifically excluded spins).
+deselect.read(file='unresolved', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, boolean='AND', change_all=False)
+deselect.read(file='exclude', spin_id_col=1)
+\end{lstlisting}
 
 The \file{unresolved} file contains a list of spins which are unresolved in all spectra.  If relax has been used for calculating the NOE and fitting the relaxation curves, then this step is not needed as the relaxation data files will not have any data for the spins deselected in those analyses.  The second file \file{exclude} is a list of spin ID strings (see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID}) of spins that for which ever reason are to be excluded from the analysis.
 
@@ -1458,18 +1467,22 @@ The \file{unresolved} file contains a list of spins which are unresolved in all 
 
 The next step is to fully specify all of the relaxation interactions active on the spins of interest.  Firstly the magnetic dipole-dipole interaction is defined between directly bonded nitrogens and protons:
 
-\begin{exampleenv}
-interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-interatom.define(spin\_id1=`@NE1', spin\_id2=`@HE1', direct\_bond=True) \\
-interatom.set\_dist(spin\_id1=`@N*', spin\_id2=`@H*', ave\_dist=1.02 * 1e-10) \\
-interatom.unit\_vectors()
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=192]
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.define(spin_id1='@NE1', spin_id2='@HE1', direct_bond=True)
+interatom.set_dist(spin_id1='@N*', spin_id2='@H*', ave_dist=1.02 * 1e-10)
+interatom.unit_vectors()
+\end{lstlisting}
 
 The regular expression \pystring{@N*} and \pystring{@H*} cannot be used with the \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}} define user function as otherwise \prompt{@N} spins will be connected to \prompt{@HE1} spins of the same tryptophan residue and \prompt{@H} spins to \prompt{@NE1} spins.  The average interatomic distance is set to 1.02 \AA ngstrom (though the \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}set\linebreak[0]{}\_dist} user function expects the units of meters).  The \uf{dipole\linebreak[0]{}\_pair.\linebreak[0]{}unit\linebreak[0]{}\_vectors} is used to calculate the averaged unit vector between the two atoms.
 
 Secondly the chemical shift anisotropy (CSA) relaxation mechanism is defined via the single command:
 
-\example{value.set(-172 * 1e-6, `csa', spin\_id=`@N*')}
+\begin{lstlisting}[firstnumber=198]
+# Define the chemical shift relaxation interaction.
+value.set(-172 * 1e-6, 'csa', spin_id='@N*')
+\end{lstlisting}
 
 If your system does not experience CSA relaxation, the value can be set to zero.
 
@@ -1480,7 +1493,13 @@ If your system does not experience CSA relaxation, the value can be set to zero.
 
 Once the data is set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{dAuvergne\linebreak[0]{}\_protocol} class.  This is the final line of the script:
 
-\example{dAuvergne\_protocol(pipe\_name=name, pipe\_bundle=pipe\_bundle, diff\_model=DIFF\_MODEL, mf\_models=MF\_MODELS, local\_tm\_models=LOCAL\_TM\_MODELS, grid\_inc=GRID\_INC, min\_algor=MIN\_ALGOR, mc\_sim\_num=MC\_NUM, conv\_loop=CONV\_LOOP)}
+\begin{lstlisting}[firstnumber=203]
+# Execution.
+############
+
+# Do not change!
+dAuvergne_protocol(pipe_name=name, pipe_bundle=pipe_bundle, diff_model=DIFF_MODEL, mf_models=MF_MODELS, local_tm_models=LOCAL_TM_MODELS, grid_inc=GRID_INC, min_algor=MIN_ALGOR, mc_sim_num=MC_NUM, conv_loop=CONV_LOOP)
+\end{lstlisting}
 
 This script needs to be executed multiple times, once for each of the diffusion models.  For example if the \pycode{DIFF\_MODEL} variable is set to \pystring{ellipsoid}, you can run relax with:
 
