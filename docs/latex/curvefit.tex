@@ -296,7 +296,7 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 % Loading the data.
 %~~~~~~~~~~~~~~~~~~
 
-\subsection{Relax-fit script mode -- loading the data}
+\subsection{Relax-fit script mode -- loading the data} \label{sect: Rx data loading}
 
 To load the peak intensities\index{peak!intensity} into relax the \uf{spectrum.read\_intensities} and \uf{relax\_fit.relax\_times} user functions are executed.  Important keyword arguments for these user functions are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
