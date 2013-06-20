@@ -79,17 +79,14 @@ The following are relax's conventions for docstrings.  Many of these are Python 
 
 An example of a single line docstring is:
 
-\begin{footnotesize}
-\begin{verbatim}
+\begin{lstlisting}
     def delete(self):
         """Function for deleting all model-free data."""
-\end{verbatim}
-\end{footnotesize}
+\end{lstlisting}
 
 An example of a multiline docstring is:
 
-\begin{footnotesize}
-\begin{verbatim}
+\begin{lstlisting}
 def aic(chi2, k, n):
     """Akaike's Information Criteria (AIC).
 
@@ -109,8 +106,7 @@ def aic(chi2, k, n):
     """
 
     return chi2 + 2.0*k
-\end{verbatim}
-\end{footnotesize}
+\end{lstlisting}
 
 In addition to the text descriptions, the docstrings use the \href{http://epydoc.sourceforge.net/}{Epydoc}\index{epydoc} markup language to describe arguments, return values, and other information about the code.  See \href{http://epydoc.sourceforge.net/fields.html}{http://epydoc.sourceforge.net/fields.html} for a listing of all the epydoc fields allowed.  This mark up language is important for the creation of the \href{http://www.nmr-relax.com/api/}{API documentation}\index{API documentation} and to help developers understand the purpose and operation of the code.
 
@@ -127,8 +123,7 @@ In relax a mixture of both camel case (eg. CamelCase)\index{camel case} and lowe
 
 For both variables and functions lower case with underscores between words is always used.  This is for readability as the convention is much more fluent than camel case.  A few rare exceptions exist, an example is the Brownian diffusion tensor parameter of anisotropy $\Diff_a$ which is referenced as \prompt{cdp.diff\_tensor.Da}.  As a rule though all new variable or function names should be kept as lower case.  An example of this convention for both the variable name and function name is:
 
-\begin{footnotesize}
-\begin{verbatim}
+\begin{lstlisting}
     def assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
         """Assemble the model-free parameter vector (as numpy array).
 
@@ -140,8 +135,7 @@ For both variables and functions lower case with underscores between words is al
         @type spin_id:          str
         @keyword sim_index:     The optional MC simulation index.
         @type sim_index:        int
-        @keyword model_type:    The optional parameter set, one of 'all', 'diff', 'mf', or
-                                'local_tm'. 
+        @keyword model_type:    The optional parameter set, one of 'all', 'diff', 'mf', or 'local_tm'. 
         @type model_type:       str or None
         @return:                An array of the parameter values of the model-free model.
         @rtype:                 numpy array
@@ -161,8 +155,7 @@ For both variables and functions lower case with underscores between words is al
                 # Spherical diffusion.
                 if cdp.diff_tensor.type == 'sphere':
                     param_vector.append(cdp.diff_tensor.tm)
-\end{verbatim}
-\end{footnotesize}
+\end{lstlisting}
 
 
 
@@ -171,8 +164,7 @@ For both variables and functions lower case with underscores between words is al
 
 For classes relax uses a mix of camel case (for example all the \prompt{RelaxError} objects) and underscores (for example \pycode{Model\_free}).  The first letter in all cases is always capitalised.  Generally the camel case is reserved for very low level classes which are involved in the program's infrastructure.  Examples include the RelaxError code, the threading code, and the relax data store code.  All the data analysis specific code, generic code, interface code, etc.\ uses underscores between the words with only the first letter capitalised.  One exception is the space mapping class \pycode{OpenDX}, the reason being that the program is called \prompt{OpenDX}.  An example is:
 
-\begin{footnotesize}
-\begin{verbatim}
+\begin{lstlisting}
 class Model_free_main:
     """Class containing functions specific to model-free analysis."""
 
@@ -181,17 +173,14 @@ class Model_free_main:
 
         @param spin:    The spin container object.
         @type spin:     SpinContainer instance
-        @return:        The name of the first parameter in the parameter list in which the
-                        corresponding parameter value is None.  If all parameters are set, then None
-                        is returned.
+        @return:        The name of the first parameter in the parameter list in which the corresponding parameter value is None.  If all parameters are set, then None is returned.
         @rtype:         str or None
         """
 
         # Deselected residue.
         if spin.select == 0:
             return
-\end{verbatim}
-\end{footnotesize}
+\end{lstlisting}
 
 
 
@@ -216,14 +205,11 @@ The following conventions are for general code cleanliness and readability:
 \end{itemize}
 
 An example which shows most of these conventions is:
-\begin{footnotesize}
-\begin{verbatim*}
+\begin{lstlisting}
 class Internal:
     """The internal relax structural data object.
 
-    The structural data object for this class is a container possessing a number of different arrays
-    corresponding to different structural information.  These objects are described in the
-    structural container docstring.
+    The structural data object for this class is a container possessing a number of different arrays corresponding to different structural information.  These objects are described in the structural container docstring.
     """
 
     def _bonded_atom(self, attached_atom, index, mol):
@@ -247,8 +233,7 @@ class Internal:
             # Determine the molecule type if needed.
             if not hasattr(mol, 'type'):
                 self._mol_type(mol)
-\end{verbatim*}
-\end{footnotesize}
+\end{lstlisting}
 
 
 
