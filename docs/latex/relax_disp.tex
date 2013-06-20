@@ -342,131 +342,131 @@ The following is a verbatim copy of the contents of the \file{sample\_scripts/re
 You will need to first copy this script to a dedicated analysis directory containing peak lists, a sequence or PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.
 The script contents are:
 
-\begin{exampleenv}
-"""Script for performing a full relaxation dispersion analysis using CPMG-type data.""" \\
- \\
- \\
-\# Python module imports. \\
-from os import sep \\
- \\
-\# relax module imports. \\
-from auto\_analyses.relax\_disp import Relax\_disp \\
- \\
- \\
-\# Analysis variables. \\
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# The dispersion models. \\
-MODELS = [`R2eff', `No Rex', `LM63', `CR72', `IT99'] \\
- \\
-\# The grid search size (the number of increments per dimension). \\
-GRID\_INC = 21 \\
- \\
-\# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis. \\
-MC\_NUM = 500 \\
- \\
-\# The model selection technique to use. \\
-MODSEL = `AIC' \\
- \\
- \\
-\# Set up the data pipe. \\
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# Create the data pipe. \\
-pipe\_name = `base pipe' \\
-pipe\_bundle = `relax\_disp' \\
-pipe.create(pipe\_name=pipe\_name, bundle=pipe\_bundle, pipe\_type=`relax\_disp') \\
- \\
-\# Load the sequence. \\
-sequence.read(`fake\_sequence.in', res\_num\_col=1, res\_name\_col=2) \\
- \\
-\# Name the spins so they can be matched to the assignments, and the isotope for field strength scaling. \\
-spin.name(name=`N') \\
-spin.isotope(isotope=`15N') \\
- \\
-\# Set the relaxation dispersion experiment type. \\
-relax\_disp.exp\_type(`cpmg fixed') \\
- \\
-\# The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz. \\
-data = [ \\
-\hspace*{4ex} [`500\_reference.in',    `500\_MHz'+sep+`reference.in\_sparky',           None,  500e6], \\
-\hspace*{4ex} [`500\_66.667.in',       `500\_MHz'+sep+`66.667.in\_sparky',           66.6666,  500e6], \\
-\hspace*{4ex} [`500\_133.33.in',       `500\_MHz'+sep+`133.33.in\_sparky',          133.3333,  500e6], \\
-\hspace*{4ex} [`500\_133.33.in.bis',   `500\_MHz'+sep+`133.33.in.bis\_sparky',      133.3333,  500e6], \\
-\hspace*{4ex} [`500\_200.in',          `500\_MHz'+sep+`200.in\_sparky',             200.0000,  500e6], \\
-\hspace*{4ex} [`500\_266.67.in',       `500\_MHz'+sep+`266.67.in\_sparky',          266.6666,  500e6], \\
-\hspace*{4ex} [`500\_333.33.in',       `500\_MHz'+sep+`333.33.in\_sparky',          333.3333,  500e6], \\
-\hspace*{4ex} [`500\_400.in',          `500\_MHz'+sep+`400.in\_sparky',             400.0000,  500e6], \\
-\hspace*{4ex} [`500\_466.67.in',       `500\_MHz'+sep+`466.67.in\_sparky',          466.6666,  500e6], \\
-\hspace*{4ex} [`500\_533.33.in',       `500\_MHz'+sep+`533.33.in\_sparky',          533.3333,  500e6], \\
-\hspace*{4ex} [`500\_533.33.in.bis',   `500\_MHz'+sep+`533.33.in.bis\_sparky',      533.3333,  500e6], \\
-\hspace*{4ex} [`500\_600.in',          `500\_MHz'+sep+`600.in\_sparky',             600.0000,  500e6], \\
-\hspace*{4ex} [`500\_666.67.in',       `500\_MHz'+sep+`666.67.in\_sparky',          666.6666,  500e6], \\
-\hspace*{4ex} [`500\_733.33.in',       `500\_MHz'+sep+`733.33.in\_sparky',          733.3333,  500e6], \\
-\hspace*{4ex} [`500\_800.in',          `500\_MHz'+sep+`800.in\_sparky',             800.0000,  500e6], \\
-\hspace*{4ex} [`500\_866.67.in',       `500\_MHz'+sep+`866.67.in\_sparky',          866.6666,  500e6], \\
-\hspace*{4ex} [`500\_933.33.in',       `500\_MHz'+sep+`933.33.in\_sparky',          933.3333,  500e6], \\
-\hspace*{4ex} [`500\_933.33.in.bis',   `500\_MHz'+sep+`933.33.in.bis\_sparky',      933.3333,  500e6], \\
-\hspace*{4ex} [`500\_1000.in',         `500\_MHz'+sep+`1000.in\_sparky',           1000.0000,  500e6], \\
-\hspace*{4ex} [`800\_reference.in',    `800\_MHz'+sep+`reference.in\_sparky',           None,  800e6], \\
-\hspace*{4ex} [`800\_66.667.in',       `800\_MHz'+sep+`66.667.in\_sparky',           66.6666,  800e6], \\
-\hspace*{4ex} [`800\_133.33.in',       `800\_MHz'+sep+`133.33.in\_sparky',          133.3333,  800e6], \\
-\hspace*{4ex} [`800\_133.33.in.bis',   `800\_MHz'+sep+`133.33.in.bis\_sparky',      133.3333,  800e6], \\
-\hspace*{4ex} [`800\_200.in',          `800\_MHz'+sep+`200.in\_sparky',             200.0000,  800e6], \\
-\hspace*{4ex} [`800\_266.67.in',       `800\_MHz'+sep+`266.67.in\_sparky',          266.6666,  800e6], \\
-\hspace*{4ex} [`800\_333.33.in',       `800\_MHz'+sep+`333.33.in\_sparky',          333.3333,  800e6], \\
-\hspace*{4ex} [`800\_400.in',          `800\_MHz'+sep+`400.in\_sparky',             400.0000,  800e6], \\
-\hspace*{4ex} [`800\_466.67.in',       `800\_MHz'+sep+`466.67.in\_sparky',          466.6666,  800e6], \\
-\hspace*{4ex} [`800\_533.33.in',       `800\_MHz'+sep+`533.33.in\_sparky',          533.3333,  800e6], \\
-\hspace*{4ex} [`800\_533.33.in.bis',   `800\_MHz'+sep+`533.33.in.bis\_sparky',      533.3333,  800e6], \\
-\hspace*{4ex} [`800\_600.in',          `800\_MHz'+sep+`600.in\_sparky',             600.0000,  800e6], \\
-\hspace*{4ex} [`800\_666.67.in',       `800\_MHz'+sep+`666.67.in\_sparky',          666.6666,  800e6], \\
-\hspace*{4ex} [`800\_733.33.in',       `800\_MHz'+sep+`733.33.in\_sparky',          733.3333,  800e6], \\
-\hspace*{4ex} [`800\_800.in',          `800\_MHz'+sep+`800.in\_sparky',             800.0000,  800e6], \\
-\hspace*{4ex} [`800\_866.67.in',       `800\_MHz'+sep+`866.67.in\_sparky',          866.6666,  800e6], \\
-\hspace*{4ex} [`800\_933.33.in',       `800\_MHz'+sep+`933.33.in\_sparky',          933.3333,  800e6], \\
-\hspace*{4ex} [`800\_933.33.in.bis',   `800\_MHz'+sep+`933.33.in.bis\_sparky',      933.3333,  800e6], \\
-\hspace*{4ex} [`800\_1000.in',         `800\_MHz'+sep+`1000.in\_sparky',           1000.0000,  800e6] \\
-] \\
- \\
-\# Loop over the spectra. \\
-for id, file, cpmg\_frq, H\_frq in data: \\
-\hspace*{4ex} \# Load the peak intensities. \\
-\hspace*{4ex} spectrum.read\_intensities(file=file, spectrum\_id=id, int\_method=`height') \\
- \\
-\hspace*{4ex} \# Set the relaxation dispersion CPMG frequencies. \\
-\hspace*{4ex} relax\_disp.cpmg\_frq(spectrum\_id=id, cpmg\_frq=cpmg\_frq) \\
- \\
-\hspace*{4ex} \# Set the NMR field strength of the spectrum. \\
-\hspace*{4ex} spectrometer.frequency(id=id, frq=H\_frq) \\
- \\
-\hspace*{4ex} \# Relaxation dispersion CPMG constant time delay T (in s). \\
-\hspace*{4ex} relax\_disp.relax\_time(spectrum\_id=id, time=0.030) \\
- \\
-\# Specify the duplicated spectra. \\
-spectrum.replicated(spectrum\_ids=[`500\_133.33.in', `500\_133.33.in.bis']) \\
-spectrum.replicated(spectrum\_ids=[`500\_533.33.in', `500\_533.33.in.bis']) \\
-spectrum.replicated(spectrum\_ids=[`500\_933.33.in', `500\_933.33.in.bis']) \\
-spectrum.replicated(spectrum\_ids=[`800\_133.33.in', `800\_133.33.in.bis']) \\
-spectrum.replicated(spectrum\_ids=[`800\_533.33.in', `800\_533.33.in.bis']) \\
-spectrum.replicated(spectrum\_ids=[`800\_933.33.in', `800\_933.33.in.bis']) \\
- \\
-\# Peak intensity error analysis. \\
-spectrum.error\_analysis(subset=[`500\_reference.in', `500\_66.667.in', `500\_133.33.in', `500\_133.33\linebreak[0]{}.in.bis', `500\_200.in', `500\_266.67.in', `500\_333.33.in', `500\_400.in', `500\_466.67.in', `500\_533\linebreak[0]{}.33.in', `500\_533.33.in.bis', `500\_600.in', `500\_666.67.in', `500\_733.33.in', `500\_800.in', `500\linebreak[0]{}\_866.67.in', `500\_933.33.in', `500\_933.33.in.bis', `500\_1000.in']) \\
-spectrum.error\_analysis(subset=[`800\_reference.in', `800\_66.667.in', `800\_133.33.in', `800\_133.33\linebreak[0]{}.in.bis', `800\_200.in', `800\_266.67.in', `800\_333.33.in', `800\_400.in', `800\_466.67.in', `800\_533\linebreak[0]{}.33.in', `800\_533.33.in.bis', `800\_600.in', `800\_666.67.in', `800\_733.33.in', `800\_800.in', `800\linebreak[0]{}\_866.67.in', `800\_933.33.in', `800\_933.33.in.bis', `800\_1000.in']) \\
- \\
-\# Deselect unresolved spins. \\
-deselect.read(file=`unresolved', dir=`500\_MHz', res\_num\_col=1) \\
-deselect.read(file=`unresolved', dir=`800\_MHz', res\_num\_col=1) \\
- \\
- \\
- \\
-\# Auto-analysis execution. \\
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\# \\
- \\
-\# Do not change! \\
-Relax\_disp(pipe\_name=pipe\_name, pipe\_bundle=pipe\_bundle, models=MODELS, grid\_inc=GRID\_INC, mc\_sim\linebreak[0]{}\_num=MC\_NUM, modsel=MODSEL) \\
-\end{exampleenv}
+\begin{lstlisting}
+"""Script for performing a full relaxation dispersion analysis using CPMG-type data."""
+
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+
+
+# Analysis variables.
+#####################
+
+# The dispersion models.
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 21
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 500
+
+# The model selection technique to use.
+MODSEL = 'AIC'
+
+
+# Set up the data pipe.
+#######################
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# Load the sequence.
+sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
+
+# Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
+spin.name(name='N')
+spin.isotope(isotope='15N')
+
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type('cpmg fixed')
+
+# The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
+data = [
+    ['500_reference.in',    '500_MHz'+sep+'reference.in_sparky',           None,  500e6],
+    ['500_66.667.in',       '500_MHz'+sep+'66.667.in_sparky',           66.6666,  500e6],
+    ['500_133.33.in',       '500_MHz'+sep+'133.33.in_sparky',          133.3333,  500e6],
+    ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis_sparky',      133.3333,  500e6],
+    ['500_200.in',          '500_MHz'+sep+'200.in_sparky',             200.0000,  500e6],
+    ['500_266.67.in',       '500_MHz'+sep+'266.67.in_sparky',          266.6666,  500e6],
+    ['500_333.33.in',       '500_MHz'+sep+'333.33.in_sparky',          333.3333,  500e6],
+    ['500_400.in',          '500_MHz'+sep+'400.in_sparky',             400.0000,  500e6],
+    ['500_466.67.in',       '500_MHz'+sep+'466.67.in_sparky',          466.6666,  500e6],
+    ['500_533.33.in',       '500_MHz'+sep+'533.33.in_sparky',          533.3333,  500e6],
+    ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis_sparky',      533.3333,  500e6],
+    ['500_600.in',          '500_MHz'+sep+'600.in_sparky',             600.0000,  500e6],
+    ['500_666.67.in',       '500_MHz'+sep+'666.67.in_sparky',          666.6666,  500e6],
+    ['500_733.33.in',       '500_MHz'+sep+'733.33.in_sparky',          733.3333,  500e6],
+    ['500_800.in',          '500_MHz'+sep+'800.in_sparky',             800.0000,  500e6],
+    ['500_866.67.in',       '500_MHz'+sep+'866.67.in_sparky',          866.6666,  500e6],
+    ['500_933.33.in',       '500_MHz'+sep+'933.33.in_sparky',          933.3333,  500e6],
+    ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis_sparky',      933.3333,  500e6],
+    ['500_1000.in',         '500_MHz'+sep+'1000.in_sparky',           1000.0000,  500e6],
+    ['800_reference.in',    '800_MHz'+sep+'reference.in_sparky',           None,  800e6],
+    ['800_66.667.in',       '800_MHz'+sep+'66.667.in_sparky',           66.6666,  800e6],
+    ['800_133.33.in',       '800_MHz'+sep+'133.33.in_sparky',          133.3333,  800e6],
+    ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis_sparky',      133.3333,  800e6],
+    ['800_200.in',          '800_MHz'+sep+'200.in_sparky',             200.0000,  800e6],
+    ['800_266.67.in',       '800_MHz'+sep+'266.67.in_sparky',          266.6666,  800e6],
+    ['800_333.33.in',       '800_MHz'+sep+'333.33.in_sparky',          333.3333,  800e6],
+    ['800_400.in',          '800_MHz'+sep+'400.in_sparky',             400.0000,  800e6],
+    ['800_466.67.in',       '800_MHz'+sep+'466.67.in_sparky',          466.6666,  800e6],
+    ['800_533.33.in',       '800_MHz'+sep+'533.33.in_sparky',          533.3333,  800e6],
+    ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis_sparky',      533.3333,  800e6],
+    ['800_600.in',          '800_MHz'+sep+'600.in_sparky',             600.0000,  800e6],
+    ['800_666.67.in',       '800_MHz'+sep+'666.67.in_sparky',          666.6666,  800e6],
+    ['800_733.33.in',       '800_MHz'+sep+'733.33.in_sparky',          733.3333,  800e6],
+    ['800_800.in',          '800_MHz'+sep+'800.in_sparky',             800.0000,  800e6],
+    ['800_866.67.in',       '800_MHz'+sep+'866.67.in_sparky',          866.6666,  800e6],
+    ['800_933.33.in',       '800_MHz'+sep+'933.33.in_sparky',          933.3333,  800e6],
+    ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis_sparky',      933.3333,  800e6],
+    ['800_1000.in',         '800_MHz'+sep+'1000.in_sparky',           1000.0000,  800e6]
+]
+
+# Loop over the spectra.
+for id, file, cpmg_frq, H_frq in data:
+    # Load the peak intensities.
+    spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
+
+    # Set the relaxation dispersion CPMG frequencies.
+    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+
+    # Set the NMR field strength of the spectrum.
+    spectrometer.frequency(id=id, frq=H_frq)
+
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.030)
+
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_533.33.in', '500_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['500_933.33.in', '500_933.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
+spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
+
+# Peak intensity error analysis.
+spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+
+# Deselect unresolved spins.
+deselect.read(file='unresolved', dir='500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
+
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+\end{lstlisting}
 
 
 
