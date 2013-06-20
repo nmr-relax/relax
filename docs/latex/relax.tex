@@ -40,9 +40,10 @@
             urlcolor=blue}
 
 % Source code and scripts.
-\usepackage{listings}
+\usepackage[procnames]{listings}
 \usepackage[svgnames]{xcolor}
 \usepackage{textcomp}
+\include{script_definition}
 \lstset{
     backgroundcolor=\color{white},
     basewidth=0.5em,
@@ -51,23 +52,26 @@
     breaklines=true,
     captionpos=b,
     columns=fixed,
-    commentstyle=\color{blue},
+    commentstyle=\color{Blue},
     frame=none,
     keepspaces=true,
     keywordstyle=\bfseries \color{ForestGreen},
-    language=Python,
+    keywordstyle=[2]\bfseries \color{BlueViolet},
+    keywordstyle=[3]\bfseries \color{SaddleBrown},
+    keywordstyle=[4]\bfseries \color{MidnightBlue},
+    language=relax,
     numbers=left,
     numbersep=15pt,
-    numberstyle=\tiny \color{orange},
+    numberstyle=\tiny \color{DarkOrange},
+    procnamestyle=\color{LightSeaGreen},
     showspaces=false,
     showstringspaces=false,
     showtabs=false,
     stepnumber=1,
-    stringstyle=\color{Crimson},
+    stringstyle=\color{FireBrick},
     tabsize=4,
     upquote=true,
 }
-
 
 % New commands.
 \newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}

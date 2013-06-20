@@ -23,6 +23,8 @@
 """User function definition conversion to LaTeX for the relax manual."""
 
 # Python module imports.
+from os import sep
+from os.path import dirname
 from re import search
 from string import ascii_letters, ascii_lowercase, punctuation, whitespace
 import sys
@@ -33,8 +35,13 @@ sys.path[0] = '../..'
 
 # relax module imports.
 from graphics import fetch_icon
+import user_functions
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+
+
+# Set up the user functions.
+user_functions.initialise()
 
 
 class Fetch_docstrings:
@@ -45,6 +52,7 @@ class Fetch_docstrings:
         self.in_quote = False
         self.table_count = 1
         self.uf_table_labels = []
+        self.path = dirname(file)
 
         # Set up the words to index.
         self.index_entries()
@@ -53,7 +61,10 @@ class Fetch_docstrings:
         self.file = open(file, 'w')
 
         # Loop over the user functions.
+        uf_names = []
         for self.uf_name, self.uf in uf_info.uf_loop():
+            # Add to the list.
+            uf_names.append(self.uf_name)
             # The user function class.
             self.uf_class = None
             if search('\.', self.uf_name):
@@ -78,6 +89,9 @@ class Fetch_docstrings:
 
         # Close the LaTeX file.
         self.file.close()
+
+        # Create the relax lstlisting definition.
+        self.script_definitions(uf_names)
 
 
     def break_functions(self, text):
@@ -735,6 +749,92 @@ class Fetch_docstrings:
 
         # Return the string.
         return string
+
+
+    def script_definitions(self, uf_names):
+        """Create a LaTeX file defining the relax language syntax for the listings package.
+
+        @param uf_names:    The list of all user function names.
+        @type uf_names:     list of str
+        """
+
+        # Open the file.
+        file = open(self.path + sep + 'script_definition.tex', 'w')
+
+        # Python keywords.
+        py_keywords = [
+            'and',
+            'assert',
+            'break',
+            'continue',
+            'del',
+            'else',
+            'exec',
+            'global',
+            'if',
+            'in',
+            'is',
+            'for',
+            'not',
+            'or',
+            'pass',
+            'print',
+            'raise',
+            'return',
+            'while',
+            'yield'
+        ]
+        py_keywords2 = [
+            'as',
+            'from',
+            'import',
+        ]
+        py_keywords3 = [
+            'class',
+            'def',
+        ]
+
+        # The relax language.
+        file.write("\lstdefinelanguage{relax}{\n")
+
+        # Allow the user function '.' character to be part of the keywords.
+        file.write("    alsoletter={.},\n")
+
+        # Output the first set of Python keywords.
+        file.write("    morekeywords={")
+        for name in py_keywords:
+            file.write("%s," % name)
+        file.write("},\n")
+
+        # Output the second set of Python keywords.
+        file.write("    morekeywords=[2]{")
+        for name in py_keywords2:
+            file.write("%s," % name)
+        file.write("},\n")
+
+        # Output the third set of Python keywords.
+        file.write("    morekeywords=[3]{")
+        for name in py_keywords3:
+            file.write("%s," % name)
+        file.write("},\n")
+
+        # Output the relax user functions as keywords.
+        file.write("    morekeywords=[4]{")
+        for name in uf_names:
+            file.write("%s," % name)
+        file.write("},\n")
+
+        # The rest of the definition.
+        file.write("    moreprocnamekeys={def,class},\n")
+        file.write("    sensitive=true,\n")
+        file.write("    morecomment=[l]{\#},\n")
+        file.write("    morestring=[b]',\n")
+        file.write("    morestring=[b]\",\n")
+        file.write("    morestring=[b]\"\"\",\n")
+        file.write("}\n")
+
+        # Close the file.
+        file.close()
 
 
     def tabular_wrapping(self, table, max_char=100):
