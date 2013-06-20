@@ -42,51 +42,7 @@
 \usepackage[procnames]{listings}
 \usepackage[svgnames]{xcolor}
 \usepackage{textcomp}
-\lstdefinelanguage{relax}{
-    alsoletter={.},
-    morekeywords={
-        and,
-        assert,
-        break,
-        continue,
-        del,
-        else,
-        exec,
-        global,
-        if,
-        in,
-        is,
-        for,
-        not,
-        or,
-        pass,
-        print,
-        raise,
-        return,
-        while,
-        yield,
-    },
-    morekeywords=[2]{
-        as,
-        from,
-        import,
-    },
-    morekeywords=[3]{
-        class,
-        def,
-    },
-    morekeywords=[4]{
-        pipe.create,
-        spin.name,
-        spin.element,
-    },
-    moreprocnamekeys={def,class},
-    sensitive=true,
-    morecomment=[l]{\#},
-    morestring=[b]',
-    morestring=[b]",
-    morestring=[b]""",
-}
+\include{script_definition}
 \lstset{
     backgroundcolor=\color{white},
     basewidth=0.5em,
