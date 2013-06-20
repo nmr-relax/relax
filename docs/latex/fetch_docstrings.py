@@ -33,8 +33,13 @@ sys.path[0] = '../..'
 
 # relax module imports.
 from graphics import fetch_icon
+import user_functions
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+
+
+# Set up the user functions.
+user_functions.initialise()
 
 
 class Fetch_docstrings:
