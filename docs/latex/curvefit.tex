@@ -85,32 +85,32 @@ Delay & P1 & FID & Spectrum\\
 
 Here is an example NMRPipe script designed for optimal relaxation rate extraction:
 
-\begin{exampleenv}
-\#!/bin/csh \\
- \\
-setenv FILEROOT \$1 \\
-set PHASE=81.4 \\
- \\
-echo "\textbackslash n\# Fourier Transform (nmrPipe fid/*.fid to ft/*.dat)" \\
-echo "\# t2 phase is set to \$PHASE" \\
-echo "\# t1 phase is set to 0.0\textbackslash n" \\
- \\
-nmrPipe -in fid/\$FILEROOT.fid \ \\
-| nmrPipe -fn SOL \ \\
-| nmrPipe -fn GM -g1 15 -g2 20 -c 0.5 \ \\
-| nmrPipe -fn ZF -size 8192 \ \\
-| nmrPipe -fn FT -auto \ \\
-| nmrPipe -fn PS -p0 \$PHASE -p1 0.0 -di -verb \ \\
-| nmrPipe -fn EXT -left -sw \ \\
-| nmrPipe -fn TP \ \\
-| nmrPipe -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5 \ \\
-| nmrPipe -fn ZF -size 8192 \ \\
-| nmrPipe -fn FT -auto \ \\
-| nmrPipe -fn PS -p0 0.0 -p1 0.0 -di -verb \ \\
-| nmrPipe -fn REV \ \\
-| nmrPipe -fn TP \ \\
-| nmrPipe -out ft/\$FILEROOT.dat -ov
-\end{exampleenv}
+\begin{lstlisting}[language=csh]
+#!/bin/csh
+
+setenv FILEROOT $1
+set PHASE=81.4
+
+echo "\n# Fourier Transform (nmrPipe fid/*.fid to ft/*.dat)"
+echo "# t2 phase is set to $PHASE"
+echo "# t1 phase is set to 0.0\n"
+
+nmrPipe -in fid/$FILEROOT.fid \
+| nmrPipe -fn SOL \
+| nmrPipe -fn GM -g1 15 -g2 20 -c 0.5 \
+| nmrPipe -fn ZF -size 8192 \
+| nmrPipe -fn FT -auto \
+| nmrPipe -fn PS -p0 $PHASE -p1 0.0 -di -verb \
+| nmrPipe -fn EXT -left -sw \
+| nmrPipe -fn TP \
+| nmrPipe -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5 \
+| nmrPipe -fn ZF -size 8192 \
+| nmrPipe -fn FT -auto \
+| nmrPipe -fn PS -p0 0.0 -p1 0.0 -di -verb \
+| nmrPipe -fn REV \
+| nmrPipe -fn TP \
+| nmrPipe -out ft/$FILEROOT.dat -ov
+\end{lstlisting}
 
 
 % Measuring peak intensities.
@@ -153,103 +153,104 @@ If using Sparky then, to be sure that the peak heights are properly updated, for
 
 The following is a verbatim copy of the contents of the \file{sample\_scripts/relax\_fit.py} file.  If your copy of the sample script is different than that below, please send an email to the relax-devel mailing list\index{mailing list!relax-devel} to tell the relax developers that the manual is out of date (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  You will need to first copy this script to a dedicated analysis directory containing peak lists, a PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.  The script contents are:
 
-\begin{exampleenv}
-\# Script for relaxation curve-fitting. \\
- \\
-\# Create the `rx' data pipe. \\
-pipe.create(`rx', `relax\_fit') \\
- \\
-\# Load the backbone amide 15N spins from a PDB file. \\
-structure.read\_pdb(`Ap4Aase\_new\_3.pdb') \\
-structure.load\_spins(spin\_id=`@N') \\
- \\
-\# Spectrum names. \\
-names = [ \\
-\hspace*{4ex} `T2\_ncyc1\_ave', \\
-\hspace*{4ex} `T2\_ncyc1b\_ave', \\
-\hspace*{4ex} `T2\_ncyc2\_ave', \\
-\hspace*{4ex} `T2\_ncyc4\_ave', \\
-\hspace*{4ex} `T2\_ncyc4b\_ave', \\
-\hspace*{4ex} `T2\_ncyc6\_ave', \\
-\hspace*{4ex} `T2\_ncyc9\_ave', \\
-\hspace*{4ex} `T2\_ncyc9b\_ave', \\
-\hspace*{4ex} `T2\_ncyc11\_ave', \\
-\hspace*{4ex} `T2\_ncyc11b\_ave' \\
-] \\
- \\
-\# Relaxation times (in seconds). \\
-times = [ \\
-\hspace*{4ex} 0.0176, \\
-\hspace*{4ex} 0.0176, \\
-\hspace*{4ex} 0.0352, \\
-\hspace*{4ex} 0.0704, \\
-\hspace*{4ex} 0.0704, \\
-\hspace*{4ex} 0.1056, \\
-\hspace*{4ex} 0.1584, \\
-\hspace*{4ex} 0.1584, \\
-\hspace*{4ex} 0.1936, \\
-\hspace*{4ex} 0.1936 \\
-] \\
- \\
-\# Loop over the spectra. \\
-for i in range(len(names)): \\
-\hspace*{4ex} \# Load the peak intensities. \\
-\hspace*{4ex} spectrum.read\_intensities(file=names[i]+`.list', dir=data\_path, spectrum\_id=names[i], int\_method=`height') \\
- \\
-\hspace*{4ex} \# Set the relaxation times. \\
-\hspace*{4ex} relax\_fit.relax\_time(time=times[i], spectrum\_id=names[i]) \\
- \\
-\# Specify the duplicated spectra. \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc1\_ave', `T2\_ncyc1b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc4\_ave', `T2\_ncyc4b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc9\_ave', `T2\_ncyc9b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc11\_ave', `T2\_ncyc11b\_ave']) \\
- \\
-\# Peak intensity error analysis. \\
-spectrum.error\_analysis() \\
- \\
-\# Deselect unresolved spins. \\
-deselect.read(file=`unresolved', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
- \\
-\# Set the relaxation curve type. \\
-relax\_fit.select\_model(`exp') \\
- \\
-\# Grid search. \\
-grid\_search(inc=11) \\
- \\
-\# Minimise. \\
-minimise(`simplex', scaling=False, constraints=False) \\
- \\
-\# Monte Carlo simulations. \\
-monte\_carlo.setup(number=500) \\
-monte\_carlo.create\_data() \\
-monte\_carlo.initial\_values() \\
-minimise(`simplex', scaling=False, constraints=False) \\
-monte\_carlo.error\_analysis() \\
- \\
-\# Save the relaxation rates. \\
-value.write(param=`rx', file=`rx.out', force=True) \\
- \\
-\# Save the results. \\
-results.write(file=`results', force=True) \\
- \\
-\# Create Grace plots of the data. \\
-grace.write(y\_data\_type=`chi2', file=`chi2.agr', force=True)    \# Minimised chi-squared value. \\
-grace.write(y\_data\_type=`i0', file=`i0.agr', force=True)    \# Initial peak intensity. \\
-grace.write(y\_data\_type=`rx', file=`rx.agr', force=True)    \# Relaxation rate. \\
-grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', file=`intensities.agr', force=True)    \# Average peak intensities. \\
-grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', norm=True, file=`intensities\_norm.agr', force=True)    \# Average peak intensities (normalised). \\
- \\
-\# Display the Grace plots. \\
-grace.view(file=`chi2.agr') \\
-grace.view(file=`i0.agr') \\
-grace.view(file=`rx.agr') \\
-grace.view(file=`intensities.agr') \\
-grace.view(file=`intensities\_norm.agr') \\
- \\
-\# Save the program state. \\
-state.save(`rx.save', force=True)
-\end{exampleenv}
+\begin{lstlisting}
+# Script for relaxation curve-fitting.
+
+# Create the 'rx' data pipe.
+pipe.create('rx', 'relax_fit')
+
+# Load the backbone amide 15N spins from a PDB file.
+structure.read_pdb('Ap4Aase_new_3.pdb')
+structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@NE1')
+
+# Spectrum names.
+names = [
+    'T2_ncyc1_ave',
+    'T2_ncyc1b_ave',
+    'T2_ncyc2_ave',
+    'T2_ncyc4_ave',
+    'T2_ncyc4b_ave',
+    'T2_ncyc6_ave',
+    'T2_ncyc9_ave',
+    'T2_ncyc9b_ave',
+    'T2_ncyc11_ave',
+    'T2_ncyc11b_ave'
+]
+
+# Relaxation times (in seconds).
+times = [
+    0.0176,
+    0.0176,
+    0.0352,
+    0.0704,
+    0.0704,
+    0.1056,
+    0.1584,
+    0.1584,
+    0.1936,
+    0.1936
+]
+
+# Loop over the spectra.
+for i in range(len(names)):
+    # Load the peak intensities.
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
+
+    # Set the relaxation times.
+    relax_fit.relax_time(time=times[i], spectrum_id=names[i])
+
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc4_ave', 'T2_ncyc4b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc9_ave', 'T2_ncyc9b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
+
+# Peak intensity error analysis.
+spectrum.error_analysis()
+
+# Deselect unresolved spins.
+deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+
+# Set the relaxation curve type.
+relax_fit.select_model('exp')
+
+# Grid search.
+grid_search(inc=11)
+
+# Minimise.
+minimise('simplex', scaling=False, constraints=False)
+
+# Monte Carlo simulations.
+monte_carlo.setup(number=500)
+monte_carlo.create_data()
+monte_carlo.initial_values()
+minimise('simplex', scaling=False, constraints=False)
+monte_carlo.error_analysis()
+
+# Save the relaxation rates.
+value.write(param='rx', file='rx.out', force=True)
+
+# Save the results.
+results.write(file='results', force=True)
+
+# Create Grace plots of the data.
+grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
+grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
+grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
+grace.write(x_data_type='relax_times', y_data_type='intensities', file='intensities.agr', force=True)    # Average peak intensities.
+grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+
+# Display the Grace plots.
+grace.view(file='chi2.agr')
+grace.view(file='i0.agr')
+grace.view(file='rx.agr')
+grace.view(file='intensities.agr')
+grace.view(file='intensities_norm.agr')
+
+# Save the program state.
+state.save('rx.save', force=True)
+\end{lstlisting}
 
 The next sections will break this script down into its logical components and explain how these parts will be interpreted by relax.  To execute this script, please see section~\ref{sect: scripting} on page~\pageref{sect: scripting} for details.
 
@@ -261,7 +262,10 @@ The next sections will break this script down into its logical components and ex
 
 The data pipe is simply created by the command
 
-\example{pipe.create(`rx', `relax\_fit')}
+\begin{lstlisting}[firstnumber=3]
+# Create the 'rx' data pipe.
+pipe.create('rx', 'relax_fit')
+\end{lstlisting}
 
 This user function will then create a relaxation exponential curve-fitting specific data pipe labelled \promptstring{rx}.  The second argument sets the pipe type to that of the relaxation curve-fitting.  Setting the pipe type is important so that the program knows which user functions are compatible with the data pipe, for example in the steady-state NOE analysis the function \uf{minimise} (see page~\pageref{uf: minimise}) is meaningless as the NOE values are calculated directly rather than optimised.
 
@@ -273,15 +277,18 @@ This user function will then create a relaxation exponential curve-fitting speci
 
 The first thing which need to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above this is generated from a PDB file, however a plain text file with the sequence information can be used instead (see the \uf{sequence.read} user function on page~\pageref{uf: sequence.read} for more details).  In the case of the sample script, the command
 
-\example{structure.read\_pdb(name, `Ap4Aase\_new\_3.pdb')}
+\begin{lstlisting}[firstnumber=6]
+# Load the backbone amide 15N spins from a PDB file.
+structure.read_pdb(name, 'Ap4Aase_new_3.pdb')
+\end{lstlisting}
 \index{PDB}
 
 will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then 
 
-\begin{exampleenv}
-structure.load\_spins(spin\_id=`@N') \\
-structure.load\_spins(spin\_id=`@NE1')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=8]
+structure.load_spins(spin_id='@N')
+structure.load_spins(spin_id='@NE1')
+\end{lstlisting}
 
 will generate the molecule, residue, and spin sequence for the current data pipe.  In this situation there will be a single spin system per residue generated corresponding to the backbone amide nitrogens as well as $^{15}$N spins set up for the tryptophan indole nitrogens.  Although the 3D coordinates have been loaded into the program from the PDB file, this structural information serves no purpose when calculating $\Rone$ and $\Rtwo$ values.
 
@@ -293,23 +300,28 @@ will generate the molecule, residue, and spin sequence for the current data pipe
 
 To load the peak intensities\index{peak!intensity} into relax the user function \uf{spectrum.read\_intensities} is executed.  Important keyword arguments to this command are the file name and directory, the spectrum identification string and the relaxation time period of the experiment in seconds.  By default the file format will be automatically detected.  Currently Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView}, and generic columnar formatted peak lists are supported.  To be able to import any other type of format please send an email to the relax development mailing list\index{mailing list!relax-devel} with the details of the format.  Adding support for new formats is trivial.  The following series of commands -- an expansion of the \prompt{for} loop in the sample script -- will load peak intensities from six different relaxation periods, four of which have been duplicated, from Sparky peak lists with the peak heights in the 10$^\textrm{th}$ column.
 
-\begin{exampleenv}
-spectrum.read\_intensities(`T2\_ncyc1.list',   spectrum\_id=`1',   relax\_time=0.0176, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc1b.list',  spectrum\_id=`1b',  relax\_time=0.0176, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc2.list',   spectrum\_id=`2',   relax\_time=0.0352, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc4.list',   spectrum\_id=`4',   relax\_time=0.0704, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc4b.list',  spectrum\_id=`4b',  relax\_time=0.0704, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc6.list',   spectrum\_id=`6',   relax\_time=0.1056, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc9.list',   spectrum\_id=`9',   relax\_time=0.1584, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc9b.list',  spectrum\_id=`9b',  relax\_time=0.1584, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc11.list',  spectrum\_id=`11',  relax\_time=0.1936, int\_col=10) \\
-spectrum.read\_intensities(`T2\_ncyc11b.list', spectrum\_id=`11b', relax\_time=0.1936, int\_col=10) \\
- \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc1\_ave', `T2\_ncyc1b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc4\_ave', `T2\_ncyc4b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc9\_ave', `T2\_ncyc9b\_ave']) \\
-spectrum.replicated(spectrum\_ids=[`T2\_ncyc11\_ave', `T2\_ncyc11b\_ave'])
-\end{exampleenv}
+\begin{lstlisting}[numbers=none]
+spectrum.read_intensities('T2_ncyc1.list',   spectrum_id='1',   relax_time=0.0176, int_col=10)
+spectrum.read_intensities('T2_ncyc1b.list',  spectrum_id='1b',  relax_time=0.0176, int_col=10)
+spectrum.read_intensities('T2_ncyc2.list',   spectrum_id='2',   relax_time=0.0352, int_col=10)
+spectrum.read_intensities('T2_ncyc4.list',   spectrum_id='4',   relax_time=0.0704, int_col=10)
+spectrum.read_intensities('T2_ncyc4b.list',  spectrum_id='4b',  relax_time=0.0704, int_col=10)
+spectrum.read_intensities('T2_ncyc6.list',   spectrum_id='6',   relax_time=0.1056, int_col=10)
+spectrum.read_intensities('T2_ncyc9.list',   spectrum_id='9',   relax_time=0.1584, int_col=10)
+spectrum.read_intensities('T2_ncyc9b.list',  spectrum_id='9b',  relax_time=0.1584, int_col=10)
+spectrum.read_intensities('T2_ncyc11.list',  spectrum_id='11',  relax_time=0.1936, int_col=10)
+spectrum.read_intensities('T2_ncyc11b.list', spectrum_id='11b', relax_time=0.1936, int_col=10)
+\end{lstlisting}
+
+The replicated spectra a set up with the commands
+
+\begin{lstlisting}[firstnumber=47]
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['T2_ncyc1_ave', 'T2_ncyc1b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc4_ave', 'T2_ncyc4b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc9_ave', 'T2_ncyc9b_ave'])
+spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
+\end{lstlisting}
 
 Note that the relaxation time period should be calculated directly from the pulse sequence (as the sum of delays and pulses for the peroid), as the estimated time may not match the real time.   For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
 
@@ -361,15 +373,24 @@ H1.L H1.P H1.W H1.B H1.E H1.J H1.U N15.L N15.P N15.W N15.B N15.E N15.J N15.U vol
 
 Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user function
 
-\example{spectrum.error\_analysis()}
+\begin{lstlisting}[firstnumber=53]
+# Peak intensity error analysis.
+spectrum.error_analysis()
+\end{lstlisting}
 
 Any spins which cannot be resolved due to peak overlap were included in a file called \file{unresolved}.  This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.  The matching spins are excluded from the analysis by the user function
 
-\example{deselect.read(file=`unresolved', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5)}
+\begin{lstlisting}[firstnumber=56]
+# Deselect unresolved spins.
+deselect.read(file='unresolved', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+\end{lstlisting}
 
 Finally the experiment type is specified by the command
 
-\example{relax\_fit.select\_model(`exp')}
+\begin{lstlisting}[firstnumber=59]
+# Set the relaxation curve type.
+relax_fit.select_model('exp')
+\end{lstlisting}
 
 The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$\mathrm{R}_x$, $I_0$\} exponential which decays to zero.  The formula of this function is
 \begin{equation}
@@ -390,11 +411,17 @@ The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$
 
 Now that everything has been setup minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
 
-\example{grid\_search(inc=11)}
+\begin{lstlisting}[firstnumber=62]
+# Grid search.
+grid_search(inc=11)
+\end{lstlisting}
 
 The next step is to select one of the minimisation algorithms to optimise the model parameters.  Currently for relaxation curve-fitting only simplex minimisation is supported.  This is because the relaxation curve-fitting C module is incomplete only implementing the chi-squared function.  The chi-squared gradient (the vector of first partial derivatives) and chi-squared Hessian (the matrix of second partial derivatives) are not yet implemented in the C modules and hence optimisation algorithms which only employ function calls are supported.  Simplex minimisation is the only technique in relax which fits this criteron.  In addition constraints cannot be used as the constraint algorithm is dependent on gradient calls.  Therefore the minimisation command for relaxation curve-fitting is forced to be
 
-\example{minimise(`simplex', constraints=False)}
+\begin{lstlisting}[firstnumber=65]
+# Minimise.
+minimise('simplex', constraints=False)
+\end{lstlisting}
 
 
 
@@ -405,23 +432,34 @@ The next step is to select one of the minimisation algorithms to optimise the mo
 
 Only one technique adequately estimates parameter errors when the parameter values where found by optimisation -- Monte Carlo simulations\index{Monte Carlo simulation}.  In relax this can be implemented by using a series of functions from the \uf{monte\_carlo} user function class.  Firstly the number of simulations needs to be set
 
-\example{monte\_carlo.setup(number=500)}
+\begin{lstlisting}[firstnumber=68]
+# Monte Carlo simulations.
+monte_carlo.setup(number=500)
+\end{lstlisting}
 
 For each simulation, randomised relaxation curves will be fit using exactly the same methodology as the original exponential curves.  These randomised curves are created by back calculation from the fitted model parameter values and then each point on the curve randomised using the error values set earlier in the script
 
-\example{monte\_carlo.create\_data()}
+\begin{lstlisting}[firstnumber=70]
+monte_carlo.create_data()
+\end{lstlisting}
 
 As a grid search for each simulation would be too computationally expensive, the starting point for optimisation for each simulation can be set to the position of the optimised parameter values of the model
 
-\example{monte\_carlo.initial\_values()}
+\begin{lstlisting}[firstnumber=71]
+monte_carlo.initial_values()
+\end{lstlisting}
 
 Then exactly the same optimisation as was used for the model can be performed
 
-\example{minimise(`simplex', constraints=False)}
+\begin{lstlisting}[firstnumber=72]
+minimise('simplex', constraints=False)
+\end{lstlisting}
 
 The parameter errors are then determined as the standard deviation of the optimised parameter values of the simulations
 
-\example{monte\_carlo.error\_analysis()}
+\begin{lstlisting}[firstnumber=73]
+monte_carlo.error_analysis()
+\end{lstlisting}
 
 
 % Finishing off.
@@ -431,26 +469,40 @@ The parameter errors are then determined as the standard deviation of the optimi
 
 To finish off, the script first saves the relaxation rates together with their errors in a simple text file
 
-\example{value.write(param=`rx', file=`rx.out', force=True)}
+\begin{lstlisting}[firstnumber=75]
+# Save the relaxation rates.
+value.write(param='rx', file='rx.out', force=True)
+\end{lstlisting}
 
 Grace plots are created and viewed
 
-\begin{exampleenv}
-grace.write(y\_data\_type=`chi2', file=`chi2.agr', force=True) \\
-grace.write(y\_data\_type=`i0', file=`i0.agr', force=True) \\
-grace.write(y\_data\_type=`rx', file=`rx.agr', force=True) \\
-grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', file=`intensities.agr', force=True) \\
-grace.write(x\_data\_type=`relax\_times', y\_data\_type=`intensities', norm=True, file=`intensities\_norm.agr', force=True) \\
-grace.view(file=`chi2.agr') \\
-grace.view(file=`i0.agr') \\
-grace.view(file=`rx.agr') \\
-grace.view(file=`intensities.agr') \\
-grace.view(file=`intensities\_norm.agr')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=81]
+# Create Grace plots of the data.
+grace.write(y_data_type='chi2', file='chi2.agr', force=True)    # Minimised chi-squared value.
+grace.write(y_data_type='i0', file='i0.agr', force=True)    # Initial peak intensity.
+grace.write(y_data_type='rx', file='rx.agr', force=True)    # Relaxation rate.
+grace.write(x_data_type='relax_times', y_data_type='intensities', file='intensities.agr', force=True)    # Average peak intensities.
+
+grace.write(x_data_type='relax_times', y_data_type='intensities', norm=True, file='intensities_norm.agr', force=True)    # Average peak intensities (normalised).
+\end{lstlisting}
+
+and viewed
+
+\begin{lstlisting}[firstnumber=88]
+# Display the Grace plots.
+grace.view(file='chi2.agr')
+grace.view(file='i0.agr')
+grace.view(file='rx.agr')
+grace.view(file='intensities.agr')
+grace.view(file='intensities_norm.agr')
+\end{lstlisting}
 
 and finally the program state is saved for future reference
 
-\example{state.save(file=`rx.save', force=True)}
+\begin{lstlisting}[firstnumber=95]
+# Save the program state.
+\example{state.save(file='rx.save', force=True)
+\end{lstlisting}
 
 
 

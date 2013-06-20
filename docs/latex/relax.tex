@@ -39,6 +39,36 @@
             linkcolor=blue,%
             urlcolor=blue}
 
+% Source code and scripts.
+\usepackage{listings}
+\usepackage[svgnames]{xcolor}
+\usepackage{textcomp}
+\lstset{
+    backgroundcolor=\color{white},
+    basewidth=0.5em,
+    basicstyle=\ttfamily \footnotesize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    columns=fixed,
+    commentstyle=\color{blue},
+    frame=none,
+    keepspaces=true,
+    keywordstyle=\bfseries \color{ForestGreen},
+    language=Python,
+    numbers=left,
+    numbersep=15pt,
+    numberstyle=\tiny \color{orange},
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    stepnumber=1,
+    stringstyle=\color{Crimson},
+    tabsize=4,
+    upquote=true,
+}
+
+
 % New commands.
 \newcommand{\example}[1]{\vspace{-1ex} \sloppy{\footnotesize \texttt{#1}}}
 \newcommand{\smallexample}[1]{\vspace{-1ex} \sloppy{\scriptsize \texttt{#1}}}

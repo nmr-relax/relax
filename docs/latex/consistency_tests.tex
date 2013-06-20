@@ -63,94 +63,94 @@ The consistency testing analysis is only available via the prompt/script UI mode
 
 The following script can be found in the \directory{sample\_scripts} directory.
 
-\begin{exampleenv}
-"""Script for consistency testing. \\
- \\
-Severe artifacts can be introduced if model-free analysis is performed from inconsistent multiple magnetic field datasets. The use of simple tests as validation tools for the consistency assessment can help avoid such problems in order to extract more reliable information from spin relaxation experiments. In particular, these tests are useful for detecting inconsistencies arising from R2 data. Since such inconsistencies can yield artifactual Rex parameters within model-free analysis, these tests should be use routinely prior to any analysis such as model-free calculations. \\
- \\
-This script will allow one to calculate values for the three consistency tests J(0), F\_eta and F\_R2. Once this is done, qualitative analysis can be performed by comparing values obtained at different magnetic fields. Correlation plots and histograms are useful tools for such comparison, such as presented in Morin \& Gagne (2009a) J. Biomol. NMR, 45: 361-372. \\
- \\
- \\
-References \\
-========== \\
- \\
-The description of the consistency testing approach: \\
- \\
-    Morin \& Gagne (2009a) Simple tests for the validation of multiple field spin relaxation data. J. Biomol. NMR, 45: 361-372. http://dx.doi.org/10.1007/s10858-009-9381-4 \\
- \\
-The origins of the equations used in the approach: \\
- \\
-    J(0): \\
-        Farrow et al. (1995) Spectral density function mapping using 15N relaxation data exclusively. J. Biomol. NMR, 6: 153-162. http://dx.doi.org/10.1007/BF00211779 \\
+\begin{lstlisting}
+""" Script for consistency testing.
 
-    F\_eta: \\
-        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m \\
+Severe artifacts can be introduced if model-free analysis is performed from inconsistent multiple magnetic field datasets. The use of simple tests as validation tools for the consistency assessment can help avoid such problems in order to extract more reliable information from spin relaxation experiments. In particular, these tests are useful for detecting inconsistencies arising from R2 data. Since such inconsistencies can yield artifactual Rex parameters within model-free analysis, these tests should be use routinely prior to any analysis such as model-free calculations.
 
-    F\_R2: \\
-        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. http://dx.doi.org/10.1021/ja981686m \\
- \\
-A study where consistency tests were used: \\
- \\
-    Morin \& Gagne (2009) NMR dynamics of PSE-4 beta-lactamase: An interplay of ps-ns order and us-ms motions in the active site. Biophys. J., 96: 4681-4691. http://dx.doi.org/10.1016/j.bpj.2009.02.068  \\
-""" \\
- \\
-\# Create the run. \\
-name = `consistency' \\
-pipe.create(name, `ct') \\
- \\
-\# Set up the 15N spins. \\
-sequence.read(`noe.600.out', res\_num\_col=1) \\
-spin.name(name=`N') \\
-spin.element(element=`N') \\
-spin.isotope(isotope=`15N', spin\_id=`@N') \\
- \\
-\# Load the relaxation data. \\
-relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out',  res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out',  res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
- \\
-\# Generate the 1H spins for the magnetic dipole-dipole interaction. \\
-sequence.attach\_protons() \\
- \\
-\# Define the magnetic dipole-dipole relaxation interaction. \\
-interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10) \\
- \\
-\# Define the chemical shift relaxation interaction. \\
-value.set(val=-172 * 1e-6, param=`csa') \\
- \\
-\# Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor \\
-value.set(val=15.7, param=`orientation') \\
- \\
-\# Set the approximate correlation time. \\
-value.set(val=13 * 1e-9, param=`tc') \\
- \\
-\# Set the frequency. \\
-consistency\_tests.set\_frq(frq=600.0 * 1e6) \\
- \\
-\# Consistency tests. \\
-calc() \\
- \\
-\# Monte Carlo simulations. \\
-monte\_carlo.setup(number=500) \\
-monte\_carlo.create\_data() \\
-calc() \\
-monte\_carlo.error\_analysis() \\
- \\
-\# Create grace files. \\
-grace.write(y\_data\_type=`j0', file=`j0.agr', force=True) \\
-grace.write(y\_data\_type=`f\_eta', file=`f\_eta.agr', force=True) \\
-grace.write(y\_data\_type=`f\_r2', file=`f\_r2.agr', force=True) \\
- \\
-\# View the grace files. \\
-grace.view(file=`j0.agr') \\
-grace.view(file=`f\_eta.agr') \\
-grace.view(file=`f\_r2.agr') \\
- \\
-\# Finish. \\
-results.write(file=`results', force=True) \\
-state.save(`save', force=True)
-\end{exampleenv}
+This script will allow one to calculate values for the three consistency tests J(0), F_eta and F_R2. Once this is done, qualitative analysis can be performed by comparing values obtained at different magnetic fields. Correlation plots and histograms are useful tools for such comparison, such as presented in Morin & Gagne (2009a) J. Biomol. NMR, 45: 361-372.
+
+
+References
+==========
+
+The description of the consistency testing approach:
+
+    Morin & Gagne (2009a) Simple tests for the validation of multiple field spin relaxation data. J. Biomol. NMR, 45: 361-372. U{http://dx.doi.org/10.1007/s10858-009-9381-4}
+
+The origins of the equations used in the approach:
+
+    J(0):
+        Farrow et al. (1995) Spectral density function mapping using 15N relaxation data exclusively. J. Biomol. NMR, 6: 153-162. U{http://dx.doi.org/10.1007/BF00211779}
+
+    F_eta:
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. U{http://dx.doi.org/10.1021/ja981686m}
+
+    F_R2:
+        Fushman et al. (1998) Direct measurement of 15N chemical shift anisotropy in solution. J. Am. Chem. Soc., 120: 10947-10952. U{http://dx.doi.org/10.1021/ja981686m}
+
+A study where consistency tests were used:
+
+    Morin & Gagne (2009) NMR dynamics of PSE-4 beta-lactamase: An interplay of ps-ns order and us-ms motions in the active site. Biophys. J., 96: 4681-4691. U{http://dx.doi.org/10.1016/j.bpj.2009.02.068}
+"""
+
+# Create the data pipe.
+name = 'consistency'
+pipe.create(name, 'ct')
+
+# Set up the 15N spins.
+sequence.read('noe.600.out', res_num_col=1)
+spin.name(name='N')
+spin.element(element='N')
+spin.isotope(isotope='15N', spin_id='@N')
+
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
+
+# Generate the 1H spins for the magnetic dipole-dipole interaction.
+sequence.attach_protons()
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+
+# Define the chemical shift relaxation interaction.
+value.set(val=-172 * 1e-6, param='csa')
+
+# Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
+value.set(val=15.7, param='orientation')
+
+# Set the approximate correlation time.
+value.set(val=13 * 1e-9, param='tc')
+
+# Set the frequency.
+consistency_tests.set_frq(frq=600.0 * 1e6)
+
+# Consistency tests.
+calc()
+
+# Monte Carlo simulations.
+monte_carlo.setup(number=500)
+monte_carlo.create_data()
+calc()
+monte_carlo.error_analysis()
+
+# Create grace files.
+grace.write(y_data_type='j0', file='j0.agr', force=True)
+grace.write(y_data_type='f_eta', file='f_eta.agr', force=True)
+grace.write(y_data_type='f_r2', file='f_r2.agr', force=True)
+
+# View the grace files.
+grace.view(file='j0.agr')
+grace.view(file='f_eta.agr')
+grace.view(file='f_r2.agr')
+
+# Finish.
+results.write(file='results', force=True)
+state.save('save', force=True)
+\end{lstlisting}
 
 This is similar in spirit to the reduced spectral density mapping sample script (Chapter~\ref{ch: J(w) mapping} on page~\pageref{ch: J(w) mapping}).
 
@@ -162,24 +162,28 @@ This is similar in spirit to the reduced spectral density mapping sample script 
 
 The steps for setting up relax and the data model concept are described in full detail in Chapter~\ref{ch: data model}.  The first step, as for all analyses in relax, is to create a data pipe for storing all the data:
 
-\begin{exampleenv}
-pipe.create(pipe\_name=`my\_protein', pipe\_type=`ct')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=31]
+# Create the data pipe.
+name = 'consistency'
+pipe.create(name, 'ct')
+\end{lstlisting}
 
 Then, in this example, the $^{15}$N spins are created from one of the NOE relaxation data files (Chapter~\ref{ch: NOE}):
 
-\begin{exampleenv}
-sequence.read(file=`noe.600.out', res\_num\_col=1, res\_name\_col=2) \\
-spin.name(name=`N') \\
-spin.element(element=`N') \\
-spin.isotope(isotope=`15N', spin\_id=`@N')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=35]
+# Set up the 15N spins.
+sequence.read('noe.600.out', res_num_col=1)
+spin.name(name='N')
+spin.element(element='N')
+spin.isotope(isotope='15N', spin_id='@N')
+\end{lstlisting}
 
 Skipping the relaxation data loading, the next part of the analysis is to create protons attached to the nitrogens for the magnetic dipole-dipole relaxation interaction:
 
-\begin{exampleenv}
-sequence.attach\_protons()
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=46]
+# Generate the 1H spins for the magnetic dipole-dipole interaction.
+sequence.attach_protons()
+\end{lstlisting}
 
 This is needed to define the magnetic dipole-dipole interaction which governs relaxation.
 
@@ -192,17 +196,19 @@ This is needed to define the magnetic dipole-dipole interaction which governs re
 
 The loading of relaxation data is straight forward.  This is performed prior to the creation of the proton spins so that the data is loaded only into the $^{15}$N spin containers and not both spins for each spin system.  Note that if the relaxation data files contain spin information, then this order is not important.  For this analysis, only data for a single field strength can be loaded:
 
-\begin{exampleenv}
-relax\_data.read(ri\_id=`R1\_600',  ri\_type=`R1',  frq=600.0*1e6, file=`r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`R2\_600',  ri\_type=`R2',  frq=600.0*1e6, file=`r2.600.out', res\_num\_col=1, data\_col=3, error\_col=4) \\
-relax\_data.read(ri\_id=`NOE\_600', ri\_type=`NOE', frq=600.0*1e6, file=`noe.600.out', res\_num\_col=1, data\_col=3, error\_col=4)
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=41]
+# Load the relaxation data.
+relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='R2_600',  ri_type='R2',  frq=600.0*1e6, file='r2.600.out', res_num_col=1, data_col=3, error_col=4)
+relax_data.read(ri_id='NOE_600', ri_type='NOE', frq=600.0*1e6, file='noe.600.out', res_num_col=1, data_col=3, error_col=4)
+\end{lstlisting}
 
 The frequency of the data must also be explicitly specified:
 
-\begin{exampleenv}
-consistency\_tests.set\_frq(frq=600.0 * 1e6) \\
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=62]
+# Set the frequency.
+consistency_tests.set_frq(frq=600.0 * 1e6)
+\end{lstlisting}
 
 
 
@@ -213,22 +219,25 @@ consistency\_tests.set\_frq(frq=600.0 * 1e6) \\
 
 Prior to calculating the $J(0)$, $F_\eta$, and $F_{R_2}$ values, the physical interactions which govern relaxation of the spins must be defined.  For the magnetic dipole-dipole relaxation interaction, the user functions are:
 
-\begin{exampleenv}
-interatom.define(spin\_id1=`@N', spin\_id2=`@H', direct\_bond=True) \\
-interatom.set\_dist(spin\_id1=`@N', spin\_id2=`@H', ave\_dist=1.02 * 1e-10)
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=49]
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.02 * 1e-10)
+\end{lstlisting}
 
 For the chemical shift relaxation interaction, the user function call is:
 
-\begin{exampleenv}
-value.set(val=-172 * 1e-6, param=`csa')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=53]
+# Define the chemical shift relaxation interaction.
+value.set(val=-172 * 1e-6, param='csa')
+\end{lstlisting}
 
 For the angle in degrees between the $^{15}$N-$^1$H vector and the principal axis of the $^{15}$N chemical shift tensor, the user function call is:
 
-\begin{exampleenv}
-value.set(val=15.7, param=`orientation')
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=56]
+# Set the angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor
+value.set(val=15.7, param='orientation')
+\end{lstlisting}
 
 
 % Calculation and error propagation.
@@ -238,18 +247,20 @@ value.set(val=15.7, param=`orientation')
 
 Optimisation for this analysis is not needed as this is a direct calculation.  Therefore the $J(0)$, $F_\eta$, and $F_{R_2}$ values are simply calculated with the call:
 
-\begin{exampleenv}
+\begin{lstlisting}[firstnumber=65]
+# Consistency tests.
 calc()
-\end{exampleenv}
+\end{lstlisting}
 
 The propagation of errors is more complicated.  The Monte Carlo simulation framework of relax can be used to propagate the relaxation data errors to the spectral density errors.  As this is a direct calculation, this collapses into the standard bootstrapping method.  The normal Monte Carlo user functions can be called:
 
-\begin{exampleenv}
-monte\_carlo.setup(number=500) \\
-monte\_carlo.create\_data() \\
-calc() \\
-monte\_carlo.error\_analysis()
-\end{exampleenv}
+\begin{lstlisting}[firstnumber=68]
+# Monte Carlo simulations.
+monte_carlo.setup(number=500)
+monte_carlo.create_data()
+calc()
+monte_carlo.error_analysis()
+\end{lstlisting}
 
 In this case, the \uf{monte\_carlo.initial\_values} user function call is not required.
 

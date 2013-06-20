@@ -36,7 +36,9 @@ All permanent data handled by relax is kept in a structure known as the relax da
 
 The first thing one must do when relax is launched is to create a data pipe.  When using the GUI, a base data pipe will be created when opening one of the automatic analyses via the analysis selection window (see figure~\ref{fig: screenshot: analysis wizard} on page~\pageref{fig: screenshot: analysis wizard}).  This will also create a data pipe bundle for the analysis (\textit{vide infra}).  Alternatively the data pipe editor window can be used to create data pipes (see figure~\ref{fig: screenshot: pipe editor} on page~\pageref{fig: screenshot: pipe editor}).  For the prompt/scripting modes, or the \guimenuitemthree{User functions}{pipe}{create} menu entry, a data pipe can be initialised by specifying the unique name of the data pipe and the data pipe type:
 
-\example{pipe.create(pipe\_name=`NOE 1200 MHz', pipe\_type=`noe')}
+\begin{lstlisting}
+pipe.create(pipe_name='NOE 1200 MHz', pipe_type='noe')
+\end{lstlisting}
 
 A number of relax operations will also create data pipes by merging a group of pipes or branching pre-existing pipes.  See section~\ref{sect: the data pipe} on page~\pageref{sect: the data pipe} for additional details.
 
@@ -52,12 +54,12 @@ All data not associated with spin systems will be stored in the base data pipe. 
 
 Related data pipes can be grouped into a `bundle'.  For example if the data pipes ``sphere'', ``oblate spheroid'', ``prolate spheroid'', and ``ellipsoid'' preexist, these can be grouped into a bundle called ``diffusion tensors'' with the following series of user function calls:
 
-\begin{exampleenv}
-pipe.bundle(bundle=`diffusion tensors', pipe=`sphere') \\
-pipe.bundle(bundle=`diffusion tensors', pipe=`oblate spheroid') \\
-pipe.bundle(bundle=`diffusion tensors', pipe=`prolate spheroid') \\
-pipe.bundle(bundle=`diffusion tensors', pipe=`ellipsoid')
-\end{exampleenv}
+\begin{lstlisting}
+pipe.bundle(bundle='diffusion tensors', pipe='sphere')
+pipe.bundle(bundle='diffusion tensors', pipe='oblate spheroid')
+pipe.bundle(bundle='diffusion tensors', pipe='prolate spheroid')
+pipe.bundle(bundle='diffusion tensors', pipe='ellipsoid')
+\end{lstlisting}
 
 The data pipe editor window of the GUI can also be used to bundle pipes together (see figure~\ref{fig: screenshot: pipe editor} on page~\pageref{fig: screenshot: pipe editor}).
 
@@ -81,7 +83,9 @@ Within a data pipe is the molecule, residue, and spin container data structure. 
 
 The spin containers are part of a nested set of containers, and are graphically depicted in the spin viewer window of the GUI in figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}.  As can be seen from the figure, the top level holds a single molecular container.  Multiple molecular containers can be present if the study is of a molecular complex.  Using the GUI menus or the prompt/scripting mode, molecule containers can be manually created with the user function:
 
-\example{molecule.create(mol\_name=`glycerol', mol\_type=`organic molecule')}
+\begin{lstlisting}
+molecule.create(mol_name='glycerol', mol_type='organic molecule')
+\end{lstlisting}
 
 In the spin viewer window of the GUI, right clicking on the \gui{Spin system information} element will pop up a menu with an entry for adding molecule containers.  Right clicking on molecule containers will show a pop up menu with an entry for permanently deleting the container.
 
@@ -96,7 +100,9 @@ In the spin viewer window of the GUI, right clicking on the \gui{Spin system inf
 
 Nested within the molecule containers are residue containers.  These are graphically depicted in the spin viewer window (see figure~\ref{fig: screenshot: spin viewer} on page~\pageref{fig: screenshot: spin viewer}).  Each molecule container can possess multiple residues.  These require either a unique residue number or unique residue name.  For organic molecules where the residue concept is meaningless, all spin containers can be held within a single unnamed and unnumbered residue container.  Using the GUI menus or the prompt/scripting mode, residue containers can be manually created with the user function:
 
-\example{residue.create(res\_num=`-5', res\_name=`ASP')}
+\begin{lstlisting}
+residue.create(res_num='-5', res_name='ASP')
+\end{lstlisting}
 
 Alternatively residues can be added in the spin viewer window from the pop up menu when right clicking on molecule containers, and can be deleted via the pop up menu when right clicking on the residue to delete.
 
@@ -114,7 +120,9 @@ Spin containers are nested within a residue container (again graphically depicte
 
 Spin containers can be manually added via the \uf{spin.create} user function in the GUI or prompt/scripting mode:
 
-\example{spin.create(spin\_num=`200', spin\_name=`NE1')}
+\begin{lstlisting}
+spin.create(spin_num='200', spin_name='NE1')
+\end{lstlisting}
 
 The spin viewer window can also be used by right clicking on residue containers.
 
@@ -150,7 +158,9 @@ Regular expression can, in some instances, be used to select spins.  For example
 
 Separate from the spin containers, yet strongly linked to them, are the interatomic data containers.  These containers are grouped together within the same data pipe as the spins they point to.  These define interactions between two spins located anywhere within the molecule, residue and spin nested data structure.  These are automatically created when reading in data defined between two spins such as RDCs and NOE distance constraints.  They can also be created using the \uf{interatom.define} user function:
 
-\example{interatom.define(spin\_id1=`:2@N', spin\_id2=`:2@H')}
+\begin{lstlisting}
+interatom.define(spin_id1=':2@N', spin_id2=':2@H')
+\end{lstlisting}
 
 As the interatomic data container concept is relatively new, how they are created and handled is likely to evolve and change in the future.
 
@@ -175,25 +185,25 @@ Below are three different examples showing how to set up the relax data model fo
 
 3D structural data is stored at the level of the current data pipe.  This data is completely separate from the molecule, residue and spin data structure.  However the structural data can be used to generate the spin containers.  For example for the nitrogen relaxation in a model-free analysis where both the nitrogen and proton are needed to define the magnetic dipole-dipole relaxation:
 
-\begin{exampleenv}
-\# Create a data pipe. \\
-pipe.create(pipe\_name=`ellipsoid', pipe\_type=`mf') \\
- \\
-\# Load the PDB file. \\
-structure.read\_pdb(`1f3y.pdb') \\
- \\
-\# Set up the 15N and 1H backbone spins. \\
-structure.load\_spins(`@N', ave\_pos=True) \\
-structure.load\_spins(`@H', ave\_pos=True) \\
- \\
-\# Set up the 15N and 1H for the tryptophan indole ring. \\
-structure.load\_spins(`@NE1', ave\_pos=True) \\
-structure.load\_spins(`@HE1', ave\_pos=True) \\
- \\
-\# Define the spin isotopes. \\
-spin.isotope(`15N', spin\_id=`@N*') \\
-spin.isotope(`1H', spin\_id=`@H*')
-\end{exampleenv}
+\begin{lstlisting}
+# Create a data pipe.
+pipe.create(pipe_name='ellipsoid', pipe_type='mf')
+
+# Load the PDB file.
+structure.read_pdb('1f3y.pdb')
+
+# Set up the 15N and 1H backbone spins.
+structure.load_spins('@N', ave_pos=True)
+structure.load_spins('@H', ave_pos=True)
+
+# Set up the 15N and 1H for the tryptophan indole ring.
+structure.load_spins('@NE1', ave_pos=True)
+structure.load_spins('@HE1', ave_pos=True)
+
+# Define the spin isotopes.
+spin.isotope('15N', spin_id='@N*')
+spin.isotope('1H', spin_id='@H*')
+\end{lstlisting}
 
 The \uf{structure.read\_pdb} user function will load the structural data into the current data pipe, and the \uf{structure.load\_spins} user function will create the molecule, residue, and spin containers as needed.  This will also load atomic position information into the matching spin containers.  The \uf{spin.isotope} user function is required to define the magnetic dipole-dipole interaction and is information not present in the PDB file.
 
@@ -212,15 +222,15 @@ Note that if structural data from the PDB is used to generate the spin container
 
 Alternatively to setting up the molecule, residue, and spin containers via 3D structural data, a plain text columnar formatted file can be used.  This is useful for when no 3D structure exists for the molecule.  It also has the advantage that the residue and atom names need not conform to the PDB standard.  An example for reading sequence data is:
 
-\begin{exampleenv}
-\# Create a data pipe. \\
-pipe.create(pipe\_name=`R1 1200', pipe\_type=`relax\_fit') \\
- \\
-\# Set up the 15N spins. \\
-sequence.read(file=`noe.500.out', mol\_name\_col=1, res\_num\_col=2, res\_name\_col=3, spin\_num\_col=4, spin\_name\_col=5) \\
-spin.element(element=`N', spin\_id=`@N*') \\
-spin.isotope(`15N', spin\_id=`@N')
-\end{exampleenv}
+\begin{lstlisting}
+# Create a data pipe.
+pipe.create(pipe_name='R1 1200', pipe_type='relax_fit')
+
+# Set up the 15N spins.
+sequence.read(file='noe.500.out', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+spin.element(element='N', spin_id='@N*')
+spin.isotope('15N', spin_id='@N')
+\end{lstlisting}
 
 Here the molecule, residue, and spin information is extracted from the \promptstring{noe.500.out} file which could look like:
 
@@ -251,17 +261,17 @@ In the GUI, the creation of molecule, residue, and spin containers from a sequen
 
 For the masochists out there, the full molecule, residue and spin data structure can be manually constructed.  For example:
 
-\begin{exampleenv}
-\# Manually create the molecule, residue, and spin containers. \\
-molecule.create(mol\_name=`Ap4Aase', mol\_type=`protein') \\
-residue.create(res\_num=1,  res\_name=`GLY') \\
-residue.create(res\_num=3,  res\_name=`LEU') \\
-residue.create(res\_num=96, res\_name=`TRP') \\
-spin.create(res\_num=1,  spin\_name=`N') \\
-spin.create(res\_num=3,  spin\_name=`N') \\
-spin.create(res\_num=96, spin\_name=`N') \\
-spin.create(res\_num=96, spin\_name=`NE1')
-\end{exampleenv}
+\begin{lstlisting}
+# Manually create the molecule, residue, and spin containers.
+molecule.create(mol_name='Ap4Aase', mol_type='protein')
+residue.create(res_num=1,  res_name='GLY')
+residue.create(res_num=3,  res_name='LEU')
+residue.create(res_num=96, res_name='TRP')
+spin.create(res_num=1,  spin_name='N')
+spin.create(res_num=3,  spin_name='N')
+spin.create(res_num=96, spin_name='N')
+spin.create(res_num=96, spin_name='NE1')
+\end{lstlisting}
 
 These user functions can be repeated until the full sequence has been constructed.
 
