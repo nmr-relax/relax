@@ -151,27 +151,31 @@ relax can be used through the following UIs:
 
 The primary interface of relax is the prompt.  After typing \promptstring{relax} within a terminal\index{terminal} you will be presented with
 
-\example{relax>}
+\begin{lstlisting}[numbers=none]
+relax>
+\end{lstlisting}
 
 This is the Python prompt which has been tailored specifically for relax.  You will hence have full access, if desired, to the power of the Python\index{Python} programing language to manipulate your data.  You can for instance type
 
-\example{relax> print("Hello World")}
+\begin{lstlisting}[numbers=none]
+relax> print("Hello World")
+\end{lstlisting}
 
 the result being
 
-\begin{exampleenv}
-relax> print("Hello World") \\
-Hello World \\
+\begin{lstlisting}[numbers=none]
+relax> print("Hello World")
+Hello World
 relax>
-\end{exampleenv}
+\end{lstlisting}
 
 Or using relax as a calculator
 
-\begin{exampleenv}
-relax> (1.0 + (2 * 3))/10 \\
-0.69999999999999996 \\
+\begin{lstlisting}[numbers=none]
+relax> (1.0 + (2 * 3))/10
+0.69999999999999996
 relax>
-\end{exampleenv}
+\end{lstlisting}
 
 % Prompt screenshot
 \begin{figure}
@@ -193,17 +197,23 @@ A number of simple programming axioms includes that of strings\index{string}, in
 
 Probably the most important detail is that functions in Python require brackets around their arguments.  For example
 
-\example{relax> minimise()}
+\begin{lstlisting}[numbers=none]
+relax> minimise()
+\end{lstlisting}
 
 will commence minimisation\index{minimisation} however
 
-\example{relax> minimise}
+\begin{lstlisting}[numbers=none]
+relax> minimise
+\end{lstlisting}
 
 will do nothing.
 
 The arguments to a function are simply a comma separated list within the brackets of the function.  For example to save the program's current state type
 
-\example{relax> state.save(`save', force=True)}
+\begin{lstlisting}[numbers=none]
+relax> state.save('save', force=True)
+\end{lstlisting}
 
 Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \prompt{file} and the value you would like to supply is \promptstring{R1.out}.  Various methods exist for supplying this argument.  Firstly you could simply type \promptstring{R1.out} into the correct position in the argument list.  Secondly you can type \prompt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
 
@@ -225,11 +235,15 @@ For standard data analysis a large number of specially tailored functions called
 
 A few special objects which are available within the prompt are not actually functions.  These objects do not require brackets at their end for them to function.  For example to exit relax type
 
-\example{relax> exit}
+\begin{lstlisting}[numbers=none]
+relax> exit
+\end{lstlisting}
 
 Another special object is that of the function class\index{function class}.  This object is simply a container which holds a number of user functions.  You can access the user function within the class by typing the name of the class, then a dot \promptstring{.}, followed by the name of the user function.  An example is the user function for reading relaxation data out of a file and loading the data into relax.  The function is called \promptstring{read} and the class is called \promptstring{relax\_data}.  To execute the function, type something like
 
-\example{relax\_data.read(ri\_id='R1\_600',  ri\_type='R1',  frq=600.0*1e6, file='r1.600.out', res\_num\_col=1, data\_col=3, error\_col=4)}
+\begin{lstlisting}[numbers=none]
+relax> relax_data.read(ri_id='R1_600',  ri_type='R1',  frq=600.0*1e6, file='r1.600.out', res_num_col=1, data_col=3, error_col=4)
+\end{lstlisting}
 
 On first usage the relax prompt can be quite daunting.  Two features exist to increase the usability of the prompt -- the help system and tab completion.
 
@@ -243,15 +257,21 @@ On first usage the relax prompt can be quite daunting.  Two features exist to in
 
 For assistance in using a function simply type
 
-\example{help(function)}
+\begin{lstlisting}[numbers=none]
+relax> help(function)
+\end{lstlisting}
 
 In addition to functions if
 
-\example{help(object)}
+\begin{lstlisting}[numbers=none]
+relax> help(object)
+\end{lstlisting}
 
 is typed the help for the python object is returned.  This system is similar to the help function built into the python interpreter, which has been renamed to \prompt{help\_python}, with the interactive component removed.  For the standard interactive python help system type
 
-\example{help\_python()}
+\begin{lstlisting}[numbers=none]
+relax> help_python()
+\end{lstlisting}
 
 
 
@@ -266,24 +286,26 @@ Tab completion is implemented to prevent insanity as the function names can be q
 
 Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \uf{model\_free} type
 
-\example{relax> model\_free.}
+\begin{lstlisting}[numbers=none]
+relax> model_free.
+\end{lstlisting}
 
 The dot character at the end is essential.  After hitting the [TAB] key you should see something like
 
-\begin{exampleenv}
-relax> model\_free. \\
-model\_free.\_\_class\_\_ \\
-model\_free.\_\_doc\_\_ \\
-model\_free.\_\_init\_\_ \\
-model\_free.\_\_module\_\_ \\
-model\_free.\_\_relax\_\_ \\
-model\_free.\_\_relax\_help\_\_ \\
-model\_free.create\_model \\
-model\_free.delete \\
-model\_free.remove\_tm \\
-model\_free.select\_model \\
-relax> model\_free.
-\end{exampleenv}
+\begin{lstlisting}[numbers=none]
+relax| model_free.
+model_free.__class__
+model_free.__doc__
+model_free.__init__
+model_free.__module__
+model_free.__relax__
+model_free.__relax_help__
+model_free.create_model
+model_free.delete
+model_free.remove_tm
+model_free.select_model
+relax> model_free.
+\end{lstlisting}
 
 All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \uf{copy}, \uf{create\_model}, \uf{delete}, \uf{remove\_tm}, and \uf{select\_model} contained within \uf{model\_free} are all visible.
 
@@ -307,7 +329,9 @@ The flow of data through relax can be thought of as travelling through these pip
 
 The primary method for creating a data pipe is through the user function\index{user functions} \uf{pipe.create}.  For example
 
-\example{relax> pipe.create(`m1', `mf')}
+\begin{lstlisting}[numbers=none]
+relax> pipe.create('m1', 'mf')
+\end{lstlisting}
 
 will create a model-free data pipe labelled \promptstring{m1}.  The following is a table of all the types which can be assigned to a data pipe.
 
@@ -565,11 +589,13 @@ A number of windows in the GUI provide user feedback or allow for the viewing an
 
 To enable advanced Python\index{Python} scripting and control many parts of relax have been designed in an object oriented fashion.  If you would like to play with internals of the program the entirety of relax is accessible by importation.  For example all data is contained within the object called the relax data store which, to be able to access it, needs be imported by typing:
 
-\example{relax> from data\_store import Relax\_data\_store; ds = Relax\_data\_store()}
+\begin{lstlisting}[numbers=none]
+relax> from data_store import Relax_data_store; ds = Relax_data_store()
+\end{lstlisting}
 
 The \prompt{ds} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
 
-\begin{lstlisting}
+\begin{lstlisting}[numbers=none]
 relax> alpha = 0.1342
 relax> beta = 1.0134
 relax> gamma = 2.4747
