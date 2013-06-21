@@ -771,6 +771,7 @@ class Fetch_docstrings:
             'else',
             'exec',
             'global',
+            'help',
             'if',
             'in',
             'is',
@@ -798,7 +799,7 @@ class Fetch_docstrings:
         file.write("\lstdefinelanguage{relax}{\n")
 
         # Allow the user function '.' character to be part of the keywords.
-        file.write("    alsoletter={.},\n")
+        file.write("    alsoletter={.>|},\n")
 
         # Output the first set of Python keywords.
         file.write("    morekeywords={")
@@ -818,8 +819,11 @@ class Fetch_docstrings:
             file.write("%s," % name)
         file.write("},\n")
 
+        # Output the relax prompt.
+        file.write("    morekeywords=[4]{relax>,relax|},\n")
+
         # Output the relax user functions as keywords.
-        file.write("    morekeywords=[4]{")
+        file.write("    morekeywords=[5]{")
         for name in uf_names:
             file.write("%s," % name)
         file.write("},\n")
