@@ -1006,13 +1006,8 @@ class Fetch_docstrings:
 
         # Loop over the examples.
         for text in list:
-            # LaTeX formatting.
-            text = self.break_functions(text)
-            text = self.latex_quotes(text)
-            text = self.latex_special_chars(text)
-
             # Write to file.
-            self.file.write("\\smallexample{%s}\n\n" % text)
+            self.file.write("\\begin{lstlisting}[numbers=none]\n%s\n\\end{lstlisting}\n\n" % text)
 
         # An extra newline.
         self.file.write("\n")
