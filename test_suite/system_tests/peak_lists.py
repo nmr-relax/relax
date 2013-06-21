@@ -206,20 +206,20 @@ class Peak_lists(SystemTestCase):
         """Test the reading of an NMRPipe seriesTab peak list."""
 
         # Create the sequence data, and name the spins.
-        self.interpreter.residue.create(62)
-        self.interpreter.spin.name(name='NE1')
-        self.interpreter.residue.create(10)
-        self.interpreter.residue.create(6)
-        self.interpreter.spin.name(name='N', spin_id=1)
-        self.interpreter.spin.name(name='N', spin_id=1)
+        self.interpreter.residue.create(res_num = 62, res_name=None, mol_name=None )
+        self.interpreter.spin.name(name='NE1', spin_id=':62')
+        self.interpreter.residue.create(res_num = 10)
+        self.interpreter.spin.name(name='N', spin_id=':10')
+        self.interpreter.residue.create(res_num = 6)
+        self.interpreter.spin.name(name='N', spin_id=':6')
 
         # Read the peak list.
         self.interpreter.spectrum.read_intensities(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
 
         # Test the data.
         self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities['test']), +1.851056e+06)
-        self.assertEqual(list(cdp.mol[0].res[1].spin[1].intensities['test']), +3.224387e+05)
-        self.assertEqual(list(cdp.mol[0].res[2].spin[1].intensities['test']), +1.479366e+06)
+        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities['test']), +3.224387e+05)
+        self.assertEqual(list(cdp.mol[0].res[2].spin[0].intensities['test']), +1.479366e+06)
 
 
     def test_read_peak_list_sparky(self):
