@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -270,6 +271,10 @@ def autodetect_format(file_data):
     # NMRView format.
     if line == ['label', 'dataset', 'sw', 'sf']:
         return 'nmrview'
+
+    # NMRPipe SeriesTab.
+    if line[0] == 'REMARK' and line[1] == 'SeriesTab':
+        return 'seriestab'
 
     # XEasy format.
     if line == ['No.', 'Color', 'w1', 'w2', 'ass.', 'in', 'w1', 'ass.', 'in', 'w2', 'Volume', 'Vol.', 'Err.', 'Method', 'Comment']:
