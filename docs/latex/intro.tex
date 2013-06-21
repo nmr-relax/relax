@@ -569,16 +569,20 @@ To enable advanced Python\index{Python} scripting and control many parts of rela
 
 The \prompt{ds} object is a dictionary type which contains the multiple data pipes.  All of relax's packages, modules, functions, and classes are also accessible by import statements.  For example to create a rotation matrix from three Euler angles in the z-y-z notation, type:
 
-\begin{exampleenv}
-relax> alpha = 0.1342 \\
-relax> beta = 1.0134 \\
-relax> gamma = 2.4747 \\
-relax> from maths\_fns.rotation\_matrix import R\_euler\_zyz \\
-relax> from numpy import float64, zeros \\
-relax> R = zeros((3,3), float64) \\
-relax> R\_euler\_zyz(R, alpha, beta, gamma) \\
-relax> R
-\end{exampleenv}
+\begin{lstlisting}
+relax> alpha = 0.1342
+relax> beta = 1.0134
+relax> gamma = 2.4747
+relax> from lib.geometry.rotations import euler_to_R_zyz
+relax> from numpy import float64, zeros
+relax> R = zeros((3,3), float64)
+relax> euler_to_R_zyz(alpha, beta, gamma, R)
+relax> print(R)
+[[-0.494666415429033 -0.557373756841289 -0.666813041737502]
+ [ 0.219125193028791 -0.822460914570202  0.524921131013452]
+ [-0.84100492699311   0.113545317776532  0.528978424497956]]
+relax>
+\end{lstlisting}
 
 
 
