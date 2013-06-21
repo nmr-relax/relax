@@ -684,28 +684,28 @@ class Auto_model_free(Base_analysis):
         # Structural data.
         if not hasattr(cdp, 'structure'):
             # Create the PDB reading page.
-            page = uf_store['structure.read_pdb'].create_page(self.dipole_wizard)
+            page = uf_store['structure.read_pdb'].create_page(self.dipole_wizard, sync=True)
             self.dipole_wizard.add_page(page, skip_button=True)
 
             # Create the position reading page.
-            page = uf_store['structure.get_pos'].create_page(self.dipole_wizard)
+            page = uf_store['structure.get_pos'].create_page(self.dipole_wizard, sync=True)
             self.dipole_wizard.add_page(page, skip_button=True)
 
         # Create the interatom.define page.
-        page = uf_store['interatom.define'].create_page(self.dipole_wizard)
+        page = uf_store['interatom.define'].create_page(self.dipole_wizard, sync=True)
         page.SetValue('spin_id1', '@N')
         page.SetValue('spin_id2', '@H')
         self.dipole_wizard.add_page(page)
 
         # Create the interatom.set_dist page.
-        page = uf_store['interatom.set_dist'].create_page(self.dipole_wizard)
+        page = uf_store['interatom.set_dist'].create_page(self.dipole_wizard, sync=True)
         page.SetValue('spin_id1', '@N*')
         page.SetValue('spin_id2', '@H*')
         page.SetValue('ave_dist', NH_BOND_LENGTH)
         self.dipole_wizard.add_page(page)
 
         # Create the interatom.unit_vectors page.
-        page = uf_store['interatom.unit_vectors'].create_page(self.dipole_wizard)
+        page = uf_store['interatom.unit_vectors'].create_page(self.dipole_wizard, sync=True)
         self.dipole_wizard.add_page(page)
 
         # Reset the cursor.
