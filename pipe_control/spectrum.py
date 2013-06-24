@@ -655,6 +655,22 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             # Replace the data.
             intensity_data[i][2] = spin_id
 
+    # NMRPipe SeriesTab.
+    elif format == 'seriestab':
+        # Print out.
+        print("NMRPipe SeriesTab formatted data file.\n")
+
+        # Extract the data.
+        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
+
+        # Convert the residue number to a spin ID.
+        for i in range(len(intensity_data)):
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
+
+            # Replace the data.
+            intensity_data[i][2] = spin_id
+
     # Sparky.
     elif format == 'sparky':
         # Print out.
