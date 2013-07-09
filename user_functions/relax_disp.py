@@ -494,12 +494,7 @@ uf.desc[-1].add_verbatim("""\
     R1rho(nu1) = ------- * ln | ------- | ,
                  relax_T      \   I0    /\
 """)
-uf.desc[-1].add_paragraph("where I1 is the peak intensity in a spectrum for a given spin-lock field strength nu1.  Errors are calculated using the formula:")
-uf.desc[-1].add_verbatim("""\
-                    / (sigma_I1 / I1(nu1))^2 + (sigma_I0 / I0)^2 \ 
-    sigma_R2 = sqrt | ------------------------------------------ | ,
-                    \                  relax_T                   /\
-""")
+uf.desc[-1].add_paragraph("where I1 is the peak intensity in a spectrum for a given spin-lock field strength nu1.")
 uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff/R1rho values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analysis.  Both R2eff/R1rho and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the parameter errors.")
 # The no exchange model.
 uf.desc.append(Desc_container("The model for no chemical exchange relaxation"))

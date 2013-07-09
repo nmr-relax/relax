@@ -176,7 +176,7 @@ The values and errors are determined with a single call of the \uf{calc} user fu
 
 Errors are calculated using the formula
 \begin{equation} \label{eq: dispersion error}
-    \sigma_{\textrm{R}_2}^2 = \frac{\left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 }{T_\textrm{relax}} .
+    \sigma_{\textrm{R}_2} = \frac{1}{T_\textrm{relax}} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
 \end{equation}
 
 In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.  This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
