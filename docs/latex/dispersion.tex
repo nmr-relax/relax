@@ -153,6 +153,8 @@ M61 skew                & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & 2 
 % R2eff model.
 %~~~~~~~~~~~~~
 
+\clearpage
+
 \subsection{The R2eff model}
 \index{relaxation dispersion!R2eff model|textbf}
 
@@ -167,15 +169,28 @@ For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ron
     R_{2\textrm{eff}}(\nucpmg) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
-The values and errors are determined with a single call of the \uf{calc} user function.  The $\Ronerho$ version of the equation is essentially the same
+The values and errors are determined with a single call of the \uf{calc} user function.  The $\Ronerho$ version of the equation is essentially the same:
 \begin{equation}
     R_{1\rho}(\omega_1) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
 \end{equation}
 
 Errors are calculated using the formula
-\begin{equation}
+\begin{equation} \label{eq: dispersion error}
     \sigma_{\textrm{R}_2}^2 = \frac{\left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 }{T_\textrm{relax}} .
 \end{equation}
+
+In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.  This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
+\begin{equation} \label{eq: IT05 dispersion error}
+    \sigma_{\textrm{R}_2} = \frac{\sigma_{I_1}}{T_\textrm{relax} I_1(\omega_1)} .
+\end{equation}
+
+This is not implemented in relax as it can be shown by simple simulation that the formula is incorrect (see Figure~\ref{fig: dispersion error comparison}).  This formula significantly underestimates the real errors.  The use of the same $I_0$ value for all dispersion points does not cause a decrease in the $\Rtwoeff$ error but rather a correlation in the errors.
+
+\begin{figure*}[h]
+\label{fig: dispersion error comparison}
+\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 728 512]{graphics/analyses/dispersion/error_comparison}}
+\caption[Comparison of relaxation dispersion errors]{A demonstration of the inaccuracy of the error formula of Equation~\ref{eq: IT05 dispersion error} from \citet{IshimaTorchia05}.  This plot was generated using the script \file{test\_suite/shared\_data/dispersion/error\_testing/simulation.py}.  The bootstrapping simulation involves randomising noise-free $I_0$ and $I_1$ values for each dispersion data point assuming Gaussian errors.  The full error formula is from Equation~\ref{eq: dispersion error}, the reduced error formula is from Equation~\ref{eq: IT05 dispersion error}, the bootstrapping using individual dispersion points estimates the errors assuming different $I_0$ randomisations for each dispersion point and each simulation, and the bootstrapping group graph uses the same randomised $I_0$ value for each dispersion point for each simulation.}
+\end{figure*}
 
 
 % Variable relaxation period experiments.
