@@ -306,7 +306,8 @@ class New_analysis_page(Wiz_page):
         box.Add(button)
 
         # Bind the click.
-        self.Bind(wx.EVT_BUTTON, fn, button)
+        if fn != None:
+            self.Bind(wx.EVT_BUTTON, fn, button)
 
         # The button is disabled.
         if disabled:
