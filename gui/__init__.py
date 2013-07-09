@@ -93,9 +93,6 @@ class App(wx.App):
     def OnInit(self):
         """Build the application, showing a splash screen first."""
 
-        # Show the splash screen.
-        self.show_splash()
-
         # Import here to break a circular import which is killing Epydoc!
         from gui import relax_gui
 
@@ -113,6 +110,9 @@ class App(wx.App):
             # Show it.
             self.gui.Show()
 
+        # Show the splash screen.
+        self.show_splash()
+
         # All is good!
         return True
 
@@ -127,4 +127,4 @@ class App(wx.App):
         timeout = 2500
 
         # The splash screen.
-        screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_SCREEN | wx.SPLASH_TIMEOUT, timeout, None, -1)
+        screen = wx.SplashScreen(bmp, wx.SPLASH_CENTRE_ON_PARENT | wx.SPLASH_TIMEOUT, timeout, None, -1)

@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +33,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import extract_data, read_spin_data, strip, write_data
-from lib.software import nmrview, sparky, xeasy
+from lib.software import nmrpipe, nmrview, sparky, xeasy
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
@@ -270,6 +271,10 @@ def autodetect_format(file_data):
     # NMRView format.
     if line == ['label', 'dataset', 'sw', 'sf']:
         return 'nmrview'
+
+    # NMRPipe SeriesTab.
+    if line[0] == 'REMARK' and line[1] == 'SeriesTab':
+        return 'seriestab'
 
     # XEasy format.
     if line == ['No.', 'Color', 'w1', 'w2', 'ass.', 'in', 'w1', 'ass.', 'in', 'w2', 'Volume', 'Vol.', 'Err.', 'Method', 'Comment']:
@@ -641,6 +646,22 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Extract the data.
         intensity_data = nmrview.read_list_intensity(file_data=file_data)
+
+        # Convert the residue number to a spin ID.
+        for i in range(len(intensity_data)):
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
+
+            # Replace the data.
+            intensity_data[i][2] = spin_id
+
+    # NMRPipe SeriesTab.
+    elif format == 'seriestab':
+        # Print out.
+        print("NMRPipe SeriesTab formatted data file.\n")
+
+        # Extract the data.
+        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
 
         # Convert the residue number to a spin ID.
         for i in range(len(intensity_data)):
