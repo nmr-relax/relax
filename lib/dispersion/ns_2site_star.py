@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Module docstring.
-"""This function that does a numerical fit of CPMG.
+"""This function performs a numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments.
 
 The function uses an explicit matrix that contains relaxation, exchange and chemical shift terms. It does the 180deg pulses in the CPMG train with conjugate complex matrices.  The approach of Bloch-McConnell can be found in chapter 3.1 of Palmer, A. G. Chem Rev 2004, 104, 3623–3640.  This function was written, initially in MATLAB, in 2010.
 
