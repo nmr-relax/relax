@@ -71,6 +71,7 @@ def r2eff_ns_2site_star(R2E=None, R2G=None, fg=None, kge=None, keg=None, tcpmg=N
     R = Rr + Rex + RCS
     cR = conj(R)
 
+    kex = kge + keg
     IGeq = keg / kex
     IEeq = kge / kex
     M0 = matrix([[IGeq], [IEeq]])
