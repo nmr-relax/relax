@@ -28,10 +28,14 @@ The function uses an explicit matrix that contains relaxation, exchange and chem
 The code was submitted at http://thread.gmane.org/gmane.science.nmr.relax.devel/4132 by Paul Schanda.
 """
 
+# Dependency check module.
+import dep_check
+
 # Python module imports.
 from math import log
 from numpy import conj, dot, matrix
-from scipy.linalg import expm
+if dep_check.scipy_module:
+    from scipy.linalg import expm
 
 
 def r2eff_ns_2site_star(R2E=None, R2G=None, fg=None, kge=None, keg=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
