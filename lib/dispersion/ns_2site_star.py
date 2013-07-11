@@ -69,21 +69,27 @@ def r2eff_ns_2site_star(R2E=None, R2G=None, fg=None, kge=None, keg=None, tcpmg=N
     Rex = -1.0 * matrix([[kge, -keg],[-kge, keg]])
     RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0],[0.0, fg]])
     R = Rr + Rex + RCS
-    cR = conj(R)
+    cR2 = conj(R) * 2.0
 
     kex = kge + keg
     IGeq = keg / kex
     IEeq = kge / kex
     M0 = matrix([[IGeq], [IEeq]])
 
+    # Replicated calculations for faster operation.
+    inv_tcpmg = 1.0 / tcpmg
+
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
-        tcp = 1.0 / (4.0 * cpmg_frqs[i])
-        prop_2 = dot(dot(expm(R*tcp), expm(cR*2.0*tcp)), expm(R*tcp))
+        # Replicated calculations for faster operation.
+        tcp = 0.25 / cpmg_frqs[i]
+        expm_R_tcp = expm(R*tcp)
+
+        prop_2 = dot(dot(expm_R_tcp, expm(cR2*tcp)), expm_R_tcp)
 
         prop_total = mpower(prop_2, cpmg_frqs[i]*tcpmg)
 
         Moft = prop_total * M0
 
         Mgx = Moft[0].real / M0[0]
-        back_calc[i]= -(1.0/tcpmg) * log(Mgx)
+        back_calc[i]= -inv_tcpmg * log(Mgx)
