@@ -495,6 +495,11 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
+        # Once off parameter conversions.
+        pB = 1.0 - pA
+        kge = pA * kex
+        keg = pB * kex
+
         # Initialise.
         chi2_sum = 0.0
 
@@ -509,7 +514,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_star(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_ns_2site_star(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, kge=kge, keg=keg, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

@@ -50,9 +50,9 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     @type r20b:             float
     @keyword fg:            Unknown.
     @type fg:               unknown
-    @keyword kge:           The forward exchange rate.
+    @keyword kge:           The forward exchange rate from state A to state B.
     @type kge:              float
-    @keyword keg:           The reverse exchange rate.
+    @keyword keg:           The reverse exchange rate from state B to state A.
     @type keg:              float
     @keyword tcpmg:         Unknown.
     @type tcpmg:            unknown
