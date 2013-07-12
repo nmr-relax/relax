@@ -38,22 +38,22 @@ if dep_check.scipy_module:
     from scipy.linalg import expm
 
 
-def r2eff_ns_2site_star(R2E=None, R2G=None, fg=None, kge=None, keg=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
 
 
-    @keyword R2E:           Unknown.
-    @type R2E:              unknown
-    @keyword R2G:           Unknown.
-    @type R2G:              unknown
+    @keyword r20a:          The R2 value for state A in the absence of exchange.
+    @type r20a:             float
+    @keyword r20b:          The R2 value for state A in the absence of exchange.
+    @type r20b:             float
     @keyword fg:            Unknown.
     @type fg:               unknown
-    @keyword kge:           Unknown.
-    @type kge:              unknown
-    @keyword keg:           Unknown.
-    @type keg:              unknown
+    @keyword kge:           The forward exchange rate.
+    @type kge:              float
+    @keyword keg:           The reverse exchange rate.
+    @type keg:              float
     @keyword tcpmg:         Unknown.
     @type tcpmg:            unknown
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
@@ -65,7 +65,7 @@ def r2eff_ns_2site_star(R2E=None, R2G=None, fg=None, kge=None, keg=None, tcpmg=N
     """
 
     # Initialise some structures.
-    Rr  = -1.0 * matrix([[R2G, 0.0],[0.0, R2E]])
+    Rr  = -1.0 * matrix([[r20b, 0.0],[0.0, r20a]])
     Rex = -1.0 * matrix([[kge, -keg],[-kge, keg]])
     RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0],[0.0, fg]])
     R = Rr + Rex + RCS
