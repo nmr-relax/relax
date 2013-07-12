@@ -26,7 +26,57 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 """
 
 # Python module imports.
+from math import cos, sin, pi
 from numpy import matrix
+
+
+def r180x_2d(flip=pi):
+    """The 2D rotation matrix for an imperfect X-axis pi-pulse.
+
+    @keyword flip:  The X-axis pi-pulse flip angle (in rad).  This is currently unused, hence perfect pi-pulses are assumed.
+    @type flip:     float
+    @return:        The 2D rotational matrix.
+    @rtype:         numpy rank-2, 4D array
+    """
+
+    # Build the matrix.
+    R = matrix([ 
+        [ 1.0,  0.0,  0.0,  0.0],
+        [ 0.0, -1.0,  0.0,  0.0],
+        [ 0.0,  0.0,  1.0,  0.0],
+        [ 0.0,  0.0,  0.0, -1.0]
+    ])
+
+    # Return the matrix.
+    return R
+
+
+def r180x_3d(flip=pi):
+    """The 3D rotation matrix for an imperfect X-axis pi-pulse.
+
+    @keyword flip:  The X-axis pi-pulse flip angle (in rad).
+    @type flip:     float
+    @return:        The 3D rotational matrix.
+    @rtype:         numpy rank-2, 7D array
+    """
+
+    # Replicated calculations.
+    ct = cos(flip)
+    st = sin(flip)
+
+    # Build the matrix.
+    R = matrix([
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0,  ct, -st, 0.0, 0.0, 0.0],
+        [0.0, 0.0,  st,  ct, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0,  ct, -st],
+        [0.0, 0.0, 0.0, 0.0, 0.0,  st,  ct]
+    ])
+
+    # Return the matrix.
+    return R
 
 
 def rcpmg_2d(R2E=None, R2G=None, df=None, kGE=None, kEG=None):
