@@ -19,10 +19,39 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib NMR package - a library of functions for advanced linear algebra not present in numpy."""
 
-__all__ = [
-    'kronecker_product',
-    'matrix_power'
-]
+# Python module imports.
+from numpy import diag, dot, eye
+from numpy.linalg import eig, inv
+
+# relax module imports.
+from lib.errors import RelaxError
+
+
+def square_matrix_power(x, y):
+    """Compute x raised to the power y when x is a square matrix and y is a scalar.
+
+    @param x:   The square matrix.
+    @type x:    numpy rank-2 array
+    @param y:   The power.
+    @type y:    float
+    @return:    The matrix power of x.
+    @rtype:     numpy rank-2 array
+    """
+
+    # Sanity check.
+    s = x.shape()
+    if len(s) != 2 or s[0] != s[1]:
+        raise RelaxError("The matrix '%s' must be square." % x)
+
+    # Catch the zeroth power.
+    if y == 0:
+        return eye(s[0])
+
+    # The eigensystem of x.
+    e, v = eig(x)
+    d = diag(e)
+
+    # Return the matrix power.
+    return dot(dot(v, d**y), inv(v))
+

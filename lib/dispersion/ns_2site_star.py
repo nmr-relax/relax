@@ -37,6 +37,9 @@ from numpy import conj, dot, matrix
 if dep_check.scipy_module:
     from scipy.linalg import expm
 
+# relax module imports.
+from lib.linear_algebra.matrix_power import square_matrix_power
+
 
 def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
@@ -87,7 +90,7 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
 
         prop_2 = dot(dot(expm_R_tcp, expm(cR2*tcp)), expm_R_tcp)
 
-        prop_total = mpower(prop_2, cpmg_frqs[i]*tcpmg)
+        prop_total = square_matrix_power(prop_2, cpmg_frqs[i]*tcpmg)
 
         Moft = prop_total * M0
 
