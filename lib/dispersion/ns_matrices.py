@@ -43,7 +43,7 @@ def rcpmg_2d(R2E=None, R2G=None, df=None, kGE=None, kEG=None):
     @keyword kEG:   The reverse exchange rate from state B to state A.
     @type kEG:      float
     @return:        The relaxation matrix.
-    @rtype:         numpy rank-2, 7D array
+    @rtype:         numpy rank-2, 4D array
     """
 
     # Parameter conversions.
