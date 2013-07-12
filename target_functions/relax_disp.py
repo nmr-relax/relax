@@ -33,9 +33,10 @@ from lib.dispersion.it99 import r2eff_IT99
 from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
+from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_STAR, MODEL_R2EFF
 
 
 class Dispersion:
@@ -45,7 +46,7 @@ class Dispersion:
         Models
         ======
 
-        The following models are currently supported:
+        The following analytic models are currently supported:
 
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
@@ -54,6 +55,10 @@ class Dispersion:
             - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
             - 'M61 skew':  The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.
+
+        The following numerical models are currently supported:
+
+            - 'NS 2-site star':  The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -116,6 +121,8 @@ class Dispersion:
         # The post spin parameter indices.
         self.end_index = []
         self.end_index.append(self.num_spins * self.num_frq)
+        if model == MODEL_NS_2SITE_STAR:
+            self.end_index.append(self.num_spins * self.num_frq)
         self.end_index.append(self.end_index[-1] + self.num_spins)
         if model == MODEL_IT99:
             self.end_index.append(self.end_index[-1] + self.num_spins)
@@ -135,6 +142,8 @@ class Dispersion:
             self.func = self.func_DPL94
         if model == MODEL_M61B:
             self.func = self.func_M61b
+        if model == MODEL_NS_2SITE_STAR:
+            self.func = self.func_ns_2site_star
 
 
     def func_CR72(self, params):
@@ -449,6 +458,54 @@ class Dispersion:
                 # The R2eff values as R20 values.
                 for i in range(self.num_disp_points):
                     self.back_calc[spin_index, frq_index, i] = R20[r20_index]
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_ns_2site_star(self, params):
+        """Target function for the numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20A = params[:self.end_index[0]]
+        R20B = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_ns_2site_star(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
