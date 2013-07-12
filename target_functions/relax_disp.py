@@ -118,11 +118,15 @@ class Dispersion:
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
 
-        # The post spin parameter indices.
+        # Initialise the post spin parameter indices.
         self.end_index = []
+
+        # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_spins * self.num_frq)
         if model == MODEL_NS_2SITE_STAR:
-            self.end_index.append(self.num_spins * self.num_frq)
+            self.end_index.append(2 * self.num_spins * self.num_frq)
+
+        # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.num_spins)
         if model == MODEL_IT99:
             self.end_index.append(self.end_index[-1] + self.num_spins)

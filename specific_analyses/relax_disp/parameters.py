@@ -134,6 +134,7 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
 
     # Initialise parameters if needed.
     for spin in spins:
+        # The R2 parameter.
         if 'r2' in spin.params:
             if sim_index != None:
                 spin.r2_sim[sim_index] = []
@@ -143,6 +144,28 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                 spin.r2 = []
                 for frq in loop_frq():
                     spin.r2.append(None)
+
+        # The R2A parameter.
+        if 'r2a' in spin.params:
+            if sim_index != None:
+                spin.r2a_sim[sim_index] = []
+                for frq in loop_frq():
+                    spin.r2a_sim[sim_index].append(None)
+            else:
+                spin.r2a = []
+                for frq in loop_frq():
+                    spin.r2a.append(None)
+
+        # The R2B parameter.
+        if 'r2b' in spin.params:
+            if sim_index != None:
+                spin.r2b_sim[sim_index] = []
+                for frq in loop_frq():
+                    spin.r2b_sim[sim_index].append(None)
+            else:
+                spin.r2b = []
+                for frq in loop_frq():
+                    spin.r2b.append(None)
 
     # Loop over the parameters of the cluster, setting the values.
     for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
@@ -398,14 +421,38 @@ def loop_parameters(spins=None):
             # Reset the frequency index.
             frq_index = -1
 
-            # Loop over the spectrometer frequencies.
-            for frq in loop_frq():
-                # First increment the indices.
-                frq_index += 1
-                param_index += 1
+            # The R2 parameter.
+            if 'r2' in spins[0].params:
+                # Loop over the spectrometer frequencies.
+                for frq in loop_frq():
+                    # First increment the indices.
+                    frq_index += 1
+                    param_index += 1
 
-                # Yield the data.
-                yield 'r2', param_index, spin_index, frq_index
+                    # Yield the data.
+                    yield 'r2', param_index, spin_index, frq_index
+
+            # The R2A parameter.
+            if 'r2a' in spins[0].params:
+                # Loop over the spectrometer frequencies.
+                for frq in loop_frq():
+                    # First increment the indices.
+                    frq_index += 1
+                    param_index += 1
+
+                    # Yield the data.
+                    yield 'r2a', param_index, spin_index, frq_index
+
+            # The R2B parameter.
+            if 'r2b' in spins[0].params:
+                # Loop over the spectrometer frequencies.
+                for frq in loop_frq():
+                    # First increment the indices.
+                    frq_index += 1
+                    param_index += 1
+
+                    # Yield the data.
+                    yield 'r2b', param_index, spin_index, frq_index
 
         # Then the chemical shift difference parameters 'phi_ex', 'padw2' and 'dw' (one per spin).
         for spin_index in range(len(spins)):
@@ -422,7 +469,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'phi_ex', 'padw2', 'dw']:
+            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'padw2', 'dw']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -508,7 +555,7 @@ def param_num(spins=None):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['r2', 'phi_ex', 'padw2', 'dw']
+    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'padw2', 'dw']
     num = 0
     for spin in spins:
         for i in range(len(spin.params)):
