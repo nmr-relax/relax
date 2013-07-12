@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for matrix power operations."""
 
 # Python module imports.
 from numpy import diag, dot, eye
