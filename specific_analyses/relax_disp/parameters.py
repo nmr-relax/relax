@@ -92,7 +92,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
     # Loop over the parameters of the cluster.
     for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Transversal relaxation rate scaling.
-        if param_name == 'r2':
+        if param_name in ['r2', 'r2a', 'r2b']:
             scaling_matrix[param_index, param_index] = 10
 
         # The pA.pB.dw**2 and pA.dw**2 parameters.
@@ -102,10 +102,6 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         # Chemical shift difference between states A and B scaling.
         elif param_name == 'dw':
             scaling_matrix[param_index, param_index] = 1
-
-        # Transversal relaxation rate scaling.
-        elif param_name == 'r2a':
-            scaling_matrix[param_index, param_index] = 10
 
         # The population of state A.
         elif param_name == 'pA':
@@ -228,9 +224,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     The different constraints used within different models are::
 
-        R2 >= 0
-        R2 <= -200
-        R2A >= 0
+        0 <= R2 <= 200
+        0 <= R2A <= 200
+        0 <= R2B <= 200
         pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
         phi_ex >= 0
@@ -252,12 +248,18 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |        |      |         |
         | 1  0  0 |     |  R2A   |      |    0    |
         |         |     |        |      |         |
+        |-1  0  0 |     |  R2A   |      |  -200   |
+        |         |     |        |      |         |
+        | 1  0  0 |     |  R2B   |      |    0    |
+        |         |     |        |      |         |
+        |-1  0  0 |     |  R2B   |      |  -200   |
+        |         |     |        |      |         |
         | 1  0  0 |     |   pA   |      |   0.5   |
         |         |     |        |      |         |
-        |-1  0  0 |     |   pA   |      |   -1    |
+        |-1  0  0 |  .  |   pA   |  >=  |   -1    |
         |         |     |        |      |         |
         | 1  0  0 |     |   pA   |      |   0.85  |
-        |         |  .  |        |  >=  |         |
+        |         |     |        |      |         |
         | 1  0  0 |     | phi_ex |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     | padw2  |      |    0    |
@@ -304,7 +306,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             j += 1
 
         # The transversal relaxation rates (0 <= r2 <= 200).
-        elif param_name == 'r2':
+        elif param_name in ['r2', 'r2a', 'r2b']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
@@ -326,16 +328,6 @@ def linear_constraints(spins=None, scaling_matrix=None):
             A[j][param_index] = 1.0
             b.append(0.0)
             j += 1
-
-        # The transversal relaxation rates (0 <= r2 <= 200).
-        elif param_name == 'r2a':
-            A.append(zero_array * 0.0)
-            A.append(zero_array * 0.0)
-            A[j][param_index] = 1.0
-            A[j+1][param_index] = -1.0
-            b.append(0.0)
-            b.append(-200.0 / scaling_matrix[param_index, param_index])
-            j += 2
 
         # The population of state A.
         elif param_name == 'pA':

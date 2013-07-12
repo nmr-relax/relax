@@ -89,7 +89,8 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('dw', scope='spin', default=0.0, desc='The chemical shift difference between states A and B (in ppm)', set='params', py_type=float, grace_string='\\q\\xDw\f{}\\Q (ppm)', err=True, sim=True)
         self.PARAMS.add('kex', scope='spin', default=10000.0, desc='The exchange rate', set='params', py_type=float, grace_string='\\qk\\sex\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('tex', scope='spin', default=1.0/20000.0, desc='The time of exchange (tex = 1/(2kex))', set='params', py_type=float, grace_string='\\q\\xt\\B\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A in the absence of exchange', set='params', py_type=float, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2b', scope='spin', default=15.0, desc='The transversal relaxation rate for state B in the absence of exchange', set='params', py_type=float, grace_string='\\qR\\s2,B\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('ka', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
 
@@ -371,7 +372,7 @@ class Relax_disp(API_base, API_common):
                 for spin in spins:
                     for i in range(len(spin.params)):
                         # R2 relaxation rates (from 1 to 40 s^-1).
-                        if spin.params[i] == 'r2':
+                        if spin.params[i] in ['r2', 'r2a', 'r2b']:
                             lower.append(1.0)
                             upper.append(40.0)
 
@@ -388,11 +389,6 @@ class Relax_disp(API_base, API_common):
                 # The cluster specific parameters (only use the values from the first spin of the cluster).
                 spin = spins[0]
                 for i in range(len(spin.params)):
-                    # R2 relaxation rates (from 1 to 40 s^-1).
-                    if spin.params[i] == 'r2a':
-                        lower.append(1.0)
-                        upper.append(40.0)
-
                     # The population of state A.
                     elif spin.params[i] == 'pA':
                         if spin.model == MODEL_M61B:
@@ -1329,6 +1325,7 @@ class Relax_disp(API_base, API_common):
     _table.add_headings(["Data type", "Object name"])
     _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'"])
     _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'"])
+    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'"])
     _table.add_row(["Population of state A", "'pA'"])
     _table.add_row(["Population of state B", "'pB'"])
     _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'"])
