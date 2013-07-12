@@ -390,7 +390,7 @@ class Relax_disp(API_base, API_common):
                 spin = spins[0]
                 for i in range(len(spin.params)):
                     # The population of state A.
-                    elif spin.params[i] == 'pA':
+                    if spin.params[i] == 'pA':
                         if spin.model == MODEL_M61B:
                             lower.append(0.85)
                         else:
