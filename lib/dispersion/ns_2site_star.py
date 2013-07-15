@@ -52,7 +52,7 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     @keyword r20b:          The R2 value for state A in the absence of exchange.
     @type r20b:             float
     @keyword fg:            The frequency of the ground state.
-    @type fg:               unknown
+    @type fg:               float
     @keyword kge:           The forward exchange rate from state A to state B.
     @type kge:              float
     @keyword keg:           The reverse exchange rate from state B to state A.
