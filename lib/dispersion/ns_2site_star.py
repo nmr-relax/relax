@@ -96,6 +96,11 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
+        # Catch zeros (to avoid matrix log failures).
+        if fA == 0.0 and pB == 0.0:
+            back_calc[i] = 0.0
+            continue
+
         # Replicated calculations for faster operation.
         tcp = 0.25 / cpmg_frqs[i]
 
@@ -111,6 +116,6 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
         # Now we apply the above propagator to the initial magnetization vector - resulting in the magnetization that remains after the full CPMG pulse train.  It is called M of t (t is the time after the CPMG train).
         Moft = prop_total * M0
 
-        # This and the next line calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+        # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mgx = Moft[0].real / M0[0]
         back_calc[i]= -inv_tcpmg * log(Mgx)
