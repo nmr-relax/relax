@@ -39,7 +39,7 @@ if dep_check.scipy_module:
     from scipy.linalg import expm
 
 
-def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, pB=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -53,8 +53,6 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     @type r20b:             float
     @keyword fA:            The frequency of state A.
     @type fA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -83,11 +81,6 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
-        # Catch zeros (to avoid matrix log failures).
-        if fA == 0.0 and pB == 0.0:
-            back_calc[i] = 0.0
-            continue
-
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
         expm_R_tcp = expm(R*tcp[i])
 
@@ -102,4 +95,7 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mgx = Moft[0].real / M0[0]
-        back_calc[i]= -inv_tcpmg * log(Mgx)
+        if Mgx == 0.0:
+            back_calc[i] = 1e99
+        else:
+            back_calc[i]= -inv_tcpmg * log(Mgx)
