@@ -74,7 +74,7 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
     """
 
     # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-    Rr  = -1.0 * matrix([[r20b, 0.0], [0.0, r20a]])
+    Rr  = -1.0 * matrix([[r20a, 0.0], [0.0, r20b]])
 
     # The matrix that contains the exchange terms between the two states A and B.
     Rex = -1.0 * matrix([[k_AB, -k_BA], [-k_AB, k_BA]])
