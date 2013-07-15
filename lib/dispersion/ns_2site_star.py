@@ -34,11 +34,9 @@ import dep_check
 # Python module imports.
 from math import log
 from numpy import add, complex, conj, dot
+from numpy.linalg import matrix_power
 if dep_check.scipy_module:
     from scipy.linalg import expm
-
-# relax module imports.
-from lib.linear_algebra.matrix_power import square_matrix_power
 
 
 def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, pB=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
@@ -101,7 +99,8 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
         prop_2 = dot(dot(expm_R_tcp, expm(cR2*tcp)), expm_R_tcp)
 
         # Now create the total propagator that will evolve the magnetization under the CPMG train, i.e. it applies the above tau-180-tau-tau-180-tau so many times as required for the CPMG frequency under consideration.
-        prop_total = square_matrix_power(prop_2, cpmg_frqs[i]*tcpmg)
+        power = int(round(cpmg_frqs[i]*tcpmg))
+        prop_total = matrix_power(prop_2, power)
 
         # Now we apply the above propagator to the initial magnetization vector - resulting in the magnetization that remains after the full CPMG pulse train.  It is called M of t (t is the time after the CPMG train).
         Moft = dot(prop_total, M0)
