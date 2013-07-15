@@ -24,7 +24,7 @@
 """Target functions for relaxation dispersion."""
 
 # Python module imports.
-from numpy import complex64, dot, float64, zeros
+from numpy import complex64, dot, float64, int16, zeros
 
 # relax module imports.
 from lib.dispersion.cr72 import r2eff_CR72
@@ -150,6 +150,16 @@ class Dispersion:
 
             # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
             self.M0 = zeros(2, float64)
+
+            # The tau_cpmg times and matrix exponential power array.
+            self.tau_cpmg = zeros(self.num_disp_points, float64)
+            self.power = zeros(self.num_disp_points, int16)
+            for i in range(self.num_disp_points):
+                self.tau_cpmg[i] = 0.25 / self.cpmg_frqs[i]
+                self.power[i] = int(round(self.cpmg_frqs[i] * self.relax_time))
+
+            # The inverted relaxation delay.
+            self.inv_relax_time = 1.0 / relax_time
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -544,7 +554,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pB=pB, fA=dw_frq, tcpmg=self.relax_time, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_ns_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pB=pB, fA=dw_frq, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

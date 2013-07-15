@@ -39,7 +39,7 @@ if dep_check.scipy_module:
     from scipy.linalg import expm
 
 
-def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, pB=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, pB=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -55,14 +55,16 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     @type fA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
-    @keyword tcpmg:         Total duration of the CPMG element (in seconds).
-    @type tcpmg:            float
-    @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
+    @type inv_tcpmg:        float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
     @type num_points:       int
+    @keyword power:         The matrix exponential power array.
+    @type power:            numpy int16, rank-1 array
     """
 
     # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
@@ -79,9 +81,6 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
     cR2 = conj(R) * 2.0
 
-    # Replicated calculations for faster operation.
-    inv_tcpmg = 1.0 / tcpmg
-
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # Catch zeros (to avoid matrix log failures).
@@ -89,18 +88,14 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
             back_calc[i] = 0.0
             continue
 
-        # Replicated calculations for faster operation.
-        tcp = 0.25 / cpmg_frqs[i]
-
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-        expm_R_tcp = expm(R*tcp)
+        expm_R_tcp = expm(R*tcp[i])
 
         # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
-        prop_2 = dot(dot(expm_R_tcp, expm(cR2*tcp)), expm_R_tcp)
+        prop_2 = dot(dot(expm_R_tcp, expm(cR2*tcp[i])), expm_R_tcp)
 
         # Now create the total propagator that will evolve the magnetization under the CPMG train, i.e. it applies the above tau-180-tau-tau-180-tau so many times as required for the CPMG frequency under consideration.
-        power = int(round(cpmg_frqs[i]*tcpmg))
-        prop_total = matrix_power(prop_2, power)
+        prop_total = matrix_power(prop_2, power[i])
 
         # Now we apply the above propagator to the initial magnetization vector - resulting in the magnetization that remains after the full CPMG pulse train.  It is called M of t (t is the time after the CPMG train).
         Moft = dot(prop_total, M0)
