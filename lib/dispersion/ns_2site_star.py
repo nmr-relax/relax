@@ -45,8 +45,16 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     This function calculates and stores the R2eff values.
 
 
+    @keyword Rr:            The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
+    @type Rr:               numpy complex64, rank-2, 2D array
+    @keyword Rex:           The matrix that contains the exchange terms between the two states A and B.
+    @type Rex:              numpy complex64, rank-2, 2D array
+    @keyword RCS:           The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
+    @type RCS:              numpy complex64, rank-2, 2D array
     @keyword R:             The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     @type R:                numpy complex64, rank-2, 2D array
+    @keyword M0:            This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    @type M0:               numpy float64, rank-1, 2D array
     @keyword r20a:          The R2 value for state A in the absence of exchange.
     @type r20a:             float
     @keyword r20b:          The R2 value for state A in the absence of exchange.
