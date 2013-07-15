@@ -24,7 +24,7 @@
 """Target functions for relaxation dispersion."""
 
 # Python module imports.
-from numpy import dot, float64, zeros
+from numpy import complex64, dot, float64, zeros
 
 # relax module imports.
 from lib.dispersion.cr72 import r2eff_CR72
@@ -133,6 +133,23 @@ class Dispersion:
         self.end_index.append(self.end_index[-1] + self.num_spins)
         if model == MODEL_IT99:
             self.end_index.append(self.end_index[-1] + self.num_spins)
+
+        # Set up the matrices for the numerical solutions.
+        if model in [MODEL_NS_2SITE_STAR]:
+            # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
+            self.Rr = zeros((2, 2), complex64)
+
+            # The matrix that contains the exchange terms between the two states A and B.
+            self.Rex = zeros((2, 2), complex64)
+
+            # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
+            self.RCS = zeros((2, 2), complex64)
+
+            # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+            self.R = zeros((2, 2), complex64)
+
+            # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+            self.M0 = zeros(2, float64)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -503,7 +520,17 @@ class Dispersion:
         k_AB = pA * kex
         k_BA = pB * kex
 
-        # Initialise.
+        # Set up the matrix that contains the exchange terms between the two states A and B.
+        self.Rex[0, 0] = -k_AB
+        self.Rex[0, 1] = k_BA
+        self.Rex[1, 0] = k_AB
+        self.Rex[1, 1] = -k_BA
+
+        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+        self.M0[0] = pA
+        self.M0[1] = pB
+
+        # Chi-squared initialisation.
         chi2_sum = 0.0
 
         # Loop over the spins.
@@ -517,7 +544,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_star(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, fA=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, tcpmg=self.relax_time, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_ns_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pB=pB, fA=dw_frq, tcpmg=self.relax_time, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

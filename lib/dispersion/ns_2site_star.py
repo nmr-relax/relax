@@ -33,7 +33,7 @@ import dep_check
 
 # Python module imports.
 from math import log
-from numpy import complex, conj, dot, matrix
+from numpy import add, complex, conj, dot
 if dep_check.scipy_module:
     from scipy.linalg import expm
 
@@ -41,28 +41,22 @@ if dep_check.scipy_module:
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=None, k_AB=None, k_BA=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, pB=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
 
 
+    @keyword R:             The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    @type R:                numpy complex64, rank-2, 2D array
     @keyword r20a:          The R2 value for state A in the absence of exchange.
     @type r20a:             float
     @keyword r20b:          The R2 value for state A in the absence of exchange.
     @type r20b:             float
     @keyword fA:            The frequency of state A.
     @type fA:               float
-    @keyword pA:            The population of state A.
-    @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
-    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
-    @type kex:              float
-    @keyword k_AB:          The forward exchange rate from state A to state B.
-    @type k_AB:             float
-    @keyword k_BA:          The reverse exchange rate from state B to state A.
-    @type k_BA:             float
     @keyword tcpmg:         Total duration of the CPMG element (in seconds).
     @type tcpmg:            float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
@@ -74,22 +68,18 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
     """
 
     # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-    Rr  = -1.0 * matrix([[r20a, 0.0], [0.0, r20b]])
-
-    # The matrix that contains the exchange terms between the two states A and B.
-    Rex = -1.0 * matrix([[k_AB, -k_BA], [-k_AB, k_BA]])
+    Rr[0, 0] = -r20a
+    Rr[1, 1] = -r20b
 
     # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    RCS = matrix([[0.0, 0.0], [0.0, complex(0.0, -fA)]], dtype=complex)
+    RCS[1, 1] = complex(0.0, -fA)
 
-    # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    R = Rr + Rex + RCS
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    add(Rr, Rex, out=R)
+    add(R, RCS, out=R)
 
     # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
     cR2 = conj(R) * 2.0
-
-    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-    M0 = matrix([[pA], [pB]])
 
     # Replicated calculations for faster operation.
     inv_tcpmg = 1.0 / tcpmg
@@ -114,7 +104,7 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
         prop_total = square_matrix_power(prop_2, cpmg_frqs[i]*tcpmg)
 
         # Now we apply the above propagator to the initial magnetization vector - resulting in the magnetization that remains after the full CPMG pulse train.  It is called M of t (t is the time after the CPMG train).
-        Moft = prop_total * M0
+        Moft = dot(prop_total, M0)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mgx = Moft[0].real / M0[0]
