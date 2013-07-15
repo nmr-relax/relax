@@ -68,13 +68,13 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     """
 
     # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-    Rr  = -1.0 * matrix([[r20b, 0.0],[0.0, r20a]])
+    Rr  = -1.0 * matrix([[r20b, 0.0], [0.0, r20a]])
 
     # The matrix that contains the exchange terms between the two states G and E.
-    Rex = -1.0 * matrix([[kge, -keg],[-kge, keg]])
+    Rex = -1.0 * matrix([[kge, -keg], [-kge, keg]])
 
     # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0],[0.0, fg]])
+    RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0], [0.0, fg]])
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R = Rr + Rex + RCS
