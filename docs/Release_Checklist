@@ -51,8 +51,8 @@ Copy the PDF manual to the mirror directory for the relax download site for uplo
 
 * Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.4/minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.5/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 
 
 
@@ -78,16 +78,16 @@ $ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.4/minfx
-$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
+$ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.5/minfx
+$ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist key=xxxxx
 
 Or:
 
 $ svn co http://svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
-$ svn co http://svn.gna.org/svn/minfx/tags/1.0.4/minfx
-$ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.2/bmrblib
+$ svn co http://svn.gna.org/svn/minfx/tags/1.0.5/minfx
+$ svn co http://svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 $ scons binary_dist
 
 
