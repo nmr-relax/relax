@@ -79,75 +79,75 @@ def r180x_3d(flip=pi):
     return R
 
 
-def rcpmg_2d(R2E=None, R2G=None, df=None, kGE=None, kEG=None):
+def rcpmg_2d(R2A=None, R2B=None, df=None, k_AB=None, k_BA=None):
     """Definition of the 2D exchange matrix.
 
-    @keyword R2E:   The transverse, spin-spin relaxation rate for state A.
-    @type R2E:      float
-    @keyword R2G:   The transverse, spin-spin relaxation rate for state B.
-    @type R2G:      float
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      float
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      float
     @keyword df:    FIXME - add description.
     @type df:       float
-    @keyword kGE:   The forward exchange rate from state A to state B.
-    @type kGE:      float
-    @keyword kEG:   The reverse exchange rate from state B to state A.
-    @type kEG:      float
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
     @return:        The relaxation matrix.
     @rtype:         numpy rank-2, 4D array
     """
 
     # Parameter conversions.
-    fG = 0
-    fE = fG + df 
+    fA = 0
+    fB = fA + df 
 
     # Create the matrix.
     temp = matrix([
-        [-R2G-kGE,          -fG,        kEG,        0.0],
-        [      fG,     -R2G-kGE,        0.0,        kEG], 
-        [     kGE,          0.0,   -R2E-kEG,        -fE], 
-        [     0.0,          kGE,         fE,   -R2E-kEG]
+        [ -R2A-k_AB,          -fA,       k_BA,        0.0],
+        [        fA,    -R2A-k_AB,        0.0,       k_BA], 
+        [      k_AB,          0.0,  -R2B-k_BA,        -fB], 
+        [       0.0,         k_AB,         fB,  -R2B-k_BA]
     ])
 
     # Return the matrix.
     return temp
 
 
-def rcpmg_3d(R1E=None, R1G=None, R2E=None, R2G=None, df=None, kGE=None, kEG=None):
+def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, df=None, k_AB=None, k_BA=None):
     """Definition of the 3D exchange matrix.
 
-    @keyword R1E:   The longitudinal, spin-lattice relaxation rate for state A.
-    @type R1E:      float
-    @keyword R1G:   The longitudinal, spin-lattice relaxation rate for state B.
-    @type R1G:      float
-    @keyword R2E:   The transverse, spin-spin relaxation rate for state A.
-    @type R2E:      float
-    @keyword R2G:   The transverse, spin-spin relaxation rate for state B.
-    @type R2G:      float
+    @keyword R1A:   The longitudinal, spin-lattice relaxation rate for state A.
+    @type R1A:      float
+    @keyword R1B:   The longitudinal, spin-lattice relaxation rate for state B.
+    @type R1B:      float
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      float
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      float
     @keyword df:    FIXME - add description.
     @type df:       float
-    @keyword kGE:   The forward exchange rate from state A to state B.
-    @type kGE:      float
-    @keyword kEG:   The reverse exchange rate from state B to state A.
-    @type kEG:      float
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
     @return:        The relaxation matrix.
     @rtype:         numpy rank-2, 7D array
     """
 
     # Parameter conversions.
-    fG = 0.0
-    fE = df
-    IGeq = kEG / (kEG + kGE)
-    IEeq = kGE / (kEG + kGE)
+    fA = 0.0
+    fB = df
+    pA = k_BA / (k_BA + k_AB)
+    pB = k_AB / (k_BA + k_AB)
 
     # Create the matrix.
     temp = matrix([
-        [        0.0,       0.0,         0.0,       0.0,       0.0,        0.0,      0.0], 
-        [        0.0,  -R2G-kGE,         -fG,       0.0,       kEG,        0.0,      0.0],
-        [        0.0,        fG,    -R2G-kGE,       0.0,       0.0,        kEG,      0.0], 
-        [2.0*R1G*IGeq,      0.0,         0.0,  -R1G-kGE,       0.0,        0.0,      kEG],
-        [        0.0,       kGE,         0.0,       0.0,  -R2E-kEG,        -fE,      0.0], 
-        [        0.0,       0.0,         kGE,       0.0,        fE,   -R2E-kEG,      0.0],
-        [2.0*R1E*IEeq,      0.0,         0.0,       kGE,       0.0,        0.0, -R1E-kEG]
+        [        0.0,       0.0,         0.0,       0.0,       0.0,        0.0,       0.0], 
+        [        0.0, -R2A-k_AB,         -fA,       0.0,      k_BA,        0.0,       0.0],
+        [        0.0,        fA,   -R2A-k_AB,       0.0,       0.0,       k_BA,       0.0], 
+        [ 2.0*R1A*pA,       0.0,         0.0, -R1A-k_AB,       0.0,        0.0,      k_BA],
+        [        0.0,      k_AB,         0.0,       0.0, -R2B-k_BA,        -fB,       0.0], 
+        [        0.0,       0.0,        k_AB,       0.0,        fB,  -R2B-k_BA,       0.0],
+        [ 2.0*R1B*pB,       0.0,         0.0,      k_AB,       0.0,        0.0, -R1B-k_BA]
     ])
 
     # Return the matrix.

@@ -41,7 +41,7 @@ if dep_check.scipy_module:
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=None, k_AB=None, k_BA=None, tcpmg=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -51,12 +51,18 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     @type r20a:             float
     @keyword r20b:          The R2 value for state A in the absence of exchange.
     @type r20b:             float
-    @keyword fg:            The frequency of the ground state.
-    @type fg:               float
-    @keyword kge:           The forward exchange rate from state A to state B.
-    @type kge:              float
-    @keyword keg:           The reverse exchange rate from state B to state A.
-    @type keg:              float
+    @keyword fA:            The frequency of state A.
+    @type fA:               float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
     @keyword tcpmg:         Total duration of the CPMG element (in seconds).
     @type tcpmg:            float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
@@ -70,11 +76,11 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
     Rr  = -1.0 * matrix([[r20b, 0.0], [0.0, r20a]])
 
-    # The matrix that contains the exchange terms between the two states G and E.
-    Rex = -1.0 * matrix([[kge, -keg], [-kge, keg]])
+    # The matrix that contains the exchange terms between the two states A and B.
+    Rex = -1.0 * matrix([[k_AB, -k_BA], [-k_AB, k_BA]])
 
     # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0], [0.0, fg]])
+    RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0], [0.0, fA]])
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R = Rr + Rex + RCS
@@ -82,17 +88,8 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fg=None, kge=None, keg=None, tcpmg
     # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
     cR2 = conj(R) * 2.0
 
-    # Conversion of kinetic rates.
-    kex = kge + keg
-
-    # Calculate relative populations - will be used for generating the equilibrium magnetizations.
-    IGeq = keg / kex
-
-    # As the preceding line but for the excited state.
-    IEeq = kge / kex
-
-    # This is a vector that contains the initial magnetizations corresponding to ground (G) and excited (E) state transverse magnetizations.
-    M0 = matrix([[IGeq], [IEeq]])
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0 = matrix([[pA], [pB]])
 
     # Replicated calculations for faster operation.
     inv_tcpmg = 1.0 / tcpmg
