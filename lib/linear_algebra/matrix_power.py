@@ -42,7 +42,7 @@ def square_matrix_power(x, y):
     """
 
     # Sanity check.
-    s = x.shape()
+    s = x.shape
     if len(s) != 2 or s[0] != s[1]:
         raise RelaxError("The matrix '%s' must be square." % x)
 
