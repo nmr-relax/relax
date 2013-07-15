@@ -33,7 +33,7 @@ import dep_check
 
 # Python module imports.
 from math import log
-from numpy import conj, dot, matrix
+from numpy import complex, conj, dot, matrix
 if dep_check.scipy_module:
     from scipy.linalg import expm
 
@@ -80,7 +80,7 @@ def r2eff_ns_2site_star(r20a=None, r20b=None, fA=None, pA=None, pB=None, kex=Non
     Rex = -1.0 * matrix([[k_AB, -k_BA], [-k_AB, k_BA]])
 
     # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    RCS = complex(0.0, -1.0) * matrix([[0.0, 0.0], [0.0, fA]])
+    RCS = matrix([[0.0, 0.0], [0.0, complex(0.0, -fA)]], dtype=complex)
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R = Rr + Rex + RCS
