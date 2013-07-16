@@ -37,7 +37,7 @@ from lib.dispersion.ns_2site_3d import r2eff_ns_2site_3D
 from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
 
 
 class Dispersion:
@@ -128,7 +128,7 @@ class Dispersion:
 
         # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_spins * self.num_frq)
-        if model in [MODEL_CR72, MODEL_NS_2SITE, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_CR72, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR]:
             self.end_index.append(2 * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
@@ -151,14 +151,14 @@ class Dispersion:
             self.R = zeros((2, 2), complex64)
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        if model in [MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]
+        if model in [MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             self.M0 = zeros(2, float64)
-        if model in [MODEL_NS_2SITE]
+        if model in [MODEL_NS_2SITE_3D]:
             self.M0 = zeros(7, float64)
             self.M0[0] = 0.5
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_2SITE, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             # The tau_cpmg times and matrix exponential power array.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             self.power = zeros(self.num_disp_points, int16)
@@ -186,7 +186,7 @@ class Dispersion:
             self.func = self.func_DPL94
         if model == MODEL_M61B:
             self.func = self.func_M61b
-        if model == MODEL_NS_2SITE:
+        if model == MODEL_NS_2SITE_3D:
             self.func = self.func_ns_2site_3D
         if model == MODEL_NS_2SITE_STAR:
             self.func = self.func_ns_2site_star
@@ -279,7 +279,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_3D(M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
+                r2eff_ns_2site_3D(M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
