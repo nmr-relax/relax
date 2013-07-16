@@ -441,7 +441,7 @@ uf.add_keyarg(
         "%s: {R20, ...}" % MODEL_NOREX,
         "%s: {R20, ..., phi_ex, kex}" % MODEL_LM63,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_CR72_RED,
-        "%s: {R20, ..., pA, dw, kex}" % MODEL_CR72,
+        "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_CR72,
         "%s: {R20, ..., phi_ex, padw2, kex}" % MODEL_IT99,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR_RED,
         "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR,
@@ -474,7 +474,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used 
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72_RED, "The Carver and Richards (1972) 2-site equation for all time scales whereby the simplification R20A = R20B is assumed.  The parameters are {R20, ..., pA, dw, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R20, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., phi_ex, padw2, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")

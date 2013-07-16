@@ -60,14 +60,16 @@ where::
 from math import acosh, cos, cosh, sqrt
 
 
-def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
 
 
-    @keyword r20:           The R20 parameter value (R2 with no exchange).  It is assumed that R2A0 and R2B0 are identical.
-    @type r20:              float
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             float
+    @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
+    @type r20b:             float
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
@@ -87,13 +89,15 @@ def r2eff_CR72(r20=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=N
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
-    r20_kex = r20 + 0.5*kex
+    r20_kex = (r20a + r20b + kex) / 2.0
 
-    # The Psi value.
-    Psi = kex**2 - dw2
-
-    # The zeta value.
-    zeta = -2.0*dw * (pA*kex - pB*kex)
+    # The Psi and zeta values.
+    if r20a != r20b:
+        Psi = (r20a - r20b - pA*kex + pB*kex)**2 - dw2 + 4.0*pA*pB*kex**2
+        zeta = 2.0*dw * (r20a - r20b - pA*kex + pB*kex)
+    else:
+        Psi = kex**2 - dw2
+        zeta = -2.0*dw * (pA*kex - pB*kex)
 
     # More repetitive calculations.
     sqrt_psi2_zeta2 = sqrt(Psi**2 + zeta**2)

@@ -658,7 +658,9 @@ class Relax_disp(API_base, API_common):
             print("The Carver and Richards (1972) 2-site model for all time scales.")
             params = []
             for frq in loop_frq():
-                params.append('r2')
+                params.append('r2a')
+            for frq in loop_frq():
+                params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
         # CR72 red model.
@@ -1088,7 +1090,7 @@ class Relax_disp(API_base, API_common):
             spins = spin_ids_to_containers(spin_ids)
 
             # Test if the spectrometer frequencies have been set.
-            if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
+            if spins[0].model in [MODEL_LM63, MODEL_CR72_RED, MODEL_CR72, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
                 raise RelaxError("The spectrometer frequency information has not been specified.")
 
             # The R2eff/R1rho data.

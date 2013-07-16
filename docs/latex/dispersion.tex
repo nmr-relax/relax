@@ -73,7 +73,7 @@ For the CPMG-type experiments, the models currently supported are:
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
 \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
 \item[`CR72 red':]\index{relaxation dispersion!CR72 red model}  The \citet{CarverRichards72} 2-site equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 red model} on page~\pageref{sect: dispersion: CR72 red model}.
-\item[`CR72':]\index{relaxation dispersion!CR72 model}  The \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
+\item[`CR72':]\index{relaxation dispersion!CR72 model}  The \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
 \item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
 \end{description}
 
@@ -165,17 +165,17 @@ $\Phiex$                & $\pA\pB\dw^2$         & Fast exchange factor          
 \caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
 \begin{tabular}{lllcll}
 \toprule
-Model code         & Type     & Sites & Parameters                                        & Restriction                       & Reference \\
+Model code         & Type     & Sites & Parameters                                          & Restriction                       & Reference \\
 \midrule                              
-R2eff              & -        & -     & $\{\Rtwoeff, \cdots\}$                            & Fixed relaxation time period      & - \\
-R2eff              & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
-No Rex             & -        & 0     & $\{\Rtwozero, \cdots\}$                           & -                                 & - \\
-LM63               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$              & Fast exchange                     & \citet{LuzMeiboom63} \\
-CR72 red           & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & \citet{CarverRichards72} \\
-CR72               & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & \citet{CarverRichards72} \\
-IT99               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$   & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
-NS 2-site star red & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & - \\
-NS 2-site star     & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                     & - \\
+R2eff              & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
+R2eff              & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
+No Rex             & -        & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
+LM63               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
+CR72 red           & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
+CR72               & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
+IT99               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+NS 2-site star red & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS 2-site star     & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
 \bottomrule
 \label{table: CPMG dispersion models}
 \end{tabular}
@@ -293,7 +293,7 @@ The reference for this equation is:
 
 This is the model for 2-site exchange on all times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.  Is it selected by setting the model to `CR72'.  The equation is
 \begin{equation}
-    \Rtwoeff = \frac{1}{2} \big( \textrm{R}_\textrm{2A}^0 + \textrm{R}_\textrm{2B}^0 + \kex - 2\nucpmg\cosh^{-1} (D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) ,
+    \Rtwoeff = \frac{1}{2} \Big( \textrm{R}_\textrm{2A}^0 + \textrm{R}_\textrm{2B}^0 + \kex - 2\nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) \Big) ,
 \end{equation}
 
 where
@@ -309,17 +309,6 @@ The reference for this equation is:
 \item \bibentry{CarverRichards72}
 \end{itemize}
 
-For this model, the $\Rtwozero$ relaxation rates for states A and B are assumed to be the same.  This simplifies the equations to
-\begin{equation}
-    \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \left( D_+\cosh(\eta_+) - D_-\cos(\eta_- \right) ,
-\end{equation}
-
-where $D_\pm$ and $\eta_\pm$ are unchanged and
-\begin{align}
-    \Psi  &= \kex^2 - \dw^2 , \\
-    \zeta &= -2\dw (\pA\kex - \pB\kex) .
-\end{align}
-
 
 
 % CR72 red model.
@@ -334,7 +323,7 @@ Is it selected by setting the model to `CR72 red'.
 It is the same as the CR72 model described above, but with the simplification that $\RtwozeroA = \RtwozeroB$.
 This simplifies the equations to
 \begin{equation}
-    \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \left( D_+\cosh(\eta_+) - D_-\cos(\eta_- \right) ,
+    \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) ,
 \end{equation}
 
 where $D_\pm$ and $\eta_\pm$ are unchanged and

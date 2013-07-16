@@ -126,7 +126,7 @@ class Dispersion:
 
         # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_spins * self.num_frq)
-        if model == MODEL_NS_2SITE_STAR:
+        if model in [MODEL_CR72, MODEL_NS_2SITE_STAR]:
             self.end_index.append(2 * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
@@ -169,7 +169,7 @@ class Dispersion:
         if model == MODEL_CR72:
             self.func = self.func_CR72
         if model == MODEL_CR72_RED:
-            self.func = self.func_CR72_ref
+            self.func = self.func_CR72_red
         if model == MODEL_IT99:
             self.func = self.func_IT99
         if model == MODEL_M61:
@@ -215,7 +215,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_CR72(r20=R20A[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -306,13 +306,14 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
-        dw = params[self.end_index[0]:self.end_index[1]]
-        pA = params[self.end_index[1]]
-        kex = params[self.end_index[1]+1]
+        R20A = params[:self.end_index[0]]
+        R20B = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
 
         # Calculate and return the chi-squared value.
-        return self.calc_ns_2site_star_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+        return self.calc_CR72_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
 
 
     def func_CR72_red(self, params):
@@ -338,7 +339,7 @@ class Dispersion:
         kex = params[self.end_index[1]+1]
 
         # Calculate and return the chi-squared value.
-        return self.calc_ns_2site_star_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+        return self.calc_CR72_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
 
     def func_DPL94(self, params):
