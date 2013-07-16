@@ -64,21 +64,24 @@ MODEL_M61B = 'M61 skew'
 
 
 # The Numerical model names.
+MODEL_NS_2SITE_STAR_RED = 'NS 2-site star red'
+"""The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices, whereby the simplification R20A = R20B is assumed."""
+
 MODEL_NS_2SITE_STAR = 'NS 2-site star'
 """The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices."""
 
 
 # The model lists.
-MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR]
+MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]
 """The list of all dispersion models (excluding the R2eff model)."""
 
-MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR]
+MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]
 """The list of the R2eff model together with all dispersion models."""
 
-MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_2SITE_STAR]
+MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]
 """The list of all dispersion models specifically for CPMG-type experiments (excluding the R2eff model)."""
 
-MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_2SITE_STAR]
+MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]
 """The list of the R2eff model together with all dispersion models specifically for CPMG-type experiments."""
 
 MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_M61B]
