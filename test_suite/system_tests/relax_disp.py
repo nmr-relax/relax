@@ -106,8 +106,8 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/10000, 2543.899105435682/10000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.4423991744690439, 4)
 
-        # The 'CR72' model checks.  These models have not reached the minima due to the low quality optimisation!
-        self.interpreter.pipe.switch(pipe_name='CR72')
+        # The 'CR72 red' model checks.  These models have not reached the minima due to the low quality optimisation!
+        self.interpreter.pipe.switch(pipe_name='CR72 red')
         spin70 = cdp.mol[0].res[0].spin[0]
         spin71 = cdp.mol[0].res[1].spin[0]
         print("\n\nOptimised parameters:\n")
