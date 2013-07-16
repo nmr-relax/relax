@@ -36,7 +36,7 @@ from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
 
 
 class Dispersion:
@@ -168,6 +168,8 @@ class Dispersion:
             self.func = self.func_LM63
         if model == MODEL_CR72:
             self.func = self.func_CR72
+        if model == MODEL_CR72_RED:
+            self.func = self.func_CR72_ref
         if model == MODEL_IT99:
             self.func = self.func_IT99
         if model == MODEL_M61:
@@ -180,6 +182,51 @@ class Dispersion:
             self.func = self.func_ns_2site_star
         if model == MODEL_NS_2SITE_STAR_RED:
             self.func = self.func_ns_2site_star_red
+
+
+    def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
+        """Calculate the chi-squared value of the 'NS 2-site star' models.
+
+        @keyword R20A:  The R2 value for state A in the absence of exchange.
+        @type R20A:     list of float
+        @keyword R20B:  The R2 value for state B in the absence of exchange.
+        @type R20B:     list of float
+        @keyword dw:    The chemical shift differences in ppm for each spin.
+        @type dw:       list of float
+        @keyword pA:    The population of state A.
+        @type pA:       float
+        @keyword kex:   The rate of exchange.
+        @type kex:      float
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_CR72(r20=R20A[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
 
 
     def calc_ns_2site_star_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -264,32 +311,34 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_2site_star_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
-        # Loop over the spins.
-        for spin_index in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for frq_index in range(self.num_frq):
-                # The R20 index.
-                r20_index = frq_index + spin_index*self.num_frq
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+    def func_CR72_red(self, params):
+        """Target function for the Carver and Richards (1972) 2-site exchange model on all time scales.
 
-                # Back calculate the R2eff values.
-                r2eff_CR72(r20=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+        This assumes that pA > pB, and hence this must be implemented as a constraint.  For this model, the simplification R20A = R20B is assumed.
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for point_index in range(self.num_disp_points):
-                    if self.missing[spin_index, frq_index, point_index]:
-                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
 
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
 
-        # Return the total chi-squared value.
-        return chi2_sum
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_2site_star_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
 
     def func_DPL94(self, params):
