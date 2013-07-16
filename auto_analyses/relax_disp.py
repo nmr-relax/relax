@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF, R1RHO_EXP
 from status import Status; status = Status()
 
 
@@ -277,7 +277,7 @@ class Relax_disp:
         self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Exponential curves.
-        if cdp.model_type == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
+        if model == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
             self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
 
@@ -285,27 +285,34 @@ class Relax_disp:
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
 
         # The R2eff parameter.
-        if cdp.model_type == 'R2eff':
+        if model == 'R2eff':
             self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
 
         # The I0 parameter.
-        if cdp.model_type == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
+        if model == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
-        # The R20 parameter.
-        if cdp.model_type in [None] + MODEL_LIST_CPMG:
-            self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
+        ## The R20 parameter.
+        #if cdp.exp_type in CPMG_EXP and model in [None, MODEL_LM63, MODEL_CR72_RED, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        #    self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
+        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
 
-        # The R1rho parameter.
-        if cdp.model_type in [None] + MODEL_LIST_R1RHO:
-            self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+        ## The R20A and R20B parameters.
+        #if cdp.exp_type in CPMG_EXP and model in [None, MODEL_CR72, MODEL_NS_2SITE_STAR]:
+        #    self.interpreter.value.write(param='r2a', file='r20a.out', dir=path, force=True)
+        #    self.interpreter.value.write(param='r2b', file='r20b.out', dir=path, force=True)
+        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
+        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
+
+        ## The R1rho parameter.
+        #if cdp.exp_type in R1RHO_EXP and model in [None] + MODEL_LIST_R1RHO:
+        #    self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
+        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        if model in [None, MODEL_CR72, MODEL_M61B]:
+        if model in [None, MODEL_CR72_RED, MODEL_CR72, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
             self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
@@ -322,17 +329,17 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='padw2', file='padw2.agr', dir=path, force=True)
 
         # The dw parameter.
-        if model in [None, MODEL_CR72, MODEL_M61B]:
+        if model in [None, MODEL_CR72_RED, MODEL_CR72, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
 
         # The kex and tex parameters.
-        if model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B]:
+        if model in [None, MODEL_LM63, MODEL_CR72_RED, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
             self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
 
         # Minimisation statistics.
-        if not (cdp.model_type == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
+        if not (model == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
