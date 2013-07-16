@@ -29,7 +29,7 @@ This module is for the function, gradient and Hessian of the CR72 model.  The mo
 
 The equation used is::
 
-    R2eff = 1/2 [ R2A0 + R2B0 + kex - 2.nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ] ,
+    R2eff = 1/2 [ R2A0 + R2B0 + kex - 2.nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-)) ] ,
 
 where::
 
