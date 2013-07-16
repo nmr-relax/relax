@@ -39,7 +39,7 @@ from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -443,6 +443,7 @@ uf.add_keyarg(
         "%s: {R20, ..., pA, dw, kex}" % MODEL_CR72_RED,
         "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_CR72,
         "%s: {R20, ..., phi_ex, padw2, kex}" % MODEL_IT99,
+        "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR_RED,
         "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61,
@@ -456,6 +457,7 @@ uf.add_keyarg(
         MODEL_CR72_RED,
         MODEL_CR72,
         MODEL_IT99,
+        MODEL_NS_2SITE,
         MODEL_NS_2SITE_STAR_RED,
         MODEL_NS_2SITE_STAR,
         MODEL_M61,
@@ -488,6 +490,7 @@ uf.desc.append(Desc_container('Numerical models'))
 uf.desc[-1].add_paragraph("The Bloch-McConnell equations can also be solved numerically.  The numeric models are also dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff values and errors required as the base data for all other models,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations with parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR_RED, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices whereby the simplification R20A = R20B is assumed.  It has the parameters {R20, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, only the base models are currently supported:")
