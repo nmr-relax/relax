@@ -462,154 +462,32 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  These models are dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the currently supported models are:")
+uf.desc[-1].add_paragraph("A number of different dispersion models are supported.  This includes both analytic models and numerical models.")
+# Analytic models.
+uf.desc.append(Desc_container('Analytic models'))
+uf.desc[-1].add_paragraph("The analytic models are closed solutions to the Bloch-McConnell equations under specific conditions.  The analytic models are dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff values and errors required as the base data for all other models,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The Carver and Richards (1972) 2-site equation for all time scales with parameters {R20, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., phi_ex, padw2, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
-uf.desc[-1].add_paragraph("Except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  The models are described in more detail below." % (MODEL_R2EFF, MODEL_NOREX))
-# R2eff model.
-uf.desc.append(Desc_container("The R2eff model"))
-uf.desc[-1].add_paragraph("This is the simplest of all models in that the dispersion component of the data is not modelled.  It is used to determine either the R2eff or R1rho values and errors which are required as the base data for all other models.  It can be selected by setting the model to '%s'.  Depending on the experiment type, this model will be handled differently.  The R2eff/R1rho values determined can be later copied to the data pipes of the other dispersion models using the appropriate user functions." % MODEL_R2EFF)
-uf.desc[-1].add_paragraph("For the fixed relaxation time period CPMG-type experiments, the R2eff values are determined by direct calculation using the formula:")
-uf.desc[-1].add_verbatim("""\
-                       -1         / I1(nu_CPMG) \ 
-    R2eff(nu_CPMG) = ------- * ln | ----------- | ,
-                     relax_T      \     I0      /\
-""")
-uf.desc[-1].add_paragraph("where nu_CPMG is the CPMG frequency in Hz, equal to:")
-uf.desc[-1].add_verbatim("""\
-                  1
-    nu_CPMG = ---------- ,
-              2 tau_CPMG\
-""")
-uf.desc[-1].add_paragraph("relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  The values and errors are determined with a single call of the calc user function.  The R1rho version of the equation is essentially the same:")
-uf.desc[-1].add_verbatim("""\
-                   -1         / I1(nu1) \ 
-    R1rho(nu1) = ------- * ln | ------- | ,
-                 relax_T      \   I0    /\
-""")
-uf.desc[-1].add_paragraph("where I1 is the peak intensity in a spectrum for a given spin-lock field strength nu1.")
-uf.desc[-1].add_paragraph("For the variable relaxation time period type experiments, the R2eff/R1rho values are determined by fitting to the simple two parameter exponential as in a R1 or R2 analysis.  Both R2eff/R1rho and the initial peak intensity I0 are optimised using the minimise user function for each exponential curve separately.  Monte Carlo simulations are used to obtain the parameter errors.")
-# The no exchange model.
-uf.desc.append(Desc_container("The model for no chemical exchange relaxation"))
-uf.desc[-1].add_paragraph("This model is provided for model selection purposes.  In combination with frequentist methods, such as AIC, or Bayesian methods it can show if the presence of chemical exchange is statistically significant.  Optimisation is still required as one R20 value per magnetic field strength will be fit to the measured data for each spin system.  It is selected by setting the model to '%s'." % MODEL_NOREX)
-# LM63 model.
-uf.desc.append(Desc_container("The LM63 2-site fast exchange CPMG model"))
-uf.desc[-1].add_paragraph("This is the original model for 2-site fast exchange for CPMG-type experiments.  It is selected by setting the model to '%s', here named after Luz and Meiboom 1963.  The equation for the exchange process is:" % MODEL_LM63)
-uf.desc[-1].add_verbatim("""\
-                  phi_ex   /     4 * nu_cpmg         /     kex     \ \ 
-    R2eff = R20 + ------ * | 1 - -----------  * tanh | ----------- | | ,
-                   kex     \         kex             \ 4 * nu_cpmg / /\
-""")
-uf.desc[-1].add_paragraph("where:")
-uf.desc[-1].add_verbatim("""\
-    phi_ex = pA * pB * delta_omega^2 ,\
-""")
-uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Luz, S. and Meiboom S. (1963).  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent.  J. Chem. Phys., 39, 366-370.  (DOI: 10.1063/1.1734254).")
-# CR72 model.
-uf.desc.append(Desc_container("The CR72 2-site CPMG model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales (with the constraint that pA > pB), named after Carver and Richards 1972.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_CR72)
-uf.desc[-1].add_verbatim("""\
-    R2eff = 1/2 [ R2A0 + R2B0 + kex - 2.nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ] ,\
-""")
-uf.desc[-1].add_paragraph("where:")
-uf.desc[-1].add_verbatim("""\
-           1 /        Psi + 2delta_omega^2 \ 
-    D+/- = - | +/-1 + -------------------- | ,
-           2 \        sqrt(Psi^2 + zeta^2) /
-
-             2^(2/3)
-    eta+/- = ------- sqrt(+/-Psi + sqrt(Psi^2 + zeta^2)) ,
-             nu_cpmg
-
-    Psi = (R2A0 - R2B0 - pA.kex + pB.kex)^2 - delta_omega^2 + 4pA.pB.kex^2 ,
-
-    zeta = 2delta_omega (R2A0 - R2B0 - pA.kex + pB.kex).\
-""")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105.  (DOI: 10.1016/0022-2364(72)90090-X).")
-uf.desc[-1].add_paragraph("For this model, the R20 relaxation rates for states A and B are assumed to be the same.  This simplifies the equations to:")
-uf.desc[-1].add_verbatim("""\
-    R2eff = R20 + kex/2 - nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ,\
-""")
-uf.desc[-1].add_paragraph("where:")
-uf.desc[-1].add_verbatim("""\
-
-    Psi = kex^2 - delta_omega^2 ,
-
-    zeta = -2delta_omega (pA.kex - pB.kex).\
-""")
-# IT99 model.
-uf.desc.append(Desc_container("The IT99 2-site CPMG model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site exchange on all times scales (with the constraint that pA >> pB), named after Ishima and Torchia 1999.  Is it selected by setting the model to '%s'.  The equation is:" % MODEL_IT99)
-uf.desc[-1].add_verbatim("""\
-              phi_ex * tex
-    Rex ~= ------------------- ,
-           1 + omega_a^2*tex^2
-
-    phi_ex = pA * pB * delta_omega^2 ,
-    
-    omega_a^2 = sqrt(omega_1^4 + pA^2*delta_omega^4) ,\
-""")
-uf.desc[-1].add_paragraph("where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (DOI: 10.1023/A:1008324025406).")
-# M61 model.
-uf.desc.append(Desc_container("The M61 2-site fast exchange R1rho model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-type experiments.  It is selected by setting the model to '%s', here named after Meiboom 1961.  The equation for the exchange process is:" % MODEL_M61)
-uf.desc[-1].add_verbatim("""\
-                                      phi_ex * kex
-    R1rho = R1rho' + sin^2(theta) * ----------------- ,
-                                    kex^2 + omega_e^2\
-""")
-uf.desc[-1].add_paragraph("where R1rho' is the R1rho value in the absence of exchange, theta is the rotating frame tilt angle,")
-uf.desc[-1].add_verbatim("""\
-    phi_ex = pA * pB * delta_omega^2 ,\
-""")
-uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_e is the effective field in the rotating frame.")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (DOI: 10.1063/1.1700960).")
-# DPL94 model.
-uf.desc.append(Desc_container("The DPL94 2-site fast exchange R1rho model"))
-uf.desc[-1].add_paragraph("This is the model for 2-site fast exchange for R1rho-type experiments.  It is selected by setting the model to '%s', here named after Davis, Perlman and London 1994.  The equation for the exchange process is:" % MODEL_DPL94)
-uf.desc[-1].add_verbatim("""\
-                                      phi_ex * kex
-    R1rho = R1rho' + sin^2(theta) * ----------------- ,
-                                    kex^2 + omega_e^2\
-""")
-uf.desc[-1].add_paragraph("where R1rho' is the R1rho value in the absence of exchange equal to")
-uf.desc[-1].add_verbatim("""\
-    R1rho' = R1.cos^2(theta) + R2.sin^2(theta) ,\
-""")
-uf.desc[-1].add_paragraph("theta is the rotating frame tilt angle,")
-uf.desc[-1].add_verbatim("""\
-    phi_ex = pA * pB * delta_omega^2 ,\
-""")
-uf.desc[-1].add_paragraph("kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_e is the effective field in the rotating frame.")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Davis, D. G., Perlman, M. E. and London, R. E. (1994).  Direct measurements of the dissociation-rate constant for inhibitor-enzyme complexes via the T1rho and T2 (CPMG) methods.  J. Magn. Reson, Series B, 104, 266-275.  (DOI: 10.1006/jmrb.1994.1084).")
-# M61 skew model.
-uf.desc.append(Desc_container("The M61 2-site, skewed, on-resonance R1rho model"))
-uf.desc[-1].add_paragraph("This is the Meiboom 1961 model for 2-site exchange on all time scales for R1rho-type experiments.  It only holds for on-resonance experiments and when the populations are significantly skewed (pA >> pB).  It is selected by setting the model to '%s'.  The equation for the exchange process is:" % MODEL_M61B)
-uf.desc[-1].add_verbatim("""\
-                           pA^2.pB.delta_omega^2.kex
-    R1rho = R1rho' + -------------------------------------- ,
-                     kex^2 + pA^2.delta_omega^2 + omega_1^2\
-""")
-uf.desc[-1].add_paragraph("where omega_1 = omega_e.")
-uf.desc[-1].add_paragraph("The reference for this equation is:")
-uf.desc[-1].add_list_element("Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (DOI: 10.1063/1.1700960).")
+uf.desc[-1].add_paragraph("Except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks." % (MODEL_R2EFF, MODEL_NOREX))
+# Numerical models.
+uf.desc.append(Desc_container('Numerical models'))
+uf.desc[-1].add_paragraph("The Bloch-McConnell equations can also be solved numerically.  The numeric models are also dependent upon whether the data originates from a CPMG-type or R1rho-type experiment.  For the CPMG-type experiments, the currently supported models are:")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff values and errors required as the base data for all other models,")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with parameters {R20A, R20B, ..., pA, dw, kex}.")
+uf.desc[-1].add_paragraph("For the R1rho-type experiment, only the base models are currently supported:")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
+uf.desc[-1].add_paragraph("Again as for the analytic models, except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  All models are described in full detail in the relax user manual." % (MODEL_R2EFF, MODEL_NOREX))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
