@@ -1234,7 +1234,7 @@ class Relax_disp(API_base, API_common):
                 for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
                     # The parameter with additional details.
                     param_text = param_name
-                    if param_name == 'r2':
+                    if param_name in ['r2', 'r2a', 'r2b']:
                         frq = return_value_from_frq_index(frq_index)
                         if frq:
                             param_text += " (%.3f MHz)" % (frq / 1e6) 
