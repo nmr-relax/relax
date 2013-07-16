@@ -103,7 +103,7 @@ For the CPMG-type experiments, the models currently supported are:
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
-\item[`NS 2-site star red':]\index{relaxation dispersion!NS 2-site star red model}  A model for 2-site exchange using complex conjugate matrices whereby the simplification R20A = R20B is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star red model} on page~\pageref{sect: dispersion: NS 2-site star red model}.
+\item[`NS 2-site star red':]\index{relaxation dispersion!NS 2-site star red model}  A model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star red model} on page~\pageref{sect: dispersion: NS 2-site star red model}.
 \item[`NS 2-site star':]\index{relaxation dispersion!NS 2-site star model}  A model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star model} on page~\pageref{sect: dispersion: NS 2-site star model}.
 \end{description}
 \end{description}
@@ -383,7 +383,7 @@ The reference for this equation is:
 \label{sect: dispersion: NS 2-site star red model}
 \index{relaxation dispersion!NS 2-site star red model|textbf}
 
-This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.
+This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
 Is it selected by setting the model to `NS 2-site star red'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
