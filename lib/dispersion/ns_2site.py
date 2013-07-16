@@ -40,7 +40,7 @@ if dep_check.scipy_module:
 from lib.dispersion.ns_matrices import r180x_3d, rcpmg_3d
 
 
-def r2eff_ns_2site_star(M0=None, r10a=None, r10b=None, r20a=None, r20b=None, pA=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_2site_3D(M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -87,10 +87,10 @@ def r2eff_ns_2site_star(M0=None, r10a=None, r10b=None, r20a=None, r20b=None, pA=
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
         Rexpo = expm(R*tcp[i])
 
-        # Loop over the CPMG elements.
+        # Loop over the CPMG elements, propagating the magnetisation.
         for j in range(2*power[i]):
 			Mint = Rexpo * Mint
-			Mint = r180x_3d(0.0) * Mint
+			Mint = r180x_3d() * Mint
 			Mint = Rexpo * Mint
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
