@@ -57,7 +57,7 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     @type M0:               numpy float64, rank-1, 2D array
     @keyword r20a:          The R2 value for state A in the absence of exchange.
     @type r20a:             float
-    @keyword r20b:          The R2 value for state A in the absence of exchange.
+    @keyword r20b:          The R2 value for state B in the absence of exchange.
     @type r20b:             float
     @keyword fA:            The frequency of state A.
     @type fA:               float
