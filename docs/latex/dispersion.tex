@@ -72,6 +72,7 @@ For the CPMG-type experiments, the models currently supported are:
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
 \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
+\item[`CR72 red':]\index{relaxation dispersion!CR72 red model}  The \citet{CarverRichards72} 2-site equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 red model} on page~\pageref{sect: dispersion: CR72 red model}.
 \item[`CR72':]\index{relaxation dispersion!CR72 model}  The \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
 \item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
 \end{description}
@@ -171,6 +172,7 @@ R2eff              & -        & -     & $\{\Rtwoeff, \cdots\}$                  
 R2eff              & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
 No Rex             & -        & 0     & $\{\Rtwozero, \cdots\}$                           & -                                 & - \\
 LM63               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$              & Fast exchange                     & \citet{LuzMeiboom63} \\
+CR72 red           & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & \citet{CarverRichards72} \\
 CR72               & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & \citet{CarverRichards72} \\
 IT99               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$   & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
 NS 2-site star red & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$            & $\pA > \pB$                       & - \\
@@ -283,7 +285,7 @@ The reference for this equation is:
 
 
 
-% LM63 model.
+% CR72 model.
 %~~~~~~~~~~~~
 
 \subsection{The CR72 2-site CPMG model}
@@ -309,6 +311,29 @@ The reference for this equation is:
 \end{itemize}
 
 For this model, the $\Rtwozero$ relaxation rates for states A and B are assumed to be the same.  This simplifies the equations to
+\begin{equation}
+    \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \left( D_+\cosh(\eta_+) - D_-\cos(\eta_- \right) ,
+\end{equation}
+
+where $D_\pm$ and $\eta_\pm$ are unchanged and
+\begin{align}
+    \Psi  &= \kex^2 - \dw^2 , \\
+    \zeta &= -2\dw (\pA\kex - \pB\kex) .
+\end{align}
+
+
+
+% CR72 red model.
+%~~~~~~~~~~~~~~~~
+
+\subsection{The CR72 reduced 2-site CPMG model}
+\label{sect: dispersion: CR72 red model}
+\index{relaxation dispersion!CR72 red model|textbf}
+
+This is the model for 2-site exchange on all times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
+Is it selected by setting the model to `CR72 red'.
+It is the same as the CR72 model described above, but with the simplification that $\RtwozeroA = \RtwozeroB$.
+This simplifies the equations to
 \begin{equation}
     \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \left( D_+\cosh(\eta_+) - D_-\cos(\eta_- \right) ,
 \end{equation}
