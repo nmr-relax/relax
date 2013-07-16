@@ -418,11 +418,11 @@ def loop_parameters(spins=None):
     else:
         # First the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
-            # Reset the frequency index.
-            frq_index = -1
-
             # The R2 parameter.
             if 'r2' in spins[0].params:
+                # Reset the frequency index.
+                frq_index = -1
+
                 # Loop over the spectrometer frequencies.
                 for frq in loop_frq():
                     # First increment the indices.
@@ -434,6 +434,9 @@ def loop_parameters(spins=None):
 
             # The R2A parameter.
             if 'r2a' in spins[0].params:
+                # Reset the frequency index.
+                frq_index = -1
+
                 # Loop over the spectrometer frequencies.
                 for frq in loop_frq():
                     # First increment the indices.
@@ -445,6 +448,9 @@ def loop_parameters(spins=None):
 
             # The R2B parameter.
             if 'r2b' in spins[0].params:
+                # Reset the frequency index.
+                frq_index = -1
+
                 # Loop over the spectrometer frequencies.
                 for frq in loop_frq():
                     # First increment the indices.
