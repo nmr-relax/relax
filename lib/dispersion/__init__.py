@@ -29,6 +29,7 @@ __all__ = [
     'lm63',
     'm61',
     'm61b',
+    'ns_2site',
     'ns_2site_star',
     'ns_matrices',
     'two_point'
