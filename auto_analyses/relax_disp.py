@@ -23,6 +23,7 @@
 """The automatic relaxation dispersion protocol."""
 
 # Python module imports.
+from copy import deepcopy
 from os import getcwd, sep
 import sys
 from warnings import warn
@@ -31,10 +32,11 @@ from warnings import warn
 from lib.list import unique_elements
 from lib.text.sectioning import title, subtitle
 from lib.warnings import RelaxWarning
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
 from status import Status; status = Status()
 
 
@@ -138,11 +140,68 @@ class Relax_disp:
             self.interpreter.spectrum.error_analysis(subset=ids)
 
 
-    def optimise(self):
-        """Optimise the model."""
+    def nesting(self, model=None):
+        """Support for model nesting.
+
+        If model nesting is detected, the optimised parameters from the simpler model will be used for the more complex model.  The method will then signal if the nesting condition is met for the model, allowing the grid search to be skipped.
+
+
+        @keyword model: The model to be optimised.
+        @type model:    str
+        @return:        True if the model is the more complex model in a nested pair and the parameters of the simpler model have been copied.  False otherwise.
+        @rtype:         bool
+        """
+
+        # The simpler model.
+        nested_pipe = None
+        if model == MODEL_CR72:
+            nested_pipe = MODEL_CR72_RED
+        if model == MODEL_NS_2SITE_STAR:
+            nested_pipe = MODEL_NS_2SITE_STAR_RED
+
+        # The more complex of nested models.
+        if nested_pipe:
+            # Printout.
+            print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
+
+            # Loop over the spins to copy the parameters.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Get the nested spin.
+                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+
+                # The R20 parameters.
+                if hasattr(nested_spin, 'r2'):
+                    setattr(spin, 'r2a', deepcopy(nested_spin.r2))
+                    setattr(spin, 'r2b', deepcopy(nested_spin.r2))
+
+                # All other spin parameters.
+                for param in spin.params:
+                    if param in ['r2', 'r2a', 'r2b']:
+                        continue
+
+                    # Copy the parameter.
+                    setattr(spin, param, deepcopy(getattr(nested_spin, param)))
+
+            # Nesting.
+            return True
+
+        # No nesting.
+        return False
+
+
+    def optimise(self, model=None):
+        """Optimise the model, taking model nesting into account.
+
+        @keyword model: The model to be optimised.
+        @type model:    str
+        """
+
+        # Nested model simplification.
+        nested = self.nesting(model=model)
 
         # Grid search.
-        self.interpreter.grid_search(inc=self.grid_inc)
+        if not nested:
+            self.interpreter.grid_search(inc=self.grid_inc)
 
         # Minimise.
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
@@ -189,7 +248,7 @@ class Relax_disp:
 
             # Optimise the model.
             else:
-                self.optimise()
+                self.optimise(model=model)
 
             # Write out the results.
             self.write_results(path=self.results_dir+sep+model, model=model)
