@@ -103,6 +103,8 @@ For the CPMG-type experiments, the models currently supported are:
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
+\item[`NS 2-site 3D red':]\index{relaxation dispersion!NS 2-site 3D red model}  A model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site 3D red model} on page~\pageref{sect: dispersion: NS 2-site 3D red model}.
+\item[`NS 2-site 3D':]\index{relaxation dispersion!NS 2-site 3D model}  A model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site 3D model} on page~\pageref{sect: dispersion: NS 2-site 3D model}.
 \item[`NS 2-site star red':]\index{relaxation dispersion!NS 2-site star red model}  A model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star red model} on page~\pageref{sect: dispersion: NS 2-site star red model}.
 \item[`NS 2-site star':]\index{relaxation dispersion!NS 2-site star model}  A model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star model} on page~\pageref{sect: dispersion: NS 2-site star model}.
 \end{description}
@@ -165,15 +167,17 @@ $\Phiex$                & $\pA\pB\dw^2$         & Fast exchange factor          
 \caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
 \begin{tabular}{lllcll}
 \toprule
-Model code         & Type     & Sites & Parameters                                          & Restriction                       & Reference \\
+Model code         & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
 \midrule                              
 R2eff              & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
 R2eff              & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
-No Rex             & -        & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
+No Rex             & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
 LM63               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
 CR72 red           & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
 CR72               & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
 IT99               & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+NS 2-site 3D red   & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS 2-site 3D       & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
 NS 2-site star red & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
 NS 2-site star     & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
 \bottomrule
@@ -188,11 +192,11 @@ NS 2-site star     & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \
 \caption{The analytic and numerical models for $\Ronerho$-type experiments currently supported within relax.}
 \begin{tabular}{lllcll}
 \toprule
-Model code & Type     & Sites & Parameters                                        & Restriction                       & Reference \\
+Model code & Solution & Sites & Parameters                                        & Restriction                       & Reference \\
 \midrule                       
 R2eff      & -        & -     & $\{\Ronerho, \cdots\}$                            & Fixed relaxation time period      & - \\
 R2eff      & -        & -     & $\{\Ronerho, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
-No Rex     & -        & 0     & $\{\Ronerhoprime, \cdots\}$                       & -                                 & - \\
+No Rex     & Closed   & 0     & $\{\Ronerhoprime, \cdots\}$                       & -                                 & - \\
 M61        & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange, on-resonance       & \citet{Meiboom61} \\
 DPL94      & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange                     & \citet{Davis94} \\
 M61 skew   & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
