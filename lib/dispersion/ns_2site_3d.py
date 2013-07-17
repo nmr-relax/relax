@@ -33,21 +33,24 @@ import dep_check
 
 # Python module imports.
 from math import fabs, log
+from numpy import dot
 if dep_check.scipy_module:
     from scipy.linalg import expm
 
 # relax module imports.
-from lib.dispersion.ns_matrices import r180x_3d, rcpmg_3d
+from lib.dispersion.ns_matrices import rcpmg_3d
 
 
-def r2eff_ns_2site_3D(M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
 
 
+    @keyword r180x:         The X-axis pi-pulse propagator.
+    @type r180x:            numpy float64, rank-2, 7D array
     @keyword M0:            This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-    @type M0:               numpy float64, rank-1, 2D array
+    @type M0:               numpy float64, rank-1, 7D array
     @keyword r10a:          The R1 value for state A.
     @type r10a:             float
     @keyword r10b:          The R1 value for state B.
@@ -89,12 +92,12 @@ def r2eff_ns_2site_3D(M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None
 
         # Loop over the CPMG elements, propagating the magnetisation.
         for j in range(2*power[i]):
-			Mint = Rexpo * Mint
-			Mint = r180x_3d() * Mint
-			Mint = Rexpo * Mint
+            Mint = dot(Rexpo, Mint)
+            Mint = dot(r180x, Mint)
+            Mint = dot(Rexpo, Mint)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        Mgx = fabs((Mint[1])/pA)
+        Mgx = fabs(Mint[1] / pA)
         if Mgx == 0.0:
             back_calc[i] = 1e99
         else:
