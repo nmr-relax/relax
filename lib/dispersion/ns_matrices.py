@@ -112,7 +112,7 @@ def rcpmg_2d(R2A=None, R2B=None, dw=None, k_AB=None, k_BA=None):
     return temp
 
 
-def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, dw=None, k_AB=None, k_BA=None):
+def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None):
     """Definition of the 3D exchange matrix.
 
     @keyword R1A:   The longitudinal, spin-lattice relaxation rate for state A.
@@ -123,6 +123,10 @@ def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, dw=None, k_AB=None, k_BA=No
     @type R2A:      float
     @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
     @type R2B:      float
+    @keyword pA:    The population of state A.
+    @type pA:       float
+    @keyword pB:    The population of state B.
+    @type pB:       float
     @keyword dw:    The chemical exchange difference between states A and B in rad/s.
     @type dw:       float
     @keyword k_AB:  The forward exchange rate from state A to state B.
@@ -136,10 +140,6 @@ def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, dw=None, k_AB=None, k_BA=No
     # The omega frequencies for states A and B (state A is assumed to be at zero frequency).
     wA = 0.0
     wB = dw
-
-    # Recreate the populations.
-    pA = k_BA / (k_BA + k_AB)
-    pB = k_AB / (k_BA + k_AB)
 
     # Create the matrix.
     temp = matrix([
