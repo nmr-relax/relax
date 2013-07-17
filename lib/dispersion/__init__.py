@@ -30,6 +30,7 @@ __all__ = [
     'm61',
     'm61b',
     'ns_2site_3d',
+    'ns_2site_expanded',
     'ns_2site_star',
     'ns_matrices',
     'two_point'
