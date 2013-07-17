@@ -40,7 +40,7 @@ if dep_check.scipy_module:
     from scipy.linalg import expm
 
 
-def r2eff_ns_2site_expanded(r20=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
+def r2eff_ns_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -48,6 +48,8 @@ def r2eff_ns_2site_expanded(r20=None, dw=None, k_AB=None, k_BA=None, relax_time=
 
     @keyword r20:               The R2 value for both states A and B in the absence of exchange.
     @type r20:                  float
+    @keyword pA:                The population of state A.
+    @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
     @type dw:                   float
     @keyword k_AB:              The rate of exchange from site A to B (rad/s).
@@ -126,7 +128,7 @@ def r2eff_ns_2site_expanded(r20=None, dw=None, k_AB=None, k_BA=None, relax_time=
     t139 = 1.0/(k_AB + k_BA) * ((-t113 * t116 * t118/2.0 + t120 * t122 * t118/2.0) * k_BA + (-t113 * t127 * t116 * t120 * t118/2.0 + t120 * t127 * t122 * t113 * t118/2.0) * k_AB/2.0)
 
     # Calculate the initial and final peak intensities.
-    intensity0 = pg
+    intensity0 = pA
     intensity = real(t139) * exp(-relax_time * r20)
 
     # The magnetisation vector.
