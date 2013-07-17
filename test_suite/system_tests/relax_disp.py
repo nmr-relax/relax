@@ -504,17 +504,17 @@ class Relax_disp(SystemTestCase):
         spin71 = cdp.mol[0].res[1].spin[0]
 
         # Set the initial parameter values.
-        spin70.r2 = [6.994165925, 9.428129427]
-        spin70.pA = 0.9897754407
-        spin70.dw = 5.642418428
-        spin70.kex = 1743.666375
-        spin71.r2 = [4.978654237, 9.276918959]
-        spin71.pA = 0.9968032899
-        spin71.dw = 4.577891393
-        spin71.kex = 1830.044597
+        spin70.r2 = [7, 9]
+        spin70.pA = 0.9
+        spin70.dw = 6.0
+        spin70.kex = 1500.0
+        spin71.r2 = [5, 9]
+        spin71.pA = 0.9
+        spin71.dw = 4.0
+        spin71.kex = 1900.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -527,19 +527,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.99588673577837, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.45248596611036, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989751958251912, 4)
-        self.assertAlmostEqual(spin70.dw, 5.64481346432097, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1723.62510048637/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 18.0983759853235, 4)
+        self.assertAlmostEqual(spin70.r2[0], 6.99593516954789, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.45232409425401, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989752048295713, 4)
+        self.assertAlmostEqual(spin70.dw, 5.64489661508384, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1723.67419665206/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.0984807984421, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.97891921568573, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996807857237692, 4)
-        self.assertAlmostEqual(spin71.dw, 4.58200738669362, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1821.36206334352/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.98018914225203, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996860641017245, 4)
+        self.assertAlmostEqual(spin71.dw, 4.62931104560895, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1804.11925367563/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37066812455524, 4)
 
 
     def test_hansen_cpmg_data_ns_2site_star(self):
