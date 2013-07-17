@@ -34,6 +34,7 @@ from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.ns_2site_3d import r2eff_ns_2site_3D
+from lib.dispersion.ns_2site_expanded import r2eff_ns_2site_expanded
 from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.errors import RelaxError
