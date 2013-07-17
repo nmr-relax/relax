@@ -33,8 +33,7 @@ import dep_check
 
 # Python module imports.
 from math import log
-import numpy
-from numpy import add, complex, conj, dot, exp, power, real
+from numpy import add, complex, conj, dot, exp, power, real, sqrt
 from numpy.linalg import matrix_power
 if dep_check.scipy_module:
     from scipy.linalg import expm
@@ -79,12 +78,12 @@ def r2eff_ns_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, re
     t11 = dw * dw
     t14 = 2.0 * t3 * k_AB*dw
     t15 = k_AB * k_AB
-    t17 = cmath.sqrt(t5 - t8 + t10 - t11 + t14 + t15)
+    t17 = sqrt(t5 - t8 + t10 - t11 + t14 + t15)
     t21 = exp((-k_BA + t4 - k_AB + t17) * tcp/4.0)
     t22 = 1.0/t17
     t28 = exp((-k_BA + t4 - k_AB - t17) * tcp/4.0)
     t31 = t21 * t22 * k_AB - t28 * t22 * k_AB
-    t33 = cmath.sqrt(t5 + t8 + t10 - t11 - t14 + t15)
+    t33 = sqrt(t5 + t8 + t10 - t11 - t14 + t15)
     t34 = k_BA + t4 - k_AB + t33
     t37 = exp((-k_BA - t4 - k_AB + t33) * tcp/2.0)
     t39 = 1.0/t33
@@ -117,7 +116,7 @@ def r2eff_ns_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, re
     t99 = t92 + t96
     t102 = t99 * t99
     t108 = t62 * t88 + t82 * t31
-    t112 = numpy.sqrt(t98 - 2.0 * t99 * t97 + t102 + 4.0 * (t91 * t68/2.0 + t95 * t55/2.0) * t108)
+    t112 = sqrt(t98 - 2.0 * t99 * t97 + t102 + 4.0 * (t91 * t68/2.0 + t95 * t55/2.0) * t108)
     t113 = t69 + t83 - t92 - t96 - t112
     t115 = num_cpmg / 2.0
     t116 = power(t69/2.0 + t83/2.0 + t92/2.0 + t96/2.0 + t112/2.0, t115)
