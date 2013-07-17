@@ -58,6 +58,37 @@ class Relax_disp(SystemTestCase):
         ds.__reset__()
 
 
+    def setup_hansen_cpmg_data(self, model=None):
+        """Set up the data for the test_hansen_cpmg_data_*() system tests.
+
+        @keyword model: The name of the model which will be tested.
+        @type model:    str
+        """
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(data_path+sep+'base_pipe')
+
+        # Set the nuclear isotope data.
+        self.interpreter.spin.isotope('15N')
+
+        # Create the R2eff data pipe and load the results.
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+
+        # The model data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
+
+
     def test_hansen_cpmg_data_auto_analysis(self):
         """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data.
 
@@ -137,28 +168,8 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Create the data pipe and load the base data.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
-        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
-        self.interpreter.results.read(data_path+sep+'base_pipe')
-
-        # Set the nuclear isotope data.
-        self.interpreter.spin.isotope('15N')
-
-        # Create the R2eff data pipe and load the results.
-        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='R2eff')
-        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
-
-        # The LM63 model data pipe.
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='LM63', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='LM63')
-
-        # Set the model.
-        self.interpreter.relax_disp.select_model(model='LM63')
-
-        # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='LM63', param='r2eff')
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='LM63')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -206,28 +217,8 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Create the data pipe and load the base data.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
-        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
-        self.interpreter.results.read(data_path+sep+'base_pipe')
-
-        # Set the nuclear isotope data.
-        self.interpreter.spin.isotope('15N')
-
-        # Create the R2eff data pipe and load the results.
-        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='R2eff')
-        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
-
-        # The CR72 model data pipe.
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='CR72', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='CR72')
-
-        # Set the model.
-        self.interpreter.relax_disp.select_model(model='CR72')
-
-        # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='CR72', param='r2eff')
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='CR72')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -278,28 +269,8 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Create the data pipe and load the base data.
-        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
-        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
-        self.interpreter.results.read(data_path+sep+'base_pipe')
-
-        # Set the nuclear isotope data.
-        self.interpreter.spin.isotope('15N')
-
-        # Create the R2eff data pipe and load the results.
-        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='R2eff')
-        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
-
-        # The IT99 model data pipe.
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='IT99', bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='IT99')
-
-        # Set the model.
-        self.interpreter.relax_disp.select_model(model='IT99')
-
-        # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='IT99', param='r2eff')
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='IT99')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
