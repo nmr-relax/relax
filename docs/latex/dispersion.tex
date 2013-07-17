@@ -364,15 +364,27 @@ The reference for this equation is:
 \end{itemize}
 
 
-% NS 2-site star red model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~
+% NS 2-site 3D model.
+%~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The NS 2-site star red CPMG model}
-\label{sect: dispersion: NS 2-site star red model}
-\index{relaxation dispersion!NS 2-site star red model|textbf}
+\subsection{The NS 2-site 3D CPMG model}
+\label{sect: dispersion: NS 2-site 3D model}
+\index{relaxation dispersion!NS 2-site 3D model|textbf}
 
-This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
-Is it selected by setting the model to `NS 2-site star red'.
+This is the numerical model for 2-site exchange using 3D magnetisation vectors.
+Is it selected by setting the model to `NS 2-site 3D'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+% NS 2-site 3D red model.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS 2-site 3D reduced CPMG model}
+\label{sect: dispersion: NS 2-site 3D red model}
+\index{relaxation dispersion!NS 2-site 3D red model|textbf}
+
+This is the numerical model for 2-site exchange using 3D magnetisation vectors, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+Is it selected by setting the model to `NS 2-site 3D red'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
 
@@ -383,7 +395,21 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \label{sect: dispersion: NS 2-site star model}
 \index{relaxation dispersion!NS 2-site star model|textbf}
 
-This is the numerical model for 2-site exchange using complex conjugate matrices.  Is it selected by setting the model to `NS 2-site star'.  The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+This is the numerical model for 2-site exchange using complex conjugate matrices.
+Is it selected by setting the model to `NS 2-site star'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+% NS 2-site star red model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS 2-site star reduced CPMG model}
+\label{sect: dispersion: NS 2-site star red model}
+\index{relaxation dispersion!NS 2-site star red model|textbf}
+
+This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+Is it selected by setting the model to `NS 2-site star red'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
 
 % M61 model.
