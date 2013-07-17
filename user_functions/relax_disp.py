@@ -39,7 +39,7 @@ from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -447,6 +447,7 @@ uf.add_keyarg(
         "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE_3D,
         "%s: {R20, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR_RED,
         "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE_STAR,
+        "%s: {R20A, R20B, ..., pA, dw, kex}" % MODEL_NS_2SITE_EXPANDED,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_DPL94,
         "%s: {R1rho', ..., pA, dw, kex}" % MODEL_M61B
@@ -462,6 +463,7 @@ uf.add_keyarg(
         MODEL_NS_2SITE_3D,
         MODEL_NS_2SITE_STAR_RED,
         MODEL_NS_2SITE_STAR,
+        MODEL_NS_2SITE_EXPANDED,
         MODEL_M61,
         MODEL_DPL94,
         MODEL_M61B
@@ -496,6 +498,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_3D_RED, "The numerical
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_3D, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR_RED, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices whereby the simplification R20A = R20B is assumed.  It has the parameters {R20, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_STAR, "The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with parameters {R20A, R20B, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_2SITE_EXPANDED, "The numerical solution for the 2-site Bloch-McConnell equationsexpanded using Maple by Nikolai Skrynnikov.  It has the parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, only the base models are currently supported:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
