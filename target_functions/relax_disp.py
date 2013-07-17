@@ -284,7 +284,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_3D(r180x=self.r180x, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
+                r2eff_ns_2site_3D(r180x=self.r180x, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -344,7 +344,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], fA=dw_frq, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
+                r2eff_ns_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], dw=dw_frq, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

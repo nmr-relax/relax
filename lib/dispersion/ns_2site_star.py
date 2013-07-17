@@ -39,7 +39,7 @@ if dep_check.scipy_module:
     from scipy.linalg import expm
 
 
-def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, fA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None, r20b=None, dw=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -59,8 +59,8 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     @type r20a:             float
     @keyword r20b:          The R2 value for state B in the absence of exchange.
     @type r20b:             float
-    @keyword fA:            The frequency of state A.
-    @type fA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -77,8 +77,8 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     Rr[0, 0] = -r20a
     Rr[1, 1] = -r20b
 
-    # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-    RCS[1, 1] = complex(0.0, -fA)
+    # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).  The chemical shift for state A is assumed to be zero.
+    RCS[1, 1] = complex(0.0, -dw)
 
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     add(Rr, Rex, out=R)
@@ -102,8 +102,8 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
         Moft = dot(prop_total, M0)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        Mgx = Moft[0].real / M0[0]
-        if Mgx == 0.0:
+        Mx = Moft[0].real / M0[0]
+        if Mx == 0.0:
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_tcpmg * log(Mgx)
+            back_calc[i]= -inv_tcpmg * log(Mx)

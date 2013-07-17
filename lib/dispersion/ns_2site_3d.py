@@ -41,7 +41,7 @@ if dep_check.scipy_module:
 from lib.dispersion.ns_matrices import rcpmg_3d
 
 
-def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -61,6 +61,8 @@ def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=N
     @type r20b:             float
     @keyword pA:            The population of state A.
     @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -80,7 +82,7 @@ def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=N
     """
 
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, df=dw, k_AB=k_AB, k_BA=k_BA)
+    R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -97,8 +99,8 @@ def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=N
             Mint = dot(Rexpo, Mint)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        Mgx = fabs(Mint[1] / pA)
-        if Mgx == 0.0:
+        Mx = fabs(Mint[1] / pA)
+        if Mx == 0.0:
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_tcpmg * log(Mgx)
+            back_calc[i]= -inv_tcpmg * log(Mx)
