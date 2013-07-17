@@ -45,7 +45,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, VAR_TIME_EXP
 from status import Status; status = Status()
 
 
@@ -557,14 +557,26 @@ class Disp_model_list_cpmg(Model_list):
         MODEL_NOREX,
         MODEL_LM63,
         MODEL_CR72,
-        MODEL_IT99
+        MODEL_CR72_FULL,
+        MODEL_IT99,
+        MODEL_NS_2SITE_3D,
+        MODEL_NS_2SITE_3D_FULL,
+        MODEL_NS_2SITE_STAR,
+        MODEL_NS_2SITE_STAR_FULL,
+        MODEL_NS_2SITE_EXPANDED
     ]
     params = [
         u"{R2eff, I\u2080}",
         u"{R\u2082, ...}",
         u"{R\u2082, ..., phi_ex, kex}",
         u"{R\u2082, ..., pA, d\u03C9, kex}",
-        u"{R\u2082, ..., phi_ex, pA.d\u03C9^2, kex}"
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
+        u"{R\u2082, ..., phi_ex, pA.d\u03C9^2, kex}",
+        u"{R\u2082, ..., pA, d\u03C9, kex}",
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
+        u"{R\u2082, ..., pA, d\u03C9, kex}",
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
+        u"{R\u2082, ..., pA, d\u03C9, kex}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."

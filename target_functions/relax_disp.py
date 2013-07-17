@@ -38,7 +38,7 @@ from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF
 
 
 class Dispersion:
@@ -129,7 +129,7 @@ class Dispersion:
 
         # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_spins * self.num_frq)
-        if model in [MODEL_CR72, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_CR72_FULL, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR_FULL]:
             self.end_index.append(2 * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
@@ -138,7 +138,7 @@ class Dispersion:
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
         # Set up the matrices for the numerical solutions.
-        if model in [MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL]:
             # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
             self.Rr = zeros((2, 2), complex64)
 
@@ -152,18 +152,18 @@ class Dispersion:
             self.R = zeros((2, 2), complex64)
 
         # Pi-pulse propagators.
-        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D]:
+        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL]:
             self.r180x = r180x_3d()
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        if model in [MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL]:
             self.M0 = zeros(2, float64)
-        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D]:
+        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL]:
             self.M0 = zeros(7, float64)
             self.M0[0] = 0.5
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL]:
             # The tau_cpmg times and matrix exponential power array.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             self.power = zeros(self.num_disp_points, int16)
@@ -179,10 +179,10 @@ class Dispersion:
             self.func = self.func_NOREX
         if model == MODEL_LM63:
             self.func = self.func_LM63
+        if model == MODEL_CR72_FULL:
+            self.func = self.func_CR72_full
         if model == MODEL_CR72:
             self.func = self.func_CR72
-        if model == MODEL_CR72_RED:
-            self.func = self.func_CR72_red
         if model == MODEL_IT99:
             self.func = self.func_IT99
         if model == MODEL_M61:
@@ -191,16 +191,16 @@ class Dispersion:
             self.func = self.func_DPL94
         if model == MODEL_M61B:
             self.func = self.func_M61b
-        if model == MODEL_NS_2SITE_3D_RED:
-            self.func = self.func_ns_2site_3D_red
+        if model == MODEL_NS_2SITE_3D_FULL:
+            self.func = self.func_ns_2site_3D_full
         if model == MODEL_NS_2SITE_3D:
             self.func = self.func_ns_2site_3D
         if model == MODEL_NS_2SITE_EXPANDED:
             self.func = self.func_ns_2site_expanded
+        if model == MODEL_NS_2SITE_STAR_FULL:
+            self.func = self.func_ns_2site_star_full
         if model == MODEL_NS_2SITE_STAR:
             self.func = self.func_ns_2site_star
-        if model == MODEL_NS_2SITE_STAR_RED:
-            self.func = self.func_ns_2site_star_red
 
 
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -363,7 +363,33 @@ class Dispersion:
 
 
     def func_CR72(self, params):
-        """Target function for the Carver and Richards (1972) 2-site exchange model on all time scales.
+        """Target function for the reduced Carver and Richards (1972) 2-site exchange model on all time scales.
+
+        This assumes that pA > pB, and hence this must be implemented as a constraint.  For this model, the simplification R20A = R20B is assumed.
+
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_CR72_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
+    def func_CR72_full(self, params):
+        """Target function for the full Carver and Richards (1972) 2-site exchange model on all time scales.
 
         This assumes that pA > pB, and hence this must be implemented as a constraint.
 
@@ -387,32 +413,6 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_CR72_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
-
-
-    def func_CR72_red(self, params):
-        """Target function for the Carver and Richards (1972) 2-site exchange model on all time scales.
-
-        This assumes that pA > pB, and hence this must be implemented as a constraint.  For this model, the simplification R20A = R20B is assumed.
-
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
-        dw = params[self.end_index[0]:self.end_index[1]]
-        pA = params[self.end_index[1]]
-        kex = params[self.end_index[1]+1]
-
-        # Calculate and return the chi-squared value.
-        return self.calc_CR72_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
 
     def func_DPL94(self, params):
@@ -691,7 +691,30 @@ class Dispersion:
 
 
     def func_ns_2site_3D(self, params):
-        """Target function for the numerical solution for the 2-site Bloch-McConnell equations.
+        """Target function for the reduced numerical solution for the 2-site Bloch-McConnell equations.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_2site_3D_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
+    def func_ns_2site_3D_full(self, params):
+        """Target function for the full numerical solution for the 2-site Bloch-McConnell equations.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -712,29 +735,6 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_ns_2site_3D_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
-
-
-    def func_ns_2site_3D_red(self, params):
-        """Target function for the numerical solution for the 2-site Bloch-McConnell equations.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
-        dw = params[self.end_index[0]:self.end_index[1]]
-        pA = params[self.end_index[1]]
-        kex = params[self.end_index[1]+1]
-
-        # Calculate and return the chi-squared value.
-        return self.calc_ns_2site_3D_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
 
     def func_ns_2site_expanded(self, params):
@@ -790,31 +790,7 @@ class Dispersion:
 
 
     def func_ns_2site_star(self, params):
-        """Target function for the numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        R20A = params[:self.end_index[0]]
-        R20B = params[self.end_index[0]:self.end_index[1]]
-        dw = params[self.end_index[1]:self.end_index[2]]
-        pA = params[self.end_index[2]]
-        kex = params[self.end_index[2]+1]
-
-        # Calculate and return the chi-squared value.
-        return self.calc_ns_2site_star_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
-
-
-    def func_ns_2site_star_red(self, params):
-        """Target function for the numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
+        """Target function for the reduced numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
 
         This is the model whereby the simplification R20A = R20B is assumed.
 
@@ -837,3 +813,27 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_ns_2site_star_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
+    def func_ns_2site_star_full(self, params):
+        """Target function for the full numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20A = params[:self.end_index[0]]
+        R20B = params[self.end_index[0]:self.end_index[1]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_2site_star_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
