@@ -38,7 +38,7 @@ from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
 
 
 class Dispersion:
@@ -163,7 +163,7 @@ class Dispersion:
             self.M0[0] = 0.5
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             # The tau_cpmg times and matrix exponential power array.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             self.power = zeros(self.num_disp_points, int16)
@@ -195,6 +195,8 @@ class Dispersion:
             self.func = self.func_ns_2site_3D_red
         if model == MODEL_NS_2SITE_3D:
             self.func = self.func_ns_2site_3D
+        if model == MODEL_NS_2SITE_EXPANDED:
+            self.func = self.func_ns_2site_expanded
         if model == MODEL_NS_2SITE_STAR:
             self.func = self.func_ns_2site_star
         if model == MODEL_NS_2SITE_STAR_RED:
@@ -733,6 +735,58 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_ns_2site_3D_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
+    def func_ns_2site_expanded(self, params):
+        """Target function for the numerical solution for the 2-site Bloch-McConnell equations using the expanded notation.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Once off parameter conversions.
+        pB = 1.0 - pA
+        k_AB = pA * kex
+        k_BA = pB * kex
+
+        # Chi-squared initialisation.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_ns_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_time, inv_relax_time=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, num_cpmg=self.power)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
 
 
     def func_ns_2site_star(self, params):
