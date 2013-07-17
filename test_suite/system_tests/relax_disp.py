@@ -29,7 +29,7 @@ from tempfile import mkdtemp
 from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import spin_loop
-from specific_analyses.relax_disp.variables import MODEL_LIST_CPMG, MODEL_M61B, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -96,7 +96,12 @@ class Relax_disp(SystemTestCase):
         """
 
         # Set the model.
-        ds.models = MODEL_LIST_CPMG
+        ds.models = [
+            MODEL_NOREX,
+            MODEL_LM63,
+            MODEL_CR72,
+            MODEL_IT99
+        ]
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
@@ -137,8 +142,8 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/10000, 2543.899105435682/10000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.4423991744690439, 4)
 
-        # The 'CR72 red' model checks.  These models have not reached the minima due to the low quality optimisation!
-        self.interpreter.pipe.switch(pipe_name='CR72 red')
+        # The 'CR72' model checks.  These models have not reached the minima due to the low quality optimisation!
+        self.interpreter.pipe.switch(pipe_name='CR72')
         spin70 = cdp.mol[0].res[0].spin[0]
         spin71 = cdp.mol[0].res[1].spin[0]
         print("\n\nOptimised parameters:\n")
