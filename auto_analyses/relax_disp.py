@@ -154,39 +154,38 @@ class Relax_disp:
 
         # The simpler model.
         nested_pipe = None
-        if model == MODEL_CR72:
+        if model == MODEL_CR72 and MODEL_CR72_RED in self.models:
             nested_pipe = MODEL_CR72_RED
-        if model == MODEL_NS_2SITE_STAR:
+        if model == MODEL_NS_2SITE_STAR and MODEL_NS_2SITE_STAR_RED in self.models:
             nested_pipe = MODEL_NS_2SITE_STAR_RED
 
-        # The more complex of nested models.
-        if nested_pipe:
-            # Printout.
-            print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
-
-            # Loop over the spins to copy the parameters.
-            for spin, spin_id in spin_loop(return_id=True):
-                # Get the nested spin.
-                nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
-
-                # The R20 parameters.
-                if hasattr(nested_spin, 'r2'):
-                    setattr(spin, 'r2a', deepcopy(nested_spin.r2))
-                    setattr(spin, 'r2b', deepcopy(nested_spin.r2))
-
-                # All other spin parameters.
-                for param in spin.params:
-                    if param in ['r2', 'r2a', 'r2b']:
-                        continue
-
-                    # Copy the parameter.
-                    setattr(spin, param, deepcopy(getattr(nested_spin, param)))
-
-            # Nesting.
-            return True
-
         # No nesting.
-        return False
+        if not nested_pipe:
+            return False
+
+        # Printout.
+        print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
+
+        # Loop over the spins to copy the parameters.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Get the nested spin.
+            nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
+
+            # The R20 parameters.
+            if hasattr(nested_spin, 'r2'):
+                setattr(spin, 'r2a', deepcopy(nested_spin.r2))
+                setattr(spin, 'r2b', deepcopy(nested_spin.r2))
+
+            # All other spin parameters.
+            for param in spin.params:
+                if param in ['r2', 'r2a', 'r2b']:
+                    continue
+
+                # Copy the parameter.
+                setattr(spin, param, deepcopy(getattr(nested_spin, param)))
+
+        # Nesting.
+        return True
 
 
     def optimise(self, model=None):
