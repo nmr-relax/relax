@@ -272,8 +272,8 @@ class Dispersion:
 
         # Once off parameter conversions.
         pB = 1.0 - pA
-        k_AB = pA * kex
-        k_BA = pB * kex
+        k_BA = pA * kex
+        k_AB = pB * kex
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
         self.M0[1] = pA
@@ -326,8 +326,8 @@ class Dispersion:
 
         # Once off parameter conversions.
         pB = 1.0 - pA
-        k_AB = pA * kex
-        k_BA = pB * kex
+        k_BA = pA * kex
+        k_AB = pB * kex
 
         # Set up the matrix that contains the exchange terms between the two states A and B.
         self.Rex[0, 0] = -k_AB
@@ -763,8 +763,8 @@ class Dispersion:
 
         # Once off parameter conversions.
         pB = 1.0 - pA
-        k_AB = pA * kex
-        k_BA = pB * kex
+        k_BA = pA * kex
+        k_AB = pB * kex
 
         # Chi-squared initialisation.
         chi2_sum = 0.0

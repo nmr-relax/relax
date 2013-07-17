@@ -90,17 +90,17 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
     r20_kex = (r20a + r20b + kex) / 2.0
-    k_AB = pA * kex
-    k_BA = pB * kex
+    k_BA = pA * kex
+    k_AB = pB * kex
 
     # The Psi and zeta values.
     if r20a != r20b:
-        fact = r20a - r20b - k_AB + k_BA
+        fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact
     else:
         Psi = kex**2 - dw2
-        zeta = -2.0*dw * (k_AB - k_BA)
+        zeta = -2.0*dw * (k_BA - k_AB)
 
     # More repetitive calculations.
     sqrt_psi2_zeta2 = sqrt(Psi**2 + zeta**2)
