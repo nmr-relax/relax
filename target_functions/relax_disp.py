@@ -38,7 +38,7 @@ from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_RED, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_RED, MODEL_R2EFF
 
 
 class Dispersion:
@@ -152,18 +152,18 @@ class Dispersion:
             self.R = zeros((2, 2), complex64)
 
         # Pi-pulse propagators.
-        if model in [MODEL_NS_2SITE_3D]:
+        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D]:
             self.r180x = r180x_3d()
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
         if model in [MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             self.M0 = zeros(2, float64)
-        if model in [MODEL_NS_2SITE_3D]:
+        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D]:
             self.M0 = zeros(7, float64)
             self.M0[0] = 0.5
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
+        if model in [MODEL_NS_2SITE_3D_RED, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_STAR_RED, MODEL_NS_2SITE_STAR]:
             # The tau_cpmg times and matrix exponential power array.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             self.power = zeros(self.num_disp_points, int16)
@@ -191,6 +191,8 @@ class Dispersion:
             self.func = self.func_DPL94
         if model == MODEL_M61B:
             self.func = self.func_M61b
+        if model == MODEL_NS_2SITE_3D_RED:
+            self.func = self.func_ns_2site_3D_red
         if model == MODEL_NS_2SITE_3D:
             self.func = self.func_ns_2site_3D
         if model == MODEL_NS_2SITE_STAR:
@@ -708,6 +710,29 @@ class Dispersion:
 
         # Calculate and return the chi-squared value.
         return self.calc_ns_2site_3D_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
+
+
+    def func_ns_2site_3D_red(self, params):
+        """Target function for the numerical solution for the 2-site Bloch-McConnell equations.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_2site_3D_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
 
 
     def func_ns_2site_star(self, params):
