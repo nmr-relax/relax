@@ -485,6 +485,169 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
 
 
+    def test_hansen_cpmg_data_ns_2site_expanded(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site expanded' dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='NS 2-site expanded')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [6.994165925, 9.428129427]
+        spin70.pA = 0.9897754407
+        spin70.dw = 5.642418428
+        spin70.kex = 1743.666375
+        spin71.r2 = [4.978654237, 9.276918959]
+        spin71.pA = 0.9968032899
+        spin71.dw = 4.577891393
+        spin71.kex = 1830.044597
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 6.99588673577837, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.45248596611036, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989751958251912, 4)
+        self.assertAlmostEqual(spin70.dw, 5.64481346432097, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1723.62510048637/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.0983759853235, 4)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.97891921568573, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996807857237692, 4)
+        self.assertAlmostEqual(spin71.dw, 4.58200738669362, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1821.36206334352/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
+
+
+    def test_hansen_cpmg_data_ns_2site_star(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site star' dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='NS 2-site star')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [6.996327746, 9.452051268]
+        spin70.pA = 0.9897519798
+        spin70.dw = 5.644862195
+        spin70.kex = 1723.820567
+        spin71.r2 = [4.978654237, 9.276918959]
+        spin71.pA = 0.9968032899
+        spin71.dw = 4.577891393
+        spin71.kex = 1830.044597
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 6.99632787205716, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.4520515321858, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989751979646436, 4)
+        self.assertAlmostEqual(spin70.dw, 5.64486197944831, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1723.82057518556/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.0982961523327, 4)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.97869498800177, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996808845898761, 4)
+        self.assertAlmostEqual(spin71.dw, 4.58279535811262, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1822.71231082936/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37073226641439, 4)
+
+
+    def test_hansen_cpmg_data_ns_2site_star_full(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site star full' dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='NS 2-site star full')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2a = [6.994165925, 9.428129427]
+        spin70.r2b = [6.994165925, 9.428129427]
+        spin70.pA = 0.9897754407
+        spin70.dw = 5.642418428
+        spin70.kex = 1743.666375
+        spin71.r2a = [4.978654237, 9.276918959]
+        spin71.r2b = [4.978654237, 9.276918959]
+        spin71.pA = 0.9968032899
+        spin71.dw = 4.577891393
+        spin71.kex = 1830.044597
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2A (500 MHz)", spin70.r2a[0], spin71.r2a[0]))
+        print("%-20s %20.15g %20.15g" % ("R2B (500 MHz)", spin70.r2b[0], spin71.r2b[0]))
+        print("%-20s %20.15g %20.15g" % ("R2A (800 MHz)", spin70.r2a[1], spin71.r2a[1]))
+        print("%-20s %20.15g %20.15g" % ("R2B (800 MHz)", spin70.r2b[1], spin71.r2b[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2a[0], 6.99588673577837, 4)
+        self.assertAlmostEqual(spin70.r2b[0], 9.45248596611036, 4)
+        self.assertAlmostEqual(spin70.r2a[1], 6.99588673577837, 4)
+        self.assertAlmostEqual(spin70.r2b[1], 9.45248596611036, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989751958251912, 4)
+        self.assertAlmostEqual(spin70.dw, 5.64481346432097, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1723.62510048637/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.0983759853235, 4)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2a[0], 4.97891921568573, 4)
+        self.assertAlmostEqual(spin71.r2b[0], 4.97891921568573, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996807857237692, 4)
+        self.assertAlmostEqual(spin71.dw, 4.58200738669362, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1821.36206334352/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
+
+
     def test_hansen_cpmgfit_input(self):
         """Conversion of Dr. Flemming Hansen's CPMG R2eff values into input files for CPMGFit.
 
