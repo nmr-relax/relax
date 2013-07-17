@@ -263,6 +263,65 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37893858617467, 4)
 
 
+    def test_hansen_cpmg_data_CR72_full(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 full dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='CR72 full')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2a = [7, 9]
+        spin70.r2b = [7, 9]
+        spin70.pA = 0.9
+        spin70.dw = 6.0
+        spin70.kex = 1500.0
+        spin71.r2a = [5, 9]
+        spin71.r2b = [5, 9]
+        spin71.pA = 0.9
+        spin71.dw = 4.0
+        spin71.kex = 1900.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2A (500 MHz)", spin70.r2a[0], spin71.r2a[0]))
+        print("%-20s %20.15g %20.15g" % ("R2B (500 MHz)", spin70.r2b[0], spin71.r2b[0]))
+        print("%-20s %20.15g %20.15g" % ("R2A (800 MHz)", spin70.r2a[1], spin71.r2a[1]))
+        print("%-20s %20.15g %20.15g" % ("R2B (800 MHz)", spin70.r2b[1], spin71.r2b[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2a[0], 7.01130442459058, 4)
+        self.assertAlmostEqual(spin70.r2b[0], 7.01130442459058, 4)
+        self.assertAlmostEqual(spin70.r2a[1], 9.46462027228904, 4)
+        self.assertAlmostEqual(spin70.r2b[1], 9.46462027228904, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989902383677276, 4)
+        self.assertAlmostEqual(spin70.dw, 5.57700074614295, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1765.82137933726/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 18.4500460425575, 4)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2a[0], 4.97845873674721, 4)
+        self.assertAlmostEqual(spin71.r2b[0], 4.97845873674721, 4)
+        self.assertAlmostEqual(spin71.pA, 0.996762135166775, 4)
+        self.assertAlmostEqual(spin71.dw, 4.46536977915207, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 1878.54479674525/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.37893858617467, 4)
+
+
     def test_hansen_cpmg_data_IT99(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the IT99 dispersion model.
 
