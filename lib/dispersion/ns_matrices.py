@@ -27,7 +27,7 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 
 # Python module imports.
 from math import cos, sin, pi
-from numpy import matrix
+from numpy import array, float64, matrix
 
 
 def r180x_2d(flip=pi):
@@ -40,12 +40,12 @@ def r180x_2d(flip=pi):
     """
 
     # Build the matrix.
-    R = matrix([ 
+    R = array([ 
         [ 1.0,  0.0,  0.0,  0.0],
         [ 0.0, -1.0,  0.0,  0.0],
         [ 0.0,  0.0,  1.0,  0.0],
         [ 0.0,  0.0,  0.0, -1.0]
-    ])
+    ], float64)
 
     # Return the matrix.
     return R
@@ -65,7 +65,7 @@ def r180x_3d(flip=pi):
     st = sin(flip)
 
     # Build the matrix.
-    R = matrix([
+    R = array([
         [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0,  ct, -st, 0.0, 0.0, 0.0],
@@ -73,7 +73,7 @@ def r180x_3d(flip=pi):
         [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0,  ct, -st],
         [0.0, 0.0, 0.0, 0.0, 0.0,  st,  ct]
-    ])
+    ], float64)
 
     # Return the matrix.
     return R
