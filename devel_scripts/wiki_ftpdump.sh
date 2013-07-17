@@ -1,6 +1,8 @@
 #!/bin/bash
 # -*- coding: UTF-8 -*-
 # Script for dumping ftp server automatically using cron.
+#
+# This script was taken from the post Troels Linnet at: http://article.gmane.org/gmane.science.nmr.relax.devel/4168.
 
 # exec test
 exec_test () {
