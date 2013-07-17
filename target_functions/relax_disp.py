@@ -53,7 +53,8 @@ class Dispersion:
 
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
-            - 'CR72':  The Carver and Richards (1972) 2-site model for all time scales.
+            - 'CR72':  The reduced Carver and Richards (1972) 2-site model for all time scales with R20A = R20B.
+            - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
             - 'IT99':  The Ishima and Torchia (1999) 2-site model for all time scales with skewed populations (pA >> pB).
             - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
@@ -61,8 +62,11 @@ class Dispersion:
 
         The following numerical models are currently supported:
 
-            - 'NS 2-site':  The numerical solution for the 2-site Bloch-McConnell equations.
-            - 'NS 2-site star':  The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
+            - 'NS 2-site 3D':  The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors with R20A = R20B.
+            - 'NS 2-site 3D full':  The full numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.
+            - 'NS 2-site star':  The reduced numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with R20A = R20B.
+            - 'NS 2-site star full':  The full numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.
+            - 'NS 2-site expanded':  The numerical solution for the 2-site Bloch-McConnell equations expanded using Maple by Nikolai Skrynnikov.
 
 
         @keyword model:             The relaxation dispersion model to fit.
