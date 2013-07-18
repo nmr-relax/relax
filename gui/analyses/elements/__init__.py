@@ -24,6 +24,7 @@
 
 # The package contents.
 __all__ = [
+    'bool_element',
     'model_list',
     'spin_element',
     'text_element'
