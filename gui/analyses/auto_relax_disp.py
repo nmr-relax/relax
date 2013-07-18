@@ -30,6 +30,7 @@ from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
+from gui.analyses.elements.bool_element import Boolean_ctrl
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.elements.model_list import Model_list
@@ -40,7 +41,7 @@ from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Missing_data
 from gui import paths
-from gui.string_conv import gui_to_int, gui_to_str, str_to_gui
+from gui.string_conv import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
@@ -117,6 +118,7 @@ class Auto_relax_disp(Base_analysis):
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
+            ds.relax_gui.analyses[data_index].mc_sim_all_models = False
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
             # Set the default dispersion models based on the experiment type.
@@ -229,6 +231,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
+        data.mc_sim_all_models = gui_to_bool(self.mc_sim_all_models.GetValue())
 
         # Optimisation precision.
         data.opt_func_tol = self.opt_func_tol
@@ -290,6 +293,7 @@ class Auto_relax_disp(Base_analysis):
         # The optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mc_sim_all_models = Boolean_ctrl(box, self, text="Per model error analysis:", default=False, tooltip="A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
@@ -476,6 +480,12 @@ class Auto_relax_disp(Base_analysis):
         elif hasattr(self.data, 'mc_sim_num'):
             self.mc_sim_num.SetValue(int(self.data.mc_sim_num))
 
+        # The All model MC sim flag.
+        if upload:
+            self.data.mc_sim_all_models = gui_to_int(self.mc_sim_all_models.GetValue())
+        elif hasattr(self.data, 'mc_sim_all_models'):
+            self.mc_sim_all_models.SetValue(int(self.data.mc_sim_all_models))
+
         # The results directory.
         if upload:
             self.data.save_dir = gui_to_str(self.field_results_dir.GetValue())
@@ -552,7 +562,7 @@ class Execute_relax_disp(Execute):
         Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, mc_sim_all_models=self.data.mc_sim_all_models)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
