@@ -498,7 +498,7 @@ def plot_disp_curves(dir=None, force=None):
 
         # Write the header.
         title = "Relaxation dispersion plot"
-        write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels)
+        write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels, legend_box_fill_pattern=0, legend_char_size=0.8)
 
         # Write the data.
         graph_type = 'xy'
