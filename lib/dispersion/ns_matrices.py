@@ -1,5 +1,6 @@
 ###############################################################################
 #                                                                             #
+# Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
