@@ -47,23 +47,25 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC'):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', mc_sim_all_models=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
-        @keyword pipe_name:     The name of the data pipe containing all of the data for the analysis.
-        @type pipe_name:        str
-        @keyword pipe_bundle:   The data pipe bundle to associate all spawned data pipes with.
-        @type pipe_bundle:      str
-        @keyword results_dir:   The directory where results files are saved.
-        @type results_dir:      str
-        @keyword models:        The list of relaxation dispersion models to optimise.
-        @type models:           list of str
-        @keyword grid_inc:      Number of grid search increments.
-        @type grid_inc:         int
-        @keyword mc_sim_num:    The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        @type mc_sim_num:       int
-        @keyword modsel:        The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
-        @type modsel:           str
+        @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
+        @type pipe_name:            str
+        @keyword pipe_bundle:       The data pipe bundle to associate all spawned data pipes with.
+        @type pipe_bundle:          str
+        @keyword results_dir:       The directory where results files are saved.
+        @type results_dir:          str
+        @keyword models:            The list of relaxation dispersion models to optimise.
+        @type models:               list of str
+        @keyword grid_inc:          Number of grid search increments.
+        @type grid_inc:             int
+        @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        @type mc_sim_num:           int
+        @keyword modsel:            The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
+        @type modsel:               str
+        @keyword mc_sim_all_models: A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
+        @type mc_sim_all_models:    bool
         """
 
         # Printout.
@@ -84,6 +86,7 @@ class Relax_disp:
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.modsel = modsel
+        self.mc_sim_all_models = mc_sim_all_models
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
@@ -208,11 +211,12 @@ class Relax_disp:
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
-        self.interpreter.monte_carlo.create_data()
-        self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
-        self.interpreter.monte_carlo.error_analysis()
+        if self.mc_sim_all_models:
+            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            self.interpreter.monte_carlo.error_analysis()
 
 
     def run(self):
@@ -262,6 +266,14 @@ class Relax_disp:
         # No model selection.
         else:
             warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
+
+        # Final Monte Carlo simulations only.
+        if not self.mc_sim_all_models:
+            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+            self.interpreter.monte_carlo.create_data()
+            self.interpreter.monte_carlo.initial_values()
+            self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+            self.interpreter.monte_carlo.error_analysis()
 
         # Finally save the program state.
         self.interpreter.state.save(state='final_state', dir=self.results_dir, force=True)
