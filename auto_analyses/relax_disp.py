@@ -169,7 +169,7 @@ class Relax_disp:
         print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
 
         # Loop over the spins to copy the parameters.
-        for spin, spin_id in spin_loop(return_id=True):
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # Get the nested spin.
             nested_spin = return_spin(spin_id=spin_id, pipe=nested_pipe)
 
