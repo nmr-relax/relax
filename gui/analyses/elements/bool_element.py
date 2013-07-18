@@ -156,4 +156,3 @@ class Boolean_ctrl:
             self.field.SetValue('False')
             self.button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.media-record'), wx.BITMAP_TYPE_ANY))
             self.state = False
-            self.button
