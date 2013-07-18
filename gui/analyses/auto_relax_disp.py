@@ -231,7 +231,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         data.mc_sim_num = gui_to_int(self.mc_sim_num.GetValue())
-        data.mc_sim_all_models = gui_to_bool(self.mc_sim_all_models.GetValue())
+        data.mc_sim_all_models = self.mc_sim_all_models.GetValue()
 
         # Optimisation precision.
         data.opt_func_tol = self.opt_func_tol
@@ -482,9 +482,9 @@ class Auto_relax_disp(Base_analysis):
 
         # The All model MC sim flag.
         if upload:
-            self.data.mc_sim_all_models = gui_to_int(self.mc_sim_all_models.GetValue())
+            self.data.mc_sim_all_models = self.mc_sim_all_models.GetValue()
         elif hasattr(self.data, 'mc_sim_all_models'):
-            self.mc_sim_all_models.SetValue(int(self.data.mc_sim_all_models))
+            self.mc_sim_all_models.SetValue(bool(self.data.mc_sim_all_models))
 
         # The results directory.
         if upload:
