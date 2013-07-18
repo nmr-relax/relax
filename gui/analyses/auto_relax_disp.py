@@ -119,11 +119,23 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
-            # Set the dispersion models based on the experiment type.
+            # Set the default dispersion models based on the experiment type.
             if cdp.exp_type in CPMG_EXP:
-                ds.relax_gui.analyses[data_index].disp_models = MODEL_LIST_CPMG_FULL
+                ds.relax_gui.analyses[data_index].disp_models = [
+                    MODEL_R2EFF,
+                    MODEL_NOREX,
+                    MODEL_LM63,
+                    MODEL_CR72,
+                    MODEL_IT99,
+                    MODEL_NS_2SITE_EXPANDED
+                ]
             else:
-                ds.relax_gui.analyses[data_index].disp_models = MODEL_LIST_R1RHO_FULL
+                ds.relax_gui.analyses[data_index].disp_models = [
+                    MODEL_R2EFF,
+                    MODEL_NOREX,
+                    MODEL_M61,
+                    MODEL_DPL94
+                ]
 
         # Error checking.
         if ds.relax_gui.analyses[data_index].pipe_bundle == None:
