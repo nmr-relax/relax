@@ -142,6 +142,26 @@ class Boolean_ctrl:
         return self.state
 
 
+    def SetValue(self, value):
+        """Set the value of the control.
+
+        @param value:   The value to set the boolean control to.
+        @type value:    bool
+        """
+
+        # True.
+        if value == True:
+            self.field.SetValue('True')
+            self.button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.media-record-relax-green'), wx.BITMAP_TYPE_ANY))
+            self.state = True
+
+        # False:
+        else:
+            self.field.SetValue('False')
+            self.button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.media-record'), wx.BITMAP_TYPE_ANY))
+            self.state = False
+
+
     def toggle(self, event=None):
         """Switch the state."""
 
