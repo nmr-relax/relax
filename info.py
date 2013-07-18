@@ -358,10 +358,13 @@ class Info_box(object):
         # bmrblib.
         package.append('bmrblib')
         status.append(dep_check.bmrblib_module)
-        if hasattr(dep_check.bmrblib, '__version__'):
-            version.append(dep_check.bmrblib.__version__)
-        else:
-            version.append('Unknown')
+        try:
+            if hasattr(dep_check.bmrblib, '__version__'):
+                version.append(dep_check.bmrblib.__version__)
+            else:
+                version.append('Unknown')
+        except:
+            version.append('')
         try:
             path.append(dep_check.bmrblib.__path__[0])
         except:
