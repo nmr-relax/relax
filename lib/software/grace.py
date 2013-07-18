@@ -195,52 +195,56 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
     file.write("@autoscale\n")
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=False, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, legend=True, legend_pos=None, legend_box_fill_pattern=1, legend_char_size=1.0, norm=False):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
 
 
-    @keyword file:                  The file object to write the data to.
-    @type file:                     file object
-    @keyword paper_size:            The paper size, i.e. 'A4'.  If set to None, this will default to letter size.
-    @type paper_size:               str
-    @keyword title:                 The title of the graph.
-    @type title:                    None or str
-    @keyword subtitle:              The sub-title of the graph.
-    @type subtitle:                 None or str
-    @keyword view:                  List of 4 coordinates defining the graph view port.
-    @type view:                     None or list of float
-    @keyword sets:                  The number of data sets in the graph G0.
-    @type sets:                     int
-    @keyword set_names:             The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
-    @type set_names:                None or list of str
-    @keyword set_colours:           The colours for each graph data set G0.Sx.
-    @type set_colours:              None or list of int
-    @keyword symbols:               The symbol style for each graph data set G0.Sx.
-    @type symbols:                  None or list of int
-    @keyword symbol_sizes:          The symbol size for each graph data set G0.Sx.
-    @type symbol_sizes:             None or list of int
-    @keyword symbol_fill:           The symbol file style for each graph data set G0.Sx.
-    @type symbol_fill:              None or list of int
-    @keyword linestyle:             The line style for each graph data set G0.Sx.
-    @type linestyle:                None or list of int
-    @keyword linetype:              The line type for each graph data set G0.Sx.
-    @type linetype:                 None or list of int
-    @keyword linewidth:             The line width for all elements of each graph data set G0.Sx.
-    @type linewidth:                None or float
-    @keyword data_type:             The axis data category (in the [X, Y] list format).
-    @type data_type:                None or list of str
-    @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
-    @type seq_type:                 None or list of str
-    @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).
-    @type axis_labels:              None or list of str
-    @keyword legend_pos:            The position of the legend, e.g. [0.3, 0.8].
-    @type legend_pos:               None or list of float
-    @keyword legend:                If True, the legend will be visible.
-    @type legend:                   bool
-    @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.
-    @type norm:                     bool
+    @keyword file:                      The file object to write the data to.
+    @type file:                         file object
+    @keyword paper_size:                The paper size, i.e. 'A4'.  If set to None, this will default to letter size.
+    @type paper_size:                   str
+    @keyword title:                     The title of the graph.
+    @type title:                        None or str
+    @keyword subtitle:                  The sub-title of the graph.
+    @type subtitle:                     None or str
+    @keyword view:                      List of 4 coordinates defining the graph view port.
+    @type view:                         None or list of float
+    @keyword sets:                      The number of data sets in the graph G0.
+    @type sets:                         int
+    @keyword set_names:                 The names associated with each graph data set G0.Sx.  For example this can be a list of spin identification strings.
+    @type set_names:                    None or list of str
+    @keyword set_colours:               The colours for each graph data set G0.Sx.
+    @type set_colours:                  None or list of int
+    @keyword symbols:                   The symbol style for each graph data set G0.Sx.
+    @type symbols:                      None or list of int
+    @keyword symbol_sizes:              The symbol size for each graph data set G0.Sx.
+    @type symbol_sizes:                 None or list of int
+    @keyword symbol_fill:               The symbol file style for each graph data set G0.Sx.
+    @type symbol_fill:                  None or list of int
+    @keyword linestyle:                 The line style for each graph data set G0.Sx.
+    @type linestyle:                    None or list of int
+    @keyword linetype:                  The line type for each graph data set G0.Sx.
+    @type linetype:                     None or list of int
+    @keyword linewidth:                 The line width for all elements of each graph data set G0.Sx.
+    @type linewidth:                    None or float
+    @keyword data_type:                 The axis data category (in the [X, Y] list format).
+    @type data_type:                    None or list of str
+    @keyword seq_type:                  The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
+    @type seq_type:                     None or list of str
+    @keyword axis_labels:               The labels for the axes (in the [X, Y] list format).
+    @type axis_labels:                  None or list of str
+    @keyword legend:                    If True, the legend will be visible.
+    @type legend:                       bool
+    @keyword legend_pos:                The position of the legend, e.g. [0.3, 0.8].
+    @type legend_pos:                   None or list of float
+    @keyword legend_box_fill_pattern:   The legend box fill.  If set to 0, it will become transparent.
+    @type legend_box_fill_pattern:      int
+    @keyword legend_char_size:          The size of the legend box text.
+    @type legend_char_size:             float
+    @keyword norm:                      The normalisation flag which if set to True will cause all graphs to be normalised to 1.
+    @type norm:                         bool
     """
 
     # Set the None args to lists as needed.
@@ -339,10 +343,14 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         file.write("@    %saxis  ticklabel char size 1.00\n" % axes[i])
 
     # Legend box.
+    if legend:
+        file.write("@    legend on\n")
+    else:
+        file.write("@    legend off\n")
     if legend_pos:
         file.write("@    legend %s, %s\n" % (legend_pos[0], legend_pos[1]))
-    if legend:
-        file.write("@    legend off\n")
+    file.write("@    legend box fill pattern %s\n" % legend_box_fill_pattern)
+    file.write("@    legend char size %s\n" % legend_char_size)
 
     # Frame.
     file.write("@    frame linewidth %s\n" % linewidth)
