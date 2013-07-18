@@ -255,7 +255,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         phi_ex >= 0
         padw2 >= 0
         dw >= 0
-        kex >= 0
+        0 <= kex <= 2e6
         tex >= 0
         kA >= 0
 
@@ -290,6 +290,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         | 1  0  0 |     |   dw   |      |    0    |
         |         |     |        |      |         |
         | 1  0  0 |     |  kex   |      |    0    |
+        |         |     |        |      |         |
+        |-1  0  0 |     |  kex   |      |  -2e6   |
         |         |     |        |      |         |
         | 1  0  0 |     |  tex   |      |    0    |
         |         |     |        |      |         |
@@ -374,8 +376,18 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.5 / scaling_matrix[param_index, param_index])
                 j += 1
 
-        # Exchange rates and times (k >= 0 and t >= 0).
-        elif param_name in ['kex', 'ka', 'tex']:
+        # Exchange rates and times (0 <= k <= 2e6).
+        elif param_name in ['kex', 'ka']:
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            A[j+1][param_index] = -1.0
+            b.append(0.0)
+            b.append(-2e6 / scaling_matrix[param_index, param_index])
+            j += 2
+
+        # Exchange times (k >= 0 and t >= 0).
+        elif param_name in ['tex']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             b.append(0.0)
