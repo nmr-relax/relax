@@ -48,7 +48,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -613,7 +613,7 @@ class Relax_disp(API_base, API_common):
     def _select_model(self, model=MODEL_R2EFF):
         """Set up the model for the relaxation dispersion analysis.
 
-        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'CR72', 'CR72 red', 'IT99', 'M61', 'DPL94', 'M61 skew', 'NS 2-site star', 'NS 2-site star red'.
+        @keyword model: The relaxation dispersion analysis type.  This can be one of 'R2eff', 'No Rex', 'LM63', 'LM63_3SITE', 'CR72', 'CR72 red', 'IT99', 'M61', 'DPL94', 'M61 skew', 'NS 2-site star', 'NS 2-site star red'.
         @type model:    str
         """
 
@@ -656,6 +656,14 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
+
+        # LM63 3-site model.
+        elif model == MODEL_LM63_3SITE:
+            print("The Luz and Meiboom (1963) 3-site fast exchange model.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['phi_ex_B', 'phi_ex_C', 'kB', 'kC']
 
         # Full CR72 model.
         elif model == MODEL_CR72_FULL:
