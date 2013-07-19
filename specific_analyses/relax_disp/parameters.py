@@ -95,8 +95,8 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         if param_name in ['r2', 'r2a', 'r2b']:
             scaling_matrix[param_index, param_index] = 10
 
-        # The pA.pB.dw**2 and pA.dw**2 parameters.
-        elif param_name in ['phi_ex', 'padw2']:
+        # The pA.pB.dw**2, phi_ex_B, phi_ex_C and pA.dw**2 parameters.
+        elif param_name in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
             scaling_matrix[param_index, param_index] = 1
 
         # Chemical shift difference between states A and B scaling.
@@ -108,7 +108,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             scaling_matrix[param_index, param_index] = 1
 
         # Exchange rate scaling.
-        elif param_name in ['kex', 'ka']:
+        elif param_name in ['kex', 'ka', 'kB', 'kC']:
             scaling_matrix[param_index, param_index] = 10000
 
         # Time of exchange scaling.
@@ -253,9 +253,13 @@ def linear_constraints(spins=None, scaling_matrix=None):
         pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
         phi_ex >= 0
+        phi_ex_B >= 0
+        phi_ex_C >= 0
         padw2 >= 0
         dw >= 0
         0 <= kex <= 2e6
+        0 <= kB <= 2e6
+        0 <= kC <= 2e6
         tex >= 0
         kA >= 0
 
@@ -265,37 +269,49 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
     In the notation A.x >= b, where A is a matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
-        | 1  0  0 |     |   R2   |      |    0    |
-        |         |     |        |      |         |
-        |-1  0  0 |     |   R2   |      |  -200   |
-        |         |     |        |      |         |
-        | 1  0  0 |     |  R2A   |      |    0    |
-        |         |     |        |      |         |
-        |-1  0  0 |     |  R2A   |      |  -200   |
-        |         |     |        |      |         |
-        | 1  0  0 |     |  R2B   |      |    0    |
-        |         |     |        |      |         |
-        |-1  0  0 |     |  R2B   |      |  -200   |
-        |         |     |        |      |         |
-        | 1  0  0 |     |   pA   |      |   0.5   |
-        |         |     |        |      |         |
-        |-1  0  0 |  .  |   pA   |  >=  |   -1    |
-        |         |     |        |      |         |
-        | 1  0  0 |     |   pA   |      |   0.85  |
-        |         |     |        |      |         |
-        | 1  0  0 |     | phi_ex |      |    0    |
-        |         |     |        |      |         |
-        | 1  0  0 |     | padw2  |      |    0    |
-        |         |     |        |      |         |
-        | 1  0  0 |     |   dw   |      |    0    |
-        |         |     |        |      |         |
-        | 1  0  0 |     |  kex   |      |    0    |
-        |         |     |        |      |         |
-        |-1  0  0 |     |  kex   |      |  -2e6   |
-        |         |     |        |      |         |
-        | 1  0  0 |     |  tex   |      |    0    |
-        |         |     |        |      |         |
-        | 1  0  0 |     |   kA   |      |    0    |
+        | 1  0  0 |     |    R2    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |    R2    |      |  -200   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |   R2A    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |   R2A    |      |  -200   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |   R2B    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |   R2B    |      |  -200   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    pA    |      |   0.5   |
+        |         |     |          |      |         |
+        |-1  0  0 |     |    pA    |      |   -1    |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    pA    |      |   0.85  |
+        |         |     |          |      |         |
+        | 1  0  0 |     |  phi_ex  |      |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |  .  | phi_ex_B |  >=  |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |     | phi_ex_C |      |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |     |  padw2   |      |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    dw    |      |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |     |   kex    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |   kex    |      |  -2e6   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    kB    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |    kB    |      |  -2e6   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    kC    |      |    0    |
+        |         |     |          |      |         |
+        |-1  0  0 |     |    kC    |      |  -2e6   |
+        |         |     |          |      |         |
+        | 1  0  0 |     |   tex    |      |    0    |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    kA    |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -340,8 +356,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(-200.0 / scaling_matrix[param_index, param_index])
             j += 2
 
-        # The pA.pB.dw**2 and pA.dw**2 parameters (phi_ex >= 0 and padw2 >= 0).
-        elif param_name in ['phi_ex', 'padw2']:
+        # The pA.pB.dw**2, phi_ex_B, phi_ex_C and pA.dw**2 parameters (phi_ex* >= 0 and padw2 >= 0).
+        elif param_name in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             b.append(0.0)
@@ -377,7 +393,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 j += 1
 
         # Exchange rates and times (0 <= k <= 2e6).
-        elif param_name in ['kex', 'ka']:
+        elif param_name in ['kex', 'ka', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
@@ -472,12 +488,18 @@ def loop_parameters(spins=None):
                     # Yield the data.
                     yield 'r2b', param_index, spin_index, frq_index
 
-        # Then the chemical shift difference parameters 'phi_ex', 'padw2' and 'dw' (one per spin).
+        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2' and 'dw' (one per spin).
         for spin_index in range(len(spins)):
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
                 param_index += 1
                 yield 'phi_ex', param_index, spin_index, None
+            if 'phi_ex_B' in spins[spin_index].params:
+                param_index += 1
+                yield 'phi_ex_B', param_index, spin_index, None
+            if 'phi_ex_C' in spins[spin_index].params:
+                param_index += 1
+                yield 'phi_ex_C', param_index, spin_index, None
             if 'padw2' in spins[spin_index].params:
                 param_index += 1
                 yield 'padw2', param_index, spin_index, None
@@ -487,7 +509,7 @@ def loop_parameters(spins=None):
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'padw2', 'dw']:
+            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -573,7 +595,7 @@ def param_num(spins=None):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'padw2', 'dw']
+    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw']
     num = 0
     for spin in spins:
         for i in range(len(spin.params)):
