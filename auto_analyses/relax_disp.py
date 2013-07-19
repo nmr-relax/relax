@@ -24,7 +24,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from os import getcwd, sep
+from os import F_OK, access, getcwd, sep
 import sys
 from warnings import warn
 
@@ -231,10 +231,31 @@ class Relax_disp:
             # Printout.
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
 
+            # The results directory path.
+            path = self.results_dir+sep+model
+
             # The name of the data pipe for the model.
             model_pipe = model
             if model != 'R2eff':
                 model_pipes.append(model_pipe)
+
+            # Check that results do not already exist - i.e. a previous run was interrupted.
+            path1 = path + sep + 'results'
+            path2 = path1 + '.bz2'
+            path3 = path1 + '.gz'
+            if access(path1, F_OK) or access(path2, F_OK) or access(path2, F_OK):
+                # Printout.
+                print("Detected the presence of results files for the '%s' model - loading these instead of performing optimisation for a second time." % model)
+
+                # Create a data pipe and switch to it.
+                self.interpreter.pipe.create(pipe_name=model_pipe, pipe_type='relax_disp', bundle=self.pipe_bundle)
+                self.interpreter.pipe.switch(model_pipe)
+
+                # Load the results.
+                self.interpreter.results.read(file='results', dir=path)
+
+                # Jump to the next model.
+                continue
 
             # Create the data pipe by copying the base pipe, then switching to it.
             self.interpreter.pipe.copy(pipe_from=self.pipe_name, pipe_to=model_pipe, bundle_to=self.pipe_bundle)
@@ -256,7 +277,7 @@ class Relax_disp:
                 self.optimise(model=model)
 
             # Write out the results.
-            self.write_results(path=self.results_dir+sep+model, model=model)
+            self.write_results(path=path, model=model)
 
         # Perform model selection, writing out the final results.
         if len(model_pipes) >= 2:
@@ -285,9 +306,6 @@ class Relax_disp:
         @keyword path:  The directory to place the files into.
         @type path:     str
         """
-
-        # Save the results.
-        self.interpreter.results.write(file='results', dir=path, force=True)
 
         # Exponential curves.
         if model == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
@@ -356,3 +374,7 @@ class Relax_disp:
         # Minimisation statistics.
         if not (model == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
+
+        # Finally save the results.  This is last to allow the continuation of an interrupted analysis while ensuring that all results files have been created.
+        self.interpreter.results.write(file='results', dir=path, force=True)
+
