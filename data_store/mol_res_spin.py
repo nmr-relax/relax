@@ -93,7 +93,8 @@ class SpinContainer(Prototype):
         """
 
         # Model-free parameters.
-        self._back_compat_hook_mf_data()
+        if pipe_control.pipes.get_type() == 'mf':
+            self._back_compat_hook_mf_data()
 
         # Relaxation data.
         self._back_compat_hook_ri_data()
