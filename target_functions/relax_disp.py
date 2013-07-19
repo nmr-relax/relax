@@ -31,6 +31,7 @@ from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.dpl94 import r1rho_DPL94
 from lib.dispersion.it99 import r2eff_IT99
 from lib.dispersion.lm63 import r2eff_LM63
+from lib.dispersion.lm63_3site import r2eff_LM63_3site
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.ns_2site_3d import r2eff_ns_2site_3D
@@ -39,7 +40,7 @@ from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF
 
 
 class Dispersion:
@@ -53,6 +54,7 @@ class Dispersion:
 
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
+            - 'LM63 3-site':  The Luz and Meiboom (1963) 3-site fast exchange model.
             - 'CR72':  The reduced Carver and Richards (1972) 2-site model for all time scales with R20A = R20B.
             - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
             - 'IT99':  The Ishima and Torchia (1999) 2-site model for all time scales with skewed populations (pA >> pB).
@@ -139,7 +141,7 @@ class Dispersion:
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.num_spins)
-        if model == MODEL_IT99:
+        if model in [MODEL_IT99, MODEL_LM63_3SITE]:
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
         # Set up the matrices for the numerical solutions.
@@ -184,6 +186,8 @@ class Dispersion:
             self.func = self.func_NOREX
         if model == MODEL_LM63:
             self.func = self.func_LM63
+        if model == MODEL_LM63_3SITE:
+            self.func = self.func_LM63_3site
         if model == MODEL_CR72_FULL:
             self.func = self.func_CR72_full
         if model == MODEL_CR72:
@@ -501,6 +505,56 @@ class Dispersion:
 
                 # Back calculate the R2eff values.
                 r2eff_IT99(r20=R20[r20_index], phi_ex=phi_ex_scaled, padw2=padw2_scaled, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_LM63_3site(self, params):
+        """Target function for the Luz and Meiboom (1963) fast 3-site exchange model.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        phi_ex_B = params[self.end_index[0]:self.end_index[1]]
+        phi_ex_C = params[self.end_index[1]:self.end_index[2]]
+        kB = params[self.end_index[2]]
+        kC = params[self.end_index[2]+1]
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert phi_ex from ppm^2 to (rad/s)^2.
+                frq2 = self.frqs[spin_index, frq_index]**2
+                phi_ex_B_scaled = phi_ex_B[spin_index] * frq2
+                phi_ex_C_scaled = phi_ex_C[spin_index] * frq2
+
+                # Back calculate the R2eff values.
+                r2eff_LM63_3site(r20=R20[r20_index], phi_ex_B=phi_ex_B_scaled, phi_ex_C=phi_ex_C_scaled, kB=kB, kC=kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
