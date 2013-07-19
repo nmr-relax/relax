@@ -71,6 +71,7 @@ For the CPMG-type experiments, the models currently supported are:
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
 \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
+\item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.  The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.  See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
 \item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
 \item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
 \item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
@@ -127,26 +128,32 @@ The parameters are given in Table~\ref{table: dispersion parameters}.
 \caption{The parameters of relaxation dispersion.}
 \begin{tabular}{llll}
 \toprule
-Parameter               & Equation              & Description                                                                   & Units \\
+Parameter          & Equation                       & Description                                                                   & Units \\
 \midrule
-$\nucpmg$               & $1 / (2 \taucpmg)$    & CPMG frequency                                                                & Hz \\
-$\taucpmg$              & $1 / (2 \nucpmg)$     & Delay between CPMG $\pi$ pulses                                               & s \\
-$T_\textrm{relax}$      & -                     & The relaxation delay period                                                   & s \\
-$I_0$                   & -                     & Reference peak intensity when $T_\textrm{relax}$ is zero                      & - \\
-$I_1$                   & -                     & Peak intensity for a given $\nucpmg$ or spin-lock field strength $\omega_1$   & - \\
-$\Rtwozero$             & -                     & $\Rtwo$ relaxation rate in the absence of exchange                            & rad.s$^{-1}$ \\
-$\RtwozeroA$            & -                     & $\Rtwo$ relaxation rate for state A in the absence of exchange                & rad.s$^{-1}$ \\
-$\RtwozeroB$            & -                     & $\Rtwo$ relaxation rate for state B in the absence of exchange                & rad.s$^{-1}$ \\
-$\Ronerhoprime$         & -                     & $\Ronerho$ relaxation rate in the absence of exchange                         & rad.s$^{-1}$ \\
-$\theta$                & -                     & Rotating frame tilt angle                                                     & rad \\
-$\omegaone$             & -                     & Spin-lock field strength                                                      & rad.s$^{-1}$ \\
-$\omegae$               & -                     & Effective field in the rotating frame                                         & rad.s$^{-1}$ \\
-$\kex$                  & $1 / (2 \tex)$        & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
-$\tex$                  & $1 / (2 \kex)$        & Time of exchange                                                              & s.rad$^{-1}$ \\
-$\pA$                   & -                     & Population of state A                                                         & - \\
-$\pB$                   & -                     & Population of state B                                                         & - \\
-$\dw$                   & -                     & Chemical shift difference between the two states                              & ppm \\
-$\Phiex$                & $\pA\pB\dw^2$         & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ \\
+$\nucpmg$          & $1 / (2 \taucpmg)$             & CPMG frequency                                                                & Hz \\
+$\taucpmg$         & $1 / (2 \nucpmg)$              & Delay between CPMG $\pi$ pulses                                               & s \\
+$T_\textrm{relax}$ & -                              & The relaxation delay period                                                   & s \\
+$I_0$              & -                              & Reference peak intensity when $T_\textrm{relax}$ is zero                      & - \\
+$I_1$              & -                              & Peak intensity for a given $\nucpmg$ or spin-lock field strength $\omega_1$   & - \\
+$\Rtwozero$        & -                              & $\Rtwo$ relaxation rate in the absence of exchange                            & rad.s$^{-1}$ \\
+$\RtwozeroA$       & -                              & $\Rtwo$ relaxation rate for state A in the absence of exchange                & rad.s$^{-1}$ \\
+$\RtwozeroB$       & -                              & $\Rtwo$ relaxation rate for state B in the absence of exchange                & rad.s$^{-1}$ \\
+$\Ronerhoprime$    & -                              & $\Ronerho$ relaxation rate in the absence of exchange                         & rad.s$^{-1}$ \\
+$\theta$           & -                              & Rotating frame tilt angle                                                     & rad \\
+$\omegaone$        & -                              & Spin-lock field strength                                                      & rad.s$^{-1}$ \\
+$\omegae$          & -                              & Effective field in the rotating frame                                         & rad.s$^{-1}$ \\
+$\kex$             & $1 / (2 \tex)$                 & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
+$\kexB$            & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
+$\kexC$            & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
+$\kB$              & $\approx \kexB$                & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
+$\kC$              & $\approx \kexC$                & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
+$\tex$             & $1 / (2 \kex)$                 & Time of exchange                                                              & s.rad$^{-1}$ \\
+$\pA$              & -                              & Population of state A                                                         & - \\
+$\pB$              & -                              & Population of state B                                                         & - \\
+$\dw$              & -                              & Chemical shift difference between the two states                              & ppm \\
+$\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ \\
+$\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ \\
+$\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ \\
 \bottomrule
 \label{table: dispersion parameters}
 \end{tabular}
@@ -165,6 +172,7 @@ R2eff               & -        & -     & $\{\Rtwoeff, \cdots\}$                 
 R2eff               & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
 No Rex              & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
 LM63                & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
+LM63 3-site         & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
 CR72                & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
 CR72 full           & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
 IT99                & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
@@ -286,7 +294,20 @@ This model is provided for model selection purposes.  In combination with freque
 \label{sect: dispersion: LM63 model}
 \index{relaxation dispersion!LM63 model|textbf}
 
-This is the original model for 2-site fast exchange for CPMG-type experiments.  It is selected by setting the model to `LM63', here named after \citet{LuzMeiboom63}.  The equation for the exchange process is:
+This is the original model for 2-site fast exchange for CPMG-type experiments.
+It is selected by setting the model to `LM63', here named after \citet{LuzMeiboom63}.
+The original $n$-site Equation~(7) from their paper can be written as:
+\begin{equation}
+    \Rex = \left[ 1 - 2\tex\taucpmg \cdot \tanh \left( 2\tex\taucpmg \right)^{-1} \right] \cdot \tex \cdot \sum_{i=2}^n p_\textrm{i}\dw_{i} ,
+\end{equation}
+
+or rearranged as:
+\begin{equation} \label{eq: Luz-Meiboom}
+    \Rex = \sum_{i=2}^n \frac{\Phi_\textrm{ex,i}}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\kex} \cdot \tanh \left( \frac{\kex}{4\nucpmg} \right) \right) ,
+\end{equation}
+
+
+The equation for the 2-site exchange process can be expressed as:
 \begin{equation}
     \Rtwoeff = \Rtwozero + \frac{\Phiex}{\kex} \cdot \left( 1 - \frac{4\nucpmg}{\kex} \cdot \tanh \left( \frac{\kex}{4\nucpmg} \right) \right) .
 \end{equation}
@@ -295,6 +316,55 @@ The reference for this equation is:
 \begin{itemize}
 \item \bibentry{LuzMeiboom63}
 \end{itemize}
+
+
+% LM63 3-site model.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{The LM63 3-site fast exchange CPMG model}
+\label{sect: dispersion: LM63 3-site model}
+\index{relaxation dispersion!LM63 3-site model|textbf}
+
+This is the original \citet{LuzMeiboom63} model for 3-site fast exchange for CPMG-type experiments.
+It is selected by setting the model to `LM63 3-site'.
+Taking the original Equation~\ref{eq: Luz-Meiboom}, the equation for 3-site exchange is simply:
+\begin{equation}
+    \Rex = \sum_{i=2}^3 \frac{\Phi_\textrm{ex,i}}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\kex} \cdot \tanh \left( \frac{\kex}{4\nucpmg} \right) \right) ,
+\end{equation}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{LuzMeiboom63}
+\end{itemize}
+
+This equation was made more practically relevant in the paper of \citet{OConnell09}.
+This relies on the assumption that site~1 (or~A) has a much larger equilibrium population than the other sites ($\pA \gg \pB$ and $\pA \gg \pC$).
+As stated, ``if the different values of ji are well-separated (by a factor of 3-10), then Eq.~3 reduces approximately to the sum of n~-~1 independent two-state processes for exchange between site~1 and the n~-~1 other sites''.
+In this situation, the following relationships hold
+\begin{subequations}
+\begin{align}
+    &\kB \approx \kexB = \kAB + \kBA , \\
+    &\kC \approx \kexC = \kAC + \kCA ,
+\end{align}
+\end{subequations}
+
+and
+\begin{subequations}
+\begin{align}
+    &\PhiexB = \overline{\Phiex} \frac{\kexB^2 \left( \overline{\kex} - \kexC \right)}{\kex^2 \left( \kex - \kexC \right)} , \label{eq: disp phiexB} \\
+    &\PhiexC = \overline{\Phiex} \frac{\kexC^2 \left( \overline{\kex} - \kexB \right)}{\kex^2 \left( \kexC - \kexB \right)} , \label{eq: disp phiexC}
+\end{align}
+\end{subequations}
+
+with
+\begin{subequations}
+\begin{align}
+    &\overline{\PhiexB} \approx (\pA + \pC) \pB \dwAB^2 , \\
+    &\overline{\PhiexC} \approx (\pA + \pB) \pC \dwAC^2 .
+\end{align}
+\end{subequations}
+
+The parameter deconvolutions for this model can be performed after a relax analysis, if desired.
 
 
 
