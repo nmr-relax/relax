@@ -17,12 +17,12 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 state.load(data_path+sep+'r2eff_values')
 
 # Loop over the models.
-for model in ['LM63', 'CR72', 'IT99']:
+for model in ['LM63', 'LM63 3-site', 'CR72', 'IT99']:
     # Set up the model.
     relax_disp.select_model(model)
 
     # Generate the input files.
-    relax_disp.cpmgfit_input(dir=model.lower(), force=True)
+    relax_disp.cpmgfit_input(dir=model.lower().replace(' ', '_'), force=True)
 
     # Execute CPMGFit.
-    relax_disp.cpmgfit_execute(dir=model.lower())
+    relax_disp.cpmgfit_execute(dir=model.lower().replace(' ', '_'))
