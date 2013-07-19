@@ -91,21 +91,9 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
         test_binary(binary)
 
         # Execute CPMGFit.
-        cmd = "%s -grid -xmgr -f \"%s\" | tee \"%s\"\n" % (binary, file_in, file_out)
+        cmd = "%s -grid -xmgr -f %s | tee %s\n" % (binary, file_in, file_out)
         print("\n\n%s" % cmd)
-        pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-
-        # Close the pipe.
-        pipe.stdin.close()
-
-        # Write to stdout.
-        for line in pipe.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
-
-            # Write.
-            sys.stdout.write(line)
+        pipe = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE, close_fds=True)
 
         # Write to stderr.
         for line in pipe.stderr.readlines():
@@ -115,6 +103,15 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
 
             # Write.
             sys.stderr.write(line)
+
+        # Write to stdout.
+        for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
+            sys.stdout.write(line)
 
 
 def cpmgfit_input(dir=None, binary='cpmgfit', spin_id=None, force=False):
