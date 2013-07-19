@@ -40,6 +40,7 @@ if dep_check.scipy_module:
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
+from lib.float import isNaN
 
 
 def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -101,7 +102,7 @@ def r2eff_ns_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=N
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mx = fabs(Mint[1] / pA)
-        if Mx == 0.0:
+        if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
         else:
             back_calc[i]= -inv_tcpmg * log(Mx)

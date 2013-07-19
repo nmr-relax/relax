@@ -39,6 +39,9 @@ from numpy.linalg import matrix_power
 if dep_check.scipy_module:
     from scipy.linalg import expm
 
+# relax module imports.
+from lib.float import isNaN
+
 
 def r2eff_ns_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
@@ -136,7 +139,7 @@ def r2eff_ns_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, re
 
     # Calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential, and store it for each dispersion point.
     for i in range(num_points):
-        if Mx[i] == 0.0:
+        if Mx[i] <= 0.0 or isNaN(Mx[i]):
             back_calc[i] = 1e99
         else:
             back_calc[i]= -inv_relax_time * log(Mx[i])
