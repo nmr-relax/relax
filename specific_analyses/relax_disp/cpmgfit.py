@@ -91,7 +91,7 @@ def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
         test_binary(binary)
 
         # Execute CPMGFit.
-        cmd = "%s -grid -xmgr -f %s | tee %s\n" % (binary, file_in, file_out)
+        cmd = "%s -grid -xmgr -f \"%s\" | tee \"%s\"\n" % (binary, file_in, file_out)
         print("\n\n%s" % cmd)
         pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
@@ -238,6 +238,18 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
         file.write("PaDw 2 10.0 50\n")
         file.write("Tau 0.1 10.0 50\n")
 
+    # The function and parameters.
+    if function == '3-site_CPMG':
+        # Function.
+        file.write("function 3-site_CPMG\n")
+
+        # Parameters.
+        file.write("R2 1 10 20\n")
+        file.write("Rex1 0 100.0 20\n")
+        file.write("Tau1 0 10.0 20\n")
+        file.write("Rex2 0 100.0 20\n")
+        file.write("Tau2 0 10.0 20\n")
+
     # The Grace setup.
     file.write("xmgr\n")
     file.write("@ xaxis label \"1/tcp (1/ms)\"\n")
@@ -299,9 +311,10 @@ def translate_model(model):
 
     # A translation table (relax to CPMGFit models).
     translation = {
-        'LM63': 'CPMG',
-        'CR72': 'Full_CPMG',
-        'IT99': "Ishima"
+        'LM63':         'CPMG',
+        'LM63 3-site':  '3-site_CPMG',
+        'CR72':         'Full_CPMG',
+        'IT99':         'Ishima'
     }
 
     # No translation, so fail.
