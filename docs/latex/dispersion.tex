@@ -50,18 +50,17 @@ Solutions can nevertheless be found by either making assumptions or restrictions
 The modelling of relaxation dispersion data can hence be catergorised into these two distinct methodologies:
 
 \begin{description}
-\item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytic models} on page~\pageref{sect: dispersion: analytic models}).
+\item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytical models} on page~\pageref{sect: dispersion: analytical models}).
 \item[Numerical models:]\index{relaxation dispersion!Numerical model}  Optimisation of models based on numerically solving the Bloch-McConnell equations (see Section~\ref{sect: dispersion: numerical models} on page~\pageref{sect: dispersion: numerical models}).
 \end{description}
 
 
 
-% Analytic models.
-%~~~~~~~~~~~~~~~~~
+% Implemented models.
+%~~~~~~~~~~~~~~~~~~~~
 
-\subsection{Analytic models}
-\label{sect: dispersion: analytic models}
-\index{relaxation dispersion!Analytical model|textbf}
+\subsection{Implemented models}
+\label{sect: dispersion: implemented models}
 
 A number of analytic models are supported within relax.
 If the model you are interested in is not available, see Section~\ref{sect: dispersion: model tutorial} on page~\pageref{sect: dispersion: model tutorial} for how new models can be added to relax.
@@ -87,14 +86,6 @@ For the $\Ronerho$-type experiment, the currently supported models are:
 \item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  This model is disabled by default in the dispersion auto-analysis.  See Section~\ref{sect: dispersion: M61 skew model} on page~\pageref{sect: dispersion: M61 skew model}.
 \end{description}
 
-
-
-% Numerical models.
-%~~~~~~~~~~~~~~~~~~
-
-\subsection{Numerical models}
-\label{sect: dispersion: numerical models}
-\index{relaxation dispersion!Numerical model|textbf}
 
 Like the analytic models, a number of numerical models are supported within relax.
 These models are also dependant upon whether the data originates from a CPMG-type or $\Ronerho$-type experiment.
@@ -209,10 +200,19 @@ M61 skew   & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$      
 \end{sidewaystable}
 
 
-% R2eff model.
-%~~~~~~~~~~~~~
+
+% The base models.
+%%%%%%%%%%%%%%%%%%
 
 \clearpage
+
+\section{The base dispersion models}
+\label{sect: dispersion: base models}
+\index{relaxation dispersion!Base model|textbf}
+
+
+% R2eff model.
+%~~~~~~~~~~~~~
 
 \subsection{The R2eff model}
 \label{sect: dispersion: R2eff model}
@@ -269,6 +269,14 @@ For the variable relaxation time period type experiments, the $\Rtwoeff$/$\Roner
 
 This model is provided for model selection purposes.  In combination with frequentist methods, such as AIC\index{model selection!AIC}, or Bayesian methods\index{model selection!Bayesian} it can show if the presence of chemical exchange is statistically significant.  Optimisation is still required as one $\Rtwozero$ value per magnetic field strength will be fit to the measured data for each spin system.  It is selected by setting the model to `No Rex'.
 
+
+
+% The analytical models.
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The analytical dispersion models}
+\label{sect: dispersion: analytical models}
+\index{relaxation dispersion!Analytical model|textbf}
 
 
 % LM63 model.
@@ -372,6 +380,66 @@ The reference for this equation is:
 \end{itemize}
 
 
+% M61 model.
+%~~~~~~~~~~~
+
+\subsection{The M61 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: M61 model}
+\index{relaxation dispersion!M61 model|textbf}
+
+This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+\end{equation}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{Meiboom61}
+\end{itemize}
+
+
+% DPL94 model.
+%~~~~~~~~~~~~~
+
+\subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: DPL94 model}
+\index{relaxation dispersion!DPL94 model|textbf}
+
+This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+\end{equation}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{Davis94}
+\end{itemize}
+
+
+% M61 skew model.
+%~~~~~~~~~~~~~~~~
+
+\subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: M61 skew model}
+\index{relaxation dispersion!M61 model|textbf}
+
+This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
+\end{equation}
+
+Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
+
+
+
+% The numerical models.
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The numerical dispersion models}
+\label{sect: dispersion: numerical models}
+\index{relaxation dispersion!Numerical model|textbf}
+
+
 % Full NS 2-site 3D model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -431,56 +499,6 @@ This is the numerical model for 2-site exchange expanded using Maple by Nikolai 
 Is it selected by setting the model to `NS 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
-
-% M61 model.
-%~~~~~~~~~~~
-
-\subsection{The M61 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: M61 model}
-\index{relaxation dispersion!M61 model|textbf}
-
-This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
-\end{equation}
-
-The reference for this equation is:
-\begin{itemize}
-\item \bibentry{Meiboom61}
-\end{itemize}
-
-
-% DPL94 model.
-%~~~~~~~~~~~~~
-
-\subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: DPL94 model}
-\index{relaxation dispersion!DPL94 model|textbf}
-
-This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
-\end{equation}
-
-The reference for this equation is:
-\begin{itemize}
-\item \bibentry{Davis94}
-\end{itemize}
-
-
-% M61 skew model.
-%~~~~~~~~~~~~~~~~
-
-\subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: M61 skew model}
-\index{relaxation dispersion!M61 model|textbf}
-
-This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
-\end{equation}
-
-Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
 
 
 % Script UI.
