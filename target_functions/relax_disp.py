@@ -538,6 +538,12 @@ class Dispersion:
         kB = params[self.end_index[2]]
         kC = params[self.end_index[2]+1]
 
+        # Once off parameter conversions.
+        rex_B = phi_ex_B / kB
+        rex_C = phi_ex_C / kC
+        quart_kB = kB / 4.0
+        quart_kC = kC / 4.0
+
         # Initialise.
         chi2_sum = 0.0
 
@@ -548,13 +554,13 @@ class Dispersion:
                 # The R20 index.
                 r20_index = frq_index + spin_index*self.num_frq
 
-                # Convert phi_ex from ppm^2 to (rad/s)^2.
+                # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
                 frq2 = self.frqs[spin_index, frq_index]**2
-                phi_ex_B_scaled = phi_ex_B[spin_index] * frq2
-                phi_ex_C_scaled = phi_ex_C[spin_index] * frq2
+                rex_B_scaled = rex_B[spin_index] * frq2
+                rex_C_scaled = rex_C[spin_index] * frq2
 
                 # Back calculate the R2eff values.
-                r2eff_LM63_3site(r20=R20[r20_index], phi_ex_B=phi_ex_B_scaled, phi_ex_C=phi_ex_C_scaled, kB=kB, kC=kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):

@@ -48,7 +48,7 @@ For deconvoluting the parameters, see the relax user manual or the reference:
 from math import tanh
 
 
-def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the LM63 3-site model.
 
     See the module docstring for details.
@@ -56,14 +56,14 @@ def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, c
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
     @type r20:              float
-    @keyword phi_ex_B:      The phi_ex_B parameter value.
-    @type phi_ex_B:         float
-    @keyword phi_ex_C:      The phi_ex_C parameter value.
-    @type phi_ex_C:         float
-    @keyword kB:            Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s).
-    @type kB:               float
-    @keyword kC:            Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s).
-    @type kC:               float
+    @keyword rex_B:         The phi_ex_B / kB parameter value.
+    @type rex_B:            float
+    @keyword rex_C:         The phi_ex_C / kC parameter value.
+    @type rex_C:            float
+    @keyword quart_kB:      Approximate chemical exchange rate constant between sites A and B (the exchange rate in rad/s) divided by 4.
+    @type quart_kB:         float
+    @keyword quart_kC:      Approximate chemical exchange rate constant between sites A and C (the exchange rate in rad/s) divided by 4.
+    @type quart_kC:         float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
@@ -72,24 +72,18 @@ def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, c
     @type num_points:       int
     """
 
-    # Repetitive calculations (to speed up calculations).
-    rex_B = phi_ex_B / kB
-    rex_C = phi_ex_C / kC
-    kB_4 = 4.0 / kB
-    kC_4 = 4.0 / kC
-
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # Catch zeros.
-        if phi_ex_B == 0.0 and phi_ex_C == 0.0:
+        if rex_B == 0.0 and rex_C == 0.0:
             back_calc[i] = r20
 
         # Avoid divide by zero.
-        elif kB == 0.0 or kC == 0.0:
+        elif quart_kB == 0.0 or quart_kC == 0.0:
             back_calc[i] = 1e100
 
         # The full formula.
         else:
             back_calc[i] = r20
-            back_calc[i] += rex_B * (1.0 - kB_4 * cpmg_frqs[i] * tanh(kB / (4.0 * cpmg_frqs[i])))
-            back_calc[i] += rex_C * (1.0 - kC_4 * cpmg_frqs[i] * tanh(kC / (4.0 * cpmg_frqs[i])))
+            back_calc[i] += rex_B * (1.0 - cpmg_frqs[i] * tanh(quart_kB * cpmg_frqs[i]) / quart_kB)
+            back_calc[i] += rex_C * (1.0 - cpmg_frqs[i] * tanh(quart_kC * cpmg_frqs[i]) / quart_kC)
