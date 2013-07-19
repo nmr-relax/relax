@@ -381,7 +381,7 @@ class Relax_disp(API_base, API_common):
                             upper.append(40.0)
 
                         # The pA.pB.dw**2 and pA.dw**2 parameters.
-                        elif spin.params[i] in ['phi_ex', 'padw2']:
+                        elif spin.params[i] in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
                             lower.append(0.0)
                             upper.append(10.0)
 
@@ -402,7 +402,7 @@ class Relax_disp(API_base, API_common):
                         upper.append(1.0)
 
                     # Exchange rates.
-                    elif spin.params[i] in ['kex', 'ka']:
+                    elif spin.params[i] in ['kex', 'ka', 'kB', 'kC']:
                         lower.append(1.0)
                         upper.append(100000.0)
 

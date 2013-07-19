@@ -48,7 +48,7 @@ For deconvoluting the parameters, see the relax user manual or the reference:
 from math import tanh
 
 
-def r2eff_LM63_3site(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the LM63 3-site model.
 
     See the module docstring for details.
@@ -85,7 +85,7 @@ def r2eff_LM63_3site(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=
             back_calc[i] = r20
 
         # Avoid divide by zero.
-        elif kA == 0.0 or kB == 0.0:
+        elif kB == 0.0 or kC == 0.0:
             back_calc[i] = 1e100
 
         # The full formula.
