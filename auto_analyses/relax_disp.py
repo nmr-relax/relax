@@ -279,22 +279,25 @@ class Relax_disp:
             # Write out the results.
             self.write_results(path=path, model=model)
 
-        # Perform model selection, writing out the final results.
+        # The final model selection data pipe.
         if len(model_pipes) >= 2:
+            # Perform model selection.
             self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=model_pipes)
+
+            # Final Monte Carlo simulations only.
+            if not self.mc_sim_all_models:
+                self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+                self.interpreter.monte_carlo.create_data()
+                self.interpreter.monte_carlo.initial_values()
+                self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
+                self.interpreter.monte_carlo.error_analysis()
+
+            # Writing out the final results.
             self.write_results(path=self.results_dir+sep+'final')
 
         # No model selection.
         else:
             warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
-
-        # Final Monte Carlo simulations only.
-        if not self.mc_sim_all_models:
-            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
-            self.interpreter.monte_carlo.create_data()
-            self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
-            self.interpreter.monte_carlo.error_analysis()
 
         # Finally save the program state.
         self.interpreter.state.save(state='final_state', dir=self.results_dir, force=True)
