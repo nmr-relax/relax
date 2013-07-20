@@ -354,6 +354,13 @@ class Relax_disp:
             self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
 
+        # The Phi_ex_B nd Phi_ex_C parameters.
+        if model in [None, MODEL_LM63_3SITE]:
+            self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=path, force=True)
+            self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', file='phi_ex_B.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', file='phi_ex_C.agr', dir=path, force=True)
+
         # The padw2 parameter.
         if model in [None, MODEL_IT99]:
             self.interpreter.value.write(param='padw2', file='padw2.out', dir=path, force=True)
@@ -370,6 +377,13 @@ class Relax_disp:
             self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
+
+        # The kB and kC parameters.
+        if model in [None, MODEL_LM63_3SITE]:
+            self.interpreter.value.write(param='kB', file='kB.out', dir=path, force=True)
+            self.interpreter.value.write(param='kC', file='kC.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', file='kB.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', file='kC.agr', dir=path, force=True)
 
         # Minimisation statistics.
         if not (model == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
