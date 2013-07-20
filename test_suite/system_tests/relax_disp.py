@@ -826,6 +826,13 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
 
 
+    def test_r2eff_fit_fixed_time(self):
+        """Test the relaxation dispersion 'R2eff' model for fixed time data in the auto-analysis."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r2eff_calc.py')
+
+
     def test_read_r2eff(self):
         """Test the reading of a file containing r2eff values."""
 
