@@ -68,10 +68,11 @@ for frq_index in range(len(frqs)):
                 intensities.append(i0[frq_index][spin_index] * exp(-rx*times[time_index]))
 
             # Create a Sparky .list file.
-            name = 'nu_%s_%s' % (frq_label[frq_index], cpmg_frq[cpmg_frq_index])
             if time_index == 0 and cpmg_frq_index == 0:
-                name += '_ref'
+                name = 'nu_%s_ref' % frq_label[frq_index]
             elif time_index == 0:
                 name = None
+            else:
+                name = 'nu_%s_%s' % (frq_label[frq_index], cpmg_frq[cpmg_frq_index])
             if name:
                 write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
