@@ -211,7 +211,7 @@ class Relax_disp:
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Monte Carlo simulations.
-        if self.mc_sim_all_models:
+        if self.mc_sim_all_models or len(self.model_pipes) < 2:
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
@@ -226,7 +226,7 @@ class Relax_disp:
         self.error_analysis()
 
         # Loop over the models.
-        model_pipes = []
+        self.model_pipes = []
         for model in self.models:
             # Printout.
             subtitle(file=sys.stdout, text="The '%s' model" % model, prespace=3)
@@ -237,7 +237,7 @@ class Relax_disp:
             # The name of the data pipe for the model.
             model_pipe = model
             if model != 'R2eff':
-                model_pipes.append(model_pipe)
+                self.model_pipes.append(model_pipe)
 
             # Check that results do not already exist - i.e. a previous run was interrupted.
             path1 = path + sep + 'results'
@@ -280,9 +280,9 @@ class Relax_disp:
             self.write_results(path=path, model=model)
 
         # The final model selection data pipe.
-        if len(model_pipes) >= 2:
+        if len(self.model_pipes) >= 2:
             # Perform model selection.
-            self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=model_pipes)
+            self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=self.model_pipes)
 
             # Final Monte Carlo simulations only.
             if not self.mc_sim_all_models:
@@ -297,7 +297,7 @@ class Relax_disp:
 
         # No model selection.
         else:
-            warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(model_pipes)))
+            warn(RelaxWarning("Model selection in the dispersion auto-analysis has been skipped as only %s models have been optimised." % len(self.model_pipes)))
 
         # Finally save the program state.
         self.interpreter.state.save(state='final_state', dir=self.results_dir, force=True)
