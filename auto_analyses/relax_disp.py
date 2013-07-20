@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, R1RHO_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, R1RHO_EXP
 from status import Status; status = Status()
 
 
