@@ -108,10 +108,3 @@ spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', 
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
-
-# Strip out all of the simulation data.
-for spin in spin_loop():
-    delattr(spin, 'r2eff_sim')
-
-# Save the program state.
-state.save('devnull', force=True)
