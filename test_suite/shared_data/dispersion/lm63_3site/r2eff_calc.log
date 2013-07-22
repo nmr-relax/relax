@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20426
+                                  relax repository checkout r20448
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -37,12 +37,6 @@ from status import Status; status = Status()
 
 # The dispersion models.
 MODELS = ['R2eff']
-
-# The grid search size (the number of increments per dimension).
-GRID_INC = 5
-
-# The number of Monte Carlo simulations to be used for the error analyses.
-MC_NUM = 3
 
 # The results directory.
 RESULTS_DIR = '.'
@@ -128,11 +122,7 @@ spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', 
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
-
-# Strip out all of the simulation data.
-for spin in spin_loop():
-    delattr(spin, 'r2eff_sim')
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS)
 
 # Save the program state.
 state.save('r2eff_values', force=True)
@@ -927,8 +917,9 @@ relax> results.read(file='results', dir='./R2eff')
 Opening the file './R2eff/results.bz2' for reading.
 RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
 
-relax> monte_carlo.setup(number=3)
+relax> state.save(state='final_state', dir='.', compress_type=1, force=True)
+Opening the file './final_state.bz2' for writing.
 
-relax> monte_carlo.create_data(method='back_calc')
-RelaxError: Back-calculation is not allowed for the fixed time experiment types.
+relax> state.save(state='r2eff_values', dir=None, compress_type=1, force=True)
+Opening the file 'r2eff_values.bz2' for writing.
 
