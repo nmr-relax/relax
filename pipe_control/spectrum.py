@@ -623,9 +623,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Automatic format detection.
     format = autodetect_format(file_data)
 
-    # Flag for single or multiple spectrum extraction
-    single_spectrum = True
-
     # Generic.
     if format == 'generic':
         # Print out.
