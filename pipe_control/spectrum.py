@@ -696,6 +696,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
                 # Replace residue number with the spin_id.
                 intensity_data[i][0][j][2] = spin_id
 
+        # Change Flag for single or multiple spectrum extraction
+        single_spectrum = False
+
     # Sparky.
     elif format == 'sparky':
         # Print out.
