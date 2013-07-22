@@ -33,7 +33,7 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 
 # Create the sequence.
 spin.create(res_name='Trp', res_num=1, spin_name='N')
-spin.create(res_name='Trp', res_num=1, spin_name='NE1')
+spin.create(res_name='Lys', res_num=2, spin_name='N')
 
 # Set the relaxation dispersion experiment type.
 relax_disp.exp_type('cpmg fixed')
@@ -78,7 +78,6 @@ data = [
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='N', proton='HN', int_method='height')
-    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='NE1', proton='HE1', int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
