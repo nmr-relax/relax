@@ -1,0 +1,114 @@
+@version 50121
+@page size 842, 595
+@with g0
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  label "\qSpin-lock field strength (Hz)\Q"
+@    xaxis  label char size 1.48
+@    xaxis  tick major size 0.75
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.45
+@    xaxis  ticklabel char size 1.00
+@    yaxis  label "\qR\s1\xr\B\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.48
+@    yaxis  tick major size 0.75
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.45
+@    yaxis  ticklabel char size 1.00
+@    legend on
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 2
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 legend "R\s2eff\N (800.0 MHz)"
+@    s2 symbol 3
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 legend "Back-calculated R\s2eff\N (500.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 legend "Back-calculated R\s2eff\N (800.0 MHz)"
+@    s4 symbol 5
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 legend "Residuals (500.0 MHz)"
+@    s5 symbol 6
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 legend "Residuals (800.0 MHz)"
+@target G0.S0
+@type xydy
+66.6666                        38.692173796059706             23.957658141676752            
+133.3333                       35.342751628981674             17.142376133848174            
+200.0                          32.148140849135295             12.459367876150074            
+266.6666                       29.293005456638078             9.370617055286106             
+333.3333                       26.866620666811162             7.358299547963113             
+400.0                          24.867309127442901             6.031715082451449             
+466.6666                       23.246415582759639             5.135903941855623             
+533.3333                       21.940540587462717             4.513535227688073             
+600.0                          20.888359310970856             4.068594644080845             
+666.6666                       20.037179325136115             3.741846057718624             
+733.3333                       19.344290597178912             3.495986014198502             
+800.0                          18.776049806485947             3.306931859170459             
+866.6666                       18.306333625302941             3.158741865826960             
+933.3333                       17.914935045997826             3.040594334950762             
+1000.0                         17.586226098550206             2.944974017731597             
+&
+@target G0.S1
+@type xydy
+66.6666                        75.652264830896129             771.962431870375099           
+133.3333                       67.077575371752388             327.493285052792430           
+200.0                          58.899337554906012             144.553091050738487           
+266.6666                       51.590146600403116             69.598321033455136            
+333.3333                       45.378555219037686             37.398178214362424            
+400.0                          40.260319220400135             22.418811080721621            
+466.6666                       36.110832063044690             14.807850074106574            
+533.3333                       32.767782801442237             10.603663559627245            
+600.0                          30.074195039442202             8.103924123968010             
+666.6666                       27.895177734134002             6.521546808861780             
+733.3333                       26.121382024271959             5.465919588592417             
+800.0                          24.666690111538834             4.730195734420464             
+866.6666                       23.464212087506397             4.198343028166704             
+933.3333                       22.462229071706197             3.801887682068398             
+1000.0                         21.620738661852016             3.498597164700040             
+&
+@target G0.S2
+@type xydy
+&
+@target G0.S3
+@type xydy
+&
+@target G0.S4
+@type xydy
+&
+@target G0.S5
+@type xydy
+&
+@autoscale

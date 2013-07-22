@@ -1,0 +1,1538 @@
+
+
+
+                                  relax repository checkout r20448
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'relax_disp.py'
+----------------------------------------------------------------------------------------------------
+"""Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+
+To run:
+
+$ ../../../../../relax --tee relax_disp.log relax_disp.py
+"""
+
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# The dispersion models.
+MODELS = ['R2eff', 'LM63 3-site']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 11
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 50
+
+
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# The path to the data files.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'lm63_3site'
+
+# Create the sequence.
+spin.create(res_name='Trp', res_num=1, spin_name='N')
+spin.create(res_name='Lys', res_num=2, spin_name='N')
+
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type('cpmg fixed')
+
+# The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
+data = [
+    ['500_reference',   'nu_500MHz_ref.list',             None,  500e6],
+    ['500_66.6666',     'nu_500MHz_66.6666.list',      66.6666,  500e6],
+    ['500_133.3333',    'nu_500MHz_133.3333.list',    133.3333,  500e6],
+    ['500_200.0',       'nu_500MHz_200.0.list',       200.0000,  500e6],
+    ['500_266.6666',    'nu_500MHz_266.6666.list',    266.6666,  500e6],
+    ['500_333.3333',    'nu_500MHz_333.3333.list',    333.3333,  500e6],
+    ['500_400.0',       'nu_500MHz_400.0.list',       400.0000,  500e6],
+    ['500_466.6666',    'nu_500MHz_466.6666.list',    466.6666,  500e6],
+    ['500_533.3333',    'nu_500MHz_533.3333.list',    533.3333,  500e6],
+    ['500_600.0',       'nu_500MHz_600.0.list',       600.0000,  500e6],
+    ['500_666.6666',    'nu_500MHz_666.6666.list',    666.6666,  500e6],
+    ['500_733.3333',    'nu_500MHz_733.3333.list',    733.3333,  500e6],
+    ['500_800.0',       'nu_500MHz_800.0.list',       800.0000,  500e6],
+    ['500_866.6666',    'nu_500MHz_866.6666.list',    866.6666,  500e6],
+    ['500_933.3333',    'nu_500MHz_933.3333.list',    933.3333,  500e6],
+    ['500_1000.0',      'nu_500MHz_1000.0.list',     1000.0000,  500e6],
+    ['800_reference',   'nu_800MHz_ref.list',             None,  800e6],
+    ['800_66.6666',     'nu_800MHz_66.6666.list',      66.6666,  800e6],
+    ['800_133.3333',    'nu_800MHz_133.3333.list',    133.3333,  800e6],
+    ['800_200.0',       'nu_800MHz_200.0.list',       200.0000,  800e6],
+    ['800_266.6666',    'nu_800MHz_266.6666.list',    266.6666,  800e6],
+    ['800_333.3333',    'nu_800MHz_333.3333.list',    333.3333,  800e6],
+    ['800_400.0',       'nu_800MHz_400.0.list',       400.0000,  800e6],
+    ['800_466.6666',    'nu_800MHz_466.6666.list',    466.6666,  800e6],
+    ['800_533.3333',    'nu_800MHz_533.3333.list',    533.3333,  800e6],
+    ['800_600.0',       'nu_800MHz_600.0.list',       600.0000,  800e6],
+    ['800_666.6666',    'nu_800MHz_666.6666.list',    666.6666,  800e6],
+    ['800_733.3333',    'nu_800MHz_733.3333.list',    733.3333,  800e6],
+    ['800_800.0',       'nu_800MHz_800.0.list',       800.0000,  800e6],
+    ['800_866.6666',    'nu_800MHz_866.6666.list',    866.6666,  800e6],
+    ['800_933.3333',    'nu_800MHz_933.3333.list',    933.3333,  800e6],
+    ['800_1000.0',      'nu_800MHz_1000.0.list',     1000.0000,  800e6]
+]
+
+# Loop over the spectra.
+for id, file, cpmg_frq, H_frq in data:
+    # Load the peak intensities.
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='N', proton='HN', int_method='height')
+
+    # Set the relaxation dispersion CPMG frequencies.
+    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+
+    # Set the NMR field strength of the spectrum.
+    spectrometer.frequency(id=id, frq=H_frq)
+
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.1)
+
+    # Errors.
+    spectrum.baseplane_rmsd(error=1000000.0, spectrum_id=id)
+
+# Peak intensity error analysis.
+spectrum.error_analysis(subset=['500_reference', '500_66.6666', '500_133.3333', '500_200.0', '500_266.6666', '500_333.3333', '500_400.0', '500_466.6666', '500_533.3333', '500_600.0', '500_666.6666', '500_733.3333', '500_800.0', '500_866.6666', '500_933.3333', '500_1000.0'])
+spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', '800_200.0', '800_266.6666', '800_333.3333', '800_400.0', '800_466.6666', '800_533.3333', '800_600.0', '800_666.6666', '800_733.3333', '800_800.0', '800_866.6666', '800_933.3333', '800_1000.0'])
+
+# Set the nuclear isotope data.
+spin.isotope('15N')
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=1, mol_name=None)
+
+relax> spin.create(spin_name='N', spin_num=None, res_name='Lys', res_num=2, mol_name=None)
+
+relax> relax_disp.exp_type(exp_type='cpmg fixed')
+The fixed relaxation time period CPMG-type experiments.
+
+relax> spectrum.read_intensities(file='nu_500MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_reference', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_ref.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:1@N         100000000.0    
+:2@N         20000000.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_reference', cpmg_frq=None)
+Setting the '500_reference' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='500_reference', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_reference', time=0.1)
+Setting the '500_reference' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_reference', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_66.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_66.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         2817793.0    
+:2@N         417494.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_66.6666', cpmg_frq=66.6666)
+Setting the '500_66.6666' spectrum CPMG frequency 66.6666 Hz.
+
+relax> spectrometer.frequency(id='500_66.6666', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_66.6666', time=0.1)
+Setting the '500_66.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_66.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_133.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_133.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         3938879.0    
+:2@N         583598.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_133.3333', cpmg_frq=133.3333)
+Setting the '500_133.3333' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='500_133.3333', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_133.3333', time=0.1)
+Setting the '500_133.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_133.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_200.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_200.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         5421414.0    
+:2@N         803256.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_200.0', cpmg_frq=200.0)
+Setting the '500_200.0' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='500_200.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_200.0', time=0.1)
+Setting the '500_200.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_200.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_266.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_266.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         7212891.0    
+:2@N         1068688.0    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_266.6666', cpmg_frq=266.6666)
+Setting the '500_266.6666' spectrum CPMG frequency 266.6666 Hz.
+
+relax> spectrometer.frequency(id='500_266.6666', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_266.6666', time=0.1)
+Setting the '500_266.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_266.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_333.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_333.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         9193611.0    
+:2@N         1362158.0    
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_333.3333', cpmg_frq=333.3333)
+Setting the '500_333.3333' spectrum CPMG frequency 333.3333 Hz.
+
+relax> spectrometer.frequency(id='500_333.3333', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_333.3333', time=0.1)
+Setting the '500_333.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_333.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_400.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_400.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         11228322.0    
+:2@N         1663629.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_400.0', cpmg_frq=400.0)
+Setting the '500_400.0' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='500_400.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_400.0', time=0.1)
+Setting the '500_400.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_400.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_466.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_466.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         13204117.0    
+:2@N         1956370.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_466.6666', cpmg_frq=466.6666)
+Setting the '500_466.6666' spectrum CPMG frequency 466.6666 Hz.
+
+relax> spectrometer.frequency(id='500_466.6666', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_466.6666', time=0.1)
+Setting the '500_466.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_466.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_533.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_533.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         15046060.0    
+:2@N         2229279.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_533.3333', cpmg_frq=533.3333)
+Setting the '500_533.3333' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='500_533.3333', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_533.3333', time=0.1)
+Setting the '500_533.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_533.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_600.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_600.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         16715469.0    
+:2@N         2476624.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_600.0', cpmg_frq=600.0)
+Setting the '500_600.0' spectrum CPMG frequency 600.0 Hz.
+
+relax> spectrometer.frequency(id='500_600.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_600.0', time=0.1)
+Setting the '500_600.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_600.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_666.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_666.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         18200559.0    
+:2@N         2696661.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_666.6666', cpmg_frq=666.6666)
+Setting the '500_666.6666' spectrum CPMG frequency 666.6666 Hz.
+
+relax> spectrometer.frequency(id='500_666.6666', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_666.6666', time=0.1)
+Setting the '500_666.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_666.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_733.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_733.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         19506374.0    
+:2@N         2890135.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_733.3333', cpmg_frq=733.3333)
+Setting the '500_733.3333' spectrum CPMG frequency 733.3333 Hz.
+
+relax> spectrometer.frequency(id='500_733.3333', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_733.3333', time=0.1)
+Setting the '500_733.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_733.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_800.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_800.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         20646900.0    
+:2@N         3059120.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_800.0', cpmg_frq=800.0)
+Setting the '500_800.0' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='500_800.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_800.0', time=0.1)
+Setting the '500_800.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_800.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_866.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_866.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         21639859.0    
+:2@N         3206240.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_866.6666', cpmg_frq=866.6666)
+Setting the '500_866.6666' spectrum CPMG frequency 866.6666 Hz.
+
+relax> spectrometer.frequency(id='500_866.6666', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_866.6666', time=0.1)
+Setting the '500_866.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_866.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_933.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_933.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         22503635.0    
+:2@N         3334220.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_933.3333', cpmg_frq=933.3333)
+Setting the '500_933.3333' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='500_933.3333', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_933.3333', time=0.1)
+Setting the '500_933.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_933.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_500MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_1000.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_1000.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         23255638.0    
+:2@N         3445640.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='500_1000.0', cpmg_frq=1000.0)
+Setting the '500_1000.0' spectrum CPMG frequency 1000.0 Hz.
+
+relax> spectrometer.frequency(id='500_1000.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='500_1000.0', time=0.1)
+Setting the '500_1000.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_1000.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_reference', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_ref.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:1@N         150000000.0    
+:2@N         25000000.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_reference', cpmg_frq=None)
+Setting the '800_reference' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='800_reference', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_reference', time=0.1)
+Setting the '800_reference' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_reference', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_66.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_66.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         104919.0     
+:2@N         12954.0      
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_66.6666', cpmg_frq=66.6666)
+Setting the '800_66.6666' spectrum CPMG frequency 66.6666 Hz.
+
+relax> spectrometer.frequency(id='800_66.6666', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_66.6666', time=0.1)
+Setting the '800_66.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_66.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_133.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_133.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         247311.0     
+:2@N         30535.0      
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_133.3333', cpmg_frq=133.3333)
+Setting the '800_133.3333' spectrum CPMG frequency 133.3333 Hz.
+
+relax> spectrometer.frequency(id='800_133.3333', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_133.3333', time=0.1)
+Setting the '800_133.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_133.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_200.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_200.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         560297.0     
+:2@N         69179.0      
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_200.0', cpmg_frq=200.0)
+Setting the '800_200.0' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='800_200.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_200.0', time=0.1)
+Setting the '800_200.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_200.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_266.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_266.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         1163725.0    
+:2@N         143684.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_266.6666', cpmg_frq=266.6666)
+Setting the '800_266.6666' spectrum CPMG frequency 266.6666 Hz.
+
+relax> spectrometer.frequency(id='800_266.6666', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_266.6666', time=0.1)
+Setting the '800_266.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_266.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_333.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_333.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         2165783.0    
+:2@N         267408.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_333.3333', cpmg_frq=333.3333)
+Setting the '800_333.3333' spectrum CPMG frequency 333.3333 Hz.
+
+relax> spectrometer.frequency(id='800_333.3333', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_333.3333', time=0.1)
+Setting the '800_333.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_333.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_400.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_400.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         3613238.0    
+:2@N         446125.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_400.0', cpmg_frq=400.0)
+Setting the '800_400.0' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='800_400.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_400.0', time=0.1)
+Setting the '800_400.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_400.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_466.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_466.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         5471501.0    
+:2@N         675564.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_466.6666', cpmg_frq=466.6666)
+Setting the '800_466.6666' spectrum CPMG frequency 466.6666 Hz.
+
+relax> spectrometer.frequency(id='800_466.6666', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_466.6666', time=0.1)
+Setting the '800_466.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_466.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_533.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_533.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:1@N         7643511.0    
+:2@N         943742.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_533.3333', cpmg_frq=533.3333)
+Setting the '800_533.3333' spectrum CPMG frequency 533.3333 Hz.
+
+relax> spectrometer.frequency(id='800_533.3333', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_533.3333', time=0.1)
+Setting the '800_533.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_533.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_600.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_600.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         10006312.0    
+:2@N         1235476.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_600.0', cpmg_frq=600.0)
+Setting the '800_600.0' spectrum CPMG frequency 600.0 Hz.
+
+relax> spectrometer.frequency(id='800_600.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_600.0', time=0.1)
+Setting the '800_600.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_600.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_666.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_666.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         12442494.0    
+:2@N         1536271.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_666.6666', cpmg_frq=666.6666)
+Setting the '800_666.6666' spectrum CPMG frequency 666.6666 Hz.
+
+relax> spectrometer.frequency(id='800_666.6666', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_666.6666', time=0.1)
+Setting the '800_666.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_666.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_733.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_733.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         14857390.0    
+:2@N         1834437.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_733.3333', cpmg_frq=733.3333)
+Setting the '800_733.3333' spectrum CPMG frequency 733.3333 Hz.
+
+relax> spectrometer.frequency(id='800_733.3333', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_733.3333', time=0.1)
+Setting the '800_733.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_733.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_800.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_800.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         17183791.0    
+:2@N         2121677.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_800.0', cpmg_frq=800.0)
+Setting the '800_800.0' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='800_800.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_800.0', time=0.1)
+Setting the '800_800.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_800.0', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_866.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_866.6666.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         19379469.0    
+:2@N         2392777.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_866.6666', cpmg_frq=866.6666)
+Setting the '800_866.6666' spectrum CPMG frequency 866.6666 Hz.
+
+relax> spectrometer.frequency(id='800_866.6666', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_866.6666', time=0.1)
+Setting the '800_866.6666' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_866.6666', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_933.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_933.3333.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         21421871.0    
+:2@N         2644952.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_933.3333', cpmg_frq=933.3333)
+Setting the '800_933.3333' spectrum CPMG frequency 933.3333 Hz.
+
+relax> spectrometer.frequency(id='800_933.3333', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_933.3333', time=0.1)
+Setting the '800_933.3333' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_933.3333', spin_id=None)
+
+relax> spectrum.read_intensities(file='nu_800MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_1000.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_1000.0.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         23302519.0    
+:2@N         2877155.0     
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_1000.0', cpmg_frq=1000.0)
+Setting the '800_1000.0' spectrum CPMG frequency 1000.0 Hz.
+
+relax> spectrometer.frequency(id='800_1000.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_1000.0', time=0.1)
+Setting the '800_1000.0' spectrum relaxation time period to 0.1 s.
+
+relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_1000.0', spin_id=None)
+
+relax> spectrum.error_analysis(subset=['500_reference', '500_66.6666', '500_133.3333', '500_200.0', '500_266.6666', '500_333.3333', '500_400.0', '500_466.6666', '500_533.3333', '500_600.0', '500_666.6666', '500_733.3333', '500_800.0', '500_866.6666', '500_933.3333', '500_1000.0'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+relax> spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', '800_200.0', '800_266.6666', '800_333.3333', '800_400.0', '800_466.6666', '800_533.3333', '800_600.0', '800_666.6666', '800_733.3333', '800_800.0', '800_866.6666', '800_933.3333', '800_1000.0'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+relax> spin.isotope(isotope='15N', spin_id=None, force=False)
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['500_reference', '500_66.6666', '500_133.3333', '500_200.0', '500_266.6666', '500_333.3333', '500_400.0', '500_466.6666', '500_533.3333', '500_600.0', '500_666.6666', '500_733.3333', '500_800.0', '500_866.6666', '500_933.3333', '500_1000.0'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+relax> spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', '800_200.0', '800_266.6666', '800_333.3333', '800_400.0', '800_466.6666', '800_533.3333', '800_600.0', '800_666.6666', '800_733.3333', '800_800.0', '800_866.6666', '800_933.3333', '800_1000.0'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+Detected the presence of results files for the 'R2eff' model - loading these instead of performing optimisation for a second time.
+
+relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> results.read(file='results', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/R2eff')
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/R2eff/results.bz2' for reading.
+
+
+
+---------------------------
+- The 'LM63 3-site' model -
+---------------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='LM63 3-site', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='LM63 3-site')
+
+relax> relax_disp.select_model(model='LM63 3-site')
+The Luz and Meiboom (1963) 3-site fast exchange model.
+
+relax> value.copy(pipe_from='R2eff', pipe_to='LM63 3-site', param='r2eff')
+
+relax> grid_search(lower=None, upper=None, inc=11, constraints=True, verbosity=1)
+
+
+Fitting to the spin block [':1@N']
+----------------------------------
+
+Unconstrained grid search size: 1771561 (constraints may decrease this size).
+
+
+Grid search
+~~~~~~~~~~~
+
+Searching through 1771561 grid nodes.
+k: 0        xk: [            0.1,             0.1,               0,               0,          0.0001,          0.0001]    fk: 18824.5266855       
+k: 1        xk: [           0.49,             0.1,               0,               0,          0.0001,          0.0001]    fk: 14979.190312        
+k: 2        xk: [           0.88,             0.1,               0,               0,          0.0001,          0.0001]    fk: 12203.3672635       
+k: 3        xk: [           1.27,             0.1,               0,               0,          0.0001,          0.0001]    fk: 10497.0575399       
+k: 4        xk: [           1.66,             0.1,               0,               0,          0.0001,          0.0001]    fk: 9860.26114133       
+k: 13       xk: [           0.88,            0.49,               0,               0,          0.0001,          0.0001]    fk: 9003.18470582       
+k: 14       xk: [           1.27,            0.49,               0,               0,          0.0001,          0.0001]    fk: 7296.87498225       
+k: 15       xk: [           1.66,            0.49,               0,               0,          0.0001,          0.0001]    fk: 6660.07858363       
+k: 24       xk: [           0.88,            0.88,               0,               0,          0.0001,          0.0001]    fk: 6478.47108256       
+k: 25       xk: [           1.27,            0.88,               0,               0,          0.0001,          0.0001]    fk: 4772.16135898       
+k: 26       xk: [           1.66,            0.88,               0,               0,          0.0001,          0.0001]    fk: 4135.36496037       
+k: 36       xk: [           1.27,            1.27,               0,               0,          0.0001,          0.0001]    fk: 2922.91667016       
+k: 37       xk: [           1.66,            1.27,               0,               0,          0.0001,          0.0001]    fk: 2286.12027154       
+k: 47       xk: [           1.27,            1.66,               0,               0,          0.0001,          0.0001]    fk: 1749.14091577       
+k: 48       xk: [           1.66,            1.66,               0,               0,          0.0001,          0.0001]    fk: 1112.34451715       
+k: 59       xk: [           1.66,            2.05,               0,               0,          0.0001,          0.0001]    fk: 614.037697196       
+k: 14764    xk: [           0.88,             0.1,               1,               0,         1.00009,          0.0001]    fk: 552.795633769       
+k: 14775    xk: [           0.88,            0.49,               1,               0,         1.00009,          0.0001]    fk: 329.450692056       
+k: 250351   xk: [           0.88,             0.1,               1,               1,         6.00004,         1.00009]    fk: 301.127358403       
+k: 264992   xk: [           0.88,             0.1,               1,               1,         7.00003,         1.00009]    fk: 281.973992025       
+k: 279633   xk: [           0.88,             0.1,               1,               1,         8.00002,         1.00009]    fk: 278.604587667       
+k: 1304503  xk: [           0.88,             0.1,               1,               1,         1.00009,         8.00002]    fk: 278.604587667       
+
+Optimised parameter values:
+r2 (500.000 MHz):            8.800000000000001
+r2 (800.000 MHz):            1.000000000000000
+phi_ex_B:                    1.000000000000000
+phi_ex_C:                    1.000000000000000
+kB:                      10000.900000000001455
+kC:                      80000.200000000011642
+
+
+Fitting to the spin block [':2@N']
+----------------------------------
+
+Unconstrained grid search size: 1771561 (constraints may decrease this size).
+
+
+Grid search
+~~~~~~~~~~~
+
+Searching through 1771561 grid nodes.
+k: 0        xk: [            0.1,             0.1,               0,               0,          0.0001,          0.0001]    fk: 480.134512479       
+k: 1        xk: [           0.49,             0.1,               0,               0,          0.0001,          0.0001]    fk: 376.048703165       
+k: 2        xk: [           0.88,             0.1,               0,               0,          0.0001,          0.0001]    fk: 295.833889641       
+k: 3        xk: [           1.27,             0.1,               0,               0,          0.0001,          0.0001]    fk: 239.490071905       
+k: 4        xk: [           1.66,             0.1,               0,               0,          0.0001,          0.0001]    fk: 207.017249959       
+k: 5        xk: [           2.05,             0.1,               0,               0,          0.0001,          0.0001]    fk: 198.415423802       
+k: 14       xk: [           1.27,            0.49,               0,               0,          0.0001,          0.0001]    fk: 182.399683389       
+k: 15       xk: [           1.66,            0.49,               0,               0,          0.0001,          0.0001]    fk: 149.926861443       
+k: 16       xk: [           2.05,            0.49,               0,               0,          0.0001,          0.0001]    fk: 141.325035286       
+k: 25       xk: [           1.27,            0.88,               0,               0,          0.0001,          0.0001]    fk: 135.680804258       
+k: 26       xk: [           1.66,            0.88,               0,               0,          0.0001,          0.0001]    fk: 103.207982312       
+k: 27       xk: [           2.05,            0.88,               0,               0,          0.0001,          0.0001]    fk: 94.6061561551       
+k: 37       xk: [           1.66,            1.27,               0,               0,          0.0001,          0.0001]    fk: 66.8606125656       
+k: 38       xk: [           2.05,            1.27,               0,               0,          0.0001,          0.0001]    fk: 58.2587864085       
+k: 48       xk: [           1.66,            1.66,               0,               0,          0.0001,          0.0001]    fk: 40.8847522037       
+k: 49       xk: [           2.05,            1.66,               0,               0,          0.0001,          0.0001]    fk: 32.2829260466       
+k: 59       xk: [           1.66,            2.05,               0,               0,          0.0001,          0.0001]    fk: 25.2804012264       
+k: 60       xk: [           2.05,            2.05,               0,               0,          0.0001,          0.0001]    fk: 16.6785750694       
+k: 71       xk: [           2.05,            2.44,               0,               0,          0.0001,          0.0001]    fk: 11.4457334767       
+k: 14776    xk: [           1.27,            0.49,               1,               0,         1.00009,          0.0001]    fk: 7.39899868185       
+k: 14787    xk: [           1.27,            0.88,               1,               0,         1.00009,          0.0001]    fk: 6.37641568217       
+k: 294286   xk: [           1.27,            0.49,               1,               1,         9.00001,         1.00009]    fk: 6.24706218266       
+k: 308927   xk: [           1.27,            0.49,               1,               1,              10,         1.00009]    fk: 6.05200611773       
+k: 1626617  xk: [           1.27,            0.49,               1,               1,         1.00009,              10]    fk: 6.05200611773       
+
+Optimised parameter values:
+r2 (500.000 MHz):           12.699999999999999
+r2 (800.000 MHz):            4.900000000000000
+phi_ex_B:                    1.000000000000000
+phi_ex_C:                    1.000000000000000
+kB:                      10000.900000000001455
+kC:                     100000.000000000000000
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+
+Fitting to the spin block [':1@N']
+----------------------------------
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [           0.88,             0.1,               1,               1,         1.00009,         8.00002]    fk: 278.604587667       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [           0.88,           0.105,               1,               1,         1.00009,         8.00002]    fk: 278.210136968       
+	k: 100      xk: [   0.8035750442,    0.1276523958,    0.9940256195,     0.540726953,    0.6165884457,     10.88344638]    fk: 89.5418812272       
+	k: 200      xk: [   0.8038281083,    0.1279603821,    0.9893285527,    0.5727904818,    0.6152523925,     10.70404083]    fk: 89.541512831        
+	k: 300      xk: [   0.8041453975,    0.1291120762,     0.968069807,    0.7093050915,    0.6088463783,     9.967862025]    fk: 89.5402847175       
+	k: 400      xk: [   0.8043696721,    0.1297030634,    0.9424199146,    0.8585567124,    0.6011222245,      9.23596226]    fk: 89.5393707159       
+
+	Parameter values: [0.80412020843499099, 0.12915815415135939, 0.9134644817127473, 1.0167305795164654, 0.5921930597791889, 8.5748016169596468]
+	Function value:   89.538897393530078
+	Iterations:       500
+	Function calls:   794
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [   0.8041202084,    0.1291581542,    0.9134644817,      1.01673058,    0.5921930598,     8.574801617]    fk: 89.6967202796       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.8041202084,    0.1291581542,    0.9134644817,      1.01673058,    0.5921930598,     8.574801617]    fk: 89.6951199949       
+	k: 100      xk: [   0.8082620177,    0.1396699844,    0.9012774818,     1.070586534,    0.5883499314,     8.562055621]    fk: 89.6950980797       
+	k: 200      xk: [   0.8339284764,    0.2054052315,    0.8255265737,     1.398710875,     0.563662175,      8.37349543]    fk: 89.6950449862       
+	k: 300      xk: [   0.8585274977,    0.2683456568,     0.750214395,     1.729352391,    0.5379942414,     8.123390937]    fk: 89.6950118364       
+	k: 400      xk: [   0.8765820697,    0.3146246071,    0.6917798647,     1.994779784,    0.5171700166,     7.917686952]    fk: 89.6949953139       
+
+	Parameter values: [0.88798057153520604, 0.34377447810414719, 0.65318324092835267, 2.1752222366497351, 0.5029346013562086, 7.7796154094151326]
+	Function value:   89.694985580225676
+	Iterations:       500
+	Function calls:   794
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 2        xk: [   0.8879805715,    0.3437744781,    0.6531832409,     2.175222237,    0.5029346014,     7.779615409]    fk: 89.6966865816       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.8879805715,    0.3437744781,    0.6531832409,     2.175222237,    0.5029346014,     7.779615409]    fk: 89.6966697706       
+	k: 100      xk: [   0.8883092793,    0.3445862357,    0.6529704637,     2.178112074,    0.5028438513,     7.793403896]    fk: 89.6966692764       
+	k: 200      xk: [   0.8902555657,    0.3495665954,    0.6516602267,     2.195315832,    0.5022934616,     7.875555353]    fk: 89.6966692472       
+	k: 300      xk: [   0.8935006235,    0.3578758408,    0.6494307213,     2.223497962,    0.5013618908,     8.010074323]    fk: 89.6966691951       
+	k: 400      xk: [   0.8963162237,     0.365083385,    0.6474756927,     2.247449775,     0.500547733,     8.124927957]    fk: 89.6966691545       
+
+	Parameter values: [0.9001800450154438, 0.37497596026625735, 0.64477431499350013, 2.2795577583592079, 0.49942575047117477, 8.2800970627057637]
+	Function value:   89.696669098471659
+	Iterations:       500
+	Function calls:   804
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 3        xk: [    0.900180045,    0.3749759603,     0.644774315,     2.279557758,    0.4994257505,     8.280097063]    fk: 89.6966862951       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    0.900180045,    0.3749759603,     0.644774315,     2.279557758,    0.4994257505,     8.280097063]    fk: 89.6966861235       
+	k: 100      xk: [   0.9004428911,    0.3756480511,    0.6445114646,     2.282496089,    0.4993191198,     8.290954959]    fk: 89.6966861214       
+	k: 200      xk: [   0.9011653021,     0.377497391,    0.6437862113,     2.290617789,    0.4990264596,     8.320938809]    fk: 89.6966861211       
+	k: 300      xk: [   0.9022833603,    0.3803598469,     0.642664153,     2.303204627,     0.498573439,     8.367381705]    fk: 89.6966861209       
+	k: 400      xk: [   0.9036323621,    0.3838132264,    0.6413121973,     2.318405248,    0.4980272957,     8.423467588]    fk: 89.6966861207       
+
+	Parameter values: [0.90499917788009387, 0.3873120588400214, 0.63994511317443559, 2.3338073829260324, 0.497474821178719, 8.4803226320572165]
+	Function value:   89.696686120519331
+	Iterations:       500
+	Function calls:   802
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 4        xk: [   0.9049991779,    0.3873120588,    0.6399451132,     2.333807383,    0.4974748212,     8.480322632]    fk: 89.6966862932       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.9049991779,    0.3873120588,    0.6399451132,     2.333807383,    0.4974748212,     8.480322632]    fk: 89.6966862915       
+	k: 100      xk: [   0.9049991779,    0.3873120588,    0.6399451132,     2.333807383,    0.4974748212,     8.480322632]    fk: 89.6966862915       
+	k: 200      xk: [   0.9051021028,    0.3875756653,    0.6398425367,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862915       
+
+	Parameter values: [0.90510210275813385, 0.38757566529969839, 0.63984253664493362, 2.3350078749448846, 0.49743326535687898, 8.4847668549187425]
+	Function value:   89.696686291471778
+	Iterations:       255
+	Function calls:   657
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 5        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 100      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 200      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+
+	Parameter values: [0.90510210275814829, 0.38757566529973475, 0.63984253664491952, 2.3350078749450507, 0.49743326535687327, 8.4847668549193571]
+	Function value:   89.696686293181472
+	Iterations:       269
+	Function calls:   681
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 6        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 100      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 200      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+
+	Parameter values: [0.90510210275814829, 0.38757566529973475, 0.63984253664491952, 2.3350078749450507, 0.49743326535687327, 8.4847668549193571]
+	Function value:   89.696686293198553
+	Iterations:       251
+	Function calls:   647
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 7        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 100      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 200      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+
+	Parameter values: [0.90510210275814829, 0.38757566529973475, 0.63984253664491952, 2.3350078749450507, 0.49743326535687327, 8.4847668549193571]
+	Function value:   89.696686293198752
+	Iterations:       251
+	Function calls:   647
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 8        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 100      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+	k: 200      xk: [   0.9051021028,    0.3875756653,    0.6398425366,     2.335007875,    0.4974332654,     8.484766855]    fk: 89.6966862932       
+
+	Parameter values: [0.90510210275814829, 0.38757566529973475, 0.63984253664491952, 2.3350078749450507, 0.49743326535687327, 8.4847668549193571]
+	Function value:   89.696686293198752
+	Iterations:       251
+	Function calls:   647
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+
+Parameter values: [0.90510210275814829, 0.38757566529973475, 0.63984253664491952, 2.3350078749450507, 0.49743326535687327, 8.4847668549193571]
+Function value:   89.696686293198752
+Iterations:       3277
+Function calls:   6473
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+Optimised parameter values:
+r2 (500.000 MHz):            9.051021027581482
+r2 (800.000 MHz):            3.875756652997348
+phi_ex_B:                    0.639842536644920
+phi_ex_C:                    2.335007874945051
+kB:                       4974.332653568732894
+kC:                      84847.668549193564104
+
+
+Fitting to the spin block [':2@N']
+----------------------------------
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [           1.27,            0.49,               1,               1,         1.00009,              10]    fk: 6.05200611773       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [           1.27,            0.49,               1,               1,         1.00009,            10.5]    fk: 5.80496447068       
+	k: 100      xk: [    1.151327067,     0.560446305,     0.902983252,     1.076677897,     0.577910355,     13.64462421]    fk: 1.5807215399        
+	k: 200      xk: [    1.060482034,    0.3263258855,     1.044801269,     1.400219114,    0.6210258718,     28.54193874]    fk: 1.57549095832       
+	k: 300      xk: [    1.155740299,    0.5764487308,    0.9311391568,     1.575427541,    0.5855013341,     32.28485819]    fk: 1.56898275815       
+	k: 400      xk: [    1.559562158,     1.607687731,    0.5352966676,     4.248976078,    0.4442961329,     123.5221315]    fk: 1.54895532176       
+
+	Parameter values: [1.5655082114731629, 1.6212427996298313, 0.53060195865663662, 4.3043594509204635, 0.44244754178666512, 125.51895977943923]
+	Function value:   1.5489144289177186
+	Iterations:       500
+	Function calls:   784
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 1        xk: [    1.565508211,       1.6212428,    0.5306019587,     4.304359451,    0.4424475418,     125.5189598]    fk: 1.76097821292       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.565508211,       1.6212428,    0.5306019587,     4.304359451,    0.4424475418,     125.5189598]    fk: 1.75885757508       
+	k: 100      xk: [    1.557462038,     1.600449297,    0.5370891803,     4.746517282,    0.4451714413,     136.1469571]    fk: 1.7588530155        
+	k: 200      xk: [    1.473019643,     1.385263974,    0.5797371666,     8.959522643,    0.4626541357,     126.6362817]    fk: 1.75880653924       
+	k: 300      xk: [    1.289676563,     0.915001965,    0.6702442638,     19.11932233,    0.4974635453,     121.2280966]    fk: 1.75874247683       
+	k: 400      xk: [     1.24621267,    0.8034718343,    0.6912856428,     21.64189489,    0.5051716813,     120.4429538]    fk: 1.7587387039        
+
+	Parameter values: [1.247355043534407, 0.80652895996957774, 0.68902860254815668, 21.833196871811168, 0.504306816368427, 120.76435000690458]
+	Function value:   1.7587383502655836
+	Iterations:       500
+	Function calls:   790
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 2        xk: [    1.247355044,      0.80652896,    0.6890286025,     21.83319687,    0.5043068164,       120.76435]    fk: 1.76097638663       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.247355044,      0.80652896,    0.6890286025,     21.83319687,    0.5043068164,       120.76435]    fk: 1.76095400626       
+	k: 100      xk: [    1.248609986,    0.8096071754,    0.6877928895,     21.94491318,    0.5038972489,     121.3894888]    fk: 1.76095366077       
+	k: 200      xk: [    1.259817457,    0.8383076402,    0.6763745874,     23.03854013,    0.4996912882,     127.2182432]    fk: 1.76095362648       
+	k: 300      xk: [    1.271009007,    0.8669383481,    0.6650512747,     24.12502139,    0.4954861052,     132.9694507]    fk: 1.76095360419       
+	k: 400      xk: [    1.281953161,    0.8949714309,    0.6540950209,     25.17351278,    0.4913808285,     138.5175221]    fk: 1.76095359243       
+
+	Parameter values: [1.2857881151913704, 0.9047843205501418, 0.65028019558114103, 25.537515233403099, 0.48994509415148135, 140.43979749716209]
+	Function value:   1.7609535914214502
+	Iterations:       500
+	Function calls:   812
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 3        xk: [    1.285788115,    0.9047843206,    0.6502801956,     25.53751523,    0.4899450942,     140.4397975]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.285788115,    0.9047843206,    0.6502801956,     25.53751523,    0.4899450942,     140.4397975]    fk: 1.76097582088       
+	k: 100      xk: [    1.285788115,    0.9047843206,    0.6502801956,     25.53751523,    0.4899450942,     140.4397975]    fk: 1.76097582088       
+	k: 200      xk: [    1.284904761,     0.902523153,    0.6508688486,     25.46587444,    0.4901675149,     139.8368842]    fk: 1.76097582087       
+	k: 300      xk: [    1.284157919,    0.9006112656,    0.6513680239,     25.40536782,    0.4903559874,     139.3298038]    fk: 1.76097582086       
+	k: 400      xk: [    1.283167874,    0.8980767991,    0.6520312743,     25.32481446,    0.4906063367,     138.6586697]    fk: 1.76097582085       
+
+	Parameter values: [1.2820517777063274, 0.895219447140577, 0.65278247610672624, 25.23312400520129, 0.49088977365282482, 137.90224779635912]
+	Function value:   1.7609758208374162
+	Iterations:       500
+	Function calls:   796
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Maximum number of iterations reached
+
+k: 4        xk: [    1.282051778,    0.8952194471,    0.6527824761,     25.23312401,    0.4908897737,     137.9022478]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282051778,    0.8952194471,    0.6527824761,     25.23312401,    0.4908897737,     137.9022478]    fk: 1.76097604318       
+	k: 100      xk: [    1.282051778,    0.8952194471,    0.6527824761,     25.23312401,    0.4908897737,     137.9022478]    fk: 1.76097604318       
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604318       
+
+	Parameter values: [1.2821678522465207, 0.89551652104885704, 0.6527115943727162, 25.241413647731775, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.760976043175521
+	Iterations:       265
+	Function calls:   658
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 5        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.7609760454        
+	k: 100      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.7609760454        
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.7609760454        
+
+	Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.7609760453988925
+	Iterations:       272
+	Function calls:   683
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 6        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 100      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+
+	Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.7609760454211258
+	Iterations:       266
+	Function calls:   659
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 7        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 100      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+
+	Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.7609760454213486
+	Iterations:       266
+	Function calls:   659
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 8        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 100      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+
+	Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.7609760454213506
+	Iterations:       266
+	Function calls:   659
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+k: 9        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 100      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+	k: 200      xk: [    1.282167852,     0.895516521,    0.6527115944,     25.24141365,    0.4908630225,     137.9795609]    fk: 1.76097604542       
+
+	Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+	Function value:   1.7609760454213506
+	Iterations:       266
+	Function calls:   659
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          Simplex has not moved.
+
+
+Parameter values: [1.2821678522465207, 0.89551652104885715, 0.6527115943727162, 25.241413647731779, 0.49086302250748648, 137.97956094785246]
+Function value:   1.7609760454213506
+Iterations:       3601
+Function calls:   7159
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+Optimised parameter values:
+r2 (500.000 MHz):           12.821678522465207
+r2 (800.000 MHz):            8.955165210488572
+phi_ex_B:                    0.652711594372716
+phi_ex_C:                   25.241413647731779
+kB:                       4908.630225074864939
+kC:                    1379795.609478524653241
+
+relax> monte_carlo.setup(number=50)
+
+relax> monte_carlo.create_data(method='back_calc')
+
+relax> monte_carlo.initial_values()
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+Simulation 1
+Simulation 2
+Simulation 3
+Simulation 4
+Simulation 5
+Simulation 6
+Simulation 7
+Simulation 8
+Simulation 9
+Simulation 10
+Simulation 11
+Simulation 12
+Simulation 13
+Simulation 14
+Simulation 15
+Simulation 16
+Simulation 17
+Simulation 18
+Simulation 19
+Simulation 20
+Simulation 21
+Simulation 22
+Simulation 23
+Simulation 24
+Simulation 25
+Simulation 26
+Simulation 27
+Simulation 28
+Simulation 29
+Simulation 30
+Simulation 31
+Simulation 32
+Simulation 33
+Simulation 34
+Simulation 35
+Simulation 36
+Simulation 37
+Simulation 38
+Simulation 39
+Simulation 40
+Simulation 41
+Simulation 42
+Simulation 43
+Simulation 44
+Simulation 45
+Simulation 46
+Simulation 47
+Simulation 48
+Simulation 49
+Simulation 50
+
+relax> monte_carlo.error_analysis()
+
+relax> relax_disp.plot_disp_curves(dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/disp_1_N.agr' for writing.
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/disp_2_N.agr' for writing.
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/grace2images.py' for writing.
+
+relax> value.write(param='phi_ex_B', file='phi_ex_B.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/phi_ex_B.out' for writing.
+
+relax> value.write(param='phi_ex_C', file='phi_ex_C.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/phi_ex_C.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/phi_ex_B.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/phi_ex_C.agr' for writing.
+
+relax> value.write(param='kB', file='kB.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/kB.out' for writing.
+
+relax> value.write(param='kC', file='kC.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/kC.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/kB.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/kC.agr' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', force=True, norm=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/chi2.agr' for writing.
+
+relax> results.write(file='results', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site', compress_type=1, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/LM63 3-site/results.bz2' for writing.
+RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 1 models have been optimised.
+
+relax> state.save(state='final_state', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results', compress_type=1, force=True)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/relax_results/final_state.bz2' for writing.
+
