@@ -108,7 +108,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrometer.frequency(id=id, frq=H_frq)
 
     # Relaxation dispersion CPMG constant time delay T (in s).
-    relax_disp.relax_time(spectrum_id=id, time=0.4)
+    relax_disp.relax_time(spectrum_id=id, time=0.1)
 
     # Errors.
     spectrum.baseplane_rmsd(error=1000000.0, spectrum_id=id)
@@ -155,8 +155,8 @@ Setting the '500_reference' spectrum CPMG frequency None Hz.
 relax> spectrometer.frequency(id='500_reference', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_reference', time=0.4)
-Setting the '500_reference' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_reference', time=0.1)
+Setting the '500_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_reference', spin_id=None)
 
@@ -165,12 +165,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49555'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '1660285'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822649.0     
+# Spin_ID    Intensity     
+:1@N         11205758.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_66.6666', cpmg_frq=66.6666)
 Setting the '500_66.6666' spectrum CPMG frequency 66.6666 Hz.
@@ -178,8 +178,8 @@ Setting the '500_66.6666' spectrum CPMG frequency 66.6666 Hz.
 relax> spectrometer.frequency(id='500_66.6666', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_66.6666', time=0.4)
-Setting the '500_66.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_66.6666', time=0.1)
+Setting the '500_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_66.6666', spin_id=None)
 
@@ -188,12 +188,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49558'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '1916888'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822696.0     
+# Spin_ID    Intensity     
+:1@N         12937643.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.3333', cpmg_frq=133.3333)
 Setting the '500_133.3333' spectrum CPMG frequency 133.3333 Hz.
@@ -201,8 +201,8 @@ Setting the '500_133.3333' spectrum CPMG frequency 133.3333 Hz.
 relax> spectrometer.frequency(id='500_133.3333', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_133.3333', time=0.4)
-Setting the '500_133.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_133.3333', time=0.1)
+Setting the '500_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_133.3333', spin_id=None)
 
@@ -211,12 +211,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49560'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2196841'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822741.0     
+# Spin_ID    Intensity     
+:1@N         14827127.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_200.0', cpmg_frq=200.0)
 Setting the '500_200.0' spectrum CPMG frequency 200.0 Hz.
@@ -224,8 +224,8 @@ Setting the '500_200.0' spectrum CPMG frequency 200.0 Hz.
 relax> spectrometer.frequency(id='500_200.0', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_200.0', time=0.4)
-Setting the '500_200.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_200.0', time=0.1)
+Setting the '500_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_200.0', spin_id=None)
 
@@ -234,12 +234,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49563'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2478570'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822781.0     
+# Spin_ID    Intensity     
+:1@N         16728601.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_266.6666', cpmg_frq=266.6666)
 Setting the '500_266.6666' spectrum CPMG frequency 266.6666 Hz.
@@ -247,8 +247,8 @@ Setting the '500_266.6666' spectrum CPMG frequency 266.6666 Hz.
 relax> spectrometer.frequency(id='500_266.6666', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_266.6666', time=0.4)
-Setting the '500_266.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_266.6666', time=0.1)
+Setting the '500_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_266.6666', spin_id=None)
 
@@ -257,12 +257,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49565'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2743545'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822814.0     
+# Spin_ID    Intensity     
+:1@N         18516996.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_333.3333', cpmg_frq=333.3333)
 Setting the '500_333.3333' spectrum CPMG frequency 333.3333 Hz.
@@ -270,8 +270,8 @@ Setting the '500_333.3333' spectrum CPMG frequency 333.3333 Hz.
 relax> spectrometer.frequency(id='500_333.3333', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_333.3333', time=0.4)
-Setting the '500_333.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_333.3333', time=0.1)
+Setting the '500_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_333.3333', spin_id=None)
 
@@ -280,12 +280,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49567'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2981135'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822841.0     
+# Spin_ID    Intensity     
+:1@N         20120560.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_400.0', cpmg_frq=400.0)
 Setting the '500_400.0' spectrum CPMG frequency 400.0 Hz.
@@ -293,8 +293,8 @@ Setting the '500_400.0' spectrum CPMG frequency 400.0 Hz.
 relax> spectrometer.frequency(id='500_400.0', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_400.0', time=0.4)
-Setting the '500_400.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_400.0', time=0.1)
+Setting the '500_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_400.0', spin_id=None)
 
@@ -303,12 +303,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49568'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3187553'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822863.0     
+# Spin_ID    Intensity     
+:1@N         21513737.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_466.6666', cpmg_frq=466.6666)
 Setting the '500_466.6666' spectrum CPMG frequency 466.6666 Hz.
@@ -316,8 +316,8 @@ Setting the '500_466.6666' spectrum CPMG frequency 466.6666 Hz.
 relax> spectrometer.frequency(id='500_466.6666', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_466.6666', time=0.4)
-Setting the '500_466.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_466.6666', time=0.1)
+Setting the '500_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_466.6666', spin_id=None)
 
@@ -326,12 +326,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49569'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3363443'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822881.0     
+# Spin_ID    Intensity     
+:1@N         22700872.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.3333', cpmg_frq=533.3333)
 Setting the '500_533.3333' spectrum CPMG frequency 533.3333 Hz.
@@ -339,8 +339,8 @@ Setting the '500_533.3333' spectrum CPMG frequency 533.3333 Hz.
 relax> spectrometer.frequency(id='500_533.3333', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_533.3333', time=0.4)
-Setting the '500_533.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_533.3333', time=0.1)
+Setting the '500_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_533.3333', spin_id=None)
 
@@ -349,12 +349,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49570'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3511728'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822895.0     
+# Spin_ID    Intensity     
+:1@N         23701686.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_600.0', cpmg_frq=600.0)
 Setting the '500_600.0' spectrum CPMG frequency 600.0 Hz.
@@ -362,8 +362,8 @@ Setting the '500_600.0' spectrum CPMG frequency 600.0 Hz.
 relax> spectrometer.frequency(id='500_600.0', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_600.0', time=0.4)
-Setting the '500_600.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_600.0', time=0.1)
+Setting the '500_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_600.0', spin_id=None)
 
@@ -372,12 +372,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49570'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3636159'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822907.0     
+# Spin_ID    Intensity     
+:1@N         24541510.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_666.6666', cpmg_frq=666.6666)
 Setting the '500_666.6666' spectrum CPMG frequency 666.6666 Hz.
@@ -385,8 +385,8 @@ Setting the '500_666.6666' spectrum CPMG frequency 666.6666 Hz.
 relax> spectrometer.frequency(id='500_666.6666', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_666.6666', time=0.4)
-Setting the '500_666.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_666.6666', time=0.1)
+Setting the '500_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_666.6666', spin_id=None)
 
@@ -395,12 +395,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49571'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3740511'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822916.0     
+# Spin_ID    Intensity     
+:1@N         25245811.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_733.3333', cpmg_frq=733.3333)
 Setting the '500_733.3333' spectrum CPMG frequency 733.3333 Hz.
@@ -408,8 +408,8 @@ Setting the '500_733.3333' spectrum CPMG frequency 733.3333 Hz.
 relax> spectrometer.frequency(id='500_733.3333', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_733.3333', time=0.4)
-Setting the '500_733.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_733.3333', time=0.1)
+Setting the '500_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_733.3333', spin_id=None)
 
@@ -418,12 +418,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49572'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3828199'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822924.0     
+# Spin_ID    Intensity     
+:1@N         25837641.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_800.0', cpmg_frq=800.0)
 Setting the '500_800.0' spectrum CPMG frequency 800.0 Hz.
@@ -431,8 +431,8 @@ Setting the '500_800.0' spectrum CPMG frequency 800.0 Hz.
 relax> spectrometer.frequency(id='500_800.0', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_800.0', time=0.4)
-Setting the '500_800.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_800.0', time=0.1)
+Setting the '500_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_800.0', spin_id=None)
 
@@ -441,12 +441,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49572'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3902152'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822930.0     
+# Spin_ID    Intensity     
+:1@N         26336772.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_866.6666', cpmg_frq=866.6666)
 Setting the '500_866.6666' spectrum CPMG frequency 866.6666 Hz.
@@ -454,8 +454,8 @@ Setting the '500_866.6666' spectrum CPMG frequency 866.6666 Hz.
 relax> spectrometer.frequency(id='500_866.6666', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_866.6666', time=0.4)
-Setting the '500_866.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_866.6666', time=0.1)
+Setting the '500_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_866.6666', spin_id=None)
 
@@ -464,12 +464,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49572'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3964809'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822935.0     
+# Spin_ID    Intensity     
+:1@N         26759666.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.3333', cpmg_frq=933.3333)
 Setting the '500_933.3333' spectrum CPMG frequency 933.3333 Hz.
@@ -477,8 +477,8 @@ Setting the '500_933.3333' spectrum CPMG frequency 933.3333 Hz.
 relax> spectrometer.frequency(id='500_933.3333', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_933.3333', time=0.4)
-Setting the '500_933.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_933.3333', time=0.1)
+Setting the '500_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_933.3333', spin_id=None)
 
@@ -487,12 +487,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '49572'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4018169'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         822940.0     
+# Spin_ID    Intensity     
+:1@N         27119808.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_1000.0', cpmg_frq=1000.0)
 Setting the '500_1000.0' spectrum CPMG frequency 1000.0 Hz.
@@ -500,8 +500,8 @@ Setting the '500_1000.0' spectrum CPMG frequency 1000.0 Hz.
 relax> spectrometer.frequency(id='500_1000.0', frq=500000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='500_1000.0', time=0.4)
-Setting the '500_1000.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='500_1000.0', time=0.1)
+Setting the '500_1000.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_1000.0', spin_id=None)
 
@@ -523,8 +523,8 @@ Setting the '800_reference' spectrum CPMG frequency None Hz.
 relax> spectrometer.frequency(id='800_reference', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_reference', time=0.4)
-Setting the '800_reference' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_reference', time=0.1)
+Setting the '800_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_reference', spin_id=None)
 
@@ -533,12 +533,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61944'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2075357'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1233973.0    
+# Spin_ID    Intensity     
+:1@N         16808637.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_66.6666', cpmg_frq=66.6666)
 Setting the '800_66.6666' spectrum CPMG frequency 66.6666 Hz.
@@ -546,8 +546,8 @@ Setting the '800_66.6666' spectrum CPMG frequency 66.6666 Hz.
 relax> spectrometer.frequency(id='800_66.6666', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_66.6666', time=0.4)
-Setting the '800_66.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_66.6666', time=0.1)
+Setting the '800_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_66.6666', spin_id=None)
 
@@ -556,12 +556,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61947'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2396110'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234044.0    
+# Spin_ID    Intensity     
+:1@N         19406465.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.3333', cpmg_frq=133.3333)
 Setting the '800_133.3333' spectrum CPMG frequency 133.3333 Hz.
@@ -569,8 +569,8 @@ Setting the '800_133.3333' spectrum CPMG frequency 133.3333 Hz.
 relax> spectrometer.frequency(id='800_133.3333', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_133.3333', time=0.4)
-Setting the '800_133.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_133.3333', time=0.1)
+Setting the '800_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_133.3333', spin_id=None)
 
@@ -579,12 +579,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61951'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '2746051'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234112.0    
+# Spin_ID    Intensity     
+:1@N         22240690.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_200.0', cpmg_frq=200.0)
 Setting the '800_200.0' spectrum CPMG frequency 200.0 Hz.
@@ -592,8 +592,8 @@ Setting the '800_200.0' spectrum CPMG frequency 200.0 Hz.
 relax> spectrometer.frequency(id='800_200.0', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_200.0', time=0.4)
-Setting the '800_200.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_200.0', time=0.1)
+Setting the '800_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_200.0', spin_id=None)
 
@@ -602,12 +602,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61954'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3098213'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234171.0    
+# Spin_ID    Intensity     
+:1@N         25092901.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_266.6666', cpmg_frq=266.6666)
 Setting the '800_266.6666' spectrum CPMG frequency 266.6666 Hz.
@@ -615,8 +615,8 @@ Setting the '800_266.6666' spectrum CPMG frequency 266.6666 Hz.
 relax> spectrometer.frequency(id='800_266.6666', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_266.6666', time=0.4)
-Setting the '800_266.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_266.6666', time=0.1)
+Setting the '800_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_266.6666', spin_id=None)
 
@@ -625,12 +625,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61956'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3429432'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234221.0    
+# Spin_ID    Intensity     
+:1@N         27775494.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_333.3333', cpmg_frq=333.3333)
 Setting the '800_333.3333' spectrum CPMG frequency 333.3333 Hz.
@@ -638,8 +638,8 @@ Setting the '800_333.3333' spectrum CPMG frequency 333.3333 Hz.
 relax> spectrometer.frequency(id='800_333.3333', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_333.3333', time=0.4)
-Setting the '800_333.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_333.3333', time=0.1)
+Setting the '800_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_333.3333', spin_id=None)
 
@@ -648,12 +648,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61958'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3726419'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234262.0    
+# Spin_ID    Intensity     
+:1@N         30180841.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_400.0', cpmg_frq=400.0)
 Setting the '800_400.0' spectrum CPMG frequency 400.0 Hz.
@@ -661,8 +661,8 @@ Setting the '800_400.0' spectrum CPMG frequency 400.0 Hz.
 relax> spectrometer.frequency(id='800_400.0', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_400.0', time=0.4)
-Setting the '800_400.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_400.0', time=0.1)
+Setting the '800_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_400.0', spin_id=None)
 
@@ -671,12 +671,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61960'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '3984442'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234295.0    
+# Spin_ID    Intensity     
+:1@N         32270606.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_466.6666', cpmg_frq=466.6666)
 Setting the '800_466.6666' spectrum CPMG frequency 466.6666 Hz.
@@ -684,8 +684,8 @@ Setting the '800_466.6666' spectrum CPMG frequency 466.6666 Hz.
 relax> spectrometer.frequency(id='800_466.6666', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_466.6666', time=0.4)
-Setting the '800_466.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_466.6666', time=0.1)
+Setting the '800_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_466.6666', spin_id=None)
 
@@ -694,12 +694,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61961'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4204304'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234322.0    
+# Spin_ID    Intensity     
+:1@N         34051308.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.3333', cpmg_frq=533.3333)
 Setting the '800_533.3333' spectrum CPMG frequency 533.3333 Hz.
@@ -707,8 +707,8 @@ Setting the '800_533.3333' spectrum CPMG frequency 533.3333 Hz.
 relax> spectrometer.frequency(id='800_533.3333', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_533.3333', time=0.4)
-Setting the '800_533.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_533.3333', time=0.1)
+Setting the '800_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_533.3333', spin_id=None)
 
@@ -717,12 +717,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61962'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4389660'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234343.0    
+# Spin_ID    Intensity     
+:1@N         35552529.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_600.0', cpmg_frq=600.0)
 Setting the '800_600.0' spectrum CPMG frequency 600.0 Hz.
@@ -730,8 +730,8 @@ Setting the '800_600.0' spectrum CPMG frequency 600.0 Hz.
 relax> spectrometer.frequency(id='800_600.0', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_600.0', time=0.4)
-Setting the '800_600.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_600.0', time=0.1)
+Setting the '800_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_600.0', spin_id=None)
 
@@ -740,12 +740,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61963'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4545199'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234360.0    
+# Spin_ID    Intensity     
+:1@N         36812265.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_666.6666', cpmg_frq=666.6666)
 Setting the '800_666.6666' spectrum CPMG frequency 666.6666 Hz.
@@ -753,8 +753,8 @@ Setting the '800_666.6666' spectrum CPMG frequency 666.6666 Hz.
 relax> spectrometer.frequency(id='800_666.6666', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_666.6666', time=0.4)
-Setting the '800_666.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_666.6666', time=0.1)
+Setting the '800_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_666.6666', spin_id=None)
 
@@ -763,12 +763,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61964'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4675639'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234374.0    
+# Spin_ID    Intensity     
+:1@N         37868716.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_733.3333', cpmg_frq=733.3333)
 Setting the '800_733.3333' spectrum CPMG frequency 733.3333 Hz.
@@ -776,8 +776,8 @@ Setting the '800_733.3333' spectrum CPMG frequency 733.3333 Hz.
 relax> spectrometer.frequency(id='800_733.3333', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_733.3333', time=0.4)
-Setting the '800_733.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_733.3333', time=0.1)
+Setting the '800_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_733.3333', spin_id=None)
 
@@ -786,12 +786,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61965'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4785248'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234386.0    
+# Spin_ID    Intensity     
+:1@N         38756462.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_800.0', cpmg_frq=800.0)
 Setting the '800_800.0' spectrum CPMG frequency 800.0 Hz.
@@ -799,8 +799,8 @@ Setting the '800_800.0' spectrum CPMG frequency 800.0 Hz.
 relax> spectrometer.frequency(id='800_800.0', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_800.0', time=0.4)
-Setting the '800_800.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_800.0', time=0.1)
+Setting the '800_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_800.0', spin_id=None)
 
@@ -809,12 +809,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61965'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4877690'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234395.0    
+# Spin_ID    Intensity     
+:1@N         39505158.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_866.6666', cpmg_frq=866.6666)
 Setting the '800_866.6666' spectrum CPMG frequency 866.6666 Hz.
@@ -822,8 +822,8 @@ Setting the '800_866.6666' spectrum CPMG frequency 866.6666 Hz.
 relax> spectrometer.frequency(id='800_866.6666', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_866.6666', time=0.4)
-Setting the '800_866.6666' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_866.6666', time=0.1)
+Setting the '800_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_866.6666', spin_id=None)
 
@@ -832,12 +832,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61965'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '4956012'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234403.0    
+# Spin_ID    Intensity     
+:1@N         40139499.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.3333', cpmg_frq=933.3333)
 Setting the '800_933.3333' spectrum CPMG frequency 933.3333 Hz.
@@ -845,8 +845,8 @@ Setting the '800_933.3333' spectrum CPMG frequency 933.3333 Hz.
 relax> spectrometer.frequency(id='800_933.3333', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_933.3333', time=0.4)
-Setting the '800_933.3333' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_933.3333', time=0.1)
+Setting the '800_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_933.3333', spin_id=None)
 
@@ -855,12 +855,12 @@ Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispers
 Sparky formatted data file.
 
 Number of header lines found: 1
-RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '61966'].
+RelaxWarning: Proton and heteronucleus names do not match, skipping the data ['Trp1NE1-HE1', '111.978', '8.720', '5022712'].
 
 The following intensities have been loaded into the relax data store:
 
-# Spin_ID    Intensity    
-:1@N         1234410.0    
+# Spin_ID    Intensity     
+:1@N         40679712.0    
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_1000.0', cpmg_frq=1000.0)
 Setting the '800_1000.0' spectrum CPMG frequency 1000.0 Hz.
@@ -868,8 +868,8 @@ Setting the '800_1000.0' spectrum CPMG frequency 1000.0 Hz.
 relax> spectrometer.frequency(id='800_1000.0', frq=800000000.0, units='Hz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_disp.relax_time(spectrum_id='800_1000.0', time=0.4)
-Setting the '800_1000.0' spectrum relaxation time period to 0.4 s.
+relax> relax_disp.relax_time(spectrum_id='800_1000.0', time=0.1)
+Setting the '800_1000.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_1000.0', spin_id=None)
 
@@ -907,14 +907,30 @@ Spectra ID subset ignored.
 - The 'R2eff' model -
 ---------------------
 
-Detected the presence of results files for the 'R2eff' model - loading these instead of performing optimisation for a second time.
 
-relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
 
 relax> pipe.switch(pipe_name='R2eff')
 
-relax> results.read(file='results', dir='./R2eff')
-Opening the file './R2eff/results.bz2' for reading.
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Spin ':1@N'.
+
+relax> relax_disp.plot_disp_curves(dir='./R2eff', force=True)
+Opening the file './R2eff/disp_1_N.agr' for writing.
+Opening the file './R2eff/grace2images.py' for writing.
+
+relax> value.write(param='r2eff', file='r2eff.out', dir='./R2eff', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file './R2eff/r2eff.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir='./R2eff', force=True, norm=False)
+Opening the file './R2eff/r2eff.agr' for writing.
+
+relax> results.write(file='results', dir='./R2eff', compress_type=1, force=True)
+Opening the file './R2eff/results.bz2' for writing.
 RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
 
 relax> state.save(state='final_state', dir='.', compress_type=1, force=True)

@@ -86,7 +86,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrometer.frequency(id=id, frq=H_frq)
 
     # Relaxation dispersion CPMG constant time delay T (in s).
-    relax_disp.relax_time(spectrum_id=id, time=0.4)
+    relax_disp.relax_time(spectrum_id=id, time=0.1)
 
     # Errors.
     spectrum.baseplane_rmsd(error=1000000.0, spectrum_id=id)

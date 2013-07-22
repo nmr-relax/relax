@@ -22,11 +22,11 @@ from lib.software.sparky import write_list
 
 # Setup for 2 spin systems.
 i0 = [[100000000.0, 20000000.0], [150000000.0, 25000000.0]]    # Initial peak intensities.
-times = [0.0, 0.4]    # The relaxation delay times in seconds.
+times = [0.0, 0.1]    # The relaxation delay times in seconds.
 cpmg_frq = [66.6666, 133.3333, 133.3333, 200.0, 266.6666, 333.3333, 400.0, 466.6666, 533.3333, 533.3333, 600.0, 666.6666, 733.3333, 800.0, 866.6666, 933.3333, 933.3333, 1000.0]    # The spin-lock field strengths in Hz.
 r20 = [[12.0, 12.0], [15.0, 15.0]]   # The R20 value per spin and per field (the same per field to allow comparison to CPMGFit).
-phi_ex_B = 0.5
-phi_ex_C = 2.0
+phi_ex_B = 5000.0
+phi_ex_C = 20000.0
 kB = 1500.0
 kC = 2500.0
 delta_omega = [1.0, 2.0]    # The chemical shift difference in ppm.
@@ -63,6 +63,7 @@ for frq_index in range(len(frqs)):
 
                 # The rate.
                 rx = r20[spin_index][frq_index] + B_rate + C_rate
+                print rx
 
                 # The peak intensity.
                 intensities.append(i0[frq_index][spin_index] * exp(-rx*times[time_index]))
