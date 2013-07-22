@@ -56,10 +56,10 @@ frqs = [-50.6985939545, -81.1177503272]
 frq_label = ['500MHz', '800MHz']
 
 # Setup for the Sparky peak list.
-res_names = ['Trp', 'Trp']
-res_nums = [1, 1]
-atom1_names = ['N', 'NE1']
-atom2_names = ['HN', 'HE1']
+res_names = ['Trp', 'Lys']
+res_nums = [1, 2]
+atom1_names = ['N', 'N']
+atom2_names = ['HN', 'HN']
 w1 = [122.454, 111.978]
 w2 = [8.397, 8.720]
 
@@ -85,7 +85,6 @@ for frq_index in range(len(frqs)):
 
                 # The rate.
                 rx = r20[spin_index][frq_index] + B_rate + C_rate
-                print rx
 
                 # The peak intensity.
                 intensities.append(i0[frq_index][spin_index] * exp(-rx*times[time_index]))
@@ -100,224 +99,80 @@ for frq_index in range(len(frqs)):
             if name:
                 write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
 ----------------------------------------------------------------------------------------------------
-21.8874242813
-24.8874242813
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_ref.list' for writing.
-21.8874242813
-24.8874242813
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_66.6666.list' for writing.
-20.4502898471
-23.4502898471
-20.4502898471
-23.4502898471
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_133.3333.list' for writing.
-20.4502898471
-23.4502898471
-20.4502898471
-23.4502898471
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_133.3333.list' for writing.
-19.0871177523
-22.0871177523
-19.0871177523
-22.0871177523
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_200.0.list' for writing.
-17.8805028877
-20.8805028877
-17.8805028877
-20.8805028877
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_266.6666.list' for writing.
-16.8648115863
-19.8648115863
-16.8648115863
-19.8648115863
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_333.3333.list' for writing.
-16.0342795975
-19.0342795975
-16.0342795975
-19.0342795975
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_400.0.list' for writing.
-15.3647849132
-18.3647849132
-15.3647849132
-18.3647849132
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_466.6666.list' for writing.
-14.8276684599
-17.8276684599
-14.8276684599
-17.8276684599
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_533.3333.list' for writing.
-14.8276684599
-17.8276684599
-14.8276684599
-17.8276684599
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_533.3333.list' for writing.
-14.3962397515
-17.3962397515
-14.3962397515
-17.3962397515
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_600.0.list' for writing.
-14.0480420198
-17.0480420198
-14.0480420198
-17.0480420198
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_666.6666.list' for writing.
-13.7650993432
-16.7650993432
-13.7650993432
-16.7650993432
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_733.3333.list' for writing.
-13.5333777631
-16.5333777631
-13.5333777631
-16.5333777631
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_800.0.list' for writing.
-13.3420403328
-16.3420403328
-13.3420403328
-16.3420403328
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_866.6666.list' for writing.
-13.1827442417
-16.1827442417
-13.1827442417
-16.1827442417
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_933.3333.list' for writing.
-13.1827442417
-16.1827442417
-13.1827442417
-16.1827442417
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_933.3333.list' for writing.
-13.0490577908
-16.0490577908
-13.0490577908
-16.0490577908
 Creating the Sparky list file.
 Opening the file 'nu_500MHz_1000.0.list' for writing.
-21.8874242813
-24.8874242813
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_ref.list' for writing.
-21.8874242813
-24.8874242813
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_66.6666.list' for writing.
-20.4502898471
-23.4502898471
-20.4502898471
-23.4502898471
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_133.3333.list' for writing.
-20.4502898471
-23.4502898471
-20.4502898471
-23.4502898471
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_133.3333.list' for writing.
-19.0871177523
-22.0871177523
-19.0871177523
-22.0871177523
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_200.0.list' for writing.
-17.8805028877
-20.8805028877
-17.8805028877
-20.8805028877
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_266.6666.list' for writing.
-16.8648115863
-19.8648115863
-16.8648115863
-19.8648115863
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_333.3333.list' for writing.
-16.0342795975
-19.0342795975
-16.0342795975
-19.0342795975
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_400.0.list' for writing.
-15.3647849132
-18.3647849132
-15.3647849132
-18.3647849132
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_466.6666.list' for writing.
-14.8276684599
-17.8276684599
-14.8276684599
-17.8276684599
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_533.3333.list' for writing.
-14.8276684599
-17.8276684599
-14.8276684599
-17.8276684599
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_533.3333.list' for writing.
-14.3962397515
-17.3962397515
-14.3962397515
-17.3962397515
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_600.0.list' for writing.
-14.0480420198
-17.0480420198
-14.0480420198
-17.0480420198
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_666.6666.list' for writing.
-13.7650993432
-16.7650993432
-13.7650993432
-16.7650993432
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_733.3333.list' for writing.
-13.5333777631
-16.5333777631
-13.5333777631
-16.5333777631
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_800.0.list' for writing.
-13.3420403328
-16.3420403328
-13.3420403328
-16.3420403328
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_866.6666.list' for writing.
-13.1827442417
-16.1827442417
-13.1827442417
-16.1827442417
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_933.3333.list' for writing.
-13.1827442417
-16.1827442417
-13.1827442417
-16.1827442417
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_933.3333.list' for writing.
-13.0490577908
-16.0490577908
-13.0490577908
-16.0490577908
 Creating the Sparky list file.
 Opening the file 'nu_800MHz_1000.0.list' for writing.
 

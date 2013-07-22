@@ -34,10 +34,10 @@ frqs = [-50.6985939545, -81.1177503272]
 frq_label = ['500MHz', '800MHz']
 
 # Setup for the Sparky peak list.
-res_names = ['Trp', 'Trp']
-res_nums = [1, 1]
-atom1_names = ['N', 'NE1']
-atom2_names = ['HN', 'HE1']
+res_names = ['Trp', 'Lys']
+res_nums = [1, 2]
+atom1_names = ['N', 'N']
+atom2_names = ['HN', 'HN']
 w1 = [122.454, 111.978]
 w2 = [8.397, 8.720]
 
@@ -63,7 +63,6 @@ for frq_index in range(len(frqs)):
 
                 # The rate.
                 rx = r20[spin_index][frq_index] + B_rate + C_rate
-                print rx
 
                 # The peak intensity.
                 intensities.append(i0[frq_index][spin_index] * exp(-rx*times[time_index]))

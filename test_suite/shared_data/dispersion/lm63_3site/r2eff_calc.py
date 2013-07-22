@@ -77,7 +77,8 @@ data = [
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
-    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='N', proton='HN', int_method='height')
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='NE1', proton='HE1', int_method='height')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
