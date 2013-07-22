@@ -93,7 +93,7 @@ class SpinContainer(Prototype):
         """
 
         # Model-free parameters.
-        if pipe_control.pipes.get_type() == 'mf':
+        if hasattr(self, 'equation') and self.equation in ['mf_orig', 'mf_ext', 'mf_ext2']:
             self._back_compat_hook_mf_data()
 
         # Relaxation data.

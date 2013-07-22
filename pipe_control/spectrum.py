@@ -623,6 +623,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Automatic format detection.
     format = autodetect_format(file_data)
 
+    # Flag for single or multiple spectrum extraction
+    single_spectrum = True
+
     # Generic.
     if format == 'generic':
         # Print out.
@@ -663,13 +666,38 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
 
-        # Convert the residue number to a spin ID.
+        # Loop over each spectrum
         for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
+            spectrum = intensity_data[i][0]
 
-            # Replace the data.
-            intensity_data[i][2] = spin_id
+            # Get the spectrum name
+            spectrum_name = intensity_data[i][1]
+
+            #Loop over each spin in the spectrum information
+            for j in range(len(spectrum)):
+                # Extract spin information
+                spin =  spectrum[j]
+
+                # Extract proton info
+                h_name = spin[0]
+
+                # Extract heteronucleus info
+                x_name = spin[1]
+
+                # Extract the residue number
+                res_num = spin[2]
+
+                # Extract the Intensity
+                intensity = spin[3]
+
+                # Generate the spin_id.
+                spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
+
+                # Replace residue number with the spin_id.
+                intensity_data[i][0][j][2] = spin_id
+
+        # Change Flag for single or multiple spectrum extraction
+        single_spectrum = False
 
     # Sparky.
     elif format == 'sparky':
