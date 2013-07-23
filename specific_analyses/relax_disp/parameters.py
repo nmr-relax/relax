@@ -24,13 +24,18 @@
 """Functions relating to the parameters of the relaxation dispersion models."""
 
 # Python module imports.
+from copy import deepcopy
 from numpy import array, float64, identity, zeros
 from re import search
+import sys
 
 # relax module imports.
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.mathematics import round_to_next_order
-from specific_analyses.relax_disp.disp_data import count_frq, loop_frq, loop_frq_point
+from lib.text.sectioning import subsection
+from pipe_control import pipes
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from specific_analyses.relax_disp.disp_data import count_frq, loop_cluster, loop_frq, loop_frq_point
 from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_M61B, VAR_TIME_EXP
 
 
@@ -118,6 +123,162 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
     # Return the scaling matrix.
     return scaling_matrix
 
+
+def copy(pipe_from=None, pipe_to=None):
+    """Copy dispersion parameters from one data pipe to another, averaging values for clusters.
+
+    @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data pipe.
+    @type pipe_from:    str
+    @param pipe_to:     The data pipe to copy the value to.  This defaults to the current data pipe.
+    @type pipe_to:      str
+    """
+
+    # The current data pipe.
+    pipe_orig = pipes.cdp_name()
+    if pipe_from == None:
+        pipe_from = pipe_orig
+    if pipe_to == None:
+        pipe_to = pipe_orig
+
+    # Test that the pipes exist.
+    pipes.test(pipe_from)
+    pipes.test(pipe_to)
+
+    # Test that the pipes are not the same.
+    if pipe_from == pipe_to:
+        raise RelaxError("The source and destination pipes cannot be the same.")
+
+    # Test if the sequence data for pipe_from is loaded.
+    if not exists_mol_res_spin_data(pipe_from):
+        raise RelaxNoSequenceError(pipe_from)
+
+    # Test if the sequence data for pipe_to is loaded.
+    if not exists_mol_res_spin_data(pipe_to):
+        raise RelaxNoSequenceError(pipe_to)
+
+    # Switch to the destination data pipe.
+    pipes.switch(pipe_to)
+
+    # Loop over the clusters.
+    for spin_ids in loop_cluster():
+        # Initialise some variables.
+        model = None
+        pA = 0.0
+        kex = 0.0
+        kB = 0.0
+        kC = 0.0
+        tex = 0.0
+        count = 0
+        spins_from = []
+        spins_to = []
+        selected_cluster = False
+
+        # Loop over the spins, summing the parameters to be averaged.
+        for id in spin_ids:
+            # Get the spins, then store them.
+            spin_from = return_spin(id, pipe=pipe_from)
+            spin_to = return_spin(id, pipe=pipe_to)
+            spins_from.append(spin_from)
+            spins_to.append(spin_to)
+
+            # Skip deselected spins.
+            if not spin_from.select or not spin_to.select:
+                continue
+
+            # The first printout.
+            if not selected_cluster:
+                subsection(file=sys.stdout, text="Copying parameters for the spin block %s"%spin_ids, prespace=2)
+
+            # Change the cluster selection flag.
+            selected_cluster = True
+
+            # The model.
+            if not model:
+                model = spin_from.model
+
+            # Check that the models match for all spins of the cluster.
+            if spin_from.model != model:
+                raise RelaxError("The model '%s' of spin '%s' from the source data pipe does not match the '%s' model of previous spins of the cluster." % (spin_from.model, id, model))
+            if spin_to.model != model:
+                raise RelaxError("The model '%s' of spin '%s' from the destination data pipe does not match the '%s' model of previous spins of the cluster." % (spin_from.model, id, model))
+
+            # Sum the source parameters.
+            if 'pA' in spin_from.params:
+                pA += spin_from.pA
+            if 'kex' in spin_from.params:
+                kex += spin_from.kex
+            if 'kB' in spin_from.params:
+                kB += spin_from.kB
+            if 'kC' in spin_from.params:
+                kC += spin_from.kC
+            if 'tex' in spin_from.params:
+                tex += spin_from.tex
+
+            # Increment the spin count.
+            count += 1
+
+        # The cluster is not selected, so move to the next.
+        if not selected_cluster:
+            continue
+
+        # Average parameters.
+        if pA != 0.0:
+            pA = pA / count
+            print("Averaged pA value:  %.15f" % pA)
+        if kex != 0.0:
+            kex = kex / count
+            print("Averaged kex value: %.15f" % kex)
+        if kB != 0.0:
+            kB = kB / count
+            print("Averaged kB value:  %.15f" % kB)
+        if kC != 0.0:
+            kC = kC / count
+            print("Averaged kC value:  %.15f" % kC)
+        if tex != 0.0:
+            tex = tex / count
+            print("Averaged tex value: %.15f" % tex)
+
+        # Loop over the spins, this time copying the parameters.
+        for i in range(len(spin_ids)):
+            # Alias the containers.
+            spin_from = spins_from[i]
+            spin_to = spins_to[i]
+
+            # Skip deselected spins.
+            if not spin_from.select or not spin_to.select:
+                continue
+
+            # The R20 parameters.
+            if 'r2' in spin_from.params:
+                spin_to.r2 = deepcopy(spin_from.r2)
+            if 'r2a' in spin_from.params:
+                spin_to.r2a = deepcopy(spin_from.r2a)
+            if 'r2b' in spin_from.params:
+                spin_to.r2b = deepcopy(spin_from.r2b)
+
+            # The averaged parameters.
+            if 'pA' in spin_from.params:
+                spin_to.pA = pA
+                spin_to.pB = 1.0 - pA
+            if 'kex' in spin_from.params:
+                spin_to.kex = kex
+            if 'kB' in spin_from.params:
+                spin_to.kB = kB
+            if 'kC' in spin_from.params:
+                spin_to.kC = kC
+            if 'tex' in spin_from.params:
+                spin_to.tex = tex
+
+            # All other spin specific parameters.
+            for param in spin_from.params:
+                if param in ['r2', 'pA', 'kex', 'kB', 'kC', 'tex']:
+                    continue
+
+                # Copy the value.
+                setattr(spin_to, param, deepcopy(getattr(spin_from, param)))
+
+    # Switch back to the original data pipe.
+    pipes.switch(pipe_orig)
 
 def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=None):
     """Disassemble the parameter vector.

@@ -32,12 +32,13 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from pipe_control import spectrum
+from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field
 from specific_analyses.relax_disp.nessy import nessy_input
+from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL
 from specific_analyses.setup import relax_disp_obj
@@ -316,6 +317,42 @@ uf.gui_icon = "relax.nessy"
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
 uf.wizard_image = WIZARD_IMAGE_PATH + 'nessy.png'
+
+
+# The relax_disp.parameter_copy user function.
+uf = uf_info.add_uf('relax_disp.parameter_copy')
+uf.title = "Copy dispersion specific parameters values from one data pipe to another."
+uf.title_short = "Dispersion parameter copying."
+uf.add_keyarg(
+    name = "pipe_from",
+    py_type = "str",
+    desc_short = "source data pipe",
+    desc = "The name of the pipe to copy from.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "pipe_to",
+    py_type = "str",
+    desc_short = "destination data pipe",
+    desc = "The name of the pipe to copy to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = pipes.pipe_names,
+    wiz_read_only = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is a special function for copying relaxation dispersion parameters from one data pipe to another.  It is much more advanced than the value.copy user function, in that clustering is taken into account.  When the destination data pipe has spin clusters defined, then the new parameter values, when required, will be averaged.")
+uf.desc[-1].add_paragraph("For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.")
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
+uf.desc[-1].add_prompt("relax> value.parameter_copy('m1', 'm2', 'csa')")
+uf.backend = copy
+uf.menu_text = "&parameter_copy"
+uf.gui_icon = "oxygen.actions.list-add"
+uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.plot_disp_curves user function.
