@@ -1,0 +1,5 @@
+# Parameter description:  The chemical shift difference between states A and B (in ppm).
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error    
+None          70         GLY         None        N                5.64486744779779    None     
+None          71         GLY         None        N                4.62873334024874    None     
