@@ -47,7 +47,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', mc_sim_all_models=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, mc_sim_all_models=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
@@ -64,6 +64,8 @@ class Relax_disp:
         @type mc_sim_num:           int
         @keyword modsel:            The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
         @type modsel:               str
+        @keyword pre_run_dir:       The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
+        @type pre_run_dir:          None or str
         @keyword mc_sim_all_models: A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
         @type mc_sim_all_models:    bool
         """
@@ -86,6 +88,7 @@ class Relax_disp:
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
         self.modsel = modsel
+        self.pre_run_dir = pre_run_dir
         self.mc_sim_all_models = mc_sim_all_models
 
         # No results directory, so default to the current directory.
@@ -212,12 +215,18 @@ class Relax_disp:
         @type model:    str
         """
 
-        # Nested model simplification.
-        nested = self.nesting(model=model)
+        # Use pre-run results as the optimisation starting point.
+        if self.pre_run_dir:
+            self.pre_run_parameters(model=model)
 
-        # Grid search.
-        if not nested:
-            self.interpreter.grid_search(inc=self.grid_inc)
+        # Otherwise use the normal nesting check and grid search if not nested.
+        else:
+            # Nested model simplification.
+            nested = self.nesting(model=model)
+
+            # Grid search.
+            if not nested:
+                self.interpreter.grid_search(inc=self.grid_inc)
 
         # Minimise.
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
@@ -229,6 +238,28 @@ class Relax_disp:
             self.interpreter.monte_carlo.initial_values()
             self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
             self.interpreter.monte_carlo.error_analysis()
+
+
+    def pre_run_parameters(self, model=None):
+        """Copy parameters from an earlier analysis.
+
+        @keyword model: The model to be optimised.
+        @type model:    str
+        """
+
+        # Create a temporary data pipe for the previous run.
+        self.interpreter.pipe.create(pipe_name='pre', pipe_type='relax_disp')
+
+        # Load the previous results.
+        path = self.pre_run_dir + sep + model
+        self.interpreter.results.read(file='results', dir=path)
+
+        # Copy the parameters.
+        self.interpreter.relax_disp.parameter_copy(pipe_from='pre', pipe_to=model)
+
+        # Finally, switch back to the original data pipe and delete the temporary one.
+        self.interpreter.pipe.switch(pipe_name=model)
+        self.interpreter.pipe.delete(pipe_name='pre')
 
 
     def run(self):
