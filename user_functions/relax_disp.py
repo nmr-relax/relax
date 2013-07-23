@@ -81,8 +81,8 @@ uf.desc[-1].add_paragraph("The special cluster ID string 'free spins' is reserve
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To add the spins ':1@N' and ':3@N' to a new cluster called 'cluster', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.cluster('cluster', ':1,3@N)")
-uf.desc[-1].add_prompt("relax> relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N)")
+uf.desc[-1].add_prompt("relax> relax_disp.cluster('cluster', ':1,3@N')")
+uf.desc[-1].add_prompt("relax> relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N')")
 uf.backend = relax_disp_obj._cluster
 uf.menu_text = "c&luster"
 uf.gui_icon = "relax.cluster"
