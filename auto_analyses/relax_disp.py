@@ -232,7 +232,7 @@ class Relax_disp:
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Monte Carlo simulations.
-        if self.mc_sim_all_models or len(self.model_pipes) < 2:
+        if self.mc_sim_all_models or len(self.models) < 2:
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
@@ -323,7 +323,7 @@ class Relax_disp:
             self.write_results(path=path, model=model)
 
         # The final model selection data pipe.
-        if len(self.model_pipes) >= 2:
+        if len(self.models) >= 2:
             # Perform model selection.
             self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=self.model_pipes)
 
