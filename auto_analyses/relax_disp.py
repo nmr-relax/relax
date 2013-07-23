@@ -232,7 +232,7 @@ class Relax_disp:
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Monte Carlo simulations.
-        if self.mc_sim_all_models or len(self.models) < 2:
+        if self.mc_sim_all_models or len(self.models) < 2 or model == 'R2eff':
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
