@@ -164,12 +164,21 @@ class Relax_disp:
         if model == MODEL_NS_2SITE_STAR_FULL and MODEL_NS_2SITE_STAR in self.models:
             nested_pipe = MODEL_NS_2SITE_STAR
 
+        # Using the analytic solution.
+        analytic = False
+        if model in [MODEL_NS_2SITE_3D, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR] and MODEL_CR72 in self.models:
+            nested_pipe = MODEL_CR72
+            analytic = True
+
         # No nesting.
         if not nested_pipe:
             return False
 
         # Printout.
-        print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
+        if analytic:
+            print("Model equivalence detected, copying the optimised parameters from the analytic '%s' model rather than performing a grid search." % nested_pipe)
+        else:
+            print("Model nesting detected, copying the optimised parameters from the '%s' model rather than performing a grid search." % nested_pipe)
 
         # Loop over the spins to copy the parameters.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
@@ -178,8 +187,11 @@ class Relax_disp:
 
             # The R20 parameters.
             if hasattr(nested_spin, 'r2'):
-                setattr(spin, 'r2a', deepcopy(nested_spin.r2))
-                setattr(spin, 'r2b', deepcopy(nested_spin.r2))
+                if model in [MODEL_CR72_FULL, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR_FULL]:
+                    setattr(spin, 'r2a', deepcopy(nested_spin.r2))
+                    setattr(spin, 'r2b', deepcopy(nested_spin.r2))
+                else:
+                    setattr(spin, 'r2', deepcopy(nested_spin.r2))
 
             # All other spin parameters.
             for param in spin.params:
