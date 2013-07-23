@@ -118,6 +118,7 @@ class Auto_relax_disp(Base_analysis):
             # Initialise the variables.
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
+            ds.relax_gui.analyses[data_index].pre_run_dir = None
             ds.relax_gui.analyses[data_index].mc_sim_all_models = False
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
@@ -203,8 +204,9 @@ class Auto_relax_disp(Base_analysis):
         data.pipe_name = self.data.pipe_name
         data.pipe_bundle = self.data.pipe_bundle
 
-        # Results directory.
+        # Results directories.
         data.save_dir = self.data.save_dir
+        data.pre_run_dir = self.field_pre_run_dir.GetValue()
 
         # Check if sequence data is loaded
         if not exists_mol_res_spin_data():
@@ -268,6 +270,10 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the results directory GUI element.
         self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
+        # Add the results directory GUI element.
+        tooltip = "The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied."
+        self.field_pre_run_dir = Text_ctrl(box, self, text="Previous run directory:", icon=paths.icon_16x16.open_folder, tooltip=tooltip, tooltip_button="Select the results directory of the previous run.", fn=self.pre_run_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
@@ -395,6 +401,30 @@ class Auto_relax_disp(Base_analysis):
         self.peak_wizard = Peak_intensity_wizard(relax_disp=True, relax_disp_cpmg=self.relax_disp_cpmg, relax_disp_times=self.relax_times_flag)
 
 
+    def pre_run_directory(self, event):
+        """The pre-run directory selection.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The dialog.
+        dialog = RelaxDirDialog(parent=self, message='Select the directory of the previous run', defaultPath=self.field_pre_run_dir.GetValue())
+
+        # Show the dialog and catch if no file has been selected.
+        if status.show_gui and dialog.ShowModal() != wx.ID_OK:
+            # Don't do anything.
+            return
+
+        # The path (don't do anything if not set).
+        path = gui_to_str(dialog.get_path())
+        if not path:
+            return
+
+        # Place the path in the text box.
+        self.field_pre_run_dir.SetValue(str_to_gui(path))
+
+
     def relax_disp_cluster(self, event=None):
         """Set up spin clustering via the relax_disp.cluster user function.
 
@@ -492,6 +522,12 @@ class Auto_relax_disp(Base_analysis):
         else:
             self.field_results_dir.SetValue(str_to_gui(self.data.save_dir))
 
+        # The previous run results directory.
+        if upload:
+            self.data.pre_run_dir = gui_to_str(self.field_pre_run_dir.GetValue())
+        elif hasattr(self.data, 'pre_run_dir'):
+            self.field_pre_run_dir.SetValue(str_to_gui(self.data.pre_run_dir))
+
         # The models to use.
         if upload:
             self.data.disp_models = self.model_field.GetValue()
@@ -562,7 +598,7 @@ class Execute_relax_disp(Execute):
         Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, mc_sim_all_models=self.data.mc_sim_all_models)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
