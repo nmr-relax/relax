@@ -13,6 +13,7 @@ The program relax is designed for the study of molecular dynamics through the an
 \item[RSDM] - Reduced Spectral Density Mapping.
 \item[Frame order and N-state model] - study of domain motions via the N-state model and frame order dynamics theories using anisotropic NMR parameters such as RDCs and PCSs.
 \item[Stereochemistry] - investigations of absolute stereochemistry of flexible molecules.
+\item[Relaxation dispersion] - the study of processes on the chemical exchange timescale.
 \end{description}
 
 The aim of relax is to provide a seamless and extremely flexible environment able to accept input in any format produced by other NMR software, able to faultlessly create input files, control, and read output from various programs including Modelfree and Dasha, output results in many formats, and visualise the data by controlling programs such as Grace\index{software!Grace|textbf}, OpenDX\index{software!OpenDX|textbf}, MOLMOL\index{software!MOLMOL|textbf}, and PyMOL\index{software!PyMOL|textbf}.  All data analysis tools from optimisation to model selection to Monte Carlo simulations are inbuilt into relax. Therefore the use of additional programs is optional.
@@ -54,18 +55,12 @@ The following relaxation data analysis techniques are currently supported by rel
 \item The frame order theory.
 \item Conformational analysis of paramagnetically tagged molecules via the N-state model \citep{Erdelyi11}.
 \item Analysis and comparison of ensembles of structures using RDCs, PCSs, NOEs, etc. (the N-state model of dynamics).
+\item The analysis of relaxation dispersion\index{relaxation dispersion}.
 \end{itemize}
 
 
 % The future.
 \subsubsection{The future}
-
-At some time in the future the following techniques are planned to be implemented within relax:
-
-\begin{itemize}
-\item Relaxation dispersion\index{relaxation dispersion}.
-\item All other dynamics analyses.
-\end{itemize}
 
 Because relax is free software, if you would like to contribute addition features, functions, or modules which you have written for your own publications for the benefit of the field, almost anything relating to molecular dynamics may be accepted.  Please see the Open Source chapter on page~\pageref{ch: open source} for more details.
 
