@@ -325,7 +325,7 @@ class Relax_disp:
         # The final model selection data pipe.
         if len(self.models) >= 2:
             # Perform model selection.
-            self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', pipes=self.model_pipes)
+            self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', bundle=self.pipe_bundle, pipes=self.model_pipes)
 
             # Final Monte Carlo simulations only.
             if not self.mc_sim_all_models:
