@@ -550,11 +550,10 @@ class Auto_relax_disp(Base_analysis):
         # List the clusters.
         else:
             # Build the text to show.
+            text = ""
             if "free spins" in cluster_keys:
-                text = "free spins"
-            else:
-                text = cluster_keys[0]
-            for i in range(1, len(cluster_keys)):
+                text += "free spins"
+            for i in range(len(cluster_keys)):
                 if cluster_keys[i] != "free spins":
                     text += ", %s" % cluster_keys[i]
 
