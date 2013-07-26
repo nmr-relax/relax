@@ -1,15 +1,12 @@
-
 The dataset contained in this folder was published in:
-	Hansen, Vallurupalli & Kay, 2008, JPhysChemB, 112: 5898-5904.
 
-The directories contain the data recorded using the improved pulse sequence with 1H CW decoupling
-during the CPMG period.
+    Hansen, D. F., Vallurupalli, P. and Kay, L. E. (2008).  An Improved 15N Relaxation Dispersion Experiment for the Measurement of Millisecond Time-Scale Dynamics in Proteins.  J. Phys. Chem. B, 112, 5898-5904 (http://dx.doi.org/10.1021/jp074793o).
 
-It was was friendly provided by Dr Flemming Hansen.
-	flemming AT pound DOT med DOT utoronto DOT ca
+The directories contain the data recorded using the improved pulse sequence with 1H CW decoupling during the CPMG period.
+
+It was was friendly provided by Dr Flemming Hansen (flemming AT pound DOT med DOT utoronto DOT ca)
 
 The original format was different and was modified to better suit the way relax handles datasets.
 
-The files ending in '_sparky' include both the intensities and chemical shifts for each residue and
-are formatted similarly to 'Sparky' peak lists.
+The files ending in '_sparky' include both the intensities and chemical shifts for each residue and are formatted similarly to 'Sparky' peak lists.
 
