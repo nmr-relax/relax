@@ -1,5 +1,6 @@
 ###############################################################################
 #                                                                             #
+# Copyright (C) 2000-2001 Martin Tollinger                                    #
 # Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
