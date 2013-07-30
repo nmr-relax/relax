@@ -1,5 +1,6 @@
 ###############################################################################
 #                                                                             #
+# Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
 # Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
@@ -32,6 +33,7 @@ The code originates as optimization function number 5 from the fitting_main_kex.
 
 Links to the copyright licensing agreements from all authors are:
 
+    - Nikolai Skrynnikov, http://article.gmane.org/gmane.science.nmr.relax.devel/4279
     - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
     - Paul Schanda, http://article.gmane.org/gmane.science.nmr.relax.devel/4271
     - Mathilde Lescanne, http://article.gmane.org/gmane.science.nmr.relax.devel/4138
