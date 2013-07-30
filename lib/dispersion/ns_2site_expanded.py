@@ -29,6 +29,13 @@
 This function is exact, just as the explicit Bloch-McConnell numerical treatments.  It comes from a Maple derivation based on the Bloch-McConnell equations.  It is much faster than the numerical Bloch-McConnell solution.  It was derived by Nikolai Skrynnikov and is provided with his permission.
 
 The code originates as optimization function number 5 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see http://thread.gmane.org/gmane.science.nmr.relax.devel/4138, https://gna.org/task/?7712#comment2 and https://gna.org/support/download.php?file_id=18262).
+
+Links to the copyright licensing agreements from all authors are:
+
+    - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
+    - Paul Schanda, http://article.gmane.org/gmane.science.nmr.relax.devel/4271
+    - Mathilde Lescanne, http://article.gmane.org/gmane.science.nmr.relax.devel/4138
+    - Dominique Marion, http://article.gmane.org/gmane.science.nmr.relax.devel/4157
 """
 
 # Dependency check module.
