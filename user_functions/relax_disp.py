@@ -40,7 +40,7 @@ from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, p
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_TP02
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -488,7 +488,8 @@ uf.add_keyarg(
         "%s: {R20, ..., pA, dw, kex}" % MODEL_NS_2SITE_EXPANDED,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_M61,
         "%s: {R1rho', ..., phi_ex, kex}" % MODEL_DPL94,
-        "%s: {R1rho', ..., pA, dw, kex}" % MODEL_M61B
+        "%s: {R1rho', ..., pA, dw, kex}" % MODEL_M61B,
+        "%s: {R1rho', ..., pA, dw, kex}" % MODEL_TP02
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
@@ -505,7 +506,8 @@ uf.add_keyarg(
         MODEL_NS_2SITE_EXPANDED,
         MODEL_M61,
         MODEL_DPL94,
-        MODEL_M61B
+        MODEL_M61B,
+        MODEL_TP02
     ],
     wiz_read_only = True
 )
@@ -528,6 +530,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for n
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex},")
 uf.desc[-1].add_paragraph("Except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks." % (MODEL_R2EFF, MODEL_NOREX))
 # Numerical models.
 uf.desc.append(Desc_container('Numerical models'))
