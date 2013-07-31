@@ -1144,7 +1144,7 @@ class Relax_disp(API_base, API_common):
                 continue
 
             # Test if the spectrometer frequencies have been set.
-            if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61] and not hasattr(cdp, 'spectrometer_frq'):
+            if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61, MODEL_TP02] and not hasattr(cdp, 'spectrometer_frq'):
                 raise RelaxError("The spectrometer frequency information has not been specified.")
 
             # The R2eff/R1rho data.
