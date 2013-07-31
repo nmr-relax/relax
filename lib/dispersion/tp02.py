@@ -32,52 +32,74 @@ Links to the copyright licensing agreements from all authors are:
     - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
 """
 
-function residual = funTrottPalmer(optpar)
+# Python module imports.
+from math import atan, cos, pi, sin
 
-% TrottPalmer's equ. acc. to Korzhnev (JBiomolNMR, 26, 39-48, 2003)
 
-global nu_0 x y Rcalc rms nfields offset w1 R1_51 R1_81
-%keyboard
-Rcalc=zeros(nfields,size(w1,2));
-tau_ex=optpar(1);
-pb=optpar(2);
-pa=1-pb;
-kex=1/tau_ex;
+def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+    """Calculate the R1rho' values for the TP02 model.
 
-for k=1:nfields
-    % we assume that A resonates at 0 [s^-1], without loss of generality
-    dw=nu_0(k)*optpar(3)*2*pi;   	% [s^-1]
-    Wa=0*2*pi;             		% Larmor frequ. [s^-1]
-    Wb=dw;         			% Larmor frequ. [s^-1]
-    Wsl=offset*2*pi;   			% Larmor frequ. of spin lock [s^-1]
-    W=pa*Wa+pb*Wb;			% pop-averaged Larmor frequ. [s^-1]
-    da=Wa-Wsl;				% offset of sl from A
-    db=Wb-Wsl;				% offset of sl from B
-    d =W -Wsl; 				% offset of sl from pop-average
-    waeff2=w1.^2+da.^2;			% effective field at A
-    wbeff2=w1.^2+db.^2;			% effective field at B
-    weff2=w1.^2+d.^2;			% effective field at pop-average
-    theta=atan(w1/d);
-    theta_degrees=atan(w1/d)*360/(2*pi);	% not used, just to check
+    See the module docstring for details.  This is the Trott and Palmer (2002) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
 
-    Rinf=optpar(3+k);
-    xx=pa*pb*dw^2*kex;
-    yytrottpalmer=waeff2.*wbeff2./weff2+kex^2;
-    yytrottpalmer_extended=waeff2.*wbeff2./weff2+kex^2-2*(sin(theta).^2)*pa*pb*dw^2;
+
+    @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
+    @type r1rho_prime:          float
+    @keyword pA:                The population of state A.
+    @type pA:                   float
+    @keyword pB:                The population of state B.
+    @type pB:                   float
+    @keyword dw:                The chemical exchange difference between states A and B in rad/s.
+    @type dw:                   float
+    @keyword kex:               The kex parameter value (the exchange rate in rad/s).
+    @type kex:                  float
+    @keyword theta:             The rotating frame tilt angle.
+    @type theta:                float
+    @keyword R1:                The R1 relaxation rate.
+    @type R1:                   float
+    @keyword spin_lock_fields:  The CPMG nu1 frequencies.
+    @type spin_lock_fields:     numpy rank-1 float array
+    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
+    @type back_calc:            numpy rank-1 float array
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @type num_points:           int
+    """
+
+    # Repetitive calculations (to speed up calculations).
+    Wa = 0.0                    # Larmor frequency [s^-1].
+    Wb = dw                     # Larmor frequency [s^-1].
+    sin_theta2 = sin(theta)**2
+    R1_cos_theta2 = R1 * cos(theta)**2
+    R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
+
+    # The numerator.
+    numer = pA * pB * dw**2 * kex
+
+    # Loop over the dispersion points, back calculating the R1rho values.
+    for i in range(num_points):
+        # Catch zeros (to avoid pointless mathematical operations).
+        if numer == 0.0:
+            back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2
+            continue
+
+        # We assume that A resonates at 0 [s^-1], without loss of generality.
+        Wsl = spin_lock_fields[i] * 2.0 * pi     # Larmor frequency of spin lock [s^-1].
+        W = pA*Wa + pB*Wb           # Pop-averaged Larmor frequency [s^-1].
+        da = Wa - Wsl               # Offset of spin-lock from A.
+        db = Wb - Wsl               # Offset of spin-lock from B.
+        d = W - Wsl                 # Offset of spin-lock from pop-average.
+        waeff2 = w1**2 + da**2      # Effective field at A.
+        wbeff2 = w1**2 + db**2      # Effective field at B.
+        weff2 = w1**2 + d**2        # Effective field at pop-average.
+        theta = atan(w1/d) 
+
+        # Denominator.
+        denom = waeff2 * wbeff2 / weff2 + kex**2
+        #denom_extended = waeff2*wbeff2/weff2+kex**2-2*sin_theta2*pA*pB*dw**2
  
-    %keyboard
-   if k==1; 
-   Rcalc(k,:)=(cos(theta).^2)*R1_51+(sin(theta).^2)*(Rinf)+(sin(theta).^2).*xx./yytrottpalmer_extended;
-   end
-   if k==2; 
-   Rcalc(k,:)=(cos(theta).^2)*R1_81+(sin(theta).^2)*(Rinf)+(sin(theta).^2).*xx./yytrottpalmer_extended;
-   end
+        # Avoid divide by zero.
+        if denom == 0.0:
+            back_calc[i] = 1e100
+            continue
 
-
-end
-
-if (size(Rcalc)==size(y))
-    residual=sum(sum((y-Rcalc).^2)); 
-    rms=sqrt(residual/(size(y,1)*size(y,2)));
-end
-
+        # R1rho calculation.
+        back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
