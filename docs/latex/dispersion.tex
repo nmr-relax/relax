@@ -621,7 +621,7 @@ from auto_analyses.relax_disp import Relax_disp
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99']
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'N2 2-site expanded']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 21
@@ -762,14 +762,14 @@ The next part of the script is the definition of a number of analysis variables.
 
 \begin{lstlisting}[firstnumber=14]
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99']
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'N2 2-site expanded']
 \end{lstlisting}
 
 If you have $\Ronerho$-type data, the models could be changed to:
 
 \begin{lstlisting}[numbers=none]
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'M61', 'DPL72']
+MODELS = ['R2eff', 'No Rex', 'M61', 'DPL72', 'TP02']
 \end{lstlisting}
 
 The next variable affects the optimisation precision:
