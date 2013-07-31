@@ -24,7 +24,7 @@ A word of warning before reading this chapter, the topics covered here are quite
 % The function value.
 \subsection{The function value}
 
-At the simplest level all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data this function is the chi-squared equation~\eqref{eq: maths: chi-squared} on page~\pageref{eq: maths: chi-squared}.  For certain algorithms, such a simplex minimisation\index{minimisation techniques!simplex}, this single value suffices.
+At the simplest level all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.  For the modelling of NMR relaxation data this function is the chi-squared equation~\eqref{eq: maths: chi-squared} on page~\pageref{eq: maths: chi-squared}.  For certain algorithms, such a simplex minimisation\index{minimisation algorithm!Nelder-Mead simplex}, this single value suffices.
 
 
 % The gradient.
@@ -42,7 +42,7 @@ The majority of minimisation algorithms also require the gradient at the point i
 
 \noindent where $n$ is the total number of parameters in the model.
 
-An example of a powerful algorithm which requires both the value and gradient at current parameter values is the BFGS quasi-Newton minimisation\index{minimisation techniques!BFGS}.  The gradient is also essential for the use of the Method of Multipliers constraints algorithm (also known as the Augmented Lagrangian algorithm).
+An example of a powerful algorithm which requires both the value and gradient at current parameter values is the BFGS quasi-Newton minimisation\index{minimisation algorithm!BFGS}.  The gradient is also essential for the use of the Method of Multipliers constraints algorithm (also known as the Augmented Lagrangian algorithm).
 
 
 % The Hessian.
@@ -60,7 +60,7 @@ A few optimisation algorithms, which are among the most reliable for model-free 
 
 \noindent As the order in which the partial derivatives are calculated is inconsequential the Hessian is symmetric.
 
-The most powerful minimisation algorithm for model-free analysis -- Newton optimisation\index{minimisation techniques!Newton} -- requires the value, gradient, and Hessian at the current parameter values.
+The most powerful minimisation algorithm for model-free analysis -- Newton optimisation\index{minimisation algorithm!Newton} -- requires the value, gradient, and Hessian at the current parameter values.
 
 
 

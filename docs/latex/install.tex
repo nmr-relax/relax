@@ -15,11 +15,11 @@ The following packages need to be installed before using relax:
 \item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.3 or higher.
 \item[\href{http://numpy.scipy.org/}{NumPy}\index{NumPy}:]  Version 1.0.4 or higher.  This package is used for most of the numerical calculations within relax.
 \item[\href{http://www.scipy.org/}{SciPy}\index{SciPy}:]  Version 0.7.1 or higher.  This package is optional.  It is required only for the frame order theory analyses.
-\item[\href{http://www.scipy.org/}{wxPython}\index{wxPython}:]  Version 2.8 or higher.  This package is also optional.  It is required for the operation of the graphical user interface (GUI)\index{GUI}.
-\item[\href{http://mpi4py.scipy.org/}{mpi4py}\index{mpi4py}:]  Version 1.2 or higher.  This optional dependency is essential for running relax in MPI multi-processor mode.
+\item[\href{http://www.scipy.org/}{wxPython}\index{wxPython}:]  Version 2.8 or higher.  This package is also optional.  It is required for the operation of the graphical user interface (GUI)\index{User interface!GUI}.
+\item[\href{http://mpi4py.scipy.org/}{mpi4py}\index{MPI!mpi4py}:]  Version 1.2 or higher.  This optional dependency is essential for running relax in MPI multi-processor mode.
 \end{description}
 
-Older versions of these packages may work, use them at your own risk.  If, for older dependency versions, errors do occur please submit a bug report to the bug tracker\index{bug tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.  That way a solution may be created for the next relax release.
+Older versions of these packages may work, use them at your own risk.  If, for older dependency versions, errors do occur please submit a bug report to the bug tracker\index{bug!tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.  That way a solution may be created for the next relax release.
 
 
 
@@ -34,18 +34,18 @@ Older versions of these packages may work, use them at your own risk.  If, for o
 \subsection{The source releases}
 \label{sect: source releases}
 
-Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \file{*.so}, \file{*.pyd} or \file{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{Scons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files installed.  Once Scons is installed type
+Two types of software packages are available for download -- the precompiled and source distribution.  Currently only relaxation curve-fitting requires compilation to function and all other features of relax will be fully functional without compilation.  If relaxation curve-fitting is required but no precompiled version of relax exists for your operating system or architecture then, if a C compiler is present, the C code can be compiled into the shared objects files \file{*.so}, \file{*.pyd} or \file{*.dylib} which are loaded as modules into relax\index{C module compilation}.  To build these modules the Scons\index{SCons|textbf} system from \href{http://scons.org/}{http://scons.org/} is required.  This software requires the Python and numpy header files installed.  Once Scons is installed type
 
 \example{\$ scons}
-\index{scons}
+\index{SCons|textbf}
 
-in the base directory where relax has been installed and the C modules should, hopefully, compile without any problems.  Otherwise please submit a bug report to the bug tracker\index{bug tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.
+in the base directory where relax has been installed and the C modules should, hopefully, compile without any problems.  Otherwise please submit a bug report to the bug tracker\index{bug!tracker} at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax}.
 
 
 
 % Installation on GNU/Linux.
 \subsection{Installation on GNU/Linux}
-\index{GNU/Linux|textbf}
+\index{Operating system!GNU/Linux|textbf}
 
 To install the program relax on a GNU/Linux system download either the precompiled distribution\index{distribution archive} labelled \file{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \file{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user ``root'', unpack and decompress the archive within the \directory{/usr/local} directory by typing, for instance
 
@@ -64,7 +64,7 @@ and finally possibly creating the byte-compiled Python \file{*.pyc} files to spe
 in the relax base directory.  Alternatively if the Scons system is installed, by typing as the root user
 
 \example{\$ scons install}
-\index{scons}
+\index{SCons!install|textbf}
 
 in the relax base directory, a directory in \directory{/usr/local/} called \file{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \directory{/usr/local/bin} to the file \directory{/usr/local/relax/relax} will be created, and then finally the Python \file{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \file{sconstruct} in the base relax directory should be modified by changing the variable \prompt{INSTALL\_PATH} to point to the desired location.
 
@@ -72,7 +72,7 @@ in the relax base directory, a directory in \directory{/usr/local/} called \file
 
 % Installation on MS Windows.
 \subsection{Installation on MS Windows}
-\index{MS Windows|textbf}
+\index{Operating system!MS Windows|textbf}
 
 In addition to the above dependencies, running relax on MS Windows requires a number of additional programs.  These include:
 
@@ -91,7 +91,7 @@ Note that the pre-compiled binary distribution was built using a specific Python
 
 % Installation on Mac OS X.
 \subsection{Installation on Mac OS X}
-\index{Mac OS X|textbf}
+\index{Operating system!Mac OS X|textbf}
 
 There are three ways of installing relax on a Mac.  These are described at \href{http://www.nmr-relax.com/download.html}{http://www.nmr-relax.com/download.html} and are the pre-compiled relax application, the Fink or the source releases.
 

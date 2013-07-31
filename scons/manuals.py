@@ -427,6 +427,9 @@ def compile_user_manual_pdf(target, source, env, convert=True):
     print("\n\n\n <<< LaTeX (third round) >>>\n\n\n")
     system('latex relax')
 
+    print("\n\n\n <<< Makeindex >>>\n\n\n")
+    system('makeindex relax')
+
     print("\n\n\n <<< LaTeX (fourth round) >>>\n\n\n")
     system('latex relax')
 

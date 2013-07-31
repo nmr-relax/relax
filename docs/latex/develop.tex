@@ -254,7 +254,7 @@ Comments are a very important component within relax.  In the current source cod
 \subsection{Submitting changes as a patch}
 \index{patch|textbf}
 
-The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix make sure you have submitted a bug report\index{bug report} to the bug tracker\index{bug tracker} located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch -- the Unix command \file{diff} or the Subversion program.  The resultant file \file{patch} of either the \file{diff} or \file{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list\index{mailing list!relax-devel}.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log\index{commit log} message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
+The preferred method for submitting fixes and improvements to the relax source code is by the creation of a patch.  If your changes are a fix make sure you have submitted a bug report\index{bug!report} to the bug tracker\index{bug!tracker} located at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} first.  See section~\ref{reporting bugs} on page~\pageref{reporting bugs} for more details.  Two methods can be used to generate the patch -- the Unix command \file{diff} or the Subversion program.  The resultant file \file{patch} of either the \file{diff} or \file{svn} command described below can be posted to the ``relax-devel at gna.org'' mailing list\index{mailing list!relax-devel}.  Please label within your post which version of relax you modified or which revision the patch is for.  Also try to create a commit log\index{commit log} message according to the format described in section~\ref{commit log format} on page~\pageref{commit log format} for one of the relax committers to use as a template for committing the change.
 
 
 
@@ -336,7 +336,7 @@ If you are a relax developer and you have commit access to the repository the fo
 
 \item Next should be another blank line.
 
-\item If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository\index{repository}, mailing lists\index{mailing list}, bug tracker\index{bug tracker}, etc.  An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org''\index{mailing list!relax-devel} describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
+\item If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).  All relevant links should be included to allow easy navigation between the repository\index{repository}, mailing lists\index{mailing list}, bug tracker\index{bug!tracker}, etc.  An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org''\index{mailing list!relax-devel} describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
 
 \item A full description with all the details can follow.  This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
 \end{itemize}
@@ -494,7 +494,7 @@ and your private branch deleted
 \section{The SCons build system}
 \index{SCons|textbf}
 
-The \href{http://www.scons.org/}{SCons} build system was chosen over other build systems including \prompt{make}\index{make} as it is a cross-platform build system which can be used in Unix\index{Unix}, GNU/Linux\index{GNU/Linux}, Mac OS X\index{Mac OS X}, and even MS Windows\index{MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file \file{sconstruct} in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
+The \href{http://www.scons.org/}{SCons} build system was chosen over other build systems including \prompt{make}\index{make} as it is a cross-platform build system which can be used in Unix\index{Operating system!Unix}, GNU/Linux\index{Operating system!GNU/Linux}, Mac OS X\index{Operating system!Mac OS X}, and even MS Windows\index{Operating system!MS Windows} (the correct compilers are nevertheless required).  Various components of the program relax can be created using the SCons utility.  This includes C module compilation, manual creation, distribution creation, and cleaning up and removing certain files.  The file \file{sconstruct} in the base relax directory, which consists of python code, directs the operation of SCons for the various functions.
 
 
 
@@ -578,7 +578,7 @@ replacing \prompt{bugman} with your user name if you are a relax developer, othe
 \example{\$ svn co svn://svn.gna.org/svn/relax/tags/1.2.3 relax}
 \index{Subversion!check out}
 
-Then build the binary distribution and send a message to the relax development mailing list\index{mailing list!relax-devel}.  If compilation does not work please submit a bug to the bug tracker\index{bug tracker} system at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.  More information about donating binary distributions to the relax project is given in the open source infrastructure chapter (Chapter~\ref{ch: open source}, page~\pageref{ch: open source}).
+Then build the binary distribution and send a message to the relax development mailing list\index{mailing list!relax-devel}.  If compilation does not work please submit a bug to the bug tracker\index{bug!tracker} system at \href{https://gna.org/bugs/?group=relax}{https://gna.org/bugs/?group=relax} detailing the relax version, operation system, architecture, and any other information you believe will help to solve the problem.  More information about donating binary distributions to the relax project is given in the open source infrastructure chapter (Chapter~\ref{ch: open source}, page~\pageref{ch: open source}).
 
 
 
@@ -644,11 +644,11 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
 
-\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \directory{prompt/}.
+\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \directory{prompt/}.
 
-\item[Script:]  If a script\index{script|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions available at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
+\item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions available at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
 
-\item[GUI:]  The graphical user interface\index{GUI|textbf} code base is located in the \directory{gui} directory.
+\item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui} directory.
 
 \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.  This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
 
@@ -695,9 +695,9 @@ Sorry in advance, but the following is the standard pre-composed response to a p
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \section{The bug, task, and support request trackers}
-\index{bug|textbf}
-\index{task|textbf}
-\index{support request|textbf}
+\index{bug!tracker|textbf}
+\index{task!tracker|textbf}
+\index{support request!tracker|textbf}
 \index{tracker!bug|textbf}
 \index{tracker!task|textbf}
 \index{tracker!support request|textbf}
