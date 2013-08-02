@@ -235,7 +235,7 @@ uf.add_keyarg(
     name = "spectrum_id",
     py_type = "str_or_str_list",
     desc_short = "spectrum ID string",
-    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values. If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}."
+    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}."
 )
 uf.add_keyarg(
     name = "heteronuc",
