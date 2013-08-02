@@ -47,7 +47,7 @@ class Peak_lists(SystemTestCase):
 
         # Missing module.
         if not dep_check.C_module_exp_fn and methodName in ['test_bug_17276_peak_lists', 'test_bug_20873_peak_lists', 'test_ccpn_analysis']:
-            # Store in the status object. 
+            # Store in the status object.
             status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
 
@@ -78,7 +78,7 @@ class Peak_lists(SystemTestCase):
         self.interpreter.sequence.read(file='test.seq', dir=path, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None)
 
         # Load the intensities.
-        self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=['2', '0'], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None) 
+        self.interpreter.spectrum.read_intensities(file='test.seq', dir=path, spectrum_id=['2', '0'], heteronuc='N', proton='HN', int_method='height', int_col=[6, 7], spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, sep=None, spin_id=None, ncproc=None)
 
         # The peak intensities.
         data_2 = [337765.90000000002, 1697771.0, 867389.80000000005, 2339480.0, 2574062.0, 1609356.0, 2179341.0, 1563795.0, 1535896.0, 3578841.0]
@@ -206,20 +206,23 @@ class Peak_lists(SystemTestCase):
         """Test the reading of an NMRPipe seriesTab peak list."""
 
         # Create the sequence data, and name the spins.
-        self.interpreter.residue.create(res_num = 62, res_name=None, mol_name=None )
+        self.interpreter.residue.create(res_num = 62)
         self.interpreter.spin.name(name='NE1', spin_id=':62')
         self.interpreter.residue.create(res_num = 10)
         self.interpreter.spin.name(name='N', spin_id=':10')
         self.interpreter.residue.create(res_num = 6)
         self.interpreter.spin.name(name='N', spin_id=':6')
 
-        # Read the peak list.
-        self.interpreter.spectrum.read_intensities(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+        # Read the peak list for W62NE1-W62HE1, with heteronuc=NE1 and proton=HE1.
+        self.interpreter.spectrum.read_intensities(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', heteronuc='NE1', proton='HE1', int_method='point sum')
+
+        # Read the peak list for heteronuc=N and proton=H.
+        self.interpreter.spectrum.read_intensities(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='point sum')
 
         # Test the data.
-        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities['test']), +1.851056e+06)
-        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities['test']), +3.224387e+05)
-        self.assertEqual(list(cdp.mol[0].res[2].spin[0].intensities['test']), +1.479366e+06)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].intensities['test'], +1.851056e+06)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].intensities['test'], +3.224387e+05)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].intensities['test'], +1.479366e+06)
 
 
     def test_read_peak_list_sparky(self):
