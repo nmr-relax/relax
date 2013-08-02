@@ -157,5 +157,14 @@ def read_list_intensity_seriestab(file_data=None, int_col=None):
         # Add 1 to current spectrum counter.
         i += 1
 
+    # Remove from data_all where empty list starts. They are created where spins are
+    # skipped for ID = '?-?'.
+    for i in range(len(data_all)):
+        spin = data_all[i]
+        if spin[0] == None and spin[1] == None and spin[2] == None:
+            # Replace the data
+            data_all = data_all[:i]
+            break
+
     # Return the data.
     return data_all
