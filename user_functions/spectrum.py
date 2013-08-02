@@ -361,7 +361,7 @@ uf.desc[-1].add_paragraph("To read the reference and saturated spectra peak heig
 uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='ref.text', spectrum_id='ref')")
 uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='sat.text', spectrum_id='sat')")
 uf.backend = spectrum.read
-uf.menu_text = "&read"
+uf.menu_text = "&read_intensities"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 140
 uf.wizard_size = (1000, 750)
