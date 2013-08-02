@@ -587,7 +587,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins. If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}.
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
