@@ -663,6 +663,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
 
+        # Extract the expected number of spectrum ID's.
+        nr_int_col = len(intensity_data[0][3])
+
+        # Checks.
+        if (isinstance(spectrum_id, list) and len(spectrum_id) != nr_int_col) or (not isinstance(spectrum_id, list) and nr_int_col > 1):
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
+
         # Convert the residue number to a spin ID.
         for i in range(len(intensity_data)):
             # Generate the spin_id.
