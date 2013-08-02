@@ -712,20 +712,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             # Replace the data.
             intensity_data[i][2] = spin_id
 
-    # Add the spectrum id (and ncproc) to the relax data store.
-    spectrum_ids = spectrum_id
-    if isinstance(spectrum_id, str):
-        spectrum_ids = [spectrum_id]
-    if not hasattr(cdp, 'spectrum_ids'):
-        cdp.spectrum_ids = []
-        if ncproc != None:
-            cdp.ncproc = {}
-    for i in range(len(spectrum_ids)):
-        if not spectrum_ids[i] in cdp.spectrum_ids:
-            cdp.spectrum_ids.append(spectrum_ids[i])
-            if ncproc != None:
-                cdp.ncproc[spectrum_ids[i]] = ncproc
-
     # Loop over the peak intensity data.
     data = []
     data_flag = False
@@ -781,6 +767,20 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
             # Append the data for printing out.
             data.append([spin_id, repr(intensity[i])])
+
+    # Add the spectrum id (and ncproc) to the relax data store.
+    spectrum_ids = spectrum_id
+    if isinstance(spectrum_id, str):
+        spectrum_ids = [spectrum_id]
+    if not hasattr(cdp, 'spectrum_ids'):
+        cdp.spectrum_ids = []
+        if ncproc != None:
+            cdp.ncproc = {}
+    for i in range(len(spectrum_ids)):
+        if not spectrum_ids[i] in cdp.spectrum_ids:
+            cdp.spectrum_ids.append(spectrum_ids[i])
+            if ncproc != None:
+                cdp.ncproc[spectrum_ids[i]] = ncproc
 
     # No data.
     if not data_flag:
