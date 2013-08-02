@@ -666,6 +666,12 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the expected number of spectrum ID's.
         nr_int_col = len(intensity_data[0][3])
 
+        # Make it possible to autogenerate spectrum ID's, if spectrum_id='auto'.
+        if not isinstance(spectrum_id, list) and spectrum_id.lower() == 'auto':
+            spectrum_id = []
+            for i in range(nr_int_col):
+                spectrum_id.append('Z_A%s'%i)
+
         # Checks.
         if (isinstance(spectrum_id, list) and len(spectrum_id) != nr_int_col) or (not isinstance(spectrum_id, list) and nr_int_col > 1):
             raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
