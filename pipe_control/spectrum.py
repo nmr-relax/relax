@@ -672,10 +672,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             for i in range(nr_int_col):
                 spectrum_id.append('Z_A%s'%i)
 
-        # Checks.
-        if (isinstance(spectrum_id, list) and len(spectrum_id) != nr_int_col) or (not isinstance(spectrum_id, list) and nr_int_col > 1):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
-
         # Convert the residue number to a spin ID.
         for i in range(len(intensity_data)):
             # Generate the spin_id.
@@ -743,6 +739,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             intensity = [intensity]
         if not isinstance(spectrum_id, list):
             spectrum_id = [spectrum_id]
+
+        # Checks for matching length of spectrum IDs and intensities columns.
+        if len(spectrum_id) != len(intensity):
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
 
         # Loop over the data.
         for i in range(len(intensity)):
