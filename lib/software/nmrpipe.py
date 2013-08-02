@@ -125,7 +125,7 @@ def read_list_intensity_seriestab(file_data=None, int_col=None):
             try:
                 res_num = int(x_row[-3])
             except:
-                raise RelaxError("Improperly formatted Sparky file.")
+                raise RelaxError("Improperly formatted NMRPipe SeriesTab file.")
 
             # Intensity.
             try:
