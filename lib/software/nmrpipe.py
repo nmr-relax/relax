@@ -96,12 +96,9 @@ def read_list_intensity_seriestab(file_data=None, int_col=None):
     # Create an empty intensity list.
     intensity_list = [None]*len(spectra)
 
-    # Create an empty data list.
+    # Create the whole empty data_all list, where entries will be replaced later.
     # Format: H_name, X_name, spin_id, intensity, line.
-    data = [None, None, None, intensity_list, None]
-
-    # Create the whole data_all list, where entries will be replaced later.
-    data_all = [data]*len(file_data)
+    data_all = [[None, None, None, intensity_list, None]]*len(file_data)
 
     # Define a current spectrum counter.
     i = 0
