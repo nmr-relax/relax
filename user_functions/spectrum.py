@@ -235,7 +235,7 @@ uf.add_keyarg(
     name = "spectrum_id",
     py_type = "str_or_str_list",
     desc_short = "spectrum ID string",
-    desc = "The unique spectrum ID string to associate with the peak intensity values."
+    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}."
 )
 uf.add_keyarg(
     name = "heteronuc",
@@ -351,6 +351,7 @@ uf.desc[-1].add_paragraph("The peak list or intensity file will be automatically
 uf.desc[-1].add_paragraph("Sparky peak list:  The file should be a Sparky peak list saved after typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd, 3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed by changing the window options.  If the peak intensity data is not within column 3, set the integration column to the appropriate number (column numbering starts from 0 rather than 1).")
 uf.desc[-1].add_paragraph("XEasy peak list:  The file should be the saved XEasy text window output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11th column) which contains either the peak height or peak volume data.  Because the columns are fixed, the integration column number will be ignored.")
 uf.desc[-1].add_paragraph("NMRView:  The file should be a NMRView peak list. The default is to use column 16 (which contains peak heights) for peak intensities. To use use peak volumes (or evolumes), int_col must be set to 15.")
+uf.desc[-1].add_paragraph("NMRPipe seriesTab:  The file should be a NMRPipe-format Spectral Series list.  If the spectrum_id='auto', the ID's are auto generated in form of Z_A{i}.")
 uf.desc[-1].add_paragraph("Generic intensity file:  This is a generic format which can be created by scripting to support non-supported peak lists.  It should contain in the first few columns enough information to identify the spin.  This can include columns for the molecule name, residue number, residue name, spin number, and spin name.  Alternatively a spin ID string column can be used. The peak intensities can be placed in another column specified by the integration column number.  Intensities from multiple spectra can be placed into different columns, and these can then be specified simultaneously by setting the integration column value to a list of columns.  This list must be matched by setting the spectrum ID to a list of the same length.  If columns are delimited by a character other than whitespace, this can be specified with the column separator.  The spin ID can be used to restrict the loading to specific spin subsets.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -361,7 +362,7 @@ uf.desc[-1].add_paragraph("To read the reference and saturated spectra peak heig
 uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='ref.text', spectrum_id='ref')")
 uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='sat.text', spectrum_id='sat')")
 uf.backend = spectrum.read
-uf.menu_text = "&read"
+uf.menu_text = "&read_intensities"
 uf.gui_icon = "oxygen.actions.document-open"
 uf.wizard_height_desc = 140
 uf.wizard_size = (1000, 750)

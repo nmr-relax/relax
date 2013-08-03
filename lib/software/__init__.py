@@ -25,6 +25,7 @@
 __all__ = [
     'bruker_dc',
     'grace',
+    'nmrpipe',
     'nmrview',
     'opendx',
     'sparky',

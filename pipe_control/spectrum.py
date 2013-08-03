@@ -587,7 +587,7 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_A{i}.
     @type spin_id:          None or str
     @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
     @type ncproc:           int or None
@@ -622,9 +622,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
     # Automatic format detection.
     format = autodetect_format(file_data)
-
-    # Flag for single or multiple spectrum extraction
-    single_spectrum = True
 
     # Generic.
     if format == 'generic':
@@ -666,38 +663,22 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
 
-        # Loop over each spectrum
+        # Extract the expected number of spectrum ID's.
+        nr_int_col = len(intensity_data[0][3])
+
+        # Make it possible to autogenerate spectrum ID's, if spectrum_id='auto'.
+        if not isinstance(spectrum_id, list) and spectrum_id.lower() == 'auto':
+            spectrum_id = []
+            for i in range(nr_int_col):
+                spectrum_id.append('Z_A%s'%i)
+
+        # Convert the residue number to a spin ID.
         for i in range(len(intensity_data)):
-            spectrum = intensity_data[i][0]
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
 
-            # Get the spectrum name
-            spectrum_name = intensity_data[i][1]
-
-            #Loop over each spin in the spectrum information
-            for j in range(len(spectrum)):
-                # Extract spin information
-                spin =  spectrum[j]
-
-                # Extract proton info
-                h_name = spin[0]
-
-                # Extract heteronucleus info
-                x_name = spin[1]
-
-                # Extract the residue number
-                res_num = spin[2]
-
-                # Extract the Intensity
-                intensity = spin[3]
-
-                # Generate the spin_id.
-                spin_id = generate_spin_id_unique(res_num=res_num, spin_name=x_name)
-
-                # Replace residue number with the spin_id.
-                intensity_data[i][0][j][2] = spin_id
-
-        # Change Flag for single or multiple spectrum extraction
-        single_spectrum = False
+            # Replace the data.
+            intensity_data[i][2] = spin_id
 
     # Sparky.
     elif format == 'sparky':
@@ -731,23 +712,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             # Replace the data.
             intensity_data[i][2] = spin_id
 
-    # Add the spectrum id (and ncproc) to the relax data store.
-    spectrum_ids = spectrum_id
-    if isinstance(spectrum_id, str):
-        spectrum_ids = [spectrum_id]
-    if not hasattr(cdp, 'spectrum_ids'):
-        cdp.spectrum_ids = []
-        if ncproc != None:
-            cdp.ncproc = {}
-    for i in range(len(spectrum_ids)):
-        if not spectrum_ids[i] in cdp.spectrum_ids:
-            cdp.spectrum_ids.append(spectrum_ids[i])
-            if ncproc != None:
-                cdp.ncproc[spectrum_ids[i]] = ncproc
-
     # Loop over the peak intensity data.
     data = []
     data_flag = False
+
     for i in range(len(intensity_data)):
         # Extract the data.
         H_name, X_name, spin_id, intensity, line = intensity_data[i]
@@ -757,6 +725,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             intensity = [intensity]
         if not isinstance(spectrum_id, list):
             spectrum_id = [spectrum_id]
+
+        # Checks for matching length of spectrum IDs and intensities columns.
+        if len(spectrum_id) != len(intensity):
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
 
         # Loop over the data.
         for i in range(len(intensity)):
@@ -795,6 +767,20 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
             # Append the data for printing out.
             data.append([spin_id, repr(intensity[i])])
+
+    # Add the spectrum id (and ncproc) to the relax data store.
+    spectrum_ids = spectrum_id
+    if isinstance(spectrum_id, str):
+        spectrum_ids = [spectrum_id]
+    if not hasattr(cdp, 'spectrum_ids'):
+        cdp.spectrum_ids = []
+        if ncproc != None:
+            cdp.ncproc = {}
+    for i in range(len(spectrum_ids)):
+        if not spectrum_ids[i] in cdp.spectrum_ids:
+            cdp.spectrum_ids.append(spectrum_ids[i])
+            if ncproc != None:
+                cdp.ncproc[spectrum_ids[i]] = ncproc
 
     # No data.
     if not data_flag:
