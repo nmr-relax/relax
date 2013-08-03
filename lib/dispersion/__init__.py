@@ -34,5 +34,6 @@ __all__ = [
     'ns_2site_expanded',
     'ns_2site_star',
     'ns_matrices',
+    'tp02',
     'two_point'
 ]
