@@ -137,7 +137,7 @@ The problem of finding the minimum is complicated by the fact that optimisation 
 
 At the simplest level all minimisation techniques require at least a function which will supply a single value for different parameter values $\theta$.
 Conceptually this is the height of the space at the current position.
-For certain algorithms, such a simplex minimisation\index{optimisation!Nelder-Mead simplex algorithm}, this single value suffices.
+For certain algorithms, such a simplex minimisation\index{optimisation!algorithm!Nelder-Mead simplex}, this single value suffices.
 
 
 
@@ -166,7 +166,7 @@ The gradient is supplied as a second function to the algorithm which is then uti
 
 \noindent where $f_k$ is the function value at the current parameter position $\theta_k$, $\nabla f_k$ is the gradient at the same position, and $x$ is an arbitrary vector.  By accumulating information from previous parameter positions a more comprehensive geometric description of the curvature of the space can be exploited by the algorithm for more efficient optimisation.
 
-An example of a powerful algorithm which requires both the value and gradient at current parameter values is the BFGS quasi-Newton minimisation\index{optimisation!BFGS algorithm}.  The gradient is also essential for the use of the Method of Multipliers constraints algorithm (also known as the Augmented Lagrangian algorithm).
+An example of a powerful algorithm which requires both the value and gradient at current parameter values is the BFGS quasi-Newton minimisation\index{optimisation!algorithm!BFGS}.  The gradient is also essential for the use of the Method of Multipliers constraints algorithm (also known as the Augmented Lagrangian algorithm).
 
 
 
@@ -195,7 +195,7 @@ The Hessian is the matrix of second partial derivatives and is defined as
 \noindent The order in which the partial derivatives are calculated is inconsequential, hence the Hessian is symmetric.
 
 As the Hessian is computationally expensive a number of optimisation algorithms try to approximate it, the BFGS algorithm being a notable example.
-The most powerful minimisation algorithm for model-free analysis -- Newton optimisation\index{optimisation!Newton algorithm} -- requires the value, gradient, and Hessian at the current parameter values.
+The most powerful minimisation algorithm for model-free analysis -- Newton optimisation\index{optimisation!algorithm!Newton} -- requires the value, gradient, and Hessian at the current parameter values.
 
 
 
@@ -226,28 +226,28 @@ The defining characteristic of a line search algorithm is to choose a search dir
 
 % The steepest descent algorithm.
 \subsubsection{The steepest descent algorithm}
-\index{optimisation!steepest descent algorithm|textbf}
+\index{optimisation!algorithm!steepest descent|textbf}
 
 One of the simplest line search methods is the steepest descent algorithm.  The search direction is simply the negative gradient, $p_k = -\nabla f_k$, and hence the direction of maximal descent is always followed.  This method is inefficient -- the linear rate of convergence requires many iterations of the algorithm to reach the minimum and it is susceptible to being trapped on saddle points within the space.
 
 
 % The coordinate descent algorithm.
 \subsubsection{The coordinate descent algorithm}
-\index{optimisation!coordinate descent algorithm|textbf}
+\index{optimisation!algorithm!coordinate descent|textbf}
 
 The coordinate descent algorithms are a simplistic group of line search methods whereby the search directions alternate between vectors parallel to the parameter axes.  For the back-and-forth coordinate descent the search directions cycle in one direction and then back again.  For example for a three parameter model the search directions cycle $\theta_1, \theta_2, \theta_3, \theta_2, \theta_1, \theta_2, \hdots$, which means that each parameter of the model is optimised one by one.  The method becomes less efficient when approaching the minimum as the step length $\alpha_k$ continually decreases (ibid.).
 
 
 % The BFGS algorithm.
 \subsubsection{The BFGS algorithm}
-\index{optimisation!BFGS algorithm|textbf}
+\index{optimisation!algorithm!BFGS|textbf}
 
 The quasi-Newton methods begin with an initial guess of the Hessian and update it at each iteration using the function value and gradient.  Therefore the benefits of using the quadratic model of \eqref{eq: quadratic model} are obtained without calculating the computationally expensive Hessian.  The Hessian approximation $B_k$ is updated using various formulae, the most common being the BFGS formula \citep{Broyden70,Fletcher70,Goldfarb70,Shanno70}.  The search direction is given by the equation $p_k = -B_k^{-1} \nabla f_k$.  The quasi-Newton algorithms can attain a superlinear rate of convergence, being superior to the steepest descent or coordinate descent methods.
 
 
 % The Newton algorithm.
 \subsubsection{The Newton algorithm}
-\index{optimisation!Newton algorithm|textbf}
+\index{optimisation!algorithm!Newton|textbf}
 
 The most powerful line search method when close to the minimum is the Newton search direction
 \begin{equation} \label{eq: Newton dir}
@@ -260,7 +260,7 @@ This algorithm is also known as the Newton-Raphson method.
 
 % The Newton conjugate gradient algorithm.
 \subsubsection{The Newton conjugate gradient algorithm}
-\index{optimisation!Newton-CG algorithm|textbf}
+\index{optimisation!algorithm!Newton-CG|textbf}
 
 A practical Newton algorithm which is robust for distant starting points is the Newton conjugate gradient method (Newton-CG).  This line search method, which is also called the truncated Newton algorithm, finds an approximate solution to Equation~\eqref{eq: Newton dir} by using a conjugate gradient (CG) sub-algorithm.  Retaining the performance of the pure Newton algorithm, the CG sub-algorithm guarantees that the search direction is always downhill as the method terminates when negative curvature is encountered.
 
@@ -283,33 +283,33 @@ In the trust region class of algorithms the curvature of the space is modelled q
  \min_{p \in \mathbb{R}^n} m_k(p) = f_k  +  p^{T} \nabla f_k  +  \tfrac{1}{2} p^{T} B_k p,  \qquad \textrm{s.t. } \lVert p \rVert \leqslant \Delta_k,
 \end{equation}
 
-\noindent where $m_k(p)$ is the quadratic model, $B_k$ is a positive definite matrix which can be the true Hessian as in the Newton model or an approximation such as the BFGS\index{optimisation!BFGS algorithm} matrix, and $\lVert p \rVert$ is the Euclidean norm of $p$.  The trust region radius $\Delta_k$ is modified dynamically during optimisation -- if the quadratic model is found to be a poor representation of the space the radius is decreased whereas if the quadratic model is found to be reasonable the radius is increased to allow larger, more efficient steps to be taken.
+\noindent where $m_k(p)$ is the quadratic model, $B_k$ is a positive definite matrix which can be the true Hessian as in the Newton model or an approximation such as the BFGS\index{optimisation!algorithm!BFGS} matrix, and $\lVert p \rVert$ is the Euclidean norm of $p$.  The trust region radius $\Delta_k$ is modified dynamically during optimisation -- if the quadratic model is found to be a poor representation of the space the radius is decreased whereas if the quadratic model is found to be reasonable the radius is increased to allow larger, more efficient steps to be taken.
 
 
 % The Cauchy point algorithm.
 \subsubsection{The Cauchy point algorithm}
-\index{optimisation!Cauchy point algorithm|textbf}
+\index{optimisation!algorithm!Cauchy point|textbf}
 
-The Cauchy point algorithm is similar in concept to the steepest descent\index{optimisation!steepest descent algorithm} line search algorithm.  The Cauchy point is the point lying on the gradient which minimises the quadratic model subject to the step being within the trust region.  By iteratively finding the Cauchy point the local minimum can be found.  The convergence of the technique is inefficient, being similar to that of the steepest descent algorithm.
+The Cauchy point algorithm is similar in concept to the steepest descent\index{optimisation!algorithm!steepest descent} line search algorithm.  The Cauchy point is the point lying on the gradient which minimises the quadratic model subject to the step being within the trust region.  By iteratively finding the Cauchy point the local minimum can be found.  The convergence of the technique is inefficient, being similar to that of the steepest descent algorithm.
 
 
 % The dogleg algorithm.
 \subsubsection{The dogleg algorithm}
-\index{optimisation!dogleg algorithm|textbf}
+\index{optimisation!algorithm!dogleg|textbf}
 
 In changing the trust region radius the exact solutions to \eqref{eq: trust region} map out a curved trajectory which starts parallel to the gradient for small radii.  The end of the trajectory, which occurs for radii greater than the step length, is the bottom of the quadratic model.  The dogleg algorithm attempts to follow a similar path by first finding the minimum along the gradient and then finding the minimum along a trajectory from the current point to the bottom of the quadratic model.  The minimum along the second path is either the trust region boundary or the quadratic solution.  The matrix $B_k$ of \eqref{eq: trust region} can be the BFGS matrix, the unmodified Hessian, or a Hessian modified to be positive definite.
 
 
 % Steihaug's algorithm.
 \subsubsection{Steihaug's algorithm}
-\index{optimisation!CG-Steihaug algorithm|textbf}
+\index{optimisation!algorithm!CG-Steihaug|textbf}
 
 Another trust region algorithm is Steihaug's modified conjugate gradient approach \citep{Steihaug83}.  For each step $k$ an iterative technique is used which is almost identical to the standard conjugate gradient procedure except for two additional termination conditions.  The first is if the next step is outside the trust region, the second is if a direction of zero or negative curvature is encountered.
 
 
 % The exact trust region.
 \subsubsection{The exact trust region}
-\index{optimisation!exact trust region algorithm|textbf}
+\index{optimisation!algorithm!exact trust region|textbf}
 
 An almost exact solution to \eqref{eq: trust region} can be found using an algorithm described in \citet{NocedalWright99}.  This exact trust region algorithm aims to precisely find the minimum of the quadratic model $m_k$ of the space within the trust region $\Delta_k$.  Any matrix $B_k$ can be used to construct the quadratic model.  However, the technique is computationally expensive.
 
@@ -325,7 +325,7 @@ The conjugate gradient algorithm (CG) was originally designed as a mathematical 
  p_i^T \nabla^2 f_k p_j = 0,  \qquad \textrm{for all } i \ne j.
 \end{equation}
 
-\noindent By performing line searches over all directions $p_j$ the solution to the quadratic model \eqref{eq: quadratic model} of the position $\theta_k$ will be found in $n$ or less iterations of the CG algorithm where $n$ is the total number of parameters in the model.  The technique performs well on large problems with many parameters as no matrices are calculated or stored.  The algorithms perform better than the steepest descent method and preconditioning of the system is used to improve optimisation.  Preconditioned techniques include the Fletcher-Reeves\index{optimisation!Fletcher-Reeves algorithm|textbf} algorithm which was the original conjugate gradient optimisation technique \citep{FletcherReeves64}, the Polak-Ribi\`ere\index{optimisation!Polak-Ribi\`ere algorithm|textbf} method \citep{PolakRibiere69}, a modified Polak-Ribi\`ere method called the Polak-Ribi\`ere +\index{optimisation!Polak-Ribi\`ere~+ algorithm|textbf} method \citep{NocedalWright99}, and the Hestenes-Stiefel\index{optimisation!Hestenes-Stiefel algorithm|textbf} algorithm which originates from a formula in \citet{HestenesStiefel52}.  As a line search is performed to find the minimum along each conjugate direction both the backtracking and Mor\'e and Thuente auxiliary step-length selection algorithms will be tested with the CG algorithms.
+\noindent By performing line searches over all directions $p_j$ the solution to the quadratic model \eqref{eq: quadratic model} of the position $\theta_k$ will be found in $n$ or less iterations of the CG algorithm where $n$ is the total number of parameters in the model.  The technique performs well on large problems with many parameters as no matrices are calculated or stored.  The algorithms perform better than the steepest descent method and preconditioning of the system is used to improve optimisation.  Preconditioned techniques include the Fletcher-Reeves\index{optimisation!algorithm!Fletcher-Reeves|textbf} algorithm which was the original conjugate gradient optimisation technique \citep{FletcherReeves64}, the Polak-Ribi\`ere\index{optimisation!algorithm!Polak-Ribi\`ere|textbf} method \citep{PolakRibiere69}, a modified Polak-Ribi\`ere method called the Polak-Ribi\`ere +\index{optimisation!algorithm!Polak-Ribi\`ere~+|textbf} method \citep{NocedalWright99}, and the Hestenes-Stiefel\index{optimisation!algorithm!Hestenes-Stiefel|textbf} algorithm which originates from a formula in \citet{HestenesStiefel52}.  As a line search is performed to find the minimum along each conjugate direction both the backtracking and Mor\'e and Thuente auxiliary step-length selection algorithms will be tested with the CG algorithms.
 
 
 
@@ -334,9 +334,9 @@ The conjugate gradient algorithm (CG) was originally designed as a mathematical 
 
 \subsection{Hessian modifications}
 
-The Newton search direction, used in both the line search and trust region methods, is dependent on the Hessian being positive definite for the quadratic model to be convex so that the search direction points sufficiently downhill.  This is not always the case as saddle points and other non-quadratic features of the space can be problematic.  Two classes of algorithms can be used to handle this situation.  The first involves using the conjugate gradient method as a sub-algorithm for solving the Newton problem for the step $k$.  The Newton-CG\index{optimisation!Newton-CG algorithm} line search algorithm described above is one such example.  The second class involves modifying the Hessian prior to, or at the same time as, finding the Newton step to guarantee that the replacement matrix $B_k$ is positive definite.  The convexity of $B_k$ is ensured by its eigenvalues all being positive.
+The Newton search direction, used in both the line search and trust region methods, is dependent on the Hessian being positive definite for the quadratic model to be convex so that the search direction points sufficiently downhill.  This is not always the case as saddle points and other non-quadratic features of the space can be problematic.  Two classes of algorithms can be used to handle this situation.  The first involves using the conjugate gradient method as a sub-algorithm for solving the Newton problem for the step $k$.  The Newton-CG\index{optimisation!algorithm!Newton-CG} line search algorithm described above is one such example.  The second class involves modifying the Hessian prior to, or at the same time as, finding the Newton step to guarantee that the replacement matrix $B_k$ is positive definite.  The convexity of $B_k$ is ensured by its eigenvalues all being positive.
 
-The first modification uses the Cholesky factorisation of the matrix $B_k$, initialised to the true Hessian, to test for convexity (Algorithm 6.3 of \citet{NocedalWright99}).  If factorisation fails the matrix is not positive definite and a constant $\tau_k$ times the identity matrix $I$ is then added to $B_k$.  The constant originates from the Robbins norm of the Hessian $\lVert \nabla^2 f_k \rVert_F$ and is steadily increased until the factorisation is successful.  The resultant Cholesky lower triangular matrix $L$ can then be used to find the approximate Newton direction.  If $\tau_k$ is too large the convergence of this technique can approach that of the steepest descent\index{optimisation!steepest descent algorithm} algorithm.
+The first modification uses the Cholesky factorisation of the matrix $B_k$, initialised to the true Hessian, to test for convexity (Algorithm 6.3 of \citet{NocedalWright99}).  If factorisation fails the matrix is not positive definite and a constant $\tau_k$ times the identity matrix $I$ is then added to $B_k$.  The constant originates from the Robbins norm of the Hessian $\lVert \nabla^2 f_k \rVert_F$ and is steadily increased until the factorisation is successful.  The resultant Cholesky lower triangular matrix $L$ can then be used to find the approximate Newton direction.  If $\tau_k$ is too large the convergence of this technique can approach that of the steepest descent\index{optimisation!algorithm!steepest descent} algorithm.
 
 The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} which modifies the Hessian during the execution of the Cholesky factorisation $\nabla^2 f_k = LIL^T$, where $L$ is a lower triangular matrix and $D$ is a diagonal matrix.  Only a single factorisation is required.  As rows and columns are interchanged during the algorithm the technique may be slow for large problems such as the optimisation of the model-free parameters of all spins together with the diffusion tensor parameters.  The rate of convergence of the technique is quadratic.
 
@@ -349,7 +349,7 @@ The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} 
 
 % Nelder-Mead simplex.
 \subsubsection{Nelder-Mead simplex}
-\index{optimisation!Nelder-Mead simplex algorithm|textbf}
+\index{optimisation!algorithm!Nelder-Mead simplex|textbf}
 
 Some optimisation algorithms cannot be classified within line search, trust region, or conjugate gradient categories.  For example the well known Nelder-Mead simplex optimisation algorithm.  The technique is often used as the only the function value is employed and hence the derivation of the gradient and Hessian can be avoided.  The simplex is created as an $n$-dimensional geometric object with $n+1$ vertices.  The first vertex is the starting position.  Each of the other $n$ vertices are created by shifting the starting position by a small amount parallel to one of unit vectors defining the coordinate system of the space.  Four simple rules are used to move the simplex through the space: reflection, extension, contraction, and a shrinkage of the entire simplex.  The result of these movements is that the simplex moves in an ameoboid-like fashion downhill, shrinking to pass through tight gaps and expanding to quickly move through non-convoluted space, eventually finding the minimum.
 
@@ -358,11 +358,11 @@ Key to these four movements is the pivot point, the centre of the face created b
 
 % Levenberg-Marquardt algorithm.
 \subsubsection{Levenberg-Marquardt algorithm}
-\index{optimisation!Levenberg-Marquardt algorithm|textbf}
+\index{optimisation!algorithm!Levenberg-Marquardt|textbf}
 
 Another algorithm is the commonly used Levenberg-Marquardt algorithm \citep{Levenberg44,Marquardt63}.
 This is the algorithm used by the model-free analysis programs Modelfree4\index{software!Modelfree}, Dasha\index{software!Dasha}, and Tensor2\index{software!Tensor}.
-This technique is designed for least-squares problems to which the chi-squared\index{chi-squared} equation \eqref{eq: chi2} belongs.  The key to the algorithm is the replacement of the Hessian with the Levenberg-Marquardt matrix $J^T J + \lambda I$, where $J$ is the Jacobian of the system calculated as the matrix of partial derivatives of the residuals, $\lambda > 0$ is a factor related to the trust-region radius, and $I$ is the identity matrix.  The algorithm is conceptually allied to the trust region methods and its performance varies finely between that of the steepest descent and the pure Newton step.  When far from the minimum $\lambda$ is large and the algorithm takes steps close to the gradient; when in vicinity of the minimum $\lambda$ heads towards zero and the steps taken approximate the Newton direction.  Hence the algorithm avoids the problems of the Newton\index{optimisation!Newton algorithm} algorithm when non-convex curvature is encountered and approximates the Newton step in convex regions of the space.
+This technique is designed for least-squares problems to which the chi-squared\index{chi-squared} equation \eqref{eq: chi2} belongs.  The key to the algorithm is the replacement of the Hessian with the Levenberg-Marquardt matrix $J^T J + \lambda I$, where $J$ is the Jacobian of the system calculated as the matrix of partial derivatives of the residuals, $\lambda > 0$ is a factor related to the trust-region radius, and $I$ is the identity matrix.  The algorithm is conceptually allied to the trust region methods and its performance varies finely between that of the steepest descent and the pure Newton step.  When far from the minimum $\lambda$ is large and the algorithm takes steps close to the gradient; when in vicinity of the minimum $\lambda$ heads towards zero and the steps taken approximate the Newton direction.  Hence the algorithm avoids the problems of the Newton\index{optimisation!algorithm!Newton} algorithm when non-convex curvature is encountered and approximates the Newton step in convex regions of the space.
 
 The technique does have one weak point though which is often mentioned only in the small print.
 That is that the algorithm catastrophically fails when the Levenberg-Marquardt matrix is singular.
@@ -385,7 +385,7 @@ To guarantee that the minimum will still be reached the implementation of constr
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \subsection{Method of Multipliers algorithm}
-\index{optimisation!Method of Multipliers constraint algorithm|textbf}
+\index{optimisation!constraint algorithm!Method of Multipliers|textbf}
 
 One of the most powerful approaches is the Method of Multipliers \citep{NocedalWright99}, also known as the Augmented Lagrangian.  Instead of a single optimisation the algorithm is iterative with each iteration consisting of an independent unconstrained minimisation on a sequentially modified space.  When inside the limits the function value is unchanged but when outside a penalty, which is proportional to the distance outside the limit, is added to the function value.  This penalty, which is based on the Lagrange multipliers, is smooth and hence the gradient and Hessian are continuous at and beyond the constraints.  For each iteration of the Method of Multipliers the penalty is increased until it becomes impossible for the parameter vector to be in violation of the limits.  This approach allows the parameter vector $\theta$ outside the limits yet the successive iterations ensure that the final results will not be in violation of the constraint.
 
@@ -469,7 +469,7 @@ In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \subsection{Logarithmic barrier constraint algorithm}
-\index{optimisation!Logarithmic barrier constraint algorithm|textbf}
+\index{optimisation!constraint algorithm!Logarithmic barrier|textbf}
 
 Another constraint method is that of the logarithmic barrier algorithm.
 As in the Method of Multipliers this method is iterative.
