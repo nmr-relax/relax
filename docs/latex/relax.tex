@@ -7,7 +7,7 @@
 \usepackage{natbib}
 
 % The index.
-\usepackage{makeidx}
+\usepackage{imakeidx}
 
 % Good looking tables.
 \usepackage{booktabs}
@@ -188,6 +188,11 @@
 %%%%%%%%%%%%%%%%%%%%%
 
 \begin{document}
+
+% Include the hyphenation rules.
+\include{hyphenation}
+
+
 \frontmatter
 
 
@@ -331,21 +336,31 @@
 \begin{spacedpara}
 
 
-% The chapters.
-%%%%%%%%%%%%%%%
+% Layout of the document.
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\part{The basics}
 \include{intro}
 \include{install}
 \include{infrastruct}
 \include{data_model}
+
+\part{The specific analyses}
 \include{curvefit}
 \include{noe}
 \include{model-free}
 \include{jw_mapping}
 \include{consistency_tests}
 \include{dispersion}
-\include{maths}
+
+\part{Power users}
 \include{develop}
+
+\part{Advanced topics}
+\include{optimisation}
+\include{maths}
+
+\part{Reference}
 \include{functions}
 \include{licence}
 
@@ -367,6 +382,81 @@
 
 % Index.
 %%%%%%%%
+
+% Cross-referencing.
+\index{AIC|see{model selection, AIC}}
+\index{AICc|see{model selection, AICc}}
+\index{anisotropic diffusion|see{diffusion, anisotropic}}
+\index{ANOVA model selection|see{model selection, ANOVA}}
+\index{asymmetric diffusion|see{diffusion, ellipsoid (asymmetric)}}
+\index{Augmented Lagrangian|see{optimisation, constraint algorithm, Method of Multipliers}}
+\index{axially symmetric diffusion|see{diffusion, spheroid (axially symmetric)}}
+\index{Bayesian model selection|see{model selection, Bayesian}}
+\index{BFGS|see{optimisation, algorithm, BFGS}}
+\index{BIC|see{model selection, BIC}}
+\index{Bootstrap model selection|see{model selection, Bootstrap}}
+\index{Brownian diffusion|see{diffusion, Brownian}}
+\index{bzip2|see{compression, bzip2}}
+\index{C module compilation|see{SCons, C module compilation}}
+\index{Cauchy point|see{optimisation, algorithm, Cauchy point}}
+\index{CG-Steihaug|see{optimisation, algorithm, CG-Steihaug}}
+\index{cross rate|see{relaxation rate, cross rate}}
+\index{cross-relaxation|see{relaxation rate, cross-relaxation}}
+\index{cross-validation model selection|see{model selection, cross-validation}}
+\index{Dasha|see{software, Dasha}}
+\index{dogleg|see{optimisation, algorithm, dogleg}}
+\index{exact trust region|see{optimisation, algorithm, exact trust region}}
+\index{ellipsoidal diffusion|see{diffusion, ellipsoid (asymmetric)}}
+\index{Fletcher-Reeves|see{optimisation, algorithm, Fletcher-Reeves}}
+\index{Frequentist model selection|see{model selection, Frequentist}}
+\index{GNU/Linux|see{Operating system, GNU/\ Lin\-ux}}
+\index{Grace|see{software, Grace}}
+\index{GUI|see{User interface, GUI}}
+\index{gzip|see{compression, gzip}}
+\index{Hestenes-Stiefel|see{optimisation, algorithm, Hestenes-Stiefel}}
+\index{Hypothesis testing model selection|see{model selection, Hypothesis testing}}
+\index{isotropic diffusion|see{diffusion, sphere (isotropic)}}
+\index{keyword argument|see{argument, keyword}}
+\index{Kullback-Leibler discrepancy|see{discrepancy, Kullback-Leibler}}
+\index{Levenberg-Marquardt|see{optimisation, algorithm, Levenberg-Marquardt}}
+\index{Linux|see{Operating system, GNU/\-Lin\-ux}}
+\index{Logarithmic barrier|see{optimisation, constraint algorithm, Logarithmic barrier}}
+\index{longitudinal relaxation|see{relaxation rate, spin-lattice}}
+\index{Mac OS X|see{Operating system, Mac OS X}}
+\index{Method of Multipliers|see{optimisation, constraint algorithm, Method of Multipliers}}
+\index{minfx|see{optimisation, minfx}}
+\index{Modelfree|see{software, Modelfree}}
+\index{MOLMOL|see{software, MOLMOL}}
+\index{MS Windows|see{Operating system, MS Windows}}
+\index{Nelder-Mead simplex|see{optimisation, algorithm, Nelder-Mead simplex}}
+\index{Newton|see{optimisation, algorithm, Newton}}
+\index{Newton-Raphson|see{optimisation, algorithm, Newton}}
+\index{Newton-CG|see{optimisation, algorithm, New\-ton-CG}}
+\index{NMRView|see{software, NMRView}}
+\index{OpenDX|see{software, OpenDX}}
+\index{OpenMPI|see{MPI, OpenMPI}}
+\index{OS X|see{Operating system, Mac OS X}}
+\index{Polak-Ribiere|see{optimisation, algorithm, Polak-Ribi\`ere}}
+\index{Polak-Ribiere +|see{optimisation, algorithm, Polak-Ribi\`ere +}}
+\index{PyMOL|see{software, PyMOL}}
+\index{R1@$\Rone$|see{relaxation rate, spin-lattice}}
+\index{R2@$\Rtwo$|see{relaxation rate, spin-spin}}
+\index{relax|see{software, relax}}
+\index{simplex algorithm|see{optimisation, algorithm, Nelder-Mead simplex}}
+\index{Sparky|see{software, Sparky}}
+\index{spherical diffusion|see{diffusion, sphere (isotropic)}}
+\index{spheroidal diffusion|see{diffusion, spheroid (axially symmetric)}}
+\index{spin-lattice relaxation|see{relaxation rate, spin-lattice}}
+\index{spin-spin relaxation|see{relaxation rate, spin-spin}}
+\index{steepest descent|see{optimisation, algorithm, steepest descent}}
+\index{step-length|see{optimisation, step-length selection algorithm}}
+\index{SVN|see{Subversion}}
+\index{svnmerge.py|see{Subversion, svnmerge.py}}
+\index{Tensor|see{software, Tensor}}
+\index{transverse relaxation|see{relaxation rate, spin-spin}}
+\index{Windows|see{Operating system, MS Windows}}
+\index{Unix|see{Operating system, Unix}}
+\index{XEasy|see{software, XEasy}}
 
 \printindex
 

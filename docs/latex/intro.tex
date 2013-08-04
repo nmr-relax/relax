@@ -74,7 +74,7 @@ Because relax is free software, if you would like to contribute addition feature
 The following tools are implemented as modular components to be used by any data analysis technique:
 
 \begin{itemize}
-\item Numerous high-precision optimisation algorithms\index{minimisation algorithm}.
+\item Numerous high-precision optimisation algorithms\index{optimisation!algorithm}.
 \item Model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}:
     \begin{itemize}
     \item Akaike's Information Criteria (AIC)\index{model selection!AIC}.
@@ -196,7 +196,7 @@ Probably the most important detail is that functions in Python require brackets 
 relax> minimise()
 \end{lstlisting}
 
-will commence minimisation\index{minimisation} however
+will commence minimisation\index{optimisation} however
 
 \begin{lstlisting}[numbers=none]
 relax> minimise
@@ -210,7 +210,7 @@ The arguments to a function are simply a comma separated list within the bracket
 relax> state.save('save', force=True)
 \end{lstlisting}
 
-Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{keyword argument}\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \prompt{file} and the value you would like to supply is \promptstring{R1.out}.  Various methods exist for supplying this argument.  Firstly you could simply type \promptstring{R1.out} into the correct position in the argument list.  Secondly you can type \prompt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
+Two types of arguments exist in Python\index{Python|textbf} -- standard arguments\index{argument} and keyword arguments\index{argument!keyword}.  The majority of arguments you will encounter within relax are keyword arguments however you may, in rare cases, encounter a non-keyword argument.  For these standard arguments just type the values in, although they must be in the correct order.  Keyword arguments consist of two parts -- the key and the value.  For example the key may be \prompt{file} and the value you would like to supply is \promptstring{R1.out}.  Various methods exist for supplying this argument.  Firstly you could simply type \promptstring{R1.out} into the correct position in the argument list.  Secondly you can type \prompt{file=`R1.out'}.  The power of this second option is that argument order is unimportant.  Therefore if you would like to change the default value of the very last argument, you don't have to supply values for all other arguments.  The only catch is that standard arguments must come before the keyword arguments.
 
 
 % Script screenshot
