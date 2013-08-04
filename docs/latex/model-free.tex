@@ -28,7 +28,7 @@
 
 \index{chi-squared|textbf}
 
-For the minimisation\index{minimisation} of the model-free models a chain of calculations, each based on a different theory, is required.  At the highest level the equation which is actually minimised is the chi-squared function
+For the minimisation\index{optimisation} of the model-free models a chain of calculations, each based on a different theory, is required.  At the highest level the equation which is actually minimised is the chi-squared function
 \begin{equation} \label{eq: chi-squared}
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
@@ -300,216 +300,39 @@ Extending the list of models given in \citet{Mandel95, Fushman97, Orekhov99b, Ko
 
 \subsection{Model-free optimisation theory}
 
+The implementation of optimisation in relax is discussed in detail in Chapter~\ref{ch: optimisation}.
+To understand the concepts in this subsection, it is best to look at that chapter first.
+
 
 % The model-free space.
 \subsubsection{The model-free space}
 
-The optimisation of the parameters of an arbitrary model is dependent on a function $f$ which takes the current parameter values $\theta \in \mathbb{R}^n$ and returns a single real value $f(\theta) \in \mathbb{R}$ corresponding to position $\theta$ in the $n$-dimensional space.  For it is that single value which is minimised as
-\begin{equation}
- \hat\theta = \arg \min_\theta f(\theta),
-\end{equation}
-
-\noindent where $\hat\theta$ is the parameter vector which is equal to the argument which minimises the function $f(\theta)$.  In model-free analysis $f(\theta)$ is the chi-squared\index{chi-squared|textbf} equation
-\begin{equation} \label{eq: chi2}
+In model-free analysis the target function $f(\theta)$ is the chi-squared\index{chi-squared|textbf} equation
+\begin{equation} \label{eq: chi2 mf}
  \chi^2(\theta) = \sum_{i=1}^n \frac{(\Ri - \Ri(\theta))^2}{\sigma_i^2},
 \end{equation}
 
 \noindent where $i$ is the summation index, $\Ri$ is the experimental relaxation data which belongs to the data set R and includes the $\Rone$, $\Rtwo$, and NOE values at all field strengths, $\Ri(\theta)$ is the back calculated relaxation data belonging to the set R$(\theta)$, and $\sigma_i$ is the experimental error.  For the optimisation of the model-free parameters while the diffusion tensor is held fixed, the summation index ranges over the relaxation data of an individual spin.  If the diffusion parameters are optimised simultaneously with the model-free parameters the summation index ranges over all relaxation data of all selected spins of the macromolecule.
 
-Given the current parameter values the model-free function provided to the algorithm will calculate the value of the model-free spectral density function $J(\omega)$ at the five frequencies which induce NMR relaxation by using Equations~\eqref{eq: J(w) model-free generic} and \eqref{eq: J(w) model-free ext generic}.  The theoretical $\Rone$, $\Rtwo$, and NOE values are then back-calculated using Equations~\eqref{eq: R1}, \eqref{eq: R2}, \eqref{eq: sigma_NOE}, and \eqref{eq: NOE}.  Finally, the chi-squared\index{chi-squared} value is calculated using Equation~\eqref{eq: chi2}.
+Given the current parameter values the model-free function provided to the algorithm will calculate the value of the model-free spectral density function $J(\omega)$ at the five frequencies which induce NMR relaxation by using Equations~\eqref{eq: J(w) model-free generic} and \eqref{eq: J(w) model-free ext generic}.  The theoretical $\Rone$, $\Rtwo$, and NOE values are then back-calculated using Equations~\eqref{eq: R1}, \eqref{eq: R2}, \eqref{eq: sigma_NOE}, and \eqref{eq: NOE}.  Finally, the chi-squared\index{chi-squared} value is calculated using Equation~\eqref{eq: chi2 mf}.
 
+To produce the gradient and Hessian required for model-free optimisation a large chain of first and second partial derivatives needs to be calculated.  Firstly the partial derivatives of the spectral density functions \eqref{eq: J(w) model-free generic} and \eqref{eq: J(w) model-free ext generic} are necessary.  Then the partial derivatives of the relaxation equations~\eqref{eq: R1} to~\eqref{eq: sigma_NOE} followed by the NOE equation~\eqref{eq: NOE} are needed.  Finally the partial derivative of the chi-squared\index{chi-squared} formula~\eqref{eq: chi2 mf} is required.  These first and second partial derivatives, as well as those of the components of the Brownian diffusion correlation function for non-isotropic tumbling, are presented as Chapter~\ref{ch: values, gradients, and Hessians}.
 
-% Topology of the space.
-\subsubsection{Topology of the space}
 
-The problem of finding the minimum is complicated by the fact that optimisation algorithms are blind to the curvature of the complete space.  Instead they rely on topological information about the current and, sometimes, the previous parameter positions in the space.  The techniques use this information to walk iteratively downhill to the minimum.  Very few optimisation algorithms rely solely on the function value, conceptually the height of the space, at the current position.  Most techniques also utilise the gradient at the current position.  Although symbolically complex in the case of model-free analysis, the gradient can simply be calculated as the vector of first partial derivatives of the chi-squared\index{chi-squared} equation with respect to each model-free parameter.  The gradient is supplied as a second function to the algorithm which is then utilised in diverse ways by different optimisation techniques.  The function value together with the gradient can be combined to construct a linear or planar description of the space at the current parameter position by first-order Taylor series approximation
-\begin{equation} \label{eq: linear model}
- f(\theta_k + x) \approx f_k  +  x^T \nabla f_k,
-\end{equation}
+% Grid search.
+\subsubsection{Grid search}
 
-\noindent where $f_k$ is the function value at the current parameter position $\theta_k$, $\nabla f_k$ is the gradient at the same position, and $x$ is an arbitrary vector.  By accumulating information from previous parameter positions a more comprehensive geometric description of the curvature of the space can be exploited by the algorithm for more efficient optimisation.
+Due to the complexity of the curvature of the model-free space, the grid point with the lowest chi-squared\index{chi-squared} value may in fact be on the opposite side of the space to the local minimum.
+Therefore the model-free space renders many optimisation algorithms ineffective \citep{dAuvergneGooley08a}.
 
-The best and most comprehensive description of the space is given by the quadratic approximation of the topology which is generated from the combination of the function value, the gradient, and the Hessian.  From the second-order Taylor series expansion the quadratic model of the space is
-\begin{equation} \label{eq: quadratic model}
- f(\theta_k + x) \approx f_k  +  x^T \nabla f_k  +  \tfrac{1}{2} x^T \nabla^2 f_k x,
-\end{equation}
 
-\noindent where $\nabla^2 f_k$ is the Hessian, which is the symmetric matrix of second partial derivatives of the function, at the position $\theta_k$.  As the Hessian is computationally expensive a number of optimisation algorithms try to approximate it.
+% Constraints.
+\subsubsection{Parameter constraints}
 
-To produce the gradient and Hessian required for model-free optimisation a large chain of first and second partial derivatives needs to be calculated.  Firstly the partial derivatives of the spectral density functions \eqref{eq: J(w) model-free generic} and \eqref{eq: J(w) model-free ext generic} are necessary.  Then the partial derivatives of the relaxation equations~\eqref{eq: R1} to~\eqref{eq: sigma_NOE} followed by the NOE equation~\eqref{eq: NOE} are needed.  Finally the partial derivative of the chi-squared\index{chi-squared} formula~\eqref{eq: chi2} is required.  These first and second partial derivatives, as well as those of the components of the Brownian diffusion correlation function for non-isotropic tumbling, are presented in Chapter~\ref{ch: values, gradients, and Hessians}.
+To understand this section, please see Section~\ref{sect: constraint algorithms} on page~\pageref{sect: constraint algorithms}.
+For model-free analysis, linear constraints are the most useful type of constraint as the correlation time $\tau_f$ can be restricted to being less than $\tau_s$ by using the inequality $\tau_s - \tau_f \geqslant 0$.
 
-
-
-% Optimisation algorithms.
-\subsubsection{Optimisation algorithms}
-
-Prior to minimisation, all optimisation algorithms investigated require a starting position within the model-free space.  This initial parameter vector is found by employing a coarse grid search -- chi-squared\index{chi-squared} values at regular positions spanning the space are calculated and the grid point with the lowest value becomes the starting position.  The grid search itself is an optimisation technique.  As it is computationally expensive the number of grid points needs to be kept to a minimum.  Hence the initial parameter values are a rough and imprecise approximation of the local minimum.  Due to the complexity of the curvature of the model-free space, the grid point with the lowest chi-squared\index{chi-squared} value may in fact be on the opposite side of the space to the local minimum.
-
-Once the starting position has been determined by the grid search the optimisation algorithm can be executed.  The number of algorithms developed within the mathematical field of optimisation is considerable.  They can nevertheless be grouped into one of a small number of major categories based on the fundamental principles of the technique.  These include the line search methods, the trust region methods, and the conjugate gradient methods.  For more details on the algorithms described below see \citet{NocedalWright99}.
-
-
-
-% Line search methods.
-\subsubsection{Line search methods}
-
-The defining characteristic of a line search algorithm is to choose a search direction $p_k$ and then to find the minimum along that vector starting from $\theta_k$ \citep{NocedalWright99}.  The distance travelled along $p_k$ is the step length $\alpha_k$ and the parameter values for the next iteration are
-\begin{equation}
- \theta_{k+1} = \theta_k + \alpha_k p_k.
-\end{equation}
-
-\noindent  The line search algorithm determines the search direction $p_k$ whereas the value of $\alpha_k$ is found using an auxiliary step-length selection algorithm.
-
-One of the simplest line search methods is the steepest descent\index{minimisation algorithm!steepest descent|textbf} algorithm.  The search direction is simply the negative gradient, $p_k = -\nabla f_k$, and hence the direction of maximal descent is always followed.  This method is inefficient -- the linear rate of convergence requires many iterations of the algorithm to reach the minimum and it is susceptible to being trapped on saddle points within the space.
-
-The coordinate descent\index{minimisation algorithm!coordinate descent|textbf} algorithms are a simplistic group of line search methods whereby the search directions alternate between vectors parallel to the parameter axes.  For the back-and-forth coordinate descent the search directions cycle in one direction and then back again.  For example for a three parameter model the search directions cycle $\theta_1, \theta_2, \theta_3, \theta_2, \theta_1, \theta_2, \hdots$, which means that each parameter of the model is optimised one by one.  The method becomes less efficient when approaching the minimum as the step length $\alpha_k$ continually decreases (ibid.).
-
-The quasi-Newton methods begin with an initial guess of the Hessian and update it at each iteration using the function value and gradient.  Therefore the benefits of using the quadratic model of \eqref{eq: quadratic model} are obtained without calculating the computationally expensive Hessian.  The Hessian approximation $B_k$ is updated using various formulae, the most common being the BFGS\index{minimisation algorithm!BFGS|textbf} formula \citep{Broyden70,Fletcher70,Goldfarb70,Shanno70}.  The search direction is given by the equation $p_k = -B_k^{-1} \nabla f_k$.  The quasi-Newton algorithms can attain a superlinear rate of convergence, being superior to the steepest descent or coordinate descent methods.
-
-The most powerful line search method when close to the minimum is the Newton\index{minimisation algorithm!Newton|textbf} search direction
-\begin{equation} \label{eq: Newton dir}
- p_k = - \nabla^2 f_k^{-1} \nabla f_k.
-\end{equation}
-
-\noindent This direction is obtained from the derivative of \eqref{eq: quadratic model} which is assumed to be zero at the minimum of the quadratic model.  The vector $p_k$ points from the current position to the exact minimum of the quadratic model of the space.  The rate of convergence is quadratic, being superior to both linear and superlinear convergence.  The technique is computationally expensive due to the calculation of the Hessian.  It is also susceptible to failure when optimisation commences from distant positions in the space as the Hessian may not be positive definite and hence not convex, a condition required for the search direction both to point downhill and to be reasonably oriented.  In these cases the quadratic model is a poor description of the space.
-
-A practical Newton algorithm which is robust for distant starting points is the Newton conjugate gradient method (Newton-CG\index{minimisation algorithm!Newton-CG|textbf}).  This line search method, which is also called the truncated Newton algorithm, finds an approximate solution to Equation~\eqref{eq: Newton dir} by using a conjugate gradient (CG) sub-algorithm.  Retaining the performance of the pure Newton algorithm, the CG sub-algorithm guarantees that the search direction is always downhill as the method terminates when negative curvature is encountered.  This algorithm is similar to the Newton-Raphson-CG algorithm implemented within Dasha\index{software!Dasha}.  Newton optimisation is sometimes also known as the Newton-Raphson algorithm and, as documented in the source code, the Newton algorithm in Dasha is coupled to a conjugate gradient algorithm.  The auxiliary ste\mbox{p-l}ength selection algorithm in Dasha\index{software!Dasha} is undocumented and may not be employed.
-
-Once the search direction has been determined by the above algorithms the minimum along that direction needs to be determined.  Not to be confused with the methodology for determining the search direction $p_k$, the line search itself is performed by an auxiliary step-length selection algorithm to find the value $\alpha_k$.  A number of step-length selection methods can be used to find a minimum along the line $\theta_k + \alpha_k p_k$, although only two will be investigated.  The first is the backtracking line search of \citet{NocedalWright99}.  This method is inexact -- it takes a starting step length $\alpha_k$ and decreases the value until a sufficient decrease in the function is found.  The second is the line search method of \citet{MoreThuente94}.  Designed to be robust, the MT algorithm finds the exact minimum along the search direction and guarantees sufficient decrease.
-
-
-
-% Trust region methods.
-\subsubsection{Trust region methods}
-
-In the trust region class of algorithms the curvature of the space is modelled quadratically by \eqref{eq: quadratic model}.  This model is assumed to be reliable only within a region of trust defined by the inequality $\lVert p \rVert \leqslant \Delta_k$ where $p$ is the step taken by the algorithm and $\Delta_k$ is the radius of the $n$-dimensional sphere of trust \citep{NocedalWright99}.  The solution sought for each iteration of the algorithm is
-\begin{equation} \label{eq: trust region}
- \min_{p \in \mathbb{R}^n} m_k(p) = f_k  +  p^{T} \nabla f_k  +  \tfrac{1}{2} p^{T} B_k p,  \qquad \textrm{s.t. } \lVert p \rVert \leqslant \Delta_k,
-\end{equation}
-
-\noindent where $m_k(p)$ is the quadratic model, $B_k$ is a positive definite matrix which can be the true Hessian as in the Newton model or an approximation such as the BFGS\index{minimisation algorithm!BFGS} matrix, and $\lVert p \rVert$ is the Euclidean norm of $p$.  The trust region radius $\Delta_k$ is modified dynamically during optimisation -- if the quadratic model is found to be a poor representation of the space the radius is decreased whereas if the quadratic model is found to be reasonable the radius is increased to allow larger, more efficient steps to be taken.
-
-The Cauchy point\index{minimisation algorithm!Cauchy point|textbf} algorithm is similar in concept to the steepest descent\index{minimisation algorithm!steepest descent} line search algorithm.  The Cauchy point is the point lying on the gradient which minimises the quadratic model subject to the step being within the trust region.  By iteratively finding the Cauchy point the local minimum can be found.  The convergence of the technique is inefficient, being similar to that of the steepest descent algorithm.
-
-In changing the trust region radius the exact solutions to \eqref{eq: trust region} map out a curved trajectory which starts parallel to the gradient for small radii.  The end of the trajectory, which occurs for radii greater than the step length, is the bottom of the quadratic model.  The dogleg\index{minimisation algorithm!dogleg|textbf} algorithm attempts to follow a similar path by first finding the minimum along the gradient and then finding the minimum along a trajectory from the current point to the bottom of the quadratic model.  The minimum along the second path is either the trust region boundary or the quadratic solution.  The matrix $B_k$ of \eqref{eq: trust region} can be the BFGS matrix, the unmodified Hessian, or a Hessian modified to be positive definite.
-
-Another trust region algorithm is Steihaug's\index{minimisation algorithm!CG-Steihaug|textbf} modified conjugate gradient approach \citep{Steihaug83}.  For each step $k$ an iterative technique is used which is almost identical to the standard conjugate gradient procedure except for two additional termination conditions.  The first is if the next step is outside the trust region, the second is if a direction of zero or negative curvature is encountered.
-
-An almost exact solution to \eqref{eq: trust region} can be found using an algorithm described in \citet{NocedalWright99}.  This exact trust region\index{minimisation algorithm!exact trust region|textbf} algorithm aims to precisely find the minimum of the quadratic model $m_k$ of the space within the trust region $\Delta_k$.  Any matrix $B_k$ can be used to construct the quadratic model.  However, the technique is computationally expensive.
-
-
-
-% Conjugate gradient methods.
-\subsubsection{Conjugate gradient methods}
-
-The conjugate gradient algorithm (CG) was originally designed as a mathematical technique for solving a large system of linear equations \citet{HestenesStiefel52}, but was later adapted to solving nonlinear optimisation problems \citep{FletcherReeves64}.  The technique loops over a set of directions $p_0$, $p_1$, $\hdots$, $p_n$ which are all conjugate to the Hessian \citep{NocedalWright99}, a property defined as
-\begin{equation}
- p_i^T \nabla^2 f_k p_j = 0,  \qquad \textrm{for all } i \ne j.
-\end{equation}
-
-\noindent By performing line searches over all directions $p_j$ the solution to the quadratic model \eqref{eq: quadratic model} of the position $\theta_k$ will be found in $n$ or less iterations of the CG algorithm where $n$ is the total number of parameters in the model.  The technique performs well on large problems with many parameters as no matrices are calculated or stored.  The algorithms perform better than the steepest descent method and preconditioning of the system is used to improve optimisation.  A number of preconditioned techniques will be investigated including the Fletcher-Reeves\index{minimisation algorithm!Fletcher-Reeves|textbf} algorithm which was the original conjugate gradient optimisation technique \citep{FletcherReeves64}, the Polak-Ribi\`ere\index{minimisation algorithm!Polak-Ribi\`ere|textbf} method \citep{PolakRibiere69}, a modified Polak-Ribi\`ere method called the Polak-Ribi\`ere +\index{minimisation algorithm!Polak-Ribi\`ere~+|textbf} method \citep{NocedalWright99}, and the Hestenes-Stiefel\index{minimisation algorithm!Hestenes-Stiefel|textbf} algorithm which originates from a formula in \citet{HestenesStiefel52}.  As a line search is performed to find the minimum along each conjugate direction both the backtracking and Mor\'e and Thuente auxiliary step-length selection algorithms will be tested with the CG algorithms.
-
-
-
-% Hessian modifications.
-\subsubsection{Hessian modifications}
-
-The Newton search direction, used in both the line search and trust region methods, is dependent on the Hessian being positive definite for the quadratic model to be convex so that the search direction points sufficiently downhill.  This is not always the case as saddle points and other non-quadratic features of the space can be problematic.  Two classes of algorithms can be used to handle this situation.  The first involves using the conjugate gradient method as a sub-algorithm for solving the Newton problem for the step $k$.  The Newton-CG\index{minimisation algorithm!Newton-CG} line search algorithm described above is one such example.  The second class involves modifying the Hessian prior to, or at the same time as, finding the Newton step to guarantee that the replacement matrix $B_k$ is positive definite.  The convexity of $B_k$ is ensured by its eigenvalues all being positive.  The performance of two of these methods within the model-free space will be investigated.
-
-The first modification uses the Cholesky factorisation of the matrix $B_k$, initialised to the true Hessian, to test for convexity (Algorithm 6.3 of \citet{NocedalWright99}).  If factorisation fails the matrix is not positive definite and a constant $\tau_k$ times the identity matrix $I$ is then added to $B_k$.  The constant originates from the Robbins norm of the Hessian $\lVert \nabla^2 f_k \rVert_F$ and is steadily increased until the factorisation is successful.  The resultant Cholesky lower triangular matrix $L$ can then be used to find the approximate Newton direction.  If $\tau_k$ is too large the convergence of this technique can approach that of the steepest descent\index{minimisation algorithm!steepest descent} algorithm.
-
-The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} which modifies the Hessian during the execution of the Cholesky factorisation $\nabla^2 f_k = LIL^T$, where $L$ is a lower triangular matrix and $D$ is a diagonal matrix.  Only a single factorisation is required.  As rows and columns are interchanged during the algorithm the technique may be slow for large problems such as the optimisation of the model-free parameters of all spins together with the diffusion tensor parameters.  The rate of convergence of the technique is quadratic.
-
-
-
-% Other methods.
-\subsubsection{Other methods}
-
-Two other optimisation algorithms which cannot be classified within line search, trust region, or conjugate gradient categories will also be investigated.  The first is the well known simplex\index{minimisation algorithm!Nelder-Mead simplex|textbf} optimisation algorithm.  The technique is often used as the only the function value is employed and hence the derivation of the gradient and Hessian can be avoided.  The simplex is created as an $n$-dimensional geometric object with $n+1$ vertices.  The first vertex is the starting position.  Each of the other $n$ vertices are created by shifting the starting position by a small amount parallel to one of unit vectors defining the coordinate system of the space.  Four simple rules are used to move the simplex through the space: reflection, extension, contraction, and a shrinkage of the entire simplex.  The result of these movements is that the simplex moves in an ameoboid-like fashion downhill, shrinking to pass through tight gaps and expanding to quickly move through non-convoluted space, eventually finding the minimum.
-
-Key to these four movements is the pivot point, the centre of the face created by the $n$ vertices with the lowest function values.  The first movement is a reflection -- the vertex with the greatest function value is reflected through the pivot point on the opposite face of the simplex.  If the function value at this new position is less than all others the simplex is allowed to extend -- the point is moved along the line to twice the distance between the current position and the pivot point.  Otherwise if the function value is greater than the second highest value but less than the highest value, the reflected simplex is contracted.  The reflected point is moved to be closer to the simplex, its position being half way between the reflected position and the pivot point.  Otherwise if the function value at the reflected point is greater than all other vertices, then the original simplex is contracted -- the highest vertex is moved to a position half way between the current position and the pivot point.  Finally if none of these four movements yield an improvement, then the simplex is shrunk halfway towards the vertex with the lowest function value.
-
-The other algorithm is the commonly used Levenberg-Marquardt\index{minimisation algorithm!Levenberg-Marquardt|textbf} algorithm \citep{Levenberg44,Marquardt63} which is implemented in Modelfree4\index{software!Modelfree}, Dasha\index{software!Dasha}, and Tensor2\index{software!Tensor}.  This technique is designed for least-squares problems to which the chi-squared\index{chi-squared} equation \eqref{eq: chi2} belongs.  The key to the algorithm is the replacement of the Hessian with the Levenberg-Marquardt matrix $J^T J + \lambda I$, where $J$ is the Jacobian of the system calculated as the matrix of partial derivatives of the residuals, $\lambda > 0$ is a factor related to the trust-region radius, and $I$ is the identity matrix.  The algorithm is conceptually allied to the trust region methods and its performance varies finely between that of the steepest descent and the pure Newton step.  When far from the minimum $\lambda$ is large and the algorithm takes steps close to the gradient; when in vicinity of the minimum $\lambda$ heads towards zero and the steps taken approximate the Newton direction.  Hence the algorithm avoids the problems of the Newton\index{minimisation algorithm!Newton} algorithm when non-convex curvature is encountered and approximates the Newton step in convex regions of the space.
-
-
-
-% Constraint algorithms.
-\subsubsection{Constraint algorithms}
-
-To guarantee that the minimum will still be reached the implementation of constraints limiting the parameter values together with optimisation algorithms is not a triviality.  For this to occur the space and its boundaries must remain smooth thereby allowing the algorithm to move along the boundary to either find the minimum along the limit or to slide along the limit and then move back into the centre of the constrained space once the curvature allows it.  One of the most powerful approaches is the Method of Multipliers \citep{NocedalWright99}, also known as the Augmented Lagrangian.  Instead of a single optimisation the algorithm is iterative with each iteration consisting of an independent unconstrained minimisation on a sequentially modified space.  When inside the limits the function value is unchanged but when outside a penalty, which is proportional to the distance outside the limit, is added to the function value.  This penalty, which is based on the Lagrange multipliers, is smooth and hence the gradient and Hessian are continuous at and beyond the constraints.  For each iteration of the Method of Multipliers the penalty is increased until it becomes impossible for the parameter vector to be in violation of the limits.  This approach allows the parameter vector $\theta$ outside the limits yet the successive iterations ensure that the final results will not be in violation of the constraint.
-
-For inequality constraints, each iteration of the Method of Multipliers attempts to solve the quadratic sub-problem
-\begin{equation} \label{eq: Augmented Lagrangian}
-    \min_\theta \mathfrak{L}_A(\theta, \lambda^k; \mu_k) \stackrel{\mathrm{def}}{=} f(\theta) + \sum_{i \in \mathfrak{I}} \Psi(c_i(\theta), \lambda_i^k; \mu_k),
-\end{equation}
-
-\noindent where the function $\Psi$ is defined as
-\begin{equation}
-    \Psi(c_i(\theta), \lambda^k; \mu_k) = \begin{cases}
-        -\lambda^k c_i(\theta) + \frac{1}{2\mu_k} c_i^2(\theta) & \textrm{if } c_i(\theta) - \mu_k \lambda^k \leqslant 0, \\
-        -\frac{\mu_k}{2} (\lambda^k)^2 & \textrm{otherwise}.
-    \end{cases}
-\end{equation}
-
-\noindent  In \eqref{eq: Augmented Lagrangian}, $\theta$ is the parameter vector; $\mathfrak{L}_A$ is the Augmented Lagrangian function; $k$ is the current iteration of the Method of Multipliers; $\lambda^k$ are the Lagrange multipliers which are positive factors such that, at the minimum $\hat\theta$, $\nabla f(\hat\theta) = \lambda_i \nabla c_i(\hat\theta)$; $\mu_k > 0$ is the penalty parameter which decreases to zero as $k \to \infty$; $\mathfrak{I}$ is the set of inequality constraints; and $c_i(\theta)$ is an individual constraint value.  The Lagrange multipliers are updated using the formula
-\begin{equation}
-    \lambda_i^{k+1} = \max(\lambda_i^k - c_i(\theta)/\mu_k, 0), \qquad \textrm{for all } i \in \mathfrak{I}.
-\end{equation}
-
-The gradient of the Augmented Lagrangian is
-\begin{equation}
-    \nabla \mathfrak{L}_A(\theta, \lambda^k; \mu_k) = 
-        \nabla f(\theta)
-        - \sum_{i \in \mathfrak{I} | c_i(\theta) \leqslant \mu_k \lambda_i^k}
-            \left( \lambda_i^k - \frac{c_i(\theta)}{\mu_k} \right) \nabla c_i(\theta),
-\end{equation}
-
-\noindent and the Hessian is
-\begin{equation}
-    \nabla^2 \mathfrak{L}_A(\theta, \lambda^k; \mu_k) = 
-        \nabla^2 f(\theta)
-        + \sum_{i \in \mathfrak{I} | c_i(\theta) \leqslant \mu_k \lambda_i^k}
-            \left[
-                \frac{1}{\mu_k} \nabla c_i^2(\theta)
-                - \left( \lambda_i^k - \frac{c_i(\theta)}{\mu_k} \right) \nabla^2 c_i(\theta)
-            \right].
-\end{equation}
-
-The Augmented Lagrangian algorithm can accept any set of three arbitrary constraint functions $c(\theta)$, $\nabla c(\theta)$, and $\nabla^2 c(\theta)$.  When given the current parameter values $c(\theta)$ returns a vector of constraint values whereby each position corresponds to one of the model parameters.  The constraint is defined as $c_i \geqslant 0$.  The function $\nabla c(\theta)$ returns the matrix of constraint gradients and $\nabla^2 c(\theta)$ is the constraint Hessian function which should return the 3D matrix of constraint Hessians.
-
-A more specific set of constraints accepted by the Method of Multipliers are bound constraints.  These are defined by the function
-\begin{equation}
-    l \leqslant \theta \leqslant u,
-\end{equation}
-
-\noindent where $l$ and $u$ are the vectors of lower and upper bounds respectively and $\theta$ is the parameter vector.  For example for model-free model $m4$ to place lower and upper bounds on the order parameter and lower bounds on the correlation time and chemical exchange parameters, the vectors are
-\begin{equation}
-    \begin{pmatrix}
-        0 \\
-        0 \\
-        0 \\
-    \end{pmatrix}
-    \leqslant
-    \begin{pmatrix}
-        S^2 \\
-        \tau_e \\
-        R_{ex} \\
-    \end{pmatrix}
-    \leqslant
-    \begin{pmatrix}
-        1 \\
-        \infty \\
-        \infty \\
-    \end{pmatrix}.
-\end{equation}
-
-The default setting in the program relax\index{software!relax} is to use linear constraints which are defined as
-\begin{equation} \label{eq: linear constraint}
-    A \cdot \theta \geqslant b,
-\end{equation}
-
-\noindent where $A$ is an $m \times n$ matrix where the rows are the transposed vectors $a_i$ of length $n$; the elements of $a_i$ are the coefficients of the model parameters; $\theta$ is the vector of model parameters of dimension $n$; $b$ is the vector of scalars of dimension $m$; $m$ is the number of constraints; and $n$ is the number of model parameters.  For model-free analysis, linear constraints are the most useful type of constraint as the correlation time $\tau_f$ can be restricted to being less than $\tau_s$ by using the inequality $\tau_s - \tau_f \geqslant 0$.
-
-In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\theta)$ returns the vector $A \cdot \theta - b$.  Because of the linearity of the constraints the gradient and Hessian are greatly simplified.  The gradient $\nabla c(\theta)$ is simply the matrix $A$ and the Hessian $\nabla^2 c(\theta)$ is zero.  For the parameters specific to individual spins the linear constraints in the notation of \eqref{eq: linear constraint} are
+For the parameters specific to individual spins the linear constraints in the notation of \eqref{eq: linear constraint} are
 \begin{equation}
     \begin{pmatrix}
         1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -564,7 +387,7 @@ In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\
     \end{pmatrix}.
 \end{equation}
 
-\noindent  Through the isolation of each individual element, the constraints can be see to be equivalent to
+\noindent  Through the isolation of each individual element, the constraints can be seen to be equivalent to
 \begin{subequations}
 \begin{gather} 
     0 \leqslant S^2 \leqslant 1, \\
@@ -693,14 +516,12 @@ For the parameters of the diffusion tensor the constraints utilised are
 Dependent on the model optimised, the matrix $A$ and vector $b$ are constructed from combinations of the above linear constraints.
 
 
-
-
 % Diagonal scaling.
-\subsubsection{Diagonal scaling} \label{sect: diagonal scaling}
+\subsubsection{Diagonal scaling}
 
-Model scaling can have a significant effect on the optimisation algorithm -- a poorly scaled model can cause certain techniques to fail.  When two parameters of the model lie on very different numeric scales the model is said to be poorly scaled.  For example in model-free analysis the order of magnitude of the order parameters is one whereas for the internal correlation times the order of magnitude is between $1e^{-12}$ to $1e^{-8}$.  Most effected are the trust region algorithms -- the multidimensional sphere of trust will either be completely ineffective against the correlation time parameters or severely restrict optimisation in the order parameter dimensions.  In model-free analysis the significant scaling disparity can even cause failure of optimisation due to amplified effects of machine precision.  Therefore the model parameters need to be scaled.
+The concept of diagonal scaling is explained in Section~\ref{sect: diagonal scaling} on page~\pageref{sect: diagonal scaling}.
 
-This can be done by supplying the optimisation algorithm with the scaled rather than unscaled parameters.  When the chi-squared\index{chi-squared} function, gradient\index{chi-squared gradient}, and Hessian\index{chi-squared Hessian} are called the vector is then premultiplied with a diagonal matrix in which the diagonal elements are the scaling factors.  For the model-free analysis the scaling factor of one was used for the order parameter and a scaling factor of $1e^{-12}$ was used for the correlation times.  The $R_{ex}$ parameter was scaled to be the chemical exchange rate of the first field strength.  The scaling matrix for the parameters \{$S^2$, $S^2_f$, $S^2_s$, $\tau_e$, $\tau_f$, $\tau_s$, $R_{ex}$, $r$, $CSA$\} of individual spins is
+For the model-free analysis the scaling factor of one is used for the order parameter and a scaling factor of $1e^{-12}$ is used for the correlation times.  The $R_{ex}$ parameter is scaled to be the chemical exchange rate of the first field strength.  The scaling matrix for the parameters \{$S^2$, $S^2_f$, $S^2_s$, $\tau_e$, $\tau_f$, $\tau_s$, $R_{ex}$, $r$, $CSA$\} of individual spins is
 \begin{equation}
     \begin{pmatrix}
         1 &  0 &  0 &  0 &  0 &  0 &  0 &  0 &  0 \\
