@@ -66,7 +66,7 @@ The following script can be found in the \directory{sample\_scripts} directory.
 \begin{lstlisting}
 """ Script for consistency testing.
 
-Severe artifacts can be introduced if model-free analysis is performed from inconsistent multiple magnetic field datasets. The use of simple tests as validation tools for the consistency assessment can help avoid such problems in order to extract more reliable information from spin relaxation experiments. In particular, these tests are useful for detecting inconsistencies arising from R2 data. Since such inconsistencies can yield artifactual Rex parameters within model-free analysis, these tests should be use routinely prior to any analysis such as model-free calculations.
+Severe artifacts can be introduced if model-free analysis is performed from inconsistent multiple magnetic field datasets. The use of simple tests as validation tools for the consistency assessment can help avoid such problems in order to extract more reliable information from spin relaxation experiments. In particular, these tests are useful for detecting inconsistencies arising from R2 data. Since such inconsistencies can yield artificial Rex parameters within model-free analysis, these tests should be use routinely prior to any analysis such as model-free calculations.
 
 This script will allow one to calculate values for the three consistency tests J(0), F_eta and F_R2. Once this is done, qualitative analysis can be performed by comparing values obtained at different magnetic fields. Correlation plots and histograms are useful tools for such comparison, such as presented in Morin & Gagne (2009a) J. Biomol. NMR, 45: 361-372.
 
@@ -281,7 +281,7 @@ To complete the consistency testing analysis, the following steps are needed:
 \item Extract the $J(0)$ values at multiple magnetic fields.
 \item Join together the data from a pair of magnetic fields either by pasting them as two columns of one file (approach A), or by dividing values from a first magnetic field by values from a second magnetic field (approach B).
 \item Make either a correlation plot (approach A), or an histogram of the ratios (approach B).
-\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).  If yes, data from multiple magnetic fields is consistent from one magnetic field to another.  If no, data is inconsistent.  In the case where inconsistency arises, if data from more than two magnetic fields is avaliable, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
+\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).  If yes, data from multiple magnetic fields is consistent from one magnetic field to another.  If no, data is inconsistent.  In the case where inconsistency arises, if data from more than two magnetic fields is available, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
 \end{itemize}
 
 \begin{figure*}[h]

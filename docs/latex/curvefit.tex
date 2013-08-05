@@ -46,7 +46,7 @@ Explicit temperature control techniques are also essential for relaxation data c
 
 \subsection{Spectral processing}
 
-For the best measurement of peak heights across the myriad of NMR spectral analysis softwares, it is recommend to zero fill a lot -- 8k to 16k would give the best results.  This does not increase the information content of the spectrum or decrease the errors, it simply interpolates.  Even if the NMR spectral software performs 3-point quadratic interpolation between the highest points to determine the peak height, the additional free interpolation will make the estimation more accurate.
+For the best measurement of peak heights across the myriad of NMR spectral analysis software, it is recommend to zero fill a lot -- 8k to 16k would give the best results.  This does not increase the information content of the spectrum or decrease the errors, it simply interpolates.  Even if the NMR spectral software performs 3-point quadratic interpolation between the highest points to determine the peak height, the additional free interpolation will make the estimation more accurate.
 
 Additionally, care must be taken to properly scale the first point as this can cause a baseline roll which will affect peak heights.  A very useful description comes directly from the \href{http://spin.niddk.nih.gov/NMRPipe/doc1/}{NMRPipe manual}:
 
@@ -333,7 +333,7 @@ spectrum.replicated(spectrum_ids=['T2_ncyc9_ave', 'T2_ncyc9b_ave'])
 spectrum.replicated(spectrum_ids=['T2_ncyc11_ave', 'T2_ncyc11b_ave'])
 \end{lstlisting}
 
-Note that the relaxation time period should be calculated directly from the pulse sequence (as the sum of delays and pulses for the peroid), as the estimated time may not match the real time.   For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
+Note that the relaxation time period should be calculated directly from the pulse sequence (as the sum of delays and pulses for the period), as the estimated time may not match the real time.   For the Sparky peak lists, by default relax assumes that the intensity value is in the 4$^\textrm{th}$ column.  A typical file looks like:
 
 {\scriptsize \begin{verbatim}
      Assignment         w1         w2   Data Height
@@ -407,7 +407,7 @@ The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$
  I(t) = I_0 e^{-\mathrm{R}_x \cdot t},
 \end{equation}
 
-\noindent where $I(t)$ is the peak intensity at any time point $t$, $I_0$ is the initial intensity, and $\mathrm{R}_x$ is the relaxation rate (either the $\Rone$ or $\Rtwo$).  Changing the user function argument to \promptstring{inv} will select the inversion recovery experiment.  This curve consists of three paremeters \{$\Rone$, $I_0$, $I_{\infty}$\} and does not decay to zero.  The formula is
+\noindent where $I(t)$ is the peak intensity at any time point $t$, $I_0$ is the initial intensity, and $\mathrm{R}_x$ is the relaxation rate (either the $\Rone$ or $\Rtwo$).  Changing the user function argument to \promptstring{inv} will select the inversion recovery experiment.  This curve consists of three parameters \{$\Rone$, $I_0$, $I_{\infty}$\} and does not decay to zero.  The formula is
 \begin{equation}
  I(t) = I_{\infty} - I_0 e^{-\Rone \cdot t}.
 \end{equation}
@@ -419,14 +419,14 @@ The argument \promptstring{exp} sets the relaxation curve to a two parameter \{$
 
 \subsection{Relax-fit script mode -- optimisation of exponential curves}
 
-Now that everything has been setup minimision can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
+Now that everything has been setup minimisation can be used to optimise the parameter values.  Firstly a grid search is applied to find a rough starting position for the subsequent optimisation algorithm.  Eleven increments per dimension of the model (in this case the two dimensions \{$\mathrm{R}_x$, $I_0$\}) is sufficient.  The user function for executing the grid search is
 
 \begin{lstlisting}[firstnumber=62]
 # Grid search.
 grid_search(inc=11)
 \end{lstlisting}
 
-The next step is to select one of the minimisation algorithms to optimise the model parameters.  Currently for relaxation curve-fitting only simplex minimisation is supported.  This is because the relaxation curve-fitting C module is incomplete only implementing the chi-squared function.  The chi-squared gradient (the vector of first partial derivatives) and chi-squared Hessian (the matrix of second partial derivatives) are not yet implemented in the C modules and hence optimisation algorithms which only employ function calls are supported.  Simplex minimisation is the only technique in relax which fits this criteron.  In addition constraints cannot be used as the constraint algorithm is dependent on gradient calls.  Therefore the minimisation command for relaxation curve-fitting is forced to be
+The next step is to select one of the minimisation algorithms to optimise the model parameters.  Currently for relaxation curve-fitting only simplex minimisation is supported.  This is because the relaxation curve-fitting C module is incomplete only implementing the chi-squared function.  The chi-squared gradient (the vector of first partial derivatives) and chi-squared Hessian (the matrix of second partial derivatives) are not yet implemented in the C modules and hence optimisation algorithms which only employ function calls are supported.  Simplex minimisation is the only technique in relax which fits this criterion.  In addition constraints cannot be used as the constraint algorithm is dependent on gradient calls.  Therefore the minimisation command for relaxation curve-fitting is forced to be
 
 \begin{lstlisting}[firstnumber=65]
 # Minimise.
