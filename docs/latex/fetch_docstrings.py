@@ -217,7 +217,7 @@ class Fetch_docstrings:
         """Create the user function synopsis."""
 
         # The section heading.
-        self.file.write("\subsubsection{Synposis}\n\n")
+        self.file.write("\subsubsection{Synopsis}\n\n")
 
         # The text.
         text = self.uf.title
