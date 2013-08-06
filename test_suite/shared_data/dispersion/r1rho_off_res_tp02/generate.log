@@ -1,3 +1,25 @@
+
+
+
+                                  relax repository checkout rNone
+                                                None
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'generate.py'
+----------------------------------------------------------------------------------------------------
 """Simulate relaxation curves for an on resonance R1rho-type experiment using the M61 model.
 
 This is the Meiboom 1961 model for on-resonance 2-site exchange with skewed populations (pA >> pB).  The equation is:
@@ -95,3 +117,53 @@ for frq_index in range(len(frqs)):
                 name = 'nu_%s_%s' % (frq_label[frq_index], spin_lock[spin_lock_index])
             if name:
                 write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
+----------------------------------------------------------------------------------------------------
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_ref.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_1000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_1500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_2000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_2500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_3000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_3500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_4000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_4500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_5000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_5500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_500MHz_6000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_ref.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_1000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_1500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_2000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_2500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_3000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_3500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_4000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_4500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_5000.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_5500.0.list' for writing.
+Creating the Sparky list file.
+Opening the file 'nu_800MHz_6000.0.list' for writing.
+
