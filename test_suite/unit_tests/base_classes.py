@@ -23,14 +23,12 @@
 """Base classes for the system tests."""
 
 # Python module imports.
-from shutil import rmtree
-from time import sleep
 from unittest import TestCase
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.reset import reset
-from lib.io import delete
+from test_suite.clean_up import deletion
 
 
 class UnitTestCase(TestCase):
@@ -40,42 +38,12 @@ class UnitTestCase(TestCase):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
         # Remove the temporary directory and variable.
-        if hasattr(ds, 'tmpdir'):
-            rmtree(ds.tmpdir)
-            del ds.tmpdir
-
-        # Remove the temporary directory and variable.
-        if hasattr(self, 'tmpdir'):
-            rmtree(self.tmpdir)
-            del self.tmpdir
+        deletion(obj=ds, name='tmpdir', dir=True)
+        deletion(obj=self, name='tmpdir', dir=True)
 
         # Remove temporary file and variable.
-        if hasattr(ds, 'tmpfile'):
-            try:
-                delete(ds.tmpfile, fail=False)
-                del ds.tmpfile
-
-            # Handle MS Windows strangeness.
-            except WindowsError:
-                sleep(3)
-                try:
-                    delete(ds.tmpfile, fail=False)
-                finally:
-                    del ds.tmpfile
-
-        # Remove temporary file and variable.
-        if hasattr(self, 'tmpfile'):
-            try:
-                delete(self.tmpfile, fail=False)
-                del self.tmpfile
-
-            # Handle MS Windows strangeness.
-            except WindowsError:
-                sleep(3)
-                try:
-                    delete(ds.tmpfile, fail=False)
-                finally:
-                    del ds.tmpfile
+        deletion(obj=ds, name='tmpfile', dir=False)
+        deletion(obj=self, name='tmpfile', dir=False)
 
         # Reset relax.
         reset()
