@@ -23,11 +23,11 @@
 """Module of functions for cleaning up after the tests."""
 
 # Python module imports.
-import exceptions
 from shutil import rmtree
 from time import sleep
 
 # relax module imports.
+from compat import builtins
 from lib.io import delete
 
 
@@ -52,8 +52,8 @@ def deletion(obj=None, name=None, dir=False):
     var = getattr(obj, name)
 
     # Non-windows systems.
-    if not hasattr(exceptions, 'WindowsError'):
-        WindowsError = None
+    if not hasattr(builtins, 'WindowsError'):
+        builtins.WindowsError = None
 
     # Attempt to remove the file or directory as well as the variable.
     try:
