@@ -24,6 +24,7 @@
 
 # Python module imports.
 from shutil import rmtree
+from time import sleep
 from unittest import TestCase
 
 # relax module imports.
@@ -38,37 +39,43 @@ class UnitTestCase(TestCase):
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
-        # Remove the temporary directories.
+        # Remove the temporary directory and variable.
         if hasattr(ds, 'tmpdir'):
-            # Delete the directory.
             rmtree(ds.tmpdir)
-
-            # Remove the variable.
             del ds.tmpdir
 
-        # Remove the temporary directories.
+        # Remove the temporary directory and variable.
         if hasattr(self, 'tmpdir'):
-            # Delete the directory.
             rmtree(self.tmpdir)
-
-            # Remove the variable.
             del self.tmpdir
 
-        # Remove temporary files.
+        # Remove temporary file and variable.
         if hasattr(ds, 'tmpfile'):
-            # Delete the file.
-            delete(ds.tmpfile, fail=False)
+            try:
+                delete(ds.tmpfile, fail=False)
+                del ds.tmpfile
 
-            # Remove the variable.
-            del ds.tmpfile
+            # Handle MS Windows strangeness.
+            except WindowsError:
+                sleep(3)
+                try:
+                    delete(ds.tmpfile, fail=False)
+                finally:
+                    del ds.tmpfile
 
-        # Remove temporary files.
+        # Remove temporary file and variable.
         if hasattr(self, 'tmpfile'):
-            # Delete the file.
-            delete(self.tmpfile, fail=False)
+            try:
+                delete(self.tmpfile, fail=False)
+                del self.tmpfile
 
-            # Remove the variable.
-            del self.tmpfile
+            # Handle MS Windows strangeness.
+            except WindowsError:
+                sleep(3)
+                try:
+                    delete(ds.tmpfile, fail=False)
+                finally:
+                    del ds.tmpfile
 
         # Reset relax.
         reset()
