@@ -850,6 +850,41 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_r1rho_off_res_fixed_time_tp02(self):
+        """Test the relaxation dispersion 'TP02' model curve fitting to fixed time synthetic data."""
+
+        # Fixed time variable.
+        ds.fixed = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_off_res_tp02.py')
+
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [2.25, 24.0]
+        pA = 0.87654321
+        kex = 1234.56789
+        delta_omega = [1.0, 2.0]
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+
+        # Switch to the 'TP02' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('TP02')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
+
+
     def test_r1rho_on_res_exponential_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to the full exponential synthetic data."""
 
