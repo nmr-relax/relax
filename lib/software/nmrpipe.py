@@ -83,7 +83,7 @@ def read_list_intensity_seriestab(file_data=None, int_col=None):
 
     # Make a regular search for Z_A entries.
     Z_A = re.compile("Z_A*")
-    spectra = filter(Z_A.search, varsline)
+    spectra = list(filter(Z_A.search, varsline))
 
     # Find index of Z_A entries.
     spectra_i = []

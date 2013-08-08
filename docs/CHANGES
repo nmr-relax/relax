@@ -1,3 +1,409 @@
+Version 3.0.0
+(6 August 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.0.0
+
+    Features:
+        * Huge amounts of code throughout the relax codebase has been shifted into independent functions in the relax library.
+        * Many new functions added to the relax library.
+        * Complete rearrangement of the relax package and module layout.
+        * Clean up and improvements to the relaxation curve-fitting C module including the removal of a severe memory leak eating up all the RAM when lots of spins are analysed simultaneously.
+        * Complete redesign of the 2D graphing code for improved data visualisation and to allow expansion to software other than Grace.
+        * Polishing of the GUI - many bug fixes and improvements throughout the GUI.
+        * Addition of the --time command line option for the relax test suite.
+        * Large speed ups of the relax test suite.
+        * Merger of the dipole_pair and interatomic user function classes into the new interatom user function class.
+        * Added support for J couplings.
+        * Import cleanups throughout relax, avoiding potential future bugs and making the code much cleaner. 
+        * Addition of many new scripts for use by the relax developers.
+        * Support for the NMRPipe SeriesTab format in the spectrum.read_intensities user function.
+        * Improvements for all code examples in the relax user manual including much better fonts, formatting, line wrapping, line numbering, and colouring using the lstlisting LaTeX enviroment.
+        * Created the relax language definition for the lstlisting LaTeX environment for better colouring of relax scripts in the user manual.
+        * Converted the Citations chapter of the relax user manual into a preface chapter.
+        * Overhaul of the indexing in the relax user manual.
+        * Higher level structuring of the user manual into parts.
+        * Creation of the optimisation chapter of the relax user manual.
+        * General improvements throughout the user manual.
+
+
+    Changes:
+        * Some small clarifications and reordering of the release checklist document.
+        * Shifted the pipe_control.structure.superimpose module to lib.structure.superimpose.
+        * Shifted the pipe_control.structure.statistics module to lib.structure.statistics.
+        * Created the unit test infrastructure for the lib.structure package.
+        * Shifted the pipe_control.structure.pdb_read and pipe_control.structure.pdb_write modules to lib.structure.
+        * Shifted the pipe_control.structure.cones module to lib.structure.cones.
+        * Split the pipe_control.structure.mass module into two with the CoM code going to lib.structure.mass.
+        * Removed the data pipe checks from the internal structural object.  This decoupling from the relax data store is in preparation for moving into the lib.structure package.
+        * More decoupling of the internal structural object from the relax data store.  Removed the ability of the internal structural object to determine if two atoms are connected by consulting the relax data store.
+        * Created the empty lib.structure.internal package for holding the internal structural object.
+        * Shifted part of the internal structural object into the lib.structure.internal.models module.  This contains the two classes ModelList and ModelContainer from the pipe_control.structure.api_base module.
+        * Shifted part of the internal structural object into the lib.structure.internal.molecules module.  This contains the class MolList from the pipe_control.structure.api_base module.
+        * Shifted the MolContainer class from pipe_control.structure.internal into lib.structure.internal.molecules.  This is in preparation for shifting the internal structural object to lib.structure.internal and for the elimination of the unused and no longer useful ScientificPython structural object.
+        * Created the empty lib.structure.represent package.  This will be used to hold modules which generate 3D structures as geometric representations of abstract ideas such as tensors, cones, frames, etc.
+        * Shifted the lib.structure.rotor module to lib.structure.represent.rotor.
+        * Total elimination of the ScientificPython PDB object.  Maintaining this reader was too much effort and the internal structural object has now surpassed the capabilities of the ScientificPython PDB object (for example the internal object is not PDB specific).  And ScientificPython is very much a dead project, largely replaced by the more successful scipy.
+        * Merged the structural API base module api_base into pipe_control.structure.internal.  The API base class is no longer needed as the ScientificPython PDB reader has been eliminated.
+        * Deleted the unit tests of the structural API base class.
+        * Moved the residual pipe_control.structure.api_base module to lib.structure.internal.displacements.  This is because the base module still contained the Displacements class.
+        * Docstring consistency in the internal structural object.
+        * Shifted the pipe_control.structure.internal module to lib.structure.internal.object.  This is the new location of the internal structural object.
+        * Shifted the selection object out of pipe_control.mol_res_spin and into the new lib.selection module.  The dependence on the MoleculeContainer, ResidueContainer and SpinContainer objects have been removed, as this is part of the relax data store.  Therefore all of the private methods (__contains__, __contains_mol_res_spin_containers, and __contains_spin_id) have been deleted.  The contains_*() will need to be used instead.
+        * The pipe_control.mol_res_spin functions no longer use the selection object __contains__() method.  All functions now use the contains_*() methods of the lib.selection.Selection object.
+        * Shifted parse_token() and tokenise() from pipe_control.mol_res_spin to lib.selection.
+        * The lib.selection.parse_token() function is using the new Python way of splitting strings.  This is via the string's split() method.
+        * Removed the no longer used parser argument for reading PDB files from some unit tests.
+        * Removed the unit test of the parser argument of the structure.read_pdb user function.  The argument no longer exists.
+        * Shifted the cone geometric object representation functions to lib.structure.represent.cone.  The structure.create_cone_pdb user function first calls pipe_control.structure.main.create_cone_pdb() which then calls lib.structure.represent.cone.cone().  This allows the pipe_control function to write out the file and add it to the data pipe's results file list.
+        * Fixed some name classes in the namespace of pipe_control.structure.mass.
+        * Shifted the diffusion tensor structural object code to lib.structure.represent.diffusion_tensor.  The user function routes to pipe_control.structure.main.create_diff_tensor_pdb(), which pulls the tensor info out of the data store, and then calls the diffusion_tensor() function of lib.structure.represent.diffusion_tensor to create the representation, writes out a PDB file, and finally adds the file to the data pipe's results file list.
+        * More removals of the now dead parser argument for the structure.read_pdb user function.
+        * Removed the parser argument from structure.read_pdb in the stereochemistry auto-analysis.
+        * Restored the selection object __contains_spin_id() method as contains_spin_id().  This will allow for faster checks for matches to spin ID strings.
+        * Speed ups for the interatom_loop() by restoring some of the code previously deleted.  This spin ID lookup table is being used again, as this is much faster than the string parsing of spin IDs.
+        * The frame order analysis is now using the correct centre of mass function.
+        * Shifted calc_chi_tensor() and kappa() from pipe_control.align_tensor to lib.alignment.alignment_tensor.
+        * Shifted some of the pipe_control.diffusion_tensor functions to lib.diffusion.main.
+        * Created the empty lib.software package.  This will be for functions which create input, read output, or control external programs.
+        * Shifted and decoupled some of the grace code into lib.software.grace.  This includes most of the write_xy_header() and write_xy_data() functions.  The data store specific part of write_xy_header() has been shifted into pipe_control.grace.axis_setup().
+        * Missing import fix for the lib.alignment.alignment_tensor module.
+        * Shifted the lib.opendx package to lib.software.opendx.
+        * Shifted the lib.xplor module into the lib.software package.
+        * Shifted the Bruker Dynamics Centre parsing code into the new lib.software.bruker_dc module.
+        * Deleted the completely unused pipe_control.spectrum.Bruker_import class.  This was added by Michael Bieri in Oct 2011, but the code has never been used.  Other, simpler code has replaced its functionality.
+        * Created the Ct.test_bug_20674_ct_analysis_failure system test for catching bug #20674.  This was reported by Mengjun Xue <mengjun dott xue att mailbox dott tu-berlin dot de> at https://gna.org/bugs/?20674.
+        * Decreased the number of Monte Carlo simulations in the Ct.test_bug_20674_ct_analysis_failure system test.
+        * Created the Jw.bug_20674_jw_mapping system test.  This is a modification of the Ct.test_bug_20674_ct_analysis_failure system test for catching bug #20674 (https://gna.org/bugs/?20674).  The test script was duplicated and the small modifications made to convert it into the J(w) mapping analysis.  This now reveals the same bug but for the J(w) mapping analysis.
+        * System test speed ups - decreased the number of Monte Carlo simulations in many tests.  Running 500 simulation optimisations in a system test is a total waste of time!
+        * Converted the bug_20674_jw_mapping.py system test script to use the self._execute_uf() interface.  This allows the script to be used in the GUI.
+        * Created the Mf.test_bug_20683_bdc_inf_values system test.  This is for catching bug #20683 (https://gna.org/bugs/?20683) reported by Mengjun Xue <mengjun dott xue att mailbox dott tu-berlin dot de>.  The problem is due to infinite and NaN values in the Bruker Dynamics Centre file.
+        * Ported the changes of r19302 to the consistency testing and J(w) mapping analyses.  This is the code for checking for infinite relaxation rates imported from Bruker Dynamics Centre files.
+        * Missing imports of the lib.float.isInf() function.
+        * Modified the bug_20674_ct_analysis_failure.py system test script to use self._execute_uf().  This allows the test to operate as a GUI test, which was failing.
+        * Created the specific API common method _data_init_spin().  This will be used as a general method for aliasing to data_init() for initialising spin parameters.
+        * Added printouts for the select.read and deselect.read user functions to identify the spins affected.
+        * Created the new lib.list module with the function count_unique_elements().  This function will be used to determine the unique number of elements in a list.
+        * Shifted the Sparky peak intensity reading code to lib.software.sparky.read_list_intensity().  This new function comes from the old pipe_control.spectrum.intensity_sparky() function, but with the spin ID code removed.
+        * Shifted the XEasy peak intensity reading code to lib.software.xeasy.read_list_intensity().  This new function comes from the old pipe_control.spectrum.intensity_xeasy() function, but with the spin ID code removed.
+        * Docstring fix for the lib.software.xeasy.read_list_intensity() function.
+        * Shifted the NMRView peak intensity reading code to lib.software.nmrview.read_list_intensity().  This new function comes from the old pipe_control.spectrum.intensity_nmrview() function, but with the spin ID code removed.
+        * Created the lib.software.sparky.write_list() function and associated unit test.  This will be used to create simple Sparky .list files.
+        * The relaxation curve-fitting analysis parameters are now all lowercase.  This is to match the other analysis types so that the parameter names are identical to the corresponding variable name.  This is assumed by some of the specific analysis API methods.
+        * Removal of junk code in the _assemble_scaling_matrix() relaxation curve-fitting method.
+        * Parameter scaling is now functional in the target_function.relax_fit.c code.  Previously the scaling was not being used and the Python to C conversion was broken.
+        * The scaling matrix is now converted into a usable list of diagonal elements for the relax_fit C module.
+        * Simplified the code of the relax_fit C module.
+        * The common spin methods of the specific analysis API now ignore parameters not in the model.  This affects the _data_init_spin(), _sim_init_values_spin(), and _sim_return_param_spin() methods.  The result is that the spin containers no longer hold parameter variables set to None for non-model parameters.
+        * Created the pipe_control.plotting module.  This will be used as a base for the plotting of all types of data.  This includes the current OpenDX and Grace modules, as well as future modules.  The determine_functions() function has been added and is used to simplify the pipe_control.grace.get_data() function.
+        * The grace.write user function data type argument sequence values have changed.  Instead of 'spin', this can now be 'res_num' or 'spin_num' to specify that either the residue number or spin number should be plotted on the desired axis.  The x_data_type now defaults to 'res_num'.
+        * Created the pipe_control.mol_res_spin.count_max_spins_per_residue() function.  This will be used by the plotting module to determine if more than one spin per residue exists.
+        * Fixes for the change of the grace.write user function data type 'spin' to 'res_num'.
+        * Updated the pipe_control.plotting.determine_functions() function.
+        * Added the skip_desel flag to the important pipe_control.mol_res_spin.spin_loop() generator function.  This is used to skip deselected spins within the loop.  As must of the code in relax using the spin_loop() does this anyway, this can be used to simplify many of the spin looping elements in relax.
+        * Expanded the relax_fit system test script to produce all types of currently supported Grace graphs.  This is to more extensively test the grace.write user function.
+        * Large redesign of the 2D graphing code in relax.  This currently affects only the grace.write user function, but the new infrastructure will make it much easier to expand the graphing abilities and to support other 2D graphing software.  The plotting code has also been significantly simplified.  The pipe_control.grace.get_data() function has been shifted into the pipe_control.plotting module.  It has been split up into the base assemble_data() function with the data assembly shifted to assemble_data_scatter(), assemble_data_seq_value() and assemble_data_series_series().  This split massively simplifies the code by not packing all different graph and set combinations into one.  In addition the auxiliary functions classify_graph_2D(), fetch_1D_data(), get_functions(), and get_data_type() have been created to maximise code sharing between the different assemble_*() functions.
+        * Modified the relax_fit system test script to generate a new type of graph.  This is the residue number sequence verses the peak intensity series data (and vice versa) via the grace.write user function.  This is to help in the implementation of this graph type.
+        * Created the pipe_control.plotting.assemble_data_seq_series() function.  This is to allow the residue or spin numbering to be plotted against any series type data (lists or dictionaries), or vice versa.
+        * Added a link to the PDF user manual from the HTML user manual.  This will affect all pages at http://www.nmr-relax.com/manual/ by adding an icon to the navigation bar pointing to the PDF manual at http://download.gna.org/relax/manual/relax.pdf.
+        * The plotting of residue or spin numbers verses values now handles multiple spin types properly.  This is in the pipe_control.plotting.assemble_data_seq_value() function.  The spin name is being used to identify different spin types for the graph sets.
+        * The pipe_control.mol_res_spin.count_max_spins_per_residue() function now accepts a spin ID argument.  This can be used to restrict the spins to count.
+        * The spin ID string is now being used by the plotting functions.  The spin ID was not being passed into the assemble_data_*() functions.
+        * Changed how pipe_control.plotting.assemble_data_seq_value() determines the number of graph sets.  Instead of counting the maximum number of spins per residue, different spin names are now checked across the sequence.  This is needed as a single residue could have a different type of spin.  This was caught by the Mf.test_dauvergne_protocol system test.
+        * Modified pipe_control.plotting.assemble_data_series_series() to handle dictionaries with keys as values.  This will be useful in, for example, relaxation dispersion for plotting the dispersion curves.  In this case, the R2eff values are in a dictionary where the keys are the values to plot against.  This is different from the current case where the X and Y data dictionaries are required to have the same keys.  These changes expand the capabilities of the grace.write user function.
+        * Formatting change for the auto_analyses __all__ package list.
+        * Removed the import of the auto-analysis modules into the auto_analyses package __init__ module.  This import is not needed.
+        * The N-state model system test module now imports the auto-analysis to fix an import order error.
+        * Added a warning for the spectrum.read user function if a peak intensity of zero is encountered.  This value can cause singular matrix failures in certain optimisation algorithms.
+        * The spectrum.error_analysis user function can now be performed on a subset of all spectra.  The subset argument has been added to allow the error analysis to be restricted to a subset of all loaded spectral data.
+        * Created the lib.list.unique_elements() function for returning a list with duplicates removed.
+        * Shifted the standard deviation code from the Monte Carlo error_analysis() function to the lib package.  The new function lib.stats.std() is now used to simplify the error_analysis() function and allow the code to be reused.  This will be useful for expanding the pipe_control.monte_carlo.error_analysis() function to handle parameters which are dictionaries, for example as in the relax_disp branch.
+        * The Monte Carlo error_analysis() function now handles dictionary type parameters.
+        * Renamed the new lib.stats module to lib.statistics.
+        * Spun out the model list GUI element from the model-free auto-analysis into its own module.  This GUI element is now the gui.analyses.model_list.Model_list class.  This code has been spun out as the GUI element will be used by the relaxation dispersion branch.
+        * The gui.analyses.model_list.Model_list GUI element now can have tooltips via the tooltip class variable.
+        * Rearrangements of the gui.analyses package.  The new gui.analyses.elements package has been created and the model list and text and spin GUI elements have all been shifted into the package.
+        * Spun out the Spin_ctrl analysis GUI element into its own module in gui.analyses.elements.
+        * The relaxation time part of the spectra list GUI element can now be turned on or off.
+        * The execution of the user function GUI pages can now be delayed.  The create_page() execute flag has been added to disable execution.  This can be later forced with the new on_execute() force_execute flag.
+        * Modified the GUI new analysis wizard to return a list of user function on_execute methods.  This will be used in the relax_disp branch and in the future for when a special user function page is added to the new analysis wizard.  This allows the use of user function pages with execution delayed until the analysis __init__() method is being run.
+        * Standardisation of the text of the GUI elements of the analysis frames and expansion of the tooltips.  All the text parts of the Spin_ctrl and Text_ctrl elements now end in a colon.  Tooltips are now present on all elements and have been expanded and improved.
+        * The Text_ctrl analysis frame GUI elements  now have separate tooltips for the buttons.  This is to give a hint to the user as to what the button does.
+        * The model selection GUI analysis element can now have a different tooltip for the button.
+        * Added tooltips to the model-free model list GUI elements in the model-free analysis frame.
+        * Created the gui.wizards package for holding all of the relax wizards.  The gui.wizard module is now called gui.wizards.wiz_objects.
+        * Shifted and merged the NOE and Rx peak intensity wizards into a new module.  The wizards were separate and a part of the analysis frame class objects.  The two wizards have been merged into the gui.wizards.peak_intensity.Peak_intensity_wizard class as most of the code is shared.  This one wizard class will be useful for reusing in the relaxation dispersion branch.
+        * The peak intensity wizard class now inherits from Wiz_window.  This allows the class to be a wizard window instead of launching a wizard window from within the class.
+        * Small rearrangements in the gui.wizards.peak_intensity module.
+        * Alphabetical ordering of the methods in the gui.wizards.peak_intensity module.
+        * Simplified all of the peak analysis wizard wizard_update_*() methods.  They now all defer to the wizard_update_ids() method which updates the spectrum ID fields.
+        * Simplified the wizard_update_noe_spectrum_type() method as in the previous commit.
+        * Fixes for the frq.set user function in the GUI.  The ID list is now set to the spectrum IDs, and the frequency units are no longer all fused into one string.
+        * Unicode is now used for the tau symbol in the model-free model parameter lists in the GUI.  This is only when modifying the models to optimise, which shouldn't be changed anyway.
+        * Removed the 'string' from 'Spectrum ID string' in the spectrum list GUI element.  This is a GUI - the word string is meaningless here!
+        * The delay times column string now specifies seconds in the spectrum list GUI element.
+        * Formatting improvements for the relaxation data list GUI element.  The data type column entries are now descriptive and use subscript.
+        * More unicode strings are used for the GUI for subscripts and Greek letters.
+        * Fixes for the R1 and R2 GUI analyses for the recently introduced unicode subscript characters.  There is now self.label for a pure string version and self.gui_label for the fancier unicode version.
+        * The frq.set user function 'id' argument is no longer read only - this was causing test suite failures.
+        * Removed a nasty kludge for releasing the execution lock on failure.  This kludge, after the bug fix for https://gna.org/bugs/?20756, was causing failures in the test suite.
+        * Changed the 'Execute relax' button in all analyses in the GUI to 'Execute analysis'.  It makes no sense to execute relax as relax has been executing during the analysis initialisation and the user setting up all the data for the analysis.  This is a remnant of ancient design of Michael Bieri's GUI being a separate program to relax, which would execute relax with the click of this button.
+        * Restored the Py_INCREF() function call in the relaxation curve-fitting C module.  This was deleted at r12632 along with Py_XDECREF() and Py_DECREF() calls.  The absence of a Py_INCREF() function call causes the module to crash the Python interpreter under certain conditions.  The problem was found in the relax_disp branch.
+        * Clean up of unused headers and declarations in the exponential curve C module.
+        * The relax_fit C module setup() function now uses the Py_RETURN_NONE macro to terminate.  This macro does exactly what the old code does anyway.
+        * Removed an unused declaration in the relax_fit C module setup() function.
+        * Increased the maximum number of relaxation times for the relax_fit C module to 50.
+        * Shifted the C array creation to the relax_fit C module header.  The params, values, sd, relax_times, and scaling_matrix C arrays are now declared and allocated in the header file rather than using malloc() calls in the setup() function.  This is to attempt to remove a memory leak.  The arrays are now of fixed length and reused for each setup() call.  These, as well as the other variables declared in the header, are no longer declared in the functions.
+        * Improved the Python and C documentation of the functions of the relax_fit C module.
+        * Converted the Py_BuildValue() calls to PyFloat_FromDouble() in the relax_fit C module.  This doesn't change much.
+        * Documentation improvements for the back_calc_I() function of the relax_fit C module.
+        * The exponential C file now uses the exp() function from math.h rather than Python.h.  This file is independent from Python.
+        * The numpy include is no longer used for the compilation of the C modules.  Numpy is not used at all in the C modules, so this just adds an annoying dependency for those who need to compile the module themselves.
+        * Removed some bad calls to status.exec_lock.release().  This commit may have to be reverted in the future.  The problem is that the execution lock is not being held when these calls are made.  The calls were added as a kludge to handle certain situations where the execution lock was not released.  There may be cases were this behaviour is still needed.
+        * Added a developer script for testing of memory leaks in the relax_fit C modules.
+        * Removed the numpy dependence from the manual C module compilation script.
+        * Created the lib.mathematics relax library module.  This currently contains two functions, order_of_magnitude() and round_to_next_order().
+        * Added unit tests for the lib.mathematics module.
+        * The relax_fit analysis now uses lib.mathematics.round_to_next_order() for the scaling matrix.  This allows the optimised I0 value to be better understandable in the printouts.
+        * Created the new Value system test class with the first test Value.test_value_copy.  This test demonstrates some pretty large bugs in the value.copy user function.
+        * Modified the Value.test_value_copy system test to check the copying of errors as well.
+        * Added the error flag argument to all of the specific analysis API set_param_values() methods.  This will allow parameter errors as well as values to be set.
+        * The Value.test_value_copy system test now checks all of the values and errors.
+        * Added the error flag argument to the value.set user function.  This will allow for parameter errors to be set by the user.
+        * The specific analysis API _return_value_general() method now returns errors even when values are missing.
+        * The internal structural object PDF file creation now writes out http://www.nmr-relax.com.  Previously the link http://nmr-relax.com was written out.
+        * Diffusion tensor PDB file fixes for the internal structural object changes.  This is because the relax website link is now written into the PDB file as http://www.nmr-relax.com rather than http://nmr-relax.com.  This fixes the diffusion tensor system tests.
+        * Converted all of the specific analysis modules into packages.  The model-free and steady-state NOE analyses were already packages, and this now brings all other analyses in line with the package design of specific_analyses.  The only change is that the files specific_analyses/x.py have been shifted to specific_analyses/x/__init__.py and the __all__ package variable added.
+        * Epydoc docstring fixes for the compat module.
+        * The peak intensity wizard can now function remotely when the spins are not named.  This will be needed for the GUI tests to allow the Question() call to be bypassed and still adding the spin.name user function as the first page of the wizard.  The key for spin.name page has also been fixed so that the page can be accessed.
+        * The timing of individual tests in the relax test suite can now be printed out.  The new command line argument --time has been added which, when supplied with one of the test suite arguments, will cause the time required to complete each individual test to be displayed.  Instead of just printing the characters '.', 'F', and 'E' for each test, now these characters are postfixed with the time in seconds, the name of the test and ending in a newline character.
+        * Big speed up of the test suite by skipping a large number of redundant Frame Order system tests.  These are tests of using only PCS or only RDC data.  These tests are still active for the pseudo-ellipse just to make sure that a whole missing data type can be handled.
+        * Suppressed the reporting of skipped tests in the test suite if the module is set to None.
+        * The preview button in the file selection elements of the user function windows can now be disabled.  This is via the new wiz_filesel_preview argument being set to False.
+        * Merged the frq.set and temperature user functions into the new spectrometer user function class.  The frq.set user function is now called spectrometer.frequency and temperature is now spectrometer.temperature.  To match these changes, the cdp.frq variable is now called cdp.spectrometer_frq.
+        * Modified the spectrometer.frequency user function so that a frequency list and count is stored.  These are the new cdp.spectrometer_frq_list and cdp.spectrometer_frq_count variables.  This will allow various parts of relax which assemble frequency information to be simplified and made more consistent.
+        * Created basic SVG and PNG graphics for the spectrometer user function class.  The spectrometer is black so as not to offend Bruker, Varian, or Jeol users by avoiding a colour from one of these companies.
+        * The pipe_control.spectrometer.get_frequencies() function can now return MHz or Tesla units.
+        * Renamed the functions of the pipe_control.spectrometer module.  The frequency() and temperature() functions are now called set_frequency() and set_temperature().
+        * Added backwards compatibility support for the spectrometer frequency list and count.  This is needed for old relax state files.
+        * A whitelist is now being used to limit the number of frame order GUI tests to 1.
+        * Shifted all frequency data handling associated with relaxation data to pipe_control.spectrometer.  This includes the deletion of the relax_data.frq user function as this replicates the behaviour of spectrometer.frequency.  A number of functions from the pipe_control.relax_data module have changed:  frq() has been deleted as it is replaced by pipe_control.spectrometer.set_frequencies(); frq_checks() has been shifted to pipe_control.spectrometer.frequency_checks(); frq_loop() has been shifted to pipe_control.spectrometer.loop_frequencies(); num_frq() has been deleted as the new variable cdp.spectrometer_frq_count contains this info.  Two new functions in the pipe_control.spectrometer module have been added to remove the functionality from pipe_control.relax_data.  These are copy_frequencies() and delete_frequencies().
+        * The molmol.macro_run user function file argument now has a description.
+        * Huge speed up of the system tests for the loading and creation of model-free saved states.  The OMP files used for the system test have been truncated from 134 to 7 spins, changing the timing of 6 system tests from 11-13 seconds to less than 0.5 seconds each.
+        * All of the binary file arguments for the user functions now are file selection GUI elements.  The GUI user function wizard pages now have file selection buttons for selecting the executable to run.  These all have the preview button disabled.  The results.read and state.load GUI elements also have the preview button disabled.
+        * The user function 'prompt' description elements as now displayed in the GUI wizard page.
+        * The monte_carlo.error_analysis user function can now handle parameters which are lists.
+        * Added the ability for specific analyses to override the optimisation constraint algorithm.  The default is still the 'Method of Multipliers', but if the constraint_algorithm() method returns a different string, then that will be used to select the algorithm.  This allows the 'Log Barrier' method in minfx to be used.
+        * The value.display and value.write user functions can now handle list and dictionary type parameters.
+        * Added two methods to the specific analysis common API class.  These are the _model_type_global() and _model_type_local() methods for always specifying that the model type is global (i.e. at the level of the data pipe) or local (i.e. there can be multiple clusters of models).
+        * Added some more functions to the lib.statistics module.  These include the bucket() function for creating a discrete distribution from a list of floating point numbers, and the gaussian() function for calculating the probability of a point on a Gaussian distribution.
+        * Added a directory and files for testing the white noise in relaxation data.  This includes scripts and graphs.
+        * The initial parameters are now the real parameter rather than the optimised ones.  This is for the script for testing white noise in relaxation data.
+        * The spectrum.peak_intensities is now more robust when reading in a generic formatted file.  Firstly there is a check that the intensity column number has been supplied.  And then there is a checks that all relevant data could be extracted from each row of the file.  This replaces traceback errors with RelaxErrors explaining the problem if the user inputs bad data or forgets the intensity column argument.
+        * Changed the "Execute analysis" button text back to the original "Execute" text of the old relax GUI.
+        * Added the 'test.seq' file from bug report #20873 (http://gna.org/bugs/?20873).  This is from Troels E. Linnet (http://gna.org/users/tlinnet).  The bug report and link to http://thread.gmane.org/gmane.science.nmr.relax.user/1452 explains the contents.  The file will be used to construct a system test to catch the bug.
+        * Created the Peak_lists.test_bug_20873_peak_lists system test to catch bug #20873.  This was reported by Troels E. Linnet (http://gna.org/users/tlinnet) at https://gna.org/bugs/?20873.  The test has been created by copying the user function calls from the original bug report and slightly modifying them to suite a 'relax_fit' analysis type.
+        * Fix for the Peak_lists.test_bug_20873_peak_lists system test.  The spectrum IDs are now strings.
+        * Added checks of the peak intensities to the Peak_lists.test_bug_20873_peak_lists system test.
+        * The spectrum.integration_points page in the peak analysis GUI wizard has been fixed.  It is only shown when volume integration is selected with no replicated spectra.
+        * Removed a debugging printout which is killing the relax unit tests in Python 3.
+        * Added an EPS version of the 128x128 pixel spectrometer icon.  This is for use in the relax manual.
+        * Added a README file for the relax 128x128 icons describing how the EPS files should be created.
+        * Updated the spectrometer 128x128 icon to be of the correct size and colour.
+        * Added a README file to the graphic/analyses directory describing how to create the EPS files.
+        * Merger of the dipole_pair and interatomic user function classes.  The functionality of these two classes overlaps significantly.  And the dipole_pair user functions are not related to magnetic dipole-dipole interactions.  Therefore all the user functions from both classes were shifted into the new interatom user function class.  This change will affect almost all relax scripts but, as this will form part of the relax 3 release, script breakage should be expected anyway.
+        * Removed the pipe_control.dipole_pair module as its contents is now in pipe_control.interatomic.
+        * Removed the dipole_pair module from the pipe_control package __all__ list.
+        * Merged the interatom.create user function into interatom.define.  These user functions had overlapping functionality which would be confusing for a user.
+        * Added polish to all of the interatom user function docstrings.
+        * Improved the functionality of the interatom.read_dist user function.  The file data is now stripped using lib.io.strip to remove comments and blank lines.  And now if the iteratomic data container cannot be found, it is created instead of raising a RelaxError.
+        * Improvements to the RelaxZeroVectorWarning - the warning message was terribly out of date.
+        * Polish for the rdc.read user function.  Comment lines and blank lines are now removed to suppress useless warning messages about these lines containing no valid data.
+        * Added some basic initial relax icons for J couplings.
+        * Created some basic initial GUI wizard graphics for J couplings.
+        * Modified the titles of all the auto-analysis GUI elements.  The text 'Setup for' has been removed as it is meaningless.
+        * Added more emphasis on the titles of the auto-analysis GUI elements.  There is now more space below the title, and a different font (16pt roman italic) is being used.
+        * Removed some now irrelevant information from the rdc.read user function docstring.
+        * Removed a false prompt example from the rdc.read user function docstring.
+        * Created an entire new user function class for handling J couplings in the relax data store.  This derives from the RDC user function modules.  The following functions have been created:  j_coupling.copy, j_coupling.delete, j_coupling.display, j_coupling.read, and j_coupling.write.
+        * Added a check for the RDC data type to the rdc.read user function.
+        * The rdc.read user function can now handle T = J+D type data.  Support for this in the specific analyses is yet to be added.
+        * Fixed for the rdc.read, j_coupling.read and interatomic.read_dist user functions.  Comment lines are no longer removed, as it is impossible to tell a comment line from a spin ID string.
+        * Split up the specific_analyses.n_state_model package into modules.  The new data and parameter modules have been created by shifting out method from the __init__ module and converting them into functions of the two new modules.  This is to simplify the package.
+        * Shifted another method from the N_state_model class to the specific_analyses.n_state_model.data module.
+        * Added support for the T = J+D RDC data type to the N-state model target function.  The J couplings are sent into the target function class when the 'T' RDC data type is encountered.  These measured values are then added to the back-calculated RDC values to produced T(theta) which is then compared to T via the chi-squared function.
+        * Fix for the new specific_analyses.n_state_model.data.opt_uses_j_couplings() function.  The cdp.rdc_data_types appears not to have all alignments IDs within it.
+        * Removed the check for Numeric Python in the dep_check module.  This Python module not been used within relax for the better part of a decade.  This check is not needed.
+        * Added the j_coupling module to the pipe_control __all__ list.
+        * Fix for the pipe_control.rdc.q_factors() for T = J+D type data.  The Q factor normalisation was incorrect, as the J coupling should be subtracted from T first.
+        * Unit test fixes for the N-state model.  This is needed due to the recent package rearrangements.
+        * Removed the absolute argument for all of the lib.alignment.rdc functions.  This should be performed at the level of the target function, as mathematical operations may be required prior to taking the absolute value.
+        * Fixes for the N-state model target functions for the lib.alignment.rdc changes.  The absolute value is now calculated within the target function rather than when back calculating the RDCs.
+        * Errors are now handled correctly for the N-state model when T = J+D values are used for the RDCs.  The error is the square root of the average variance of the RDC error and J coupling error.
+        * The RDC back-calculation function now supports T = J+D values.
+        * Created the N_state_model.test_absolute_T system test.  This is for checking the optimisation of absolute T=J+D values to find alignment tensors.
+        * Epydoc docstring fix for the RelaxTestResult.write_time() method.
+        * Created a script to look through the entire relax source tree for unused imports.
+        * Removed a large amount of unused imports throughout the relax code base.  These were identified by the new ./devel_scripts/find_unused_imports.py script together with pylint.
+        * Fixes for the pipe_control.rdc module for when the structure cdp.rdc_data_types is missing.
+        * Improvements to the devel_scripts/find_unused_imports.py script.
+        * More cleanups of unused imports throughout relax.
+        * Fixes for how the devel_scripts/find_unused_imports.py script runs pylint.
+        * More cleanups of unused imports throughout relax.
+        * Fixes and expansion of the test_suite.unit_tests._lib package __all__ list.
+        * Fixes and improvements to Gary Thompson's unit_test_runner.py script.  The printouts have been improved and the script can now handle more than 3 levels of directories for a package.
+        * The unit_test_runner.py script now defaults to verbose mode.
+        * More cleanups of the unit_test_runner.py script.
+        * Added a printout to the unit_test_runner.py if the TestCase class cannot be found.  This normally continued the test loading silently without warning that the TestCase class name is missing or incorrect.
+        * Missing import in the unit test module for the lib.frame_order.matrix_ops module.
+        * Shifted the spin_id_to_data_list() function from pipe_control.selection to lib.selection.  This is because the selection object requires this function, and the function has nothing to do with the relax data store.
+        * Lots of import cleanups including removal of '*' imports, missing imports, and unused imports.
+        * Small change to the find_unused_imports.py printouts.
+        * Large removal of unused imports throughout relax found using the devel_scripts/find_unused_imports.py script.
+        * Clean up of all the imports in the relax code base.  This is mainly alphabetical reordering of the imports required due to the huge layout changes in the trunk.
+        * Shifted the user function initalisation.  This is from the import of the user_functions package to the package initialise() function.  This is for saner importing dependencies in the relax sources.
+        * The lib.io.open_write_file() function now catches file names of None and raises a RelaxError.  This is useful for the GUI if the user forgets to select a file name.
+        * The rdc.corr_plot user function can now handled T=J+D type data.
+        * The N-state model analysis can now handle RDC data of mixed D and T=J+D.
+        * Added support for mixed RDC data types per alignment.  This is to allow, for example, one bond RDC values of the 'D' data type and two bond RDC values of the T = J+D data type to be loaded for the same alignment ID.  This is now handled in the N-state or ensemble analysis by handling a different RDC data type per RDC value.
+        * The Peak_lists.test_bug_20873_peak_lists system test is now skipped if the C modules are not compiled.  This test requires the presence of the C modules.
+        * Added a completely empty PNG image to use in the new analysis GUI wizard for blank buttons.  This will be used in the relax_disp branch to eliminate a Mac OS X only bug.
+        * Added the scripts for backing up the relax SVN repository and mailing lists to the repository.  This is to make it easier for others to set up the backups on their systems.
+        * Added comments to the backup scripts to make it easier to use them.
+        * Added the listings package to the relax user manual LaTeX file.  This will be used to improve the formatting and look of relax scripts in the manual.
+        * Started to convert the relax user manual to use the lstlisting environment for scripts.  This is to prettify the scripts in the manual.
+        * Improvements to the script UI section of the NOE chapter of the user manual.  The lstlisting environments now have the correct numbering to match the script at the start,comments have been copied into the split up script elements, and a few comments improved.
+        * The NMRPipe script in the relaxation curve-fitting chapter of the manual now uses lstlisting.  The language has been explicitly set to csh to override the global default of Python.
+        * Converted all of the relaxation curve-fitting chapter of the user manual to the lstlisting environment.  This is for all parts of the script UI section of the chapter.
+        * Converted all of the model-free chapter of the user manual to the lstlisting environment.  This is for all parts of the script UI section of the chapter.
+        * Converted all of the J(w) mapping chapter of the user manual to the lstlisting environment.  This is for all parts of the script UI section of the chapter.
+        * Converted all of the Consistency testing chapter of the user manual to the lstlisting environment.  This is for all parts of the script UI section of the chapter.
+        * Created a new listings language definition for relax for the user manual.  This is for better highlighting of relax scripts and code in the relax manual.
+        * Added an EPS version of the 128x128 J coupling icon for use in the relax user manual.
+        * Removed some junk text from the relax script text in section 6.3.8 of the user manual.
+        * The relax language definition is now auto-generated by the fetch_docstrings.py script.  This is for use in the relax user manual using the listings package.  The fetch_docstrings.py script now creates the docs/latex/script_definition.tex file.  This is used by the relax.tex file via an \include{} statement.  This setup allows all of the relax user functions to be dynamically set as keywords for the relax language definition.
+        * Converted all of the Development chapter of the user manual to use the listing package.  This is for all of the code examples, which are now much more colourful.
+        * Small typo fix for the relaxation curve-fitting chapter of the user manual.
+        * Fixed some out of date script code for the relaxation curve-fitting chapter of the user manual.
+        * Added a section label to the relaxation curve-fitting chapter of the user manual.
+        * Adding a test data file in NMRPipe SeriesTab format.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  A file in NMRPipe SeriesTab format is added to the test-suite for further development.
+        * Test function for NMRPipe SeriesTab format implemented.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  An assertEqual test is implemented for the reading of NMRPipe SeriesTab format.  The standalone call is: relax -s Peak_lists.test_read_peak_list_NMRPipe_seriesTab
+        * Adding a NMRPipe function file in the folder lib\software\nmrpipe.py.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  Initial file for: lib\software\nmrpipe.py.  This file will hold the function calls handling NMRPipe SeriesTab format.
+        * Fix for commit (http://article.gmane.org/gmane.science.nmr.relax.scm/18004).  The spin naming was wrong.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  'spin_id' keywords should be supplied different.  Ex: spin.name(name='NE1', spin_id=':62').
+        * Autodetect format implemented for NMRPipe SeriesTab format implemented.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  The file is determined a NMRPipe SeriesTab if the first two words of the first line is: REMARK SeriesTab.
+        * Update of the rotation matrix example in the intro chapter of the user manual.  The function is now in lib.geometry.rotations.euler_to_R_zyz().  The example has also been converted to the lstlisting environment for better formatting.
+        * The relax prompt strings and help system are now keywords for the relax listings package definition.  The prompt strings "relax>" and "relax|" are now recognised as keywords and are coloured blue.  The help system has been added as a normal Python keyword for highlighting.
+        * Converted all relax prompt examples in the intro chapter of the manual to the lstlisting environment.  This is simply for a more colourful representation.
+        * The prompt examples in the user function chapter of the manual now use the listing environment.  This is via the fetch_docstrings.py script and results in much better formatting of these subsections.
+        * Added function destination for auto-detected NMRPipe SeriesTab format.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  Auto-detected NMRPipe SeriesTab format make function calls to the file: lib\software\nmrpipe.py in function nmrpipe.read_list_intensity_seriestab().
+        * Imported the missing lib.software.nmrpipe module into pipe_control.spectrum.  Progress sr #3043: (https://gna.org/support/index.php?3043) - Support for NMRPipe seriesTab format *.ser.  Expected modules for use in lib\software\nmrpipe.py is imported.
+        * Release checklist minfx and bmrblib version update to the newest versions.
+        * Spacing fix in an import statement (found using the 2to3 conversion program).
+        * Added the relax wiki backup script for dumping the MySQL database contents locally.  This is from http://article.gmane.org/gmane.science.nmr.relax.devel/4163.
+        * Added the script from Troels Linnet for backing up the relax wiki via FTP.  This is from the post http://article.gmane.org/gmane.science.nmr.relax.devel/4168.
+        * Added a link to Troels' post to the relax-devel mailing list to the relax wiki FTP backup script.  The link is http://article.gmane.org/gmane.science.nmr.relax.devel/4168
+        * The relax info printout now works in the absence of the bmrblib module.
+        * Added some Oxygen icons for a boolean GUI input element.  The media-record-relax-green.png files are the media-record.png files with the hue set to 117.
+        * Created a boolean input element for the auto-analyses of the GUI.  This simply turns on and off.
+        * The boolean GUI auto-analysis input element now has a SetValue() method.
+        * Completed NMRPipe SeriesTab reader.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.  Completed NMRPipe SeriesTab reader for assignment according to SPARKY format.  Changes implemented according to: http://article.gmane.org/gmane.science.nmr.relax.devel/4120.
+        * Extraction of NMRPipe SeriesTab changed.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.  The Extraction of NMRPipe SeriesTab data is changed in pipe_control/spectrum.py in the read() function.
+        * Added flag for single or multiple extraction of spectrum.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Flag change added to reading of NMRPipe SeriesTab.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Some small edits to the intro chapter of the relax user manual.
+        * Many improvements to the indexing in the relax user manual.
+        * Removed the flag for single_spectrum.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Fixed wrong reference to Sparky format.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Modfied the intensity list to handle intensities for all spectra per spin.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Fixed the extraction of NMRPipe seriestab data in pipe_control.spectrum.read().  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Fix for handling reading spin of type heteronuc='NE1' and proton='HE1'.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Adding NMR seriesTab data file for a multiple column / multiple spectrum formatted file.  This file is from https://gna.org/support/download.php?file_id=18618 attached to the support request https://gna.org/support/?3043 by Troels Linnet.  This is if the command "seriesTab -in ../../peaks.dat -out seriesTab_multi.ser -list nmrfiles.list -sum -dx 1 -dy 1" where nmrfiles.list contains file reference to 10 .ft2 files.
+        * Fix for unit test of nmrpipe.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Replacing a pointer-reference structure to an empty creation of list of lists.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * The ID of spins in seriesTab_multi.ser was not formatted correctly to SPARKY format.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Added system test for reading of a multi column formatted NMRPipe seriesTab file.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.  Generated the reference data in Excel, for the system test.  The spectrum ID's are auto generated by supplying the keyword spectrum_id='auto'.  The first few tests was matched against integers rather than floats. Adding '.0' to the end of each number.  Spaces added after the commas in the self.assertAlmostEqual() calls.  The 2to3 conversion program (for Python 2 to Python 3 conversion) highlights this issue.
+        * Added check for number of supplied spectra ID's and the number of returned intensity columns.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Made it possible to autogenerate spectrum ID's, if spectrum_id='auto'.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Remove from datalist where empty list starts. These are created where spins are skipped for ID = '?-?'.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Moved checks for matching length of spectrum IDs and intensities columns.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Moved the adding function of adding the spectrum id (and ncproc) to the relax data store.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.  Shifting it to later will prevent the cdp.spectrum_ids list to be populated after the user calls the user function incorrectly.
+        * Added epydoc documentation in pipe_controlspectrum.read() when supplying keyword 'auto'.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Added GUI description for when supplying 'auto' to the spectrum_id.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Added a stub GUI describtion in the File formats, for NMRPipe seriesTab.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.
+        * Fix for two spaces are used after a period in documentation.  Progress sr #3043: (https://gna.org/support/index.php?3043) - support for NMRPipe seriesTab format *.ser.  relax uses the double space for easier for the eyes to pick up the sentence structure.
+        * The relax user manual is now broken into parts.  The higher level LaTeX part command is now used to group related chapters.  This should make it easier for users to navigate this huge thing.
+        * Creation of the optimisation chapter of the relax user manual.  The main text of this chapter originates as part of the model-free chapter.  As this most of this text was not model-free specific, it has been spun out as its own chapter.  Text has also been taken from the "Optimisation of relaxation data – values, gradients, and Hessians" chapter.  The indexing for the optimisation topics has also been improved.
+        * Changed the chapter layout of the relax user manual.  The development chapter has been moved forwards.
+        * Fix for the spectrum.read_intensities user function docstring.  Grammatically, the text "spectrum ID's" should be "spectrum IDs".  The problem though was that this text was strangely causing the user manual compilation to fail.
+        * Added subsubindexing for the optimisation algorithm index entries.
+        * Added extensive cross-referencing to the index of the relax user manual.
+        * Added some hyphenation rules for better formatting in the user manual.  For this, the external hyphenation.tex has been created.
+        * Better indexing in the relax user manual.  The imakeidx LaTeX package is now used instead of makeidx, and the hyphenation has been improved.
+        * Lots of spelling fixes for the relax user manual.
+        * Updated the minimum Python version from 2.3 to 2.5 in the user manual.
+        * Epydoc docstring fix for the pipe_control.spectrum.read() function.  The text "Z_A{i}" causes problems when compiling the API documentation, so it has been changed to "Z_Ai".
+        * Python 3 fix for the new test_suite.clean_up module.  The exceptions Python module does not exist in Python 3, so instead the relax compat.builtins object is being used to store the WindowsError variable of None.
+        * Added a paragraph to the installation chapter of the manual about not supporting the EPD.
+
+
+    Bugfixes:
+        * Fix for bug #20674 (https://gna.org/bugs/?20674) - the failure of the consistency testing analysis.  This was reported by Mengjun Xue <mengjun dott xue att mailbox dott tu-berlin dot de>.  The problem was that the first residue did not have a single proton 'H' in the PDB file, and therefore the dipolar relaxation interaction was not set up.  The overfit_deselect() method of the consistency testing specific API was not checking for this.  The method is now much more like that of the model-free specific analysis.
+        * Fix for the model-free analysis specific overfit_deselect() method.  The tests for the presence of dipolar relaxation was not correct and was non-functional.
+        * Fix for the J(w) mapping analysis matching that for the consistency testing.  The overfit_deselect() method is now identical to that of the consistency testing analysis.
+        * Fix for bug #20683 (https://gna.org/bugs/?20683) - the infinite and NaN data in Bruker DC files.  This was reported by Mengjun Xue <mengjun dott xue att mailbox dott tu-berlin dot de>.  The model-free specific overfit_deselect() method now checks for infinite relaxation data and deselects the spin if such data is encountered.
+        * Fix for the analysis specific API common method _data_init_spin().  The data types are now correctly checked - they are not strings but types.
+        * Fix for the relaxation curve-fitting _assemble_scaling_matrix() method.  The intensity scaling was never activated before due to a lower vs. uppercase parameter name mismatch.  This scaling is now correctly set up as the previous code assumed cdp.relax_times was a list whereas it has been a dictionary since the early 1.3 releases.
+        * The grid search bounds for the relaxation curve-fitting are no longer affected by scaling.  The parameter scaling recently activated revealed a bug in the lower and upper data structures for the grid search in that these were continuously scaled down.
+        * Fix for the target_functions.relax_fit C module - the scaling was incorrectly performed.
+        * Fix for the relaxation curve-fitting _back_calc() method for the changes to the C module.  The setup() method requires that the scaling matrix is converted to a list of the diagonal elements.
+        * Fix for the analysis specific API common _return_value_general() method.  The value of None is now handled properly when a simulation value is asked for.
+        * Restored the default behaviour of the spin_loop().  The skip_desel flag is now functional and defaults to False.
+        * Fix for the relax_times and intensities parameter definitions for specific_analyses.relax_fit.  These are dictionaries, not lists.
+        * Fix for the spectrum.error_analysis user function for replicated spectra and subsets.  A second call to spectrum.error_analysis was removing the results from the first call.  This is now avoided.
+        * Bug fix for the right click popup menu in the spectra list GUI element.  This affects the NOE, R1, and R2 analyses.  The actions of the menu items were all mixed up.
+        * Fix for the nasty bug #20756 (https://gna.org/bugs/?20756).  The problem was that the global execution lock was not always released by a relax script when certain errors are raised during the script execution.  This does not occur for all types of error though.  Now the release of the lock has been shifted into the 'finally' statement to absolutely force lock release.
+        * Big bug fix for a memory leak in the relaxation curve-fitting C module.  Proper reference counting is used for the temporary 'element' Python objects used in the conversion between Python and C objects.  The use of the Py_CLEAR() macro removes the memory leak.  However the number of references as seen by sys.gettotalrefcount() in a debugging Python version keeps rising and might be a problem in the future.
+        * Big bug fix for the value.copy user function - it is now functional again.
+        * Bug fix for the value.copy user function.  The user function can now handle parameter errors, and the values are set in the correct data pipe.
+        * Bug fix for an incorrect print statement in the N_state_model.test_paramag_centre_fit system test.  This is in the script, and was uncovered using WinPython by Troels E. Linnet (http://gna.org/users/tlinnet) via the relax system tests at http://thread.gmane.org/gmane.science.nmr.relax.devel/3863.  The Python bug was detailed at http://thread.gmane.org/gmane.science.nmr.relax.devel/3863/focus=3867.
+        * Fix for the package checking as part of the unit tests.  This was identified from the bug report #20820 (https://gna.org/bugs/?20820) submitted by Troels E.  Linnet (https://gna.org/users/tlinnet).  The problem was that on some systems, the full path is required for checking the presence of the directories which are the sub-packages of the main package being checked.  The result was that checking for the package in the __all__ list was skipped.  Note that this change does not fix the bug reported.
+        * Fixes for the Jw.test_calc system test - the spectral density value comparison is now significant.
+        * Bug fix for the pipe_control.spectrometer.get_frequencies() function.  The units argument was incorrectly referenced.
+        * Fix for bug #20820 (https://gna.org/bugs/?20820).  Solution found - 'software' was not mentioned in __init__.py, and failed at import.
+        * Partial fix for bug #20873 (https://gna.org/bugs/?20873).  The spectrum_id argument for the spectrum.read_intensities user function can now be both a string and a list of strings.
+        * Fix for bug #20873 (http://gna.org/bugs/?20873).  This was reported by Troels E. Linnet (http://gna.org/users/tlinnet).  The ability to load multiple peak intensities from a single generic formatted file has been correctly implemented.  This involves added checks to make sure that the user supplies reasonable arguments and to then loop over the intensity column argument.
+        * Python 3 fixes via the 2to3 program.
+        * Bug fix for the value.write user function for list or dictionary type data.  This is for the case where the variable of one spin is set to None rather than a list or dictionary type.
+        * Bug fix for the Sequence GUI input element.  This complete the removal of bug #20873 (https://gna.org/bugs/?20873).  The problem was that the gui_to_str() function was not failing to convert the string into a string list, so the list was deemed as a single string.  Now the first character of '[' or '(' for lists or tuples are now searched for instead of relying on the conversion to trigger an error.
+        * Fixes for the value.write user function for simple parameter values of None.  This is a recently introduced bug which causes a complete failure of the user function is the parameter for any spin is None.
+        * Fix for bug #20888 (https://gna.org/bugs/?20888), the autoscaling of Grace graphs.  This solution was mentioned in the post at http://thread.gmane.org/gmane.science.nmr.relax.devel/3920/focus=3930.  Instead of using minimum and maximum values for the axes in the Grace graphs produced by the lib.software.grace module, which was the old solution for having the graphs scaled to reasonable values, instead the '@autoscale' command is appended to the end of all graphs.  This is performed by the write_xy_data() function.
+        * Bug fix for the running of the test suite in the relax GUI.  The fix of r19727 was extended to apply to the GUI as well.  Too many arguments were being sent into TextTestRunner Python class on certain Python versions (3.1 and <= 2.6).
+        * Big bug fix - the relax execution lock now truly supports nesting.  This fixes bug #20891 (https://gna.org/bugs/?20891) reported by Troels Linnet (https://gna.org/users/tlinnet).  Scripts can now be executed from the GUI.  Note that this is a very dangerous fix.
+        * Completed the fix for bug #20889 (https://gna.org/bugs/?20889).  The problem was that the spectrum.read_intensities user function was incorrectly updating the cdp.spectrum_ids list when the spectrum_id argument is set to a list.  The list of IDs was being set as a single element of cdp.spectrum_ids, causing problems with the GUI when updating the ComboBox choices and then subsequent setting of the spectrum IDs.  This bug and fix is independent of the relax_disp branch, despite being uncovered there and being caught by the Relax_disp.test_bug_20889_multi_col_peak_list GUI test in that branch.
+        * Bug fix for the GUI element for the interatom.define user function.  The special spin ID GUI elements can not be set to the get_spin_ids() function as then SetValue can no longer work for IDs not in the list.
+        * Fixes for the TestCase class names for a number of lib package modules.  As the test class name was incorrect, previously the test suite was skipping these silently.  This was dangerous.
+        * Fixes for the unit tests of the lib.selection module.  The contains_*() methods now should be used.  And the test_Selection_ful_spin_id() unit test has been completely deleted as this way of checking the selection object is no longer valid.
+        * Fix for bug #20910 (https://gna.org/bugs/?20910) - the broken grace.write GUI interface.  The problem was that the Value GUI input element was not detecting list-type data returned by the wiz_combo_iter method.
+        * Fix for bug #20915, (https://gna.org/bugs/?20915) - Failure of Grace opening in MS Windows Troels E. Linnet provided this patch, and was discovered during work on a Windows 7 system: telinnet aaattt bio_dot_ku_dot_dk.  This is a small fix for a wrong call to "raise RelaxMissingBinaryError(binary)", when issuing an external call to xmgrace.  The "path_sep" would be equal = [\/], and the RE search would not find(True) the full path specified for the xmgrace file.  This is now shifted to python: os.path.isfile http://docs.python.org/2/library/os.path.html.  Another fix, is that as a standard the command "xmgrace" is provided.  This will work fine through windows cmd, but the true name for program in windows is "xmgrace.exe", and so an additional search for +".exe" is also performed.
+        * Fix for the N_state_model.test_absolute_T system test for Mac OS X.  The precision of the check needed to be decreased.
+        * Fix for bug #20918 (https://gna.org/bugs/?20918), the hanging of the data pipe editor.  This was reported by Troels Linnet (https://gna.org/users/tlinnet) and is an MS Windows only problem.  The problem is in the wxMSW part of wxPython, and it may be fixed in newer wxPython versions.  The issue is nevertheless now avoided by calling the GUI user function store objects with the arguments wx_wizard_sync=True and wx_wizard_modal=True.  This appears to solve the problem.
+        * Decreased the precision of the check in the Frame_order.test_rigid_data_to_rigid_model system test.  This is to allow the test to pass on a MS Windows 7 test machine.
+        * More MS Windows fixes, this time a nasty kludge, for the relax system tests.  This is strangely needed for the relax_disp branch and not the trunk for a 64-bit MS Windows 7 test system.  The reason why this WindowsError is triggered by the base tearDown() method in the relax_disp branch and not trunk is a total mystery.  Actually why Windows refuses to complete the file close() operations of the results.write and state.save user functions before calling the tearDown() method is the greater mystery.
+        * Bug fix for the batch file permissions for executing Art Palmer's Modelfree4 program.  This was identified in the post http://thread.gmane.org/gmane.science.nmr.relax.devel/3953/focus=4000.  The file was set to be executable, but on Unix systems it would end up with the permissions "---x------".
+        * Small comment fix in the sample_scripts/consistency_tests.py script.
+        * Fix for the scons fetch_docstrings target.  The user functions need to be explicitly initialised in the fetch_docstrings script as this is not running through relax.
+        * Fix for bug #20921 (https://gna.org/bugs/?20921), the GUI tests freezing in MS Windows.  The problem was that the dipolar interaction wizard in the model-free auto-analysis GUI element was calling its user functions asynchronously.  This can lead to racing conditions.  The commit r80084 (http://article.gmane.org/gmane.science.nmr.relax.scm/17840) somehow randomly triggers this racing on MS Windows systems only together with the Mf.test_mf_auto_analysis GUI test.  Now all user functions are called synchronously.
+        * Fix for the relax GUI splash screen.  On certain systems, the GUI was failing due to the splash screen.  It is now shown after the main wxPython window has been created.
+        * Fix for the new analysis wizard when running the GUI tests.  If the create_button() method is called without a function argument, the wizard is still created.  This is triggered in the relax_disp branch on certain systems.
+        * Bug fix for the spin parameter array always being converted to lowercase.  The is in the data_store.mol_res_spin.SpinContainer._back_compat_hook() method.  It always calls the _back_compat_hook_mf_data() method which converts the spin 'params' list all to lowercase.  Now the _back_compat_hook() method first checks that the data pipe is that of a model-free analysis.
+        * Proper bug fix for the spin parameter array always being converted to lowercase.  The previous fix was causing failures in certain cases.  One system test and one GUI test were failing.  Now the spin container is checked for the presence 'equation' variable to determine if this is a model free data pipe.
+        * Fix for the relax version file for the relax user manual construction.  This was causing 'scons user_manual_pdf' and related targets to fail when a local git repository is used (via git-svn).
+        * Bug fix for the page numbers in the index - these were often out by a few pages.  The makeindex command was being run too early in the repetitive LaTeX compilation chain, causing the page numbers to be incorrect.  It is now run twice to fix the problem.
+        * Fix for the spectrum.read_intensities user function in the GUI.  The menu string was truncated to spectrum.read.
+        * Python 3 fix for the lib.software.nmrpipe.read_list_intensity_seriestab() function.  The inbuilt Python filter() function does not return a list in Python 3, as previously, but rather a filter object.  Therefore a call to list() is required to properly convert the data.
+        * An attempt at better handling MS Windows not releasing the file handle on time in the test suite.  The system and unit tests tearDown() method should now be resilient to the strange MS Windows behaviour of not releasing the relax state files.  The tearDown() method should now complete even when this error occurs.  A delay of 3 seconds has been added when the WindowsError occurs to give the OS some time before attempting to delete the file again.  If this fails, then the file deletion operation is skipped.
+        * Better handling of temporary file and directory removal in the relax test suite.  The new test_suite.clean_up.deletion() function has been created from the recent method of the same name.  This is used by the tearDown() method of the system, unit, and GUI tests.  It should prevent rare MS Windows errors from appearing due to the OS not releasing a temporary file after a close() call.
+
+
+
 Version 2.2.5
 (24 March 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/2.2.5
@@ -74,37 +480,37 @@ http://svn.gna.org/svn/relax/tags/2.2.4
 
     Changes:
         * Updated the release checklist document to include the correct instructions for minfx and bmrblib.  These are the packages bundled with relax (http://gna.org/projects/minfx/ and http://gna.org/projects/bmrblib/)
-        * Improvements for Python 2 and 3 compatibility.  Much of the Python 2 verses 3 compatibility, as well as different Python 2 version compatibility and different Python 3 version compatibility, code has been shifted into the compat module.  The different parts of relax now import from the compat module for modules/packages with different import semantics for different Python versions.  In addition the different handling of the bz2 and gzip module for reading and writing files has been shifted from 'relax_io' into 'compat'.  
-        * Updated the 2to3 checklist document to include multiple threads for faster operation.  
-        * Eliminated the os.devnull import flag dep_check.devnull_import.  This is not needed as the compat relax module defines os.devnull for Python <= 2.3.  The devnull module is no longer part of the relax information printout.  
-        * Added a more informative error message if the platform module is missing.  This is for Python <= 2.2.  The file from http://hg.python.org/cpython/file/2.3/Lib/platform.py can simply be copied into the lib/pythonX.X/ directory to fix this.  
-        * Slight change to the message printed if the platform module is missing.  
-        * Modified the script for running the relax test-suite on multiple Python versions.  The pre-2.2 Python versions are now commented out as well as the abortive Python 3.0.  
-        * Created the Mf.test_bug_20613_auto_mf_diff_tensor_pdb system test to catch bug #20613.  This was reported by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt> at https://gna.org/bugs/?20613.  This test is a direct copy of the Mf.test_bug_20563_missing_ri_error system test.  The only change is that the local tm global model results file (in the local_tm/aic/ directory) has been modified.  This results were read into relax, the file test_suite/shared_data/structures/Ap4Aase_res1-12.pdb loaded into the data pipe, and the results saved again.  This triggers the bug as the problem is the presence of structural data with the local tm global model being selected in the auto-analysis.  
-        * Shifted all of the model-free specific analysis class documentation variables to the top.  This is simply for better organisation of the code.  
-        * Created the model-free write_doc class variable talking about the field strength independent Rex value.  This has been added to the value.display and value.write user functions to explain that Rex values are very small and that the user needs to scale them up.  
-        * Shifted all of the documentation variables to the top of the specific API_base class.  This is for better organisation.  
-        * Added the write_doc class variable to the specific analysis API class as a empty string.  This is to fix the unit tests.  
-        * Created the front end for the new structure.create_rotor_pdb user function.  This will be used to create a PDB representation of a rotor motional model.  
-        * Added file, directory and overwrite force arguments to the structure.create_rotor_pdb user function.  
-        * Started to implement the backend of the structure.create_rotor_pdb user function.  
-        * The internal structural object MolContainer.add_atom() method now returns the index of the new atom.  
-        * Created the internal structural object MolContainer.last_residue() method.  
-        * Fully implemented the structure.create_rotor_pdb user function.  For this, the generic_fns.structure.geometric.create_rotor_propellers() function was created.  
+        * Improvements for Python 2 and 3 compatibility.  Much of the Python 2 verses 3 compatibility, as well as different Python 2 version compatibility and different Python 3 version compatibility, code has been shifted into the compat module.  The different parts of relax now import from the compat module for modules/packages with different import semantics for different Python versions.  In addition the different handling of the bz2 and gzip module for reading and writing files has been shifted from 'relax_io' into 'compat'.
+        * Updated the 2to3 checklist document to include multiple threads for faster operation.
+        * Eliminated the os.devnull import flag dep_check.devnull_import.  This is not needed as the compat relax module defines os.devnull for Python <= 2.3.  The devnull module is no longer part of the relax information printout.
+        * Added a more informative error message if the platform module is missing.  This is for Python <= 2.2.  The file from http://hg.python.org/cpython/file/2.3/Lib/platform.py can simply be copied into the lib/pythonX.X/ directory to fix this.
+        * Slight change to the message printed if the platform module is missing.
+        * Modified the script for running the relax test-suite on multiple Python versions.  The pre-2.2 Python versions are now commented out as well as the abortive Python 3.0.
+        * Created the Mf.test_bug_20613_auto_mf_diff_tensor_pdb system test to catch bug #20613.  This was reported by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt> at https://gna.org/bugs/?20613.  This test is a direct copy of the Mf.test_bug_20563_missing_ri_error system test.  The only change is that the local tm global model results file (in the local_tm/aic/ directory) has been modified.  This results were read into relax, the file test_suite/shared_data/structures/Ap4Aase_res1-12.pdb loaded into the data pipe, and the results saved again.  This triggers the bug as the problem is the presence of structural data with the local tm global model being selected in the auto-analysis.
+        * Shifted all of the model-free specific analysis class documentation variables to the top.  This is simply for better organisation of the code.
+        * Created the model-free write_doc class variable talking about the field strength independent Rex value.  This has been added to the value.display and value.write user functions to explain that Rex values are very small and that the user needs to scale them up.
+        * Shifted all of the documentation variables to the top of the specific API_base class.  This is for better organisation.
+        * Added the write_doc class variable to the specific analysis API class as a empty string.  This is to fix the unit tests.
+        * Created the front end for the new structure.create_rotor_pdb user function.  This will be used to create a PDB representation of a rotor motional model.
+        * Added file, directory and overwrite force arguments to the structure.create_rotor_pdb user function.
+        * Started to implement the backend of the structure.create_rotor_pdb user function.
+        * The internal structural object MolContainer.add_atom() method now returns the index of the new atom.
+        * Created the internal structural object MolContainer.last_residue() method.
+        * Fully implemented the structure.create_rotor_pdb user function.  For this, the generic_fns.structure.geometric.create_rotor_propellers() function was created.
 
 
     Bugfixes:
-        * Fix for the system tests in the Mac OS X application binary.  The Mf.test_bug_20563_missing_ri_error system test fails in the Mac OS X application binary.  The problem is that the py2app extension used to build the Mac application decides that empty directories are not to be included in the app, so naturally the test fails when checking for these.  Now empty results files have been added to these directories to trick py2app to include them.  
-        * Fixes for the unit test package __all__ list checking.  Now only *.py files and directories are checked.  In some cases other files could be present in the packages, for example the object files when compiling the C modules.  These would cause the unit tests to fail unnecessarily.  
-        * Fixes for the unit test __all__ list checking for the lib package for the Mac OS X application.  For some reason the py2app extension which creates the app merges the Python installation directory Resources/lib/python2.7 and the relax lib package into Resources/lib.  Now 'python2.7' is blacklisted when checking the lib package so that the parasitic Python install location is ignored.  
-        * Bug fix for the structure RMSD function for when old numpy versions are present.  Older numpy versions do not have the ddof argument for the std() standard deviation function,therefore relax now catches this, calculates the biased standard deviation formula, and then multiplies the value by a correction factor to obtain the non-biased estimator.  
-        * Bug fix for the info relax system information module for when spaces are present in the relax path.  If relax is placed into a directory containing spaces, then the determination of the architecture of the compiled C modules fails. 
+        * Fix for the system tests in the Mac OS X application binary.  The Mf.test_bug_20563_missing_ri_error system test fails in the Mac OS X application binary.  The problem is that the py2app extension used to build the Mac application decides that empty directories are not to be included in the app, so naturally the test fails when checking for these.  Now empty results files have been added to these directories to trick py2app to include them.
+        * Fixes for the unit test package __all__ list checking.  Now only *.py files and directories are checked.  In some cases other files could be present in the packages, for example the object files when compiling the C modules.  These would cause the unit tests to fail unnecessarily.
+        * Fixes for the unit test __all__ list checking for the lib package for the Mac OS X application.  For some reason the py2app extension which creates the app merges the Python installation directory Resources/lib/python2.7 and the relax lib package into Resources/lib.  Now 'python2.7' is blacklisted when checking the lib package so that the parasitic Python install location is ignored.
+        * Bug fix for the structure RMSD function for when old numpy versions are present.  Older numpy versions do not have the ddof argument for the std() standard deviation function,therefore relax now catches this, calculates the biased standard deviation formula, and then multiplies the value by a correction factor to obtain the non-biased estimator.
+        * Bug fix for the info relax system information module for when spaces are present in the relax path.  If relax is placed into a directory containing spaces, then the determination of the architecture of the compiled C modules fails.
         * Python 3 fixes for the model-free analysis specific code.  This was causing errors "AttributeError: 'dict_values' object has no attribute 'sort'".
         * Python 3 updates and fixes using the 2to3 program.
-        * Bug fix for the external Scientific Python Geometry package.  This is a strange Python 3 issue only triggered when the epydoc Python package is installed.  
-        * Fix for bug #20613 (https://gna.org/bugs/?20613), the failure of the diffusion tensor PDB creation.  This was reported by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt>.  The problem was that the diffusion tensor PDB representation structure.create_diff_tensor_pdb user function was being called even when the local tm global model was selected.  This naturally failed as there is no global diffusion tensor.  Now this user function is avoided for the local tm global model.  
-        * Fix for the value.write user function for very small parameter values (Rex for example).  This was reported by Martin Ballaschk <ballaschk att fmp-berlin dott de> in the thread http://thread.gmane.org/gmane.science.nmr.relax.user/1397/focus=1402 and by by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt> in the unrelated bug report at https://gna.org/bugs/?20613.  The formatting string "20.15f" has been changed to "20.15g" to allow Python to decide if the normal decimal or exponential form of the number should be printed.  
-        * Fix for a strange and extremely rare typo bug in the model-free specific analysis code.  This was identified by Manish Chaubey <manish dott chaubey att tuebingen dott mpg dott de> in the message at http://thread.gmane.org/gmane.science.nmr.relax.user/1422.  This only occurs if a relaxation data error of zero is encountered and is a bug in the RelaxError message explaining the problem with the data.  
+        * Bug fix for the external Scientific Python Geometry package.  This is a strange Python 3 issue only triggered when the epydoc Python package is installed.
+        * Fix for bug #20613 (https://gna.org/bugs/?20613), the failure of the diffusion tensor PDB creation.  This was reported by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt>.  The problem was that the diffusion tensor PDB representation structure.create_diff_tensor_pdb user function was being called even when the local tm global model was selected.  This naturally failed as there is no global diffusion tensor.  Now this user function is avoided for the local tm global model.
+        * Fix for the value.write user function for very small parameter values (Rex for example).  This was reported by Martin Ballaschk <ballaschk att fmp-berlin dott de> in the thread http://thread.gmane.org/gmane.science.nmr.relax.user/1397/focus=1402 and by by Angelo Miguel Figueiredo <am dott figueiredo att fct dot unl dot pt> in the unrelated bug report at https://gna.org/bugs/?20613.  The formatting string "20.15f" has been changed to "20.15g" to allow Python to decide if the normal decimal or exponential form of the number should be printed.
+        * Fix for a strange and extremely rare typo bug in the model-free specific analysis code.  This was identified by Manish Chaubey <manish dott chaubey att tuebingen dott mpg dott de> in the message at http://thread.gmane.org/gmane.science.nmr.relax.user/1422.  This only occurs if a relaxation data error of zero is encountered and is a bug in the RelaxError message explaining the problem with the data.
 
 
 

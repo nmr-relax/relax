@@ -23,15 +23,13 @@
 """Base classes for the system tests."""
 
 # Python module imports.
-from shutil import rmtree
-from time import sleep
 from unittest import TestCase
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.reset import reset
 from prompt.interpreter import Interpreter
-from lib.io import delete
+from test_suite.clean_up import deletion
 
 
 class SystemTestCase(TestCase):
@@ -67,40 +65,13 @@ class SystemTestCase(TestCase):
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
-        # Horrible MS Windows kludge - avoid the WindowsError due to the file still being open by the state.save or results.write user functions.
-        sleep(0.03)
+        # Remove the temporary directory and variable.
+        deletion(obj=ds, name='tmpdir', dir=True)
+        deletion(obj=self, name='tmpdir', dir=True)
 
-        # Remove the temporary directories.
-        if hasattr(ds, 'tmpdir'):
-            # Delete the directory.
-            rmtree(ds.tmpdir)
-
-            # Remove the variable.
-            del ds.tmpdir
-
-        # Remove the temporary directories.
-        if hasattr(self, 'tmpdir'):
-            # Delete the directory.
-            rmtree(self.tmpdir)
-
-            # Remove the variable.
-            del self.tmpdir
-
-        # Remove temporary files.
-        if hasattr(ds, 'tmpfile'):
-            # Delete the file.
-            delete(ds.tmpfile, fail=False)
-
-            # Remove the variable.
-            del ds.tmpfile
-
-        # Remove temporary files.
-        if hasattr(self, 'tmpfile'):
-            # Delete the file.
-            delete(self.tmpfile, fail=False)
-
-            # Remove the variable.
-            del self.tmpfile
+        # Remove temporary file and variable.
+        deletion(obj=ds, name='tmpfile', dir=False)
+        deletion(obj=self, name='tmpfile', dir=False)
 
         # Reset relax.
         reset()

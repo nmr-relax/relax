@@ -25,7 +25,6 @@
 # Python module imports.
 from math import pi    # This is needed for relax scripts as pi is located in the relax prompt namespace.
 from os import sep
-from shutil import rmtree
 from tempfile import mktemp, mkdtemp
 from unittest import TestCase
 import wx
@@ -37,8 +36,8 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.reset import reset
 from prompt.interpreter import exec_script
 from lib.errors import RelaxError
-from lib.io import delete
 from status import Status; status = Status()
+from test_suite.clean_up import deletion
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
@@ -187,37 +186,13 @@ class GuiTestCase(TestCase):
         # Flush all wx events prior to the clean up operations of this method.  This prevents these events from occurring after the GUI elements have been deleted.
         wx.Yield()
 
-        # Remove the temporary directories.
-        if hasattr(ds, 'tmpdir'):
-            # Delete the directory.
-            rmtree(ds.tmpdir)
+        # Remove the temporary directory and variable.
+        deletion(obj=ds, name='tmpdir', dir=True)
+        deletion(obj=self, name='tmpdir', dir=True)
 
-            # Remove the variable.
-            del ds.tmpdir
-
-        # Remove the temporary directories.
-        if hasattr(self, 'tmpdir'):
-            # Delete the directory.
-            rmtree(self.tmpdir)
-
-            # Remove the variable.
-            del self.tmpdir
-
-        # Remove temporary files.
-        if hasattr(ds, 'tmpfile'):
-            # Delete the file.
-            delete(ds.tmpfile, fail=False)
-
-            # Remove the variable.
-            del ds.tmpfile
-
-        # Remove temporary files.
-        if hasattr(self, 'tmpfile'):
-            # Delete the file.
-            delete(self.tmpfile, fail=False)
-
-            # Remove the variable.
-            del self.tmpfile
+        # Remove temporary file and variable.
+        deletion(obj=ds, name='tmpfile', dir=False)
+        deletion(obj=self, name='tmpfile', dir=False)
 
         # Reset relax.
         reset()
