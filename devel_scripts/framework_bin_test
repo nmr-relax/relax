@@ -78,7 +78,34 @@ for (dirpath, dirnames, filenames) in walk(cwd):
 
         # The type.
         file_type = None
-        if data[0][:-1] == 'Mach-O universal binary with 3 architectures':
+        if data[0][:-1] == 'Mach-O universal binary with 4 architectures':
+            file_type = '4-way'
+
+            # Arch.
+            arch = [None, None, None, None]
+            for i in range(3):
+                row = data[i+1].split('\t')
+                arch[i] = row[1][:-1]
+            arch.sort()
+
+            # The full file type printout.
+            if arch == ['Mach-O 64-bit executable x86_64', 'Mach-O executable i386', 'Mach-O executable ppc']:
+                part_type = '%s [i386, ppc, x86_64]' % file_type
+                full_type = '%s exec [i386, ppc, x86_64]' % file_type
+            elif arch == ['Mach-O 64-bit bundle x86_64', 'Mach-O bundle i386', 'Mach-O bundle ppc']:
+                part_type = '%s [i386, ppc, x86_64]' % file_type
+                full_type = '%s bundle [i386, ppc, x86_64]' % file_type
+            elif arch == ['Mach-O 64-bit dynamically linked shared library x86_64', 'Mach-O dynamically linked shared library i386', 'Mach-O dynamically linked shared library ppc']:
+                part_type = '%s [i386, ppc, x86_64]' % file_type
+                full_type = '%s lib [i386, ppc, x86_64]' % file_type
+            elif arch == ['Mach-O 64-bit object x86_64', 'Mach-O object i386', 'Mach-O object ppc']:
+                part_type = '%s [i386, ppc, x86_64]' % file_type
+                full_type = '%s obj [i386, ppc, x86_64]' % file_type
+            else:
+                full_type = '%s %s' % (file_type, arch)
+                part_type = full_type
+
+        elif data[0][:-1] == 'Mach-O universal binary with 3 architectures':
             file_type = '3-way'
 
             # Arch.
