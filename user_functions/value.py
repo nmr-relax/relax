@@ -296,7 +296,7 @@ uf.desc[-1].add_prompt("relax> value.read(param='csa', file='csa_value', dir='da
 uf.backend = value.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 200
+uf.wizard_height_desc = 450
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 

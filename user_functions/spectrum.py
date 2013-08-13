@@ -358,7 +358,7 @@ uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='sat.text', spectr
 uf.backend = spectrum.read
 uf.menu_text = "&read_intensities"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 160
+uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
