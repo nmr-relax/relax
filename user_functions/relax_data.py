@@ -362,7 +362,7 @@ uf.desc[-1].add_prompt("relax> relax_data.read('R1_300', 'R1', 300.1 * 1e6, 'r1.
 uf.backend = relax_data.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 140
+uf.wizard_height_desc = 450
 uf.wizard_size = (1000, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'fid.png'
 

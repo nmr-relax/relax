@@ -252,8 +252,8 @@ uf.desc[-1].add_prompt("relax> deselect.read(file='r1.600', spin_num_col=2, chan
 uf.backend = selection.desel_read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 200
-uf.wizard_size = (1000, 700)
+uf.wizard_height_desc = 400
+uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 
 

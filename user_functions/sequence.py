@@ -276,7 +276,7 @@ uf.desc[-1].add_prompt("relax> sequence.read(file='500.NOE', res_num_col=1, res_
 uf.backend = sequence.read
 uf.menu_text = "&read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_size = (900, 700)
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'sequence.png'
 uf.wizard_apply_button = False
 
