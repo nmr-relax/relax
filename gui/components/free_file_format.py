@@ -101,7 +101,7 @@ class Free_file_format:
         """Build the default GUI element."""
 
         # A static box to hold all the widgets.
-        box = wx.StaticBox(self.parent, -1, "Free format file settings")
+        box = wx.StaticBox(self.parent, -1, "The free file format settings:")
         box.SetFont(font.subtitle)
 
         # Init.
