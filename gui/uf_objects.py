@@ -614,7 +614,7 @@ class Uf_page(Wiz_page):
 
         # Add the free format element.
         if free_format:
-            self.uf_args['free_file_format'] = Free_file_format(sizer, parent=self, data_cols=free_format_data, padding=3, spacer=0)
+            self.uf_args['free_file_format'] = Free_file_format(parent=self, sizer=sizer, element_type='mini', data_cols=free_format_data, divider=self._div_left, height_element=self.height_element, padding=0, spacer=None)
 
 
     def add_desc(self, sizer, max_y=220):
