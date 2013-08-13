@@ -238,18 +238,12 @@ uf.add_keyarg(
     desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the IDs are auto generated in form of Z_A{i}."
 )
 uf.add_keyarg(
-    name = "heteronuc",
-    default = "N",
-    py_type = "str",
-    desc_short = "heteronucleus name",
-    desc = "The name of the heteronucleus as specified in the peak intensity file."
-)
-uf.add_keyarg(
-    name = "proton",
-    default = "HN",
-    py_type = "str",
-    desc_short = "proton name",
-    desc = "The name of the proton as specified in the peak intensity file."
+    name = "dim",
+    default = 1,
+    py_type = "int",
+    min = 1,
+    desc_short = "spectral dimension to read",
+    desc = "Associate the data with the spins of any dimension in the peak list."
 )
 uf.add_keyarg(
     name = "int_method",
@@ -328,7 +322,7 @@ uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     desc_short = "spin ID string",
-    desc = "The spin ID string used by the generic intensity file format to restrict the loading of data to certain spin subsets.",
+    desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
     can_be_none = True
 )
 uf.add_keyarg(
@@ -342,7 +336,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The peak intensity can either be from peak heights or peak volumes.")
 uf.desc[-1].add_paragraph("The spectrum ID is a label which is subsequently utilised by other user functions.  If this identifier matches that of a previously loaded set of intensities, then this indicates a replicated spectrum.")
-uf.desc[-1].add_paragraph("The heteronucleus and proton should be set respectively to the name of the heteronucleus and proton in the file.  Only those lines which match these labels will be used.")
+uf.desc[-1].add_paragraph("The spectral dimension is used to specify if the intensity data should be loaded into the spins identified by the first dimension, second dimension, etc.")
 uf.desc[-1].add_paragraph("The integration method is required for the subsequent error analysis.  When peak heights are measured, this should be set to 'height'.  Volume integration methods are a bit varied and hence two values are accepted.  If the volume integration involves pure point summation, with no deconvolution algorithms or other methods affecting peak heights, then the value should be set to 'point sum'.  All other volume integration methods, e.g. line shape fitting, the value should be set to 'other'.")
 uf.desc[-1].add_paragraph("If a series of intensities extracted from Bruker FID files processed in Topspin or XWinNMR are to be compared, the ncproc parameter may need to be supplied.  This is because this FID is stored using integer representation and is scaled using ncproc to avoid numerical truncation artifacts.  If two spectra have significantly different maximal intensities, then ncproc will be different for both.  The intensity scaling is binary, i.e. 2**ncproc. Therefore if spectrum A has an ncproc of 6 and and spectrum B a value of 7, then a reference intensity in B will be double that of A.  Internally, relax stores the intensities scaled by 2**ncproc.")
 # File formats.
@@ -364,7 +358,7 @@ uf.desc[-1].add_prompt("relax> spectrum.read_intensities(file='sat.text', spectr
 uf.backend = spectrum.read
 uf.menu_text = "&read_intensities"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_height_desc = 140
+uf.wizard_height_desc = 160
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
