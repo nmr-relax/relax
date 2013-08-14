@@ -180,20 +180,21 @@ class Palmer(SystemTestCase):
             raise RelaxError("You are using an old, buggy Modelfree4 version!  You must upgrade to version 4.20 or later.")
 
         # Determine if the Gnu gcc or Portland C compiler version is being used.
-        if spin.te == 20.043*1e-12:
+        spin = return_spin(':9@N', pipe='aic')
+        if spin.te * 1e12 == 52.195:
             compiler = 'gcc'    # Gnu gcc modelfree4 version.
-        else:
+        elif spin.te * 1e12 == 52.197:
             compiler = 'pgf'    # Portland C compiler modelfree4 version.
+        else:
+            raise RelaxError("The Modelfree4 binary cannot be identified, therefore the parameters cannot be meaningfully checked.")
+        print("\nDetected the '%s' compiled binary." % compiler)
 
         # Model m1, m2, and m3 mfout file data.
         models = ['m1', 'm2', 'm3']
         params = [['s2'], ['s2', 'te'], ['s2', 'rex']]
         spin_names = [':9@N', ':10@N', ':11@N']
         s2 = [[0.822, 0.799, 0.823], [0.788, 0.777, 0.812], [0.822, 0.799, 0.823]]
-        if compiler == 'gcc':
-            te = [[None, None, None], [61.506, 36.084, 20.043], [None, None, None]]
-        else:
-            te = [[None, None, None], [61.506, 36.087, 20.039], [None, None, None]]
+        te = [[None, None, None], [61.506, 36.087, 20.039], [None, None, None]]
         rex = [[None, None, None], [None, None, None], [0.0, 0.0, 0.0]]
         chi2 = [[143.6773, 105.1767, 61.6684], [40.9055, 57.1562, 48.4927], [143.6773, 105.1767, 61.6684]]
 
@@ -227,23 +228,17 @@ class Palmer(SystemTestCase):
         # Final mfout file data.
         models = ['m2', 'm2', 'm2']
         params = [['s2', 'te'], ['s2', 'te'], ['s2', 'te']]
+        s2 = [0.755, 0.761, 0.787]
         if compiler == 'gcc':
-            s2 = [0.782, 0.760, 0.785]
-            te = [60.009, 29.134, 12.590]
-            chi2 = [24.0495, 8.1168, 0.5332]
+            te = [52.195, 29.356, 12.678]
         else:
-            s2 = [0.755, 0.761, 0.787]
             te = [52.197, 29.361, 12.677]
-            chi2 = [7.254, 8.0437, 0.5327]
+        chi2 = [7.254, 8.0437, 0.5327]
 
         # Checks for the final mfout file reading.
         for spin_index in range(3):
             # Get the spin.
             spin = return_spin(spin_names[spin_index], pipe='aic')
-
-            # Conversions.
-            if te[spin_index]:
-                te[spin_index] = te[spin_index] * 1e-12
 
             # Checks.
             self.assertEqual(spin.model, models[spin_index])
@@ -251,7 +246,8 @@ class Palmer(SystemTestCase):
             self.assertEqual(spin.s2, s2[spin_index])
             self.assertEqual(spin.s2f, None)
             self.assertEqual(spin.s2s, None)
-            self.assertAlmostEqual(spin.te, te[spin_index])
+            if te[spin_index]:
+                self.assertAlmostEqual(spin.te * 1e12, te[spin_index])
             self.assertEqual(spin.tf, None)
             self.assertEqual(spin.ts, None)
             self.assertEqual(spin.rex, None)
@@ -260,14 +256,14 @@ class Palmer(SystemTestCase):
         # Final global values.
         final_pipe = pipes.get_pipe('aic')
         if compiler == 'gcc':
-            self.assertEqual(final_pipe.chi2, 32.6995)
-            self.assertEqual(final_pipe.diff_tensor.tm, 8.964)
-            self.assertEqual(final_pipe.diff_tensor.Dratio, 1.324)
-            self.assertEqual(final_pipe.diff_tensor.theta, (-52.070 / 360.0) * 2.0 * pi + pi)
-            self.assertEqual(final_pipe.diff_tensor.phi, (2.377 / 360.0) * 2.0 * pi)
+            self.assertEqual(final_pipe.chi2, 15.8304)
+            self.assertEqual(final_pipe.diff_tensor.tm, 8.443)
+            self.assertEqual(final_pipe.diff_tensor.Dratio, 1.053)
+            self.assertEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.592)
+            self.assertEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 73.756)
         else:
             self.assertEqual(final_pipe.chi2, 15.8304)
             self.assertEqual(final_pipe.diff_tensor.tm, 8.443)
             self.assertEqual(final_pipe.diff_tensor.Dratio, 1.053)
-            self.assertEqual(final_pipe.diff_tensor.theta, (68.864 / 360.0) * 2.0 * pi)
-            self.assertEqual(final_pipe.diff_tensor.phi, (73.913 / 360.0) * 2.0 * pi)
+            self.assertEqual(final_pipe.diff_tensor.theta * 360 / 2.0 / pi, 68.864)
+            self.assertEqual(final_pipe.diff_tensor.phi * 360 / 2.0 / pi, 73.913)
