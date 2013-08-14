@@ -158,7 +158,10 @@ class Palmer(SystemTestCase):
             self.assertAlmostEqual(spin.s2, s2[spin_index])
             self.assertEqual(spin.s2f, None)
             self.assertEqual(spin.s2s, None)
-            self.assertAlmostEqual(spin.te, te[spin_index])
+            if te[spin_index]:
+                self.assertAlmostEqual(spin.te, te[spin_index])
+            else:
+                self.assertEqual(spin.te, None)
             self.assertEqual(spin.tf, None)
             self.assertEqual(spin.ts, None)
             self.assertAlmostEqual(spin.rex, rex[spin_index])
