@@ -86,8 +86,8 @@ def r2eff_ns_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=None,
     RCS[1, 1] = complex(0.0, -dw)
 
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    add(Rr, Rex, out=R)
-    add(R, RCS, out=R)
+    R = add(Rr, Rex)
+    R = add(R, RCS)
 
     # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
     cR2 = conj(R) * 2.0
