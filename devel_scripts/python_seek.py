@@ -5,8 +5,8 @@
 
 
 # Python module imports.
-from os import X_OK, access, system
-from os.path import isfile, islink
+from os import X_OK, access, readlink, system
+from os.path import abspath, dirname, isabs, isfile, islink, join
 from subprocess import PIPE, Popen
 import sys
 
@@ -96,6 +96,17 @@ class Python_info:
             # The file name.
             file = line[:-1]
 
+            # Recursively follow and expand links.
+            while 1:
+                if islink(file):
+                    orig = readlink(file)
+                    if not isabs(orig):
+                        orig = join(dirname(file), orig)
+                    file = orig
+                    continue
+                else:
+                    break
+
             # Check if the path is a file.
             if not isfile(file):
                 continue
@@ -104,12 +115,12 @@ class Python_info:
             if not access(file, X_OK):
                 continue
 
-            # Check if the path is a link.
-            if islink(file):
-                continue
+            # Convert to an absolute path.
+            file = abspath(file)
 
-            # Add the file.
-            binaries.append(file)
+            # Add the file, avoiding duplicates.
+            if file not in binaries:
+                binaries.append(file)
 
         # Return the file list.
         return binaries
