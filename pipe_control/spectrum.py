@@ -452,7 +452,7 @@ def integration_points(N=0, spectrum_id=None, spin_id=None):
     raise RelaxImplementError
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
+def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -461,10 +461,8 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
     @type spectrum_id:      str or list of str
-    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
-    @type heteronuc:        str
-    @keyword proton:        The name of the proton as specified in the peak intensity file.
-    @type proton:           str
+    @keyword dim:           The dimension of the peak list to associate the data with.
+    @type dim:              int
     @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
     @type int_col:          int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
