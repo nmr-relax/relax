@@ -34,7 +34,12 @@ Install the appropriate GNU fortran version to add to Xcode (for example gfortra
 
 $ PATH=/usr/local/bin/:$PATH C_INCLUDE_PATH=/sw/include/suitesparse/ ~/bin/python2.7 setup.py install
 
-The PATH option is needed if gfortran is located in both /usr/local/bin/ and /sw/bin/.  The C_INCLUDE_PATH may be needed if the suitesparse header files cannot be found.
+The PATH option is needed if gfortran is located in both /usr/local/bin/ and /sw/bin/.  The C_INCLUDE_PATH may be needed if the suitesparse header files cannot be found.  If you still encounter swig problems finding the umfpack_*.h files, then manually type:
+
+$ swig -I/sw/include/suitesparse/ -python -o build/src.macosx-10.5-fat3-2.7/scipy/sparse/linalg/dsolve/umfpack/_umfpack_wrap.c -outdir build/src.macosx-10.5-fat3-2.7/scipy/sparse/linalg/dsolve/umfpack scipy/sparse/linalg/dsolve/umfpack/umfpack.i
+$ PATH=/usr/local/bin/:$PATH C_INCLUDE_PATH=/sw/include/suitesparse/ ~/bin/python2.7 setup.py install
+
+The swig command will build the Scipy part requining the umfpack_*.h files, and then the python command will continue happily.
 
 
 

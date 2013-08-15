@@ -151,7 +151,7 @@ class Analysis:
 
         # PyMOL.
         pymol.view()
-        pymol.command('show spheres'_pseudo_ellipse)
+        pymol.command('show spheres')
         pymol.cone_pdb('cone_pseudo_ellipse.pdb')
 
 
