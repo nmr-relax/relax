@@ -83,7 +83,7 @@ class Peak_list(list):
             raise RelaxError("The chemical shifts %s must be a list of %s dimensions." % (shifts, self._dim))
 
         # Add a new element.
-        self.append(Assignment)
+        self.append(Assignment())
 
         # Store the data.
         assign = self[-1]
