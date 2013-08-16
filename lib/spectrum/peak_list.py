@@ -188,16 +188,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("NMRPipe SeriesTab formatted data file.\n")
 
         # Extract the data.
-        nmrpipe.read_list_intensity_seriestab(peak_list=peak_list, file_data=file_data, int_col=int_col, int_col_labels=int_col_labels)
-
-        # Extract the expected number of spectrum ID's.
-        nr_int_col = len(peak_list[0].intensity)
-
-        # Make it possible to autogenerate spectrum ID's, if spectrum_id='auto'.
-        if not isinstance(spectrum_id, list) and spectrum_id.lower() == 'auto':
-            spectrum_id = []
-            for i in range(nr_int_col):
-                spectrum_id.append('Z_A%s'%i)
+        nmrpipe.read_list_intensity_seriestab(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
     # Sparky.
     elif format == 'sparky':

@@ -507,7 +507,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     # Intensity column checks.
     if isinstance(spectrum_id, list) and not isinstance(int_col, list):
         raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
-    if not isinstance(spectrum_id, list) and isinstance(int_col, list):
+    if spectrum_id != 'auto' and not isinstance(spectrum_id, list) and isinstance(int_col, list):
         raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
     if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
         raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
@@ -521,6 +521,10 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
 
     # Read the peak list data.
     peak_list = read_peak_list(file=file, dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+
+    # Automatic spectrum IDs.
+    if spectrum_id == 'auto':
+        spectrum_id = peak_list[0].intensity_name
 
     # Loop over the assignments.
     data = []
