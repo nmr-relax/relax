@@ -165,30 +165,17 @@ class Test_spectrum(TestCase):
             self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, spectrum_id=data[1])
 
 
-    def test_read_intensities_argfail_heteronuc(self):
-        """The heteronuc arg test of the spectrum.read_intensities() user function."""
+    def test_read_intensities_argfail_dim(self):
+        """The dim arg test of the spectrum.read_intensities() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
+            # Catch the int argument, and skip it.
+            if data[0] == 'int':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, heteronuc=data[1])
-
-
-    def test_read_intensities_argfail_proton(self):
-        """The proton arg test of the spectrum.read_intensities() user function."""
-
-        # Loop over the data types.
-        for data in DATA_TYPES:
-            # Catch the str argument, and skip it.
-            if data[0] == 'str':
-                continue
-
-            # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, proton=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, dim=data[1])
 
 
     def test_read_intensities_argfail_int_col(self):
