@@ -32,19 +32,16 @@ from lib.errors import RelaxError
 from lib.io import open_write_file, strip
 
 
-def read_list_intensity(file_data=None, int_col=None):
+def read_list_intensity(peak_list=None, file_data=None, int_col=3):
     """Return the peak intensity information from the Sparky peak intensity file.
 
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
+    @keyword peak_list: The peak list object to place all data into.
+    @type peak_list:    lib.spectrum.objects.Peak_list instance
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
     @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, residue number, the intensity value, and the original line of text.
-    @rtype:             list of lists of str, str, int, float, str
     """
 
     # The number of header lines.
@@ -54,6 +51,10 @@ def read_list_intensity(file_data=None, int_col=None):
     if file_data[1] == '':
         num = num + 1
     print("Number of header lines found: %s" % num)
+
+    # Default intensity column.
+    if int_col == None:
+        int_col = 3
 
     # Remove the header.
     file_data = file_data[num:]
@@ -66,9 +67,8 @@ def read_list_intensity(file_data=None, int_col=None):
     for line in file_data:
         # The Sparky assignment.
         assignment = ''
-        res_num = ''
-        h_name = ''
-        x_name = ''
+        name1 = ''
+        name2 = ''
         intensity = ''
 
         # Skip non-assigned peaks.
@@ -76,37 +76,30 @@ def read_list_intensity(file_data=None, int_col=None):
             continue
 
         # First split by the 2D separator.
-        x_assign, h_assign = split('-', line[0])
+        assign1, assign2 = split('-', line[0])
 
-        # The proton info.
-        h_row = split('([A-Z]+)', h_assign)
-        h_name = h_row[-2] + h_row[-1]
+        # The assignment of the first dimension.
+        row1 = split('([A-Z]+)', assign1)
+        name1 = row1[-2] + row1[-1]
 
-        # The heteronucleus info.
-        x_row = split('([A-Z]+)', x_assign)
-        x_name = x_row[-2] + x_row[-1]
+        # The assignment of the second dimension.
+        row2 = split('([A-Z]+)', assign2)
+        name2 = row2[-2] + row2[-1]
 
         # The residue number.
         try:
-            res_num = int(x_row[-3])
+            res_num = int(row1[-3])
         except:
-            raise RelaxError("Improperly formatted Sparky file.")
-
-        # The peak intensity column.
-        if int_col == None:
-            int_col = 3
+            raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
 
         # Intensity.
         try:
             intensity = float(line[int_col])
         except ValueError:
-            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+            raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
 
-        # Append the data.
-        data.append([h_name, x_name, res_num, intensity, line])
-
-    # Return the data.
-    return data
+        # Add the assignment to the peak list object.
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)
 
 
 def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):
