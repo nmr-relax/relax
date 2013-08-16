@@ -33,6 +33,7 @@ from warnings import warn
 from lib.errors import RelaxError
 from lib.io import extract_data, read_spin_data, strip, write_data
 from lib.software import nmrpipe, nmrview, sparky, xeasy
+from lib.spectrum.objects import Peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control.mol_res_spin import generate_spin_id_unique, return_spin
 
@@ -167,10 +168,15 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
     @type sep:              str or None
     @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
+    @return:                The peak list object containing all relevant data in the peak list.
+    @rtype:                 lib.spectrum.objects.Peak_list instance
     """
 
     # Extract the data from the file.
     file_data = extract_data(file, dir, sep=sep)
+
+    # Initialise the peak list object.
+    peak_list = Peak_list()
 
     # Automatic format detection.
     format = autodetect_format(file_data)
@@ -181,7 +187,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("Generic formatted data file.\n")
 
         # Extract the data.
-        intensity_data = intensity_generic(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
+        intensity_generic(peak_list=peak_list, file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
 
     # NMRView.
     elif format == 'nmrview':
@@ -189,7 +195,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("NMRView formatted data file.\n")
 
         # Extract the data.
-        intensity_data = nmrview.read_list_intensity(file_data=file_data)
+        nmrview.read_list_intensity(peak_list=peak_list, file_data=file_data)
 
     # NMRPipe SeriesTab.
     elif format == 'seriestab':
@@ -197,10 +203,10 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("NMRPipe SeriesTab formatted data file.\n")
 
         # Extract the data.
-        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col, int_col_labels=int_col_labels)
+        nmrpipe.read_list_intensity_seriestab(peak_list=peak_list, file_data=file_data, int_col=int_col, int_col_labels=int_col_labels)
 
         # Extract the expected number of spectrum ID's.
-        nr_int_col = len(intensity_data[0][3])
+        nr_int_col = len(peak_list[0].intensity)
 
         # Make it possible to autogenerate spectrum ID's, if spectrum_id='auto'.
         if not isinstance(spectrum_id, list) and spectrum_id.lower() == 'auto':
@@ -214,7 +220,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("Sparky formatted data file.\n")
 
         # Extract the data.
-        intensity_data = sparky.read_list_intensity(file_data=file_data, int_col=int_col)
+        sparky.read_list_intensity(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
     # XEasy.
     elif format == 'xeasy':
@@ -222,7 +228,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("XEasy formatted data file.\n")
 
         # Extract the data.
-        intensity_data = xeasy.read_list_intensity(file_data=file_data, int_col=int_col)
+        xeasy.read_list_intensity(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
-    # Return the data.
-    return mol_names, res_names, res_nums, spin_names, spin_nums, 
+    # Return the peak list object.
+    return peak_list
