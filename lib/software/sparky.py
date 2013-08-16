@@ -65,18 +65,12 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
     # Loop over the file data.
     data = []
     for line in file_data:
-        # The Sparky assignment.
-        assignment = ''
-        name1 = ''
-        name2 = ''
-        intensity = ''
-
         # Skip non-assigned peaks.
         if line[0] == '?-?':
             continue
 
         # First split by the 2D separator.
-        assign1, assign2 = split('-', line[0])
+        assign2, assign1 = split('-', line[0])
 
         # The assignment of the first dimension.
         row1 = split('([A-Z]+)', assign1)
@@ -88,7 +82,7 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
 
         # The residue number.
         try:
-            res_num = int(row1[-3])
+            res_num = int(row2[-3])
         except:
             raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
 
