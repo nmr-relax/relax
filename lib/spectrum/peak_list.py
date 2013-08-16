@@ -142,23 +142,15 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     return data
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
+def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
     @type file:             str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
-    @keyword spectrum_id:   The spectrum identification string.
-    @type spectrum_id:      str or list of str
-    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
-    @type heteronuc:        str
-    @keyword proton:        The name of the proton as specified in the peak intensity file.
-    @type proton:           str
-    @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
-    @type int_col:          int
-    @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
-    @type int_method:       str
+    @keyword int_col:       The column containing the peak intensity data.  If set to None, no intensity data will be returned.
+    @type int_col:          None or int
     @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
     @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
@@ -173,28 +165,9 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type spin_num_col:     int or None
     @keyword sep:           The column separator which, if None, defaults to whitespace.
     @type sep:              str or None
-    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_Ai.
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
-    @keyword ncproc:        The Bruker ncproc binary intensity scaling factor.
-    @type ncproc:           int or None
-    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
-    @type verbose:          bool
     """
-
-    # Check the file name.
-    if file == None:
-        raise RelaxError("The file name must be supplied.")
-
-    # Test that the intensity measures are identical.
-    if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
-        raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
-
-    # Check the intensity measure.
-    if not int_method in ['height', 'point sum', 'other']:
-        raise RelaxError("The intensity measure '%s' is not one of 'height', 'point sum', 'other'." % int_method)
-
-    # Set the peak intensity measure.
-    cdp.int_method = int_method
 
     # Extract the data from the file.
     file_data = extract_data(file, dir, sep=sep)
@@ -207,14 +180,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Print out.
         print("Generic formatted data file.\n")
 
-        # Checks.
-        if isinstance(spectrum_id, list) and not isinstance(int_col, list):
-            raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
-        if not isinstance(spectrum_id, list) and isinstance(int_col, list):
-            raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
-        if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
-
         # Extract the data.
         intensity_data = intensity_generic(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
 
@@ -226,21 +191,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         intensity_data = nmrview.read_list_intensity(file_data=file_data)
 
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
     # NMRPipe SeriesTab.
     elif format == 'seriestab':
         # Print out.
         print("NMRPipe SeriesTab formatted data file.\n")
 
         # Extract the data.
-        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
+        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col, int_col_labels=int_col_labels)
 
         # Extract the expected number of spectrum ID's.
         nr_int_col = len(intensity_data[0][3])
@@ -251,14 +208,6 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
             for i in range(nr_int_col):
                 spectrum_id.append('Z_A%s'%i)
 
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
     # Sparky.
     elif format == 'sparky':
         # Print out.
@@ -267,109 +216,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
         # Extract the data.
         intensity_data = sparky.read_list_intensity(file_data=file_data, int_col=int_col)
 
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
     # XEasy.
     elif format == 'xeasy':
         # Print out.
         print("XEasy formatted data file.\n")
 
         # Extract the data.
-        intensity_data = xeasy.read_list_intensity(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
+        intensity_data = xeasy.read_list_intensity(file_data=file_data, int_col=int_col)
 
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
-    # Loop over the peak intensity data.
-    data = []
-    data_flag = False
-
-    for i in range(len(intensity_data)):
-        # Extract the data.
-        H_name, X_name, spin_id, intensity, line = intensity_data[i]
-
-        # Convert the intensity data and spectrum IDs to lists if needed.
-        if not isinstance(intensity, list):
-            intensity = [intensity]
-        if not isinstance(spectrum_id, list):
-            spectrum_id = [spectrum_id]
-
-        # Checks for matching length of spectrum IDs and intensities columns.
-        if len(spectrum_id) != len(intensity):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
-
-        # Loop over the data.
-        for i in range(len(intensity)):
-            # Sanity check.
-            if intensity[i] == 0.0:
-                warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
-
-            # Skip data.
-            if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-                warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
-                continue
-
-            # Get the spin container.
-            spin = return_spin(spin_id)
-            if not spin:
-                warn(RelaxNoSpinWarning(spin_id))
-                continue
-
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # Initialise.
-            if not hasattr(spin, 'intensities'):
-                spin.intensities = {}
-
-            # Intensity scaling.
-            if ncproc != None:
-                intensity[i] = intensity[i] / float(2**ncproc)
-
-            # Add the data.
-            spin.intensities[spectrum_id[i]] = intensity[i]
-
-            # Switch the flag.
-            data_flag = True
-
-            # Append the data for printing out.
-            data.append([spin_id, repr(intensity[i])])
-
-    # Add the spectrum id (and ncproc) to the relax data store.
-    spectrum_ids = spectrum_id
-    if isinstance(spectrum_id, str):
-        spectrum_ids = [spectrum_id]
-    if not hasattr(cdp, 'spectrum_ids'):
-        cdp.spectrum_ids = []
-        if ncproc != None:
-            cdp.ncproc = {}
-    for i in range(len(spectrum_ids)):
-        if not spectrum_ids[i] in cdp.spectrum_ids:
-            cdp.spectrum_ids.append(spectrum_ids[i])
-            if ncproc != None:
-                cdp.ncproc[spectrum_ids[i]] = ncproc
-
-    # No data.
-    if not data_flag:
-        # Delete all the data.
-        delete(spectrum_id)
-
-        # Raise the error.
-        raise RelaxError("No data could be loaded from the peak list")
-
-    # Print out.
-    if verbose:
-        print("\nThe following intensities have been loaded into the relax data store:\n")
-        write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
+    # Return the data.
+    return mol_names, res_names, res_nums, spin_names, spin_nums, 
