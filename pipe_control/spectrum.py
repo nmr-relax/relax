@@ -520,26 +520,17 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     cdp.int_method = int_method
 
     # Read the peak list data.
-    x = read_peak_list(file=file, dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
-    print x
+    peak_list = read_peak_list(file=file, dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
-    # Convert the residue number to a spin ID.
-    for i in range(len(intensity_data)):
-        # Generate the spin_id.
-        spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-        # Replace the data.
-        intensity_data[i][2] = spin_id
-
-    # Loop over the peak intensity data.
+    # Loop over the assignments.
     data = []
     data_flag = False
-
-    for i in range(len(intensity_data)):
-        # Extract the data.
-        H_name, X_name, spin_id, intensity, line = intensity_data[i]
+    for assign in peak_list:
+        # Generate the spin_id.
+        spin_id = generate_spin_id_unique(res_num=assign.res_num[dim], spin_name=assign.spin_name[dim])
 
         # Convert the intensity data and spectrum IDs to lists if needed.
+        intensity = assign.intensity
         if not isinstance(intensity, list):
             intensity = [intensity]
         if not isinstance(spectrum_id, list):
@@ -549,16 +540,11 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
         if len(spectrum_id) != len(intensity):
             raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
 
-        # Loop over the data.
+        # Loop over the intensity data.
         for i in range(len(intensity)):
             # Sanity check.
             if intensity[i] == 0.0:
                 warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
-
-            # Skip data.
-            if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-                warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
-                continue
 
             # Get the spin container.
             spin = return_spin(spin_id)
