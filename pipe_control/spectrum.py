@@ -527,7 +527,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     data_flag = False
     for assign in peak_list:
         # Generate the spin_id.
-        spin_id = generate_spin_id_unique(res_num=assign.res_num[dim], spin_name=assign.spin_name[dim])
+        spin_id = generate_spin_id_unique(res_num=assign.res_nums[dim-1], spin_name=assign.spin_names[dim-1])
 
         # Convert the intensity data and spectrum IDs to lists if needed.
         intensity = assign.intensity
