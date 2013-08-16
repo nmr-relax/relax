@@ -184,7 +184,6 @@ class Rx(GuiTestCase):
             page = wizard.get_page(wizard.page_indices['read'])
             page.uf_args['file'].SetValue(str_to_gui("%s%s.list" % (data_path, names[i])))
             page.uf_args['spectrum_id'].SetValue(str_to_gui(names[i]))
-            page.uf_args['proton'].SetValue(str_to_gui('HN'))
 
             # Go to the next page.
             wizard._go_next(None)

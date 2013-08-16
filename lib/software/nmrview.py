@@ -33,24 +33,21 @@ from lib.io import strip
 from lib.warnings import RelaxWarning
 
 
-def read_list_intensity(file_data=None, int_col=None):
-    """Return the peak intensity information from the NMRView peak intensity file.
+def read_list_intensity(peak_list=None, file_data=None, int_col=None):
+    """Extract the peak intensity information from the NMRView peak intensity file.
 
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
+    @keyword peak_list: The peak list object to place all data into.
+    @type peak_list:    lib.spectrum.objects.Peak_list instance
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
     @keyword int_col:   The column containing the peak intensity data. The default is 16 for intensities. Setting the int_col argument to 15 will use the volumes (or evolumes). For a non-standard formatted file, use a different value.
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, residue number, the intensity value, and the original line of text
-    @rtype:             list of lists of str, str, int, float, str
     """
 
     # Assume the NMRView file has six header lines!
     num = 6
-    print("Number of header lines: " + repr(num))
+    print("Number of header lines: %s" % num)
 
     # Remove the header.
     file_data = file_data[num:]
@@ -67,7 +64,6 @@ def read_list_intensity(file_data=None, int_col=None):
         print('Using peak volumes (or evolumes).')
 
     # Loop over the file data.
-    data = []
     for line in file_data:
         # Unknown assignment.
         if line[1] == '{}':
@@ -85,18 +81,18 @@ def read_list_intensity(file_data=None, int_col=None):
             raise RelaxError("The peak list is invalid.")
 
         # Nuclei names.
-        x_name = ''
-        if line[8]!='{}':
-            x_name = line[8].strip('{')
-            x_name = x_name.strip('}')
-            x_name = x_name.split('.')
-            x_name = x_name[1]
-        h_name = ''
+        name1 = ''
         if line[1]!='{}':
-            h_name = line[1].strip('{')
-            h_name = h_name.strip('}')
-            h_name = h_name.split('.')
-            h_name = h_name[1]
+            name1 = line[1].strip('{')
+            name1 = name1.strip('}')
+            name1 = name1.split('.')
+            name1 = name1[1]
+        name2 = ''
+        if line[8]!='{}':
+            name2 = line[8].strip('{')
+            name2 = name2.strip('}')
+            name2 = name2.split('.')
+            name2 = name2[1]
 
         # Intensity.
         try:
@@ -104,8 +100,5 @@ def read_list_intensity(file_data=None, int_col=None):
         except ValueError:
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
-        # Append the data.
-        data.append([h_name, x_name, res_num, intensity, line])
-
-    # Return the data.
-    return data
+        # Add the assignment to the peak list object.
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)

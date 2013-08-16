@@ -31,19 +31,16 @@ from lib.errors import RelaxError
 from lib.io import open_write_file, strip
 
 
-def read_list_intensity_seriestab(file_data=None, int_col=None):
-    """Return the peak intensity information from the NMRPipe SeriesTab peak intensity file.
+def read_list_intensity_seriestab(peak_list=None, file_data=None, int_col=None):
+    """Extract the intensity information from the NMRPipe SeriesTab peak intensity file.
 
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
+    @keyword peak_list: The peak list object to place all data into.
+    @type peak_list:    lib.spectrum.objects.Peak_list instance
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
     @keyword int_col:  The column which to multiply the peak intensity data (used by the SeriesTab intensity file format).
     @type int_col:     int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, residue number, the intensity value, and the original line of text.
-    @rtype:             list of lists of str, str, int, float, str
     """
 
     # Set start variables.
@@ -93,78 +90,40 @@ def read_list_intensity_seriestab(file_data=None, int_col=None):
     # Remove the header.
     file_data = file_data[header:]
 
-    # Create an empty intensity list.
-    intensity_list = [None]*len(spectra)
+    # Loop over the file data.
+    for line in file_data:
+        # Skip non-assigned peaks.
+        if line[ass_i] == '?-?':
+            continue
 
-    # Create the whole empty data_all list, where entries will be replaced later.
-    # Format: H_name, X_name, spin_id, intensity, line.
-    data_all = [[None, None, None, intensity_list, None]]*len(file_data)
+        # First split by the 2D separator.
+        assign2, assign1 = re.split('-', line[ass_i])
 
-    # Define a current spectrum counter.
-    i = 0
+        # The assignment of the first dimension.
+        row1 = re.split('([A-Z]+)', assign1)
+        name1 = row1[-2] + row1[-1]
 
-    # Loop over the spectra.
-    for spectrum in spectra:
-        # Current intensity index.
-        int_i = spectra_i[i]
+        # The assignment of the second dimension.
+        row2 = re.split('([A-Z]+)', assign2)
+        name2 = row2[-2] + row2[-1]
 
-        # Define a current line counter.
-        j = 0
+        # Get the residue number.
+        try:
+            res_num = int(row2[-3])
+        except:
+            raise RelaxError("Improperly formatted NMRPipe SeriesTab file., cannot process the assignment '%s'." % line[0])
 
-        for line in file_data:
-            # Skip non-assigned peaks.
-            if line[ass_i] == '?-?':
-                continue
-
-            # First split by the 2D separator.
-            x_assign, h_assign = re.split('-', line[ass_i])
-
-            # The proton info.
-            h_row = re.split('([A-Z]+)', h_assign)
-            h_name = h_row[-2] + h_row[-1]
-
-            # The heteronucleus info.
-            x_row = re.split('([A-Z]+)', x_assign)
-            x_name = x_row[-2] + x_row[-1]
-
-            # Get the residue number.
-            try:
-                res_num = int(x_row[-3])
-            except:
-                raise RelaxError("Improperly formatted NMRPipe SeriesTab file.")
-
-            # Get the intensity.
-            try:
+        # Get the intensities.
+        try:
+            # Loop over the spectra.
+            intensities = []
+            for i in range(len(spectra)):
                 # The intensity is given by column multiplication.
-                intensity = float(line[int_i])*float(line[5])
+                intensities.append(float(line[spectra_i[i]])*float(line[5]))
 
-                # Extract the intensity_list
-                intensity_list = data_all[j][3]
+        # Bad data.
+        except ValueError:
+            raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
 
-                # Replace the intensity.
-                intensity_list[i] = intensity
-
-            except ValueError:
-                raise RelaxError("The peak intensity value %s from the line %s is invalid."%(intensity,line))
-
-            # Replace the data.
-            # Format: H_name, X_name, spin_id, intensity, line.
-            data_all[j] = [h_name, x_name, res_num, list(intensity_list), line]
-
-            # Add 1 to current line counter.
-            j += 1
-
-        # Add 1 to current spectrum counter.
-        i += 1
-
-    # Remove from data_all where empty list starts. They are created where spins are
-    # skipped for ID = '?-?'.
-    for i in range(len(data_all)):
-        spin = data_all[i]
-        if spin[0] == None and spin[1] == None and spin[2] == None:
-            # Replace the data
-            data_all = data_all[:i]
-            break
-
-    # Return the data.
-    return data_all
+        # Add the assignment to the peak list object.
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensities, intensity_name=spectra)

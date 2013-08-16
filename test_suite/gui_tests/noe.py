@@ -103,16 +103,10 @@ class Noe(GuiTestCase):
             page = wizard.get_page(wizard.page_indices['read'])
             page.uf_args['file'].SetValue(str_to_gui(files[i]))
             page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
-            page.uf_args['proton'].SetValue(str_to_gui('HN'))
-
-            # Apply to load the backbone NH, then set up for the Trp indoles.
-            wizard._apply(None)
-            interpreter.flush()
-            page.uf_args['heteronuc'].SetValue(str_to_gui('NE1'))
-            page.uf_args['proton'].SetValue(str_to_gui('HE1'))
-
-            # Move down 2 pages.
             wizard._go_next(None)
+            interpreter.flush()
+
+            # Move down one pages.
             wizard._go_next(None)
 
             # Set the errors.
