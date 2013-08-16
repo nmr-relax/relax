@@ -239,11 +239,11 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dim",
-    default = 1,
+    default = 2,
     py_type = "int",
     min = 1,
     desc_short = "spectral dimension to read",
-    desc = "Associate the data with the spins of any dimension in the peak list."
+    desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w2, the heteronucleus in HSQC type experiments."
 )
 uf.add_keyarg(
     name = "int_method",
