@@ -33,7 +33,7 @@ from lib.io import open_write_file, strip
 
 
 def read_list_intensity(peak_list=None, file_data=None, int_col=3):
-    """Return the peak intensity information from the Sparky peak intensity file.
+    """Extract the peak intensity information from the Sparky peak intensity file.
 
     @keyword peak_list: The peak list object to place all data into.
     @type peak_list:    lib.spectrum.objects.Peak_list instance
