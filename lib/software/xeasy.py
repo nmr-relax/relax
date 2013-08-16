@@ -68,7 +68,6 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=None):
     file_data = strip(file_data)
 
     # Loop over the file data.
-    data = []
     for line in file_data:
         # Test for invalid assignment lines which have the column numbers changed and return empty data.
         if line[w1_col] == 'inv.':

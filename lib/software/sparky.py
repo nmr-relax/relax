@@ -63,7 +63,6 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
     file_data = strip(file_data)
 
     # Loop over the file data.
-    data = []
     for line in file_data:
         # Skip non-assigned peaks.
         if line[0] == '?-?':

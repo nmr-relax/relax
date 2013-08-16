@@ -64,7 +64,6 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=None):
         print('Using peak volumes (or evolumes).')
 
     # Loop over the file data.
-    data = []
     for line in file_data:
         # Unknown assignment.
         if line[1] == '{}':
