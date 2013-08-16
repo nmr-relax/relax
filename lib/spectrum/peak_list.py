@@ -70,12 +70,11 @@ def autodetect_format(file_data):
     return 'generic'
 
 
-def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
-    """Return the process data from the generic peak intensity file.
+def intensity_generic(peak_list=None, file_data=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, sep=None, spin_id=None):
+    """Extract the peak intensity information from the generic column formatted peak list.
 
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
+    @keyword peak_list:     The peak list object to place all data into.
+    @type peak_list:        lib.spectrum.objects.Peak_list instance
     @keyword file_data:     The data extracted from the file converted into a list of lists.
     @type file_data:        list of lists of str
     @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none. @type spin_id_col:      int or None @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
@@ -95,8 +94,6 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.
     @type spin_id:          None or str
     @raises RelaxError:     When the expected peak intensity is not a float.
-    @return:                The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, spin ID string, and the intensity value.
-    @rtype:                 list of lists of str, str, str, float
     """
 
     # Check the intensity column argument.
@@ -110,37 +107,25 @@ def intensity_generic(file_data=None, spin_id_col=None, mol_name_col=None, res_n
     if not isinstance(data_col, list):
         data_col = [data_col]
 
-    # Loop over the data columns.
-    data = []
-    for i in range(len(data_col)):
-        # Loop over the data.
-        row_index = 0
-        for values in read_spin_data(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id):
-            # Check the values.
-            if len(values) != 6:
-                raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
+    # Loop over the file data.
+    for line in file_data:
+        # Loop over the intensity columns, storing the data.
+        intensity = []
+        for i in range(len(data_col)):
+            # Extract the data for the single line (loop of a single element).
+            for values in read_spin_data(file_data=[line], spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id):
+                # Check the values.
+                if len(values) != 6:
+                    raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
 
-            # Unpack.
-            mol_name, res_num, res_name, spin_num, spin_name, value = values
+                # Unpack.
+                mol_name, res_num, res_name, spin_num, spin_name, value = values
 
-            # Create the unique spin ID.
-            id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+                # Store the intensity.
+                intensity.append(value)
 
-            # Store the necessary data.
-            if i == 0:
-                # Convert the value to a list if multiple columns are present.
-                if len(data_col) > 1:
-                    data.append([None, None, id, [value], id])
-                else:
-                    data.append([None, None, id, value, id])
-            else:
-                data[row_index][3].append(value)
-
-            # Go to the next row.
-            row_index += 1
-
-    # Return the data.
-    return data
+        # Add the assignment to the peak list object.
+        peak_list.add(mol_names=[mol_name, mol_name], res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_nums=[spin_num, spin_num], spin_names=[spin_name, spin_name], intensity=intensity)
 
 
 def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None):
