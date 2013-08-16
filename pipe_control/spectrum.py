@@ -464,7 +464,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     @keyword dim:           The dimension of the peak list to associate the data with.
     @type dim:              int
     @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
-    @type int_col:          int
+    @type int_col:          int or list of int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
     @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
@@ -538,7 +538,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
 
         # Checks for matching length of spectrum IDs and intensities columns.
         if len(spectrum_id) != len(intensity):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, len(intensity)))
 
         # Loop over the intensity data.
         for i in range(len(intensity)):
