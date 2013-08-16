@@ -48,24 +48,26 @@ class Peak_list(list):
         self._dim = dim
 
 
-    def add(self, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, shifts=None, intensity=None):
+    def add(self, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, shifts=None, intensity=None, intensity_name=None):
         """Add a peak list element.
 
 
-        @keyword mol_names:     The list of molecule names for each dimension of the assignment.
-        @type mol_names:        list of str or None
-        @keyword res_nums:      The list of residue numbers for each dimension of the assignment.
-        @type res_nums:         list of int or None
-        @keyword res_names:     The list of residue names for each dimension of the assignment.
-        @type res_names:        list of str or None
-        @keyword spin_nums:     The list of spin numbers for each dimension of the assignment.
-        @type spin_nums:        list of int or None
-        @keyword spin_names:    The list of spin names for each dimension of the assignment.
-        @type spin_names:       list of str or None
-        @keyword shifts:        The chemical shifts for each dimension of the assignment in ppm.
-        @type shifts:           list of float or None
-        @keyword intensity:     The single intensity value for the peak.
-        @type intensity:        float or None
+        @keyword mol_names:         The list of molecule names for each dimension of the assignment.
+        @type mol_names:            list of str or None
+        @keyword res_nums:          The list of residue numbers for each dimension of the assignment.
+        @type res_nums:             list of int or None
+        @keyword res_names:         The list of residue names for each dimension of the assignment.
+        @type res_names:            list of str or None
+        @keyword spin_nums:         The list of spin numbers for each dimension of the assignment.
+        @type spin_nums:            list of int or None
+        @keyword spin_names:        The list of spin names for each dimension of the assignment.
+        @type spin_names:           list of str or None
+        @keyword shifts:            The chemical shifts for each dimension of the assignment in ppm.
+        @type shifts:               list of float or None
+        @keyword intensity:         The optional intensity value for the peak.  This can have multiple values as some peak lists cover multiple spectra.
+        @type intensity:            list of float or None
+        @keyword intensity_name:    The optional name of the intensity column.  This can be used for automated spectrum ID generation.
+        @type intensity_name:       list of str or None
         """
 
         # Check the arguments.
@@ -94,3 +96,4 @@ class Peak_list(list):
         assign.spin_names = spin_names
         assign.shifts = shifts
         assign.intensity = intensity
+        assign.intensity_name = intensity_name
