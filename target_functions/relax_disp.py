@@ -39,9 +39,10 @@ from lib.dispersion.ns_2site_expanded import r2eff_ns_2site_expanded
 from lib.dispersion.ns_2site_star import r2eff_ns_2site_star
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
+from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, MODEL_TP02
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -55,6 +56,7 @@ class Dispersion:
 
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
+            - 'TSMFK01':  The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
             - 'LM63 3-site':  The Luz and Meiboom (1963) 3-site fast exchange model.
             - 'CR72':  The reduced Carver and Richards (1972) 2-site model for all time scales with R20A = R20B.
             - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
@@ -188,6 +190,8 @@ class Dispersion:
             self.func = self.func_NOREX
         if model == MODEL_LM63:
             self.func = self.func_LM63
+        if model == MODEL_TSMFK01:
+            self.func = self.func_TSMFK01
         if model == MODEL_LM63_3SITE:
             self.func = self.func_LM63_3site
         if model == MODEL_CR72_FULL:
@@ -945,6 +949,49 @@ class Dispersion:
 
                 # Back calculate the R1rho values.
                 r1rho_TP02(r1rho_prime=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_TSMFK01(self, params):
+        """Target function for the the Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20A = params[:self.end_index[0]]
+        dw = params[self.end_index[1]:self.end_index[2]]
+        kA = params[self.end_index[2]+1]
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20a_index = frq_index + spin_index*self.num_frq
+
+                # Back calculate the R2eff values.
+                r2eff_TSMFK01(r20a=R20A[r20a_index], dw=phi_ex_scaled, kA=kA, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
