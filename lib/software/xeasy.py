@@ -29,33 +29,23 @@ from lib.errors import RelaxError
 from lib.io import strip
 
 
-def read_list_intensity(file_data=None, heteronuc=None, proton=None, int_col=None):
-    """Return the peak intensity information from the XEasy file.
+def read_list_intensity(peak_list=None, file_data=None, int_col=None):
+    """Extract the peak intensity information from the XEasy file.
 
-    The residue number, heteronucleus and proton names, and peak intensity will be returned.
-
-
+    @keyword peak_list: The peak list object to place all data into.
+    @type peak_list:    lib.spectrum.objects.Peak_list instance
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword heteronuc: The name of the heteronucleus as specified in the peak intensity file.
-    @type heteronuc:    str
-    @keyword proton:    The name of the proton as specified in the peak intensity file.
-    @type proton:       str
     @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
     @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
-    @return:            The extracted data as a list of lists.  The first dimension corresponds to the spin.  The second dimension consists of the proton name, heteronucleus name, residue number, the intensity value, and the original line of text.
-    @rtype:             list of lists of str, str, int, float, str
     """
 
-    # The columns.
+    # The hardcoded column positions.
     w1_col = 4
     w2_col = 7
     if int_col == None:
         int_col = 10
-
-    # Set the default proton dimension.
-    H_dim = 'w1'
 
     # Determine the number of header lines.
     num = 0
@@ -77,32 +67,7 @@ def read_list_intensity(file_data=None, heteronuc=None, proton=None, int_col=Non
     # Strip the data.
     file_data = strip(file_data)
 
-    # Determine the proton and heteronucleus dimensions.
-    for line in file_data:
-        # Proton in w1, heteronucleus in w2.
-        if line[w1_col] == proton and line[w2_col] == heteronuc:
-            # Set the proton dimension.
-            H_dim = 'w1'
-
-            # Print out.
-            print("The proton dimension is w1")
-
-            # Don't continue (waste of time).
-            break
-
-        # Heteronucleus in w1, proton in w2.
-        if line[w1_col] == heteronuc and line[w2_col] == proton:
-            # Set the proton dimension.
-            H_dim = 'w2'
-
-            # Print out.
-            print("The proton dimension is w2")
-
-            # Don't continue (waste of time).
-            break
-
     # Loop over the file data.
-    data = []
     for line in file_data:
         # Test for invalid assignment lines which have the column numbers changed and return empty data.
         if line[w1_col] == 'inv.':
@@ -112,24 +77,17 @@ def read_list_intensity(file_data=None, heteronuc=None, proton=None, int_col=Non
         try:
             res_num = int(line[5])
         except:
-            raise RelaxError("Improperly formatted XEasy file.")
+            raise RelaxError("Improperly formatted XEasy file, cannot read the line %s." % line)
 
         # Nuclei names.
-        if H_dim == 'w1':
-            h_name = line[w1_col]
-            x_name = line[w2_col]
-        else:
-            x_name = line[w1_col]
-            h_name = line[w2_col]
+        name1 = line[w1_col]
+        name2 = line[w2_col]
 
         # Intensity.
         try:
             intensity = float(line[int_col])
         except ValueError:
-            raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
+            raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
 
-        # Append the data.
-        data.append([h_name, x_name, res_num, intensity, line])
-
-    # Return the data.
-    return data
+        # Add the assignment to the peak list object.
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)

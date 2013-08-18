@@ -23,5 +23,6 @@
 """The relax-lib NMR package - a library of functions for spectral data."""
 
 __all__ = [
-    'peak_list'
+    'peak_list',
+    'objects'
 ]

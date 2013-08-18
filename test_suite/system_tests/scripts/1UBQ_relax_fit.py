@@ -54,7 +54,7 @@ data_path = '.'
 # Loop over the spectra.
 for i in range(len(names)):
     # Load the peak intensities.
-    spectrum.read_intensities(file=names[i]+'.listb', dir=list_path, spectrum_id=names[i], int_method='height', proton='H')
+    spectrum.read_intensities(file=names[i]+'.listb', dir=list_path, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])

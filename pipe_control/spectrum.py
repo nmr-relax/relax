@@ -32,9 +32,9 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
-from lib.io import extract_data, write_data
+from lib.io import write_data
 from lib.software import nmrpipe, nmrview, sparky, xeasy
-from lib.spectrum.peak_list import autodetect_format, intensity_generic
+from lib.spectrum.peak_list import read_peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
@@ -452,7 +452,7 @@ def integration_points(N=0, spectrum_id=None, spin_id=None):
     raise RelaxImplementError
 
 
-def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
+def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
     @keyword file:          The name of the file containing the peak intensities.
@@ -461,12 +461,10 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
     @type spectrum_id:      str or list of str
-    @keyword heteronuc:     The name of the heteronucleus as specified in the peak intensity file.
-    @type heteronuc:        str
-    @keyword proton:        The name of the proton as specified in the peak intensity file.
-    @type proton:           str
+    @keyword dim:           The dimension of the peak list to associate the data with.
+    @type dim:              int
     @keyword int_col:       The column containing the peak intensity data (used by the generic intensity file format).
-    @type int_col:          int
+    @type int_col:          int or list of int
     @keyword int_method:    The integration method, one of 'height', 'point sum' or 'other'.
     @type int_method:       str
     @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
@@ -506,6 +504,14 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
 
+    # Intensity column checks.
+    if isinstance(spectrum_id, list) and not isinstance(int_col, list):
+        raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
+    if spectrum_id != 'auto' and not isinstance(spectrum_id, list) and isinstance(int_col, list):
+        raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
+    if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
+        raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
+
     # Check the intensity measure.
     if not int_method in ['height', 'point sum', 'other']:
         raise RelaxError("The intensity measure '%s' is not one of 'height', 'point sum', 'other'." % int_method)
@@ -513,110 +519,22 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
     # Set the peak intensity measure.
     cdp.int_method = int_method
 
-    # Extract the data from the file.
-    file_data = extract_data(file, dir, sep=sep)
+    # Read the peak list data.
+    peak_list = read_peak_list(file=file, dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
-    # Automatic format detection.
-    format = autodetect_format(file_data)
+    # Automatic spectrum IDs.
+    if spectrum_id == 'auto':
+        spectrum_id = peak_list[0].intensity_name
 
-    # Generic.
-    if format == 'generic':
-        # Print out.
-        print("Generic formatted data file.\n")
-
-        # Checks.
-        if isinstance(spectrum_id, list) and not isinstance(int_col, list):
-            raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
-        if not isinstance(spectrum_id, list) and isinstance(int_col, list):
-            raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
-        if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
-
-        # Extract the data.
-        intensity_data = intensity_generic(file_data=file_data, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=int_col, sep=sep, spin_id=spin_id)
-
-    # NMRView.
-    elif format == 'nmrview':
-        # Print out.
-        print("NMRView formatted data file.\n")
-
-        # Extract the data.
-        intensity_data = nmrview.read_list_intensity(file_data=file_data)
-
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
-    # NMRPipe SeriesTab.
-    elif format == 'seriestab':
-        # Print out.
-        print("NMRPipe SeriesTab formatted data file.\n")
-
-        # Extract the data.
-        intensity_data = nmrpipe.read_list_intensity_seriestab(file_data=file_data, int_col=int_col)
-
-        # Extract the expected number of spectrum ID's.
-        nr_int_col = len(intensity_data[0][3])
-
-        # Make it possible to autogenerate spectrum ID's, if spectrum_id='auto'.
-        if not isinstance(spectrum_id, list) and spectrum_id.lower() == 'auto':
-            spectrum_id = []
-            for i in range(nr_int_col):
-                spectrum_id.append('Z_A%s'%i)
-
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
-    # Sparky.
-    elif format == 'sparky':
-        # Print out.
-        print("Sparky formatted data file.\n")
-
-        # Extract the data.
-        intensity_data = sparky.read_list_intensity(file_data=file_data, int_col=int_col)
-
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
-    # XEasy.
-    elif format == 'xeasy':
-        # Print out.
-        print("XEasy formatted data file.\n")
-
-        # Extract the data.
-        intensity_data = xeasy.read_list_intensity(file_data=file_data, proton=proton, heteronuc=heteronuc, int_col=int_col)
-
-        # Convert the residue number to a spin ID.
-        for i in range(len(intensity_data)):
-            # Generate the spin_id.
-            spin_id = generate_spin_id_unique(res_num=intensity_data[i][2], spin_name=intensity_data[i][1])
-
-            # Replace the data.
-            intensity_data[i][2] = spin_id
-
-    # Loop over the peak intensity data.
+    # Loop over the assignments.
     data = []
     data_flag = False
-
-    for i in range(len(intensity_data)):
-        # Extract the data.
-        H_name, X_name, spin_id, intensity, line = intensity_data[i]
+    for assign in peak_list:
+        # Generate the spin_id.
+        spin_id = generate_spin_id_unique(res_num=assign.res_nums[dim-1], spin_name=assign.spin_names[dim-1])
 
         # Convert the intensity data and spectrum IDs to lists if needed.
+        intensity = assign.intensity
         if not isinstance(intensity, list):
             intensity = [intensity]
         if not isinstance(spectrum_id, list):
@@ -624,18 +542,13 @@ def read(file=None, dir=None, spectrum_id=None, heteronuc=None, proton=None, int
 
         # Checks for matching length of spectrum IDs and intensities columns.
         if len(spectrum_id) != len(intensity):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, nr_int_col))
+            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, len(intensity)))
 
-        # Loop over the data.
+        # Loop over the intensity data.
         for i in range(len(intensity)):
             # Sanity check.
             if intensity[i] == 0.0:
                 warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
-
-            # Skip data.
-            if (X_name and X_name != heteronuc) or (H_name and H_name != proton):
-                warn(RelaxWarning("Proton and heteronucleus names do not match, skipping the data %s." % line))
-                continue
 
             # Get the spin container.
             spin = return_spin(spin_id)
