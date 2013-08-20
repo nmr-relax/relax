@@ -39,8 +39,8 @@ res_names = ['Trp', 'Lys']
 res_nums = [1, 2]
 atom1_names = ['N', 'N']
 atom2_names = ['HN', 'HN']
-w1 = [122.454, 111.978]
-w2 = [8.397, 8.720]
+w1 = array([122.454, 111.978], float64)
+w2 = array([8.397, 8.720], float64)
 
 # Calculate some parameters.
 pB = 1.0 - pA
@@ -53,8 +53,8 @@ for frq_index in range(len(frqs)):
     omega_rf = spin_lock_offset * frq
 
     # Frequency dependent parameters.
-    omega_a = dw * 0.0
-    omega_b = dw
+    omega_a = w1 - 0.5*dw
+    omega_b = w1 + 0.5*dw
     omega_ave = pA*omega_a + pB*omega_b
     delta_a = omega_a - omega_rf 
     delta_b = omega_b - omega_rf 
