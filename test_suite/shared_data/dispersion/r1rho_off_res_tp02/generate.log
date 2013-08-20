@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20632
+                                  relax repository checkout r20641
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -110,60 +110,60 @@ for frq_index in range(len(frqs)):
 
             # Create a Sparky .list file.
             if time_index == 0 and spin_lock_index == 0:
-                name = 'nu_%s_ref' % frq_label[frq_index]
+                name = 'ref_%s' % frq_label[frq_index]
             elif time_index == 0:
                 name = None
             else:
-                name = 'nu_%s_%s' % (frq_label[frq_index], spin_lock[spin_lock_index])
+                name = 'nu_%s_%s' % (spin_lock[spin_lock_index], frq_label[frq_index])
             if name:
                 write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
 ----------------------------------------------------------------------------------------------------
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_ref.list' for writing.
+Opening the file 'ref_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_1000.0.list' for writing.
+Opening the file 'nu_1000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_1500.0.list' for writing.
+Opening the file 'nu_1500.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_2000.0.list' for writing.
+Opening the file 'nu_2000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_2500.0.list' for writing.
+Opening the file 'nu_2500.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_3000.0.list' for writing.
+Opening the file 'nu_3000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_3500.0.list' for writing.
+Opening the file 'nu_3500.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_4000.0.list' for writing.
+Opening the file 'nu_4000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_4500.0.list' for writing.
+Opening the file 'nu_4500.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_5000.0.list' for writing.
+Opening the file 'nu_5000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_5500.0.list' for writing.
+Opening the file 'nu_5500.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_500MHz_6000.0.list' for writing.
+Opening the file 'nu_6000.0_500MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_ref.list' for writing.
+Opening the file 'ref_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_1000.0.list' for writing.
+Opening the file 'nu_1000.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_1500.0.list' for writing.
+Opening the file 'nu_1500.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_2000.0.list' for writing.
+Opening the file 'nu_2000.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_2500.0.list' for writing.
+Opening the file 'nu_2500.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_3000.0.list' for writing.
+Opening the file 'nu_3000.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_3500.0.list' for writing.
+Opening the file 'nu_3500.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_4000.0.list' for writing.
+Opening the file 'nu_4000.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_4500.0.list' for writing.
+Opening the file 'nu_4500.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_5000.0.list' for writing.
+Opening the file 'nu_5000.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_5500.0.list' for writing.
+Opening the file 'nu_5500.0_800MHz.list' for writing.
 Creating the Sparky list file.
-Opening the file 'nu_800MHz_6000.0.list' for writing.
+Opening the file 'nu_6000.0_800MHz.list' for writing.
 

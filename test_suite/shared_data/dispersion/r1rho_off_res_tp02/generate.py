@@ -88,10 +88,10 @@ for frq_index in range(len(frqs)):
 
             # Create a Sparky .list file.
             if time_index == 0 and spin_lock_index == 0:
-                name = 'nu_%s_ref' % frq_label[frq_index]
+                name = 'ref_%s' % frq_label[frq_index]
             elif time_index == 0:
                 name = None
             else:
-                name = 'nu_%s_%s' % (frq_label[frq_index], spin_lock[spin_lock_index])
+                name = 'nu_%s_%s' % (spin_lock[spin_lock_index], frq_label[frq_index])
             if name:
                 write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
