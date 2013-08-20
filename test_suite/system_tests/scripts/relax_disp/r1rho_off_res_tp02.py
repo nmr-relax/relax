@@ -57,10 +57,10 @@ for frq_index in range(len(frq)):
     data = []
     spin_lock = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
     for spin_lock_index in range(len(spin_lock)):
-        data.append(["nu_%s_%s" % (frq_label[frq_index], spin_lock[spin_lock_index]), "nu_%s_%s.list" % (frq_label[frq_index], spin_lock[spin_lock_index]), spin_lock[spin_lock_index]])
+        data.append(["nu_%s_%s" % (spin_lock[spin_lock_index], frq_label[frq_index]), "nu_%s_%s.list" % (spin_lock[spin_lock_index], frq_label[frq_index]), spin_lock[spin_lock_index]])
 
     # Load the reference spectrum.
-    spectrum.read_intensities(file="nu_%s_ref.list" % frq_label[frq_index], dir=data_path, spectrum_id='ref_%s' % frq_label[frq_index], int_method='height', dim=1)
+    spectrum.read_intensities(file="ref_%s.list" % frq_label[frq_index], dir=data_path, spectrum_id='ref_%s' % frq_label[frq_index], int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id='ref_%s' % frq_label[frq_index], error=error)
 
     # Set as the reference.
