@@ -596,23 +596,17 @@ At this stage, the peak intensity data needs to be loaded.  In both the $\Rone$ 
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_bb_peaks}}
 \end{minipage}
 
-In this example, a Sparky peak list containing the peak heights determined from the averaged chemical shift positions for all spectra will be loaded.  Set the spectrum ID string to a unique value.  Change the heteronucleus and proton names to those of the $^{15}$N backbone assignments in the peak lists, in this case \gui{N} and \gui{NH}.
-
-To load the tryptophan indole $^{15}$N spins as well, first click on \guibutton{Apply} rather than \guibutton{Next}.  This will most likely cause a \prompt{RelaxWarning} message to appear for all peak list elements which do not match the atom names given:
+In this example, a Sparky peak list containing the peak heights determined from the averaged chemical shift positions for all spectra will be loaded.  Set the spectrum ID string to a unique value.
+Click on \guibutton{Next}.
+This will most likely cause a \prompt{RelaxWarning} message to appear for all peak list elements which do not correspond to any spins loaded into the relax data store:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_warnings}}
 \end{minipage}
 
-These messages must be carefully checked to be sure that the correct data has been loaded.  A \prompt{RelaxError} might be thrown if the peak list is corrupted or if the atom names have been incorrectly given.  In this case, check the message, fix the problem, and click on \guibutton{Apply} again.
-
-For the the tryptophan indole $^{15}$N spins, change the heteronucleus and proton names to \gui{NE1} and \gui{HE1} respectively (or to whatever you have named these in your assignments).  Then click on \guibutton{Next}:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_trp_peaks}}
-\end{minipage}
-
-Again check the messages in the relax controller window which will appear.  You should now see the error type page:
+These messages must be carefully checked to be sure that the correct data has been loaded.  A \prompt{RelaxError} might be thrown if the peak list is corrupted or if the dimension has been incorrectly given.  In this case check the message, go \guibutton{Back}, fix the problem, and click on \guibutton{Next} again.
+Then click on \guibutton{Next}.
+You should now see the error type page:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_err_type}}

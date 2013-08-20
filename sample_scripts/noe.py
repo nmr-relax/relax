@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,10 +31,8 @@ structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@NE1')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
 
 # Set the spectrum types.
 noe.spectrum_type('ref', 'ref_ave')

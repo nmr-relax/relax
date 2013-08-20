@@ -53,10 +53,8 @@ structure.load_spins(spin_id='@N')
 structure.load_spins(spin_id='@NE1')
 
 # Load the reference spectrum and saturated spectrum peak intensities.
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
 
 # Set the spectrum types.
 noe.spectrum_type('ref', 'ref_ave')
@@ -146,10 +144,8 @@ The commands
 
 \begin{lstlisting}[firstnumber=11]
 # Load the reference spectrum and saturated spectrum peak intensities.
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave', heteronuc='NE1', proton='HE1')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='N', proton='HN')
-spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
+spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
 \end{lstlisting}
 
 will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  relax will automatically determine the format of the peak list.  Currently only Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView} and a generic columnar formatted text file are supported.
@@ -383,21 +379,16 @@ The next step is to load the saturated and reference NOE peak lists.  From the m
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity1}}
 \end{minipage}
 
-Then set the obligatory spectrum ID string to a unique value (in this case \guistring{ref}).  The heteronucleus and proton names must be changed to match the convention used in the peak list.  In case you have forgotten the spin names, next to the file name selection button is a preview button which can be used to open the peak list in the default text editor.  Set the other fields as needed.
-
-To load the NH data, rather than clicking on \guibutton{Next}, click on \guibutton{Apply}.  This will allow the tryptophan indole data to be loaded in the next step.  Note that a \prompt{RelaxWarning} will be thrown for all peak list entries which do not match the heteronucleus and proton names.  This will cause the relax controller window to appear:
+Then set the obligatory spectrum ID string to a unique value (in this case \guistring{ref}).  The spectral dimension may need to be changed so that the peak intensities are associated with the correct atom of the pair.  In case you have forgotten the spin names or the format of the peak list next to the file name selection button is a preview button which can be used to open the peak list in the default text editor.  Set the other fields as needed.
+Click on \guibutton{Next}
+Note that a \prompt{RelaxWarning} will be thrown for all peak list entries which do not match a spin system within the relax data store.  This will cause the relax controller window to appear:
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity2}}
 \end{minipage}
 
-Carefully check these warnings to be sure that the data is correctly loaded, and if everything is fine, the relax controller window can be closed.  If the atom names have been wrongly specified or some other setting is incorrect, a \prompt{RelaxError} might appear saying that no data was loaded -- you will then need to fix the settings and click on \guibutton{Apply} again.  Now change the heteronucleus and protons names to \guistring{NE1} and \guistring{HE1} respectively (or to what ever they have been named in the peak list).  Click on \guibutton{Next}:
-
-\begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity3}}
-\end{minipage}
-
-The relax controller will appear again -- check the \prompt{RelaxWarnings} to be sure that the data has loaded correctly then close the controller again.  The error type page should now appear.
+Carefully check these warnings to be sure that the data is correctly loaded and, if everything is fine, the relax controller window can be closed.  If the dimension has been wrongly specified or some other setting is incorrect a \prompt{RelaxError} might appear saying that no data was loaded -- you will then need to fix the settings and click on \guibutton{Apply} again.
+The error type page should now appear.
 
 \begin{minipage}[h]{\linewidth}
 \centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity4}}

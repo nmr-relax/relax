@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -60,8 +60,7 @@ times = [
 # Loop over the spectra.
 for i in range(len(names)):
     # Load the peak intensities (first the backbone NH, then the tryptophan indole NH).
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height', heteronuc='N', proton='HN')
-    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height', heteronuc='NE1', proton='HE1')
+    spectrum.read_intensities(file=names[i]+'.list', dir=data_path, spectrum_id=names[i], int_method='height')
 
     # Set the relaxation times.
     relax_fit.relax_time(time=times[i], spectrum_id=names[i])
