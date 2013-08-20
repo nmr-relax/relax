@@ -35,7 +35,7 @@ IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'misc' + sep
 WIZARD_IMAGE_PATH = status.install_path + sep + 'graphics' + sep + 'wizards' + sep
 
 
-def fetch_icon(icon=None, size='16x16', format='png'):
+def fetch_icon(icon=None, size='16x16', format='png', full_path=True):
     """Return the path to the specified icon.
 
     The icon code consists of two parts separated by the '.' character.  These are:
@@ -51,6 +51,8 @@ def fetch_icon(icon=None, size='16x16', format='png'):
     @type size:         str
     @keyword format:    The format of the icon, defaulting to PNG images.  This can be changed to 'eps.gz' for example, or None for no file ending.
     @type format:       str
+    @keyword full_path: A flag which if True will cause the absolute path to be returned.  If False, the relative path will be returned.
+    @type full_path:    bool
     @return:            The icon path, for example 'oxygen_icons/16x16/actions/document-open.png'.
     @rtype:             str
     """
@@ -60,7 +62,10 @@ def fetch_icon(icon=None, size='16x16', format='png'):
         return None
 
     # Initialise the path.
-    path = status.install_path + sep + 'graphics' + sep
+    path = ''
+    if full_path:
+        path += status.install_path + sep
+    path += 'graphics' + sep
 
     # Split up the icon code.
     elements = icon.split('.')
