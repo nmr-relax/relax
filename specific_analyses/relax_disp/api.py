@@ -649,6 +649,14 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
 
+        # TSMFK01 model.
+        elif model == MODEL_TSMFK01:
+            print("The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2a')
+            params += ['dw', 'kA']
+
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
