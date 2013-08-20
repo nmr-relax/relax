@@ -56,8 +56,7 @@ for spin_lock_index in range(len(spin_lock)):
     data.append(["nu_%s_time_0.1" % spin_lock[spin_lock_index], "nu_%s_time_0.1.list" % spin_lock[spin_lock_index], spin_lock[spin_lock_index], 0.1, 100000.0])
 
 # Load the reference spectrum.
-spectrum.read_intensities(file="nu_%s_ref.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', heteronuc='N', proton='HN')
-spectrum.read_intensities(file="nu_%s_ref.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', heteronuc='NE1', proton='HE1')
+spectrum.read_intensities(file="nu_%s_ref.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', dim=1)
 spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
 # Set as the reference.

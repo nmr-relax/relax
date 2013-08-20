@@ -70,8 +70,7 @@ for spin_lock_index in range(len(spin_lock)):
 # Load the reference spectrum.
 if ds.fixed:
     # Load the peak intensities and set the errors.
-    spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', heteronuc='N', proton='HN')
-    spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', heteronuc='NE1', proton='HE1')
+    spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
     # Set as the reference.
@@ -83,8 +82,7 @@ if ds.fixed:
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
     # Load the peak intensities and set the errors.
-    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='N', proton='HN')
-    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='NE1', proton='HE1')
+    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion spin-lock field strength (nu1).

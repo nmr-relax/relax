@@ -67,7 +67,7 @@ data = [
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
     # Load the peak intensities and set the errors.
-    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', proton='H')
+    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height')
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
