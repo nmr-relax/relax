@@ -219,7 +219,7 @@ def find_intensity_keys(frq=None, point=None, time=None):
 
     # Check for missing IDs.
     if len(ids) == 0:
-        raise RelaxError("No intensity key could be found corresponding to the spectrometer frequency %s, dispersion point %s and relaxation time %s." % (frq, point, time))
+        raise RelaxError("No intensity data could be found corresponding to the spectrometer frequency of %s MHz, dispersion point of %s and relaxation time of %s s." % (frq*1e-6, point, time))
 
     # Return the IDs.
     return ids
