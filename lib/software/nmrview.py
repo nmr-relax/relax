@@ -81,18 +81,18 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=None):
             raise RelaxError("The peak list is invalid.")
 
         # Nuclei names.
-        name1 = ''
-        if line[1]!='{}':
-            name1 = line[1].strip('{')
-            name1 = name1.strip('}')
-            name1 = name1.split('.')
-            name1 = name1[1]
         name2 = ''
-        if line[8]!='{}':
-            name2 = line[8].strip('{')
+        if line[1]!='{}':
+            name2 = line[1].strip('{')
             name2 = name2.strip('}')
             name2 = name2.split('.')
             name2 = name2[1]
+        name1 = ''
+        if line[8]!='{}':
+            name1 = line[8].strip('{')
+            name1 = name1.strip('}')
+            name1 = name1.split('.')
+            name1 = name1[1]
 
         # Intensity.
         try:

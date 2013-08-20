@@ -41,9 +41,9 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=None):
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
-    # The hardcoded column positions.
-    w1_col = 4
-    w2_col = 7
+    # The hardcoded column positions (note that w1 and w2 are swapped!).
+    w1_col = 7
+    w2_col = 4
     if int_col == None:
         int_col = 10
 
@@ -70,7 +70,7 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=None):
     # Loop over the file data.
     for line in file_data:
         # Test for invalid assignment lines which have the column numbers changed and return empty data.
-        if line[w1_col] == 'inv.':
+        if line[w1_col] == 'inv.' or line[w2_col] == 'inv.':
             continue
 
         # The residue number.

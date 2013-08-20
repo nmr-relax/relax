@@ -69,7 +69,7 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
             continue
 
         # First split by the 2D separator.
-        assign2, assign1 = split('-', line[0])
+        assign1, assign2 = split('-', line[0])
 
         # The assignment of the first dimension.
         row1 = split('([A-Z]+)', assign1)
@@ -81,7 +81,7 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
 
         # The residue number.
         try:
-            res_num = int(row2[-3])
+            res_num = int(row1[-3])
         except:
             raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
 
