@@ -258,14 +258,14 @@ class Fetch_docstrings:
 
         # Add the user function class icon.
         if self.uf_class:
-            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format=None, full_path=False)
+            icon = fetch_icon(self.uf_class.gui_icon, size='128x128', format=None, sep='/', full_path=False)
             if icon:
                 self.file.write("\includegraphics[bb=0 0 18 18]{%s} \hfill " % icon)
             else:
                 self.file.write("\hfill ")
 
         # Add the user function icon.
-        icon = fetch_icon(self.uf.gui_icon, size='128x128', format=None, full_path=False)
+        icon = fetch_icon(self.uf.gui_icon, size='128x128', format=None, sep='/', full_path=False)
         if icon:
             self.file.write("\includegraphics[bb=0 0 18 18]{%s}\n" % icon)
         else:
