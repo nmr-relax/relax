@@ -97,7 +97,7 @@ def read_list_intensity_seriestab(peak_list=None, file_data=None, int_col=None):
             continue
 
         # First split by the 2D separator.
-        assign2, assign1 = re.split('-', line[ass_i])
+        assign1, assign2 = re.split('-', line[ass_i])
 
         # The assignment of the first dimension.
         row1 = re.split('([A-Z]+)', assign1)
@@ -109,7 +109,7 @@ def read_list_intensity_seriestab(peak_list=None, file_data=None, int_col=None):
 
         # Get the residue number.
         try:
-            res_num = int(row2[-3])
+            res_num = int(row1[-3])
         except:
             raise RelaxError("Improperly formatted NMRPipe SeriesTab file., cannot process the assignment '%s'." % line[0])
 
