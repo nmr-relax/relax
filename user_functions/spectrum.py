@@ -239,11 +239,11 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "dim",
-    default = 2,
+    default = 1,
     py_type = "int",
     min = 1,
     desc_short = "spectral dimension to read",
-    desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w2, the heteronucleus in HSQC type experiments."
+    desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w1, the heteronucleus in HSQC type experiments."
 )
 uf.add_keyarg(
     name = "int_method",
@@ -336,7 +336,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The peak intensity can either be from peak heights or peak volumes.")
 uf.desc[-1].add_paragraph("The spectrum ID is a label which is subsequently utilised by other user functions.  If this identifier matches that of a previously loaded set of intensities, then this indicates a replicated spectrum.")
-uf.desc[-1].add_paragraph("The spectral dimension is used to specify if the intensity data should be loaded into the spins identified by the first dimension, second dimension, etc.")
+uf.desc[-1].add_paragraph("The spectral dimension is used to specify if the intensity data should be loaded into the spins identified by the first dimension w1, second dimension w2, etc.")
 uf.desc[-1].add_paragraph("The integration method is required for the subsequent error analysis.  When peak heights are measured, this should be set to 'height'.  Volume integration methods are a bit varied and hence two values are accepted.  If the volume integration involves pure point summation, with no deconvolution algorithms or other methods affecting peak heights, then the value should be set to 'point sum'.  All other volume integration methods, e.g. line shape fitting, the value should be set to 'other'.")
 uf.desc[-1].add_paragraph("If a series of intensities extracted from Bruker FID files processed in Topspin or XWinNMR are to be compared, the ncproc parameter may need to be supplied.  This is because this FID is stored using integer representation and is scaled using ncproc to avoid numerical truncation artifacts.  If two spectra have significantly different maximal intensities, then ncproc will be different for both.  The intensity scaling is binary, i.e. 2**ncproc. Therefore if spectrum A has an ncproc of 6 and and spectrum B a value of 7, then a reference intensity in B will be double that of A.  Internally, relax stores the intensities scaled by 2**ncproc.")
 # File formats.
