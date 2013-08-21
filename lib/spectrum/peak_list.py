@@ -135,7 +135,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
     @type file:             str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
-    @keyword int_col:       The column containing the peak intensity data.  If set to None, no intensity data will be returned.
+    @keyword int_col:       The column containing the peak intensity data.  If set to None, the auto-detection of intensity data will be attempted.
     @type int_col:          None or int
     @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
     @type spin_id_col:      int or None
@@ -196,7 +196,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("Sparky formatted data file.\n")
 
         # Extract the data.
-        sparky.read_list(peak_list=peak_list, file_data=file_data, int_col=int_col)
+        sparky.read_list(peak_list=peak_list, file_data=file_data)
 
     # XEasy.
     elif format == 'xeasy':
