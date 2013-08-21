@@ -43,6 +43,29 @@ class Chemical_shift(SystemTestCase):
         self.interpreter.pipe.create('cs', 'mf')
 
 
+    def test_read_nmrview(self):
+        """Test the reading of chemical shifts from an NMRView peak list."""
+
+        # Create the sequence data, and name the spins.
+        self.interpreter.spin.create(res_num=70, spin_name='N')
+        self.interpreter.spin.create(res_num=70, spin_name='HN')
+        self.interpreter.spin.create(res_num=72, spin_name='N')
+        self.interpreter.spin.create(res_num=72, spin_name='HN')
+
+        # Read the peak list.
+        self.interpreter.chemical_shift.read(file="cNTnC.xpk", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Test the data.
+        cs = [116.37241, 10.75274, 126.41302, 9.67752]
+        i = 0
+        for spin in spin_loop():
+            # Check the shift.
+            self.assertEqual(spin.chemical_shift, cs[i])
+
+            # Increment the index.
+            i += 1
+
+
     def test_read_sparky(self):
         """Test the reading of chemical shifts from a Sparky peak list."""
 
