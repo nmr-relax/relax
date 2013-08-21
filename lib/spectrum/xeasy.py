@@ -29,7 +29,7 @@ from lib.errors import RelaxError
 from lib.io import strip
 
 
-def read_list_intensity(peak_list=None, file_data=None, int_col=None):
+def read_list(peak_list=None, file_data=None, int_col=None):
     """Extract the peak intensity information from the XEasy file.
 
     @keyword peak_list: The peak list object to place all data into.

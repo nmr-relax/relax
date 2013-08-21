@@ -32,7 +32,7 @@ from lib.errors import RelaxError
 from lib.io import open_write_file, strip
 
 
-def read_list_intensity(peak_list=None, file_data=None, int_col=3):
+def read_list(peak_list=None, file_data=None, int_col=3):
     """Extract the peak intensity information from the Sparky peak intensity file.
 
     @keyword peak_list: The peak list object to place all data into.

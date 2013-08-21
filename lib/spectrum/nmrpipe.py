@@ -31,7 +31,7 @@ from lib.errors import RelaxError
 from lib.io import open_write_file, strip
 
 
-def read_list_intensity_seriestab(peak_list=None, file_data=None, int_col=None):
+def read_seriestab(peak_list=None, file_data=None, int_col=None):
     """Extract the intensity information from the NMRPipe SeriesTab peak intensity file.
 
     @keyword peak_list: The peak list object to place all data into.

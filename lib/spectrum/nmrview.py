@@ -33,7 +33,7 @@ from lib.io import strip
 from lib.warnings import RelaxWarning
 
 
-def read_list_intensity(peak_list=None, file_data=None, int_col=None):
+def read_list(peak_list=None, file_data=None, int_col=None):
     """Extract the peak intensity information from the NMRView peak intensity file.
 
     @keyword peak_list: The peak list object to place all data into.

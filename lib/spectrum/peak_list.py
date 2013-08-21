@@ -180,7 +180,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("NMRView formatted data file.\n")
 
         # Extract the data.
-        nmrview.read_list_intensity(peak_list=peak_list, file_data=file_data)
+        nmrview.read_list(peak_list=peak_list, file_data=file_data)
 
     # NMRPipe SeriesTab.
     elif format == 'seriestab':
@@ -188,7 +188,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("NMRPipe SeriesTab formatted data file.\n")
 
         # Extract the data.
-        nmrpipe.read_list_intensity_seriestab(peak_list=peak_list, file_data=file_data, int_col=int_col)
+        nmrpipe.read_seriestab(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
     # Sparky.
     elif format == 'sparky':
@@ -196,7 +196,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("Sparky formatted data file.\n")
 
         # Extract the data.
-        sparky.read_list_intensity(peak_list=peak_list, file_data=file_data, int_col=int_col)
+        sparky.read_list(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
     # XEasy.
     elif format == 'xeasy':
@@ -204,7 +204,7 @@ def read_peak_list(file=None, dir=None, int_col=None, spin_id_col=None, mol_name
         print("XEasy formatted data file.\n")
 
         # Extract the data.
-        xeasy.read_list_intensity(peak_list=peak_list, file_data=file_data, int_col=int_col)
+        xeasy.read_list(peak_list=peak_list, file_data=file_data, int_col=int_col)
 
     # Return the peak list object.
     return peak_list
