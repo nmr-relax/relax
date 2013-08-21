@@ -49,7 +49,7 @@ class Chemical_shift(SystemTestCase):
         # Create the sequence data, and name the spins.
         for res_num in [3, 4, 5, 6, 40]:
             self.interpreter.spin.create(res_num=res_num, spin_name='N')
-            self.interpreter.spin.create(res_num=res_num, spin_name='H')
+            self.interpreter.spin.create(res_num=res_num, spin_name='HN')
         self.interpreter.spin.create(res_num=40, spin_name='NE1')
         self.interpreter.spin.create(res_num=40, spin_name='HE1')
 
