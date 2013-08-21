@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from lib.io import DummyFileObject
-from lib.software.sparky import write_list
+from lib.spectrum.sparky import write_list
 
 
 class Test_sparky(TestCase):
