@@ -78,10 +78,9 @@ def read(file=None, dir=None, spin_id_col=None, mol_name_col=None, res_num_col=N
     # Loop over the assignments.
     data = []
     data_flag = False
-    dim = peak_list._dim
     for assign in peak_list:
         # Loop over the dimensions of the peak list.
-        for i in range(dim):
+        for i in range(peak_list.dimensionality):
             # Generate the spin_id.
             spin_id = generate_spin_id_unique(res_num=assign.res_nums[i], spin_name=assign.spin_names[i])
 

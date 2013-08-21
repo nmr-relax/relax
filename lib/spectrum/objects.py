@@ -45,7 +45,7 @@ class Peak_list(list):
         """
 
         # Store the dimensionality.
-        self._dim = dim
+        self.dimensionality = dim
 
 
     def add(self, mol_names=None, res_nums=None, res_names=None, spin_nums=None, spin_names=None, shifts=None, intensity=None, intensity_name=None):
@@ -71,18 +71,18 @@ class Peak_list(list):
         """
 
         # Check the arguments.
-        if mol_names != None and len(mol_names) != self._dim:
-            raise RelaxError("The molecule names %s must be a list of %s dimensions." % (mol_names, self._dim))
-        if res_nums != None and len(res_nums) != self._dim:
-            raise RelaxError("The residue numbers %s must be a list of %s dimensions." % (res_nums, self._dim))
-        if res_names != None and len(res_names) != self._dim:
-            raise RelaxError("The residue names %s must be a list of %s dimensions." % (res_names, self._dim))
-        if spin_nums != None and len(spin_nums) != self._dim:
-            raise RelaxError("The spin numbers %s must be a list of %s dimensions." % (spin_nums, self._dim))
-        if spin_names != None and len(spin_names) != self._dim:
-            raise RelaxError("The spin names %s must be a list of %s dimensions." % (spin_names, self._dim))
-        if shifts != None and len(shifts) != self._dim:
-            raise RelaxError("The chemical shifts %s must be a list of %s dimensions." % (shifts, self._dim))
+        if mol_names != None and len(mol_names) != self.dimensionality:
+            raise RelaxError("The molecule names %s must be a list of %s dimensions." % (mol_names, self.dimensionality))
+        if res_nums != None and len(res_nums) != self.dimensionality:
+            raise RelaxError("The residue numbers %s must be a list of %s dimensions." % (res_nums, self.dimensionality))
+        if res_names != None and len(res_names) != self.dimensionality:
+            raise RelaxError("The residue names %s must be a list of %s dimensions." % (res_names, self.dimensionality))
+        if spin_nums != None and len(spin_nums) != self.dimensionality:
+            raise RelaxError("The spin numbers %s must be a list of %s dimensions." % (spin_nums, self.dimensionality))
+        if spin_names != None and len(spin_names) != self.dimensionality:
+            raise RelaxError("The spin names %s must be a list of %s dimensions." % (spin_names, self.dimensionality))
+        if shifts != None and len(shifts) != self.dimensionality:
+            raise RelaxError("The chemical shifts %s must be a list of %s dimensions." % (shifts, self.dimensionality))
 
         # Add a new element.
         self.append(Assignment())
@@ -97,3 +97,10 @@ class Peak_list(list):
         assign.shifts = shifts
         assign.intensity = intensity
         assign.intensity_name = intensity_name
+
+        # Convert certain None values to lists of None.
+        names = ['mol_names', 'res_names', 'res_nums', 'spin_names', 'spin_nums', 'shifts']
+        for name in names:
+            obj = getattr(assign, name)
+            if obj == None:
+                setattr(assign, name, [None]*self.dimensionality)
