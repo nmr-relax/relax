@@ -33,7 +33,6 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
 from lib.io import write_data
-from lib.software import nmrpipe, nmrview, sparky, xeasy
 from lib.spectrum.peak_list import read_peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
