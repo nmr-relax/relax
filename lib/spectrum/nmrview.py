@@ -55,6 +55,10 @@ def read_list(peak_list=None, file_data=None, int_col=None):
     # Strip the data.
     file_data = strip(file_data)
 
+    # The chemical shift columns.
+    w2_col = 2
+    w1_col = 9
+
     # The peak intensity column.
     if int_col == None:
         int_col = 16
@@ -94,6 +98,20 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             name1 = name1.split('.')
             name1 = name1[1]
 
+        # Chemical shifts.
+        w1 = None
+        w2 = None
+        if w1_col != None:
+            try:
+                w1 = float(line[w1_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+        if w2_col != None:
+            try:
+                w2 = float(line[w2_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+
         # Intensity.
         try:
             intensity = float(line[int_col])
@@ -101,4 +119,4 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             raise RelaxError("The peak intensity value " + repr(intensity) + " from the line " + repr(line) + " is invalid.")
 
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
