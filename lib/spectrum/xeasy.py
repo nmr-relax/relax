@@ -42,8 +42,10 @@ def read_list(peak_list=None, file_data=None, int_col=None):
     """
 
     # The hardcoded column positions (note that w1 and w2 are swapped!).
-    w1_col = 7
-    w2_col = 4
+    w1_col = 3
+    w2_col = 2
+    ass_w1_col = 7
+    ass_w2_col = 4
     if int_col == None:
         int_col = 10
 
@@ -70,7 +72,7 @@ def read_list(peak_list=None, file_data=None, int_col=None):
     # Loop over the file data.
     for line in file_data:
         # Test for invalid assignment lines which have the column numbers changed and return empty data.
-        if line[w1_col] == 'inv.' or line[w2_col] == 'inv.':
+        if line[ass_w1_col] == 'inv.' or line[ass_w2_col] == 'inv.':
             continue
 
         # The residue number.
@@ -80,14 +82,24 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             raise RelaxError("Improperly formatted XEasy file, cannot read the line %s." % line)
 
         # Nuclei names.
-        name1 = line[w1_col]
-        name2 = line[w2_col]
+        name1 = line[ass_w1_col]
+        name2 = line[ass_w2_col]
+
+        # Chemical shifts.
+        try:
+            w1 = float(line[w1_col])
+        except ValueError:
+            raise RelaxError("The w1 chemical shift from the line %s is invalid." % line)
+        try:
+            w2 = float(line[w2_col])
+        except ValueError:
+            raise RelaxError("The w2 chemical shift from the line %s is invalid." % line)
 
         # Intensity.
         try:
             intensity = float(line[int_col])
         except ValueError:
-            raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
+            raise RelaxError("The peak intensity value from the line %s is invalid." % line)
 
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)
+        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
