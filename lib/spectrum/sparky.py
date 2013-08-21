@@ -71,6 +71,10 @@ def read_list(peak_list=None, file_data=None):
         elif file_data[0][i] == 'Data' and file_data[0][i+1] == 'Height':
             int_col = i
 
+        # The peak volume.
+        elif file_data[0][i] == 'Intensity':
+            int_col = i
+
     # Remove the header.
     file_data = file_data[num:]
 
