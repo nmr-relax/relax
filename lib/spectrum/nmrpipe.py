@@ -100,11 +100,11 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         assign1, assign2 = re.split('-', line[ass_i])
 
         # The assignment of the first dimension.
-        row1 = re.split('([A-Z]+)', assign1)
+        row1 = re.split('([a-zA-Z]+)', assign1)
         name1 = row1[-2] + row1[-1]
 
         # The assignment of the second dimension.
-        row2 = re.split('([A-Z]+)', assign2)
+        row2 = re.split('([a-zA-Z]+)', assign2)
         name2 = row2[-2] + row2[-1]
 
         # Get the residue number.
