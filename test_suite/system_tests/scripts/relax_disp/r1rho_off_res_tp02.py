@@ -89,7 +89,7 @@ for frq_index in range(len(frq)):
 relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 
 # Read the chemical shift data.
-chemical_shift.read(file='ref_500MHz.list')
+chemical_shift.read(file='ref_500MHz.list', dir=data_path)
 
 
 
