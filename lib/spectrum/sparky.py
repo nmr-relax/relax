@@ -32,15 +32,13 @@ from lib.errors import RelaxError
 from lib.io import open_write_file, strip
 
 
-def read_list_intensity(peak_list=None, file_data=None, int_col=3):
+def read_list(peak_list=None, file_data=None):
     """Extract the peak intensity information from the Sparky peak intensity file.
 
     @keyword peak_list: The peak list object to place all data into.
     @type peak_list:    lib.spectrum.objects.Peak_list instance
     @keyword file_data: The data extracted from the file converted into a list of lists.
     @type file_data:    list of lists of str
-    @keyword int_col:   The column containing the peak intensity data (for a non-standard formatted file).
-    @type int_col:      int
     @raises RelaxError: When the expected peak intensity is not a float.
     """
 
@@ -52,9 +50,30 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
         num = num + 1
     print("Number of header lines found: %s" % num)
 
-    # Default intensity column.
-    if int_col == None:
-        int_col = 3
+    # The columns according to the file.
+    w1_col = None
+    w2_col = None
+    w3_col = None
+    w4_col = None
+    int_col = None
+    for i in range(len(file_data[0])):
+        # The chemical shifts.
+        if file_data[0][i] == 'w1':
+            w1_col = i
+        elif file_data[0][i] == 'w2':
+            w2_col = i
+        elif file_data[0][i] == 'w3':
+            w3_col = i
+        elif file_data[0][i] == 'w4':
+            w4_col = i
+
+        # The peak height.
+        elif file_data[0][i] == 'Data' and file_data[0][i+1] == 'Height':
+            int_col = i
+
+        # The peak volume.
+        elif file_data[0][i] == 'Intensity':
+            int_col = i
 
     # Remove the header.
     file_data = file_data[num:]
@@ -62,22 +81,48 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
     # Strip the data.
     file_data = strip(file_data)
 
+    # The dimensionality.
+    if w4_col != None:
+        dim = 4
+    elif w3_col != None:
+        dim = 3
+    elif w2_col != None:
+        dim = 2
+    elif w1_col != None:
+        dim = 1
+    else:
+        raise RelaxError("The dimensionality of the peak list cannot be determined.")
+    print("%sD peak list detected." % dim)
+
     # Loop over the file data.
     for line in file_data:
         # Skip non-assigned peaks.
         if line[0] == '?-?':
             continue
 
-        # First split by the 2D separator.
-        assign1, assign2 = split('-', line[0])
+        # Split up the assignments.
+        if dim == 1:
+            assign1 = line[0]
+        elif dim == 2:
+            assign1, assign2 = split('-', line[0])
+        elif dim == 3:
+            assign1, assign2, assign3 = split('-', line[0])
+        elif dim == 4:
+            assign1, assign2, assign3, assign4 = split('-', line[0])
 
-        # The assignment of the first dimension.
-        row1 = split('([a-zA-Z]+)', assign1)
-        name1 = row1[-2] + row1[-1]
-
-        # The assignment of the second dimension.
-        row2 = split('([a-zA-Z]+)', assign2)
-        name2 = row2[-2] + row2[-1]
+        # Process the assignment for each dimension.
+        if dim >= 1:
+            row1 = split('([A-Z]+)', assign1)
+            name1 = row1[-2] + row1[-1]
+        if dim >= 2:
+            row2 = split('([A-Z]+)', assign2)
+            name2 = row2[-2] + row2[-1]
+        if dim >= 3:
+            row3 = split('([A-Z]+)', assign3)
+            name3 = row3[-2] + row3[-1]
+        if dim >= 4:
+            row4 = split('([A-Z]+)', assign4)
+            name4 = row4[-2] + row4[-1]
 
         # The residue number.
         try:
@@ -85,14 +130,48 @@ def read_list_intensity(peak_list=None, file_data=None, int_col=3):
         except:
             raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
 
+        # Chemical shifts.
+        w1 = None
+        w2 = None
+        w3 = None
+        w4 = None
+        if w1_col != None:
+            try:
+                w1 = float(line[w1_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+        if w2_col != None:
+            try:
+                w2 = float(line[w2_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+        if w3_col != None:
+            try:
+                w3 = float(line[w3_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+        if w4_col != None:
+            try:
+                w4 = float(line[w4_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+
         # Intensity.
-        try:
-            intensity = float(line[int_col])
-        except ValueError:
-            raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
+        if int_col != None:
+            try:
+                intensity = float(line[int_col])
+            except ValueError:
+                raise RelaxError("The peak intensity value from the line %s is invalid." % line)
 
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensity)
+        if dim == 1:
+            peak_list.add(res_nums=[res_num], spin_names=[name1], shifts=[w1], intensity=intensity)
+        elif dim == 2:
+            peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
+        elif dim == 3:
+            peak_list.add(res_nums=[res_num, res_num, res_num], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
+        elif dim == 4:
+            peak_list.add(res_nums=[res_num, res_num, res_num, res_num], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
 
 
 def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):

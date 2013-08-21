@@ -35,6 +35,7 @@ from test_suite.system_tests.align_tensor import Align_tensor
 from test_suite.system_tests.angles import Angles
 from test_suite.system_tests.bmrb import Bmrb
 from test_suite.system_tests.bruker import Bruker
+from test_suite.system_tests.chemical_shift import Chemical_shift
 from test_suite.system_tests.consistency_tests import Ct
 from test_suite.system_tests.dasha import Dasha
 from test_suite.system_tests.diffusion_tensor import Diffusion_tensor
@@ -72,6 +73,7 @@ __all__ = ['align_tensor',
            'angles',
            'bmrb',
            'bruker',
+           'chemical_shift'
            'consistency_tests',
            'dasha'
            'diffusion_tensor',
@@ -161,6 +163,7 @@ class System_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Bmrb))
             suite_array.append(TestLoader().loadTestsFromTestCase(Bruker))
             suite_array.append(TestLoader().loadTestsFromTestCase(Angles))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Chemical_shift))
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dasha))
             suite_array.append(TestLoader().loadTestsFromTestCase(Diffusion_tensor))

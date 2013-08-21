@@ -37,6 +37,7 @@ __all__ += [
     'angles',
     'bmrb',
     'bruker',
+    'chemical_shift',
     'consistency_tests',
     'dasha',
     'deselect',
@@ -92,6 +93,7 @@ def initialise():
     import user_functions.angles
     import user_functions.bmrb
     import user_functions.bruker
+    import user_functions.chemical_shift
     import user_functions.consistency_tests
     import user_functions.dasha
     import user_functions.deselect
