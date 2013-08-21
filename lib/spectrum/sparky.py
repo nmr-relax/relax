@@ -112,16 +112,16 @@ def read_list(peak_list=None, file_data=None):
 
         # Process the assignment for each dimension.
         if dim >= 1:
-            row1 = split('([A-Z]+)', assign1)
+            row1 = split('([a-zA-Z]+)', assign1)
             name1 = row1[-2] + row1[-1]
         if dim >= 2:
-            row2 = split('([A-Z]+)', assign2)
+            row2 = split('([a-zA-Z]+)', assign2)
             name2 = row2[-2] + row2[-1]
         if dim >= 3:
-            row3 = split('([A-Z]+)', assign3)
+            row3 = split('([a-zA-Z]+)', assign3)
             name3 = row3[-2] + row3[-1]
         if dim >= 4:
-            row4 = split('([A-Z]+)', assign4)
+            row4 = split('([a-zA-Z]+)', assign4)
             name4 = row4[-2] + row4[-1]
 
         # The residue number.
