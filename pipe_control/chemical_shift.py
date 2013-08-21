@@ -24,10 +24,12 @@
 
 
 # Python module imports.
+import sys
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.io import write_data
 from lib.spectrum.peak_list import read_peak_list
 from lib.warnings import RelaxNoSpinWarning
 from pipe_control import pipes
