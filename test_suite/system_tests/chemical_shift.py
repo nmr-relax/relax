@@ -70,3 +70,32 @@ class Chemical_shift(SystemTestCase):
 
             # Increment the index.
             i += 1
+
+
+    def test_read_xeasy(self):
+        """Test the reading of chemical shifts from a XEasy peak list."""
+
+        # Create the sequence data, and name the spins.
+        for res_num in [21, 96, 104, 110]:
+            self.interpreter.spin.create(res_num=res_num, spin_name='N')
+            self.interpreter.spin.create(res_num=res_num, spin_name='HN')
+        self.interpreter.spin.create(res_num=79, spin_name='NE1')
+        self.interpreter.spin.create(res_num=79, spin_name='HE1')
+
+        # Load the peak list.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
+        self.interpreter.chemical_shift.read(file='xeasy_r1_20ms.text', dir=path)
+
+        # Test the data.
+        cs = [134.221, 10.014, 118.450, 8.364, 127.582, 9.211, 129.041, 9.882, 132.592, 10.481]
+        i = 0
+        for spin in spin_loop():
+            # No data.
+            if i > 10:
+                self.assert_(not hasattr(spin, 'chemical_shift'))
+
+            # Check the shift.
+            self.assertEqual(spin.chemical_shift, cs[i])
+
+            # Increment the index.
+            i += 1
