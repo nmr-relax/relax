@@ -23,6 +23,10 @@
 """The relax-lib NMR package - a library of functions for spectral data."""
 
 __all__ = [
+    'nmrpipe',
+    'nmrview',
     'peak_list',
     'objects'
+    'sparky',
+    'xeasy',
 ]

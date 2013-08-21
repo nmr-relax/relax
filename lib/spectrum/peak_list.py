@@ -32,7 +32,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import extract_data, read_spin_data, strip, write_data
-from lib.software import nmrpipe, nmrview, sparky, xeasy
+from lib.spectrum import nmrpipe, nmrview, sparky, xeasy
 from lib.spectrum.objects import Peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control.mol_res_spin import generate_spin_id_unique, return_spin
