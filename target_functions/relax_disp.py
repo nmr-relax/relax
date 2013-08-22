@@ -46,7 +46,7 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, 
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, relax_time=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, relax_time=None, scaling_matrix=None, chemical_shifts=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -101,6 +101,8 @@ class Dispersion:
         @type relax_time:           float
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
+        @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
+        @type chemical_shifts:      numpy rank-2 float array
         """
 
         # Check the args.
@@ -112,6 +114,8 @@ class Dispersion:
             raise RelaxError("No errors have been supplied to the target function.")
         if missing == None:
             raise RelaxError("No missing data information has been supplied to the target function.")
+        if model in [MODEL_DPL94, MODEL_TP02] and chemical_shifts == None:
+            raise RelaxError("Chemical shifts must be supplied for the off-resonance dispersion models.")
 
         # Store the arguments.
         self.num_params = num_params
@@ -126,6 +130,7 @@ class Dispersion:
         self.spin_lock_nu1 = spin_lock_nu1
         self.relax_time = relax_time
         self.scaling_matrix = scaling_matrix
+        self.chemical_shifts = chemical_shifts
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -464,7 +469,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
 
                 # Back calculate the R2eff values.
-                r1rho_DPL94(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r1rho_DPL94(r1rho_prime=R20[r20_index], w=self.chemical_shifts[spin_index, frq_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
@@ -948,7 +953,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R1rho values.
-                r1rho_TP02(r1rho_prime=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r1rho_TP02(r1rho_prime=R20[r20_index], w=self.chemical_shifts[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
