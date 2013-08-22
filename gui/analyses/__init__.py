@@ -451,9 +451,13 @@ class Analysis_controller:
         """
 
         # Check the C modules.
-        if analysis_type in ['r1', 'r2', 'relax_disp'] and not dep_check.C_module_exp_fn:
+        if analysis_type in ['r1', 'r2'] and not dep_check.C_module_exp_fn:
             error_message("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
             return
+
+        # Check the C modules.
+        if analysis_type == 'relax_disp' and not dep_check.C_module_exp_fn:
+            error_message("Relaxation curve fitting will not available for this dispersion analysis.  Try compiling the C modules on your platform if you have measured full exponential curves.")
 
         # Freeze the GUI.
         wx.Yield()
