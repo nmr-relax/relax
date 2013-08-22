@@ -459,6 +459,10 @@ class Relax_disp(API_base, API_common):
         @type inc:                  array of int
         """
 
+        # Check that the C modules have been compiled.
+        if not C_module_exp_fn:
+            raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
+
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # Skip spins which have no data.
