@@ -65,6 +65,7 @@ for frq_index in range(len(frq)):
 
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref_%s' % frq_label[frq_index], field=None)
+    relax_disp.spin_lock_offset(spectrum_id='ref_%s' % frq_label[frq_index], offset=110.0)
     relax_disp.relax_time(spectrum_id='ref_%s' % frq_label[frq_index], time=0.1)
 
     # Set the spectrometer frequency.
