@@ -84,7 +84,6 @@ Delay & P1 & FID & Spectrum\\
 
 
 Here is an example NMRPipe script designed for optimal relaxation rate extraction:
-
 \begin{lstlisting}[language=csh]
 #!/bin/csh
 
@@ -112,9 +111,13 @@ nmrPipe -in fid/$FILEROOT.fid \
 | nmrPipe -out ft/$FILEROOT.dat -ov
 \end{lstlisting}
 
-The script is run by suppling the FILEROOT value as a command line option.
-Different experiment specific options may be needed such as:
+The script is run by suppling the FILEROOT value as a command line option so if the script is called \file{nmrpipe.sh} and the \file{var2pipe} or \file{bruk2pipe} processed file \file{R1\_ncyc4.fid} is in the \directory{fid} directory, you would run:
+\begin{lstlisting}[language=bash,numbers=none]
+$ ./nmrpipe.sh R1_ncyc4
+\end{lstlisting}
 
+The \dir{ft} directory must exist for this script to execute.
+Different experiment specific options may be needed such as:
 \begin{lstlisting}[language=csh,numbers=none]
 | nmrPipe -fn REV \
 | nmrPipe -fn FT -neg \
