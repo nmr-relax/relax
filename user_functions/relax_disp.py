@@ -36,7 +36,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field
+from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -622,5 +622,39 @@ uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(2100, 'nu1_2.1kHz_rela
 uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_field(field=2100, spectrum_id='nu1_2.1kHz_relaxT_0.010')")
 uf.backend = spin_lock_field
 uf.menu_text = "spin_lock_&field"
+uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.spin_lock_offset user function.
+uf = uf_info.add_uf('relax_disp.spin_lock_offset')
+uf.title = "Set the relaxation dispersion spin-lock offset (omega_rf)."
+uf.title_short = "Spin-lock offset."
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string to associate the spin-lock offset to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "offset",
+    py_type = "num",
+    desc_short = "spin-lock offset (ppm)",
+    desc = "The spin-lock offset, omega_rf, in ppm.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This sets the spin-lock offset, omega_rf, for the specified R1rho spectrum in ppm.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To set a spin-lock offset of 110.0 ppm for the spectrum 'nu1_2.1kHz_relaxT_0.010', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_offset('nu1_2.1kHz_relaxT_0.010', 110.0)")
+uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_offset(spectrum_id='nu1_2.1kHz_relaxT_0.010', offset=110.0)")
+uf.backend = spin_lock_offset
+uf.menu_text = "spin_lock_&offset"
 uf.wizard_size = (800, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'

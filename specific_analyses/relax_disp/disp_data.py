@@ -1039,3 +1039,41 @@ def spin_lock_field(spectrum_id=None, field=None):
         print("Setting the '%s' spectrum as the reference." % spectrum_id)
     else:
         print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
+
+
+def spin_lock_offset(spectrum_id=None, offset=None):
+    """Set the spin-lock offset (omega_rf) for the given spectrum.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    @keyword offset:        The spin-lock offset (omega_rf) in ppm.
+    @type offset:           int or float
+    """
+
+    # Test if the spectrum ID exists.
+    if spectrum_id not in cdp.spectrum_ids:
+        raise RelaxNoSpectraError(spectrum_id)
+
+    # Initialise the global offset data structures if needed.
+    if not hasattr(cdp, 'spin_lock_offset'):
+        cdp.spin_lock_offset = {}
+    if not hasattr(cdp, 'spin_lock_offset_list'):
+        cdp.spin_lock_offset_list = []
+
+    # Add the offset, converting to a float if needed.
+    if offset == None:
+        raise RelaxError("The offset value must be provided.")
+    cdp.spin_lock_offset[spectrum_id] = float(offset)
+
+    # The unique curves for the R2eff fitting (R1rho).
+    if cdp.spin_lock_offset[spectrum_id] not in cdp.spin_lock_offset_list:
+        cdp.spin_lock_offset_list.append(cdp.spin_lock_offset[spectrum_id])
+
+    # Sort the list.
+    cdp.spin_lock_offset_list.sort()
+
+    # Update the exponential curve count.
+    cdp.dispersion_points = len(cdp.spin_lock_offset_list)
+
+    # Printout.
+    print("Setting the '%s' spectrum spin-lock offset to %s ppm." % (spectrum_id, cdp.spin_lock_offset[spectrum_id]))
