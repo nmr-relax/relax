@@ -80,6 +80,9 @@ for frq_index in range(len(frq)):
         # Set the relaxation dispersion spin-lock field strength (nu1).
         relax_disp.spin_lock_field(spectrum_id=id, field=field)
 
+        # Set the spin-lock offset.
+        relax_disp.spin_lock_offset(spectrum_id='ref_%s' % frq_label[frq_index], offset=110.0)
+
         # Set the relaxation times.
         relax_disp.relax_time(spectrum_id=id, time=0.1)
 
