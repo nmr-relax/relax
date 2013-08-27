@@ -53,6 +53,10 @@ frq = [500, 800]
 frq_label = ['500MHz', '800MHz']
 error = 200000.0
 for frq_index in range(len(frq)):
+    # Load the R1 data.
+    label = 'R1_%s' % frq_label[frq_index]
+    relax_data.read(ri_id=label, ri_type='R1', frq=frq[frq_index]*1e6, file='%s.out'%label, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
     # The spectral data - spectrum ID, peak lists, offset frequency (Hz).
     data = []
     spin_lock = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
