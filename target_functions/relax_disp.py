@@ -46,7 +46,7 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, 
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, relax_time=None, scaling_matrix=None, chemical_shifts=None, tilt_angles=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, relax_time=None, scaling_matrix=None, chemical_shifts=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -101,10 +101,8 @@ class Dispersion:
         @type relax_time:           float
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
-        @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in ppm, only used for the off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block).
-        @type chemical_shifts:      numpy rank-1 float array
-        @keyword tilt_angles:       The pre-calculated rotating frame tilt angle theta, only for off-resonance models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the different spin-lock offsets, and the fourth is the dispersion points.
-        @type tilt_angles:          numpy rank-4 float array
+        @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
+        @type chemical_shifts:      numpy rank-2 float array
         """
 
         # Check the args.
@@ -132,21 +130,12 @@ class Dispersion:
         self.spin_lock_nu1 = spin_lock_nu1
         self.relax_time = relax_time
         self.scaling_matrix = scaling_matrix
+        self.chemical_shifts = chemical_shifts
 
         # Scaling initialisation.
         self.scaling_flag = False
         if self.scaling_matrix != None:
             self.scaling_flag = True
-
-        # Convert the chemical shifts from ppm to rad/s.
-        if chemical_shifts != None:
-            # Initialise the rad/s data structure.
-            self.chemical_shifts = zeros((self.num_spins, self.num_frq), float64)
-
-            # Loop over the elements.
-            for spin_index in range(self.num_spins):
-                for frq_index in range(self.num_frq):
-                    self.chemical_shifts[spin_index][frq_index] = chemical_shifts[spin_index] * self.frqs[spin_index, frq_index]
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
         self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
