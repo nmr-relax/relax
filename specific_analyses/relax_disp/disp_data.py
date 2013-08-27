@@ -929,13 +929,18 @@ def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim
     @rtype:                 numpy rank-2 float array
     """
 
+    # Check for the presence of data.
+    if not hasattr(cdp, 'ri_ids'):
+        raise RelaxError("No R1 relaxation data has been loaded.  This data is essential for certain off-resonance R1rho experiments.")
+
     # The spin count.
     spin_num = len(spins)
 
     # Initialise the data structure.
-    r1 = zeros((spin_num, field_count), float64)
+    r1 = -ones((spin_num, field_count), float64)
 
     # Loop over the Rx IDs.
+    flags = [False]*field_count
     for ri_id in cdp.ri_ids:
         # Only use R1 data.
         if cdp.ri_type[ri_id] != 'R1':
@@ -945,6 +950,9 @@ def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim
         frq = cdp.spectrometer_frq[ri_id]
         frq_index = return_index_from_frq(frq)
 
+        # Flip the flag.
+        flags[frq_index] = True
+
         # Spin loop.
         for spin_index in range(spin_num):
             # Store the data.
@@ -952,6 +960,20 @@ def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim
                 r1[spin_index, frq_index] = spins[spin_index].ri_data_sim[ri_id][sim_index]
             else:
                 r1[spin_index, frq_index] = spins[spin_index].ri_data[ri_id]
+
+    # Check the data to prevent user mistakes.
+    for frq_index in range(field_count):
+        # The frequency.
+        frq = return_value_from_frq_index(frq_index=frq_index)
+
+        # Check for R1 data for this frequency.
+        if not flags[frq_index]:
+            raise RelaxError("R1 data for the %.1f MHz field strength cannot be found." % (frq/1e6))
+
+        # Check the spin data.
+        for spin_index in range(spin_num):
+            if r1[spin_index, frq_index] == -1.0:
+                raise RelaxError("R1 data for the '%s' spin at %.1f MHz field strength cannot be found." % (spin_ids[spin_index], frq/1e6))
 
     # Return the data.
     return r1
