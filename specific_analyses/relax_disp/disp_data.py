@@ -33,7 +33,7 @@ The dispersion data model is based on the following concepts, in order of import
 """
 
 # Python module imports.
-from math import pi, sqrt
+from math import atan, pi, sqrt
 from numpy import float64, int32, ones, zeros
 
 # relax module imports.
@@ -810,6 +810,87 @@ def return_key_from_disp_point_index(frq_index=None, disp_point_index=None):
 
     # Return the key.
     return key
+
+
+def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None):
+    """Return numpy arrays of the chemical shifts, offsets and tilt angles.
+
+    @keyword spins:         The list of spin containers in the cluster.
+    @type spins:            list of SpinContainer instances
+    @keyword spin_ids:      The list of spin IDs for the cluster.
+    @type spin_ids:         list of str
+    @keyword fields:        The list of spectrometer field strengths.
+    @type fields:           list of float
+    @keyword field_count:   The number of spectrometer field strengths.  This may not be equal to the length of the fields list as the user may not have set the field strength.
+    @type field_count:      int
+    @return:                The numpy array structures of the chemical shifts in rad/s, spin-lock offsets in rad/s, and rotating frame tilt angles.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.  For the chemical shift structure, the third dimension is omitted.
+    @rtype:                 numpy rank-2 float array, numpy rank-3 float array, numpy rank-3 float array
+    """
+
+    # The spin count.
+    spin_num = len(spins)
+
+    # Initialise the data structures for the target function.
+    shifts = zeros((spin_num, field_count), float64)
+    offsets = zeros((spin_num, field_count, cdp.dispersion_points), float64)
+    theta = zeros((spin_num, field_count, cdp.dispersion_points), float64)
+
+    # Assemble the shift data.
+    data_flag = False
+    for spin_index in range(spin_num):
+        # Alias the spin.
+        spin = spins[spin_index]
+
+        # No data.
+        if not hasattr(spin, 'chemical_shift'):
+            continue
+        data_flag = True
+
+        # Loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # The index.
+            frq_index = return_index_from_frq(frq)
+
+            # Convert the shift from ppm to rad/s and store it.
+            shifts[spin_index, frq_index] = spin.chemical_shift * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+
+    # No shift data for the spin cluster.
+    if not data_flag:
+        return None, None, None
+
+    # Make sure offset data exists.
+    if not hasattr(cdp, 'spin_lock_offset'):
+        raise RelaxError("The spin-lock offsets have not been set.")
+
+    # Loop over all spectrum IDs.
+    for id in cdp.spectrum_ids:
+        # The data.
+        frq = cdp.spectrometer_frq[id]
+        point = cdp.spin_lock_nu1[id]
+
+        # Skip reference spectra.
+        if point == None:
+            continue
+
+        # The indices.
+        frq_index = return_index_from_frq(frq)
+        disp_pt_index = return_index_from_disp_point(point)
+
+        # Loop over the spins.
+        for spin_index in range(spin_num):
+            # Alias the spin.
+            spin = spins[spin_index]
+
+            # Store the offset in rad/s.
+            offsets[spin_index, frq_index, disp_pt_index] = cdp.spin_lock_offset[id] * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+
+            # Calculate the tilt angle.
+            omega1 = point * 2.0 * pi
+            Delta_omega = shifts[spin_index, frq_index] - offsets[spin_index, frq_index, disp_pt_index]
+            theta[spin_index, frq_index, disp_pt_index] = atan(omega1 / Delta_omega)
+
+    # Return the structures.
+    return shifts, offsets, theta
 
 
 def return_param_key_from_data(frq=None, point=None):

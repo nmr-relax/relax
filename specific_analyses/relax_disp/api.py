@@ -46,7 +46,7 @@ from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
@@ -129,8 +129,11 @@ class Relax_disp(API_base, API_common):
         # Initialise the data structures for the target function.
         values, errors, missing, frqs = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
+        # The offset data.
+        chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
+        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         model.func(param_vector)
@@ -1162,6 +1165,9 @@ class Relax_disp(API_base, API_common):
             # The R2eff/R1rho data.
             values, errors, missing, frqs = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count, sim_index=sim_index)
 
+            # The offset data.
+            chemical_shifts, offsets, tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
+
             # Create the initial parameter vector.
             param_vector = assemble_param_vector(spins=spins)
 
@@ -1193,7 +1199,7 @@ class Relax_disp(API_base, API_common):
                     print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
 
             # Initialise the function to minimise.
-            model = Dispersion(model=spins[0].model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
+            model = Dispersion(model=spins[0].model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
 
             # Grid search.
             if search('^[Gg]rid', min_algor):
