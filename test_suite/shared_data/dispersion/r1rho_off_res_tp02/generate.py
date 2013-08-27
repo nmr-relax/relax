@@ -18,7 +18,7 @@ from math import atan, cos, exp, pi, sin
 from numpy import array, float64
 
 # relax module imports.
-from lib.software.sparky import write_list
+from lib.spectrum.sparky import write_list
 
 
 # Setup for 2 spin systems.
@@ -28,6 +28,7 @@ spin_lock = array([1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6
 spin_lock_offset = 110.0    # The spin-lock frequency in ppm.
 r1rho_prime = array([[10.0, 15.0], [12.0, 18.0]], float64)  # The R1rho' value per spin and per field.
 r1 = array([[1.0, 1.2], [1.1, 1.3]], float64)    # The R1 value per spin and per field.
+r1_err = 0.1
 pA = 0.7654321
 kex = 1234.56789
 delta_omega = array([7.0, 9.0], float64)    # The chemical shift difference in ppm.
@@ -51,6 +52,18 @@ for frq_index in range(len(frqs)):
     frq = 2.0 * pi * frqs[frq_index]
     dw = delta_omega * frq
     omega_rf = spin_lock_offset * frq
+
+    # Set up the data for the R1 file.
+    label = 'R1_%s' % frq_label[frq_index]
+    pipe.create(label, 'mf')
+    cdp.ri_ids = ['r1']
+    for i in range(len(res_names)):
+        spin.create(res_name=res_names[i], res_num=res_nums[i], spin_name=atom1_names[i])
+        cdp.mol[0].res[i].spin[0].ri_data = {}
+        cdp.mol[0].res[i].spin[0].ri_data_err = {}
+        cdp.mol[0].res[i].spin[0].ri_data['r1'] = r1[i, frq_index]
+        cdp.mol[0].res[i].spin[0].ri_data_err['r1'] = r1_err
+    relax_data.write(ri_id='r1', file='%s.out'%label, force=True)
 
     # Frequency dependent parameters.
     omega_a = w1 - 0.5*dw
@@ -81,10 +94,10 @@ for frq_index in range(len(frqs)):
                 # The rate.
                 nomen = pA * pB * dw[spin_index]**2 * kex
                 denom = omega_aeff2[spin_index] * omega_beff2[spin_index] / omega_eff2[spin_index] + kex**2
-                rx = r1[spin_index][frq_index] * cos_theta2 + sin_theta2 * (r1rho_prime[spin_index][frq_index] + nomen / denom)
+                rx = r1[spin_index, frq_index] * cos_theta2 + sin_theta2 * (r1rho_prime[spin_index, frq_index] + nomen / denom)
     
                 # The peak intensity.
-                intensities.append(i0[spin_index][frq_index] * exp(-rx*times[time_index]))
+                intensities.append(i0[spin_index, frq_index] * exp(-rx*times[time_index]))
 
             # Create a Sparky .list file.
             if time_index == 0 and spin_lock_index == 0:
