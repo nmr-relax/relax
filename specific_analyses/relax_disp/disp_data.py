@@ -912,6 +912,51 @@ def return_param_key_from_data(frq=None, point=None):
     return "%s_%s" % (frq/1e6, point)
 
 
+def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim_index=None):
+    """Return the R1 data structures for off-resonance R1rho experiments.
+
+    @keyword spins:         The list of spin containers in the cluster.
+    @type spins:            list of SpinContainer instances
+    @keyword spin_ids:      The list of spin IDs for the cluster.
+    @type spin_ids:         list of str
+    @keyword fields:        The list of spectrometer field strengths.
+    @type fields:           list of float
+    @keyword field_count:   The number of spectrometer field strengths.  This may not be equal to the length of the fields list as the user may not have set the field strength.
+    @type field_count:      int
+    @keyword sim_index:     The index of the simulation to return the R1 data of.  This should be None if the normal data is required.
+    @type sim_index:        None or int
+    @return:                The R1 relaxation data.
+    @rtype:                 numpy rank-2 float array
+    """
+
+    # The spin count.
+    spin_num = len(spins)
+
+    # Initialise the data structure.
+    r1 = zeros((spin_num, field_count), float64)
+
+    # Loop over the Rx IDs.
+    for ri_id in cdp.ri_ids:
+        # Only use R1 data.
+        if cdp.ri_type[ri_id] != 'R1':
+            continue
+
+        # The frequency.
+        frq = cdp.spectrometer_frq[ri_id]
+        frq_index = return_index_from_frq(frq)
+
+        # Spin loop.
+        for spin_index in range(spin_num):
+            # Store the data.
+            if sim_index != None:
+                r1[spin_index, frq_index] = spins[spin_index].ri_data_sim[ri_id][sim_index]
+            else:
+                r1[spin_index, frq_index] = spins[spin_index].ri_data[ri_id]
+
+    # Return the data.
+    return r1
+
+
 def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None, sim_index=None):
     """Return numpy arrays of the R2eff/R1rho values and errors.
 
