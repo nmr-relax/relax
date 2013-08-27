@@ -46,7 +46,7 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, 
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, relax_time=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_time=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -103,6 +103,8 @@ class Dispersion:
         @type spin_lock_offsets:    numpy rank-3 float array
         @keyword tilt_angles:       The spin-lock rotating frame tilt angle for each spin.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
         @type tilt_angles:          numpy rank-3 float array
+        @keyword r1:                The R1 relaxation rates for each spin and field strength.  This is only used for off-resonance R1rho models.
+        @type r1:                   numpy rank-2 float array.
         @keyword relax_time:        The fixed time period for relaxation (in seconds).
         @type relax_time:           float
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
@@ -118,8 +120,11 @@ class Dispersion:
             raise RelaxError("No errors have been supplied to the target function.")
         if missing == None:
             raise RelaxError("No missing data information has been supplied to the target function.")
-        if model in [MODEL_DPL94, MODEL_TP02] and chemical_shifts == None:
-            raise RelaxError("Chemical shifts must be supplied for the off-resonance dispersion models.")
+        if model in [MODEL_DPL94, MODEL_TP02]:
+            if chemical_shifts == None:
+                raise RelaxError("Chemical shifts must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
+            if r1 == None:
+                raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
 
         # Store the arguments.
         self.num_params = num_params
@@ -135,6 +140,7 @@ class Dispersion:
         self.chemical_shifts = chemical_shifts
         self.spin_lock_offsets = spin_lock_offsets
         self.tilt_angles = tilt_angles
+        self.r1 = r1
         self.relax_time = relax_time
         self.scaling_matrix = scaling_matrix
 
@@ -959,7 +965,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R1rho values.
-                r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, theta=self.tilt_angles[spin_index, frq_index], spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, theta=self.tilt_angles[spin_index, frq_index], R1=self.r1[spin_index, frq_index], spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
