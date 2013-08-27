@@ -1072,8 +1072,5 @@ def spin_lock_offset(spectrum_id=None, offset=None):
     # Sort the list.
     cdp.spin_lock_offset_list.sort()
 
-    # Update the exponential curve count.
-    cdp.dispersion_points = len(cdp.spin_lock_offset_list)
-
     # Printout.
     print("Setting the '%s' spectrum spin-lock offset to %s ppm." % (spectrum_id, cdp.spin_lock_offset[spectrum_id]))
