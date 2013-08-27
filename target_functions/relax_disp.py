@@ -46,7 +46,7 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, 
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, relax_time=None, scaling_matrix=None, chemical_shifts=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, relax_time=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -97,12 +97,16 @@ class Dispersion:
         @type cpmg_frqs:            numpy rank-1 float array
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
         @type spin_lock_nu1:        numpy rank-1 float array
+        @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
+        @type chemical_shifts:      numpy rank-2 float array
+        @keyword spin_lock_offsets: The structure of spin-lock offsets for each data point.  This is only used for off-resonance R1rho models.  The first dimension is the spectrometer field strength and the second is the dispersion points.
+        @type spin_lock_offsets:    numpy rank-2 float array
+        @keyword tilt_angles:       The spin-lock rotating frame tilt angle for each spin.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
+        @type tilt_angles:          numpy rank-3 float array
         @keyword relax_time:        The fixed time period for relaxation (in seconds).
         @type relax_time:           float
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
-        @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
-        @type chemical_shifts:      numpy rank-2 float array
         """
 
         # Check the args.
@@ -128,9 +132,11 @@ class Dispersion:
         self.frqs = frqs
         self.cpmg_frqs = cpmg_frqs
         self.spin_lock_nu1 = spin_lock_nu1
+        self.chemical_shifts = chemical_shifts
+        self.spin_lock_offsets = spin_lock_offsets
+        self.tilt_angles = tilt_angles
         self.relax_time = relax_time
         self.scaling_matrix = scaling_matrix
-        self.chemical_shifts = chemical_shifts
 
         # Scaling initialisation.
         self.scaling_flag = False
