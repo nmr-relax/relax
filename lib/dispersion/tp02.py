@@ -36,7 +36,7 @@ Links to the copyright licensing agreements from all authors are:
 from math import atan, cos, pi, sin
 
 
-def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_TP02(r1rho_prime=None, omega=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Trott and Palmer (2002) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
@@ -44,6 +44,8 @@ def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2
 
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          float
+    @keyword omega:             The chemical shift for the spin in rad/s.
+    @type omega:                float
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword pB:                The population of state B.
@@ -52,8 +54,8 @@ def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2
     @type dw:                   float
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
-    @keyword theta:             The rotating frame tilt angle.
-    @type theta:                float
+    @keyword theta:             The rotating frame tilt angles.  Each element corresponds to one of the spin-lock fields.
+    @type theta:                numpy rank-1 float array
     @keyword R1:                The R1 relaxation rate.
     @type R1:                   float
     @keyword spin_lock_fields:  The CPMG nu1 frequencies.
@@ -65,17 +67,20 @@ def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2
     """
 
     # Repetitive calculations (to speed up calculations).
-    Wa = 0.0                    # Larmor frequency [s^-1].
-    Wb = dw                     # Larmor frequency [s^-1].
-    sin_theta2 = sin(theta)**2
-    R1_cos_theta2 = R1 * cos(theta)**2
-    R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
+    half_dw = dw / 2.0
+    Wa = omega - half_dw        # Larmor frequency [s^-1].
+    Wb = omega + half_dw        # Larmor frequency [s^-1].
 
     # The numerator.
     numer = pA * pB * dw**2 * kex
 
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
+        # Repetitive calculations (to speed up calculations).
+        sin_theta2 = sin(theta[i])**2
+        R1_cos_theta2 = R1 * cos(theta[i])**2
+        R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
+
         # Catch zeros (to avoid pointless mathematical operations).
         if numer == 0.0:
             back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2
@@ -83,6 +88,7 @@ def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2
 
         # We assume that A resonates at 0 [s^-1], without loss of generality.
         Wsl = spin_lock_fields[i] * 2.0 * pi     # Larmor frequency of spin lock [s^-1].
+        w1 = spin_lock_fields[i] * 2.0 * pi     # Larmor frequency of spin lock [s^-1].
         W = pA*Wa + pB*Wb           # Pop-averaged Larmor frequency [s^-1].
         da = Wa - Wsl               # Offset of spin-lock from A.
         db = Wb - Wsl               # Offset of spin-lock from B.
@@ -90,7 +96,6 @@ def r1rho_TP02(r1rho_prime=None, pA=None, pB=None, dw=None, kex=None, theta=pi/2
         waeff2 = w1**2 + da**2      # Effective field at A.
         wbeff2 = w1**2 + db**2      # Effective field at B.
         weff2 = w1**2 + d**2        # Effective field at pop-average.
-        theta = atan(w1/d) 
 
         # Denominator.
         denom = waeff2 * wbeff2 / weff2 + kex**2

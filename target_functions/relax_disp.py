@@ -99,8 +99,8 @@ class Dispersion:
         @type spin_lock_nu1:        numpy rank-1 float array
         @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
         @type chemical_shifts:      numpy rank-2 float array
-        @keyword spin_lock_offsets: The structure of spin-lock offsets for each data point.  This is only used for off-resonance R1rho models.  The first dimension is the spectrometer field strength and the second is the dispersion points.
-        @type spin_lock_offsets:    numpy rank-2 float array
+        @keyword spin_lock_offsets: The structure of spin-lock offsets for each spin, each field, and each data point.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength and the third is the dispersion points.
+        @type spin_lock_offsets:    numpy rank-3 float array
         @keyword tilt_angles:       The spin-lock rotating frame tilt angle for each spin.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
         @type tilt_angles:          numpy rank-3 float array
         @keyword relax_time:        The fixed time period for relaxation (in seconds).
@@ -959,7 +959,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R1rho values.
-                r1rho_TP02(r1rho_prime=R20[r20_index], w=self.chemical_shifts[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, theta=self.tilt_angles[spin_index, frq_index], spin_lock_fields=self.spin_lock_nu1, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
