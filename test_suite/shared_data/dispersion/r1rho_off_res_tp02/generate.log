@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20695
+                                  relax repository checkout r20701
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -74,6 +74,7 @@ for frq_index in range(len(frqs)):
     frq = 2.0 * pi * frqs[frq_index]
     dw = delta_omega * frq
     omega_rf = spin_lock_offset * frq
+    w1_frq = w1 * frq
 
     # Set up the data for the R1 file.
     label = 'R1_%s' % frq_label[frq_index]
@@ -88,8 +89,8 @@ for frq_index in range(len(frqs)):
     relax_data.write(ri_id='r1', file='%s.out'%label, force=True)
 
     # Frequency dependent parameters.
-    omega_a = w1 - 0.5*dw
-    omega_b = w1 + 0.5*dw
+    omega_a = w1_frq - 0.5*dw
+    omega_b = w1_frq + 0.5*dw
     omega_ave = pA*omega_a + pB*omega_b
     delta_a = omega_a - omega_rf 
     delta_b = omega_b - omega_rf 
