@@ -250,7 +250,7 @@ def loop_cluster():
             if key == 'free spins':
                 continue
 
-            # Create the spin container and ID lists.
+            # Create the spin ID lists.
             spin_id_list = []
             for spin_id in cdp.clustering[key]:
                 spin_id_list.append(spin_id)
