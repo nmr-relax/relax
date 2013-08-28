@@ -35,6 +35,7 @@ The dispersion data model is based on the following concepts, in order of import
 # Python module imports.
 from math import atan, pi, sqrt
 from numpy import float64, int32, ones, zeros
+from random import gauss
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
@@ -620,6 +621,31 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     add_result_file(type='grace', label='Grace', file=file_path)
 
 
+def randomise_R1(spin=None, ri_id=None, N=None):
+    """Randomise the R1 data for the given spin for use in the Monte Carlo simulations.
+
+    @keyword spin:      The spin container to randomise the data for.
+    @type spin:         SpinContainer instance
+    @keyword ri_id:     The relaxation data ID string.
+    @type ri_id:        str
+    @keyword N:         The number of randomisations to perform.
+    @type N:            int
+    """
+
+    # The data already exists.
+    if hasattr(spin, 'ri_data_sim') and ri_id in spin.ri_data_sim:
+        return
+
+    # Initialise the structure.
+    if not hasattr(spin, 'ri_data_sim'):
+        spin.ri_data_sim = {}
+    spin.ri_data_sim[ri_id] = []
+
+    # Randomise.
+    for i in range(N):
+        spin.ri_data_sim[ri_id].append(gauss(spin.ri_data[ri_id], spin.ri_data_err[ri_id]))
+
+
 def relax_time(time=0.0, spectrum_id=None):
     """Set the relaxation time period associated with a given spectrum.
 
@@ -955,6 +981,11 @@ def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim
 
         # Spin loop.
         for spin_index in range(spin_num):
+            # FIXME:  This is a kludge - the data randomisation needs to be incorporated into the dispersion base_data_loop() method and the standard Monte Carlo simulation pathway used.
+            # Randomise the R1 data, when required.
+            if sim_index != None and (not hasattr(spins[spin_index], 'ri_data_sim') or ri_id not in spins[spin_index].ri_data_sim):
+                randomise_R1(spin=spins[spin_index], ri_id=ri_id, N=cdp.sim_number)
+
             # Store the data.
             if sim_index != None:
                 r1[spin_index, frq_index] = spins[spin_index].ri_data_sim[ri_id][sim_index]
