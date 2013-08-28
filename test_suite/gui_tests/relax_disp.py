@@ -104,8 +104,6 @@ class Relax_disp(GuiTestCase):
         page = wizard.get_page(wizard.page_indices['read'])
         page.uf_args['file'].SetValue(str_to_gui("%stest.seq" % path))
         page.uf_args['spectrum_id'].SetValue(['0_2', '1_0'])
-        page.uf_args['heteronuc'].SetValue(str_to_gui('N'))
-        page.uf_args['proton'].SetValue(str_to_gui('HN'))
         page.uf_args['int_col'].SetValue([6, 7])
         wizard._go_next(None)
 
