@@ -60,10 +60,10 @@ frq_label = ['500MHz', '800MHz']
 # Setup for the Sparky peak list.
 res_names = ['Trp', 'Lys']
 res_nums = [1, 2]
-atom1_names = ['N', 'N']
-atom2_names = ['HN', 'HN']
-w1 = array([122.454, 111.978], float64)
-w2 = array([8.397, 8.720], float64)
+atomN_names = ['N', 'N']
+atomH_names = ['HN', 'HN']
+wN = array([122.454, 111.978], float64)
+wH = array([8.397, 8.720], float64)
 
 # Calculate some parameters.
 pB = 1.0 - pA
@@ -74,14 +74,14 @@ for frq_index in range(len(frqs)):
     frq = 2.0 * pi * frqs[frq_index]
     dw = delta_omega * frq
     omega_rf = spin_lock_offset * frq
-    w1_frq = w1 * frq
+    wN_frq = wN * frq
 
     # Set up the data for the R1 file.
     label = 'R1_%s' % frq_label[frq_index]
     pipe.create(label, 'mf')
     cdp.ri_ids = ['r1']
     for i in range(len(res_names)):
-        spin.create(res_name=res_names[i], res_num=res_nums[i], spin_name=atom1_names[i])
+        spin.create(res_name=res_names[i], res_num=res_nums[i], spin_name=atomN_names[i])
         cdp.mol[0].res[i].spin[0].ri_data = {}
         cdp.mol[0].res[i].spin[0].ri_data_err = {}
         cdp.mol[0].res[i].spin[0].ri_data['r1'] = r1[i, frq_index]
@@ -89,8 +89,8 @@ for frq_index in range(len(frqs)):
     relax_data.write(ri_id='r1', file='%s.out'%label, force=True)
 
     # Frequency dependent parameters.
-    omega_a = w1_frq - 0.5*dw
-    omega_b = w1_frq + 0.5*dw
+    omega_a = wN_frq
+    omega_b = wN_frq + dw
     omega_ave = pA*omega_a + pB*omega_b
     delta_a = omega_a - omega_rf 
     delta_b = omega_b - omega_rf 
@@ -130,7 +130,7 @@ for frq_index in range(len(frqs)):
             else:
                 name = 'nu_%s_%s' % (spin_lock[spin_lock_index], frq_label[frq_index])
             if name:
-                write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atom1_names, atom2_names=atom2_names, w1=w1, w2=w2, data_height=intensities)
+                write_list(file_prefix=name, dir=None, res_names=res_names, res_nums=res_nums, atom1_names=atomN_names, atom2_names=atomH_names, w1=wN, w2=wH, data_height=intensities)
 ----------------------------------------------------------------------------------------------------
 
 relax> pipe.create(pipe_name='R1_500MHz', pipe_type='mf', bundle=None)

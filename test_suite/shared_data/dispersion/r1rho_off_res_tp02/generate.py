@@ -67,8 +67,8 @@ for frq_index in range(len(frqs)):
     relax_data.write(ri_id='r1', file='%s.out'%label, force=True)
 
     # Frequency dependent parameters.
-    omega_a = wN_frq - 0.5*dw
-    omega_b = wN_frq + 0.5*dw
+    omega_a = wN_frq
+    omega_b = wN_frq + dw
     omega_ave = pA*omega_a + pB*omega_b
     delta_a = omega_a - omega_rf 
     delta_b = omega_b - omega_rf 
