@@ -181,6 +181,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Activate or deactivate the elements.
         wx.CallAfter(self.field_results_dir.Enable, enable)
+        wx.CallAfter(self.field_pre_run_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
         wx.CallAfter(self.field_isotope.Enable, enable)
         wx.CallAfter(self.field_cluster.Enable, enable)
