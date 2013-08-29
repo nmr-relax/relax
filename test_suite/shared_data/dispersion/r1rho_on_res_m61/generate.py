@@ -21,7 +21,7 @@ $ ../../../../relax generate.py --tee generate.log
 from math import exp, pi
 
 # relax module imports.
-from lib.software.sparky import write_list
+from lib.spectrum.sparky import write_list
 
 
 # Setup for 2 spin systems.
@@ -36,11 +36,11 @@ frq = -81.1177503272
 
 # Setup for the Sparky peak list.
 res_names = ['Trp', 'Trp']
-res_nums = [1, 1]
-atom1_names = ['N', 'NE1']
-atom2_names = ['HN', 'HE1']
-w1 = [122.454, 111.978]
-w2 = [8.397, 8.720]
+res_nums = [1, 2]
+atom1_names = ['N', 'N']
+atom2_names = ['HN', 'HN']
+w1 = [115.000, 115.000]
+w2 = [8.000, 8.000]
 
 # Loop over the spin-lock fields.
 for spin_lock_index in range(len(spin_lock)):
