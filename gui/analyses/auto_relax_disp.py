@@ -206,7 +206,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Results directories.
         data.save_dir = self.data.save_dir
-        data.pre_run_dir = self.field_pre_run_dir.GetValue()
+        data.pre_run_dir = gui_to_str(self.field_pre_run_dir.GetValue())
 
         # Check if sequence data is loaded
         if not exists_mol_res_spin_data():
