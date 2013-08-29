@@ -41,10 +41,10 @@ R1rho' is the R1rho value in the absence of exchange, kex is the chemical exchan
 """
 
 # Python module imports.
-from math import cos, pi, sin
+from math import pi
 
 
-def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.
 
     See the module docstring for details.
@@ -56,10 +56,6 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_
     @type phi_ex:               float
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
-    @keyword theta:             The rotating frame tilt angle.
-    @type theta:                float
-    @keyword R1:                The R1 relaxation rate.
-    @type R1:                   float
     @keyword spin_lock_fields:  The CPMG nu1 frequencies.
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
