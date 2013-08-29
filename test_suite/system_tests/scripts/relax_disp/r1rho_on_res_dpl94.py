@@ -40,7 +40,7 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 
 # Create the sequence data.
 spin.create(res_name='Trp', res_num=1, spin_name='N')
-spin.create(res_name='Trp', res_num=1, spin_name='NE1')
+spin.create(res_name='Trp', res_num=2, spin_name='N')
 
 # Set the isotope information.
 spin.isotope(isotope='15N')
@@ -63,9 +63,13 @@ spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
 # Set as the reference.
 relax_disp.spin_lock_field(spectrum_id='ref', field=None)
+relax_disp.spin_lock_offset(spectrum_id='ref', offset=115.0)
 
 # Set the spectrometer frequency.
 spectrometer.frequency(id='ref', frq=800, units='MHz')
+
+# Load the R1 data.
+relax_data.read(ri_id='R1', ri_type='R1', frq=800*1e6, file='R1.out', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
@@ -76,6 +80,9 @@ for i in range(len(data)):
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
 
+    # Set the spin-lock offset.
+    relax_disp.spin_lock_offset(spectrum_id=data[i][0], offset=115.0)
+
     # Set the relaxation times.
     relax_disp.relax_time(spectrum_id=data[i][0], time=data[i][3])
 
@@ -83,7 +90,10 @@ for i in range(len(data)):
     spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
 
 # Clustering.
-relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
+relax_disp.cluster(cluster_id='cluster', spin_id=':1,2')
+
+# Read the chemical shift data.
+chemical_shift.read(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path)
 
 
 
