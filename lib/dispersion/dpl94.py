@@ -29,15 +29,11 @@ This module is for the function, gradient and Hessian of the DPL94 model.  The m
 
 The equation used is::
 
-                                       phi_ex * kex
-    R1rho = R1rho' + sin^2(theta) * ------------------ ,
-                                    kex^2 + omega_sl^2
+                                                                      phi_ex * kex
+    R1rho = R1.cos^2(theta) + R1rho'.sin^2(theta) + sin^2(theta) * ------------------ ,
+                                                                   kex^2 + omega_sl^2
 
-where R1rho' is the R1rho value in the absence of exchange equal to::
-
-    R1rho' = R1.cos^2(theta) + R2.sin^2(theta) ,
-
-theta is the rotating frame tilt angle, and::
+where theta is the rotating frame tilt angle, and::
 
     phi_ex = pA * pB * delta_omega^2 ,
 
@@ -48,7 +44,7 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 from math import cos, pi, sin
 
 
-def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R1rho values for the DPL94 model.
 
     See the module docstring for details.
@@ -60,8 +56,8 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spi
     @type phi_ex:               float
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
-    @keyword theta:             The rotating frame tilt angle.
-    @type theta:                float
+    @keyword theta:             The rotating frame tilt angles for each dispersion point.
+    @type theta:                numpy rank-1 float array
     @keyword R1:                The R1 relaxation rate.
     @type R1:                   float
     @keyword spin_lock_fields:  The CPMG nu1 frequencies.
@@ -74,14 +70,16 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=pi/2, R1=0.0, spi
 
     # Repetitive calculations (to speed up calculations).
     kex2 = kex**2
-    sin_theta2 = sin(theta)**2
-    R1_R2 = R1 * cos(theta)**2  +  r1rho_prime * sin(theta)**2
-
-    # The numerator.
-    numer = sin_theta2 * phi_ex * kex
 
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
+        # The non-Rex factors.
+        sin_theta2 = sin(theta[i])**2
+        R1_R2 = R1 * cos(theta[i])**2  +  r1rho_prime * sin_theta2
+
+        # The numerator.
+        numer = sin_theta2 * phi_ex * kex
+
         # Catch zeros (to avoid pointless mathematical operations).
         if numer == 0.0:
             back_calc[i] = R1_R2
