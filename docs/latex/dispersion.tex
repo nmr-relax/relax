@@ -127,7 +127,7 @@ The parameters are given in Table~\ref{table: dispersion parameters}.
 \begin{sidewaystable}
 \begin{center}
 \caption{The parameters of relaxation dispersion.}
-\begin{tabular}{llll}
+\begin{longtable}{llll}
 \toprule
 Parameter          & Equation                       & Description                                                                   & Units \\
 \midrule
@@ -140,9 +140,14 @@ $\Rtwozero$        & -                              & $\Rtwo$ relaxation rate in
 $\RtwozeroA$       & -                              & $\Rtwo$ relaxation rate for state A in the absence of exchange                & rad.s$^{-1}$ \\
 $\RtwozeroB$       & -                              & $\Rtwo$ relaxation rate for state B in the absence of exchange                & rad.s$^{-1}$ \\
 $\Ronerhoprime$    & -                              & $\Ronerho$ relaxation rate in the absence of exchange                         & rad.s$^{-1}$ \\
-$\theta$           & -                              & Rotating frame tilt angle                                                     & rad \\
-$\omegaone$        & -                              & Spin-lock field strength                                                      & rad.s$^{-1}$ \\
-$\omegae$          & -                              & Effective field in the rotating frame                                         & rad.s$^{-1}$ \\
+$\aveoffset$       & $\aveomega - \omegarf$         & The average resonance offset in the rotating frame                            & rad.s$^{-1}$ \\
+$\omegaA$          & -                              & The Larmor frequency of the spin in state A                                   & rad.s$^{-1}$ \\
+$\omegaB$          & -                              & The Larmor frequency of the spin in state B                                   & rad.s$^{-1}$ \\
+$\aveomega$        & $\pA\omegaA + \pB\omegaB$      & The population averaged Larmor frequency of the spin                          & rad.s$^{-1}$ \\
+$\omegaone$        & -                              & Spin-lock field strength, i.e. the amplitude of the rf field                  & rad.s$^{-1}$ \\
+$\omegae$          & $\sqrt(\aveoffset^2 + \omegaone^2)$  & Effective field in the rotating frame                                   & rad.s$^{-1}$ \\
+$\omegarf$         & -                              & Spin-lock offset, i.e. the frequency of the rf field                          & rad.s$^{-1}$ \\
+$\theta$           & $\arctan \left( \frac{\omegaone}{\aveoffset} \right)$  & Rotating frame tilt angle                             & rad \\
 $\kex$             & $1 / (2 \tex)$                 & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
 $\kexB$            & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
 $\kexC$            & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
@@ -151,13 +156,13 @@ $\kC$              & $\approx \kexC$                & Approximate chemical excha
 $\tex$             & $1 / (2 \kex)$                 & Time of exchange                                                              & s.rad$^{-1}$ \\
 $\pA$              & -                              & Population of state A                                                         & - \\
 $\pB$              & -                              & Population of state B                                                         & - \\
-$\dw$              & -                              & Chemical shift difference between the two states                              & ppm \\
+$\dw$              & -                              & Chemical shift difference between the two states                              & ppm (or rad.s$^{-1}$) \\
 $\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ \\
 $\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ \\
 $\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ \\
 \bottomrule
 \label{table: dispersion parameters}
-\end{tabular}
+\end{longtable}
 \end{center}
 \end{sidewaystable}
 
@@ -464,7 +469,7 @@ The reference for this equation is:
 
 This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
 \begin{equation}
-    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+    \Ronerho = \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
 \end{equation}
 
 The reference for this equation is:
@@ -482,10 +487,10 @@ The reference for this equation is:
 
 This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
 \begin{equation}
-    \Ronerho = \Ronerhoprime + \sin^2(\theta) \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+    \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta ,
 \end{equation}
 
-The reference for this equation is:
+where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
 \begin{itemize}
 \item \bibentry{Davis94}
 \end{itemize}
@@ -515,7 +520,7 @@ Care must be taken as this model appears to have infinite lines of solutions -- 
 
 This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{TrottPalmer02}.  It is selected by setting the model to `TP02'.  The equation for the exchange process is:
 \begin{equation}
-    \Ronerho = \Rone\cos^2(\theta) + \Ronerhoprime\sin^2(\theta) + \frac{\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2} \sin^2(\theta).
+    \Ronerho = \Rone\cos^2\theta + \left( \Ronerhoprime + \frac{\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2} \right) \sin^2\theta.
 \end{equation}
 
 
