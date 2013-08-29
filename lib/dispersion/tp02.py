@@ -67,9 +67,8 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     """
 
     # Repetitive calculations (to speed up calculations).
-    half_dw = dw / 2.0
-    Wa = omega - half_dw        # Larmor frequency [s^-1].
-    Wb = omega + half_dw        # Larmor frequency [s^-1].
+    Wa = omega                  # Larmor frequency [s^-1].
+    Wb = omega + dw             # Larmor frequency [s^-1].
     kex2 = kex**2
 
     # The numerator.
