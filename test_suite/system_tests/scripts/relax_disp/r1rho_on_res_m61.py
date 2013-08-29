@@ -44,7 +44,7 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 
 # Create the sequence data.
 spin.create(res_name='Trp', res_num=1, spin_name='N')
-spin.create(res_name='Trp', res_num=1, spin_name='NE1')
+spin.create(res_name='Trp', res_num=2, spin_name='N')
 
 # Set the isotope information.
 spin.isotope(isotope='15N')
