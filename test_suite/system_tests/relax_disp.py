@@ -167,7 +167,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 43.4801222646425, 2)
 
 
-    def test_hansen_cpmg_data_LM63(self):
+    def test_hansen_cpmg_data_to_lm63(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -216,7 +216,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.44240142554555)
 
 
-    def test_hansen_cpmg_data_CR72(self):
+    def test_hansen_cpmg_data_to_cr72(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -268,7 +268,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37893840351891, 4)
 
 
-    def test_hansen_cpmg_data_CR72_full(self):
+    def test_hansen_cpmg_data_to_cr72_full(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 full dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -327,7 +327,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37893732634858, 4)
 
 
-    def test_hansen_cpmg_data_IT99(self):
+    def test_hansen_cpmg_data_to_it99(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the IT99 dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -379,7 +379,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.45010375234816, 4)
 
 
-    def test_hansen_cpmg_data_ns_cpmg_2site_3D(self):
+    def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -431,7 +431,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
 
 
-    def test_hansen_cpmg_data_ns_cpmg_2site_3D_full(self):
+    def test_hansen_cpmg_data_to_ns_cpmg_2site_3D_full(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D full' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -490,7 +490,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073477904824, 4)
 
 
-    def test_hansen_cpmg_data_ns_cpmg_2site_expanded(self):
+    def test_hansen_cpmg_data_to_ns_cpmg_2site_expanded(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site expanded' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -542,7 +542,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37066812455524, 4)
 
 
-    def test_hansen_cpmg_data_ns_cpmg_2site_star(self):
+    def test_hansen_cpmg_data_to_ns_cpmg_2site_star(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site star' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -594,7 +594,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073226641439, 4)
 
 
-    def test_hansen_cpmg_data_ns_cpmg_2site_star_full(self):
+    def test_hansen_cpmg_data_to_ns_cpmg_2site_star_full(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site star full' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
@@ -850,7 +850,7 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
-    def test_r1rho_ns_r1rho_2site_to_tp02(self, model=None):
+    def test_tp02_data_to_ns_r1rho_2site(self, model=None):
         """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
 
         # Reset.
@@ -915,7 +915,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin2.chi2, 0.000133191682505916, 4)
 
 
-    def test_r1rho_off_res_fixed_time_tp02(self):
+    def test_tp02_data_to_tp02(self):
         """Test the relaxation dispersion 'TP02' model curve fitting to fixed time synthetic data."""
 
         # Fixed time variable.
@@ -947,7 +947,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_r1rho_on_res_exponential_m61(self):
+    def test_m61_exp_data_to_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to the full exponential synthetic data."""
 
         # Fixed time variable.
@@ -998,7 +998,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_r1rho_on_res_fixed_time_dpl94(self):
+    def test_dpl94_data_to_dpl94(self):
         """Test the relaxation dispersion 'DPL94' model curve fitting to fixed time synthetic data."""
 
         # Fixed time variable.
@@ -1033,7 +1033,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def test_r1rho_on_res_fixed_time_m61(self):
+    def test_m61_data_to_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
 
         # Fixed time variable.
@@ -1084,7 +1084,7 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
-    def xxx_test_r1rho_on_res_fixed_time_m61b(self):
+    def xxx_test_m61b_data_to_m61b(self):
         """Test the relaxation dispersion 'M61 skew' model curve fitting to fixed time synthetic data."""
 
         # Execute the script.
