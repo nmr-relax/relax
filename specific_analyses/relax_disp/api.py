@@ -48,7 +48,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_EXPANDED, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01, R1RHO_EXP, VAR_TIME_EXP
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -733,9 +733,9 @@ class Relax_disp(API_base, API_common):
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
-        # Full NS 2-site 3D model.
-        elif model == MODEL_NS_2SITE_3D_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.")
+        # Full NS CPMG 2-site 3D model.
+        elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
+            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
             params = []
             for frq in loop_frq():
                 params.append('r2a')
@@ -743,25 +743,25 @@ class Relax_disp(API_base, API_common):
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
-        # Reduced NS 2-site 3D model.
-        elif model == MODEL_NS_2SITE_3D:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
+        # Reduced NS CPMG 2-site 3D model.
+        elif model == MODEL_NS_CPMG_2SITE_3D:
+            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
             params = []
             for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
-        # NS 2-site expanded model.
-        elif model == MODEL_NS_2SITE_EXPANDED:
-            print("The numerical solution for the 2-site Bloch-McConnell equations expanded using Maple by Nikolai Skrynnikov.")
+        # NS CPMG 2-site expanded model.
+        elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
+            print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
             params = []
             for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
-        # Full NS 2-site star model.
-        elif model == MODEL_NS_2SITE_STAR_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices.")
+        # Full NS CPMG 2-site star model.
+        elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
+            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
             params = []
             for frq in loop_frq():
                 params.append('r2a')
@@ -769,9 +769,9 @@ class Relax_disp(API_base, API_common):
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
-        # Reduced NS 2-site star model.
-        elif model == MODEL_NS_2SITE_STAR:
-            print("The numerical reduced solution for the 2-site Bloch-McConnell equations using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
+        # Reduced NS CPMG 2-site star model.
+        elif model == MODEL_NS_CPMG_2SITE_STAR:
+            print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
             params = []
             for frq in loop_frq():
                 params.append('r2')

@@ -31,9 +31,9 @@ __all__ = [
     'lm63_3site',
     'm61',
     'm61b',
-    'ns_2site_3d',
-    'ns_2site_expanded',
-    'ns_2site_star',
+    'ns_cpmg_2site_3d',
+    'ns_cpmg_2site_expanded',
+    'ns_cpmg_2site_star',
     'ns_matrices',
     'tp02',
     'two_point'

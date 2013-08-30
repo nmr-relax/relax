@@ -102,27 +102,27 @@ chi2            1.450         N/A       1.774         N/A
 
 
 
-The numeric models in relax
-===========================
+The numeric CPMG models in relax
+================================
 
 Residue :70
 -----------
 
-Param     NS 2-site 3D  NS 2-site expanded   NS 2-site star
-R2 (500)         6.996               6.996            6.996
-R2 (800)         9.453               9.453            9.453
-pA               0.990               0.990            0.990
-dw               5.645               5.645            5.645
-kex           1723.443            1723.443         1723.078
-chi2            18.098              18.098           18.098
+Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star
+R2 (500)              6.996                    6.996                 6.996
+R2 (800)              9.453                    9.453                 9.453
+pA                    0.990                    0.990                 0.990
+dw                    5.645                    5.645                 5.645
+kex                1723.443                 1723.443              1723.078
+chi2                 18.098                   18.098                18.098
 
 
 Residue :71
 -----------
 
-Param     NS 2-site 3D  NS 2-site expanded   NS 2-site star
-R2 (500)         4.980               4.980            4.980
-pA               0.997               0.997            0.997
-dw               4.629               4.629            4.629
-kex           1805.665            1805.676         1805.110
-chi2             1.371               1.371            1.371
+Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star
+R2 (500)              4.980                    4.980                 4.980
+pA                    0.997                    0.997                 0.997
+dw                    4.629                    4.629                 4.629
+kex                1805.665                 1805.676              1805.110
+chi2                  1.371                    1.371                 1.371

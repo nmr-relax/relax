@@ -379,14 +379,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.45010375234816, 4)
 
 
-    def test_hansen_cpmg_data_ns_2site_3D(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site 3D' dispersion model.
+    def test_hansen_cpmg_data_ns_cpmg_2site_3D(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
-        self.setup_hansen_cpmg_data(model='NS 2-site 3D')
+        self.setup_hansen_cpmg_data(model='NS CPMG 2-site 3D')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -431,14 +431,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
 
 
-    def test_hansen_cpmg_data_ns_2site_3D_full(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site 3D full' dispersion model.
+    def test_hansen_cpmg_data_ns_cpmg_2site_3D_full(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D full' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
-        self.setup_hansen_cpmg_data(model='NS 2-site 3D full')
+        self.setup_hansen_cpmg_data(model='NS CPMG 2-site 3D full')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -490,14 +490,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073477904824, 4)
 
 
-    def test_hansen_cpmg_data_ns_2site_expanded(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site expanded' dispersion model.
+    def test_hansen_cpmg_data_ns_cpmg_2site_expanded(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site expanded' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
-        self.setup_hansen_cpmg_data(model='NS 2-site expanded')
+        self.setup_hansen_cpmg_data(model='NS CPMG 2-site expanded')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -542,14 +542,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37066812455524, 4)
 
 
-    def test_hansen_cpmg_data_ns_2site_star(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site star' dispersion model.
+    def test_hansen_cpmg_data_ns_cpmg_2site_star(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site star' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
-        self.setup_hansen_cpmg_data(model='NS 2-site star')
+        self.setup_hansen_cpmg_data(model='NS CPMG 2-site star')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -594,14 +594,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 1.37073226641439, 4)
 
 
-    def test_hansen_cpmg_data_ns_2site_star_full(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS 2-site star full' dispersion model.
+    def test_hansen_cpmg_data_ns_cpmg_2site_star_full(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site star full' dispersion model.
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
-        self.setup_hansen_cpmg_data(model='NS 2-site star full')
+        self.setup_hansen_cpmg_data(model='NS CPMG 2-site star full')
 
         # Alias the spins.
         spin70 = cdp.mol[0].res[0].spin[0]

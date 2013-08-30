@@ -96,11 +96,11 @@ For the CPMG-type experiments, the models currently supported are:
 \begin{description}
 \item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
 \item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
-\item[`NS 2-site 3D':]\index{relaxation dispersion!NS 2-site 3D model}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site 3D model} on page~\pageref{sect: dispersion: NS 2-site 3D model}.
-\item[`NS 2-site 3D full':]\index{relaxation dispersion!NS 2-site 3D full model}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site 3D full model} on page~\pageref{sect: dispersion: NS 2-site 3D full model}.
-\item[`NS 2-site star':]\index{relaxation dispersion!NS 2-site star model}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star model} on page~\pageref{sect: dispersion: NS 2-site star model}.
-\item[`NS 2-site star full':]\index{relaxation dispersion!NS 2-site star full model}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site star full model} on page~\pageref{sect: dispersion: NS 2-site star full model}.
-\item[`NS 2-site expanded':]\index{relaxation dispersion!NS 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS 2-site expanded model} on page~\pageref{sect: dispersion: NS 2-site expanded model}.
+\item[`NS CPMG 2-site 3D':]\index{relaxation dispersion!NS CPMG 2-site 3D model}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site 3D model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D model}.
+\item[`NS CPMG 2-site 3D full':]\index{relaxation dispersion!NS CPMG 2-site 3D full model}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site 3D full model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D full model}.
+\item[`NS CPMG 2-site star':]\index{relaxation dispersion!NS CPMG 2-site star model}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site star model} on page~\pageref{sect: dispersion: NS CPMG 2-site star model}.
+\item[`NS CPMG 2-site star full':]\index{relaxation dispersion!NS CPMG 2-site star full model}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site star full model} on page~\pageref{sect: dispersion: NS CPMG 2-site star full model}.
+\item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!NS CPMG 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}.
 \end{description}
 
 
@@ -172,21 +172,21 @@ $\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC}
 \caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
 \begin{tabular}{lllcll}
 \toprule
-Model code          & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
-\midrule                               
-R2eff               & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
-R2eff               & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
-No Rex              & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
-LM63                & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
-LM63 3-site         & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
-CR72                & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
-CR72 full           & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
-IT99                & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
-NS 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
+\midrule                                    
+R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
+R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
+No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
+LM63                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
+LM63 3-site              & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
+CR72                     & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
+CR72 full                & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
+IT99                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+NS CPMG 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
 \bottomrule
 \label{table: CPMG dispersion models}
 \end{tabular}
@@ -533,63 +533,63 @@ This is the model for 2-site exchange for off-resonance $\Ronerho$-type experime
 \index{relaxation dispersion!Numerical model|textbf}
 
 
-% Full NS 2-site 3D model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~
-
-\subsection{The full NS 2-site 3D CPMG model}
-\label{sect: dispersion: NS 2-site 3D full model}
-\index{relaxation dispersion!NS 2-site 3D full model|textbf}
-
-This is the numerical model for 2-site exchange using 3D magnetisation vectors.
-Is it selected by setting the model to `NS 2-site 3D full'.
-The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
-
-
-% Reduced NS 2-site 3D model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-\subsection{The reduced NS 2-site 3D CPMG model}
-\label{sect: dispersion: NS 2-site 3D model}
-\index{relaxation dispersion!NS 2-site 3D model|textbf}
-
-This is the numerical model for 2-site exchange using 3D magnetisation vectors, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
-Is it selected by setting the model to `NS 2-site 3D'.
-The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
-
-
-% Full NS 2-site star model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-\subsection{The full NS 2-site star CPMG model}
-\label{sect: dispersion: NS 2-site star full model}
-\index{relaxation dispersion!NS 2-site star full model|textbf}
-
-This is the numerical model for 2-site exchange using complex conjugate matrices.
-Is it selected by setting the model to `NS 2-site star full'.
-The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
-
-
-% Reduced NS 2-site star model.
+% Full NS CPMG 2-site 3D model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The reduced NS 2-site star CPMG model}
-\label{sect: dispersion: NS 2-site star model}
-\index{relaxation dispersion!NS 2-site star model|textbf}
+\subsection{The full NS 2-site 3D CPMG model}
+\label{sect: dispersion: NS CPMG 2-site 3D full model}
+\index{relaxation dispersion!NS CPMG 2-site 3D full model|textbf}
 
-This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
-Is it selected by setting the model to `NS 2-site star'.
+This is the numerical model for 2-site exchange using 3D magnetisation vectors.
+Is it selected by setting the model to `NS CPMG 2-site 3D full'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
 
-% NS 2-site expanded model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Reduced NS CPMG 2-site 3D model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The reduced NS 2-site 3D CPMG model}
+\label{sect: dispersion: NS CPMG 2-site 3D model}
+\index{relaxation dispersion!NS CPMG 2-site 3D model|textbf}
+
+This is the numerical model for 2-site exchange using 3D magnetisation vectors, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+Is it selected by setting the model to `NS CPMG 2-site 3D'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+% Full NS CPMG 2-site star model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The full NS 2-site star CPMG model}
+\label{sect: dispersion: NS CPMG 2-site star full model}
+\index{relaxation dispersion!NS CPMG 2-site star full model|textbf}
+
+This is the numerical model for 2-site exchange using complex conjugate matrices.
+Is it selected by setting the model to `NS CPMG 2-site star full'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+% Reduced NS CPMG 2-site star model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The reduced NS 2-site star CPMG model}
+\label{sect: dispersion: NS CPMG 2-site star model}
+\index{relaxation dispersion!NS CPMG 2-site star model|textbf}
+
+This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+Is it selected by setting the model to `NS CPMG 2-site star'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+% NS CPMG 2-site expanded model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \subsection{The NS 2-site expanded CPMG model}
-\label{sect: dispersion: NS 2-site expanded model}
-\index{relaxation dispersion!NS 2-site expanded model|textbf}
+\label{sect: dispersion: NS CPMG 2-site expanded model}
+\index{relaxation dispersion!NS CPMG 2-site expanded model|textbf}
 
 This is the numerical model for 2-site exchange expanded using Maple by Nikolai Skrynnikov.
-Is it selected by setting the model to `NS 2-site expanded'.
+Is it selected by setting the model to `NS CPMG 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
 
@@ -626,7 +626,7 @@ from auto_analyses.relax_disp import Relax_disp
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'NS 2-site expanded']
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'NS CPMG 2-site expanded']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 21
@@ -767,7 +767,7 @@ The next part of the script is the definition of a number of analysis variables.
 
 \begin{lstlisting}[firstnumber=14]
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'NS 2-site expanded']
+MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'NS CPMG 2-site expanded']
 \end{lstlisting}
 
 If you have $\Ronerho$-type data, the models could be changed to:

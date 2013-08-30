@@ -76,33 +76,33 @@ MODEL_TP02 = 'TP02'
 
 
 # The Numerical model names.
-MODEL_NS_2SITE_3D = 'NS 2-site 3D'
-"""The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed."""
+MODEL_NS_CPMG_2SITE_3D = 'NS CPMG 2-site 3D'
+"""The numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed."""
 
-MODEL_NS_2SITE_3D_FULL = 'NS 2-site 3D full'
-"""The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors."""
+MODEL_NS_CPMG_2SITE_3D_FULL = 'NS CPMG 2-site 3D full'
+"""The numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors."""
 
-MODEL_NS_2SITE_STAR = 'NS 2-site star'
-"""The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices, whereby the simplification R20A = R20B is assumed."""
+MODEL_NS_CPMG_2SITE_STAR = 'NS CPMG 2-site star'
+"""The numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed."""
 
-MODEL_NS_2SITE_STAR_FULL = 'NS 2-site star full'
-"""The numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices."""
+MODEL_NS_CPMG_2SITE_STAR_FULL = 'NS CPMG 2-site star full'
+"""The numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices."""
 
-MODEL_NS_2SITE_EXPANDED = 'NS 2-site expanded'
-"""The numerical solution for the 2-site Bloch-McConnell equations expanded using Maple by Nikolai Skrynnikov."""
+MODEL_NS_CPMG_2SITE_EXPANDED = 'NS CPMG 2-site expanded'
+"""The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov."""
 
 
 # The model lists.
-MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_TP02, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_NS_2SITE_EXPANDED]
+MODEL_LIST_DISP = [MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_TP02, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
 """The list of all dispersion models (excluding the R2eff model)."""
 
-MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_TP02, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_NS_2SITE_EXPANDED]
+MODEL_LIST_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_TP02, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
 """The list of the R2eff model together with all dispersion models."""
 
-MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_NS_2SITE_EXPANDED]
+MODEL_LIST_CPMG = [MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
 """The list of all dispersion models specifically for CPMG-type experiments (excluding the R2eff model)."""
 
-MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_NS_2SITE_3D, MODEL_NS_2SITE_3D_FULL, MODEL_NS_2SITE_STAR, MODEL_NS_2SITE_STAR_FULL, MODEL_NS_2SITE_EXPANDED]
+MODEL_LIST_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_TSMFK01, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED]
 """The list of the R2eff model together with all dispersion models specifically for CPMG-type experiments."""
 
 MODEL_LIST_R1RHO = [MODEL_NOREX, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_TP02]
