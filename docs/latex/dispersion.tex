@@ -18,9 +18,9 @@ Relaxation dispersion is the experimental modulation of chemical exchange relaxa
 
 
 % The models.
-%%%%%%%%%%%%%
+%~~~~~~~~~~~~
 
-\section{The modelling of dispersion data}
+\subsection{The modelling of dispersion data}
 
 For a system under the influence of chemical exchange, the evolution of the transverse magnetisation is given by the \citet{Bloch46} equations as modified by \citet{McConnell58} for chemical exchange -- the Bloch-McConnell equations.
 For a two state exchange jumping between states A and B, the equation is:
@@ -50,8 +50,8 @@ Solutions can nevertheless be found by either making assumptions or restrictions
 The modelling of relaxation dispersion data can hence be catergorised into these two distinct methodologies:
 
 \begin{description}
-\item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytical models} on page~\pageref{sect: dispersion: analytical models}).
-\item[Numerical models:]\index{relaxation dispersion!Numerical model}  Optimisation of models based on numerically solving the Bloch-McConnell equations (see Section~\ref{sect: dispersion: numerical models} on page~\pageref{sect: dispersion: numerical models}).
+\item[Analytical models:]\index{relaxation dispersion!Analytical model}  Optimisation of models based on analytical, closed-form expressions derived from the Bloch-McConnell equations subject to certain conditions (see Section~\ref{sect: dispersion: analytic CPMG models} on page~\pageref{sect: dispersion: analytic CPMG models} and Section~\ref{sect: dispersion: analytic R1rho models} on page~\pageref{sect: dispersion: analytic R1rho models}).
+\item[Numerical models:]\index{relaxation dispersion!Numerical model}  Optimisation of models based on numerically solving the Bloch-McConnell equations (see Section~\ref{sect: dispersion: numeric CPMG models} on page~\pageref{sect: dispersion: numeric CPMG models} and Section~\ref{sect: dispersion: numeric R1rho models} on page~\pageref{sect: dispersion: numeric R1rho models}).
 \end{description}
 
 
@@ -168,55 +168,6 @@ $\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC}
 \end{sidewaystable}
 
 
-\begin{sidewaystable}
-\begin{center}
-\caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
-\begin{tabular}{lllcll}
-\toprule
-Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
-\midrule                                    
-R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
-R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
-No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
-LM63                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
-LM63 3-site              & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
-CR72                     & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
-CR72 full                & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
-IT99                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
-NS CPMG 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS CPMG 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-\bottomrule
-\label{table: CPMG dispersion models}
-\end{tabular}
-\end{center}
-\end{sidewaystable}
-
-
-\begin{sidewaystable}
-\begin{center}
-\caption{The analytic and numerical models for $\Ronerho$-type experiments currently supported within relax.}
-\begin{tabular}{lllcll}
-\toprule
-Model code      & Solution & Sites & Parameters                                        & Restriction                       & Reference \\
-\midrule                            
-R2eff           & -        & -     & $\{\Ronerho, \cdots\}$                            & Fixed relaxation time period      & - \\
-R2eff           & -        & -     & $\{\Ronerho, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
-No Rex          & Closed   & 0     & $\{\Ronerhoprime, \cdots\}$                       & -                                 & - \\
-M61             & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange, on-resonance, $\Rone = \Rtwo$ & \citet{Meiboom61} \\
-DPL94           & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange                     & \citet{Davis94} \\
-M61 skew        & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
-TP02            & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & Not fast exchange                 & \citet{TrottPalmer02} \\
-NS R1rho 2-site & Numeric  & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA > \pB$                       & - \\
-\bottomrule
-\label{table: R1rho dispersion models}
-\end{tabular}
-\end{center}
-\end{sidewaystable}
-
-
 
 % The base models.
 %%%%%%%%%%%%%%%%%%
@@ -288,12 +239,39 @@ This model is provided for model selection purposes.  In combination with freque
 
 
 
-% The analytical models.
-%%%%%%%%%%%%%%%%%%%%%%%%
+% The analytic CPMG models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{The analytical dispersion models}
-\label{sect: dispersion: analytical models}
-\index{relaxation dispersion!Analytical model|textbf}
+\section{The analytic CPMG models}
+\label{sect: dispersion: analytical CPMG models}
+\index{relaxation dispersion!Analytic CPMG model|textbf}
+
+\begin{sidewaystable}
+\begin{center}
+\caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
+\begin{tabular}{lllcll}
+\toprule
+Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
+\midrule                                    
+R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
+R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
+No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
+LM63                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
+LM63 3-site              & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
+CR72                     & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
+CR72 full                & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
+IT99                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+NS CPMG 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+\bottomrule
+\label{table: CPMG dispersion models}
+\end{tabular}
+\end{center}
+\end{sidewaystable}
+
 
 
 % LM63 model.
@@ -462,77 +440,13 @@ The reference for this equation is:
 \end{itemize}
 
 
-% M61 model.
-%~~~~~~~~~~~
 
-\subsection{The M61 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: M61 model}
-\index{relaxation dispersion!M61 model|textbf}
+% The numeric CPMG models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
-\end{equation}
-
-The reference for this equation is:
-\begin{itemize}
-\item \bibentry{Meiboom61}
-\end{itemize}
-
-
-% DPL94 model.
-%~~~~~~~~~~~~~
-
-\subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: DPL94 model}
-\index{relaxation dispersion!DPL94 model|textbf}
-
-This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta ,
-\end{equation}
-
-where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
-\begin{itemize}
-\item \bibentry{Davis94}
-\end{itemize}
-
-
-% M61 skew model.
-%~~~~~~~~~~~~~~~~
-
-\subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
-\label{sect: dispersion: M61 skew model}
-\index{relaxation dispersion!M61 skew model|textbf}
-
-This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
-\end{equation}
-
-Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
-
-
-% TP02 model.
-%~~~~~~~~~~~~
-
-\subsection{The TP02 2-site exchange $\Ronerho$ model}
-\label{sect: dispersion: TP02 model}
-\index{relaxation dispersion!TP02 model|textbf}
-
-This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{TrottPalmer02}.  It is selected by setting the model to `TP02'.  The equation for the exchange process is:
-\begin{equation}
-    \Ronerho = \Rone\cos^2\theta + \left( \Ronerhoprime + \frac{\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2} \right) \sin^2\theta.
-\end{equation}
-
-
-
-% The numerical models.
-%%%%%%%%%%%%%%%%%%%%%%%
-
-\section{The numerical dispersion models}
-\label{sect: dispersion: numerical models}
-\index{relaxation dispersion!Numerical model|textbf}
+\section{The numeric CPMG models}
+\label{sect: dispersion: numeric CPMG models}
+\index{relaxation dispersion!Numeric CPMG model|textbf}
 
 
 % Full NS CPMG 2-site 3D model.
@@ -594,6 +508,108 @@ This is the numerical model for 2-site exchange expanded using Maple by Nikolai 
 Is it selected by setting the model to `NS CPMG 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
+
+
+% The analytic R1rho models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The analytic $\Ronerho$ models}
+\label{sect: dispersion: analytical R1rho models}
+\index{relaxation dispersion!Analytic R1rho model|textbf}
+
+\begin{sidewaystable}
+\begin{center}
+\caption{The analytic and numerical models for $\Ronerho$-type experiments currently supported within relax.}
+\begin{tabular}{lllcll}
+\toprule
+Model code      & Solution & Sites & Parameters                                        & Restriction                       & Reference \\
+\midrule                            
+R2eff           & -        & -     & $\{\Ronerho, \cdots\}$                            & Fixed relaxation time period      & - \\
+R2eff           & -        & -     & $\{\Ronerho, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
+No Rex          & Closed   & 0     & $\{\Ronerhoprime, \cdots\}$                       & -                                 & - \\
+M61             & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange, on-resonance, $\Rone = \Rtwo$ & \citet{Meiboom61} \\
+DPL94           & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange                     & \citet{Davis94} \\
+M61 skew        & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
+TP02            & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & Not fast exchange                 & \citet{TrottPalmer02} \\
+NS R1rho 2-site & Numeric  & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA > \pB$                       & - \\
+\bottomrule
+\label{table: R1rho dispersion models}
+\end{tabular}
+\end{center}
+\end{sidewaystable}
+
+
+% M61 model.
+%~~~~~~~~~~~
+
+\subsection{The M61 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: M61 model}
+\index{relaxation dispersion!M61 model|textbf}
+
+This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+\end{equation}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{Meiboom61}
+\end{itemize}
+
+
+% M61 skew model.
+%~~~~~~~~~~~~~~~~
+
+\subsection{The M61 skew 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: M61 skew model}
+\index{relaxation dispersion!M61 skew model|textbf}
+
+This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
+\end{equation}
+
+Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
+
+
+% DPL94 model.
+%~~~~~~~~~~~~~
+
+\subsection{The DPL94 2-site fast exchange $\Ronerho$ model}
+\label{sect: dispersion: DPL94 model}
+\index{relaxation dispersion!DPL94 model|textbf}
+
+This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta ,
+\end{equation}
+
+where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
+\begin{itemize}
+\item \bibentry{Davis94}
+\end{itemize}
+
+
+% TP02 model.
+%~~~~~~~~~~~~
+
+\subsection{The TP02 2-site exchange $\Ronerho$ model}
+\label{sect: dispersion: TP02 model}
+\index{relaxation dispersion!TP02 model|textbf}
+
+This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{TrottPalmer02}.  It is selected by setting the model to `TP02'.  The equation for the exchange process is:
+\begin{equation}
+    \Ronerho = \Rone\cos^2\theta + \left( \Ronerhoprime + \frac{\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2} \right) \sin^2\theta.
+\end{equation}
+
+
+
+% The numeric R1rho models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The numeric $\Ronerho$ models}
+\label{sect: dispersion: numeric R1rho models}
+\index{relaxation dispersion!Numeric R1rho model|textbf}
 
 % NS R1rho 2-site model.
 %~~~~~~~~~~~~~~~~~~~~~~~
