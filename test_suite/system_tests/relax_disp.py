@@ -850,6 +850,71 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_r1rho_ns_r1rho_2site_to_tp02(self, model=None):
+        """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The model data pipe.
+        model = 'NS R1rho 2-site'
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin1.r2 = [10.0, 15.0]
+        spin1.pA = 0.7654321
+        spin1.dw = 7.0
+        spin1.kex = 1234.56789
+        spin2.r2 = [12.0, 18.0]
+        spin2.pA = 0.7654321
+        spin2.dw = 9.0
+        spin2.kex = 1234.56789
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[0], spin2.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[1], spin2.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
+
+        # Checks for residue :1.
+        self.assertAlmostEqual(spin1.r2[0], 10.0, 4)
+        self.assertAlmostEqual(spin1.r2[1], 15.0, 4)
+        self.assertAlmostEqual(spin1.pA, 0.7654321, 4)
+        self.assertAlmostEqual(spin1.dw, 7.0, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1234.56789/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 0.0, 4)
+
+        # Checks for residue :2.
+        self.assertAlmostEqual(spin2.r2[0], 12.0, 4)
+        self.assertAlmostEqual(spin2.r2[1], 18.0, 4)
+        self.assertAlmostEqual(spin2.pA, 0.7654321, 4)
+        self.assertAlmostEqual(spin2.dw, 9.0, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1234.56789/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 0.0, 4)
+
+
     def test_r1rho_off_res_fixed_time_tp02(self):
         """Test the relaxation dispersion 'TP02' model curve fitting to fixed time synthetic data."""
 
