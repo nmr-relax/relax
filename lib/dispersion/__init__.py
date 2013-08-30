@@ -34,6 +34,7 @@ __all__ = [
     'ns_cpmg_2site_3d',
     'ns_cpmg_2site_expanded',
     'ns_cpmg_2site_star',
+    'ns_r1rho_2site',
     'ns_matrices',
     'tp02',
     'two_point'
