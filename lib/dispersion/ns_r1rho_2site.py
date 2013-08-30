@@ -2,9 +2,6 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
-# Copyright (C) 2013 Mathilde Lescanne                                        #
-# Copyright (C) 2013 Dominique Marion                                         #
 # Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -44,7 +41,7 @@ from lib.dispersion.ns_matrices import rr1rho_3d
 from lib.float import isNaN
 
 
-def r2eff_ns_cpmg_2site_3D(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
