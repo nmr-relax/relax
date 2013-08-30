@@ -131,7 +131,7 @@ class Relax_disp(API_base, API_common):
 
         # The offset and R1 data for R1rho off-resonance models.
         chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-        if spin.model in [MODEL_DPL94, MODEL_TP02]:
+        if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_NS_R1RHO_2SITE]:
             chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
             r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
@@ -1178,7 +1178,7 @@ class Relax_disp(API_base, API_common):
 
             # The offset and R1 data for R1rho off-resonance models.
             chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-            if spins[0].model in [MODEL_DPL94, MODEL_TP02]:
+            if spins[0].model in [MODEL_DPL94, MODEL_TP02, MODEL_NS_R1RHO_2SITE]:
                 chemical_shifts, offsets, tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
                 r1 = return_r1_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count, sim_index=sim_index)
 

@@ -31,7 +31,7 @@ This is the model of the numerical solution for the 2-site Bloch-McConnell equat
 import dep_check
 
 # Python module imports.
-from math import atan, fabs, log
+from math import atan, cos, log, pi, sin, sqrt
 from numpy import dot
 if dep_check.scipy_module:
     from scipy.linalg import expm
@@ -41,7 +41,7 @@ from lib.dispersion.ns_matrices import rr1rho_3d
 from lib.float import isNaN
 
 
-def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -53,6 +53,8 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=No
     @type r1rho_prime:          float
     @keyword omega:             The chemical shift for the spin in rad/s.
     @type omega:                float
+    @keyword offset:            The spin-lock offsets for the data.
+    @type offset:               numpy rank-1 float array
     @keyword r1:                The R1 relaxation rate.
     @type r1:                   float
     @keyword pA:                The population of state A.
@@ -68,9 +70,9 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=No
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths in Hz.
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword relax_time:        The total relaxation time period for each spin-lock field strength (in seconds).
-    @type relax_time:           numpy rank-1 float array
+    @type relax_time:           float
     @keyword inv_relax_time:    The inverse of the relaxation time period for each spin-lock field strength (in inverse seconds).  This is used for faster calculations.
-    @type inv_relax_time:       numpy rank-1 float array
+    @type inv_relax_time:       float
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:            numpy rank-1 float array
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
@@ -80,7 +82,6 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=No
     # Repetitive calculations (to speed up calculations).
     Wa = omega                  # Larmor frequency [s^-1].
     Wb = omega + dw             # Larmor frequency [s^-1].
-    kex2 = kex**2
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -102,7 +103,7 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=No
         M0[5] = cos(thetaB) * pB
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = expm(R*relax_time[i])
+        Rexpo = expm(R*relax_time)
 
         # Magnetization evolution.
         Moft = dot(Rexpo, M0)
@@ -115,6 +116,6 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, r1=0.0, pA=None, pB=No
         if MA <= 0.0 or isNaN(MA):
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_relax_time[i] * log(MA)
+            back_calc[i]= -inv_relax_time * log(MA)
 
 
