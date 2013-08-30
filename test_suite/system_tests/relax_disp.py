@@ -89,6 +89,89 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 
+    def test_dpl94_data_to_dpl94(self):
+        """Test the relaxation dispersion 'DPL94' model curve fitting to fixed time synthetic data."""
+
+        # Fixed time variable.
+        ds.fixed = True
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_dpl94.py')
+
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [2.25, 24.0]
+        pA = 0.7
+        kex = 1000.0
+        delta_omega = [1.0, 2.0]
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+
+        # Switch to the 'DPL94' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('DPL94')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
+
+
+    def test_exp_fit(self):
+        """Test the relaxation dispersion 'exp_fit' model curve fitting."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'exp_fit.py')
+
+        # The original exponential curve parameters.
+        res_data = [
+            [15., 10., 20000., 25000.],
+            [12., 11., 50000., 51000.],
+            [17., 9., 100000., 96000.]
+        ]
+
+        # List of parameters which do not belong to the model.
+        blacklist = ['cpmg_frqs', 'r2', 'rex', 'kex', 'r2a', 'ka', 'dw']
+
+        # Checks for each residue.
+        for i in range(len(res_data)):
+            # Printout.
+            print("\nResidue number %s." % (i+1))
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['1000.0'], res_data[i][0], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['2000.0'], res_data[i][1], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['1000.0']/10000, res_data[i][2]/10000, places=3)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['2000.0']/10000, res_data[i][3]/10000, places=3)
+
+            # Check the simulation errors.
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['1000.0'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['2000.0'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['1000.0']/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['2000.0']/10000 < 5.0)
+
+            # Check that certain parameters are not present.
+            for param in blacklist:
+                print("\tChecking for the absence of the '%s' parameter." % param)
+                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], param))
+
+        # Check the clustering information.
+        self.assert_(hasattr(cdp, 'clustering'))
+        keys = ['free spins', 'cluster']
+        for key in keys:
+            self.assert_(key in cdp.clustering)
+        self.assert_('test' not in cdp.clustering)
+        self.assertEqual(cdp.clustering['free spins'], [':2@N'])
+        self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+
+
     def test_hansen_cpmg_data_auto_analysis(self):
         """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data.
 
@@ -165,55 +248,6 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.dw, 131.496501939365, 2)
         self.assertAlmostEqual(spin71.kex, 2.38926416198431, 2)
         self.assertAlmostEqual(spin71.chi2, 43.4801222646425, 2)
-
-
-    def test_hansen_cpmg_data_to_lm63(self):
-        """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
-
-        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
-        """
-
-        # Base data setup.
-        self.setup_hansen_cpmg_data(model='LM63')
-
-        # Alias the spins.
-        spin70 = cdp.mol[0].res[0].spin[0]
-        spin71 = cdp.mol[0].res[1].spin[0]
-
-        # Set the initial parameter values.
-        spin70.r2 = [7, 7]
-        spin70.phi_ex = 0.3
-        spin70.kex = 5000.0
-        spin71.r2 = [5, 9]
-        spin71.phi_ex = 0.1
-        spin71.kex = 2500.0
-
-        # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
-
-        # Printout.
-        print("\n\nOptimised parameters:\n")
-        spin70 = cdp.mol[0].res[0].spin[0]
-        spin71 = cdp.mol[0].res[1].spin[0]
-        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
-        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
-        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
-        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
-        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
-        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-
-        # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.80566297338119)
-        self.assertAlmostEqual(spin70.r2[1], 6.67846669704843)
-        self.assertAlmostEqual(spin70.phi_ex, 0.31011906704072)
-        self.assertAlmostEqual(spin70.kex, 4763.71326098192)
-        self.assertAlmostEqual(spin70.chi2, 106.393365192324)
-
-        # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.92610970714703)
-        self.assertAlmostEqual(spin71.phi_ex, 0.0592876975157063)
-        self.assertAlmostEqual(spin71.kex, 2544.61582323959)
-        self.assertAlmostEqual(spin71.chi2, 1.44240142554555)
 
 
     def test_hansen_cpmg_data_to_cr72(self):
@@ -377,6 +411,55 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.padw2, 0.00113652645563722, 3)
         self.assertAlmostEqual(spin71.tex*1000, 0.000125611470803158*1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.45010375234816, 4)
+
+
+    def test_hansen_cpmg_data_to_lm63(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='LM63')
+
+        # Alias the spins.
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+
+        # Set the initial parameter values.
+        spin70.r2 = [7, 7]
+        spin70.phi_ex = 0.3
+        spin70.kex = 5000.0
+        spin71.r2 = [5, 9]
+        spin71.phi_ex = 0.1
+        spin71.kex = 2500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        self.assertAlmostEqual(spin70.r2[0], 6.80566297338119)
+        self.assertAlmostEqual(spin70.r2[1], 6.67846669704843)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31011906704072)
+        self.assertAlmostEqual(spin70.kex, 4763.71326098192)
+        self.assertAlmostEqual(spin70.chi2, 106.393365192324)
+
+        # Checks for residue :71.
+        self.assertAlmostEqual(spin71.r2[0], 4.92610970714703)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0592876975157063)
+        self.assertAlmostEqual(spin71.kex, 2544.61582323959)
+        self.assertAlmostEqual(spin71.chi2, 1.44240142554555)
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
@@ -778,52 +861,136 @@ class Relax_disp(SystemTestCase):
             self.assertEqual(spin2[i], lines[i])
 
 
-    def test_exp_fit(self):
-        """Test the relaxation dispersion 'exp_fit' model curve fitting."""
+    def test_m61_data_to_m61(self):
+        """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
+
+        # Fixed time variable.
+        ds.fixed = True
 
         # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'exp_fit.py')
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
 
-        # The original exponential curve parameters.
-        res_data = [
-            [15., 10., 20000., 25000.],
-            [12., 11., 50000., 51000.],
-            [17., 9., 100000., 96000.]
-        ]
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [2.25, 24.0]
+        pA = 0.7
+        kex = 1000.0
+        delta_omega = [1.0, 2.0]
+        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
 
-        # List of parameters which do not belong to the model.
-        blacklist = ['cpmg_frqs', 'r2', 'rex', 'kex', 'r2a', 'ka', 'dw']
-
-        # Checks for each residue.
-        for i in range(len(res_data)):
+        # Switch to the 'R2eff' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('R2eff')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
             # Printout.
-            print("\nResidue number %s." % (i+1))
+            print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['1000.0'], res_data[i][0], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['2000.0'], res_data[i][1], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['1000.0']/10000, res_data[i][2]/10000, places=3)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['2000.0']/10000, res_data[i][3]/10000, places=3)
+            for i in range(len(keys)):
+                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
 
-            # Check the simulation errors.
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['1000.0'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['2000.0'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['1000.0']/10000 < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['2000.0']/10000 < 5.0)
+            # Increment the spin index.
+            spin_index += 1
 
-            # Check that certain parameters are not present.
-            for param in blacklist:
-                print("\tChecking for the absence of the '%s' parameter." % param)
-                self.assert_(not hasattr(cdp.mol[0].res[i].spin[0], param))
+        # Switch to the 'M61' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('M61')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
 
-        # Check the clustering information.
-        self.assert_(hasattr(cdp, 'clustering'))
-        keys = ['free spins', 'cluster']
-        for key in keys:
-            self.assert_(key in cdp.clustering)
-        self.assert_('test' not in cdp.clustering)
-        self.assertEqual(cdp.clustering['free spins'], [':2@N'])
-        self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
+
+
+    def test_m61_exp_data_to_m61(self):
+        """Test the relaxation dispersion 'M61' model curve fitting to the full exponential synthetic data."""
+
+        # Fixed time variable.
+        ds.fixed = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
+
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [2.25, 24.0]
+        pA = 0.7
+        kex = 1000.0
+        delta_omega = [1.0, 2.0]
+        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
+        phi_ex = []
+        for i in range(2):
+            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
+        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
+
+        # Switch to the 'R2eff' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('R2eff')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            for i in range(len(keys)):
+                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
+
+        # Switch to the 'M61' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('M61')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
+
+
+    def xxx_test_m61b_data_to_m61b(self):
+        """Test the relaxation dispersion 'M61 skew' model curve fitting to fixed time synthetic data."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61b.py')
+
+        # The original parameters.
+        i0 = [100000.0, 20000.0]
+        r1rho_prime = [10.0, 24.0]
+        pA = 0.95
+        kex = 2000.0
+        delta_omega = [1.0, 2.0]
+
+        # Switch to the 'M61 skew' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch(MODEL_M61B)
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
+            self.assertAlmostEqual(spin.pA, pA, 2)
+            self.assertAlmostEqual(spin.dw, dw[spin_index], 2)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
+
+            # Increment the spin index.
+            spin_index += 1
 
 
     def test_r2eff_fit_fixed_time(self):
@@ -942,173 +1109,6 @@ class Relax_disp(SystemTestCase):
             self.assertAlmostEqual(spin.r2[1]/10, r1rho_prime[spin_index][1]/10, 4)
             self.assertAlmostEqual(spin.dw, delta_omega[spin_index], 3)
             self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 3)
-
-            # Increment the spin index.
-            spin_index += 1
-
-
-    def test_m61_exp_data_to_m61(self):
-        """Test the relaxation dispersion 'M61' model curve fitting to the full exponential synthetic data."""
-
-        # Fixed time variable.
-        ds.fixed = False
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
-
-        # The original parameters.
-        i0 = [100000.0, 20000.0]
-        r1rho_prime = [2.25, 24.0]
-        pA = 0.7
-        kex = 1000.0
-        delta_omega = [1.0, 2.0]
-        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
-        phi_ex = []
-        for i in range(2):
-            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
-        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
-
-        # Switch to the 'R2eff' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('R2eff')
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            for i in range(len(keys)):
-                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
-
-            # Increment the spin index.
-            spin_index += 1
-
-        # Switch to the 'M61' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('M61')
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
-            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
-            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
-
-            # Increment the spin index.
-            spin_index += 1
-
-
-    def test_dpl94_data_to_dpl94(self):
-        """Test the relaxation dispersion 'DPL94' model curve fitting to fixed time synthetic data."""
-
-        # Fixed time variable.
-        ds.fixed = True
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_dpl94.py')
-
-        # The original parameters.
-        i0 = [100000.0, 20000.0]
-        r1rho_prime = [2.25, 24.0]
-        pA = 0.7
-        kex = 1000.0
-        delta_omega = [1.0, 2.0]
-        phi_ex = []
-        for i in range(2):
-            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
-
-        # Switch to the 'DPL94' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('DPL94')
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
-            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
-            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
-
-            # Increment the spin index.
-            spin_index += 1
-
-
-    def test_m61_data_to_m61(self):
-        """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
-
-        # Fixed time variable.
-        ds.fixed = True
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
-
-        # The original parameters.
-        i0 = [100000.0, 20000.0]
-        r1rho_prime = [2.25, 24.0]
-        pA = 0.7
-        kex = 1000.0
-        delta_omega = [1.0, 2.0]
-        keys = ['800.0_1000.0', '800.0_1500.0', '800.0_2000.0', '800.0_2500.0', '800.0_3000.0', '800.0_3500.0', '800.0_4000.0', '800.0_4500.0', '800.0_5000.0', '800.0_5500.0', '800.0_6000.0']
-        phi_ex = []
-        for i in range(2):
-            phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
-        rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
-
-        # Switch to the 'R2eff' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('R2eff')
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            for i in range(len(keys)):
-                self.assertAlmostEqual(spin.r2eff[keys[i]]/10.0, rates[spin_index][i]/10.0, 2)
-
-            # Increment the spin index.
-            spin_index += 1
-
-        # Switch to the 'M61' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('M61')
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
-            self.assertAlmostEqual(spin.phi_ex, phi_ex[spin_index], 2)
-            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
-
-            # Increment the spin index.
-            spin_index += 1
-
-
-    def xxx_test_m61b_data_to_m61b(self):
-        """Test the relaxation dispersion 'M61 skew' model curve fitting to fixed time synthetic data."""
-
-        # Execute the script.
-        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61b.py')
-
-        # The original parameters.
-        i0 = [100000.0, 20000.0]
-        r1rho_prime = [10.0, 24.0]
-        pA = 0.95
-        kex = 2000.0
-        delta_omega = [1.0, 2.0]
-
-        # Switch to the 'M61 skew' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch(MODEL_M61B)
-        spin_index = 0
-        for spin, spin_id in spin_loop(return_id=True):
-            # Printout.
-            print("\nSpin %s." % spin_id)
-
-            # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index]/10, 2)
-            self.assertAlmostEqual(spin.pA, pA, 2)
-            self.assertAlmostEqual(spin.dw, dw[spin_index], 2)
-            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 2)
 
             # Increment the spin index.
             spin_index += 1
