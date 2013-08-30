@@ -876,14 +876,14 @@ class Relax_disp(SystemTestCase):
         spin2 = cdp.mol[0].res[1].spin[0]
 
         # Set the initial parameter values.
-        spin1.r2 = [10.0, 15.0]
-        spin1.pA = 0.7654321
-        spin1.dw = 7.0
-        spin1.kex = 1234.56789
-        spin2.r2 = [12.0, 18.0]
-        spin2.pA = 0.7654321
-        spin2.dw = 9.0
-        spin2.kex = 1234.56789
+        spin1.r2 = [9.9963793866185, 15.0056724422684]
+        spin1.pA = 0.779782428085762
+        spin1.dw = 7.57855284496424
+        spin1.kex = 1116.7911285203
+        spin2.r2 = [11.9983346935434, 18.0076097513337]
+        spin2.pA = 0.826666229688602
+        spin2.dw = 9.5732624231366
+        spin2.kex = 1380.46162655657
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
@@ -899,20 +899,20 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Checks for residue :1.
-        self.assertAlmostEqual(spin1.r2[0], 10.0, 4)
-        self.assertAlmostEqual(spin1.r2[1], 15.0, 4)
-        self.assertAlmostEqual(spin1.pA, 0.7654321, 4)
-        self.assertAlmostEqual(spin1.dw, 7.0, 4)
-        self.assertAlmostEqual(spin1.kex/1000, 1234.56789/1000, 4)
-        self.assertAlmostEqual(spin1.chi2, 0.0, 4)
+        self.assertAlmostEqual(spin1.r2[0], 9.9963793866185, 4)
+        self.assertAlmostEqual(spin1.r2[1], 15.0056724422684, 4)
+        self.assertAlmostEqual(spin1.pA, 0.779782428085762, 4)
+        self.assertAlmostEqual(spin1.dw, 7.57855284496424, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1116.7911285203/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 0.0180437453493939, 4)
 
         # Checks for residue :2.
-        self.assertAlmostEqual(spin2.r2[0], 12.0, 4)
-        self.assertAlmostEqual(spin2.r2[1], 18.0, 4)
-        self.assertAlmostEqual(spin2.pA, 0.7654321, 4)
-        self.assertAlmostEqual(spin2.dw, 9.0, 4)
-        self.assertAlmostEqual(spin2.kex/1000, 1234.56789/1000, 4)
-        self.assertAlmostEqual(spin2.chi2, 0.0, 4)
+        self.assertAlmostEqual(spin2.r2[0], 11.9980071986823, 4)
+        self.assertAlmostEqual(spin2.r2[1], 18.0073617211812, 4)
+        self.assertAlmostEqual(spin2.pA, 0.827043369462035, 4)
+        self.assertAlmostEqual(spin2.dw, 9.55524394456733, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1387.8774707803/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 0.000133191682505916, 4)
 
 
     def test_r1rho_off_res_fixed_time_tp02(self):
