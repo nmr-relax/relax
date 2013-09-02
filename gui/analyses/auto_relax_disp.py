@@ -46,7 +46,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_R2EFF, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, VAR_TIME_EXP
 from status import Status; status = Status()
 
 
@@ -137,7 +137,9 @@ class Auto_relax_disp(Base_analysis):
                     MODEL_R2EFF,
                     MODEL_NOREX,
                     MODEL_M61,
-                    MODEL_DPL94
+                    MODEL_DPL94,
+                    MODEL_TP02,
+                    MODEL_NS_R1RHO_2SITE
                 ]
 
         # Error checking.
@@ -695,7 +697,9 @@ class Disp_model_list_r1rho(Model_list):
         MODEL_NOREX,
         MODEL_M61,
         MODEL_DPL94,
-        MODEL_M61B
+        MODEL_M61B,
+        MODEL_TP02,
+        MODEL_NS_R1RHO_2SITE
     ]
     params = [
         u"{R\u2081\u1D68, I\u2080}",
@@ -703,6 +707,8 @@ class Disp_model_list_r1rho(Model_list):
         u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
         u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
         u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
