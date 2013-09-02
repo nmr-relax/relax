@@ -472,6 +472,13 @@ class Mf(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_20683_bdc_inf_values.py')
 
 
+    def test_bug_21079_local_tm_global_selection(self):
+        """Test catching U{bug #21079<https://gna.org/bugs/?21079>}, the local tm global model selection."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'bug_21079_local_tm_global_selection.py')
+
+
     def test_create_m4(self):
         """Creating model m4 with parameters {S2, te, Rex} using model_free.create_model()."""
 
