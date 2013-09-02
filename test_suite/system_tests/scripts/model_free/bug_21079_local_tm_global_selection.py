@@ -30,3 +30,6 @@ sequence.display()
 # Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data(method='back_calc')
+monte_carlo.initial_values()
+minimise()
+monte_carlo.error_analysis()
