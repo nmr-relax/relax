@@ -215,7 +215,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_r1.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.fid", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_r1.SetFont(font.normal)
         self.button_r1.SetSize((-1, 25))
-        self.button_r1.SetToolTipString(u"Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types, this is unused.  One R\u2081 data set per magnetic field strength must be loaded.")
+        self.button_r1.SetToolTipString(u"Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.  One R\u2081 data set per magnetic field strength must be loaded.")
         self.gui.Bind(wx.EVT_BUTTON, self.load_r1_data, self.button_r1)
         sizer.Add(self.button_r1, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -224,7 +224,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_chemical_shift.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.chemical_shift", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_chemical_shift.SetFont(font.normal)
         self.button_chemical_shift.SetSize((-1, 25))
-        self.button_chemical_shift.SetToolTipString(u"Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types, this is unused.")
+        self.button_chemical_shift.SetToolTipString(u"Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.")
         self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
         sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
 
