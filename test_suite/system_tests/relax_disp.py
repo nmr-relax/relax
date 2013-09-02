@@ -89,6 +89,20 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 
+    def test_bug_21081_disp_cluster_fail(self):
+        """U{Bug #21081<https://gna.org/bugs/?21081>} catch, the failure of a cluster analysis when spins are deselected."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'bug_21081_disp_cluster_fail.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Model selection - to catch the failure.
+        self.interpreter.model_selection(method='AIC', modsel_pipe='final', bundle='relax_disp', pipes=['No Rex', 'CR72'])
+
+
     def test_dpl94_data_to_dpl94(self):
         """Test the relaxation dispersion 'DPL94' model curve fitting to fixed time synthetic data."""
 
