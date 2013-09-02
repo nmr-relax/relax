@@ -550,7 +550,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_EXPANDED, "The nu
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("Again as for the analytic models, except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks.  All models are described in full detail in the relax user manual." % (MODEL_R2EFF, MODEL_NOREX))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
