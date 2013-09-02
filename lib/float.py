@@ -568,6 +568,10 @@ def isNaN(obj):
     @raise TypeError:   If obj isn't a python float.
     """
 
+    # Catch None.
+    if obj == None:
+        return False
+
     # bad result for code checking
     result = None
 
@@ -603,6 +607,10 @@ def isInf(obj):
     @rtype:             bool
     @raise TypeError:   If obj isn't a python float.
     """
+
+    # Catch None.
+    if obj == None:
+        return False
 
     # bad result for code checking
     result = None
