@@ -829,14 +829,14 @@ class Local_tm_list(Model_list):
     ]
     params = [
         u"{local \u03C4m}",
-        u"{local \u03C4m, S2}",
-        u"{local \u03C4m, S2, \u03C4e}",
-        u"{local \u03C4m, S2, Rex}",
-        u"{local \u03C4m, S2, \u03C4e, Rex}",
-        u"{local \u03C4m, S2, S2f, \u03C4s}",
-        u"{local \u03C4m, S2, \u03C4f, S2f, \u03C4s}",
-        u"{local \u03C4m, S2, S2f, \u03C4s, Rex}",
-        u"{local \u03C4m, S2, \u03C4f, S2f, \u03C4s, Rex}",
+        u"{local \u03C4m, S\u00B2}",
+        u"{local \u03C4m, S\u00B2, \u03C4e}",
+        u"{local \u03C4m, S\u00B2, Rex}",
+        u"{local \u03C4m, S\u00B2, \u03C4e, Rex}",
+        u"{local \u03C4m, S\u00B2, S\u00B2f, \u03C4s}",
+        u"{local \u03C4m, S\u00B2, \u03C4f, S\u00B2f, \u03C4s}",
+        u"{local \u03C4m, S\u00B2, S\u00B2f, \u03C4s, Rex}",
+        u"{local \u03C4m, S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}",
         u"{local \u03C4m, Rex}"
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
@@ -865,14 +865,14 @@ class Mf_list(Model_list):
     ]
     params = [
         u"{}",
-        u"{S2}",
-        u"{S2, \u03C4e}",
-        u"{S2, Rex}",
-        u"{S2, \u03C4e, Rex}",
-        u"{S2, S2f, \u03C4s}",
-        u"{S2, \u03C4f, S2f, \u03C4s}",
-        u"{S2, S2f, \u03C4s, Rex}",
-        u"{S2, \u03C4f, S2f, \u03C4s, Rex}",
+        u"{S\u00B2}",
+        u"{S\u00B2, \u03C4e}",
+        u"{S\u00B2, Rex}",
+        u"{S\u00B2, \u03C4e, Rex}",
+        u"{S\u00B2, S\u00B2f, \u03C4s}",
+        u"{S\u00B2, \u03C4f, S\u00B2f, \u03C4s}",
+        u"{S\u00B2, S\u00B2f, \u03C4s, Rex}",
+        u"{S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}",
         u"{Rex}"
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
