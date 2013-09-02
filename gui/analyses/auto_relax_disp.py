@@ -667,18 +667,18 @@ class Disp_model_list_cpmg(Model_list):
         MODEL_NS_CPMG_2SITE_EXPANDED
     ]
     params = [
-        u"{R2eff, I\u2080}",
+        u"{R\u2082eff, I\u2080}",
         u"{R\u2082, ...}",
-        u"{R\u2082, ..., phi_ex, kex}",
-        u"{R\u2082, ..., phi_exB, kB, phi_exC, kC}",
-        u"{R\u2082, ..., pA, d\u03C9, kex}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
-        u"{R\u2082, ..., phi_ex, pA.d\u03C9^2, kex}",
-        u"{R\u2082, ..., pA, d\u03C9, kex}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
-        u"{R\u2082, ..., pA, d\u03C9, kex}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, kex}",
-        u"{R\u2082, ..., pA, d\u03C9, kex}"
+        u"{R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}",
+        u"{R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}",
+        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}",
+        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
+        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
@@ -700,9 +700,9 @@ class Disp_model_list_r1rho(Model_list):
     params = [
         u"{R\u2081\u1D68, I\u2080}",
         u"{R\u2081\u1D68', ...}",
-        u"{R\u2081\u1D68', ..., phi_ex, kex}",
-        u"{R\u2081\u1D68', ..., phi_ex, kex}",
-        u"{R\u2081\u1D68', ..., pA, d\u03C9, kex}",
+        u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
+        u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
+        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}",
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
