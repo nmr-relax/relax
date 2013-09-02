@@ -167,7 +167,6 @@ class Auto_relax_disp(Base_analysis):
         self.opt_max_iterations = int(1e7)
 
         # Update the isotope and cluster information.
-        self.update_isotopes()
         self.update_clusters()
 
 
@@ -183,11 +182,57 @@ class Auto_relax_disp(Base_analysis):
         wx.CallAfter(self.field_results_dir.Enable, enable)
         wx.CallAfter(self.field_pre_run_dir.Enable, enable)
         wx.CallAfter(self.spin_systems.Enable, enable)
-        wx.CallAfter(self.field_isotope.Enable, enable)
         wx.CallAfter(self.field_cluster.Enable, enable)
+        wx.CallAfter(self.button_isotope.Enable, enable)
+        wx.CallAfter(self.button_r1.Enable, enable)
+        wx.CallAfter(self.button_chemical_shift.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
         wx.CallAfter(self.model_field.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
+
+
+    def add_buttons(self, box):
+        """Add all of the buttons.
+
+        @param box:     The box element to pack the GUI element into.
+        @type box:      wx.BoxSizer instance
+        """
+
+        # Sizer.
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+
+        # Isotope type button.
+        self.button_isotope = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Spin isotope")
+        self.button_isotope.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.nuclear_symbol", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_isotope.SetFont(font.normal)
+        self.button_isotope.SetSize((-1, 25))
+        self.button_isotope.SetToolTipString("Set the nuclear isotope types via the spin.isotope user function.")
+        self.gui.Bind(wx.EVT_BUTTON, self.spin_isotope, self.button_isotope)
+        sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
+
+        # R1 button.
+        self.button_r1 = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, u" R\u2081 relaxation data")
+        self.button_r1.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.fid", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_r1.SetFont(font.normal)
+        self.button_r1.SetSize((-1, 25))
+        self.button_r1.SetToolTipString(u"Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types, this is unused.  One R\u2081 data set per magnetic field strength must be loaded.")
+        self.gui.Bind(wx.EVT_BUTTON, self.load_r1_data, self.button_r1)
+        sizer.Add(self.button_r1, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Chemical shift button.
+        self.button_chemical_shift = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Chemical shift")
+        self.button_chemical_shift.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.chemical_shift", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_chemical_shift.SetFont(font.normal)
+        self.button_chemical_shift.SetSize((-1, 25))
+        self.button_chemical_shift.SetToolTipString(u"Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types, this is unused.")
+        self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
+        sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Spacer (this is to be replaced by a button for the interatom.define user function for the MQ dispersion models in the future).
+        sizer.AddStretchSpacer()
+
+        # Add the element to the box.
+        box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
 
     def assemble_data(self):
@@ -282,8 +327,9 @@ class Auto_relax_disp(Base_analysis):
         # Spin cluster setup.
         self.field_cluster = Text_ctrl(box, self, text="Spin cluster IDs:", button_text=" Cluster", icon=fetch_icon("relax.cluster", "16x16"), tooltip="The list of currently defined spin clusters.  A spin cluster will share the same the dispersion parameters during the optimisation of the dispersion model.  The special 'free spins' cluster ID refers to all non-clustered spins.", tooltip_button="Define clusters of spins using the relax_disp.cluster user function.", fn=self.relax_disp_cluster, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
-        # Spin isotope setup.
-        self.field_isotope = Text_ctrl(box, self, text="Spin isotopes:", button_text=" Setup", icon=fetch_icon("relax.nuclear_symbol", "16x16"), tooltip="The list of nuclear isotopes of the spins to be used in the analysis.", tooltip_button="Execute the spin.isotope user function.", fn=self.spin_isotope, button=True, editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        # Add the buttons.
+        box.AddSpacer(20)
+        self.add_buttons(box=box)
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
@@ -365,6 +411,28 @@ class Auto_relax_disp(Base_analysis):
         event.Skip()
 
 
+    def load_cs_data(self, event=None):
+        """Read chemical shift data from a peak list via the chemical_shift.read user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['chemical_shift.read'](wx_wizard_modal=True)
+
+
+    def load_r1_data(self, event=None):
+        """Load R1 relaxation data via the relax_data.read user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['relax_data.read'](wx_wizard_modal=True, ri_type='R1')
+
+
     def observer_register(self, remove=False):
         """Register and unregister methods with the observer objects.
 
@@ -376,7 +444,6 @@ class Auto_relax_disp(Base_analysis):
         if not remove:
             status.observers.gui_uf.register('spin count - %s' % self.data.pipe_bundle, self.update_spin_count, method_name='update_spin_count')
             status.observers.exec_lock.register(self.data.pipe_bundle, self.activate, method_name='activate')
-            status.observers.gui_uf.register('isotopes - %s' % self.data.pipe_bundle, self.update_isotopes, method_name='update_isotopes')
             status.observers.gui_uf.register('clusters - %s' % self.data.pipe_bundle, self.update_clusters, method_name='update_clusters')
 
         # Unregister.
@@ -560,31 +627,6 @@ class Auto_relax_disp(Base_analysis):
 
             # Update the text.
             self.field_cluster.SetValue(text)
-
-
-    def update_isotopes(self):
-        """Update the isotope field."""
-
-        # Assemble a list of all unique isotope types.
-        isotopes = []
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            if hasattr(spin, 'isotope') and spin.isotope not in isotopes:
-                isotopes.append(spin.isotope)
-
-        # Nothing yet.
-        if not len(isotopes):
-            self.field_isotope.SetValue("Undefined")
-
-        # List the isotopes.
-        else:
-            # Build the text to show.
-            text = isotopes[0]
-            for i in range(1, len(isotopes)):
-                text += ", %s" % isotopes[i]
-
-            # Update the text.
-            self.field_isotope.SetValue(text)
-
 
 
 class Execute_relax_disp(Execute):
