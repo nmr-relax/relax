@@ -1264,9 +1264,9 @@ class Model_free_main:
         if not spin.select:
             return
 
-        # Test if the model is set.
+        # Test if the model is set, returning None to signal that the spin should be skipped.
         if not hasattr(spin, 'model') or not spin.model:
-            raise RelaxNoModelError
+            return None
 
         # Loop over the relaxation data.
         for ri_id in cdp.ri_ids:

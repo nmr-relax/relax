@@ -70,6 +70,10 @@ def create_data(method=None):
         else:
             data = return_data(data_index)
 
+        # No data, so skip.
+        if data == None:
+            continue
+
         # Get the errors.
         error = return_error(data_index)
 
