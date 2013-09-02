@@ -253,6 +253,12 @@ def loop_cluster():
             # Create the spin ID lists.
             spin_id_list = []
             for spin_id in cdp.clustering[key]:
+                # Skip deselected spins.
+                spin = return_spin(spin_id)
+                if not spin.select:
+                    continue
+
+                # Add the spin ID.
                 spin_id_list.append(spin_id)
 
             # Yield the cluster.
@@ -260,6 +266,11 @@ def loop_cluster():
 
         # The free spins.
         for spin_id in cdp.clustering['free spins']:
+            # Skip deselected spins.
+            spin = return_spin(spin_id)
+            if not spin.select:
+                continue
+
             # Yield each spin individually.
             yield [spin_id]
 
