@@ -323,6 +323,10 @@ class Mf_minimise:
         @type scaling_matrix:       numpy diagonal matrix
         """
 
+        # No result.
+        if param_vector == None:
+            return
+
         # Alias the current data pipe.
         cdp = pipes.get_pipe()
 
