@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Mageia) (format=latex 2013.8.1)  21 AUG 2013 10:54
+This is pdfTeX, Version 3.1415926-2.4-1.40.13 (TeX Live 2012/Mageia) (format=latex 2013.5.27)  2 SEP 2013 17:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -62,7 +62,7 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 ] (./doc.aux) ) 
 Here is how much of TeX's memory you used:
  227 strings out of 493489
- 2355 string characters out of 3146902
+ 2355 string characters out of 3146901
  49432 words of memory out of 3000000
  3620 multiletter control sequences out of 15000+200000
  3993 words of font info for 15 fonts, out of 3000000 for 9000
