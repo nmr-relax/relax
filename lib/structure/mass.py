@@ -59,7 +59,7 @@ def centre_of_mass(pos=None, elements=None, verbosity=1):
         try:
             mass = return_atomic_mass(elements[i])
         except RelaxError:
-            warn(RelaxWarning("Skipping the atom '%s' as the element '%s' is unknown." % (id, element)))
+            warn(RelaxWarning("Skipping the atom '%s' as the element '%s' is unknown." % (id, elements[i])))
 
         # Total mass.
         M = M + mass
