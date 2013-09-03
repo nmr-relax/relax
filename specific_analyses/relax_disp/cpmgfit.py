@@ -289,7 +289,7 @@ def spin_file_name(spin_id=None, output=False):
     """
 
     # Construct the name.
-    name = "spin_%s." % spin_id
+    name = "spin%s." % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
     if output:
         name += "out"
     else:
