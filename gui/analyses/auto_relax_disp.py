@@ -631,6 +631,7 @@ class Auto_relax_disp(Base_analysis):
             self.field_cluster.SetValue(text)
 
 
+
 class Execute_relax_disp(Execute):
     """The relaxation dispersion analysis execution object."""
 
