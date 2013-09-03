@@ -95,4 +95,4 @@ def r2eff_TSMFK01(r20a=None, dw=None, kA=None, cpmg_frqs=None, back_calc=None, n
 
         # The full formula.
         else:
-            back_calc[i] = r20 + kA - kA * numer / denom
+            back_calc[i] = r20a + kA - kA * numer / denom
