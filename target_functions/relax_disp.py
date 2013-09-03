@@ -221,12 +221,6 @@ class Dispersion:
             self.func = self.func_CR72
         if model == MODEL_IT99:
             self.func = self.func_IT99
-        if model == MODEL_M61:
-            self.func = self.func_M61
-        if model == MODEL_DPL94:
-            self.func = self.func_DPL94
-        if model == MODEL_M61B:
-            self.func = self.func_M61b
         if model == MODEL_NS_CPMG_2SITE_3D_FULL:
             self.func = self.func_ns_cpmg_2site_3D_full
         if model == MODEL_NS_CPMG_2SITE_3D:
@@ -237,6 +231,12 @@ class Dispersion:
             self.func = self.func_ns_cpmg_2site_star_full
         if model == MODEL_NS_CPMG_2SITE_STAR:
             self.func = self.func_ns_cpmg_2site_star
+        if model == MODEL_M61:
+            self.func = self.func_M61
+        if model == MODEL_M61B:
+            self.func = self.func_M61b
+        if model == MODEL_DPL94:
+            self.func = self.func_DPL94
         if model == MODEL_TP02:
             self.func = self.func_TP02
         if model == MODEL_NS_R1RHO_2SITE:

@@ -488,8 +488,8 @@ uf.add_keyarg(
         u"%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_STAR_FULL,
         u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_EXPANDED,
         u"%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_M61,
-        u"%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_DPL94,
         u"%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_M61B,
+        u"%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_DPL94,
         u"%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_TP02,
         u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_R1RHO_2SITE
     ],
@@ -508,8 +508,8 @@ uf.add_keyarg(
         MODEL_NS_CPMG_2SITE_STAR_FULL,
         MODEL_NS_CPMG_2SITE_EXPANDED,
         MODEL_M61,
-        MODEL_DPL94,
         MODEL_M61B,
+        MODEL_DPL94,
         MODEL_TP02,
         MODEL_NS_R1RHO_2SITE
     ],
@@ -533,8 +533,8 @@ uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supporte
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex},")
 uf.desc[-1].add_paragraph("Except for '%s' and '%s', these CPMG and R1rho models are fit to clusterings of spins, or spin blocks." % (MODEL_R2EFF, MODEL_NOREX))
 # Numerical models.

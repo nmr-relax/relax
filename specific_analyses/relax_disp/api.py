@@ -709,30 +709,6 @@ class Relax_disp(API_base, API_common):
                 params.append('r2')
             params += ['phi_ex', 'padw2', 'tex']
 
-        # M61 model.
-        elif model == MODEL_M61:
-            print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex', 'kex']
-
-        # DPL94 model.
-        elif model == MODEL_DPL94:
-            print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex', 'kex']
-
-        # M61 skew model.
-        elif model == MODEL_M61B:
-            print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
-
         # Full NS CPMG 2-site 3D model.
         elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
@@ -776,6 +752,30 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
+
+        # M61 model.
+        elif model == MODEL_M61:
+            print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['phi_ex', 'kex']
+
+        # M61 skew model.
+        elif model == MODEL_M61B:
+            print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['pA', 'dw', 'kex']
+
+        # DPL94 model.
+        elif model == MODEL_DPL94:
+            print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['phi_ex', 'kex']
 
         # TP02 model.
         elif model == MODEL_TP02:
