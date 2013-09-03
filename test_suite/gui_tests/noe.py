@@ -100,33 +100,20 @@ class Noe(GuiTestCase):
             wizard = analysis.peak_wizard
 
             # The spectrum.
-            page = wizard.get_page(wizard.page_indices['read'])
-            page.uf_args['file'].SetValue(str_to_gui(files[i]))
-            page.uf_args['spectrum_id'].SetValue(str_to_gui(ids[i]))
+            wizard.setup_page(page='read', file=files[i], spectrum_id=ids[i])
             wizard._go_next(None)
-            interpreter.flush()
 
             # Move down one pages.
             wizard._go_next(None)
 
             # Set the errors.
-            page = wizard.get_page(wizard.page_indices['rmsd'])
-            page.uf_args['error'].SetValue(int_to_gui(errors[i]))
-
-            # Apply, then set the individual spin errors.
+            wizard.setup_page(page='rmsd', error=errors[i])
             wizard._apply(None)
-            interpreter.flush()
-            page.uf_args['error'].SetValue(int_to_gui(errors_5[i]))
-            page.uf_args['spin_id'].SetValue(str_to_gui(':5'))
-
-            # Go to the next page.
+            wizard.setup_page(page='rmsd', error=errors_5[i], spin_id=':5')
             wizard._go_next(None)
 
-            # Set the type.
-            page = wizard.get_page(wizard.page_indices['spectrum_type'])
-            page.uf_args['spectrum_type'].SetValue(types[i])
-
-            # Go to the next page (i.e. finish).
+            # Set the type and finish.
+            wizard.setup_page(page='spectrum_type', spectrum_type=types[i])
             wizard._go_next(None)
 
         # Execute relax.
