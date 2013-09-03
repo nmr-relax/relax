@@ -222,6 +222,11 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Handle list arguments.
         if isinstance(id, list):
+            # If an empty list is encountered, exit this method without doing anything.
+            if id == []:
+                return
+
+            # Use only the first element.
             id = id[0]
 
         # Set the ID in the page.
