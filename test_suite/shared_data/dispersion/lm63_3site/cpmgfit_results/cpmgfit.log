@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20448
+                                  relax repository checkout r20760
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -57,17 +57,16 @@ The Luz and Meiboom (1963) 3-site fast exchange model.
 relax> relax_disp.cpmgfit_input(dir='.', force=True, binary='cpmgfit', spin_id=None)
 Opening the file './batch_run.sh' for writing.
 Translating the relax 'LM63 3-site' model to the CPMGFit '3-site_CPMG' model.
-Opening the file './spin_:1@N.in' for writing.
+Opening the file './spin_1_N.in' for writing.
 Translating the relax 'LM63 3-site' model to the CPMGFit '3-site_CPMG' model.
-Opening the file './spin_:2@N.in' for writing.
+Opening the file './spin_2_N.in' for writing.
 
 relax> relax_disp.cpmgfit_execute(dir='.', force=False, binary='cpmgfit')
 Translating the relax 'LM63 3-site' model to the CPMGFit '3-site_CPMG' model.
 
 
-cpmgfit -grid -xmgr -f ./spin_:1@N.in | tee ./spin_:1@N.out
+cpmgfit -grid -xmgr -f ./spin_1_N.in | tee ./spin_1_N.out
 
- ssifa:            2 th pivot block is singular
 # CPMGfit 1.43        
 #
 # title    :1@N                                                                            
@@ -78,36 +77,36 @@ cpmgfit -grid -xmgr -f ./spin_:1@N.in | tee ./spin_:1@N.out
 # X2(red)           0.0001
 #
 # Parameter            Fitted_Value  Fitted_Error     Sim_value     Sim_error
-# R2                          11.9978       0.3185         11.9684       0.3082
-# Rex1                        13.1787     219.3717         36.7155      80.2845
-# Tau1                         1.0901       4.4558          3.5244       6.9044
-# Rex2                        13.7225     222.5982         13.0630       6.9290
-# Tau2                         0.7475       1.9467          0.6897       0.2579
+# R2                          11.9978       0.3185         11.9863       0.3167
+# Rex1                        13.1787     219.3717         32.8988      81.9885
+# Tau1                         1.0901       4.4558          2.9337       6.1985
+# Rex2                        13.7225     222.5982         12.6104       6.8267
+# Tau2                         0.7475       1.9467          0.6793       0.2747
 #
 #          Field           Rex     Rex_error
-#        11.7433       26.9012       82.6976
-#        18.7893       68.8671      211.7059
+#        11.7433       26.9012       84.1243
+#        18.7893       68.8671      215.3582
 #
 # %tile     X2
-#          0.0500        15.6137
-#          0.1000        17.5718
-#          0.1500        18.9281
-#          0.2000        20.2582
-#          0.2500        21.1191
-#          0.3000        21.8741
-#          0.3500        22.6652
-#          0.4000        23.6391
-#          0.4500        24.3836
-#          0.5000        25.4736
-#          0.5500        26.0259
-#          0.6000        26.7738
-#          0.6500        27.8479
-#          0.7000        28.9514
-#          0.7500        30.0008
-#          0.8000        31.2188
-#          0.8500        32.9396
-#          0.9000        35.4074
-#          0.9500        38.9380
+#          0.0500        15.1376
+#          0.1000        17.1414
+#          0.1500        18.4356
+#          0.2000        19.6318
+#          0.2500        20.5927
+#          0.3000        21.2071
+#          0.3500        22.2108
+#          0.4000        22.9130
+#          0.4500        23.7604
+#          0.5000        25.0353
+#          0.5500        25.9298
+#          0.6000        26.7015
+#          0.6500        27.6702
+#          0.7000        29.0433
+#          0.7500        30.3627
+#          0.8000        31.6703
+#          0.8500        33.0415
+#          0.9000        35.5918
+#          0.9500        39.3011
 #
 @ CLEAR STRING
 @ TITLE ":1@N"
@@ -131,37 +130,37 @@ cpmgfit -grid -xmgr -f ./spin_:1@N.in | tee ./spin_:1@N.out
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.215
-@ STRING DEF "R2                          11.9978 +/-       0.3082"
+@ STRING DEF "R2                          11.9978 +/-       0.3167"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.180
-@ STRING DEF "Rex1                        13.1787 +/-      80.2845"
+@ STRING DEF "Rex1                        13.1787 +/-      81.9885"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.145
-@ STRING DEF "Tau1                         1.0901 +/-       6.9044"
+@ STRING DEF "Tau1                         1.0901 +/-       6.1985"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.110
-@ STRING DEF "Rex2                        13.7225 +/-       6.9290"
+@ STRING DEF "Rex2                        13.7225 +/-       6.8267"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.075
-@ STRING DEF "Tau2                         0.7475 +/-       0.2579"
+@ STRING DEF "Tau2                         0.7475 +/-       0.2747"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.040
-@ STRING DEF "X2          0.0017          X2(0.95)         38.9380"
+@ STRING DEF "X2          0.0017          X2(0.95)         39.3011"
 @ STRING on
 @ S0 TYPE xydy
 @ S0  LINESTYLE 0
@@ -1223,11 +1222,9 @@ cpmgfit -grid -xmgr -f ./spin_:1@N.in | tee ./spin_:1@N.out
 Translating the relax 'LM63 3-site' model to the CPMGFit '3-site_CPMG' model.
 
 
-cpmgfit -grid -xmgr -f ./spin_:2@N.in | tee ./spin_:2@N.out
+cpmgfit -grid -xmgr -f ./spin_2_N.in | tee ./spin_2_N.out
 
  ssifa:            1 th pivot block is singular
- ssifa:            4 th pivot block is singular
- ssifa:            4 th pivot block is singular
  ssifa:            4 th pivot block is singular
  ssifa:            4 th pivot block is singular
  ssifa:            4 th pivot block is singular
@@ -2222,36 +2219,36 @@ cpmgfit -grid -xmgr -f ./spin_:2@N.in | tee ./spin_:2@N.out
 # X2(red)           0.0000
 #
 # Parameter            Fitted_Value  Fitted_Error     Sim_value     Sim_error
-# R2                          14.9999       2.2219         14.7864       2.1214
-# Rex1                         7.0521     818.0823    -186498.5156 5575530.0000
-# Tau1                         1.2920      51.9686  -10316938.0000 ************
-# Rex2                        19.9927     843.2558         19.2839      23.7334
-# Tau2                         0.7987       6.6343          0.7774       1.5513
+# R2                          14.9999       2.2219         14.6894       2.1798
+# Rex1                         7.0521     818.0823    -141213.2344 4472462.0000
+# Tau1                         1.2920      51.9686  298889856.0000 ************
+# Rex2                        19.9927     843.2558         21.6621      29.3081
+# Tau2                         0.7987       6.6343          0.7518       0.4898
 #
 #          Field           Rex     Rex_error
-#        11.7433       27.0448  5575527.5000
-#        18.7893       69.2346 14273351.0000
+#        11.7433       27.0448  4472462.5000
+#        18.7893       69.2346 11449504.0000
 #
 # %tile     X2
-#          0.0500        14.6168
-#          0.1000        17.1461
-#          0.1500        18.6844
-#          0.2000        19.7036
-#          0.2500        21.0257
-#          0.3000        22.1736
-#          0.3500        23.0241
-#          0.4000        23.8792
-#          0.4500        24.6284
-#          0.5000        25.3976
-#          0.5500        26.4773
-#          0.6000        27.6446
-#          0.6500        28.4254
-#          0.7000        29.3529
-#          0.7500        30.8280
-#          0.8000        32.5332
-#          0.8500        34.0501
-#          0.9000        36.0028
-#          0.9500        39.6430
+#          0.0500        14.9559
+#          0.1000        17.0308
+#          0.1500        18.5677
+#          0.2000        19.3858
+#          0.2500        20.6075
+#          0.3000        21.5974
+#          0.3500        22.4585
+#          0.4000        23.4774
+#          0.4500        24.8018
+#          0.5000        25.3297
+#          0.5500        26.2297
+#          0.6000        27.2415
+#          0.6500        28.7015
+#          0.7000        30.0025
+#          0.7500        31.2192
+#          0.8000        32.4861
+#          0.8500        34.2727
+#          0.9000        36.6976
+#          0.9500        40.3662
 #
 @ CLEAR STRING
 @ TITLE ":2@N"
@@ -2275,13 +2272,13 @@ cpmgfit -grid -xmgr -f ./spin_:2@N.in | tee ./spin_:2@N.out
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.215
-@ STRING DEF "R2                          14.9999 +/-       2.1214"
+@ STRING DEF "R2                          14.9999 +/-       2.1798"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.180
-@ STRING DEF "Rex1                         7.0521 +/- 5575530.0000"
+@ STRING DEF "Rex1                         7.0521 +/- 4472462.0000"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
@@ -2293,19 +2290,19 @@ cpmgfit -grid -xmgr -f ./spin_:2@N.in | tee ./spin_:2@N.out
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.110
-@ STRING DEF "Rex2                        19.9927 +/-      23.7334"
+@ STRING DEF "Rex2                        19.9927 +/-      29.3081"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.075
-@ STRING DEF "Tau2                         0.7987 +/-       1.5513"
+@ STRING DEF "Tau2                         0.7987 +/-       0.4898"
 @ STRING on
 @ WITH STRING
 @ STRING LOCTYPE VIEW
 @ STRING CHAR SIZE 0.9
 @ STRING 0.2, 0.040
-@ STRING DEF "X2          0.0002          X2(0.95)         39.6430"
+@ STRING DEF "X2          0.0002          X2(0.95)         40.3662"
 @ STRING on
 @ S0 TYPE xydy
 @ S0  LINESTYLE 0

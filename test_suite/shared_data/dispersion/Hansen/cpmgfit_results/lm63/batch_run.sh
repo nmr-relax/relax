@@ -1,4 +1,4 @@
 #! /bin/sh
 
-cpmgfit -grid -xmgr -f spin_:70@N.in | tee spin_:70@N.out
-cpmgfit -grid -xmgr -f spin_:71@N.in | tee spin_:71@N.out
+cpmgfit -grid -xmgr -f spin_70_N.in | tee spin_70_N.out
+cpmgfit -grid -xmgr -f spin_71_N.in | tee spin_71_N.out
