@@ -1056,8 +1056,8 @@ class Dispersion:
 
         # Unpack the parameter values.
         R20A = params[:self.end_index[0]]
-        dw = params[self.end_index[1]:self.end_index[2]]
-        kA = params[self.end_index[2]+1]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        kA = params[self.end_index[1]]
 
         # Initialise.
         chi2_sum = 0.0
