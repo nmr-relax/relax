@@ -32,6 +32,8 @@ import dep_check
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from pipe_control.mol_res_spin import spin_loop
+from pipe_control.pipes import switch
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -316,3 +318,186 @@ class Relax_disp(GuiTestCase):
         if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
             self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
+
+
+    def test_tp02_data_to_tp02(self):
+        """Test the GUI analysis with the relaxation dispersion 'TP02' model fitting to the 'TP02' synthetic data."""
+
+        # The paths to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'+sep
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        page.uf_args['exp_type'].SetValue(str_to_gui('r1rho fixed'))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Create the sequence data.
+        self._execute_uf(uf_name='spin.create', res_name='Trp', res_num=1, spin_name='N')
+        interpreter.flush()
+        self._execute_uf(uf_name='spin.create', res_name='Trp', res_num=2, spin_name='N')
+        interpreter.flush()
+        self._execute_uf(uf_name='sequence.display')
+        interpreter.flush()
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope()
+        uf_store['spin.isotope'].page.SetValue('spin_id', '')
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Load the chemical shift data.
+        self._execute_uf(uf_name='chemical_shift.read', file='ref_500MHz.list', dir=data_path)
+        interpreter.flush()
+
+        # Load the spectrum.
+        frq = [500, 800]
+        frq_label = ['500MHz', '800MHz']
+        error = 200000.0
+        for frq_index in range(len(frq)):
+            # Load the R1 data.
+            label = 'R1_%s' % frq_label[frq_index]
+            self._execute_uf(uf_name='relax_data.read', ri_id=label, ri_type='R1', frq=frq[frq_index]*1e6, file='%s.out'%label, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+            interpreter.flush()
+
+            # Set up the peak intensity wizard for the reference spectrum.
+            analysis.peak_wizard_launch(None)
+            wizard = analysis.peak_wizard
+
+            # The reference spectrum ID.
+            id = str_to_gui('ref_%s' % frq_label[frq_index])
+
+            # Load the reference spectrum.
+            wizard.setup_page(page='read', file="%sref_%s.list" % (data_path, frq_label[frq_index]), spectrum_id=id, int_method='height', dim=1)
+            wizard._go_next(None)
+
+            # The error type.
+            page = wizard.get_page(wizard.page_indices['err_type'])
+            page.selection = 'rmsd'
+            wizard._go_next(None)
+
+            # Baseplane RMSD.
+            wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
+            wizard._go_next(None)
+
+            # Set the spectrometer frequency.
+            wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
+            wizard._go_next(None)
+
+            # Set as the reference.
+            wizard.setup_page(page='relax_time', spectrum_id=id, time=0.1)
+            wizard._go_next(None)
+            wizard.setup_page(page='spin_lock_field', spectrum_id=id, field=None)
+            wizard._go_next(None)
+            wizard.setup_page(page='spin_lock_offset', spectrum_id=id, offset=110.0)
+            wizard._go_next(None)    # Moving off the last page so the wizard will terminate.
+
+            # The spectral data - spectrum ID, peak lists, offset frequency (Hz).
+            data = []
+            spin_lock = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
+            for spin_lock_index in range(len(spin_lock)):
+                data.append(["nu_%s_%s" % (spin_lock[spin_lock_index], frq_label[frq_index]), "nu_%s_%s.list" % (spin_lock[spin_lock_index], frq_label[frq_index]), spin_lock[spin_lock_index]])
+
+            # Loop over the spectral data, loading it and setting the metadata.
+            for id, file, field in data:
+                # Set up the peak intensity wizard for the reference spectrum.
+                analysis.peak_wizard_launch(None)
+                wizard = analysis.peak_wizard
+
+                # Load the peak intensities and set the errors.
+                wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height')
+                wizard._go_next(None)
+
+                # The error type.
+                page = wizard.get_page(wizard.page_indices['err_type'])
+                page.selection = 'rmsd'
+                wizard._go_next(None)
+
+                # Set the errors.
+                wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
+                wizard._go_next(None)
+
+                # Set the spectrometer frequency.
+                wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
+                wizard._go_next(None)
+
+                # Set the relaxation times.
+                wizard.setup_page(page='relax_time', spectrum_id=id, time=0.1)
+                wizard._go_next(None)
+
+                # Set the relaxation dispersion spin-lock field strength (nu1).
+                wizard.setup_page(page='spin_lock_field', spectrum_id=id, field=field)
+                wizard._go_next(None)
+
+                # Set the spin-lock offset.
+                wizard.setup_page(page='spin_lock_offset', spectrum_id=id, offset=110.0)
+                wizard._go_next(None)
+
+        # Deselect all but the 'TP02' model.
+        for i in [1, 2, 3, 4, 6]:
+            analysis.model_field.select[i] = False
+        analysis.model_field.modify()
+
+        # Set the grid search size and number of MC sims.
+        analysis.grid_inc.SetValue(4)
+        analysis.mc_sim_num.SetValue(3)
+
+        # Optimisation speedups.
+        analysis.opt_func_tol = 1e-10
+        analysis.opt_max_iterations = 10000
+
+        # Execute relax.
+        analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+
+        # Wait for execution to complete.
+        analysis.thread.join()
+
+        # Flush all wx events.
+        wx.Yield()
+
+        # Exceptions in the thread.
+        self.check_exceptions()
+
+        # Check the relax controller.
+        # FIXME: skipping the checks for certain wxPython bugs.
+        if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
+            self.assertEqual(self.app.gui.controller.mc_gauge_rx.GetValue(), 100)
+            self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
+
+        # The original parameters.
+        r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
+        pA = 0.7654321
+        kex = 1234.56789
+        delta_omega = [7.0, 9.0]
+
+        # Switch to the 'TP02' model data pipe, then check for each spin.
+        switch('TP02')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index][0]/10, 4)
+            self.assertAlmostEqual(spin.r2[1]/10, r1rho_prime[spin_index][1]/10, 4)
+            self.assertAlmostEqual(spin.dw, delta_omega[spin_index], 3)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 3)
+
+            # Increment the spin index.
+            spin_index += 1
