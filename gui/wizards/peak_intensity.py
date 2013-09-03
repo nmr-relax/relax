@@ -62,7 +62,7 @@ class Peak_intensity_wizard(Wiz_window):
         @type relax_fit:            bool
         @keyword relax_disp:        A flag which when True will enable the relaxation dispersion portions of the wizard.
         @type relax_disp:           bool
-        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_frq user function and if False enables the relax_disp.spin_lock_field user function.
+        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_frq user function and if False enables the relax_disp.spin_lock_field user function.  It also enables the relax_disp.spin_lock_offset user function if R1rho data is indicated.
         @type relax_disp_cpmg:      bool
         @keyword relax_disp_times:  A flag which if True will enable the relax_disp.relax_time page.
         @type relax_disp_times:     bool
@@ -161,8 +161,13 @@ class Peak_intensity_wizard(Wiz_window):
             else:
                 # The relax_disp.spin_lock_field page.
                 page = uf_store['relax_disp.spin_lock_field'].create_page(self, sync=True)
-                self.page_indices['spin_lock_field'] = self.add_page(page, skip_button=False, proceed_on_error=False)
+                self.page_indices['spin_lock_field'] = self.add_page(page, skip_button=True, proceed_on_error=False)
                 page.on_init = self.wizard_update_relax_disp_spin_lock_field
+
+                # The relax_disp.spin_lock_offset page.
+                page = uf_store['relax_disp.spin_lock_offset'].create_page(self, sync=True)
+                self.page_indices['spin_lock_offset'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+                page.on_init = self.wizard_update_relax_disp_spin_lock_offset
 
         # Reset the cursor.
         if wx.IsBusy():
@@ -313,6 +318,13 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Update the spectrum ID.
         self.wizard_update_ids(page_key='spin_lock_field')
+
+
+    def wizard_update_relax_disp_spin_lock_offset(self):
+        """Update the relax_disp.spin_lock_offset page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='spin_lock_offset')
 
 
     def wizard_update_relax_fit_relax_time(self):
