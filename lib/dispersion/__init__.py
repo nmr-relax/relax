@@ -27,7 +27,6 @@ __all__ = [
     'dpl94',
     'it99',
     'lm63',
-    'tsmfk01',
     'lm63_3site',
     'm61',
     'm61b',
@@ -37,5 +36,6 @@ __all__ = [
     'ns_r1rho_2site',
     'ns_matrices',
     'tp02',
+    'tsmfk01',
     'two_point'
 ]

@@ -57,11 +57,11 @@ class Dispersion:
 
             - 'No Rex':  The model for no chemical exchange relaxation.
             - 'LM63':  The Luz and Meiboom (1963) 2-site fast exchange model.
-            - 'TSMFK01':  The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
             - 'LM63 3-site':  The Luz and Meiboom (1963) 3-site fast exchange model.
             - 'CR72':  The reduced Carver and Richards (1972) 2-site model for all time scales with R20A = R20B.
             - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
             - 'IT99':  The Ishima and Torchia (1999) 2-site model for all time scales with skewed populations (pA >> pB).
+            - 'TSMFK01':  The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
             - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
             - 'M61 skew':  The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.
@@ -211,8 +211,6 @@ class Dispersion:
             self.func = self.func_NOREX
         if model == MODEL_LM63:
             self.func = self.func_LM63
-        if model == MODEL_TSMFK01:
-            self.func = self.func_TSMFK01
         if model == MODEL_LM63_3SITE:
             self.func = self.func_LM63_3site
         if model == MODEL_CR72_FULL:
@@ -221,6 +219,8 @@ class Dispersion:
             self.func = self.func_CR72
         if model == MODEL_IT99:
             self.func = self.func_IT99
+        if model == MODEL_TSMFK01:
+            self.func = self.func_TSMFK01
         if model == MODEL_NS_CPMG_2SITE_3D_FULL:
             self.func = self.func_ns_cpmg_2site_3D_full
         if model == MODEL_NS_CPMG_2SITE_3D:
