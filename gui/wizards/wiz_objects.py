@@ -33,6 +33,8 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, bitmap_setup
+from gui.string_conv import float_to_gui, str_to_gui
+from lib.check_types import is_float
 from lib.errors import RelaxImplementError
 from status import Status; status = Status()
 
@@ -941,3 +943,26 @@ class Wiz_window(wx.Dialog):
 
         # Store the function.
         self._seq_fn_list[index] = fn
+
+
+    def setup_page(self, page=None, **kargs):
+        """Allow a specified user function page to be remotely set up.
+
+        @keyword page:  The page to setup.  This is the page index key.
+        @type page:     str
+        """
+
+        # Get the page.
+        page = self.get_page(self.page_indices[page])
+
+        # Loop over the keyword arguments and set them.
+        for arg in kargs:
+            # The value.
+            value = kargs[arg]
+            if isinstance(value, str):
+                value = str_to_gui(value)
+            elif is_float(value):
+                value = float_to_gui(value)
+
+            # Set the argument.
+            page.uf_args[arg].SetValue(value)
