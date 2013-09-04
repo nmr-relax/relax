@@ -99,12 +99,12 @@ class Relax_disp(SystemTestCase):
         # Create the data pipe and load the base data.
         data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'
         self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
-        self.interpreter.results.read(data_path+sep+'ini_setup')
+        self.interpreter.results.read(data_path+sep+'ini_setup_trunc')
 
         # Create the R2eff data pipe and load the results.
         self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
         self.interpreter.pipe.switch(pipe_name='R2eff')
-        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe_trunc')
 
         # The model data pipe.
         self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
@@ -901,6 +901,44 @@ class Relax_disp(SystemTestCase):
         file.close()
         for i in range(len(lines)):
             self.assertEqual(spin2[i], lines[i])
+
+
+    def test_kteilum_fmpoulsen_makke_cpmg_data_to_cr72(self):
+        """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at http://dx.doi.org/10.1073/pnas.0509100103.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model='CR72')
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[56].spin[0]
+
+        # Set the initial parameter values.
+        res61L.r2 = [7, 9]
+        res61L.pA = 0.9
+        res61L.dw = 6.0
+        res61L.kex = 1500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:61)"))
+        print("%-20s %20.15g" % ("R2 (600 MHz)", res61L.r2[0]))
+        print("%-20s %20.15g" % ("pA", res61L.pA))
+        print("%-20s %20.15g" % ("dw", res61L.dw))
+        print("%-20s %20.15g" % ("kex", res61L.kex))
+        print("%-20s %20.15g\n" % ("chi2", res61L.chi2))
+
+        # Checks for residue :61.
+        self.assertAlmostEqual(res61L.r2[0], 7.0113578451986, 4)
+        self.assertAlmostEqual(res61L.pA, 0.989902944469035, 4)
+        self.assertAlmostEqual(res61L.dw, 5.57732219224166, 4)
+        self.assertAlmostEqual(res61L.kex/1000, 1765.83406854571/1000, 4)
+        self.assertAlmostEqual(res61L.chi2, 18.4500388644895, 4)
 
 
     def test_m61_data_to_m61(self):
