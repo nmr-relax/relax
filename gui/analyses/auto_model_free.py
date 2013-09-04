@@ -815,7 +815,7 @@ class Local_tm_list(Model_list):
     """The local model-free model list GUI element."""
 
     # Some class variables.
-    desc = u("Local \u03C4m models:")
+    desc = u("Local \u03C4\u2098 models:")
     models = [
         "tm0",
         "tm1",
@@ -829,20 +829,20 @@ class Local_tm_list(Model_list):
         "tm9"
     ]
     params = [
-        u("{local \u03C4m}"),
-        u("{local \u03C4m, S\u00B2}"),
-        u("{local \u03C4m, S\u00B2, \u03C4e}"),
-        u("{local \u03C4m, S\u00B2, Rex}"),
-        u("{local \u03C4m, S\u00B2, \u03C4e, Rex}"),
-        u("{local \u03C4m, S\u00B2, S\u00B2f, \u03C4s}"),
-        u("{local \u03C4m, S\u00B2, \u03C4f, S\u00B2f, \u03C4s}"),
-        u("{local \u03C4m, S\u00B2, S\u00B2f, \u03C4s, Rex}"),
-        u("{local \u03C4m, S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}"),
-        u("{local \u03C4m, Rex}")
+        u("{local \u03C4\u2098}"),
+        u("{local \u03C4\u2098, S\u00B2}"),
+        u("{local \u03C4\u2098, S\u00B2, \u03C4e}"),
+        u("{local \u03C4\u2098, S\u00B2, Rex}"),
+        u("{local \u03C4\u2098, S\u00B2, \u03C4e, Rex}"),
+        u("{local \u03C4\u2098, S\u00B2, S\u00B2f, \u03C4s}"),
+        u("{local \u03C4\u2098, S\u00B2, \u03C4f, S\u00B2f, \u03C4s}"),
+        u("{local \u03C4\u2098, S\u00B2, S\u00B2f, \u03C4s, Rex}"),
+        u("{local \u03C4\u2098, S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}"),
+        u("{local \u03C4\u2098, Rex}")
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
-    tooltip = u("The list model-free models with the local \u03C4m parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed.")
+    tooltip = u("The list model-free models with the local \u03C4\u2098 parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed.")
     tooltip_button = "Open the model list selector window."
 
 
@@ -973,8 +973,8 @@ class Protocol_mode_sel_window(wx.Dialog):
         sub_sizer.AddSpacer(10)
 
         # The local_tm button.
-        button = wx.Button(self, -1, u("Local \u03C4m"))
-        button.SetToolTipString(u("Optimise global model I, the local \u03C4m models.  Please click on the 'About' button for more information."))
+        button = wx.Button(self, -1, u("Local \u03C4\u2098"))
+        button.SetToolTipString(u("Optimise global model I, the local \u03C4\u2098 models.  Please click on the 'About' button for more information."))
         button.SetFont(font.normal)
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_local_tm, button)
