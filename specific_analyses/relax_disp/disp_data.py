@@ -505,7 +505,7 @@ def plot_disp_curves(dir=None, force=None):
                     data[-1][-1].append(spin.r2eff_err[key])
 
         # The axis labels.
-        if cdp.exp_type == 'CPMG':
+        if cdp.exp_type in CPMG_EXP:
             axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
         else:
             axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
