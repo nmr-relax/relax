@@ -35,4 +35,4 @@ class Auto_r2(Auto_rx):
     bitmap = [ANALYSIS_IMAGE_PATH+"r2_200x200.png",
               IMAGE_PATH+'r2.png']
     label = "R2"
-    gui_label = u"R\u2082"
+    gui_label = unicode("R\u2082")
