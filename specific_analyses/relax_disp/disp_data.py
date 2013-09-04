@@ -46,7 +46,8 @@ from lib.software.grace import write_xy_data, write_xy_header, script_grace2imag
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO
+from pipe_control.spectrum import check_spectrum_id
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_DESC_CPMG_FIXED, EXP_TYPE_DESC_CPMG_EXP, EXP_TYPE_DESC_R1RHO_FIXED, EXP_TYPE_DESC_R1RHO_EXP, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, path, sep
 
@@ -179,6 +180,55 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
 
     # Printout.
     print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
+
+
+def exp_type(spectrum_id=None, exp_type=None):
+    """Select the relaxation dispersion experiment type performed.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'cpmg fixed', 'cpmg exponential', 'r1rho fixed' or 'r1rho exponential'.
+    @type exp:              str
+    """
+
+    # Data checks.
+    pipes.test()
+    check_spectrum_id(spectrum_id)
+
+    # Check the experiment type.
+    if exp_type not in EXP_TYPE_LIST:
+        raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
+
+    # FIXME:  Temporary solution to keep the branch functional.
+    cdp.exp_type = {}
+
+    # Initialise the experiment type data structures if needed.
+    if not hasattr(cdp, 'exp_type'):
+        cdp.exp_type = {}
+    if not hasattr(cdp, 'exp_type_list'):
+        cdp.exp_type_list = []
+
+    # Store the value.
+    cdp.exp_type[spectrum_id] = exp_type
+
+    # Unique experiments.
+    if cdp.exp_type[spectrum_id] not in cdp.exp_type_list:
+        cdp.exp_type_list.append(cdp.exp_type[spectrum_id])
+
+    # Printout.
+    text = "Setting the '%s' spectrum to" % spectrum_id
+    if exp_type == EXP_TYPE_CPMG_FIXED:
+        text += EXP_TYPE_DESC_CPMG_FIXED + "."
+    elif exp_type == EXP_TYPE_CPMG_EXP:
+        text += EXP_TYPE_DESC_CPMG_EXP + "."
+    elif exp_type == EXP_TYPE_R1RHO_FIXED:
+        text += EXP_TYPE_DESC_R1RHO_FIXED + "."
+    elif exp_type == EXP_TYPE_R1RHO_EXP:
+        text += EXP_TYPE_DESC_R1RHO_EXP + "."
+    print(text)
+
+    # FIXME:  Temporary solution to keep the branch functional.
+    cdp.exp_type = exp_type
 
 
 def find_intensity_keys(frq=None, point=None, time=None):

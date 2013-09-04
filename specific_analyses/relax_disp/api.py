@@ -280,36 +280,6 @@ class Relax_disp(API_base, API_common):
         return ids
 
 
-    def _exp_type(self, exp_type='cpmg fixed'):
-        """Select the relaxation dispersion experiment type performed.
-
-        @keyword exp: The relaxation dispersion experiment type.  Can be one of 'cpmg fixed', 'cpmg exponential', 'r1rho fixed' or 'r1rho exponential'.
-        @type exp:    str
-        """
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Printouts.
-        if exp_type == 'cpmg fixed':
-            print("The fixed relaxation time period CPMG-type experiments.")
-        elif exp_type == 'cpmg exponential':
-            print("The CPMG-type experiments consisting of full exponential curves for each dispersion point.")
-        elif exp_type == 'r1rho fixed':
-            print("The fixed relaxation time period R1rho-type experiments.")
-        elif exp_type == 'r1rho exponential':
-            print("The R1rho-type experiments consisting of full exponential curves for each dispersion point.")
-        else:
-            raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
-
-        # Sanity check.
-        if exp_type not in EXP_TYPE_LIST_FIXED_TIME and exp_type not in EXP_TYPE_LIST_VAR_TIME:
-            raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment." % exp_type)
-
-        # Store the value.
-        cdp.exp_type = exp_type
-
-
     def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
         """The grid search setup function.
 

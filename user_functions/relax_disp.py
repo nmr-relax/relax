@@ -37,7 +37,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
+from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -224,8 +224,17 @@ uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 # The relax_disp.exp_type user function.
 uf = uf_info.add_uf('relax_disp.exp_type')
-uf.title = "Select the type of relaxation dispersion experiments to be analysed."
+uf.title = "Select the relaxation dispersion experiment type."
 uf.title_short = "Relaxation dispersion experiment type selection."
+uf.add_keyarg(
+    name = "spectrum_id",
+    py_type = "str",
+    desc_short = "spectrum ID string",
+    desc = "The spectrum ID string to associate the spin-lock field strength to.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
 uf.add_keyarg(
     name = "exp_type",
     default = "cpmg fixed",
@@ -236,8 +245,8 @@ uf.add_keyarg(
     wiz_combo_choices = [
         "CPMG, fixed time",
         "CPMG, full exponential",
-        "R1rho, fixed time",
-        "R1rho, full exponential"
+        u("R\u2081\u1D68, fixed time"),
+        u("R\u2081\u1D68, full exponential")
     ],
     wiz_combo_data = [
         "cpmg fixed",
@@ -249,6 +258,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("Peak intensities should already be loaded using the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID.  To allow for different data types to be analysed together, each spectrum ID must be associated an experiment type.")
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
 uf.desc[-1].add_item_list_element("'cpmg fixed'", "The fixed relaxation time period CPMG-type experiments,")
 uf.desc[-1].add_item_list_element("'cpmg exponential'", "The full exponential curve CPMG-type experiments,")
@@ -275,7 +285,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg fixed' for all selected spins, type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg fixed')")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg fixed')")
-uf.backend = relax_disp_obj._exp_type
+uf.backend = exp_type
 uf.menu_text = "&exp_type"
 uf.wizard_height_desc = 500
 uf.wizard_size = (1000, 700)
