@@ -349,8 +349,33 @@ if PY_VERSION == 2:
         else:
             os.devnull = None
 
+    # Unicode string handling.
+    from codecs import unicode_escape_decode
+    def u(text):
+        """Create a unicode string for Python 2.
+
+        @param text:    The text to convert.
+        @type text:     str
+        @return:        The text converted to unicode.
+        @rtype:         unicode
+        """
+
+        return unicode_escape_decode(text)[0]
+
 
 # Python 3 work-arounds.
 if PY_VERSION == 3:
     # The unicode conversion function - essential for the GUI in Python 2.
     builtins.unicode = builtins.str
+
+    # Unicode string handling.
+    def u(text):
+        """Create a unicode string for Python 3.
+
+        @param text:    The text to convert.
+        @type text:     str
+        @return:        The unmodified text, as all strings in Python 3 are unicode and the unicode type does not exist.
+        @rtype:         str
+        """
+
+        return text
