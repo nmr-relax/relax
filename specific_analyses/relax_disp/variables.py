@@ -23,17 +23,35 @@
 # Module docstring.
 """Variables for the relaxation dispersion specific analysis."""
 
+
+# Experiment types.
+EXP_TYPE_CPMG_FIXED = 'cpmg fixed'
+EXP_TYPE_CPMG_EXP = 'cpmg exponential'
+EXP_TYPE_R1RHO_FIXED = 'r1rho fixed'
+EXP_TYPE_R1RHO_EXP = 'r1rho exponential'
+
+
+# Experiment type descriptions.
+EXP_TYPE_DESC_CPMG_FIXED = "the fixed relaxation time period CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_EXP = "the CPMG-type experiment consisting of full exponential curves for each dispersion point"
+EXP_TYPE_DESC_R1RHO_FIXED = "the fixed relaxation time period R1rho-type experiment"
+EXP_TYPE_DESC_R1RHO_EXP = "the R1rho-type experiment consisting of full exponential curves for each dispersion point"
+
+
 # The experiment type lists.
-FIXED_TIME_EXP = ['cpmg fixed', 'r1rho fixed']
+EXP_TYPE_LIST = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP]
+"""The list of all dispersion experiment types."""
+
+EXP_TYPE_FIXED_TIME = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_R1RHO_FIXED]
 """The list of fixed relaxation time period experiments."""
 
-VAR_TIME_EXP = ['cpmg exponential', 'r1rho exponential']
+EXP_TYPE_VAR_TIME = [EXP_TYPE_CPMG_EXP, EXP_TYPE_R1RHO_EXP]
 """The list of variable relaxation time period experiments."""
 
-CPMG_EXP = ['cpmg fixed', 'cpmg exponential']
+EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP]
 """The list of CPMG-type experiments."""
 
-R1RHO_EXP = ['r1rho fixed', 'r1rho exponential']
+EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP]
 """The list of R1rho-type experiments."""
 
 
