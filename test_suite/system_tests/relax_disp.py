@@ -906,7 +906,7 @@ class Relax_disp(SystemTestCase):
     def test_kteilum_fmpoulsen_makke_cpmg_data_to_cr72(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
 
-        This uses the data from paper at http://dx.doi.org/10.1073/pnas.0509100103.  This is CPMG data with a fixed relaxation time period.
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.
         """
 
         # Base data setup.
