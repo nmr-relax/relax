@@ -42,10 +42,10 @@ EXP_TYPE_DESC_R1RHO_EXP = "the R1rho-type experiment consisting of full exponent
 EXP_TYPE_LIST = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP]
 """The list of all dispersion experiment types."""
 
-EXP_TYPE_FIXED_TIME = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_R1RHO_FIXED]
+EXP_TYPE_LIST_FIXED_TIME = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_R1RHO_FIXED]
 """The list of fixed relaxation time period experiments."""
 
-EXP_TYPE_VAR_TIME = [EXP_TYPE_CPMG_EXP, EXP_TYPE_R1RHO_EXP]
+EXP_TYPE_LIST_VAR_TIME = [EXP_TYPE_CPMG_EXP, EXP_TYPE_R1RHO_EXP]
 """The list of variable relaxation time period experiments."""
 
 EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP]
