@@ -31,12 +31,12 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxImplementError, RelaxNoSequenceError, RelaxNoSpectraError
+from lib.errors import RelaxError, RelaxImplementError, RelaxNoSpectraError
 from lib.io import write_data
 from lib.spectrum.peak_list import read_peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 
 
 def __errors_height_no_repl():
@@ -264,16 +264,10 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     @type spin_id:          str
     """
 
-    # Test if the current pipe exists
+    # Data checks.
     pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test the spectrum id string.
-    if spectrum_id not in cdp.spectrum_ids:
-        raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
+    check_mol_res_spin_data()
+    check_spectrum_id(spectrum_id)
 
     # The scaling by NC_proc.
     if hasattr(cdp, 'ncproc') and spectrum_id in cdp.ncproc:
@@ -295,6 +289,23 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
         spin.baseplane_rmsd[spectrum_id] = float(error) * scale
 
 
+def check_spectrum_id(id):
+    """Check that the give spectrum ID exists.
+
+    @param id:  The spectrum ID to check for.
+    @type id:   str
+    @raises:    RelaxNoSpectraError if the ID does not exist.
+    """
+
+    # Check that the spectrum ID structure exists.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxNoSpectraError(id)
+
+    # Test if the spectrum ID exists.
+    if id not in cdp.spectrum_ids:
+        raise RelaxNoSpectraError(id)
+
+
 def delete(spectrum_id=None):
     """Delete spectral data corresponding to the spectrum ID.
 
@@ -302,16 +313,10 @@ def delete(spectrum_id=None):
     @type spectrum_id:      str
     """
 
-    # Test if the current pipe exists.
+    # Data checks.
     pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Test if data exists.
-    if not hasattr(cdp, 'spectrum_ids') or spectrum_id not in cdp.spectrum_ids:
-        raise RelaxNoSpectraError(spectrum_id)
+    check_mol_res_spin_data()
+    check_spectrum_id(spectrum_id)
 
     # Remove the ID.
     cdp.spectrum_ids.pop(cdp.spectrum_ids.index(spectrum_id))
@@ -357,12 +362,9 @@ def error_analysis(subset=None):
     @type subset:       list of str
     """
 
-    # Test if the current pipe exists
+    # Tests.
     pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    check_mol_res_spin_data()
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
@@ -488,12 +490,9 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     @type verbose:          bool
     """
 
-    # Test if the current data pipe exists.
+    # Data checks.
     pipes.test()
-
-    # Test if sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
+    check_mol_res_spin_data()
 
     # Check the file name.
     if file == None:
@@ -612,8 +611,13 @@ def replicated(spectrum_ids=None):
     @type spectrum_ids:     list of str
     """
 
-    # Test if the current pipe exists
+    # Test if the current pipe exists.
     pipes.test()
+
+    # Test for None.
+    if spectrum_ids == None:
+        warn(RelaxWarning("The spectrum ID list cannot be None."))
+        return
 
     # Test if spectra have been loaded.
     if not hasattr(cdp, 'spectrum_ids'):
@@ -621,13 +625,7 @@ def replicated(spectrum_ids=None):
 
     # Test the spectrum id strings.
     for spectrum_id in spectrum_ids:
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' do not exist." % spectrum_id)
-
-    # Test for None.
-    if spectrum_ids == None:
-        warn(RelaxWarning("The spectrum ID list cannot be None."))
-        return
+        check_spectrum_id(spectrum_id)
 
     # Test for more than one element.
     if len(spectrum_ids) == 1:
@@ -726,19 +724,3 @@ def replicated_ids(spectrum_id):
 
     # Return the list.
     return repl
-
-
-def test_spectrum_id(id):
-    """Test that the give spectrum ID exists.
-
-    @param id:  The spectrum ID to check for.
-    @type id:   str
-    """
-
-    # Check that the spectrum ID structure exists.
-    if not hasattr(cdp, 'spectrum_ids'):
-        raise RelaxNoSpectraError(id)
-
-    # Test if the spectrum ID exists.
-    if spectrum_id not in cdp.spectrum_ids:
-        raise RelaxNoSpectraError(id)
