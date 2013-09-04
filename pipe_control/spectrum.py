@@ -726,3 +726,19 @@ def replicated_ids(spectrum_id):
 
     # Return the list.
     return repl
+
+
+def test_spectrum_id(id):
+    """Test that the give spectrum ID exists.
+
+    @param id:  The spectrum ID to check for.
+    @type id:   str
+    """
+
+    # Check that the spectrum ID structure exists.
+    if not hasattr(cdp, 'spectrum_ids'):
+        raise RelaxNoSpectraError(id)
+
+    # Test if the spectrum ID exists.
+    if spectrum_id not in cdp.spectrum_ids:
+        raise RelaxNoSpectraError(id)
