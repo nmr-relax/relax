@@ -63,10 +63,6 @@ class Analysis_wizard:
         self.wizard.add_page(self.new_page, apply_button=False)
         self.wizard.set_seq_next_fn(0, self.wizard_page_after_analysis)
 
-        # The relax_disp.exp_type page.
-        self.relax_disp_page = uf_store['relax_disp.exp_type'].create_page(self.wizard, sync=True, execute=False)
-        self.wizard.add_page(self.relax_disp_page, apply_button=False)
-
         # Add the data pipe name panel.
         self.pipe_page = Data_pipe_page(self.wizard, height_desc=400)
         self.wizard.add_page(self.pipe_page, apply_button=False)
@@ -99,8 +95,6 @@ class Analysis_wizard:
 
         # The user function on_execute methods.
         uf_exec = []
-        if analysis_name == 'Relaxation dispersion':
-            uf_exec.append(self.relax_disp_page.on_execute)
 
         # Return it.
         return analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec
@@ -116,13 +110,8 @@ class Analysis_wizard:
         # The selected analysis.
         analysis_name = gui_to_str(self.new_page.analysis_name.GetValue())
 
-        # Go to the relax_disp.exp_type page.
-        if analysis_name == 'Relaxation dispersion':
-            return 1
-
-        # Otherwise go to the pipe setup.
-        else:
-            return 2
+        # Default to the second page.
+        return 1
 
 
 
