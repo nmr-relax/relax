@@ -32,6 +32,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
+from compat import u
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
@@ -474,24 +475,24 @@ uf.add_keyarg(
     desc = "The type of relaxation dispersion model to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        u"%s: {R\u2082eff/R\u2081\u1D68, I\u2080}" % MODEL_R2EFF,
-        u"%s: {R\u2082, ...}" % MODEL_NOREX,
-        u"%s: {R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_LM63,
-        u"%s: {R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}" % MODEL_LM63_3SITE,
-        u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_CR72,
-        u"%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_CR72_FULL,
-        u"%s: {R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}" % MODEL_IT99,
-        u"%s: {R\u2082A, ..., d\u03C9, kA}" % MODEL_TSMFK01,
-        u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_3D,
-        u"%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_3D_FULL,
-        u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_STAR,
-        u"%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_STAR_FULL,
-        u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_CPMG_2SITE_EXPANDED,
-        u"%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_M61,
-        u"%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_M61B,
-        u"%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}" % MODEL_DPL94,
-        u"%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_TP02,
-        u"%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}" % MODEL_NS_R1RHO_2SITE
+        u("%s: {R\u2082eff/R\u2081\u1D68, I\u2080}") % MODEL_R2EFF,
+        u("%s: {R\u2082, ...}") % MODEL_NOREX,
+        u("%s: {R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_LM63,
+        u("%s: {R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}") % MODEL_LM63_3SITE,
+        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72,
+        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72_FULL,
+        u("%s: {R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}") % MODEL_IT99,
+        u("%s: {R\u2082A, ..., d\u03C9, kA}") % MODEL_TSMFK01,
+        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D,
+        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D_FULL,
+        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_STAR,
+        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_STAR_FULL,
+        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_EXPANDED,
+        u("%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_M61,
+        u("%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_M61B,
+        u("%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_DPL94,
+        u("%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_TP02,
+        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_R1RHO_2SITE
     ],
     wiz_combo_data = [
         MODEL_R2EFF,

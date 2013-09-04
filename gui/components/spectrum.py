@@ -28,6 +28,7 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+from compat import u
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
@@ -274,7 +275,7 @@ class Spectra_list(Base_list):
             return False
 
         # Append a column.
-        self.element.InsertColumn(index, u"\u03BDCPMG (Hz)")
+        self.element.InsertColumn(index, u("\u03BDCPMG (Hz)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -303,7 +304,7 @@ class Spectra_list(Base_list):
             return False
 
         # Append a column.
-        self.element.InsertColumn(index, u"\u03C9H (MHz)")
+        self.element.InsertColumn(index, u("\u03C9H (MHz)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -332,7 +333,7 @@ class Spectra_list(Base_list):
             return False
 
         # Append a column.
-        self.element.InsertColumn(index, u"Spin-lock \u03BD1 (Hz)")
+        self.element.InsertColumn(index, u("Spin-lock \u03BD1 (Hz)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -525,14 +526,14 @@ class Spectra_list(Base_list):
         if self.spin_lock_flag:
             self.popup_menus.append({
                 'id': wx.NewId(),
-                'text': u"Set the spin-&lock field strength \u03BD1",
+                'text': u("Set the spin-&lock field strength \u03BD1"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_spin_lock_field
             })
         if self.cpmg_frq_flag:
             self.popup_menus.append({
                 'id': wx.NewId(),
-                'text': u"Set the &CPMG pulse frequency \u03BDCPMG",
+                'text': u("Set the &CPMG pulse frequency \u03BDCPMG"),
                 'icon': fetch_icon("relax.relax_disp"),
                 'method': self.action_relax_disp_cpmg_frq
             })

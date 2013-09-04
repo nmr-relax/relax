@@ -27,6 +27,7 @@ import wx
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
+from compat import u
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
@@ -213,11 +214,11 @@ class Auto_relax_disp(Base_analysis):
         sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
 
         # R1 button.
-        self.button_r1 = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, u" R\u2081 relaxation data")
+        self.button_r1 = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, u(" R\u2081 relaxation data"))
         self.button_r1.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.fid", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_r1.SetFont(font.normal)
         self.button_r1.SetSize((-1, 25))
-        self.button_r1.SetToolTipString(u"Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.  One R\u2081 data set per magnetic field strength must be loaded.")
+        self.button_r1.SetToolTipString(u("Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.  One R\u2081 data set per magnetic field strength must be loaded."))
         self.gui.Bind(wx.EVT_BUTTON, self.load_r1_data, self.button_r1)
         sizer.Add(self.button_r1, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -226,7 +227,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_chemical_shift.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.chemical_shift", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_chemical_shift.SetFont(font.normal)
         self.button_chemical_shift.SetSize((-1, 25))
-        self.button_chemical_shift.SetToolTipString(u"Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.")
+        self.button_chemical_shift.SetToolTipString(u("Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused."))
         self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
         sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -308,8 +309,8 @@ class Auto_relax_disp(Base_analysis):
         table = {
             "cpmg fixed": "CPMG-type experiment - fixed relaxation time period",
             "cpmg exponential": "CPMG-type experiment - Full exponential curve",
-            "r1rho fixed": u"R\u2081\u1D68-type experiment - fixed relaxation time period",
-            "r1rho exponential": u"R\u2081\u1D68-type experiment - full exponential curve"
+            "r1rho fixed": u("R\u2081\u1D68-type experiment - fixed relaxation time period"),
+            "r1rho exponential": u("R\u2081\u1D68-type experiment - full exponential curve")
         }
         Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  The %s experiment type was selected in the new analysis wizard and can no longer be changed."%table[cdp.exp_type], editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -670,18 +671,18 @@ class Disp_model_list_cpmg(Model_list):
         MODEL_NS_CPMG_2SITE_EXPANDED
     ]
     params = [
-        u"{R\u2082eff, I\u2080}",
-        u"{R\u2082, ...}",
-        u"{R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}",
-        u"{R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}",
-        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}",
-        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"
+        u("{R\u2082eff, I\u2080}"),
+        u("{R\u2082, ...}"),
+        u("{R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
+        u("{R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}"),
+        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}"),
+        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}")
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
@@ -703,13 +704,13 @@ class Disp_model_list_r1rho(Model_list):
         MODEL_NS_R1RHO_2SITE
     ]
     params = [
-        u"{R\u2081\u1D68, I\u2080}",
-        u"{R\u2081\u1D68', ...}",
-        u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
-        u"{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}",
-        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}",
-        u"{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"
+        u("{R\u2081\u1D68, I\u2080}"),
+        u("{R\u2081\u1D68', ...}"),
+        u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
+        u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
+        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"),
+        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}")
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
