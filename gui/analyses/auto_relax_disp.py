@@ -104,10 +104,6 @@ class Auto_relax_disp(Base_analysis):
             if not has_bundle(pipe_bundle):
                 self.gui.interpreter.apply('pipe.bundle', bundle=pipe_bundle, pipe=pipe_name)
 
-            # Set up the experiment.
-            if not hasattr(cdp, 'exp_type'):
-                uf_exec[0](force_exec=True)
-
             # Generate a storage container in the relax data store, and alias it for easy access.
             data_index = ds.relax_gui.analyses.add(self.label)
 
@@ -124,24 +120,18 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
             # Set the default dispersion models based on the experiment type.
-            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-                ds.relax_gui.analyses[data_index].disp_models = [
-                    MODEL_R2EFF,
-                    MODEL_NOREX,
-                    MODEL_LM63,
-                    MODEL_CR72,
-                    MODEL_IT99,
-                    MODEL_NS_CPMG_2SITE_EXPANDED
-                ]
-            else:
-                ds.relax_gui.analyses[data_index].disp_models = [
-                    MODEL_R2EFF,
-                    MODEL_NOREX,
-                    MODEL_M61,
-                    MODEL_DPL94,
-                    MODEL_TP02,
-                    MODEL_NS_R1RHO_2SITE
-                ]
+            ds.relax_gui.analyses[data_index].disp_models = [
+                MODEL_R2EFF,
+                MODEL_NOREX,
+                MODEL_LM63,
+                MODEL_CR72,
+                MODEL_IT99,
+                MODEL_NS_CPMG_2SITE_EXPANDED,
+                MODEL_M61,
+                MODEL_DPL94,
+                MODEL_TP02,
+                MODEL_NS_R1RHO_2SITE
+            ]
 
         # Error checking.
         if ds.relax_gui.analyses[data_index].pipe_bundle == None:
@@ -153,14 +143,6 @@ class Auto_relax_disp(Base_analysis):
 
         # Register the method for updating the spin count for the completion of user functions.
         self.observer_register()
-
-        # Set up some flags based on the experiment type.
-        self.relax_times_flag = False
-        if cdp.exp_type in EXP_TYPE_LIST_VAR_TIME:
-            self.relax_times_flag = True
-        self.relax_disp_cpmg = False
-        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-            self.relax_disp_cpmg = True
 
         # Execute the base class method to build the panel.
         super(Auto_relax_disp, self).__init__(parent, id=id, pos=pos, size=size, style=style, name=name)
@@ -305,15 +287,6 @@ class Auto_relax_disp(Base_analysis):
         # Add the frame title.
         self.add_title(box, "Relaxation dispersion analysis")
 
-        # Display the experiment type.
-        table = {
-            "cpmg fixed": "CPMG-type experiment - fixed relaxation time period",
-            "cpmg exponential": "CPMG-type experiment - Full exponential curve",
-            "r1rho fixed": u("R\u2081\u1D68-type experiment - fixed relaxation time period"),
-            "r1rho exponential": u("R\u2081\u1D68-type experiment - full exponential curve")
-        }
-        Text_ctrl(box, self, text="Experiment type:", default=table[cdp.exp_type], tooltip="The relaxation dispersion experiment type.  The %s experiment type was selected in the new analysis wizard and can no longer be changed."%table[cdp.exp_type], editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
-
         # Display the data pipe.
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -336,14 +309,11 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_times=self.relax_times_flag, frq_flag=True, spin_lock_flag=(not self.relax_disp_cpmg), cpmg_frq_flag=self.relax_disp_cpmg)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, frq_flag=True)
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
-        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-            self.model_field = Disp_model_list_cpmg(self, box)
-        else:
-            self.model_field = Disp_model_list_r1rho(self, box)
+        self.model_field = Disp_model_list(self, box)
         self.model_field.set_value(self.data.disp_models)
 
         # The optimisation settings.
@@ -469,7 +439,7 @@ class Auto_relax_disp(Base_analysis):
         """
 
         # A new wizard instance.
-        self.peak_wizard = Peak_intensity_wizard(relax_disp=True, relax_disp_cpmg=self.relax_disp_cpmg, relax_disp_times=self.relax_times_flag)
+        self.peak_wizard = Peak_intensity_wizard(relax_disp=True)
 
 
     def pre_run_directory(self, event):
@@ -505,21 +475,6 @@ class Auto_relax_disp(Base_analysis):
 
         # Call the user function.
         uf_store['relax_disp.cluster'](wx_wizard_modal=True)
-
-
-    def relax_disp_exp_type(self, event):
-        """Set the experiment type via the relax_disp.exp_type user function.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # Call the user function.
-        uf_store['relax_disp.exp_type'](wx_wizard_modal=True)
-
-        # Place the experiment type in the text box.
-        if hasattr(cdp, 'exp_type'):
-            self.field_exp_type.SetValue(str_to_gui(cdp.exp_type))
 
 
     def results_directory(self, event):
@@ -651,14 +606,16 @@ class Execute_relax_disp(Execute):
 
 
 
-class Disp_model_list_cpmg(Model_list):
+class Disp_model_list(Model_list):
     """The diffusion model list GUI element."""
 
     # Class variables.
     desc = "Relaxation dispersion models:"
     models = [
         MODEL_R2EFF,
+        None,
         MODEL_NOREX,
+        None,
         MODEL_LM63,
         MODEL_LM63_3SITE,
         MODEL_CR72,
@@ -668,11 +625,19 @@ class Disp_model_list_cpmg(Model_list):
         MODEL_NS_CPMG_2SITE_3D_FULL,
         MODEL_NS_CPMG_2SITE_STAR,
         MODEL_NS_CPMG_2SITE_STAR_FULL,
-        MODEL_NS_CPMG_2SITE_EXPANDED
+        MODEL_NS_CPMG_2SITE_EXPANDED,
+        None,
+        MODEL_M61,
+        MODEL_DPL94,
+        MODEL_M61B,
+        MODEL_TP02,
+        MODEL_NS_R1RHO_2SITE
     ]
     params = [
         u("{R\u2082eff, I\u2080}"),
+        "",
         u("{R\u2082, ...}"),
+        "",
         u("{R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
         u("{R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}"),
         u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
@@ -682,30 +647,8 @@ class Disp_model_list_cpmg(Model_list):
         u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
         u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
         u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}")
-    ]
-    tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
-    tooltip_button = "Open the model list selector window."
-
-
-
-class Disp_model_list_r1rho(Model_list):
-    """The diffusion model list GUI element."""
-
-    # Class variables.
-    desc = "Relaxation dispersion models:"
-    models = [
-        MODEL_R2EFF,
-        MODEL_NOREX,
-        MODEL_M61,
-        MODEL_DPL94,
-        MODEL_M61B,
-        MODEL_TP02,
-        MODEL_NS_R1RHO_2SITE
-    ]
-    params = [
-        u("{R\u2081\u1D68, I\u2080}"),
-        u("{R\u2081\u1D68', ...}"),
+        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
+        "",
         u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
         u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
         u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"),
