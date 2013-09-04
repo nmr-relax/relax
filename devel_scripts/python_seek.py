@@ -97,7 +97,7 @@ class Python_info:
             file = line[:-1]
 
             # Recursively follow and expand links.
-            while 1:
+            while True:
                 if islink(file):
                     orig = readlink(file)
                     if not isabs(orig):

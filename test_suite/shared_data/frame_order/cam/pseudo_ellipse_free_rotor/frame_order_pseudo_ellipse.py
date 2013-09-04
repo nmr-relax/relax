@@ -74,7 +74,7 @@ class Analysis:
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
         for i in range(len(full)):
             # Initialise the reduced tensor.
-            align_tensor.init(tensor=red[i], params=(0,0,0,0,0))
+            align_tensor.init(tensor=red[i], params=(0, 0, 0, 0, 0))
 
             # Set the domain info.
             align_tensor.set_domain(tensor=full[i], domain='N')
