@@ -45,9 +45,6 @@ spin.create(res_name='Trp', res_num=2, spin_name='N')
 # Set the isotope information.
 spin.isotope(isotope='15N')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('r1rho fixed')
-
 # Loop over the frequencies.
 frq = [500, 800]
 frq_label = ['500MHz', '800MHz']
@@ -67,6 +64,9 @@ for frq_index in range(len(frq)):
     spectrum.read_intensities(file="ref_%s.list" % frq_label[frq_index], dir=data_path, spectrum_id='ref_%s' % frq_label[frq_index], int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id='ref_%s' % frq_label[frq_index], error=error)
 
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id='ref_%s' % frq_label[frq_index], exp_type='r1rho fixed')
+
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref_%s' % frq_label[frq_index], field=None)
     relax_disp.spin_lock_offset(spectrum_id='ref_%s' % frq_label[frq_index], offset=110.0)
@@ -80,6 +80,9 @@ for frq_index in range(len(frq)):
         # Load the peak intensities and set the errors.
         spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
         spectrum.baseplane_rmsd(spectrum_id=id, error=error)
+
+        # Set the relaxation dispersion experiment type.
+        relax_disp.exp_type(spectrum_id=id, exp_type='r1rho fixed')
 
         # Set the relaxation dispersion spin-lock field strength (nu1).
         relax_disp.spin_lock_field(spectrum_id=id, field=field)

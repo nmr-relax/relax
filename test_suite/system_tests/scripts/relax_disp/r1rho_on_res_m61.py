@@ -49,12 +49,6 @@ spin.create(res_name='Trp', res_num=2, spin_name='N')
 # Set the isotope information.
 spin.isotope(isotope='15N')
 
-# Set the relaxation dispersion experiment type.
-if ds.fixed:
-    relax_disp.exp_type('r1rho fixed')
-else:
-    relax_disp.exp_type('r1rho exponential')
-
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = []
 times = [0.00, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]
@@ -73,6 +67,9 @@ if ds.fixed:
     spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id='ref', exp_type='r1rho fixed')
+
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref', field=None)
 
@@ -84,6 +81,12 @@ for i in range(len(data)):
     # Load the peak intensities and set the errors.
     spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', dim=1)
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
+
+    # Set the relaxation dispersion experiment type.
+    if ds.fixed:
+        relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho fixed')
+    else:
+        relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho exponential')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
