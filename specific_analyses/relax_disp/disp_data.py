@@ -325,6 +325,80 @@ def loop_cluster():
             yield [spin_id]
 
 
+def loop_exp():
+    """Generator method for looping over all experiment types.
+
+    @return:    The experiment type.
+    @rtype:     str
+    """
+
+    # Yield each unique experiment type.
+    for exp_type in cdp.exp_type_list:
+        yield exp_type
+
+
+def loop_exp_frq():
+    """Generator method for looping over the exp and frq data.
+    
+    These are the experiment types and spectrometer frequencies.
+
+
+    @return:    The experiment type and spectrometer frequency in Hz.
+    @rtype:     str, float
+    """
+
+    # First loop over the experiment types.
+    for exp_type in loop_exp():
+        # Then loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # And finally the dispersion points.
+            for point in loop_point():
+                # Yield the data.
+                yield exp_type, frq, point
+
+
+def loop_exp_frq_point():
+    """Generator method for looping over the exp, frq, and point data.
+    
+    These are the experiment types, spectrometer frequencies and dispersion points.
+
+
+    @return:    The experiment type, spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @rtype:     str, float, float
+    """
+
+    # First loop over the experiment types.
+    for exp_type in loop_exp():
+        # Then loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # And finally the dispersion points.
+            for point in loop_point():
+                # Yield the data.
+                yield exp_type, frq, point
+
+
+def loop_exp_frq_point_time():
+    """Generator method for looping over the exp, frq, point, and time data.
+    
+    These are the experiment types, spectrometer frequencies, dispersion points, and relaxation times.
+
+
+    @return:    The experiment type, spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation time.
+    @rtype:     str, float, float, float
+    """
+
+    # First loop over the experiment types.
+    for exp_type in loop_exp():
+        # Then the spectrometer frequencies.
+        for frq in loop_frq():
+            # Then the dispersion points.
+            for point in loop_point():
+                # Finally the relaxation times.
+                for time in loop_time():
+                    # Yield all data.
+                    yield exp_type, frq, point, time
+
+
 def loop_frq():
     """Generator method for looping over all spectrometer frequencies.
 
