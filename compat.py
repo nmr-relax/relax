@@ -365,6 +365,9 @@ if PY_VERSION == 2:
 
 # Python 3 work-arounds.
 if PY_VERSION == 3:
+    # The unicode conversion function - essential for the GUI in Python 2.
+    builtins.unicode = builtins.str
+
     # Unicode string handling.
     def u(text):
         """Create a unicode string for Python 3.
