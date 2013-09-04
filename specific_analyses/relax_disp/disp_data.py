@@ -46,7 +46,7 @@ from lib.software.grace import write_xy_data, write_xy_header, script_grace2imag
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, R1RHO_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, path, sep
 
@@ -195,7 +195,7 @@ def find_intensity_keys(frq=None, point=None, time=None):
     """
 
     # The dispersion data.
-    if cdp.exp_type in CPMG_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
         disp_data = cdp.cpmg_frqs
     else:
         disp_data = cdp.spin_lock_nu1
@@ -349,9 +349,9 @@ def loop_point(skip_ref=True):
     """
 
     # CPMG type data.
-    if cdp.exp_type in CPMG_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
         fields = cdp.cpmg_frqs_list
-    elif cdp.exp_type in R1RHO_EXP:
+    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
         fields = cdp.spin_lock_nu1_list
     else:
         raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
@@ -421,7 +421,7 @@ def plot_disp_curves(dir=None, force=None):
             data.append([])
 
             # Add a new label.
-            if cdp.exp_type in CPMG_EXP:
+            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
                 label = "R\\s2eff\\N"
             else:
                 label = "R\\s1\\xr\\B\\N"
@@ -452,7 +452,7 @@ def plot_disp_curves(dir=None, force=None):
             data.append([])
 
             # Add a new label.
-            if cdp.exp_type in CPMG_EXP:
+            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
                 label = "Back-calculated R\\s2eff\\N"
             else:
                 label = "Back-calculated R\\s1\\xr\\B\\N"
@@ -505,7 +505,7 @@ def plot_disp_curves(dir=None, force=None):
                     data[-1][-1].append(spin.r2eff_err[key])
 
         # The axis labels.
-        if cdp.exp_type in CPMG_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
             axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
         else:
             axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
@@ -728,15 +728,15 @@ def return_index_from_disp_point(value):
     index = 0
 
     # CPMG-type experiments.
-    if cdp.exp_type in CPMG_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
         index = cdp.cpmg_frqs_list.index(value)
 
     # R1rho-type experiments.
-    elif cdp.exp_type in R1RHO_EXP:
+    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
         index = cdp.spin_lock_nu1_list.index(value)
 
     # Remove the reference point (always at index 0).
-    if cdp.exp_type in FIXED_TIME_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
         index -= 1
 
     # Return the index.
@@ -770,11 +770,11 @@ def return_index_from_disp_point_key(key):
     """
 
     # CPMG-type experiments.
-    if cdp.exp_type in CPMG_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
         return return_index_from_disp_point(cdp.cpmg_frqs[key])
 
     # R1rho-type experiments.
-    elif cdp.exp_type in R1RHO_EXP:
+    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
         return return_index_from_disp_point(cdp.spin_lock_nu1[key])
 
 
@@ -797,7 +797,7 @@ def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
     """
 
     # Checks.
-    if ref and cdp.exp_type not in FIXED_TIME_EXP:
+    if ref and cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
         raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
 
     # The key.
@@ -822,14 +822,14 @@ def return_key_from_disp_point_index(frq_index=None, disp_point_index=None):
     """
 
     # Insert the reference point (always at index 0).
-    if cdp.exp_type in FIXED_TIME_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
         disp_point_index += 1
 
     # The frequency.
     frq = return_value_from_frq_index(frq_index)
 
     # CPMG data.
-    if cdp.exp_type in CPMG_EXP:
+    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
         point = cdp.cpmg_frqs_list[disp_point_index]
         points = cdp.cpmg_frqs
 

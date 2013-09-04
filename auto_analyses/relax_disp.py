@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import loop_frq
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, R1RHO_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 
 
@@ -312,7 +312,7 @@ class Relax_disp:
                 self.interpreter.value.copy(pipe_from=MODEL_R2EFF, pipe_to=model, param='r2eff')
 
             # Calculate the R2eff values for the fixed relaxation time period data types.
-            if model == MODEL_R2EFF and cdp.exp_type in FIXED_TIME_EXP:
+            if model == MODEL_R2EFF and cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
                 self.interpreter.calc()
 
             # Optimise the model.
@@ -354,7 +354,7 @@ class Relax_disp:
         """
 
         # Exponential curves.
-        if model == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
+        if model == 'R2eff' and cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
             self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=path, force=True)    # Average peak intensities.
             self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=path, force=True, norm=True)    # Average peak intensities (normalised).
 
@@ -367,24 +367,24 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', file='r2eff.agr', dir=path, force=True)
 
         # The I0 parameter.
-        if model == 'R2eff' and cdp.exp_type not in FIXED_TIME_EXP:
+        if model == 'R2eff' and cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
             self.interpreter.value.write(param='i0', file='i0.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         ## The R20 parameter.
-        #if cdp.exp_type in CPMG_EXP and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED]:
+        #if cdp.exp_type in EXP_TYPE_LIST_CPMG and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED]:
         #    self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
 
         ## The R20A and R20B parameters.
-        #if cdp.exp_type in CPMG_EXP and model in [None, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        #if cdp.exp_type in EXP_TYPE_LIST_CPMG and model in [None, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
         #    self.interpreter.value.write(param='r2a', file='r20a.out', dir=path, force=True)
         #    self.interpreter.value.write(param='r2b', file='r20b.out', dir=path, force=True)
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
 
         ## The R1rho parameter.
-        #if cdp.exp_type in R1RHO_EXP and model in [None] + MODEL_LIST_R1RHO:
+        #if cdp.exp_type in EXP_TYPE_LIST_R1RHO and model in [None] + MODEL_LIST_R1RHO:
         #    self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
@@ -432,7 +432,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', file='kC.agr', dir=path, force=True)
 
         # Minimisation statistics.
-        if not (model == 'R2eff' and cdp.exp_type in FIXED_TIME_EXP):
+        if not (model == 'R2eff' and cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME):
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
 
         # Finally save the results.  This is last to allow the continuation of an interrupted analysis while ensuring that all results files have been created.

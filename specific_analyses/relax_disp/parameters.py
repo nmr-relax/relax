@@ -36,7 +36,7 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from specific_analyses.relax_disp.disp_data import count_frq, loop_cluster, loop_frq, loop_frq_point
-from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_M61B, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_VAR_TIME, MODEL_R2EFF, MODEL_M61B
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -743,7 +743,7 @@ def param_num(spins=None):
     # The R2eff model.
     if cdp.model_type == 'R2eff':
         # Exponential curves (with clustering).
-        if cdp.exp_type in VAR_TIME_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_VAR_TIME:
             return 2 * len(spins)
 
         # Fixed time period experiments (with clustering).

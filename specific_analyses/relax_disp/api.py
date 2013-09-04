@@ -48,7 +48,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import CPMG_EXP, FIXED_TIME_EXP, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01, R1RHO_EXP, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_VAR_TIME, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -176,7 +176,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Check.
-        if cdp.exp_type in FIXED_TIME_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
             raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
@@ -303,7 +303,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
         # Sanity check.
-        if exp_type not in FIXED_TIME_EXP and exp_type not in VAR_TIME_EXP:
+        if exp_type not in EXP_TYPE_LIST_FIXED_TIME and exp_type not in EXP_TYPE_LIST_VAR_TIME:
             raise RelaxError("The experiment type '%s' is neither a fixed relaxation time period or variable relaxation time period experiment." % exp_type)
 
         # Store the value.
@@ -644,7 +644,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("The relaxation dispersion experiment type has not been set.")
 
         # Test for the C-modules.
-        if model == MODEL_R2EFF and cdp.exp_type in VAR_TIME_EXP and not C_module_exp_fn:
+        if model == MODEL_R2EFF and cdp.exp_type in EXP_TYPE_LIST_VAR_TIME and not C_module_exp_fn:
             raise RelaxError("The exponential curve-fitting C module cannot be found.")
 
         # R2eff/R1rho model.
@@ -877,7 +877,7 @@ class Relax_disp(API_base, API_common):
                 raise RelaxError("The spin-lock field strengths have not been set up.")
 
         # Only allow the fixed relaxation time period data types.
-        if cdp.exp_type not in FIXED_TIME_EXP:
+        if cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
 
         # Printouts.
@@ -1135,7 +1135,7 @@ class Relax_disp(API_base, API_common):
         # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model_type == 'R2eff':
             # Sanity checks.
-            if cdp.exp_type in FIXED_TIME_EXP:
+            if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
                 raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")
 
             # Optimisation.

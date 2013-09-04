@@ -47,7 +47,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from specific_analyses.relax_disp.variables import CPMG_EXP, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, VAR_TIME_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_VAR_TIME, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 
 
@@ -124,7 +124,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].save_dir = self.gui.launch_dir
 
             # Set the default dispersion models based on the experiment type.
-            if cdp.exp_type in CPMG_EXP:
+            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
                 ds.relax_gui.analyses[data_index].disp_models = [
                     MODEL_R2EFF,
                     MODEL_NOREX,
@@ -156,10 +156,10 @@ class Auto_relax_disp(Base_analysis):
 
         # Set up some flags based on the experiment type.
         self.relax_times_flag = False
-        if cdp.exp_type in VAR_TIME_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_VAR_TIME:
             self.relax_times_flag = True
         self.relax_disp_cpmg = False
-        if cdp.exp_type in CPMG_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
             self.relax_disp_cpmg = True
 
         # Execute the base class method to build the panel.
@@ -340,7 +340,7 @@ class Auto_relax_disp(Base_analysis):
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
-        if cdp.exp_type in CPMG_EXP:
+        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
             self.model_field = Disp_model_list_cpmg(self, box)
         else:
             self.model_field = Disp_model_list_r1rho(self, box)
