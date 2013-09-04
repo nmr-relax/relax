@@ -5,13 +5,13 @@ from auto_analyses.relax_disp import Relax_disp
 
 # Load the initial state setup
 state.load(state='ini_setup_trunc.bz2')
- 
+
 # Set settings for run.
 results_directory = 'temp'
 pipe_name = 'base pipe'; pipe_bundle = 'relax_disp'
 MODELS = ['R2eff']
 GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
- 
+
 # Execute
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=results_directory, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
