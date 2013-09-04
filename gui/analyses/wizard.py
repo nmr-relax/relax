@@ -29,6 +29,7 @@ import wx
 from wx.lib import buttons
 
 # relax module imports.
+from compat import u
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, WIZARD_IMAGE_PATH
 from gui.input_elements.value import Value
 from gui.misc import bitmap_setup
@@ -103,7 +104,7 @@ class Data_pipe_page(Wiz_page):
 
     # Class variables.
     image_path = WIZARD_IMAGE_PATH + 'pipe.png'
-    main_text = unicode("Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store and each analysis tab is coupled to a specific bundle.\n\nSimple analyses such as the steady-state NOE and the R\u2081 and R\u2082 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single bundle.\n\nThe initialisation of a new analysis will call the pipe.create user function with the pipe name and pipe bundle as given below.")
+    main_text = u("Select the name of the data pipe used at the start of the analysis and the name of the data pipe bundle to be associated with this analysis.  All data in relax is kept within a special structure known as the relax data store.  This store is composed of multiple data pipes, each being associated with a specific analysis type.  Data pipe bundles are simple groupings of the pipes within the data store and each analysis tab is coupled to a specific bundle.\n\nSimple analyses such as the steady-state NOE and the R\u2081 and R\u2082 curve-fitting will be located within a single data pipe.  More complex analyses such as the automated model-free analysis will be spread across multiple data pipes, internally created by forking the original data pipe which holds the input data, all grouped together within a single bundle.\n\nThe initialisation of a new analysis will call the pipe.create user function with the pipe name and pipe bundle as given below.")
     title = 'Data pipe set up'
 
     def add_contents(self, sizer):
@@ -176,7 +177,7 @@ class New_analysis_page(Wiz_page):
 
     # Class variables.
     image_path = IMAGE_PATH + "relax.gif"
-    main_text = unicode("A number of automatic analyses to be preformed using relax in GUI mode.  Although not as flexible or powerful as the prompt/scripting modes, this provides a quick and easy setup and execution for a number of analysis types.   These currently include the calculation of the steady-state NOE, the exponential curve-fitting for the R\u2081 and R\u2082 relaxation rates, and for a full and automatic model-free analysis using the d'Auvergne and Gooley, 2008b protocol.  All analyses perform error propagation using the gold standard Monte Calro simulations.  Please select from one of the following analysis types:")
+    main_text = u("A number of automatic analyses to be preformed using relax in GUI mode.  Although not as flexible or powerful as the prompt/scripting modes, this provides a quick and easy setup and execution for a number of analysis types.   These currently include the calculation of the steady-state NOE, the exponential curve-fitting for the R\u2081 and R\u2082 relaxation rates, and for a full and automatic model-free analysis using the d'Auvergne and Gooley, 2008b protocol.  All analyses perform error propagation using the gold standard Monte Calro simulations.  Please select from one of the following analysis types:")
     title = "Start a new analysis"
 
     def add_artwork(self, sizer):
@@ -232,10 +233,10 @@ class New_analysis_page(Wiz_page):
         self.button_noe = self.create_button(id=self.button_ids['noe'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"noe_150x150.png", tooltip="Steady-state NOE analysis", fn=self.select_noe)
 
         # The R1 button.
-        self.button_r1 = self.create_button(id=self.button_ids['r1'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r1_150x150.png", tooltip=unicode("R\u2081 relaxation curve-fitting analysis"), fn=self.select_r1)
+        self.button_r1 = self.create_button(id=self.button_ids['r1'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r1_150x150.png", tooltip=u("R\u2081 relaxation curve-fitting analysis"), fn=self.select_r1)
 
         # The R2 button.
-        self.button_r2 = self.create_button(id=self.button_ids['r2'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip=unicode("R\u2082 relaxation curve-fitting analysis"), fn=self.select_r2)
+        self.button_r2 = self.create_button(id=self.button_ids['r2'], box=sizer1, size=size, bmp=ANALYSIS_IMAGE_PATH+"r2_150x150.png", tooltip=u("R\u2082 relaxation curve-fitting analysis"), fn=self.select_r2)
 
         # Consistency testing.
         self.button_consist_test = self.create_button(id=self.button_ids['consist_test'], box=sizer2, size=size, bmp=ANALYSIS_IMAGE_PATH+"consistency_testing_150x70.png", tooltip="Relaxation data consistency testing", fn=self.select_consist_test, disabled=True)
