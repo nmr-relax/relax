@@ -300,8 +300,8 @@ class Relax_data_list(Base_list):
         # Translation table for the Rx data types.
         table = {
             "NOE": "Steady-state NOE",
-            "R1": u"R\u2081 longitudinal relaxation",
-            "R2": u"R\u2082 transverse relaxation"
+            "R1": unicode("R\u2081 longitudinal relaxation"),
+            "R2": unicode("R\u2082 transverse relaxation")
         }
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.

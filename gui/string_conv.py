@@ -98,7 +98,7 @@ def gui_to_bool(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Convert.
@@ -115,7 +115,7 @@ def gui_to_float(string):
     """
 
     # No input.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Already a float.
@@ -147,7 +147,7 @@ def gui_to_int(string):
     """
 
     # No input.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Already an int.
@@ -178,7 +178,7 @@ def gui_to_int_or_list(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Already an int or list.
@@ -208,7 +208,7 @@ def gui_to_list(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return []
 
     # Convert.
@@ -230,7 +230,7 @@ def gui_to_py(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Use an eval call to create a standard object.
@@ -255,7 +255,7 @@ def gui_to_str(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Convert.
@@ -272,7 +272,7 @@ def gui_to_str_or_list(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return None
 
     # Try converting to a list.
@@ -297,7 +297,7 @@ def gui_to_tuple(string):
     """
 
     # No value.
-    if string in ['', u'', None]:
+    if string in ['', unicode(''), None]:
         return ()
 
     # Convert.
