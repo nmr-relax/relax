@@ -89,6 +89,34 @@ class Relax_disp(SystemTestCase):
         self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 
+    def setup_kteilum_fmpoulsen_makke_cpmg_data(self, model=None):
+        """Set up the data for the test_kteilum_fmpoulsen_makke_cpmg_data_*() system tests.
+
+        @keyword model: The name of the model which will be tested.
+        @type model:    str
+        """
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'
+        self.interpreter.pipe.create(pipe_name='base pipe', pipe_type='relax_disp')
+        self.interpreter.results.read(data_path+sep+'ini_setup')
+
+        # Create the R2eff data pipe and load the results.
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
+        self.interpreter.results.read(data_path+sep+'r2eff_pipe')
+
+        # The model data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
+
+
     def test_bug_21081_disp_cluster_fail(self):
         """U{Bug #21081<https://gna.org/bugs/?21081>} catch, the failure of a cluster analysis when spins are deselected."""
 
