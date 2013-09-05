@@ -47,7 +47,8 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_VAR_TIME, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG_FULL, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02
+from specific_analyses.relax_disp.disp_data import has_cpmg_exp_type, has_r1rho_exp_type
+from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_VAR_TIME, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 
 
@@ -223,13 +224,14 @@ class Auto_relax_disp(Base_analysis):
     def assemble_data(self):
         """Assemble the data required for the Auto_noe class.
 
-        @return:    A container with all the data required for the auto-analysis.
-        @rtype:     class instance, list of str
+        @return:    A container with all the data required for the auto-analysis, the missing list, and a list of models that don't match the experiment types.
+        @rtype:     class instance, list of str, list of str
         """
 
         # The data container.
         data = Container()
         missing = []
+        model_mismatch = []
 
         # The pipe name and bundle.
         data.pipe_name = self.data.pipe_name
@@ -259,6 +261,16 @@ class Auto_relax_disp(Base_analysis):
         # The dispersion models.
         data.models = self.model_field.GetValue()
 
+        # Invalid models.
+        for model in data.models:
+            # Invalid CPMG models.
+            if model != MODEL_NOREX and model in MODEL_LIST_CPMG and not has_cpmg_exp_type():
+                model_mismatch.append([model, 'CPMG'])
+
+            # Invalid R1rho models.
+            if model != MODEL_NOREX and model in MODEL_LIST_R1RHO and not has_r1rho_exp_type():
+                model_mismatch.append([model, 'R1rho'])
+
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
 
@@ -270,8 +282,8 @@ class Auto_relax_disp(Base_analysis):
         data.opt_func_tol = self.opt_func_tol
         data.opt_max_iterations = self.opt_max_iterations
 
-        # Return the container and list of missing data.
-        return data, missing
+        # Return the container, the list of missing data, and any models that don't match the experiment types.
+        return data, missing, model_mismatch
 
 
     def build_right_box(self):
@@ -365,11 +377,22 @@ class Auto_relax_disp(Base_analysis):
         self.sync_ds(upload=True)
 
         # Assemble all the data needed for the auto-analysis.
-        data, missing = self.assemble_data()
+        data, missing, model_mismatch = self.assemble_data()
 
         # Missing data.
         if len(missing):
             Missing_data(missing)
+            return
+
+        # Model mismatch.
+        if len(model_mismatch):
+            # Generate the text.
+            text = ''
+            for model, exp in model_mismatch:
+                text += "The '%s' %s model cannot be used as no %s experiment types have been set up.\n" % (model, exp, exp)
+
+            # The error message.
+            error_message(text, caption='Model mismatch')
             return
 
         # Display the relax controller, and go to the end of the log window.
