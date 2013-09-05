@@ -303,6 +303,10 @@ class Spectra_list(Base_list):
         # Append a column.
         self.element.InsertColumn(index, u("\u03BDCPMG (Hz) or Spin-lock \u03BD1 (Hz)"))
 
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # Set the CPMG frequency.
@@ -328,7 +332,10 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, u("Experiment type"))
-        return True
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -352,12 +359,14 @@ class Spectra_list(Base_list):
         @rtype:         bool
         """
 
-        # No type info.
-        if not hasattr(cdp, 'spectrometer_frq') or not len(cdp.spectrometer_frq):
-            return False
-
         # Append a column.
         self.element.InsertColumn(index, u("\u03C9H (MHz)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+        if not hasattr(cdp, 'spectrometer_frq') or not len(cdp.spectrometer_frq):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -394,6 +403,10 @@ class Spectra_list(Base_list):
             'ref': 'Reference'
         }
 
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
             # No value.
@@ -422,6 +435,10 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, str_to_gui("Delay times (s)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -454,6 +471,10 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, str_to_gui("Replicate IDs"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
