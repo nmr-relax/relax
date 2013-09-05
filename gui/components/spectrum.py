@@ -153,7 +153,7 @@ class Spectra_list(Base_list):
             nu1 = cdp.spin_lock_nu1[id]
 
         # Launch the dialog.
-        if time == None:
+        if nu1 == None:
             uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
         else:
             uf_store['relax_disp.spin_lock_field'](frq=nu1, spectrum_id=id)
