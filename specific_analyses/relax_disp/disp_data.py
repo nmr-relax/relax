@@ -610,133 +610,137 @@ def plot_disp_curves(dir=None, force=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Loop over each spin.
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-        # The unique file name.
-        file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+    # Loop over each experiment type.
+    for exp_type in loop_exp():
+        # Loop over each spin.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # The unique file name.
+            file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+            if num_exp_type > 1:
+                file_name = exp_type.replace(' ', '_') + file_name
 
-        # Open the file for writing.
-        file_path = get_file_path(file_name, dir)
-        file = open_write_file(file_name, dir, force)
+            # Open the file for writing.
+            file_path = get_file_path(file_name, dir)
+            file = open_write_file(file_name, dir, force)
 
-        # Initialise some data structures.
-        data = []
-        set_labels = []
-        x_err_flag = False
-        y_err_flag = False
+            # Initialise some data structures.
+            data = []
+            set_labels = []
+            x_err_flag = False
+            y_err_flag = False
 
-        # Loop over the spectrometer frequencies.
-        graph_index = 0
-        err = False
-        for exp_type, frq in loop_exp_frq():
-            # Add a new set for the data at each frequency.
-            data.append([])
+            # Loop over the spectrometer frequencies.
+            graph_index = 0
+            err = False
+            for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
 
-            # Add a new label.
-            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-                label = "R\\s2eff\\N"
+                # Add a new label.
+                if exp_type in EXP_TYPE_LIST_CPMG:
+                    label = "R\\s2eff\\N"
+                else:
+                    label = "R\\s1\\xr\\B\\N"
+                if frq != None:
+                    label += " (%.1f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
+                # Loop over the dispersion points.
+                for disp_point in loop_point(exp_type=exp_type):
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if key not in spin.r2eff:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff[key]])
+
+                    # Add the error.
+                    if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
+                        err = True
+                        data[-1][-1].append(spin.r2eff_err[key])
+
+            # Add the back-calculated data.
+            for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
+
+                # Add a new label.
+                if exp_type in EXP_TYPE_LIST_CPMG:
+                    label = "Back-calculated R\\s2eff\\N"
+                else:
+                    label = "Back-calculated R\\s1\\xr\\B\\N"
+                if frq != None:
+                    label += " (%.1f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
+                # Loop over the dispersion points.
+                for disp_point in loop_point(exp_type=exp_type):
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff_bc[key]])
+
+                    # Handle the errors.
+                    if err:
+                        data[-1][-1].append(None)
+
+            # Add the residuals for statistical comparison.
+            for frq in loop_frq():
+                # Add a new set for the data at each frequency.
+                data.append([])
+
+                # Add a new label.
+                label = "Residuals"
+                if frq != None:
+                    label += " (%.1f MHz)" % (frq / 1e6)
+                set_labels.append(label)
+
+                # Loop over the dispersion points.
+                for disp_point in loop_point(exp_type=exp_type):
+                    # The data key.
+                    key = return_param_key_from_data(frq=frq, point=disp_point)
+
+                    # No data present.
+                    if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                        continue
+
+                    # Add the data.
+                    data[-1].append([disp_point, spin.r2eff[key] - spin.r2eff_bc[key]])
+
+                    # Handle the errors.
+                    if err:
+                        err = True
+                        data[-1][-1].append(spin.r2eff_err[key])
+
+            # The axis labels.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
             else:
-                label = "R\\s1\\xr\\B\\N"
-            if frq != None:
-                label += " (%.1f MHz)" % (frq / 1e6)
-            set_labels.append(label)
+                axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
 
-            # Loop over the dispersion points.
-            for disp_point in loop_point(exp_type=exp_type):
-                # The data key.
-                key = return_param_key_from_data(frq=frq, point=disp_point)
+            # Write the header.
+            title = "Relaxation dispersion plot"
+            write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels, legend_box_fill_pattern=0, legend_char_size=0.8)
 
-                # No data present.
-                if key not in spin.r2eff:
-                    continue
+            # Write the data.
+            graph_type = 'xy'
+            if err:
+                graph_type = 'xydy'
+            write_xy_data([data], file=file, graph_type=graph_type)
 
-                # Add the data.
-                data[-1].append([disp_point, spin.r2eff[key]])
+            # Close the file.
+            file.close()
 
-                # Add the error.
-                if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
-                    err = True
-                    data[-1][-1].append(spin.r2eff_err[key])
-
-        # Add the back-calculated data.
-        for exp_type, frq in loop_exp_frq():
-            # Add a new set for the data at each frequency.
-            data.append([])
-
-            # Add a new label.
-            if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-                label = "Back-calculated R\\s2eff\\N"
-            else:
-                label = "Back-calculated R\\s1\\xr\\B\\N"
-            if frq != None:
-                label += " (%.1f MHz)" % (frq / 1e6)
-            set_labels.append(label)
-
-            # Loop over the dispersion points.
-            for disp_point in loop_point(exp_type=exp_type):
-                # The data key.
-                key = return_param_key_from_data(frq=frq, point=disp_point)
-
-                # No data present.
-                if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
-                    continue
-
-                # Add the data.
-                data[-1].append([disp_point, spin.r2eff_bc[key]])
-
-                # Handle the errors.
-                if err:
-                    data[-1][-1].append(None)
-
-        # Add the residuals for statistical comparison.
-        for exp_type, frq in loop_exp_frq():
-            # Add a new set for the data at each frequency.
-            data.append([])
-
-            # Add a new label.
-            label = "Residuals"
-            if frq != None:
-                label += " (%.1f MHz)" % (frq / 1e6)
-            set_labels.append(label)
-
-            # Loop over the dispersion points.
-            for disp_point in loop_point(exp_type=exp_type):
-                # The data key.
-                key = return_param_key_from_data(frq=frq, point=disp_point)
-
-                # No data present.
-                if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
-                    continue
-
-                # Add the data.
-                data[-1].append([disp_point, spin.r2eff[key] - spin.r2eff_bc[key]])
-
-                # Handle the errors.
-                if err:
-                    err = True
-                    data[-1][-1].append(spin.r2eff_err[key])
-
-        # The axis labels.
-        if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-            axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
-        else:
-            axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
-
-        # Write the header.
-        title = "Relaxation dispersion plot"
-        write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels, legend_box_fill_pattern=0, legend_char_size=0.8)
-
-        # Write the data.
-        graph_type = 'xy'
-        if err:
-            graph_type = 'xydy'
-        write_xy_data([data], file=file, graph_type=graph_type)
-
-        # Close the file.
-        file.close()
-
-        # Add the file to the results file list.
-        add_result_file(type='grace', label='Grace', file=file_path)
+            # Add the file to the results file list.
+            add_result_file(type='grace', label='Grace', file=file_path)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
