@@ -309,7 +309,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, frq_flag=True)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, exp_type_flag=True, relax_times_flag=True, frq_flag=True, spin_lock_flag=True, cpmg_frq_flag=True)
         box.AddSpacer(10)
 
         # Add the dispersion models GUI element, with spacing.
