@@ -453,11 +453,9 @@ class Relax_disp(API_base, API_common):
 
                 # The initial parameter vector.
                 param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)
-                print param_vector
 
                 # Diagonal scaling.
                 scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=scaling)
-                print scaling_matrix
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
