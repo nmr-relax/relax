@@ -1,0 +1,939 @@
+
+
+
+                                  relax repository checkout r20831
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'r2eff_calc.py'
+----------------------------------------------------------------------------------------------------
+# Script for generating a save file of the R2eff fitted model.
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# Analysis variables.
+#####################
+
+# The dispersion models.
+MODELS = ['R2eff']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 10
+
+# The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+MC_NUM = 500
+
+
+# Set up the data pipe.
+#######################
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# The path to the data files.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
+
+# Create the sequence data.
+spin.create(res_name='Trp', res_num=1, spin_name='N')
+spin.create(res_name='Trp', res_num=2, spin_name='N')
+
+# Set the isotope information.
+spin.isotope(isotope='15N')
+
+# Loop over the frequencies.
+frq = [500, 800]
+frq_label = ['500MHz', '800MHz']
+error = 200000.0
+for frq_index in range(len(frq)):
+    # Load the R1 data.
+    label = 'R1_%s' % frq_label[frq_index]
+    relax_data.read(ri_id=label, ri_type='R1', frq=frq[frq_index]*1e6, file='%s.out'%label, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+    # The spectral data - spectrum ID, peak lists, offset frequency (Hz).
+    data = []
+    spin_lock = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
+    for spin_lock_index in range(len(spin_lock)):
+        data.append(["nu_%s_%s" % (spin_lock[spin_lock_index], frq_label[frq_index]), "nu_%s_%s.list" % (spin_lock[spin_lock_index], frq_label[frq_index]), spin_lock[spin_lock_index]])
+
+    # Load the reference spectrum.
+    id = 'ref_%s' % frq_label[frq_index]
+    spectrum.read_intensities(file="ref_%s.list" % frq_label[frq_index], dir=data_path, spectrum_id=id, int_method='height', dim=1)
+    spectrum.baseplane_rmsd(spectrum_id=id, error=error)
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='r1rho fixed')
+
+    # Set as the reference.
+    relax_disp.spin_lock_field(spectrum_id=id, field=None)
+    relax_disp.spin_lock_offset(spectrum_id=id, offset=110.0)
+    relax_disp.relax_time(spectrum_id=id, time=0.1)
+
+    # Set the spectrometer frequency.
+    spectrometer.frequency(id=id, frq=frq[frq_index], units='MHz')
+
+    # Loop over the spectral data, loading it and setting the metadata.
+    for id, file, field in data:
+        # Load the peak intensities and set the errors.
+        spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+        spectrum.baseplane_rmsd(spectrum_id=id, error=error)
+
+        # Set the relaxation dispersion experiment type.
+        relax_disp.exp_type(spectrum_id=id, exp_type='r1rho fixed')
+
+        # Set the relaxation dispersion spin-lock field strength (nu1).
+        relax_disp.spin_lock_field(spectrum_id=id, field=field)
+
+        # Set the spin-lock offset.
+        relax_disp.spin_lock_offset(spectrum_id=id, offset=110.0)
+
+        # Set the relaxation times.
+        relax_disp.relax_time(spectrum_id=id, time=0.1)
+
+        # Set the spectrometer frequency.
+        spectrometer.frequency(id=id, frq=frq[frq_index], units='MHz')
+
+# Clustering.
+#relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
+
+# Read the chemical shift data.
+chemical_shift.read(file='ref_500MHz.list', dir=data_path)
+
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir='.', models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+
+# Save the program state.
+state.save('r2eff_values', force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=1, mol_name=None)
+
+relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=2, mol_name=None)
+
+relax> spin.isotope(isotope='15N', spin_id=None, force=False)
+
+relax> relax_data.read(ri_id='R1_500MHz', ri_type='R1', frq=500000000.0, file='R1_500MHz.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_500MHz.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 500.0 MHz R1 relaxation data with the ID 'R1_500MHz' has been loaded into the relax data store:
+
+# Spin_ID    Value    Error    
+:1@N         1.0      0.1      
+:2@N         1.1      0.1      
+
+relax> spectrum.read_intensities(file='ref_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:1@N         100000000.0    
+:2@N         20000000.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='ref_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='ref_500MHz', exp_type='r1rho fixed')
+Setting the 'ref_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='ref_500MHz', field=None)
+Setting the 'ref_500MHz' spectrum as the reference.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='ref_500MHz', offset=110.0)
+Setting the 'ref_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='ref_500MHz', time=0.1)
+Setting the 'ref_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='ref_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_1000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         18515120.0    
+:2@N         213372.0      
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_1000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_1000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_1000.0_500MHz', field=1000.0)
+Setting the 'nu_1000.0_500MHz' spectrum spin-lock field strength to 1.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_1000.0_500MHz', offset=110.0)
+Setting the 'nu_1000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_1000.0_500MHz', time=0.1)
+Setting the 'nu_1000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_1000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_1500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         21007203.0    
+:2@N         1049546.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_1500.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_1500.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_1500.0_500MHz', field=1500.0)
+Setting the 'nu_1500.0_500MHz' spectrum spin-lock field strength to 1.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_1500.0_500MHz', offset=110.0)
+Setting the 'nu_1500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_1500.0_500MHz', time=0.1)
+Setting the 'nu_1500.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_1500.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_2000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         24546679.0    
+:2@N         2114363.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_2000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_2000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_2000.0_500MHz', field=2000.0)
+Setting the 'nu_2000.0_500MHz' spectrum spin-lock field strength to 2.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_2000.0_500MHz', offset=110.0)
+Setting the 'nu_2000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_2000.0_500MHz', time=0.1)
+Setting the 'nu_2000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_2000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_2500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         27433824.0    
+:2@N         3018966.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_2500.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_2500.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_2500.0_500MHz', field=2500.0)
+Setting the 'nu_2500.0_500MHz' spectrum spin-lock field strength to 2.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_2500.0_500MHz', offset=110.0)
+Setting the 'nu_2500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_2500.0_500MHz', time=0.1)
+Setting the 'nu_2500.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_2500.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_3000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         29561755.0    
+:2@N         3698057.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_3000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_3000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_3000.0_500MHz', field=3000.0)
+Setting the 'nu_3000.0_500MHz' spectrum spin-lock field strength to 3.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_3000.0_500MHz', offset=110.0)
+Setting the 'nu_3000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_3000.0_500MHz', time=0.1)
+Setting the 'nu_3000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_3000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_3500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         31103270.0    
+:2@N         4193490.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_3500.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_3500.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_3500.0_500MHz', field=3500.0)
+Setting the 'nu_3500.0_500MHz' spectrum spin-lock field strength to 3.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_3500.0_500MHz', offset=110.0)
+Setting the 'nu_3500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_3500.0_500MHz', time=0.1)
+Setting the 'nu_3500.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_3500.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_4000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         32229761.0    
+:2@N         4556446.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_4000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_4000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_4000.0_500MHz', field=4000.0)
+Setting the 'nu_4000.0_500MHz' spectrum spin-lock field strength to 4.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_4000.0_500MHz', offset=110.0)
+Setting the 'nu_4000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_4000.0_500MHz', time=0.1)
+Setting the 'nu_4000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_4000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_4500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         33067144.0    
+:2@N         4826435.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_4500.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_4500.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_4500.0_500MHz', field=4500.0)
+Setting the 'nu_4500.0_500MHz' spectrum spin-lock field strength to 4.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_4500.0_500MHz', offset=110.0)
+Setting the 'nu_4500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_4500.0_500MHz', time=0.1)
+Setting the 'nu_4500.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_4500.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_5000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         33701586.0    
+:2@N         5030983.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_5000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_5000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_5000.0_500MHz', field=5000.0)
+Setting the 'nu_5000.0_500MHz' spectrum spin-lock field strength to 5.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_5000.0_500MHz', offset=110.0)
+Setting the 'nu_5000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_5000.0_500MHz', time=0.1)
+Setting the 'nu_5000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_5000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_5500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         34191294.0    
+:2@N         5188816.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_5500.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_5500.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_5500.0_500MHz', field=5500.0)
+Setting the 'nu_5500.0_500MHz' spectrum spin-lock field strength to 5.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_5500.0_500MHz', offset=110.0)
+Setting the 'nu_5500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_5500.0_500MHz', time=0.1)
+Setting the 'nu_5500.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_5500.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_6000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         34575874.0    
+:2@N         5312715.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000.0_500MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_6000.0_500MHz', exp_type='r1rho fixed')
+Setting the 'nu_6000.0_500MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_6000.0_500MHz', field=6000.0)
+Setting the 'nu_6000.0_500MHz' spectrum spin-lock field strength to 6.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_6000.0_500MHz', offset=110.0)
+Setting the 'nu_6000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_6000.0_500MHz', time=0.1)
+Setting the 'nu_6000.0_500MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_6000.0_500MHz', frq=500, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_data.read(ri_id='R1_800MHz', ri_type='R1', frq=800000000.0, file='R1_800MHz.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_800MHz.out' for reading.
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+The following 800.0 MHz R1 relaxation data with the ID 'R1_800MHz' has been loaded into the relax data store:
+
+# Spin_ID    Value    Error    
+:1@N         1.2      0.1      
+:2@N         1.3      0.1      
+
+relax> spectrum.read_intensities(file='ref_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:1@N         150000000.0    
+:2@N         25000000.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='ref_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='ref_800MHz', exp_type='r1rho fixed')
+Setting the 'ref_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='ref_800MHz', field=None)
+Setting the 'ref_800MHz' spectrum as the reference.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='ref_800MHz', offset=110.0)
+Setting the 'ref_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='ref_800MHz', time=0.1)
+Setting the 'ref_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='ref_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_1000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         26891617.0    
+:2@N         9158.0        
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_1000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_1000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_1000.0_800MHz', field=1000.0)
+Setting the 'nu_1000.0_800MHz' spectrum spin-lock field strength to 1.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_1000.0_800MHz', offset=110.0)
+Setting the 'nu_1000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_1000.0_800MHz', time=0.1)
+Setting the 'nu_1000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_1000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_1500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         19879838.0    
+:2@N         101071.0      
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_1500.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_1500.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_1500.0_800MHz', field=1500.0)
+Setting the 'nu_1500.0_800MHz' spectrum spin-lock field strength to 1.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_1500.0_800MHz', offset=110.0)
+Setting the 'nu_1500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_1500.0_800MHz', time=0.1)
+Setting the 'nu_1500.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_1500.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_2000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         19663125.0    
+:2@N         380763.0      
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_2000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_2000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_2000.0_800MHz', field=2000.0)
+Setting the 'nu_2000.0_800MHz' spectrum spin-lock field strength to 2.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_2000.0_800MHz', offset=110.0)
+Setting the 'nu_2000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_2000.0_800MHz', time=0.1)
+Setting the 'nu_2000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_2000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_2500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         21108448.0    
+:2@N         807695.0      
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_2500.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_2500.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_2500.0_800MHz', field=2500.0)
+Setting the 'nu_2500.0_800MHz' spectrum spin-lock field strength to 2.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_2500.0_800MHz', offset=110.0)
+Setting the 'nu_2500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_2500.0_800MHz', time=0.1)
+Setting the 'nu_2500.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_2500.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_3000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         22850175.0    
+:2@N         1272336.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_3000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_3000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_3000.0_800MHz', field=3000.0)
+Setting the 'nu_3000.0_800MHz' spectrum spin-lock field strength to 3.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_3000.0_800MHz', offset=110.0)
+Setting the 'nu_3000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_3000.0_800MHz', time=0.1)
+Setting the 'nu_3000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_3000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_3500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         24467504.0    
+:2@N         1703242.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_3500.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_3500.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_3500.0_800MHz', field=3500.0)
+Setting the 'nu_3500.0_800MHz' spectrum spin-lock field strength to 3.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_3500.0_800MHz', offset=110.0)
+Setting the 'nu_3500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_3500.0_800MHz', time=0.1)
+Setting the 'nu_3500.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_3500.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_4000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         25849923.0    
+:2@N         2074059.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_4000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_4000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_4000.0_800MHz', field=4000.0)
+Setting the 'nu_4000.0_800MHz' spectrum spin-lock field strength to 4.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_4000.0_800MHz', offset=110.0)
+Setting the 'nu_4000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_4000.0_800MHz', time=0.1)
+Setting the 'nu_4000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_4000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_4500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         26994708.0    
+:2@N         2382641.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_4500.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_4500.0_800MHz', field=4500.0)
+Setting the 'nu_4500.0_800MHz' spectrum spin-lock field strength to 4.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_4500.0_800MHz', offset=110.0)
+Setting the 'nu_4500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_4500.0_800MHz', time=0.1)
+Setting the 'nu_4500.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_4500.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_5000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         27932504.0    
+:2@N         2636122.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_5000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_5000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_5000.0_800MHz', field=5000.0)
+Setting the 'nu_5000.0_800MHz' spectrum spin-lock field strength to 5.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_5000.0_800MHz', offset=110.0)
+Setting the 'nu_5000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_5000.0_800MHz', time=0.1)
+Setting the 'nu_5000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_5000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_5500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         28699908.0    
+:2@N         2843818.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_5500.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_5500.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_5500.0_800MHz', field=5500.0)
+Setting the 'nu_5500.0_800MHz' spectrum spin-lock field strength to 5.5 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_5500.0_800MHz', offset=110.0)
+Setting the 'nu_5500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_5500.0_800MHz', time=0.1)
+Setting the 'nu_5500.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_5500.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> spectrum.read_intensities(file='nu_6000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_800MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity     
+:1@N         29330204.0    
+:2@N         3014487.0     
+
+relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000.0_800MHz', spin_id=None)
+
+relax> relax_disp.exp_type(spectrum_id='nu_6000.0_800MHz', exp_type='r1rho fixed')
+Setting the 'nu_6000.0_800MHz' spectrum tothe fixed relaxation time period R1rho-type experiment.
+
+relax> relax_disp.spin_lock_field(spectrum_id='nu_6000.0_800MHz', field=6000.0)
+Setting the 'nu_6000.0_800MHz' spectrum spin-lock field strength to 6.0 kHz.
+
+relax> relax_disp.spin_lock_offset(spectrum_id='nu_6000.0_800MHz', offset=110.0)
+Setting the 'nu_6000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
+
+relax> relax_disp.relax_time(spectrum_id='nu_6000.0_800MHz', time=0.1)
+Setting the 'nu_6000.0_800MHz' spectrum relaxation time period to 0.1 s.
+
+relax> spectrometer.frequency(id='nu_6000.0_800MHz', frq=800, units='MHz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> chemical_shift.read(file='ref_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
+Sparky formatted data file.
+
+Number of header lines found: 1
+2D peak list detected.
+RelaxWarning: Cannot find the spin :1@HN within the sequence.
+RelaxWarning: Cannot find the spin :2@HN within the sequence.
+
+The following chemical shifts have been loaded into the relax data store:
+
+# Spin_ID    Chemical shift    
+:1@N         122.454           
+:2@N         111.978           
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['ref_500MHz', 'nu_1000.0_500MHz', 'nu_1500.0_500MHz', 'nu_2000.0_500MHz', 'nu_2500.0_500MHz', 'nu_3000.0_500MHz', 'nu_3500.0_500MHz', 'nu_4000.0_500MHz', 'nu_4500.0_500MHz', 'nu_5000.0_500MHz', 'nu_5500.0_500MHz', 'nu_6000.0_500MHz'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+relax> spectrum.error_analysis(subset=['ref_800MHz', 'nu_1000.0_800MHz', 'nu_1500.0_800MHz', 'nu_2000.0_800MHz', 'nu_2500.0_800MHz', 'nu_3000.0_800MHz', 'nu_3500.0_800MHz', 'nu_4000.0_800MHz', 'nu_4500.0_800MHz', 'nu_5000.0_800MHz', 'nu_5500.0_800MHz', 'nu_6000.0_800MHz'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+Detected the presence of results files for the 'R2eff' model - loading these instead of performing optimisation for a second time.
+
+relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> results.read(file='results', dir='./R2eff')
+Opening the file './R2eff/results.bz2' for reading.
+RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
+
+relax> state.save(state='final_state', dir='.', compress_type=1, force=True)
+Opening the file './final_state.bz2' for writing.
+
+relax> state.save(state='r2eff_values', dir=None, compress_type=1, force=True)
+Opening the file 'r2eff_values.bz2' for writing.
+
