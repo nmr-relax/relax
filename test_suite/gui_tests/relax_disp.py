@@ -369,96 +369,83 @@ class Relax_disp(GuiTestCase):
         self._execute_uf(uf_name='chemical_shift.read', file='ref_500MHz.list', dir=data_path)
         interpreter.flush()
 
-        # Load the spectrum.
+        # The spectral data.
         frq = [500, 800]
         frq_label = ['500MHz', '800MHz']
         error = 200000.0
+        data = []
+        spin_lock = [None, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
         for frq_index in range(len(frq)):
-            # Load the R1 data.
+            for spin_lock_index in range(len(spin_lock)):
+                # The reference.
+                if spin_lock[spin_lock_index] == None:
+                    id = 'ref_%s' % frq_label[frq_index]
+                    file = "ref_%s.list" % frq_label[frq_index]
+
+                # Normal data.
+                else:
+                    id = "nu_%s_%s" % (spin_lock[spin_lock_index], frq_label[frq_index])
+                    file = "nu_%s_%s.list" % (spin_lock[spin_lock_index], frq_label[frq_index])
+
+                # Append the data.
+                data.append([id, file, spin_lock[spin_lock_index], frq[frq_index]])
+
+        # Load the R1 data.
+        for frq_index in range(len(frq)):
             label = 'R1_%s' % frq_label[frq_index]
             self._execute_uf(uf_name='relax_data.read', ri_id=label, ri_type='R1', frq=frq[frq_index]*1e6, file='%s.out'%label, dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
             interpreter.flush()
 
-            # Set up the peak intensity wizard for the reference spectrum.
-            analysis.peak_wizard_launch(None)
-            wizard = analysis.peak_wizard
+        # Set up the peak intensity wizard.
+        analysis.peak_wizard_launch(None)
+        wizard = analysis.peak_wizard
 
-            # The reference spectrum ID.
-            id = str_to_gui('ref_%s' % frq_label[frq_index])
+        # The spectra.
+        for id, file, field, H_frq in data:
+            wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height', dim=1)
+            wizard._apply(None)
+        wizard._skip(None)
 
-            # Load the reference spectrum.
-            wizard.setup_page(page='read', file="%sref_%s.list" % (data_path, frq_label[frq_index]), spectrum_id=id, int_method='height', dim=1)
-            wizard._go_next(None)
+        # The error type.
+        page = wizard.get_page(wizard.page_indices['err_type'])
+        page.selection = 'rmsd'
+        wizard._go_next(None)
 
-            # The error type.
-            page = wizard.get_page(wizard.page_indices['err_type'])
-            page.selection = 'rmsd'
-            wizard._go_next(None)
-
-            # Baseplane RMSD.
+        # Baseplane RMSD.
+        for id, file, field, H_frq in data:
             wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
-            wizard._go_next(None)
+            wizard._apply(None)
+        wizard._skip(None)
 
-            # The experiment type.
+        # The experiment type.
+        for id, file, field, H_frq in data:
             wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='r1rho fixed')
-            wizard._go_next(None)
+            wizard._apply(None)
+        wizard._skip(None)
 
-            # Set the spectrometer frequency.
-            wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
-            wizard._go_next(None)
+        # Set the spectrometer frequency.
+        for id, file, field, H_frq in data:
+            wizard.setup_page(page='spectrometer_frequency', id=id, frq=H_frq, units='MHz')
+            wizard._apply(None)
+        wizard._skip(None)
 
-            # Set as the reference.
+        # Set the relaxation times.
+        for id, file, field, H_frq in data:
             wizard.setup_page(page='relax_time', spectrum_id=id, time=0.1)
-            wizard._go_next(None)
-            wizard.setup_page(page='spin_lock_field', spectrum_id=id, field=None)
-            wizard._go_next(None)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Set the relaxation dispersion spin-lock field strength (nu1).
+        for id, file, field, H_frq in data:
+            wizard.setup_page(page='spin_lock_field', spectrum_id=id, field=field)
+            wizard._apply(None)
+        wizard._skip(None)
+
+        # Set the spin-lock offset.
+        for id, file, field, H_frq in data:
             wizard.setup_page(page='spin_lock_offset', spectrum_id=id, offset=110.0)
-            wizard._go_next(None)    # Moving off the last page so the wizard will terminate.
-
-            # The spectral data - spectrum ID, peak lists, offset frequency (Hz).
-            data = []
-            spin_lock = [1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0, 5500.0, 6000.0]
-            for spin_lock_index in range(len(spin_lock)):
-                data.append(["nu_%s_%s" % (spin_lock[spin_lock_index], frq_label[frq_index]), "nu_%s_%s.list" % (spin_lock[spin_lock_index], frq_label[frq_index]), spin_lock[spin_lock_index]])
-
-            # Loop over the spectral data, loading it and setting the metadata.
-            for id, file, field in data:
-                # Set up the peak intensity wizard for the reference spectrum.
-                analysis.peak_wizard_launch(None)
-                wizard = analysis.peak_wizard
-
-                # Load the peak intensities and set the errors.
-                wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height')
-                wizard._go_next(None)
-
-                # The error type.
-                page = wizard.get_page(wizard.page_indices['err_type'])
-                page.selection = 'rmsd'
-                wizard._go_next(None)
-
-                # Set the errors.
-                wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
-                wizard._go_next(None)
-
-                # The experiment type.
-                wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='r1rho fixed')
-                wizard._go_next(None)
-
-                # Set the spectrometer frequency.
-                wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
-                wizard._go_next(None)
-
-                # Set the relaxation times.
-                wizard.setup_page(page='relax_time', spectrum_id=id, time=0.1)
-                wizard._go_next(None)
-
-                # Set the relaxation dispersion spin-lock field strength (nu1).
-                wizard.setup_page(page='spin_lock_field', spectrum_id=id, field=field)
-                wizard._go_next(None)
-
-                # Set the spin-lock offset.
-                wizard.setup_page(page='spin_lock_offset', spectrum_id=id, offset=110.0)
-                wizard._go_next(None)
+            wizard._apply(None)
+        wizard._skip(None)
 
         # Deselect all but the 'TP02' model.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_TP02]
