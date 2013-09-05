@@ -308,6 +308,10 @@ def has_cpmg_exp_type():
     @rtype:     bool
     """
 
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type'):
+        return False
+
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
         if exp_type in EXP_TYPE_LIST_CPMG:
@@ -323,6 +327,10 @@ def has_exponential_exp_type():
     @return:    True if spectral data for exponential curves exist, False otherwise.
     @rtype:     bool
     """
+
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type'):
+        return False
 
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
@@ -340,6 +348,10 @@ def has_fixed_time_exp_type():
     @rtype:     bool
     """
 
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type'):
+        return False
+
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
         if exp_type in EXP_TYPE_LIST_FIXED_TIME:
@@ -355,6 +367,10 @@ def has_r1rho_exp_type():
     @return:    True if R1rho experiment types exist, False otherwise.
     @rtype:     bool
     """
+
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type'):
+        return False
 
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
