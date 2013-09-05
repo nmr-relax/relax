@@ -26,6 +26,7 @@
 # The available modules.
 __all__ = [
     'api',
+    'checks',
     'cpmgfit',
     'disp_data',
     'parameters',
