@@ -37,16 +37,17 @@ from types import MethodType
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
-from lib.errors import RelaxError, RelaxFuncSetupError, RelaxLenError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoSpectraError
+from lib.errors import RelaxError, RelaxLenError, RelaxNoModelError, RelaxNoSpectraError
 from lib.list import count_unique_elements, unique_elements
 from lib.mathematics import round_to_next_order
 from lib.statistics import std
 from lib.text.sectioning import subsection
 from pipe_control import pipes, sequence
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, loop_cluster, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
+from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq_point, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_VAR_TIME, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
@@ -143,7 +144,7 @@ class Relax_disp(API_base, API_common):
 
         # Convert to a dictionary matching the R2eff data structure.
         results = {}
-        for frq, point in loop_frq_point():
+        for exp_type, frq, point in loop_exp_frq_point():
             # The indices.
             frq_index = return_index_from_frq(frq)
             point_index = return_index_from_disp_point(point)
@@ -176,7 +177,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Check.
-        if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
+        if not has_exponential_exp_type():
             raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
@@ -333,7 +334,7 @@ class Relax_disp(API_base, API_common):
                     spin = spins[spin_index]
 
                     # Loop over each spectrometer frequency and dispersion point.
-                    for frq, point in loop_frq_point():
+                    for exp_type, frq, point in loop_exp_frq_point():
                         # Loop over the parameters.
                         for i in range(len(spin.params)):
                             # R2eff relaxation rate (from 1 to 40 s^-1).
@@ -446,15 +447,17 @@ class Relax_disp(API_base, API_common):
                 continue
 
             # Loop over each spectrometer frequency and dispersion point.
-            for frq, point in loop_frq_point():
+            for exp_type, frq, point in loop_exp_frq_point():
                 # The parameter key.
                 param_key = return_param_key_from_data(frq=frq, point=point)
 
                 # The initial parameter vector.
                 param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)
+                print param_vector
 
                 # Diagonal scaling.
                 scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=scaling)
+                print scaling_matrix
                 if len(scaling_matrix):
                     param_vector = dot(inv(scaling_matrix), param_vector)
 
@@ -597,43 +600,37 @@ class Relax_disp(API_base, API_common):
         @type model:    str
         """
 
-        # Test if the current pipe exists.
+        # Data checks.
         pipes.test()
+        check_pipe_type()
+        check_mol_res_spin_data()
+        check_exp_type()
+        if model == MODEL_R2EFF:
+            check_c_modules()
 
-        # Test if the pipe type is set to 'relax_disp'.
-        function_type = cdp.pipe_type
-        if function_type != 'relax_disp':
-            raise RelaxFuncSetupError(specific_setup.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Test if the experiment type is set.
-        if not hasattr(cdp, 'exp_type'):
-            raise RelaxError("The relaxation dispersion experiment type has not been set.")
-
-        # Test for the C-modules.
-        if model == MODEL_R2EFF and cdp.exp_type in EXP_TYPE_LIST_VAR_TIME and not C_module_exp_fn:
-            raise RelaxError("The exponential curve-fitting C module cannot be found.")
+        # The curve type.
+        curve_type = get_curve_type()
 
         # R2eff/R1rho model.
         if model == MODEL_R2EFF:
             print("R2eff/R1rho value and error determination.")
-            params = ['r2eff', 'i0']
+            if curve_type == 'exponential':
+                params = ['r2eff', 'i0']
+            else:
+                params = ['r2eff']
 
         # The model for no chemical exchange relaxation.
         elif model == MODEL_NOREX:
             print("The model for no chemical exchange relaxation.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
 
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -641,7 +638,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_LM63_3SITE:
             print("The Luz and Meiboom (1963) 3-site fast exchange model.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['phi_ex_B', 'phi_ex_C', 'kB', 'kC']
 
@@ -649,9 +646,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72_FULL:
             print("The full Carver and Richards (1972) 2-site model for all time scales.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2a')
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -659,7 +656,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72:
             print("The reduced Carver and Richards (1972) 2-site model for all time scales, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -667,7 +664,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_IT99:
             print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['phi_ex', 'padw2', 'tex']
 
@@ -675,7 +672,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_TSMFK01:
             print("The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2a')
             params += ['dw', 'kA']
 
@@ -683,9 +680,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2a')
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -693,7 +690,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_3D:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -701,7 +698,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
             print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -709,9 +706,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2a')
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -719,7 +716,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_STAR:
             print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -727,7 +724,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_M61:
             print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -735,7 +732,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_M61B:
             print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -743,7 +740,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_DPL94:
             print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -751,7 +748,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_TP02:
             print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -759,7 +756,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_R1RHO_2SITE:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -794,8 +791,8 @@ class Relax_disp(API_base, API_common):
                     continue
 
                 # Loop over each spectrometer frequency and dispersion point.
-                for frq, point in loop_frq_point():
-                    yield spin, frq, point
+                for exp_type, frq, point in loop_exp_frq_point():
+                    yield spin, exp_type, frq, point
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
@@ -824,31 +821,13 @@ class Relax_disp(API_base, API_common):
         @type sim_index:    None
         """
 
-        # Test if the current pipe exists.
+        # Data checks.
         pipes.test()
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Test if the model has been set.
-        if not hasattr(cdp, 'exp_type'):
-            raise RelaxError("The relaxation dispersion experiment type has not been specified.")
-
-        # Test if the model has been set.
-        if not hasattr(cdp, 'model_type'):
-            raise RelaxError("The relaxation dispersion model has not been specified.")
-
-        # Test if the curve count exists.
-        if not hasattr(cdp, 'dispersion_points'):
-            if cdp.exp_type == 'cpmg':
-                raise RelaxError("The CPMG frequencies have not been set up.")
-            elif cdp.exp_type == 'r1rho':
-                raise RelaxError("The spin-lock field strengths have not been set up.")
-
-        # Only allow the fixed relaxation time period data types.
-        if cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
-            raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type, the R2eff/R1rho values cannot be directly calculated." % cdp.exp_type)
+        check_mol_res_spin_data()
+        check_exp_type()
+        check_model_type()
+        check_disp_points()
+        check_exp_type_fixed_time()
 
         # Printouts.
         print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
@@ -869,7 +848,7 @@ class Relax_disp(API_base, API_common):
                 spin.r2eff_err = {}
 
             # Loop over all the data.
-            for frq, point, time in loop_frq_point_time():
+            for exp_type, frq, point, time in loop_exp_frq_point_time():
                 # The three keys.
                 ref_keys = find_intensity_keys(frq=frq, point=None, time=time)
                 int_keys = find_intensity_keys(frq=frq, point=point, time=time)
@@ -1077,24 +1056,11 @@ class Relax_disp(API_base, API_common):
         @type inc:                  array of int
         """
 
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Test if the model has been set.
-        if not hasattr(cdp, 'exp_type'):
-            raise RelaxError("The relaxation dispersion experiment type has not been specified.")
-
-        # Test if the model has been set.
-        if not hasattr(cdp, 'model_type'):
-            raise RelaxError("The relaxation dispersion model has not been specified.")
-
-        # Test if the curve count exists.
-        if not hasattr(cdp, 'dispersion_points'):
-            if cdp.exp_type == 'cpmg':
-                raise RelaxError("The CPMG frequencies have not been set up.")
-            elif cdp.exp_type == 'r1rho':
-                raise RelaxError("The spin-lock field strengths have not been set up.")
+        # Data checks.
+        check_mol_res_spin_data()
+        check_exp_type()
+        check_model_type()
+        check_disp_points()
 
         # Initialise some empty data pipe structures so that the target function set up does not fail.
         if not hasattr(cdp, 'cpmg_frqs_list'):
@@ -1105,8 +1071,8 @@ class Relax_disp(API_base, API_common):
         # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model_type == 'R2eff':
             # Sanity checks.
-            if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
-                raise RelaxError("The R2eff model with the fixed time period CPMG experiment cannot be optimised.")
+            if not has_exponential_exp_type():
+                raise RelaxError("The R2eff model with the fixed time period dispersion experiments cannot be optimised.")
 
             # Optimisation.
             self._minimise_r2eff(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index, lower=lower, upper=upper, inc=inc)
@@ -1269,7 +1235,7 @@ class Relax_disp(API_base, API_common):
                         spin.r2eff_bc = {}
 
                     # Loop over the R2eff data.
-                    for frq, point in loop_frq_point():
+                    for exp_type, frq, point in loop_exp_frq_point():
                         # The indices.
                         disp_pt_index = return_index_from_disp_point(point)
                         frq_index = return_index_from_frq(frq)
@@ -1372,8 +1338,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Test the sequence data exists.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        check_mol_res_spin_data()
 
         # Loop over spin data.
         for spin in spin_loop():
