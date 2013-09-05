@@ -429,10 +429,8 @@ def loop_exp_frq():
     for exp_type in loop_exp():
         # Then loop over the spectrometer frequencies.
         for frq in loop_frq():
-            # And finally the dispersion points.
-            for point in loop_point(exp_type=exp_type):
-                # Yield the data.
-                yield exp_type, frq, point
+            # Yield the data.
+            yield exp_type, frq
 
 
 def loop_exp_frq_point():
