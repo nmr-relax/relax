@@ -866,12 +866,12 @@ class Relax_disp(API_base, API_common):
                     continue
 
                 # Average the reference intensity data and errors.
-                ref_intensity = average_intensity(spin=spin, frq=frq, point=None, time=time)
-                ref_intensity_err = average_intensity(spin=spin, frq=frq, point=None, time=time, error=True)
+                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
+                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
 
                 # Average the intensity data and errors.
-                intensity = average_intensity(spin=spin, frq=frq, point=point, time=time)
-                intensity_err = average_intensity(spin=spin, frq=frq, point=point, time=time, error=True)
+                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
+                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True)
 
                 # Calculate the R2eff value.
                 spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
@@ -903,10 +903,10 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, frq, point = data_id
+            spin, exp_type, frq, point = data_id
 
             # Back calculate the peak intensities.
-            values = self._back_calc_peak_intensities(spin=spin, frq=frq, point=point)
+            values = self._back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, point=point)
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -1400,12 +1400,12 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, frq, point = data_id
+            spin, exp_type, frq, point = data_id
 
             # Generate the data structure to return.
             errors = []
             for time in cdp.relax_time_list:
-                errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
+                errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
 
         # All other models.
         else:

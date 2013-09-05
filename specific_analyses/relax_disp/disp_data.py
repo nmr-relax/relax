@@ -54,7 +54,7 @@ from os import chmod, path, sep
 
 
 
-def average_intensity(spin=None, frq=None, point=None, time=None, sim_index=None, error=False):
+def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, sim_index=None, error=False):
     """Return the average peak intensity for the spectrometer frequency, dispersion point, and relaxation time.
 
     This is for handling replicate peak intensity data.
@@ -62,6 +62,8 @@ def average_intensity(spin=None, frq=None, point=None, time=None, sim_index=None
 
     @keyword spin:      The spin container to average the peak intensities for.
     @type spin:         SpinContainer instance
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
     @type frq:          float
     @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
@@ -77,7 +79,7 @@ def average_intensity(spin=None, frq=None, point=None, time=None, sim_index=None
     """
 
     # The keys.
-    int_keys = find_intensity_keys(frq=frq, point=point, time=time)
+    int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
     # Initialise.
     intensity = 0.0
@@ -240,6 +242,10 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
     @return:            The keys corresponding to the spectrometer frequency, dispersion point, and relaxation time.
     @rtype:             List of str
     """
+
+    # Check.
+    if exp_type == None:
+        raise RelaxError("The experiment type has not been supplied.")
 
     # The dispersion data.
     if exp_type in EXP_TYPE_LIST_CPMG:
@@ -590,6 +596,17 @@ def loop_time():
         yield time
 
 
+def num_exp_types():
+    """Count the number of experiment types present.
+
+    @return:    The number of experiment types.
+    @rtype:     int
+    """
+
+    # Return the count.
+    return len(cdp.exp_type_list)
+
+
 def plot_disp_curves(dir=None, force=None):
     """Custom 2D Grace plotting function for the dispersion curves.
 
@@ -616,7 +633,7 @@ def plot_disp_curves(dir=None, force=None):
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # The unique file name.
             file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
-            if num_exp_type > 1:
+            if num_exp_types() > 1:
                 file_name = exp_type.replace(' ', '_') + file_name
 
             # Open the file for writing.
@@ -811,7 +828,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Loop over the relaxation time periods.
                 for time in cdp.relax_time_list:
                     # The key.
-                    keys = find_intensity_keys(frq=frq, point=disp_point, time=time)
+                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=disp_point, time=time)
 
                     # Loop over each key.
                     for key in keys:
@@ -994,22 +1011,24 @@ def return_index_from_disp_point_key(key):
         return return_index_from_disp_point(cdp.spin_lock_nu1[key])
 
 
-def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
+def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, ref=False):
     """Return the peak intensity corresponding to the given field strength and dispersion point.
 
     The corresponding reference intensity can be returned if the ref flag is set.  This assumes that the data is of the fixed relaxation time period type.
 
 
-    @keyword spin:  The spin container object.
-    @type spin:     SpinContainer instance
-    @keyword frq:   The spectrometer frequency.
-    @type frq:      float
-    @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @type point:    float
-    @keyword time:  The relaxation time period.
-    @type time:     float
-    @keyword ref:   A flag which if True will cause the corresponding reference intensity to be returned instead.
-    @type ref:      bool
+    @keyword spin:      The spin container object.
+    @type spin:         SpinContainer instance
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency.
+    @type frq:          float
+    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:        float
+    @keyword time:      The relaxation time period.
+    @type time:         float
+    @keyword ref:       A flag which if True will cause the corresponding reference intensity to be returned instead.
+    @type ref:          bool
     """
 
     # Checks.
@@ -1018,9 +1037,9 @@ def return_intensity(spin=None, frq=None, point=None, time=None, ref=False):
 
     # The key.
     if ref:
-        keys = find_intensity_keys(frq=frq, point=None, time=time)
+        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
     else:
-        keys = find_intensity_keys(frq=frq, point=point, time=time)
+        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
     # Return the intensity.
     return spin.intensities[key]
