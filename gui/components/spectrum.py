@@ -334,7 +334,7 @@ class Spectra_list(Base_list):
         self.element.InsertColumn(index, u("Experiment type"))
 
         # No data.
-        if not hasattr(cdp, 'spectrum_ids'):
+        if not hasattr(cdp, 'spectrum_ids') or not hasattr(cdp, 'exp_type'):
             return True
 
         # Set the values.
