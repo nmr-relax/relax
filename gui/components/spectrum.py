@@ -289,8 +289,10 @@ class Spectra_list(Base_list):
             uf_store['spectrum.replicated'](spectrum_ids=replicates)
 
 
-    def add_cpmg_frqs(self, index):
-        """Add the CPMG pulse frequency info to the element.
+    def add_disp_point(self, index):
+        """Add the dispersion point info to the element.
+
+        This is either the CPMG pulse frequency or the spin-lock field strength.  Both share the same column.
 
         @param index:   The column index for the data.
         @type index:    int
@@ -298,21 +300,18 @@ class Spectra_list(Base_list):
         @rtype:         bool
         """
 
-        # No type info.
-        if not hasattr(cdp, 'cpmg_frqs') or not len(cdp.cpmg_frqs):
-            return False
-
         # Append a column.
-        self.element.InsertColumn(index, u("\u03BDCPMG (Hz)"))
+        self.element.InsertColumn(index, u("\u03BDCPMG (Hz) or Spin-lock \u03BD1 (Hz)"))
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
-            # No value.
-            if cdp.spectrum_ids[i] not in cdp.cpmg_frqs.keys():
-                continue
+            # Set the CPMG frequency.
+            if hasattr(cdp, 'cpmg_frqs') and cdp.spectrum_ids[i] in cdp.cpmg_frqs.keys():
+                self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
 
-            # Set the value.
-            self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+            # Set the spin-lock field strength.
+            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] not in cdp.spin_lock_nu1.keys():
+                self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -329,6 +328,7 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, u("Experiment type"))
+        return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -367,35 +367,6 @@ class Spectra_list(Base_list):
 
             # Set the value (in MHz).
             self.element.SetStringItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
-
-        # Successful.
-        return True
-
-
-    def add_spin_lock(self, index):
-        """Add the spin-lock field strength info to the element.
-
-        @param index:   The column index for the data.
-        @type index:    int
-        @return:        True if the data exists, False otherwise.
-        @rtype:         bool
-        """
-
-        # No type info.
-        if not hasattr(cdp, 'spin_lock_nu1') or not len(cdp.spin_lock_nu1):
-            return False
-
-        # Append a column.
-        self.element.InsertColumn(index, u("Spin-lock \u03BD1 (Hz)"))
-
-        # Set the values.
-        for i in range(len(cdp.spectrum_ids)):
-            # No value.
-            if cdp.spectrum_ids[i] not in cdp.spin_lock_nu1.keys():
-                continue
-
-            # Set the value.
-            self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -634,12 +605,8 @@ class Spectra_list(Base_list):
         if self.frq_flag and self.add_frqs(index):
             index += 1
 
-        # The spin-lock field strength.
-        if self.spin_lock_flag and self.add_spin_lock(index):
-            index += 1
-
-        # The CPMG pulse frequency.
-        if self.cpmg_frq_flag and self.add_cpmg_frqs(index):
+        # The spin-lock field strength or CPMG pulse frequency.
+        if (self.spin_lock_flag or self.cpmg_frq_flag) and self.add_disp_point(index):
             index += 1
 
         # The relaxation times.
