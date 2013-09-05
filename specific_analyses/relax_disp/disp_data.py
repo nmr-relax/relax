@@ -293,6 +293,22 @@ def get_curve_type():
     return curve_type
 
 
+def has_cpmg_exp_type():
+    """Determine if the current data pipe contains CPMG experiment types.
+
+    @return:    True if CPMG experiment types exist, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over all experiment types.
+    for exp_type in cdp.exp_type_list:
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            return True
+
+    # No CPMG experiment types.
+    return False
+
+
 def has_exponential_exp_type():
     """Determine if the current data pipe contains exponential curves.
 
@@ -322,6 +338,22 @@ def has_fixed_time_exp_type():
             return True
 
     # No exponential data.
+    return False
+
+
+def has_r1rho_exp_type():
+    """Determine if the current data pipe contains R1rho experiment types.
+
+    @return:    True if R1rho experiment types exist, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over all experiment types.
+    for exp_type in cdp.exp_type_list:
+        if exp_type in EXP_TYPE_LIST_R1RHO:
+            return True
+
+    # No CPMG experiment types.
     return False
 
 
