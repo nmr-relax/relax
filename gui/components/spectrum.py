@@ -103,7 +103,7 @@ class Spectra_list(Base_list):
             frq = cdp.cpmg_frqs[id]
 
         # Launch the dialog.
-        if time == None:
+        if frq == None:
             uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
         else:
             uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
