@@ -346,7 +346,7 @@ def loop_exp_frq():
         # Then loop over the spectrometer frequencies.
         for frq in loop_frq():
             # And finally the dispersion points.
-            for point in loop_point():
+            for point in loop_point(exp_type=exp_type):
                 # Yield the data.
                 yield exp_type, frq, point
 
@@ -366,7 +366,7 @@ def loop_exp_frq_point():
         # Then loop over the spectrometer frequencies.
         for frq in loop_frq():
             # And finally the dispersion points.
-            for point in loop_point():
+            for point in loop_point(exp_type=exp_type):
                 # Yield the data.
                 yield exp_type, frq, point
 
@@ -386,7 +386,7 @@ def loop_exp_frq_point_time():
         # Then the spectrometer frequencies.
         for frq in loop_frq():
             # Then the dispersion points.
-            for point in loop_point():
+            for point in loop_point(exp_type=exp_type):
                 # Finally the relaxation times.
                 for time in loop_time():
                     # Yield all data.
@@ -410,9 +410,11 @@ def loop_frq():
         yield field
 
 
-def loop_frq_point():
+def loop_frq_point(exp_type=None):
     """Generator method for looping over the spectrometer frequencies and dispersion points.
 
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
     @return:    The spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @rtype:     float, float
     """
@@ -420,14 +422,16 @@ def loop_frq_point():
     # First loop over the spectrometer frequencies.
     for frq in loop_frq():
         # Then the dispersion points.
-        for point in loop_point():
+        for point in loop_point(exp_type=exp_type):
             # Yield the data.
             yield frq, point
 
 
-def loop_frq_point_key():
+def loop_frq_point_key(exp_type=None):
     """Generator method for looping over the spectrometer frequencies and dispersion points (returning the key).
 
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
     @return:    The key corresponding to the spectrometer frequency and dispersion point.
     @rtype:     str
     """
@@ -435,14 +439,16 @@ def loop_frq_point_key():
     # First loop over the spectrometer frequencies.
     for frq in loop_frq():
         # Then the dispersion points.
-        for point in loop_point():
+        for point in loop_point(exp_type=exp_type):
             # Generate and yield the key.
             yield return_param_key_from_data(frq=frq, point=point)
 
 
-def loop_frq_point_time():
+def loop_frq_point_time(exp_type=None):
     """Generator method for looping over the spectrometer frequencies, dispersion points, and relaxation times.
 
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
     @return:    The spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation time.
     @rtype:     float, float, float
     """
@@ -450,16 +456,18 @@ def loop_frq_point_time():
     # First loop over the spectrometer frequencies.
     for frq in loop_frq():
         # Then the dispersion points.
-        for point in loop_point():
+        for point in loop_point(exp_type=exp_type):
             # Finally the relaxation times.
             for time in loop_time():
                 # Yield all data.
                 yield frq, point, time
 
 
-def loop_point(skip_ref=True):
+def loop_point(exp_type=None, skip_ref=True):
     """Generator method for looping over the dispersion points.
 
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
     @keyword skip_ref:  A flag which if True will cause the reference point to be skipped.
     @type skip_ref:     bool
     @return:            Dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
@@ -467,12 +475,12 @@ def loop_point(skip_ref=True):
     """
 
     # CPMG type data.
-    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type in EXP_TYPE_LIST_CPMG:
         fields = cdp.cpmg_frqs_list
-    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
+    elif exp_type in EXP_TYPE_LIST_R1RHO:
         fields = cdp.spin_lock_nu1_list
     else:
-        raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type)
+        raise RelaxError("The experiment type '%s' is unknown." % exp_type)
 
     # Loop over the field data.
     for field in fields:
@@ -534,7 +542,7 @@ def plot_disp_curves(dir=None, force=None):
         # Loop over the spectrometer frequencies.
         graph_index = 0
         err = False
-        for frq in loop_frq():
+        for exp_type, frq in loop_exp_frq():
             # Add a new set for the data at each frequency.
             data.append([])
 
@@ -548,7 +556,7 @@ def plot_disp_curves(dir=None, force=None):
             set_labels.append(label)
 
             # Loop over the dispersion points.
-            for disp_point in loop_point():
+            for disp_point in loop_point(exp_type=exp_type):
                 # The data key.
                 key = return_param_key_from_data(frq=frq, point=disp_point)
 
@@ -565,7 +573,7 @@ def plot_disp_curves(dir=None, force=None):
                     data[-1][-1].append(spin.r2eff_err[key])
 
         # Add the back-calculated data.
-        for frq in loop_frq():
+        for exp_type, frq in loop_exp_frq(exp_type):
             # Add a new set for the data at each frequency.
             data.append([])
 
@@ -579,7 +587,7 @@ def plot_disp_curves(dir=None, force=None):
             set_labels.append(label)
 
             # Loop over the dispersion points.
-            for disp_point in loop_point():
+            for disp_point in loop_point(exp_type=exp_type):
                 # The data key.
                 key = return_param_key_from_data(frq=frq, point=disp_point)
 
@@ -595,7 +603,7 @@ def plot_disp_curves(dir=None, force=None):
                     data[-1][-1].append(None)
 
         # Add the residuals for statistical comparison.
-        for frq in loop_frq():
+        for exp_type, frq in loop_exp_frq():
             # Add a new set for the data at each frequency.
             data.append([])
 
@@ -606,7 +614,7 @@ def plot_disp_curves(dir=None, force=None):
             set_labels.append(label)
 
             # Loop over the dispersion points.
-            for disp_point in loop_point():
+            for disp_point in loop_point(exp_type=exp_type):
                 # The data key.
                 key = return_param_key_from_data(frq=frq, point=disp_point)
 
@@ -693,9 +701,9 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     # Loop over the spectrometer frequencies.
     graph_index = 0
     err = False
-    for frq in loop_frq():
+    for exp_type, frq in loop_exp_frq():
         # Loop over the dispersion points.
-        for disp_point in loop_point():
+        for disp_point in loop_point(exp_type=exp_type):
             # Create a new graph.
             data.append([])
 
