@@ -47,7 +47,8 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.spectrum import check_spectrum_id
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_DESC_CPMG_FIXED, EXP_TYPE_DESC_CPMG_EXP, EXP_TYPE_DESC_R1RHO_FIXED, EXP_TYPE_DESC_R1RHO_EXP, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP
+from specific_analyses.relax_disp.checks import check_mixed_curve_types
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_DESC_CPMG_FIXED, EXP_TYPE_DESC_CPMG_EXP, EXP_TYPE_DESC_R1RHO_FIXED, EXP_TYPE_DESC_R1RHO_EXP, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, EXP_TYPE_LIST_VAR_TIME, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, path, sep
 
@@ -271,6 +272,57 @@ def find_intensity_keys(frq=None, point=None, time=None):
 
     # Return the IDs.
     return ids
+
+
+def get_curve_type():
+    """Return the unique curve type.
+
+    @return:    The curve type - either 'fixed time' or 'exponential'.
+    @rtype:     str
+    """
+
+    # Data checks.
+    check_mixed_curve_types()
+
+    # Determine the curve type.
+    curve_type = 'fixed time'
+    if has_exponential_exp_type():
+        curve_type = 'exponential'
+
+    # Return the type.
+    return curve_type
+
+
+def has_exponential_exp_type():
+    """Determine if the current data pipe contains exponential curves.
+
+    @return:    True if spectral data for exponential curves exist, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over all experiment types.
+    for exp_type in cdp.exp_type_list:
+        if exp_type in EXP_TYPE_LIST_VAR_TIME:
+            return True
+
+    # No exponential data.
+    return False
+
+
+def has_fixed_time_exp_type():
+    """Determine if the current data pipe contains fixed time data.
+
+    @return:    True if spectral data for fixed time data exists, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over all experiment types.
+    for exp_type in cdp.exp_type_list:
+        if exp_type in EXP_TYPE_LIST_FIXED_TIME:
+            return True
+
+    # No exponential data.
+    return False
 
 
 def loop_cluster():
