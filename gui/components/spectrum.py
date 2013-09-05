@@ -109,8 +109,8 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
 
 
-    def action_relax_fit_exp_type(self, event):
-        """Launch the relax_fit.exp_type user function.
+    def action_relax_disp_exp_type(self, event):
+        """Launch the relax_disp.exp_type user function.
 
         @param event:   The wx event.
         @type event:    wx event
@@ -129,9 +129,9 @@ class Spectra_list(Base_list):
 
         # Launch the dialog.
         if exp_type == None:
-            uf_store['relax_fit.exp_type'](spectrum_id=id)
+            uf_store['relax_disp.exp_type'](spectrum_id=id)
         else:
-            uf_store['relax_fit.exp_type'](spectrum_id=id, exp_type=exp_type)
+            uf_store['relax_disp.exp_type'](spectrum_id=id, exp_type=exp_type)
 
 
     def action_relax_disp_spin_lock_field(self, event):
@@ -559,7 +559,7 @@ class Spectra_list(Base_list):
                 'id': wx.NewId(),
                 'text': "Set the &experiment type",
                 'icon': None,
-                'method': self.action_relax_fit_exp_type
+                'method': self.action_relax_disp_exp_type
             })
         if self.relax_times_flag:
             self.popup_menus.append({
