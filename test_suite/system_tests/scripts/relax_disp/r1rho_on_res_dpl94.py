@@ -58,6 +58,9 @@ for spin_lock_index in range(len(spin_lock)):
 spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', dim=1)
 spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
+# Set the relaxation dispersion experiment type.
+relax_disp.exp_type(spectrum_id='ref', exp_type='r1rho fixed')
+
 # Set as the reference.
 relax_disp.spin_lock_field(spectrum_id='ref', field=None)
 relax_disp.spin_lock_offset(spectrum_id='ref', offset=115.0)
