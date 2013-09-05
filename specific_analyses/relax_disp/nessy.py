@@ -32,7 +32,7 @@ from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.disp_data import find_intensity_keys, loop_frq, loop_frq_point_time, loop_point, return_index_from_disp_point, return_index_from_frq
+from specific_analyses.relax_disp.disp_data import find_intensity_keys, loop_exp_frq, loop_exp_frq_point_time, loop_point, return_index_from_disp_point, return_index_from_frq
 
 
 def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
@@ -281,14 +281,14 @@ class Nessy_data:
                 raise RelaxError("A residue number of greater than 700 is not supported in NESSY.")
 
             # Loop over all spectrometer frequencies.
-            for frq in loop_frq():
+            for exp_type, frq in loop_exp_frq():
                 # Loop over all dispersion points.
                 field_index = 0
-                for point in loop_point(skip_ref=False):
+                for point in loop_point(exp_type=exp_type, skip_ref=False):
                     # Indices and keys.
                     exp_index = return_index_from_frq(frq)
                     point_index = return_index_from_disp_point(point)
-                    keys = find_intensity_keys(frq=frq, point=point, time=cdp.relax_time_list[0])
+                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=cdp.relax_time_list[0])
 
                     # Convert the reference point for NESSY input.
                     if point == None:
@@ -320,7 +320,7 @@ class Nessy_data:
         frq_T = get_frequencies(units='T')
 
         # Loop over all data points.
-        for frq, point, time in loop_frq_point_time():
+        for exp_type, frq, point, time in loop_exp_frq_point_time():
             # The frequency index.
             frq_index = cdp.spectrometer_frq_list.index(frq)
 

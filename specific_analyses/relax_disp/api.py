@@ -163,17 +163,19 @@ class Relax_disp(API_base, API_common):
         return results
 
 
-    def _back_calc_peak_intensities(self, spin=None, frq=None, point=None):
+    def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, point=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
-        @keyword spin:  The specific spin data container.
-        @type spin:     SpinContainer instance
-        @keyword frq:   The spectrometer frequency.
-        @type frq:      float
-        @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-        @type point:    float
-        @return:        The back-calculated peak intensities for the given exponential curve.
-        @rtype:         numpy rank-1 float array
+        @keyword spin:      The specific spin data container.
+        @type spin:         SpinContainer instance
+        @keyword exp_type:  The experiment type.
+        @type exp_type:     str
+        @keyword frq:       The spectrometer frequency.
+        @type frq:          float
+        @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+        @type point:        float
+        @return:            The back-calculated peak intensities for the given exponential curve.
+        @rtype:             numpy rank-1 float array
         """
 
         # Check.
@@ -195,8 +197,8 @@ class Relax_disp(API_base, API_common):
         times = []
         for time in cdp.relax_time_list:
             # The data.
-            values.append(average_intensity(spin=spin, frq=frq, point=point, time=time))
-            errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
+            values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time))
+            errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
             times.append(time)
 
         # The scaling matrix in a diagonalised list form.
@@ -487,8 +489,8 @@ class Relax_disp(API_base, API_common):
                 errors = []
                 times = []
                 for time in cdp.relax_time_list:
-                    values.append(average_intensity(spin=spin, frq=frq, point=point, time=time, sim_index=sim_index))
-                    errors.append(average_intensity(spin=spin, frq=frq, point=point, time=time, error=True))
+                    values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, sim_index=sim_index))
+                    errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
                     times.append(time)
 
                 # The scaling matrix in a diagonalised list form.
@@ -621,14 +623,14 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NOREX:
             print("The model for no chemical exchange relaxation.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
 
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -636,7 +638,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_LM63_3SITE:
             print("The Luz and Meiboom (1963) 3-site fast exchange model.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex_B', 'phi_ex_C', 'kB', 'kC']
 
@@ -644,9 +646,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72_FULL:
             print("The full Carver and Richards (1972) 2-site model for all time scales.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2a')
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -654,7 +656,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_CR72:
             print("The reduced Carver and Richards (1972) 2-site model for all time scales, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -662,7 +664,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_IT99:
             print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'padw2', 'tex']
 
@@ -670,7 +672,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_TSMFK01:
             print("The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2a')
             params += ['dw', 'kA']
 
@@ -678,9 +680,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2a')
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -688,7 +690,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_3D:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -696,7 +698,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
             print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -704,9 +706,9 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2a')
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2b')
             params += ['pA', 'dw', 'kex']
 
@@ -714,7 +716,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_CPMG_2SITE_STAR:
             print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -722,7 +724,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_M61:
             print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -730,7 +732,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_M61B:
             print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -738,7 +740,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_DPL94:
             print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['phi_ex', 'kex']
 
@@ -746,7 +748,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_TP02:
             print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 
@@ -754,7 +756,7 @@ class Relax_disp(API_base, API_common):
         elif model == MODEL_NS_R1RHO_2SITE:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
             params = []
-            for exp_type, frq in loop_exp_frq():
+            for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
 

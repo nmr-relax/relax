@@ -35,7 +35,7 @@ from lib.mathematics import round_to_next_order
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import count_frq, loop_cluster, loop_frq, loop_frq_point
+from specific_analyses.relax_disp.disp_data import count_frq, loop_cluster, loop_frq
 from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_VAR_TIME, MODEL_R2EFF, MODEL_M61B
 
 
@@ -279,6 +279,7 @@ def copy(pipe_from=None, pipe_to=None):
 
     # Switch back to the original data pipe.
     pipes.switch(pipe_orig)
+
 
 def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=None):
     """Disassemble the parameter vector.

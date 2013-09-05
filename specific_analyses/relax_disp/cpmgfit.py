@@ -41,7 +41,7 @@ from lib.physical_constants import g1H
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.disp_data import loop_frq_point, return_param_key_from_data
+from specific_analyses.relax_disp.disp_data import loop_exp_frq_point, return_param_key_from_data
 
 
 def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):
@@ -259,7 +259,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
 
     # The data.
     file.write("data\n")
-    for frq, point in loop_frq_point():
+    for exp_type, frq, point in loop_exp_frq_point():
         # The parameter key.
         param_key = return_param_key_from_data(frq=frq, point=point)
 
