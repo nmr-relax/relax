@@ -423,9 +423,9 @@ class Dispersion:
             self.missing = self.missing[0]
 
             # Check that the data is correct.
-            if self.model in MODEL_LIST_CPMG and self.exp_types[0] in EXP_TYPE_LIST_R1RHO:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_CPMG and self.exp_types[0] in EXP_TYPE_LIST_R1RHO:
                 raise RelaxError("The '%s' CPMG model is not compatible with the R1rho experiment type." % self.model)
-            if self.model in MODEL_LIST_R1RHO and self.exp_types[0] in EXP_TYPE_LIST_CPMG:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_R1RHO and self.exp_types[0] in EXP_TYPE_LIST_CPMG:
                 raise RelaxError("The '%s' R1rho model is not compatible with the CPMG experiment type." % self.model)
 
 
