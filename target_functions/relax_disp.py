@@ -43,11 +43,11 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_time=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, num_disp_points=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_time=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -86,12 +86,14 @@ class Dispersion:
         @type num_frq:              int
         @keyword num_disp_points:   The number of points on the dispersion curve.
         @type num_disp_points:      int
-        @keyword values:            The R2eff/R1rho values.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
-        @type values:               numpy rank-3 float array
-        @keyword errors:            The R2eff/R1rho errors.  The three dimensions must correspond to those of the values argument.
-        @type errors:               numpy rank-3 float array
-        @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The three dimensions must correspond to those of the values argument.
-        @type missing:              numpy rank-3 int array
+        @keyword exp_types:         The list of experiment types.
+        @type exp_types:            list of str
+        @keyword values:            The R2eff/R1rho values.  The dimensions are:  the experiment type; the spin cluster (each element corresponds to a different spin in the block); the spectrometer field strength; and the dispersion points.
+        @type values:               numpy rank-4 float array
+        @keyword errors:            The R2eff/R1rho errors.  The dimensions must correspond to those of the values argument.
+        @type errors:               numpy rank-4 float array
+        @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The dimensions must correspond to those of the values argument.
+        @type missing:              numpy rank-4 int array
         @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first two of the value, error and missing structures.
         @type frqs:                 numpy rank-2 float array
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
@@ -128,6 +130,7 @@ class Dispersion:
                 raise RelaxError("R1 relaxation rates must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
 
         # Store the arguments.
+        self.model = model
         self.num_params = num_params
         self.num_spins = num_spins
         self.num_frq = num_frq
@@ -144,6 +147,9 @@ class Dispersion:
         self.r1 = r1
         self.relax_time = relax_time
         self.scaling_matrix = scaling_matrix
+
+        # Check the experiment types, simplifying the data structures as needed.
+        self.experiment_type_setup()
 
         # Scaling initialisation.
         self.scaling_flag = False
@@ -400,6 +406,19 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_sum
+
+
+    def experiment_type_setup(self):
+        """Check the experiment types and simplify data structures.
+
+        For the single experiment type models, the first dimension of the values, errors, and missing data structures will be removed to simplify the target functions.
+        """
+
+        # The CPMG and R1rho single models.
+        if self.model in MODEL_LIST_CPMG + MODEL_LIST_R1RHO:
+            self.values = self.values[0]
+            self.errors = self.errors[0]
+            self.missing = self.missing[0]
 
 
     def func_CR72(self, params):
