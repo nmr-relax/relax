@@ -557,7 +557,9 @@ def loop_point(exp_type=None, skip_ref=True):
     """
 
     # CPMG type data.
-    if exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type == None:
+        raise RelaxError("The experiment type must be supplied.")
+    elif exp_type in EXP_TYPE_LIST_CPMG:
         fields = cdp.cpmg_frqs_list
     elif exp_type in EXP_TYPE_LIST_R1RHO:
         fields = cdp.spin_lock_nu1_list
@@ -655,7 +657,7 @@ def plot_disp_curves(dir=None, force=None):
                     data[-1][-1].append(spin.r2eff_err[key])
 
         # Add the back-calculated data.
-        for exp_type, frq in loop_exp_frq(exp_type):
+        for exp_type, frq in loop_exp_frq():
             # Add a new set for the data at each frequency.
             data.append([])
 
@@ -1271,7 +1273,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             raise RelaxSpinTypeError(spin_id=spin_ids[spin_index])
 
         # Loop over the R2eff data.
-        for frq, point in loop_frq_point():
+        for exp_type, frq, point in loop_exp_frq_point():
             # The indices.
             disp_pt_index = return_index_from_disp_point(point)
             frq_index = return_index_from_frq(frq)
