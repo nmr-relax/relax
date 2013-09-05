@@ -41,7 +41,7 @@ from user_functions.data import Uf_info; uf_info = Uf_info()
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', relax_times=False, frq_flag=False, spin_lock_flag=False, cpmg_frq_flag=False):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', exp_type_flag=False, relax_times_flag=False, frq_flag=False, spin_lock_flag=False, cpmg_frq_flag=False):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -60,8 +60,10 @@ class Spectra_list(Base_list):
         @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
-        @keyword relax_times:       A flag which if True will activate the relaxation time parts of the GUI element.
-        @type relax_times:          bool
+        @keyword exp_type_flag:     A flag which if True will activate the experiment type parts of the GUI element.
+        @type exp_type_flag:        bool
+        @keyword relax_times_flag:  A flag which if True will activate the relaxation time parts of the GUI element.
+        @type relax_times_flag:     bool
         @keyword frq_flag:          A flag which if True will activate the spectrometer frequency parts of the GUI element.
         @type frq_flag:             bool
         @keyword spin_lock_flag:    A flag which if True will activate the spin-lock field strength parts of the GUI element.
@@ -72,7 +74,8 @@ class Spectra_list(Base_list):
 
         # Store the arguments.
         self.fn_add = fn_add
-        self.relax_times_flag = relax_times
+        self.exp_type_flag = exp_type_flag
+        self.relax_times_flag = relax_times_flag
         self.frq_flag = frq_flag
         self.spin_lock_flag = spin_lock_flag
         self.cpmg_frq_flag = cpmg_frq_flag
@@ -104,6 +107,31 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
         else:
             uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
+
+
+    def action_relax_fit_exp_type(self, event):
+        """Launch the relax_fit.exp_type user function.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # The current selection.
+        item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        exp_type = None
+        if hasattr(cdp, 'exp_type') and id in cdp.exp_type.keys():
+            exp_type = cdp.exp_type[id]
+
+        # Launch the dialog.
+        if exp_type == None:
+            uf_store['relax_fit.exp_type'](spectrum_id=id)
+        else:
+            uf_store['relax_fit.exp_type'](spectrum_id=id, exp_type=exp_type)
 
 
     def action_relax_disp_spin_lock_field(self, event):
@@ -285,6 +313,31 @@ class Spectra_list(Base_list):
 
             # Set the value.
             self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
+    def add_exp_type(self, index):
+        """Add the experiment type info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # Append a column.
+        self.element.InsertColumn(index, u("Experiment type"))
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.exp_type.keys():
+                continue
+
+            # Set the value.
+            self.element.SetStringItem(i, index, float_to_gui(cdp.exp_type[cdp.spectrum_ids[i]]))
 
         # Successful.
         return True
@@ -509,6 +562,13 @@ class Spectra_list(Base_list):
                 'method': self.action_spectrum_replicated
             }
         ]
+        if self.exp_type_flag:
+            self.popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the &experiment type",
+                'icon': None,
+                'method': self.action_relax_fit_exp_type
+            })
         if self.relax_times_flag:
             self.popup_menus.append({
                 'id': wx.NewId(),
@@ -564,6 +624,10 @@ class Spectra_list(Base_list):
 
         # The NOE spectrum type.
         if self.noe_spectrum_type(index):
+            index += 1
+
+        # The experiment type.
+        if self.exp_type_flag and self.add_exp_type(index):
             index += 1
 
         # The spectrometer frequency.
