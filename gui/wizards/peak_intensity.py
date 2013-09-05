@@ -140,6 +140,11 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Relaxation dispersion pages.
         if self.relax_disp_flag:
+            # The relax_disp.exp_type page.
+            page = uf_store['relax_disp.exp_type'].create_page(self, sync=True)
+            self.page_indices['exp_type'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_exp_type
+
             # The spectrometer.frequency page.
             page = uf_store['spectrometer.frequency'].create_page(self, sync=True)
             self.page_indices['spectrometer_frequency'] = self.add_page(page, skip_button=True, proceed_on_error=False)
@@ -304,6 +309,13 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Update the spectrum ID.
         self.wizard_update_ids(page_key='cpmg_frq')
+
+
+    def wizard_update_relax_disp_exp_type(self):
+        """Update the relax_disp.exp_type page based on previous data."""
+
+        # Update the spectrum ID.
+        self.wizard_update_ids(page_key='exp_type')
 
 
     def wizard_update_relax_disp_relax_time(self):
