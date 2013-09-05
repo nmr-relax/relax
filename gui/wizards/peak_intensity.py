@@ -37,6 +37,7 @@ from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 from pipe_control.mol_res_spin import are_spins_named
+from specific_analyses.relax_disp.disp_data import has_cpmg_exp_type, has_r1rho_exp_type
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -45,7 +46,7 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 class Peak_intensity_wizard(Wiz_window):
     """The wizard for loading peak intensity data."""
 
-    def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False, relax_disp=False, relax_disp_cpmg=False, relax_disp_times=False):
+    def __init__(self, parent=None, size_x=1000, size_y=750, title="Peak intensity loading wizard", noe=False, relax_fit=False, relax_disp=False):
         """Set up the peak intensity loading wizard.
 
         @keyword parent:            The parent window.
@@ -62,18 +63,12 @@ class Peak_intensity_wizard(Wiz_window):
         @type relax_fit:            bool
         @keyword relax_disp:        A flag which when True will enable the relaxation dispersion portions of the wizard.
         @type relax_disp:           bool
-        @keyword relax_disp_cpmg:   A flag which if True enables the relax_disp.cpmg_frq user function and if False enables the relax_disp.spin_lock_field user function.  It also enables the relax_disp.spin_lock_offset user function if R1rho data is indicated.
-        @type relax_disp_cpmg:      bool
-        @keyword relax_disp_times:  A flag which if True will enable the relax_disp.relax_time page.
-        @type relax_disp_times:     bool
         """
 
         # Store the args.
         self.noe_flag = noe
         self.relax_fit_flag = relax_fit
         self.relax_disp_flag = relax_disp
-        self.relax_disp_cpmg = relax_disp_cpmg
-        self.relax_disp_times = relax_disp_times
 
         # Get the app and store the GUI instance.
         app = wx.GetApp()
@@ -154,25 +149,23 @@ class Peak_intensity_wizard(Wiz_window):
             page = uf_store['relax_disp.relax_time'].create_page(self, sync=True)
             self.page_indices['relax_time'] = self.add_page(page, skip_button=True, proceed_on_error=False)
             page.on_init = self.wizard_update_relax_disp_relax_time
+            self.set_seq_next_fn(self.page_indices['relax_time'], self.wizard_page_after_relax_time)
 
-            # CPMG pages.
-            if self.relax_disp_cpmg:
-                # The relax_disp.cpmg_frq page.
-                page = uf_store['relax_disp.cpmg_frq'].create_page(self, sync=True)
-                self.page_indices['cpmg_frq'] = self.add_page(page, skip_button=False, proceed_on_error=False)
-                page.on_init = self.wizard_update_relax_disp_cpmg_frq
+            # The relax_disp.cpmg_frq page.
+            page = uf_store['relax_disp.cpmg_frq'].create_page(self, sync=True)
+            self.page_indices['cpmg_frq'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_cpmg_frq
+            self.set_seq_next_fn(self.page_indices['cpmg_frq'], self.wizard_page_after_cpmg_frq)
 
-            # R1rho pages.
-            else:
-                # The relax_disp.spin_lock_field page.
-                page = uf_store['relax_disp.spin_lock_field'].create_page(self, sync=True)
-                self.page_indices['spin_lock_field'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-                page.on_init = self.wizard_update_relax_disp_spin_lock_field
+            # The relax_disp.spin_lock_field page.
+            page = uf_store['relax_disp.spin_lock_field'].create_page(self, sync=True)
+            self.page_indices['spin_lock_field'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_spin_lock_field
 
-                # The relax_disp.spin_lock_offset page.
-                page = uf_store['relax_disp.spin_lock_offset'].create_page(self, sync=True)
-                self.page_indices['spin_lock_offset'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-                page.on_init = self.wizard_update_relax_disp_spin_lock_offset
+            # The relax_disp.spin_lock_offset page.
+            page = uf_store['relax_disp.spin_lock_offset'].create_page(self, sync=True)
+            self.page_indices['spin_lock_offset'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_spin_lock_offset
 
         # Reset the cursor.
         if wx.IsBusy():
@@ -180,6 +173,25 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Run the wizard.
         self.run()
+
+
+    def wizard_page_after_cpmg_frq(self):
+        """Set the page after the CPMG frequency page.
+
+        This should either be the R1rho page if R1rho experiment types exist, or terminate the wizard.
+
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # R1rho experiments exists.
+        if has_r1rho_exp_type():
+            return self.page_indices['spin_lock_field']
+
+        # Nothing left, so run off the end.
+        else:
+            return self._num_pages + 1
 
 
     def wizard_page_after_error_type(self):
@@ -196,6 +208,29 @@ class Peak_intensity_wizard(Wiz_window):
         # Go to the spectrum.replicated page.
         elif self.page_error_type.selection == 'repl':
             return self.page_indices['repl']
+
+
+    def wizard_page_after_relax_time(self):
+        """Set the page after the relaxation time period page.
+
+        This should either be the CPMG page if CPMG experiment types exist, the R1rho page if R1rho experiment types exist, or terminate the wizard.
+
+
+        @return:    The index of the next page, which is the current page index plus one.
+        @rtype:     int
+        """
+
+        # CPMG experiments exists.
+        if has_cpmg_exp_type():
+            return self.page_indices['cpmg_frq']
+
+        # R1rho experiments exists.
+        elif has_r1rho_exp_type():
+            return self.page_indices['spin_lock_field']
+
+        # Nothing left, so run off the end.
+        else:
+            return self._num_pages + 1
 
 
     def wizard_page_after_repl(self):
@@ -220,7 +255,7 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Skip to the first dispersion page.
         elif self.relax_disp_flag:
-            return self.page_indices['spectrometer_frequency']
+            return self.page_indices['exp_type']
 
         # Nothing left, so run off the end.
         else:
@@ -249,7 +284,7 @@ class Peak_intensity_wizard(Wiz_window):
 
         # Skip to the first dispersion page.
         elif self.relax_disp_flag:
-            return self.page_indices['spectrometer_frequency']
+            return self.page_indices['exp_type']
 
         # Nothing left, so run off the end.
         else:
