@@ -43,9 +43,6 @@ sequence.read('fake_sequence.in_trunc', dir=status.install_path + sep+'test_suit
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference.in',    '500_MHz'+sep+'reference.in_trunc',           None,  500e6],
@@ -93,6 +90,9 @@ for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
 
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='cpmg fixed')
+
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
 
@@ -125,9 +125,9 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
-# Strip out all of the simulation data.
-for spin in spin_loop():
-    delattr(spin, 'r2eff_sim')
-
 # Save the program state.
 state.save('r2eff_values', force=True)
+
+# Save the base data pipe.
+pipe.switch('base pipe')
+results.write('base_pipe', dir=None, force=True)
