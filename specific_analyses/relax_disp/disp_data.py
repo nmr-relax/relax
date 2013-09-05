@@ -199,9 +199,6 @@ def exp_type(spectrum_id=None, exp_type=None):
     if exp_type not in EXP_TYPE_LIST:
         raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
 
-    # FIXME:  Temporary solution to keep the branch functional.
-    cdp.exp_type = {}
-
     # Initialise the experiment type data structures if needed.
     if not hasattr(cdp, 'exp_type'):
         cdp.exp_type = {}
@@ -226,9 +223,6 @@ def exp_type(spectrum_id=None, exp_type=None):
     elif exp_type == EXP_TYPE_R1RHO_EXP:
         text += EXP_TYPE_DESC_R1RHO_EXP + "."
     print(text)
-
-    # FIXME:  Temporary solution to keep the branch functional.
-    cdp.exp_type = exp_type
 
 
 def find_intensity_keys(frq=None, point=None, time=None):
