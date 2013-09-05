@@ -34,6 +34,7 @@ from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import switch
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -67,9 +68,6 @@ class Relax_disp(GuiTestCase):
         self.app.gui.analysis.menu_new(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.uf_args['exp_type'].SetValue(str_to_gui('cpmg fixed'))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
@@ -149,9 +147,6 @@ class Relax_disp(GuiTestCase):
         self.app.gui.analysis.menu_new(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.uf_args['exp_type'].SetValue(str_to_gui('cpmg fixed'))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
@@ -264,6 +259,12 @@ class Relax_disp(GuiTestCase):
             wizard._apply(None)
         wizard._skip(None)
 
+        # Set the experiment types.
+        for id, file, cpmg_frq, H_frq in data:
+            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='cpmg fixed')
+            wizard._apply(None)
+        wizard._skip(None)
+
         # Set the spectrometer frequencies.
         page = wizard.get_page(wizard.page_indices['spectrometer_frequency'])
         for id, file, cpmg_frq, H_frq in data:
@@ -289,8 +290,13 @@ class Relax_disp(GuiTestCase):
         wizard._skip(None)
         wizard._go_next(None)    # Terminate the wizard.
 
-        # Deselect the 'CR72' model.
-        analysis.model_field.select[2] = False
+        # Set up the models to use.
+        models = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_CPMG_2SITE_EXPANDED]
+        for i in range(len(analysis.model_field.models)):
+            if analysis.model_field.models[i] in models:
+                analysis.model_field.select[i] = True
+            else:
+                analysis.model_field.select[i] = False
         analysis.model_field.modify()
 
         # Set the grid search size and number of MC sims.
@@ -330,9 +336,6 @@ class Relax_disp(GuiTestCase):
         self.app.gui.analysis.menu_new(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
         page.select_disp(None)
-        self.app.gui.analysis.new_wizard.wizard._go_next(None)
-        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.uf_args['exp_type'].SetValue(str_to_gui('r1rho fixed'))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
@@ -396,6 +399,10 @@ class Relax_disp(GuiTestCase):
             wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
             wizard._go_next(None)
 
+            # The experiment type.
+            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='r1rho fixed')
+            wizard._go_next(None)
+
             # Set the spectrometer frequency.
             wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
             wizard._go_next(None)
@@ -433,6 +440,10 @@ class Relax_disp(GuiTestCase):
                 wizard.setup_page(page='rmsd', spectrum_id=id, error=error)
                 wizard._go_next(None)
 
+                # The experiment type.
+                wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='r1rho fixed')
+                wizard._go_next(None)
+
                 # Set the spectrometer frequency.
                 wizard.setup_page(page='spectrometer_frequency', id=id, frq=frq[frq_index], units='MHz')
                 wizard._go_next(None)
@@ -450,8 +461,12 @@ class Relax_disp(GuiTestCase):
                 wizard._go_next(None)
 
         # Deselect all but the 'TP02' model.
-        for i in [1, 2, 3, 4, 6]:
-            analysis.model_field.select[i] = False
+        models = [MODEL_R2EFF, MODEL_NOREX, MODEL_TP02]
+        for i in range(len(analysis.model_field.models)):
+            if analysis.model_field.models[i] in models:
+                analysis.model_field.select[i] = True
+            else:
+                analysis.model_field.select[i] = False
         analysis.model_field.modify()
 
         # Set the grid search size and number of MC sims.
