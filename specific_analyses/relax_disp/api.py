@@ -850,8 +850,8 @@ class Relax_disp(API_base, API_common):
             # Loop over all the data.
             for exp_type, frq, point, time in loop_exp_frq_point_time():
                 # The three keys.
-                ref_keys = find_intensity_keys(frq=frq, point=None, time=time)
-                int_keys = find_intensity_keys(frq=frq, point=point, time=time)
+                ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
+                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
                 param_key = return_param_key_from_data(frq=frq, point=point)
 
                 # Check for missing data.
@@ -1599,7 +1599,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, frq, point = data_id
+            spin, exp_type, frq, point = data_id
 
             # Initialise the data structure if needed.
             if not hasattr(spin, 'intensity_sim'):
@@ -1609,7 +1609,7 @@ class Relax_disp(API_base, API_common):
             time_index = 0
             for time in loop_time():
                 # Get the intensity keys.
-                int_keys = find_intensity_keys(frq=frq, point=point, time=time)
+                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
                 # Loop over the intensity keys.
                 for int_key in int_keys:

@@ -226,21 +226,23 @@ def exp_type(spectrum_id=None, exp_type=None):
     print(text)
 
 
-def find_intensity_keys(frq=None, point=None, time=None):
+def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
-    @keyword frq:   The spectrometer frequency.
-    @type frq:      float
-    @keyword point: The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @type point:    float
-    @keyword time:  The relaxation time period.
-    @type time:     float
-    @return:        The keys corresponding to the spectrometer frequency, dispersion point, and relaxation time.
-    @rtype:         list of str
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency.
+    @type frq:          Float
+    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:        Float
+    @keyword time:      The relaxation time period.
+    @type time:         Float
+    @return:            The keys corresponding to the spectrometer frequency, dispersion point, and relaxation time.
+    @rtype:             List of str
     """
 
     # The dispersion data.
-    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type in EXP_TYPE_LIST_CPMG:
         disp_data = cdp.cpmg_frqs
     else:
         disp_data = cdp.spin_lock_nu1
