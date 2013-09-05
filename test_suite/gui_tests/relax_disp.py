@@ -232,17 +232,12 @@ class Relax_disp(GuiTestCase):
         wizard = analysis.peak_wizard
 
         # Spin naming.
-        page = wizard.get_page(wizard.page_indices['name'])
-        page.uf_args['name'].SetValue(str_to_gui("N"))
-        page.uf_args['force'].SetValue(True)
+        wizard.setup_page(page='name', name="N", force=True)
         wizard._go_next(None)
 
         # The spectrum.
-        page = wizard.get_page(wizard.page_indices['read'])
         for id, file, cpmg_frq, H_frq in data:
-            page.uf_args['file'].SetValue(str_to_gui("%s%s" % (data_path, file)))
-            page.uf_args['spectrum_id'].SetValue(str_to_gui(id))
-            page.uf_args['int_method'].SetValue(str_to_gui('height'))
+            wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height', dim=1)
             wizard._apply(None)
         wizard._skip(None)
 
@@ -252,10 +247,8 @@ class Relax_disp(GuiTestCase):
         wizard._go_next(None)
 
         # Replicated spectra:
-        page = wizard.get_page(wizard.page_indices['repl'])
         for id1, id2 in replicated:
-            page.uf_args['spectrum_ids'].SetValue(value=id1, index=0)
-            page.uf_args['spectrum_ids'].SetValue(value=id2, index=1)
+            wizard.setup_page(page='repl', spectrum_ids=[id1, id2])
             wizard._apply(None)
         wizard._skip(None)
 
@@ -266,29 +259,22 @@ class Relax_disp(GuiTestCase):
         wizard._skip(None)
 
         # Set the spectrometer frequencies.
-        page = wizard.get_page(wizard.page_indices['spectrometer_frequency'])
         for id, file, cpmg_frq, H_frq in data:
-            page.uf_args['id'].SetValue(str_to_gui(id))
-            page.uf_args['frq'].SetValue(float_to_gui(H_frq))
+            wizard.setup_page(page='spectrometer_frequency', id=id, frq=H_frq)
             wizard._apply(None)
         wizard._skip(None)
 
         # Set the relaxation time.
-        page = wizard.get_page(wizard.page_indices['relax_time'])
         for id, file, cpmg_frq, H_frq in data:
-            page.uf_args['spectrum_id'].SetValue(str_to_gui(id))
-            page.uf_args['time'].SetValue(float_to_gui(0.03))
+            wizard.setup_page(page='relax_time', spectrum_id=id, time=0.03)
             wizard._apply(None)
         wizard._skip(None)
 
         # Set the CPMG frequencies.
-        page = wizard.get_page(wizard.page_indices['cpmg_frq'])
         for id, file, cpmg_frq, H_frq in data:
-            page.uf_args['spectrum_id'].SetValue(str_to_gui(id))
-            page.uf_args['cpmg_frq'].SetValue(float_to_gui(cpmg_frq))
+            wizard.setup_page(page='cpmg_frq', spectrum_id=id, cpmg_frq=cpmg_frq)
             wizard._apply(None)
         wizard._skip(None)
-        wizard._go_next(None)    # Terminate the wizard.
 
         # Set up the models to use.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_CPMG_2SITE_EXPANDED]
