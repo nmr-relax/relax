@@ -287,7 +287,7 @@ class Nessy_data:
                 for point in loop_point(exp_type=exp_type, skip_ref=False):
                     # Indices and keys.
                     exp_index = return_index_from_frq(frq)
-                    point_index = return_index_from_disp_point(point)
+                    point_index = return_index_from_disp_point(point, exp_type=exp_type)
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=cdp.relax_time_list[0])
 
                     # Convert the reference point for NESSY input.

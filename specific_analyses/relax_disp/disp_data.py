@@ -948,28 +948,34 @@ def return_cpmg_frqs(ref_flag=True):
     return cpmg_frqs
 
 
-def return_index_from_disp_point(value):
+def return_index_from_disp_point(value, exp_type=None):
     """Convert the dispersion point data into the corresponding index.
 
-    @param value:   The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @type value:    float
-    @return:        The corresponding index.
-    @rtype:         int
+    @param value:       The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type value:        float
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @return:            The corresponding index.
+    @rtype:             int
     """
+
+    # Check.
+    if exp_type == None:
+        raise RelaxError("The experiment type has not been supplied.")
 
     # Initialise.
     index = 0
 
     # CPMG-type experiments.
-    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type in EXP_TYPE_LIST_CPMG:
         index = cdp.cpmg_frqs_list.index(value)
 
     # R1rho-type experiments.
-    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
+    elif exp_type in EXP_TYPE_LIST_R1RHO:
         index = cdp.spin_lock_nu1_list.index(value)
 
     # Remove the reference point (always at index 0).
-    if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
+    if exp_type in EXP_TYPE_LIST_FIXED_TIME:
         index -= 1
 
     # Return the index.
@@ -993,22 +999,28 @@ def return_index_from_frq(value):
     return cdp.spectrometer_frq_list.index(value)
 
 
-def return_index_from_disp_point_key(key):
+def return_index_from_disp_point_key(key, exp_type=None):
     """Convert the dispersion point key into the corresponding index.
 
-    @param key: The dispersion point or R2eff/R1rho key.
-    @type key:  str
-    @return:    The corresponding index.
-    @rtype:     int
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @param key:         The dispersion point or R2eff/R1rho key.
+    @type key:          str
+    @return:            The corresponding index.
+    @rtype:             int
     """
 
+    # Check.
+    if exp_type == None:
+        raise RelaxError("The experiment type has not been supplied.")
+
     # CPMG-type experiments.
-    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
-        return return_index_from_disp_point(cdp.cpmg_frqs[key])
+    if exp_type in EXP_TYPE_LIST_CPMG:
+        return return_index_from_disp_point(cdp.cpmg_frqs[key], exp_type=exp_type)
 
     # R1rho-type experiments.
-    elif cdp.exp_type in EXP_TYPE_LIST_R1RHO:
-        return return_index_from_disp_point(cdp.spin_lock_nu1[key])
+    elif exp_type in EXP_TYPE_LIST_R1RHO:
+        return return_index_from_disp_point(cdp.spin_lock_nu1[key], exp_type=exp_type)
 
 
 def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, ref=False):
@@ -1032,7 +1044,7 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
     """
 
     # Checks.
-    if ref and cdp.exp_type not in EXP_TYPE_LIST_FIXED_TIME:
+    if ref and exp_type not in EXP_TYPE_LIST_FIXED_TIME:
         raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
 
     # The key.
@@ -1057,14 +1069,14 @@ def return_key_from_disp_point_index(frq_index=None, disp_point_index=None):
     """
 
     # Insert the reference point (always at index 0).
-    if cdp.exp_type in EXP_TYPE_LIST_FIXED_TIME:
+    if exp_type in EXP_TYPE_LIST_FIXED_TIME:
         disp_point_index += 1
 
     # The frequency.
     frq = return_value_from_frq_index(frq_index)
 
     # CPMG data.
-    if cdp.exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type in EXP_TYPE_LIST_CPMG:
         point = cdp.cpmg_frqs_list[disp_point_index]
         points = cdp.cpmg_frqs
 
@@ -1137,6 +1149,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
     # Loop over all spectrum IDs.
     for id in cdp.spectrum_ids:
         # The data.
+        exp_type = cdp.exp_type[id]
         frq = cdp.spectrometer_frq[id]
         point = cdp.spin_lock_nu1[id]
 
@@ -1146,7 +1159,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
 
         # The indices.
         frq_index = return_index_from_frq(frq)
-        disp_pt_index = return_index_from_disp_point(point)
+        disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
 
         # Loop over the spins.
         for spin_index in range(spin_num):
@@ -1273,7 +1286,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     @rtype:                 numpy rank-3 float array, numpy rank-3 float array, numpy rank-3 int array, numpy rank-2 int array
     """
 
-    # The spin count.
+    # The counts.
     spin_num = len(spins)
 
     # Initialise the data structures for the target function (errors are set to one to avoid divide by zero for missing data in the chi-squared function).
@@ -1300,7 +1313,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         # Loop over the R2eff data.
         for exp_type, frq, point in loop_exp_frq_point():
             # The indices.
-            disp_pt_index = return_index_from_disp_point(point)
+            disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
             frq_index = return_index_from_frq(frq)
 
             # The key.

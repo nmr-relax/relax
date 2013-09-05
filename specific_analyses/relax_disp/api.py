@@ -147,7 +147,7 @@ class Relax_disp(API_base, API_common):
         for exp_type, frq, point in loop_exp_frq_point():
             # The indices.
             frq_index = return_index_from_frq(frq)
-            point_index = return_index_from_disp_point(point)
+            point_index = return_index_from_disp_point(point, exp_type=exp_type)
 
             # The parameter key.
             param_key = return_param_key_from_data(frq=frq, point=point)
@@ -1237,7 +1237,7 @@ class Relax_disp(API_base, API_common):
                     # Loop over the R2eff data.
                     for exp_type, frq, point in loop_exp_frq_point():
                         # The indices.
-                        disp_pt_index = return_index_from_disp_point(point)
+                        disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
                         frq_index = return_index_from_frq(frq)
 
                         # Missing data.
