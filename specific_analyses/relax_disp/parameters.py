@@ -743,12 +743,12 @@ def param_num(spins=None):
     # The R2eff model.
     if cdp.model_type == 'R2eff':
         # Exponential curves (with clustering).
-        if cdp.exp_type in EXP_TYPE_LIST_VAR_TIME:
-            return 2 * len(spins)
+        for id in cdp.exp_type:
+            if cdp.exp_type[id] in EXP_TYPE_LIST_VAR_TIME:
+                return 2 * len(spins)
 
         # Fixed time period experiments (with clustering).
-        else:
-            return 1 * len(spins)
+        return 1 * len(spins)
 
     # Check the spin cluster.
     for spin in spins:
