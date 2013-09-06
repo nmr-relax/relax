@@ -30,6 +30,7 @@ from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.mol_res_spin import spin_loop
+from specific_analyses.relax_disp.disp_data import get_curve_type
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
