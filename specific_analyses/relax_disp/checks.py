@@ -229,12 +229,20 @@ def get_times():
     for type in cdp.exp_type_list:
         times[type] = []
 
-    # No experiment types set.
+    # Not set up yet.
     if not hasattr(cdp, 'exp_type') or not hasattr(cdp, 'spectrum_ids') or not hasattr(cdp, 'relax_times'):
         return times
 
     # Loop over all spectra IDs.
     for id in cdp.spectrum_ids:
+        # No time set.
+        if id not in cdp.relax_times:
+            continue
+
+        # No type set.
+        if id not in cdp.exp_type:
+            continue
+
         # Count the number of times.
         if cdp.relax_times[id] not in times[cdp.exp_type[id]]:
             times[cdp.exp_type[id]].append(cdp.relax_times[id])
