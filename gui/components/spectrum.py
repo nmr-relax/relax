@@ -79,15 +79,18 @@ class Spectra_list(Base_list):
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
 
 
-    def action_relax_disp_cpmg_frq(self, event):
+    def action_relax_disp_cpmg_frq(self, event=None, item=None):
         """Launch the relax_disp.cpmg_frq user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
@@ -104,15 +107,18 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
 
 
-    def action_relax_disp_exp_type(self, event):
+    def action_relax_disp_exp_type(self, event=None, item=None):
         """Launch the relax_disp.exp_type user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
@@ -154,15 +160,18 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.spin_lock_field'](frq=nu1, spectrum_id=id)
 
 
-    def action_relax_fit_relax_time(self, event):
+    def action_relax_fit_relax_time(self, event=None, item=None):
         """Launch the relax_fit.relax_time user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
@@ -179,15 +188,18 @@ class Spectra_list(Base_list):
             uf_store['relax_fit.relax_time'](time=time, spectrum_id=id)
 
 
-    def action_spectrometer_frq(self, event):
+    def action_spectrometer_frq(self, event=None, item=None):
         """Launch the spectrometer.frequency user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
