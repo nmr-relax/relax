@@ -59,7 +59,7 @@ spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path,
 spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
 
 # Set the relaxation dispersion experiment type.
-relax_disp.exp_type(spectrum_id='ref', exp_type='r1rho fixed')
+relax_disp.exp_type(spectrum_id='ref', exp_type='R1rho')
 
 # Set as the reference.
 relax_disp.spin_lock_field(spectrum_id='ref', field=None)
@@ -78,7 +78,7 @@ for i in range(len(data)):
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho fixed')
+    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='R1rho')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
