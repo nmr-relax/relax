@@ -250,7 +250,7 @@ class Relax_disp(SystemTestCase):
         ]
 
         # List of parameters which do not belong to the model.
-        blacklist = ['cpmg_frqs', 'r2', 'rex', 'kex', 'r2a', 'ka', 'dw']
+        blacklist = ['cpmg_frqs', 'r2', 'rex', 'kex', 'r2a', 'k_AB', 'dw']
 
         # Checks for each residue.
         for i in range(len(res_data)):
@@ -1066,11 +1066,11 @@ class Relax_disp(SystemTestCase):
 
         {Representative 15N CPMG relaxation dispersion curve measured on the cross peaks from residue L61 in folded ACBP at pH 5.3, 1 M GuHCl, and 40C.}
           1. The dotted line represents a residue-specific fit of all parameters in Eq. 1.
-            - ka = 11.3 +/- 0.7 s^{-1}
+            - k_AB = 11.3 +/- 0.7 s^{-1}
             - dw = (2.45 +/- 0.09) * 10^3 s^{-1}
             - R2 = 8.0 +/- 0.5 s^{-1}.
-          2. The solid line represents a global fit of ka to all protein residues and a residue-specific fit of dw and R2.}
-            -.ka = 10.55 +/- 0.08 s^{-1}
+          2. The solid line represents a global fit of k_AB to all protein residues and a residue-specific fit of dw and R2.}
+            -.k_AB = 10.55 +/- 0.08 s^{-1}
             - dw = (2.44 +/- 0.08) * 10^3 s^{-1}
             - R2 = 8.4 +/- 0.3 s^{-1}.
 
@@ -1089,7 +1089,7 @@ class Relax_disp(SystemTestCase):
         # Set the initial parameter values.
         res61L.r2a = [8]
         res61L.dw = 6.5
-        res61L.kA = 11.0
+        res61L.k_AB = 11.0
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
@@ -1099,14 +1099,14 @@ class Relax_disp(SystemTestCase):
         print("%-20s %-20s" % ("Parameter", "Value (:61)"))
         print("%-20s %20.15g" % ("R2A (600 MHz)", res61L.r2a[0]))
         print("%-20s %20.15g" % ("dw", res61L.dw))
-        print("%-20s %20.15g" % ("kA", res61L.kA))
+        print("%-20s %20.15g" % ("k_AB", res61L.k_AB))
         print("%-20s %20.15g\n" % ("chi2", res61L.chi2))
 
         # Checks for residue :61. Reference values from paper
 
         self.assertAlmostEqual(res61L.r2a[0], 8.4, -1)
         self.assertAlmostEqual(res61L.dw, 6.41, 2)
-        self.assertAlmostEqual(res61L.kA, 10.55, 0)
+        self.assertAlmostEqual(res61L.k_AB, 10.55, 0)
         self.assertAlmostEqual(res61L.chi2, 60.0, 5)
 
 

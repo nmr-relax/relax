@@ -96,7 +96,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('kB', scope='spin', default=10000.0, desc='Approximate chemical exchange rate constant between sites A and B (rad.s^-1)', set='params', py_type=float, grace_string='\\qk\\sB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('kC', scope='spin', default=10000.0, desc='Approximate chemical exchange rate constant between sites A and C (rad.s^-1)', set='params', py_type=float, grace_string='\\qk\\sC\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('tex', scope='spin', default=1.0/20000.0, desc='The time of exchange (tex = 1/(2kex))', set='params', py_type=float, grace_string='\\q\\xt\\B\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('kA', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('k_AB', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
 
         # Add the minimisation data.
@@ -382,7 +382,7 @@ class Relax_disp(API_base, API_common):
                         upper.append(1.0)
 
                     # Exchange rates.
-                    elif spin.params[i] in ['kex', 'kA', 'kB', 'kC']:
+                    elif spin.params[i] in ['kex', 'k_AB', 'kB', 'kC']:
                         lower.append(1.0)
                         upper.append(100000.0)
 
@@ -675,7 +675,7 @@ class Relax_disp(API_base, API_common):
             params = []
             for frq in loop_frq():
                 params.append('r2a')
-            params += ['dw', 'kA']
+            params += ['dw', 'k_AB']
 
         # Full NS CPMG 2-site 3D model.
         elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
@@ -1382,7 +1382,7 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'"])
     _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
     _table.add_row(["Exchange rate (rad/s)", "'kex'"])
-    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'kA'"])
+    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'"])
     _table.add_row(["Time of exchange (s/rad)", "'tex'"])
     _table.add_row(["Peak intensities (series)", "'intensities'"])
     _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
@@ -1421,7 +1421,7 @@ class Relax_disp(API_base, API_common):
 
 
     set_doc = Desc_container("Relaxation dispersion curve fitting set details")
-    set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (kA) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
+    set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
     def set_error(self, model_info, index, error):

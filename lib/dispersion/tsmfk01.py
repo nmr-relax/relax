@@ -23,7 +23,7 @@
 
 # Module docstring.
 """The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
-Applicable in the limit of slow exchange, when |R20A-R2bj| << kA,kB << 1/tau_CP. R20A is the transverse relaxation rate of site A in the absence of exchange.
+Applicable in the limit of slow exchange, when |R2A-R2B| << k_AB, kB << 1/tau_CP. R20A is the transverse relaxation rate of site A in the absence of exchange.
 2*tau_CP is is the time between successive 180 deg. pulses.
 
 This module is for the function, gradient and Hessian of the TSMFK01 model.  The model is named after the reference:
@@ -32,22 +32,22 @@ This module is for the function, gradient and Hessian of the TSMFK01 model.  The
 
 The equation used is::
 
-                              sin(delta_omega * tau_CP)
-    R2Aeff = R20A + kA - kA * -------------------------  ,
-                               delta_omega * tau_CP
+                                   sin(delta_omega * tau_CP)
+    R2Aeff = R20A + k_AB - k_AB * -------------------------  ,
+                                   delta_omega * tau_CP
 
 where::
 
     tau_CP = 1.0/(4*nu_cpmg) ,
 
-R20A is the transverse relaxation rate of site A in the absence of exchange, 2*tau_CP is is the time between successive 180 deg. pulses, kA is the forward chemical exchange rate constant, delta_omega is the chemical shift difference between the two states.
+R20A is the transverse relaxation rate of site A in the absence of exchange, 2*tau_CP is is the time between successive 180 deg. pulses, k_AB is the forward chemical exchange rate constant, delta_omega is the chemical shift difference between the two states.
 """
 
 # Python module imports.
 from math import sin
 
 
-def r2eff_TSMFK01(r20a=None, dw=None, kA=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the TSMFK01 model.
 
     See the module docstring for details.
@@ -57,8 +57,8 @@ def r2eff_TSMFK01(r20a=None, dw=None, kA=None, cpmg_frqs=None, back_calc=None, n
     @type r20a:             float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               float
-    @keyword kA:            The kA parameter value (the forward exchange rate in rad/s).
-    @type kA:               float
+    @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
+    @type k_AB:             float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
@@ -82,7 +82,7 @@ def r2eff_TSMFK01(r20a=None, dw=None, kA=None, cpmg_frqs=None, back_calc=None, n
 
         # Catch zeros (to avoid pointless mathematical operations).
         if numer == 0.0:
-            back_calc[i] = r20a + kA
+            back_calc[i] = r20a + k_AB
             continue
 
         # Denominator.
@@ -95,4 +95,4 @@ def r2eff_TSMFK01(r20a=None, dw=None, kA=None, cpmg_frqs=None, back_calc=None, n
 
         # The full formula.
         else:
-            back_calc[i] = r20a + kA - kA * numer / denom
+            back_calc[i] = r20a + k_AB - k_AB * numer / denom

@@ -469,7 +469,7 @@ uf.add_keyarg(
         u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72,
         u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72_FULL,
         u("%s: {R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}") % MODEL_IT99,
-        u("%s: {R\u2082A, ..., d\u03C9, kA}") % MODEL_TSMFK01,
+        u("%s: {R\u2082A, ..., d\u03C9, k_AB}") % MODEL_TSMFK01,
         u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D,
         u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D_FULL,
         u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_STAR,
@@ -516,7 +516,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63_3SITE, "The original Luz a
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The reduced Carver and Richards (1972) 2-site equation for all time scales whereby the simplification R20A = R20B is assumed.  The parameters are {R20, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72_FULL, "The full Carver and Richards (1972) 2-site equation for all time scales with parameters {R20A, R20B, ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., phi_ex, padw2, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_TSMFK01, "The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.  Applicable in the limit of slow exchange, when |R20A-R20B| << kA,kB << 1/tau_CP.  R20A is the transverse relaxation rate of site A in the absence of exchange.  2*tau_CP is is the time between successive 180 deg. pulses.  The parameters are {R20A, ..., dw, kA}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_TSMFK01, "The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.  Applicable in the limit of slow exchange, when |R20A-R20B| << k_AB,kB << 1/tau_CP.  R20A is the transverse relaxation rate of site A in the absence of exchange.  2*tau_CP is is the time between successive 180 deg. pulses.  The parameters are {R20A, ..., dw, k_AB}.")
 uf.desc[-1].add_paragraph("For the R1rho-type experiment, the currently supported models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the same model model as for the CPMG-type experiments except that the R1rho and not R2eff values are determined.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present,")

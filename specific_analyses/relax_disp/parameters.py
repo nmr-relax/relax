@@ -113,7 +113,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             scaling_matrix[param_index, param_index] = 1
 
         # Exchange rate scaling.
-        elif param_name in ['kex', 'ka', 'kB', 'kC']:
+        elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
             scaling_matrix[param_index, param_index] = 10000
 
         # Time of exchange scaling.
@@ -423,7 +423,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         0 <= kB <= 2e6
         0 <= kC <= 2e6
         tex >= 0
-        kA >= 0
+        k_AB >= 0
 
 
     Matrix notation
@@ -473,7 +473,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |         |     |          |      |         |
         | 1  0  0 |     |   tex    |      |    0    |
         |         |     |          |      |         |
-        | 1  0  0 |     |    kA    |      |    0    |
+        | 1  0  0 |     |   k_AB   |      |    0    |
 
 
     @keyword spins:             The list of spin data containers for the block.
@@ -555,7 +555,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 j += 1
 
         # Exchange rates and times (0 <= k <= 2e6).
-        elif param_name in ['kex', 'ka', 'kB', 'kC']:
+        elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
