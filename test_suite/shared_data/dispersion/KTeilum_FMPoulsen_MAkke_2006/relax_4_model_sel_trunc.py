@@ -6,7 +6,7 @@ from auto_analyses.relax_disp import Relax_disp
 state.load(state='ini_setup_trunc.bz2')
  
 # Set settings for run.
-results_directory = os.path.join(os.getcwd(),"relax_results_trunc")
+results_directory = os.path.join(os.getcwd(), "relax_results_trunc")
 pipe_name = 'base pipe'; pipe_bundle = 'relax_disp'
 MODELS = ['R2eff', 'No Rex', 'TSMFK01', 'LM63', 'LM63 3-site', 'CR72', 'CR72 full', 'IT99', 'NS CPMG 2-site 3D', 'NS CPMG 2-site expanded', 'NS CPMG 2-site star']
 GRID_INC = 11; MC_NUM = 50; MODSEL = 'AIC'
