@@ -29,7 +29,6 @@ import wx.lib.buttons
 
 # relax module imports.
 from graphics import fetch_icon
-from gui import text
 from gui.components.base_list import Base_list
 from gui.components.relax_data_meta import Relax_data_meta_list
 from gui.icons import relax_icons
@@ -37,6 +36,7 @@ from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_window
+from lib.text.gui import r1, r2
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
@@ -301,8 +301,8 @@ class Relax_data_list(Base_list):
         # Translation table for the Rx data types.
         table = {
             "NOE": "Steady-state NOE",
-            "R1": "%s longitudinal relaxation" % text.r1,
-            "R2": "%s transverse relaxation" % text.r2
+            "R1": "%s longitudinal relaxation" % r1,
+            "R2": "%s transverse relaxation" % r2
         }
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.

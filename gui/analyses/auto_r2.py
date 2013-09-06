@@ -24,8 +24,8 @@
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
-from gui import text
 from gui.analyses.auto_rx_base import Auto_rx
+from lib.text.gui import r2
 
 
 class Auto_r2(Auto_rx):
@@ -36,4 +36,4 @@ class Auto_r2(Auto_rx):
     bitmap = [ANALYSIS_IMAGE_PATH+"r2_200x200.png",
               IMAGE_PATH+'r2.png']
     label = "R2"
-    gui_label = text.r2
+    gui_label = r2
