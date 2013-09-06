@@ -27,7 +27,6 @@ import wx
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
-from compat import u
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
@@ -45,6 +44,7 @@ from gui import paths
 from gui.string_conv import gui_to_bool, gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
+from lib.text.gui import dw, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.disp_data import has_cpmg_exp_type, has_r1rho_exp_type
@@ -197,11 +197,11 @@ class Auto_relax_disp(Base_analysis):
         sizer.Add(self.button_isotope, 1, wx.ALL|wx.EXPAND, 0)
 
         # R1 button.
-        self.button_r1 = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, u(" R\u2081 relaxation data"))
+        self.button_r1 = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " %s relaxation data"%r1)
         self.button_r1.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.fid", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_r1.SetFont(font.normal)
         self.button_r1.SetSize((-1, 25))
-        self.button_r1.SetToolTipString(u("Load the R\u2081 relaxation data for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused.  One R\u2081 data set per magnetic field strength must be loaded."))
+        self.button_r1.SetToolTipString("Load the %s relaxation data for the off-resonance %s-type experiments.  For all other experiment types this is unused.  One %s data set per magnetic field strength must be loaded."%(r1, r1rho, r1))
         self.gui.Bind(wx.EVT_BUTTON, self.load_r1_data, self.button_r1)
         sizer.Add(self.button_r1, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -210,7 +210,7 @@ class Auto_relax_disp(Base_analysis):
         self.button_chemical_shift.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.chemical_shift", "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_chemical_shift.SetFont(font.normal)
         self.button_chemical_shift.SetSize((-1, 25))
-        self.button_chemical_shift.SetToolTipString(u("Read chemical shifts from a peak list for the off-resonance R\u2081\u1D68-type experiments.  For all other experiment types this is unused."))
+        self.button_chemical_shift.SetToolTipString("Read chemical shifts from a peak list for the off-resonance %s-type experiments.  For all other experiment types this is unused."%r1rho)
         self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
         sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
 
@@ -657,26 +657,27 @@ class Disp_model_list(Model_list):
         MODEL_NS_R1RHO_2SITE
     ]
     params = [
-        u("{R\u2082eff, I\u2080}"),
+        "{%s/%s, %s}" % (r2eff, r1rho, i0),
         "",
-        u("{R\u2082, ...}"),
+        "{%s, ...}" % (r2),
         "",
-        u("{R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
-        u("{R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}"),
-        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}"),
-        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2082, ..., pA, d\u03C9, k\u2091\u2093}"),
+        "{%s, ..., %s, %s}" % (r2, phi_ex, kex),
+        "{%s, ..., %s, kB, %s, kC}" % (r2, phi_exB, phi_exC),
+        "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
+        "{%s, ..., %s, %s, %s}" % (r2, phi_ex, padw2, kex),
+        "{%s, ..., %s, k_AB}" % (r2a, dw),
+        "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
+        "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
+        "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
+        "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
         "",
-        u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
-        u("{R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}"),
-        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}"),
-        u("{R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}")
+        "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
+        "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
+        "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex)
     ]
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."

@@ -32,10 +32,10 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from compat import u
+from lib.text.gui import dw, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
+from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
-from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
@@ -244,7 +244,7 @@ uf.add_keyarg(
     wiz_element_type = "combo",
     wiz_combo_choices = [
         "CPMG",
-        u("R\u2081\u1D68")
+        r1rho
     ],
     wiz_combo_data = [
         "CPMG",
@@ -462,24 +462,24 @@ uf.add_keyarg(
     desc = "The type of relaxation dispersion model to fit.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        u("%s: {R\u2082eff/R\u2081\u1D68, I\u2080}") % MODEL_R2EFF,
-        u("%s: {R\u2082, ...}") % MODEL_NOREX,
-        u("%s: {R\u2082, ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_LM63,
-        u("%s: {R\u2082, ..., \u03D5\u2091\u2093B, kB, \u03D5\u2091\u2093C, kC}") % MODEL_LM63_3SITE,
-        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72,
-        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_CR72_FULL,
-        u("%s: {R\u2082, ..., \u03D5\u2091\u2093, pA.d\u03C9\u00B2, k\u2091\u2093}") % MODEL_IT99,
-        u("%s: {R\u2082A, ..., d\u03C9, k_AB}") % MODEL_TSMFK01,
-        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D,
-        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_3D_FULL,
-        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_STAR,
-        u("%s: {R\u2082A, R\u2082B, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_STAR_FULL,
-        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_CPMG_2SITE_EXPANDED,
-        u("%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_M61,
-        u("%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_M61B,
-        u("%s: {R\u2081\u1D68', ..., \u03D5\u2091\u2093, k\u2091\u2093}") % MODEL_DPL94,
-        u("%s: {R\u2081\u1D68', ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_TP02,
-        u("%s: {R\u2082, ..., pA, d\u03C9, k\u2091\u2093}") % MODEL_NS_R1RHO_2SITE
+        "%s: {%s/%s, %s}" % (MODEL_R2EFF, r2eff, r1rho, i0),
+        "%s: {%s, ...}" % (MODEL_NOREX, r2),
+        "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
+        "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_CR72_FULL, r2a, r2b, dw, kex),
+        "%s: {%s, ..., %s, %s, %s}" % (MODEL_IT99, r2, phi_ex, padw2, kex),
+        "%s: {%s, ..., %s, k_AB}" % (MODEL_TSMFK01, r2a, dw),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_3D, r2, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_3D_FULL, r2a, r2b, dw, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_STAR, r2, dw, kex),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_STAR_FULL, r2a, r2b, dw, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_EXPANDED, r2, dw, kex),
+        "%s: {%s, ..., %s, %s}" % (MODEL_M61, r1rho_prime, phi_ex, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
+        "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_TP02, r1rho_prime, dw, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex)
     ],
     wiz_combo_data = [
         MODEL_R2EFF,

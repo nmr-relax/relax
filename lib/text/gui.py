@@ -56,3 +56,25 @@ if win:
     local_tm = u("local \u03C4m")
     tm = u("\u03C4m")
     rex = "Rex"
+
+# Relaxation dispersion GUI text elements.
+dw = u("d\u03C9")
+i0 = u("I\u2080")
+kex = u("k\u2091\u2093")
+padw2 = u("pA.d\u03C9\u00B2")
+phi_ex = u("\u03D5\u2091\u2093")
+phi_exB = u("\u03D5\u2091\u2093B")
+phi_exC = u("\u03D5\u2091\u2093C")
+r1rho = u("R\u2081\u1D68")
+r1rho_prime = u("R\u2081\u1D68'")
+r2a = u("R\u2082A")
+r2b = u("R\u2082B")
+r2eff = u("R\u2082eff")
+if win:
+    i0 = "I0"
+    kex = "kex"
+    r1rho = "R1rho"
+    r1rho_prime = "R1rho'"
+    r2a = "R2A"
+    r2b = "R2B"
+    r2eff = "R2eff"
