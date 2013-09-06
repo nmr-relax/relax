@@ -23,9 +23,9 @@
 """Module for the automatic R1 analysis frame."""
 
 # relax module imports.
-from compat import u
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
 from gui.analyses.auto_rx_base import Auto_rx
+from lib.text.gui import r1
 
 
 class Auto_r1(Auto_rx):
@@ -36,4 +36,4 @@ class Auto_r1(Auto_rx):
     bitmap = [ANALYSIS_IMAGE_PATH+"r1_200x200.png",
               IMAGE_PATH+'r1.png']
     label = "R1"
-    gui_label = u("R\u2081")
+    gui_label = r1

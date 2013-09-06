@@ -53,6 +53,8 @@ import threading
 
 # The operating system.
 SYSTEM = platform.uname()[0]
+if SYSTEM == 'Microsoft':
+    SYSTEM == 'Windows'
 
 # The Python version.
 PY_VERSION = sys.version_info[0]
@@ -342,7 +344,7 @@ if PY_VERSION == 2:
     if sys.version_info[1] <= 3:
         if SYSTEM == 'Linux':
             os.devnull = '/dev/null'
-        elif SYSTEM == 'Windows' or SYSTEM == 'Microsoft':
+        elif SYSTEM == 'Windows':
             os.devnull = 'nul'
         elif SYSTEM == 'Darwin':
             os.devnull = 'Dev:Null'
