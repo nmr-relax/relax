@@ -60,6 +60,7 @@ __all__ = ['about',
            'relax_gui',
            'relax_prompt',
            'settings',
+           'text',
            'wizard']
 
 

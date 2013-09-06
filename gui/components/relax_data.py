@@ -28,8 +28,8 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
-from compat import u
 from graphics import fetch_icon
+from gui import text
 from gui.components.base_list import Base_list
 from gui.components.relax_data_meta import Relax_data_meta_list
 from gui.icons import relax_icons
@@ -301,8 +301,8 @@ class Relax_data_list(Base_list):
         # Translation table for the Rx data types.
         table = {
             "NOE": "Steady-state NOE",
-            "R1": u("R\u2081 longitudinal relaxation"),
-            "R2": u("R\u2082 transverse relaxation")
+            "R1": "%s longitudinal relaxation" % text.r1,
+            "R2": "%s transverse relaxation" % text.r2
         }
 
         # Expand the number of rows to match the number of relaxation IDs, and add the IDs.

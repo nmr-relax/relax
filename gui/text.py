@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,20 +20,28 @@
 ###############################################################################
 
 # Module docstring.
-"""Module for the automatic R2 analysis frame."""
+"""Module defining a number of text elements for use in the GUI.
+
+Some of these text elements are operating system dependent due to the incompleteness of the unicode fonts on certain systems.
+"""
 
 # relax module imports.
-from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
-from gui import text
-from gui.analyses.auto_rx_base import Auto_rx
+from compat import SYSTEM, u
 
 
-class Auto_r2(Auto_rx):
-    """Class for building the automatic R2 analysis frame."""
+# Relaxation data GUI text elements.
+r1 = u("R\u2081")
+r2 = u("R\u2082")
 
-    # Hardcoded variables.
-    analysis_type = 'r2'
-    bitmap = [ANALYSIS_IMAGE_PATH+"r2_200x200.png",
-              IMAGE_PATH+'r2.png']
-    label = "R2"
-    gui_label = text.r2
+# Model-free GUI text elements.
+s2 = u("S\u00B2")
+s2f = u("S\u00B2f")
+s2s = u("S\u00B2s")
+local_tm = u("local \u03C4\u2098")
+tm = u("\u03C4\u2098")
+te = u("\u03C4e")
+tf = u("\u03C4f")
+ts = u("\u03C4s")
+rex = u("R\u2091\u2093")
+csa = "CSA"
+r = "r"

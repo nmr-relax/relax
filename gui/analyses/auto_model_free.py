@@ -32,10 +32,9 @@ import wx.lib.mixins.listctrl
 
 # relax module imports.
 from auto_analyses import dauvergne_protocol
-from compat import u
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
-from gui import paths
+from gui import paths, text
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
@@ -815,7 +814,7 @@ class Local_tm_list(Model_list):
     """The local model-free model list GUI element."""
 
     # Some class variables.
-    desc = u("Local \u03C4\u2098 models:")
+    desc = "Local %s models:" % text.tm
     models = [
         "tm0",
         "tm1",
@@ -829,20 +828,20 @@ class Local_tm_list(Model_list):
         "tm9"
     ]
     params = [
-        u("{local \u03C4\u2098}"),
-        u("{local \u03C4\u2098, S\u00B2}"),
-        u("{local \u03C4\u2098, S\u00B2, \u03C4e}"),
-        u("{local \u03C4\u2098, S\u00B2, Rex}"),
-        u("{local \u03C4\u2098, S\u00B2, \u03C4e, Rex}"),
-        u("{local \u03C4\u2098, S\u00B2, S\u00B2f, \u03C4s}"),
-        u("{local \u03C4\u2098, S\u00B2, \u03C4f, S\u00B2f, \u03C4s}"),
-        u("{local \u03C4\u2098, S\u00B2, S\u00B2f, \u03C4s, Rex}"),
-        u("{local \u03C4\u2098, S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}"),
-        u("{local \u03C4\u2098, Rex}")
+        "{%s}" % text.local_tm,
+        "{%s, %s}" % (text.local_tm, text.s2),
+        "{%s, %s, %s}" % (text.local_tm, text.s2, text.te),
+        "{%s, %s, %s}" % (text.local_tm, text.s2, text.rex),
+        "{%s, %s, %s, %s}" % (text.local_tm, text.s2, text.te, text.rex),
+        "{%s, %s, %s, %s}" % (text.local_tm, text.s2, text.s2f, text.ts),
+        "{%s, %s, %s, %s, %s}" % (text.local_tm, text.s2, text.tf, text.s2f, text.ts),
+        "{%s, %s, %s, %s, %s}" % (text.local_tm, text.s2, text.s2f, text.ts, text.rex),
+        "{%s, %s, %s, %s, %s, %s}" % (text.local_tm, text.s2, text.tf, text.s2f, text.ts, text.rex),
+        "{%s, %s}" % (text.local_tm, text.rex)
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
-    tooltip = u("The list model-free models with the local \u03C4\u2098 parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed.")
+    tooltip = "The list model-free models with the %s parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed." % text.local_tm
     tooltip_button = "Open the model list selector window."
 
 
@@ -865,16 +864,16 @@ class Mf_list(Model_list):
         "m9"
     ]
     params = [
-        u("{}"),
-        u("{S\u00B2}"),
-        u("{S\u00B2, \u03C4e}"),
-        u("{S\u00B2, Rex}"),
-        u("{S\u00B2, \u03C4e, Rex}"),
-        u("{S\u00B2, S\u00B2f, \u03C4s}"),
-        u("{S\u00B2, \u03C4f, S\u00B2f, \u03C4s}"),
-        u("{S\u00B2, S\u00B2f, \u03C4s, Rex}"),
-        u("{S\u00B2, \u03C4f, S\u00B2f, \u03C4s, Rex}"),
-        u("{Rex}")
+        "{}",
+        "{%s}" % text.s2,
+        "{%s, %s}" % (text.s2, text.te),
+        "{%s, %s}" % (text.s2, text.rex),
+        "{%s, %s, %s}" % (text.s2, text.te, text.rex),
+        "{%s, %s, %s}" % (text.s2, text.s2f, text.ts),
+        "{%s, %s, %s, %s}" % (text.s2, text.tf, text.s2f, text.ts),
+        "{%s, %s, %s, %s}" % (text.s2, text.s2f, text.ts, text.rex),
+        "{%s, %s, %s, %s, %s}" % (text.s2, text.tf, text.s2f, text.ts, text.rex),
+        "{%s}" % text.rex
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
@@ -973,8 +972,8 @@ class Protocol_mode_sel_window(wx.Dialog):
         sub_sizer.AddSpacer(10)
 
         # The local_tm button.
-        button = wx.Button(self, -1, u("Local \u03C4\u2098"))
-        button.SetToolTipString(u("Optimise global model I, the local \u03C4\u2098 models.  Please click on the 'About' button for more information."))
+        button = wx.Button(self, -1, "Local %s" % text.tm)
+        button.SetToolTipString("Optimise global model I, the %s models.  Please click on the 'About' button for more information." % text.local_tm)
         button.SetFont(font.normal)
         sub_sizer.Add(button, 1, wx.EXPAND, 0)
         self.Bind(wx.EVT_BUTTON, self.select_local_tm, button)
