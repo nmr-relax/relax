@@ -188,7 +188,7 @@ class Spectra_list(Base_list):
         if nu1 == None:
             uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
         else:
-            uf_store['relax_disp.spin_lock_field'](frq=nu1, spectrum_id=id)
+            uf_store['relax_disp.spin_lock_field'](field=nu1, spectrum_id=id)
 
 
     def action_relax_fit_relax_time(self, event=None, item=None):
