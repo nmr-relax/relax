@@ -165,6 +165,7 @@ def copy(pipe_from=None, pipe_to=None):
         model = None
         pA = 0.0
         kex = 0.0
+        k_AB = 0.0
         kB = 0.0
         kC = 0.0
         tex = 0.0
@@ -207,6 +208,8 @@ def copy(pipe_from=None, pipe_to=None):
                 pA += spin_from.pA
             if 'kex' in spin_from.params:
                 kex += spin_from.kex
+            if 'k_AB' in spin_from.params:
+                k_AB += spin_from.k_AB
             if 'kB' in spin_from.params:
                 kB += spin_from.kB
             if 'kC' in spin_from.params:
@@ -228,6 +231,9 @@ def copy(pipe_from=None, pipe_to=None):
         if kex != 0.0:
             kex = kex / count
             print("Averaged kex value: %.15f" % kex)
+        if k_AB != 0.0:
+            k_AB = k_AB / count
+            print("Averaged k_AB value: %.15f" % k_AB)
         if kB != 0.0:
             kB = kB / count
             print("Averaged kB value:  %.15f" % kB)
@@ -262,6 +268,8 @@ def copy(pipe_from=None, pipe_to=None):
                 spin_to.pB = 1.0 - pA
             if 'kex' in spin_from.params:
                 spin_to.kex = kex
+            if 'k_AB' in spin_from.params:
+                spin_to.k_AB = k_AB
             if 'kB' in spin_from.params:
                 spin_to.kB = kB
             if 'kC' in spin_from.params:
@@ -271,7 +279,7 @@ def copy(pipe_from=None, pipe_to=None):
 
             # All other spin specific parameters.
             for param in spin_from.params:
-                if param in ['r2', 'pA', 'kex', 'kB', 'kC', 'tex']:
+                if param in ['r2', 'pA', 'kex', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
                 # Copy the value.
@@ -420,6 +428,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         padw2 >= 0
         dw >= 0
         0 <= kex <= 2e6
+        0 <= k_AB <= 2e6
         0 <= kB <= 2e6
         0 <= kC <= 2e6
         tex >= 0
