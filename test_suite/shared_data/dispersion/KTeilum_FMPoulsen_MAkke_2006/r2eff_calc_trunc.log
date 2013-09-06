@@ -1,0 +1,111 @@
+
+
+
+                                  relax repository checkout r20904
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'r2eff_calc_trunc.py'
+----------------------------------------------------------------------------------------------------
+"""Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
+
+To run the script, simply type:
+
+$ ../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
+"""
+
+import os
+import shutil
+from auto_analyses.relax_disp import Relax_disp
+
+# Load the initial state setup
+state.load(state='ini_setup_trunc.bz2')
+
+# Set settings for run.
+results_directory = 'temp'
+pipe_name = 'base pipe'; pipe_bundle = 'relax_disp'
+MODELS = ['R2eff']
+GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
+
+# Execute
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=results_directory, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+# Delete the "base pipe"
+pipe.delete(pipe_name='base pipe')
+
+# Save the program state.
+state.save('r2eff_pipe_trunc', force=True)
+
+# Delete data result directory
+shutil.rmtree(results_directory)
+----------------------------------------------------------------------------------------------------
+
+relax> state.load(state='ini_setup_trunc.bz2', dir=None, force=False)
+Opening the file 'ini_setup_trunc.bz2' for reading.
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['Z_A0', 'Z_A1', 'Z_A2', 'Z_A3', 'Z_A4', 'Z_A5', 'Z_A6', 'Z_A7', 'Z_A8', 'Z_A9', 'Z_A10', 'Z_A11', 'Z_A12', 'Z_A13', 'Z_A14', 'Z_A16'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Spin ':61@N'.
+
+relax> relax_disp.plot_disp_curves(dir='temp/R2eff', force=True)
+Opening the file 'temp/R2eff/disp_61_N.agr' for writing.
+Opening the file 'temp/R2eff/grace2images.py' for writing.
+
+relax> value.write(param='r2eff', file='r2eff.out', dir='temp/R2eff', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file 'temp/R2eff/r2eff.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir='temp/R2eff', force=True, norm=False)
+Opening the file 'temp/R2eff/r2eff.agr' for writing.
+
+relax> results.write(file='results', dir='temp/R2eff', compress_type=1, force=True)
+Opening the file 'temp/R2eff/results.bz2' for writing.
+RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
+
+relax> state.save(state='final_state', dir='temp', compress_type=1, force=True)
+Opening the file 'temp/final_state.bz2' for writing.
+
+relax> pipe.delete(pipe_name='base pipe')
+
+relax> state.save(state='r2eff_pipe_trunc', dir=None, compress_type=1, force=True)
+Opening the file 'r2eff_pipe_trunc.bz2' for writing.
+

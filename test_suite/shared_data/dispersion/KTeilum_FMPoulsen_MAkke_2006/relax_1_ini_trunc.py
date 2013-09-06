@@ -1,4 +1,10 @@
-# Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script
+"""Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
+
+To run the script, simply type:
+
+$ ../../../../relax relax_1_ini_trunc.py --tee relax_1_ini_trunc.log
+"""
+
 # Create the data pipe.
 pipe_name = 'base pipe'
 pipe_bundle = 'relax_disp'

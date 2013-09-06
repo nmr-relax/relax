@@ -1,4 +1,10 @@
-# Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script
+"""Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
+
+To run the script, simply type:
+
+$ ../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
+"""
+
 import os
 import shutil
 from auto_analyses.relax_disp import Relax_disp
