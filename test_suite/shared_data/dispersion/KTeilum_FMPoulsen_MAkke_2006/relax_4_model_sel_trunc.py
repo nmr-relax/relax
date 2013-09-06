@@ -3,7 +3,7 @@ import os
 from auto_analyses.relax_disp import Relax_disp
 
 # Load the initial state setup
-state.load(state='ini_setup_trunk.bz2')
+state.load(state='ini_setup_trunc.bz2')
  
 # Set settings for run.
 results_directory = os.path.join(os.getcwd(),"model_sel_analyt")
