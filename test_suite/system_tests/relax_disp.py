@@ -1014,6 +1014,47 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(res61L.chi2, 65.99987828889657, 5)
 
 
+    def test_kteilum_fmpoulsen_makke_cpmg_data_to_cr72_full(self):
+        """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model='CR72 full')
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[56].spin[0]
+
+        # Set the initial parameter values.
+        res61L.r2a = [8]
+        res61L.r2b = [105]
+        res61L.pA = 0.9
+        res61L.dw = 6.0
+        res61L.kex = 500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:61)"))
+        print("%-20s %20.15g" % ("R2A (600 MHz)", res61L.r2a[0]))
+        print("%-20s %20.15g" % ("R2B (600 MHz)", res61L.r2b[0]))
+        print("%-20s %20.15g" % ("pA", res61L.pA))
+        print("%-20s %20.15g" % ("dw", res61L.dw))
+        print("%-20s %20.15g" % ("kex", res61L.kex))
+        print("%-20s %20.15g\n" % ("chi2", res61L.chi2))
+
+        # Checks for residue :61. Calculated for 500 Monte Carlo simulations.
+        self.assertAlmostEqual(res61L.r2a[0], 8.044428899438309, 0)
+        self.assertAlmostEqual(res61L.r2b[0], 105.11894506392449, -2)
+        self.assertAlmostEqual(res61L.pA, 0.992066883657578, 2)
+        self.assertAlmostEqual(res61L.dw, 6.389453586338883, 3)
+        self.assertAlmostEqual(res61L.kex, 513.483608742063, -2)
+        self.assertAlmostEqual(res61L.chi2, 65.99987828890289, 5)
+
+
     def test_m61_data_to_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
 
