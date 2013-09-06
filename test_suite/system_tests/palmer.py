@@ -229,7 +229,6 @@ class Palmer(SystemTestCase):
 
                 # Get the spin.
                 spin = return_spin(spin_names[spin_index], pipe=models[model_index])
-                print spin
 
                 # Conversions.
                 if rex[model_index][spin_index]:
