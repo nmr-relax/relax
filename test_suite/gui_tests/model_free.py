@@ -437,8 +437,15 @@ class Mf(GuiTestCase):
 class Fake_right_click:
     """Simulate a grid_cell_right_click event ."""
 
+    def GetPosition(self):
+        """Simulate the GetPosition() method."""
+
+        # Return some random position.
+        return (10, 10)
+
+
     def GetRow(self):
-        """Overwrite the GetRow() method."""
+        """Simulate the GetRow() method."""
 
         # Return the first row.
         return 0
