@@ -135,6 +135,34 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.exp_type'](spectrum_id=id, exp_type=exp_type)
 
 
+    def action_relax_disp_relax_time(self, event=None, item=None):
+        """Launch the relax_disp.relax_time user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current time.
+        time = None
+        if hasattr(cdp, 'relax_times') and id in cdp.relax_times.keys():
+            time = cdp.relax_times[id]
+
+        # Launch the dialog.
+        if time == None:
+            uf_store['relax_disp.relax_time'](spectrum_id=id)
+        else:
+            uf_store['relax_disp.relax_time'](time=time, spectrum_id=id)
+
+
     def action_relax_disp_spin_lock_field(self, event):
         """Launch the relax_disp.spin_lock_field user function.
 
@@ -428,7 +456,7 @@ class Spectra_list(Base_list):
                 'icon': None,
                 'method': self.action_relax_disp_exp_type
             })
-        if self.relax_fit_flag or self.relax_disp_flag:
+        if self.relax_fit_flag:
             popup_menus.append({
                 'id': wx.NewId(),
                 'text': "Set the relaxation &time",
@@ -436,6 +464,12 @@ class Spectra_list(Base_list):
                 'method': self.action_relax_fit_relax_time
             })
         if self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the relaxation &time",
+                'icon': fetch_icon(uf_info.get_uf('relax_disp.relax_time').gui_icon),
+                'method': self.action_relax_disp_relax_time
+            })
             popup_menus.append({
                 'id': wx.NewId(),
                 'text': "Set the spectrometer &frequency",
