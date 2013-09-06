@@ -989,10 +989,10 @@ class Relax_disp(SystemTestCase):
         res61L = cdp.mol[0].res[56].spin[0]
 
         # Set the initial parameter values.
-        res61L.r2 = [7, 9]
+        res61L.r2 = [8]
         res61L.pA = 0.9
         res61L.dw = 6.0
-        res61L.kex = 1500.0
+        res61L.kex = 600.0
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
@@ -1006,12 +1006,12 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g" % ("kex", res61L.kex))
         print("%-20s %20.15g\n" % ("chi2", res61L.chi2))
 
-        # Checks for residue :61.
-        self.assertAlmostEqual(res61L.r2[0], 7.0113578451986, 4)
-        self.assertAlmostEqual(res61L.pA, 0.989902944469035, 4)
-        self.assertAlmostEqual(res61L.dw, 5.57732219224166, 4)
-        self.assertAlmostEqual(res61L.kex/1000, 1765.83406854571/1000, 4)
-        self.assertAlmostEqual(res61L.chi2, 18.4500388644895, 4)
+        # Checks for residue :61. Calculated for 500 Monte Carlo simulations.
+        self.assertAlmostEqual(res61L.r2[0], 8.69277980194016, 4)
+        self.assertAlmostEqual(res61L.pA, 0.9943781590842946, 5)
+        self.assertAlmostEqual(res61L.dw, 6.389453131263374, 3)
+        self.assertAlmostEqual(res61L.kex, 609.262167216419, 0)
+        self.assertAlmostEqual(res61L.chi2, 65.99987828889657, 5)
 
 
     def test_m61_data_to_m61(self):
