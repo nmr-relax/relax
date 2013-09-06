@@ -381,6 +381,48 @@ def has_r1rho_exp_type():
     return False
 
 
+def is_cpmg_exp_type(id=None):
+    """Determine if the given spectrum ID corresponds to a CPMG experiment type.
+
+    @keyword id:    The spectrum ID string.
+    @type id:       str
+    @return:        True if the spectrum ID corresponds to a CPMG experiment type, False otherwise.
+    @rtype:         bool
+    """
+
+    # No experiment type set.
+    if not hasattr(cdp, 'exp_type') or id not in cdp.exp_type:
+        return False
+
+    # CPMG experiment type.
+    if cdp.exp_type[id] in EXP_TYPE_LIST_CPMG:
+        return True
+
+    # Not a CPMG experiment type.
+    return False
+
+
+def is_r1rho_exp_type(id=None):
+    """Determine if the given spectrum ID corresponds to a R1rho experiment type.
+
+    @keyword id:    The spectrum ID string.
+    @type id:       str
+    @return:        True if the spectrum ID corresponds to a R1rho experiment type, False otherwise.
+    @rtype:         bool
+    """
+
+    # No experiment type set.
+    if not hasattr(cdp, 'exp_type') or id not in cdp.exp_type:
+        return False
+
+    # R1rho experiment type.
+    if cdp.exp_type[id] in EXP_TYPE_LIST_R1RHO:
+        return True
+
+    # Not a R1rho experiment type.
+    return False
+
+
 def loop_cluster():
     """Loop over the spin groupings for one model applied to multiple spins.
 
