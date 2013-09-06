@@ -47,7 +47,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.spectrum import check_spectrum_id
-from specific_analyses.relax_disp.checks import check_mixed_curve_types
+from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_DESC_CPMG_FIXED, EXP_TYPE_DESC_CPMG_EXP, EXP_TYPE_DESC_R1RHO_FIXED, EXP_TYPE_DESC_R1RHO_EXP, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, EXP_TYPE_LIST_VAR_TIME, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, path, sep
@@ -136,6 +136,25 @@ def count_frq():
 
     # The normal count variable.
     return cdp.spectrometer_frq_count
+
+
+def count_relax_times(exp_type=None):
+    """Count the number of relaxation times present.
+
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @return:            The relaxation time count for the given experiment.
+    @rtype:             int
+    """
+
+    # Loop.
+    times = []
+    for frq, point, time in loop_frq_point_time(exp_type=exp_type):
+        if time not in times:
+            times.append(time)
+
+    # Return the count.
+    return len(times)
 
 
 def cpmg_frq(spectrum_id=None, cpmg_frq=None):
@@ -282,20 +301,34 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
     return ids
 
 
-def get_curve_type():
+def get_curve_type(id=None):
     """Return the unique curve type.
 
-    @return:    The curve type - either 'fixed time' or 'exponential'.
-    @rtype:     str
+    @keyword id:    The spectrum ID.  If not supplied, then all data will be assumed.
+    @type id:       str
+    @return:        The curve type - either 'fixed time' or 'exponential'.
+    @rtype:         str
     """
 
-    # Data checks.
-    check_mixed_curve_types()
+    # Data check.
+    check_exp_type()
 
-    # Determine the curve type.
-    curve_type = 'fixed time'
-    if has_exponential_exp_type():
+    # All data.
+    if id == None:
+        # Data checks.
+        check_mixed_curve_types()
+
+        # Determine the curve type.
+        curve_type = 'fixed time'
+        if has_exponential_exp_type():
+            curve_type = 'exponential'
+
+    # A specific ID.
+    else:
+        # Determine the curve type.
         curve_type = 'exponential'
+        if count_relax_times(cdp.exp_type[id]) == 1:
+            curve_type = 'fixed time'
 
     # Return the type.
     return curve_type
