@@ -254,7 +254,7 @@ class Relax_disp(GuiTestCase):
 
         # Set the experiment types.
         for id, file, cpmg_frq, H_frq in data:
-            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='cpmg fixed')
+            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='CPMG')
             wizard._apply(None)
         wizard._skip(None)
 
@@ -425,7 +425,7 @@ class Relax_disp(GuiTestCase):
 
         # The experiment type.
         for id, file, field, H_frq in data:
-            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='r1rho fixed')
+            wizard.setup_page(page='exp_type', spectrum_id=id, exp_type='R1rho')
             wizard._apply(None)
         wizard._skip(None)
 

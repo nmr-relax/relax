@@ -52,16 +52,15 @@ relax_disp.spin_lock_field(spectrum_id='ref', field=None)
 # Set the spectrometer frequency.
 spectrometer.frequency(id='ref', frq=800, units='MHz')
 
-# The experiment type and model.
-relax_disp.exp_type('r1rho fixed')
-relax_disp.select_model('R2eff')
-
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
     # Load the peak intensities and set the errors.
     spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='N', proton='HN')
     spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='NE1', proton='HE1')
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
+
+    # Set the experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='R1rho')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
@@ -71,6 +70,9 @@ for i in range(len(data)):
 
     # Set the spectrometer frequency.
     spectrometer.frequency(id=data[i][0], frq=800, units='MHz')
+
+# The model.
+relax_disp.select_model('R2eff')
 
 # Set up all the errors.
 spectrum.error_analysis()

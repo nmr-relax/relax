@@ -42,9 +42,6 @@ sequence.read('fake_sequence.in_trunc', dir=status.install_path + sep+'test_suit
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference.in',    '500_MHz'+sep+'reference.in_trunc',           None,  500e6],
@@ -91,6 +88,9 @@ data = [
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
