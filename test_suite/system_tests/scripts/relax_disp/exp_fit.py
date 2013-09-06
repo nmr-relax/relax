@@ -76,6 +76,9 @@ for i in range(len(data)):
     # Set the relaxation times.
     relax_disp.relax_time(spectrum_id=data[i][0], time=data[i][3])
 
+    # Set the spectrometer frequency.
+    spectrometer.frequency(id=data[i][0], frq=1.2, units='GHz')
+
 # Clustering.
 relax_disp.cluster(cluster_id='test', spin_id=':1')
 relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N')
