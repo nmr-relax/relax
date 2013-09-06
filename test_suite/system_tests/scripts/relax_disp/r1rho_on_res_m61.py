@@ -73,6 +73,9 @@ if ds.fixed:
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref', field=None)
 
+    # Set the relaxation times.
+    relax_disp.relax_time(spectrum_id='ref', time=data[0][3])
+
     # Set the spectrometer frequency.
     spectrometer.frequency(id='ref', frq=800, units='MHz')
 

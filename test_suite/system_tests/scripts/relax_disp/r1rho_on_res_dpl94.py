@@ -68,6 +68,9 @@ relax_disp.spin_lock_offset(spectrum_id='ref', offset=115.0)
 # Set the spectrometer frequency.
 spectrometer.frequency(id='ref', frq=800, units='MHz')
 
+# Set the relaxation times.
+relax_disp.relax_time(spectrum_id='ref', time=data[0][3])
+
 # Load the R1 data.
 relax_data.read(ri_id='R1', ri_type='R1', frq=800*1e6, file='R1.out', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
