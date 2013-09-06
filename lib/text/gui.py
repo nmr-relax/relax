@@ -28,10 +28,17 @@ Some of these text elements are operating system dependent due to the incomplete
 # relax module imports.
 from compat import SYSTEM, u
 
+# Windows.
+win = False
+if SYSTEM == 'Windows':
+    win = True
 
 # Relaxation data GUI text elements.
 r1 = u("R\u2081")
 r2 = u("R\u2082")
+if win:
+    r1 = "R1"
+    r2 = "R2"
 
 # Model-free GUI text elements.
 s2 = u("S\u00B2")
@@ -45,3 +52,7 @@ ts = u("\u03C4s")
 rex = u("R\u2091\u2093")
 csa = "CSA"
 r = "r"
+if win:
+    local_tm = u("local \u03C4m")
+    tm = u("\u03C4m")
+    rex = "Rex"
