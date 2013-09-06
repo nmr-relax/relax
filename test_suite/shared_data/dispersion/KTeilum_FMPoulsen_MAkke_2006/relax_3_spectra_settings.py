@@ -24,6 +24,9 @@ for line in ncycfile:
     # Set the current spectrum id
     current_id = "Z_A%s"%(i)
 
+    # Set the current experiment type.
+    relax_disp.exp_type(spectrum_id=current_id, exp_type='cpmg fixed')
+
     # Set the peak intensity errors, as defined as the baseplane RMSD.
     spectrum.baseplane_rmsd(error=rmsd_err, spectrum_id=current_id)
 

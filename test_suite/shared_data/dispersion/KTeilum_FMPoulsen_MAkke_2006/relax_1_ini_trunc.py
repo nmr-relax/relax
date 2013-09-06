@@ -4,9 +4,6 @@ pipe_name = 'base pipe'
 pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-
 # Create the spins
 script(file='relax_2_spins.py', dir=None)
 
