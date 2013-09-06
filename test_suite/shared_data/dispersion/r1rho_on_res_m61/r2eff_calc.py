@@ -42,29 +42,13 @@ spin.isotope(isotope='15N')
 
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = []
-times = [0.15]
-ncyc = [9]
+times = [0.00, 0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.12, 0.15]
+ncyc = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 spin_lock = [1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]
 for spin_lock_index in range(len(spin_lock)):
     for time_index in range(len(times)):
         data.append(["nu_%s_ncyc%s" % (spin_lock[spin_lock_index], ncyc[time_index]), "nu_%s_ncyc%s.list" % (spin_lock[spin_lock_index], ncyc[time_index]), spin_lock[spin_lock_index], times[time_index], 200000.0])
 
-# Load the reference spectrum.
-spectrum.read_intensities(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path, spectrum_id='ref', int_method='height', dim=1)
-spectrum.baseplane_rmsd(spectrum_id='ref', error=data[0][4])
-
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type(spectrum_id='ref', exp_type='r1rho fixed')
-
-# Set as the reference.
-relax_disp.spin_lock_field(spectrum_id='ref', field=None)
-relax_disp.spin_lock_offset(spectrum_id='ref', offset=115.0)
-
-# Set the spectrometer frequency.
-spectrometer.frequency(id='ref', frq=800, units='MHz')
-
-# Load the R1 data.
-relax_data.read(ri_id='R1', ri_type='R1', frq=800*1e6, file='R1.out', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
@@ -73,7 +57,7 @@ for i in range(len(data)):
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho fixed')
+    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho exponential')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
