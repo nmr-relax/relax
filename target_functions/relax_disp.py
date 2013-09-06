@@ -43,7 +43,7 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -423,9 +423,9 @@ class Dispersion:
             self.missing = self.missing[0]
 
             # Check that the data is correct.
-            if self.model != MODEL_NOREX and self.model in MODEL_LIST_CPMG and self.exp_types[0] in EXP_TYPE_LIST_R1RHO:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_CPMG and self.exp_types[0] == EXP_TYPE_R1RHO:
                 raise RelaxError("The '%s' CPMG model is not compatible with the R1rho experiment type." % self.model)
-            if self.model != MODEL_NOREX and self.model in MODEL_LIST_R1RHO and self.exp_types[0] in EXP_TYPE_LIST_CPMG:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_R1RHO and self.exp_types[0] == EXP_TYPE_CPMG:
                 raise RelaxError("The '%s' R1rho model is not compatible with the CPMG experiment type." % self.model)
 
 

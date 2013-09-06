@@ -29,7 +29,6 @@ These functions raise various RelaxErrors to help the user understand what went 
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError
 import specific_analyses
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_VAR_TIME
 
 
 def check_c_modules():
@@ -38,9 +37,12 @@ def check_c_modules():
     @raises RelaxError: If the compiled C-module is not present and exponential curves are required.
     """
 
-    # Loop over the experiment types.
-    for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_VAR_TIME and not C_module_exp_fn:
+    # Get the times.
+    times = get_times()
+
+    # Complain.
+    for exp_type in times:
+        if len(times[exp_type]) > 1 and not C_module_exp_fn:
             raise RelaxError("The exponential curve-fitting C module cannot be found.")
 
 
@@ -77,9 +79,12 @@ def check_exp_type_fixed_time():
     @raises RelaxError: If exponential curves are present.
     """
 
+    # Get the times.
+    times = get_times()
+
     # Loop over all experiment types.
-    for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_VAR_TIME:
+    for exp_type in times:
+        if len(times[exp_type]) > 1:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type." % exp_type)
 
 
@@ -89,14 +94,21 @@ def check_mixed_curve_types():
     @raises RelaxError: If mixed curve types are present.
     """
 
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type') or not hasattr(cdp, 'spectrum_ids') or not hasattr(cdp, 'relax_times'):
+        return False
+
+    # Get the times.
+    times = get_times()
+
     # Loop over all experiment types.
     var_flag = False
     fixed_flag = False
-    for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_VAR_TIME:
-            var_flag = True
-        if exp_type in EXP_TYPE_LIST_FIXED_TIME:
+    for exp_type in times:
+        if times[exp_type] == 1:
             fixed_flag = True
+        else:
+            var_flag = True
 
     # The check.
     if var_flag and fixed_flag:
@@ -124,3 +136,29 @@ def check_pipe_type():
     function_type = cdp.pipe_type
     if function_type != 'relax_disp':
         raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
+
+
+def get_times():
+    """Create a per-experiment dictionary of relaxation times.
+    
+    @return:    The dictionary of unique relaxation times.
+    @rtype:     dict of float
+    """
+
+    # Initialise.
+    times = {}
+    for type in cdp.exp_type_list:
+        times[type] = []
+
+    # No experiment types set.
+    if not hasattr(cdp, 'exp_type') or not hasattr(cdp, 'spectrum_ids') or not hasattr(cdp, 'relax_times'):
+        return times
+
+    # Loop over all spectra IDs.
+    for id in cdp.spectrum_ids:
+        # Count the number of times.
+        if cdp.relax_times[id] not in times[cdp.exp_type[id]]:
+            times[cdp.exp_type[id]].append(cdp.relax_times[id])
+
+    # Return the times dictionary.
+    return times

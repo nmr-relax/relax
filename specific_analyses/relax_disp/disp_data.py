@@ -48,7 +48,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spi
 from pipe_control.result_files import add_result_file
 from pipe_control.spectrum import check_spectrum_id
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_FIXED, EXP_TYPE_CPMG_EXP, EXP_TYPE_DESC_CPMG_FIXED, EXP_TYPE_DESC_CPMG_EXP, EXP_TYPE_DESC_R1RHO_FIXED, EXP_TYPE_DESC_R1RHO_EXP, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_FIXED_TIME, EXP_TYPE_LIST_R1RHO, EXP_TYPE_LIST_VAR_TIME, EXP_TYPE_R1RHO_FIXED, EXP_TYPE_R1RHO_EXP
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_R1RHO
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, path, sep
 
@@ -209,7 +209,7 @@ def exp_type(spectrum_id=None, exp_type=None):
 
     @keyword spectrum_id:   The spectrum ID string.
     @type spectrum_id:      str
-    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'cpmg fixed', 'cpmg exponential', 'r1rho fixed' or 'r1rho exponential'.
+    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'CPMG' or 'R1rho'.
     @type exp:              str
     """
 
@@ -236,14 +236,10 @@ def exp_type(spectrum_id=None, exp_type=None):
 
     # Printout.
     text = "Setting the '%s' spectrum to" % spectrum_id
-    if exp_type == EXP_TYPE_CPMG_FIXED:
-        text += EXP_TYPE_DESC_CPMG_FIXED + "."
-    elif exp_type == EXP_TYPE_CPMG_EXP:
-        text += EXP_TYPE_DESC_CPMG_EXP + "."
-    elif exp_type == EXP_TYPE_R1RHO_FIXED:
-        text += EXP_TYPE_DESC_R1RHO_FIXED + "."
-    elif exp_type == EXP_TYPE_R1RHO_EXP:
-        text += EXP_TYPE_DESC_R1RHO_EXP + "."
+    if exp_type == EXP_TYPE_CPMG:
+        text += EXP_TYPE_DESC_CPMG + "."
+    elif exp_type == EXP_TYPE_R1RHO:
+        text += EXP_TYPE_DESC_R1RHO + "."
     print(text)
 
 
@@ -267,7 +263,7 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
         raise RelaxError("The experiment type has not been supplied.")
 
     # The dispersion data.
-    if exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type == EXP_TYPE_CPMG:
         disp_data = cdp.cpmg_frqs
     else:
         disp_data = cdp.spin_lock_nu1
@@ -347,7 +343,7 @@ def has_cpmg_exp_type():
 
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_CPMG:
+        if exp_type == EXP_TYPE_CPMG:
             return True
 
     # No CPMG experiment types.
@@ -365,9 +361,9 @@ def has_exponential_exp_type():
     if not hasattr(cdp, 'exp_type'):
         return False
 
-    # Loop over all experiment types.
-    for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_VAR_TIME:
+    # Loop over all spectra IDs.
+    for id in cdp.spectrum_ids:
+        if get_curve_type(id) == 'exponential':
             return True
 
     # No exponential data.
@@ -386,8 +382,8 @@ def has_fixed_time_exp_type():
         return False
 
     # Loop over all experiment types.
-    for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_FIXED_TIME:
+    for id in cdp.spectrum_ids:
+        if get_curve_type(id) == 'fixed time':
             return True
 
     # No exponential data.
@@ -407,7 +403,7 @@ def has_r1rho_exp_type():
 
     # Loop over all experiment types.
     for exp_type in cdp.exp_type_list:
-        if exp_type in EXP_TYPE_LIST_R1RHO:
+        if exp_type == EXP_TYPE_R1RHO:
             return True
 
     # No CPMG experiment types.
@@ -428,7 +424,7 @@ def is_cpmg_exp_type(id=None):
         return False
 
     # CPMG experiment type.
-    if cdp.exp_type[id] in EXP_TYPE_LIST_CPMG:
+    if cdp.exp_type[id] == EXP_TYPE_CPMG:
         return True
 
     # Not a CPMG experiment type.
@@ -449,7 +445,7 @@ def is_r1rho_exp_type(id=None):
         return False
 
     # R1rho experiment type.
-    if cdp.exp_type[id] in EXP_TYPE_LIST_R1RHO:
+    if cdp.exp_type[id] == EXP_TYPE_R1RHO:
         return True
 
     # Not a R1rho experiment type.
@@ -658,9 +654,9 @@ def loop_point(exp_type=None, skip_ref=True):
     # CPMG type data.
     if exp_type == None:
         raise RelaxError("The experiment type must be supplied.")
-    elif exp_type in EXP_TYPE_LIST_CPMG:
+    elif exp_type == EXP_TYPE_CPMG:
         fields = cdp.cpmg_frqs_list
-    elif exp_type in EXP_TYPE_LIST_R1RHO:
+    elif exp_type == EXP_TYPE_R1RHO:
         fields = cdp.spin_lock_nu1_list
     else:
         raise RelaxError("The experiment type '%s' is unknown." % exp_type)
@@ -673,6 +669,88 @@ def loop_point(exp_type=None, skip_ref=True):
 
         # Yield each unique field strength or frequency.
         yield field
+
+
+def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
+    """Generator method for selectively looping over the spectrum IDs.
+
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency.
+    @type frq:          float
+    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:        float
+    @keyword time:      The relaxation time period.
+    @type time:         float
+    @return:            The spectrum ID.
+    @rtype:             str
+    """
+
+    # Loop over all spectrum IDs.
+    for id in cdp.spectrum_ids:
+        # Experiment type filter.
+        if exp_type != None:
+            # No experiment type set.
+            if not hasattr(cdp, 'exp_type') or id not in cdp.exp_type:
+                continue
+
+            # No match.
+            if cdp.exp_type[id] != exp_type:
+                continue
+
+        # The frequency filter.
+        if frq != None:
+            # No frequency data set.
+            if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq:
+                continue
+
+            # No match.
+            if cdp.spectrometer_frq[id] != spectrometer_frq:
+                continue
+
+        # The dispersion point filter.
+        if point != None:
+            # No experiment type set.
+            if not hasattr(cdp, 'exp_type') or id not in cdp.exp_type:
+                continue
+
+            # The experiment type.
+            exp_type = cdp.exp_type[id]
+
+            # The CPMG dispersion data.
+            if exp_type == EXP_TYPE_CPMG:
+                # No dispersion point data set.
+                if not hasattr(cdp, 'cpmg_frqs') or id not in cdp.cpmg_frqs:
+                    continue
+
+                # Alias the structure
+                disp_data = cdp.cpmg_frqs
+
+            # The R1rho dispersion data.
+            else:
+                # No dispersion point data set.
+                if not hasattr(cdp, 'spin_lock_nu1') or id not in cdp.spin_lock_nu1:
+                    continue
+
+                # Alias the structure
+                disp_data = cdp.spin_lock_nu1
+
+            # No match.
+            if disp_data[id] != point:
+                continue
+
+        # The time filter.
+        if time != None:
+            # No time data set.
+            if not hasattr(cdp, 'relax_times') or id not in cdp.relax_times:
+                continue
+
+            # No match.
+            if cdp.relax_times[id] != time:
+                continue
+
+        # Yield the Id.
+        yield id
 
 
 def loop_time():
@@ -745,7 +823,7 @@ def plot_disp_curves(dir=None, force=None):
                 data.append([])
 
                 # Add a new label.
-                if exp_type in EXP_TYPE_LIST_CPMG:
+                if exp_type == EXP_TYPE_CPMG:
                     label = "R\\s2eff\\N"
                 else:
                     label = "R\\s1\\xr\\B\\N"
@@ -776,7 +854,7 @@ def plot_disp_curves(dir=None, force=None):
                 data.append([])
 
                 # Add a new label.
-                if exp_type in EXP_TYPE_LIST_CPMG:
+                if exp_type == EXP_TYPE_CPMG:
                     label = "Back-calculated R\\s2eff\\N"
                 else:
                     label = "Back-calculated R\\s1\\xr\\B\\N"
@@ -829,7 +907,7 @@ def plot_disp_curves(dir=None, force=None):
                         data[-1][-1].append(spin.r2eff_err[key])
 
             # The axis labels.
-            if exp_type in EXP_TYPE_LIST_CPMG:
+            if exp_type == EXP_TYPE_CPMG:
                 axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
             else:
                 axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
@@ -1058,16 +1136,18 @@ def return_index_from_disp_point(value, exp_type=None):
     index = 0
 
     # CPMG-type experiments.
-    if exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type == EXP_TYPE_CPMG:
         index = cdp.cpmg_frqs_list.index(value)
 
     # R1rho-type experiments.
-    elif exp_type in EXP_TYPE_LIST_R1RHO:
+    elif exp_type == EXP_TYPE_R1RHO:
         index = cdp.spin_lock_nu1_list.index(value)
 
     # Remove the reference point (always at index 0).
-    if exp_type in EXP_TYPE_LIST_FIXED_TIME:
-        index -= 1
+    for id in loop_spectrum_ids(exp_type=exp_type):
+        if get_curve_type(id) == 'fixed time':
+            index -= 1
+            break
 
     # Return the index.
     return index
@@ -1123,11 +1203,11 @@ def return_index_from_disp_point_key(key, exp_type=None):
         raise RelaxError("The experiment type has not been supplied.")
 
     # CPMG-type experiments.
-    if exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type == EXP_TYPE_CPMG:
         return return_index_from_disp_point(cdp.cpmg_frqs[key], exp_type=exp_type)
 
     # R1rho-type experiments.
-    elif exp_type in EXP_TYPE_LIST_R1RHO:
+    elif exp_type == EXP_TYPE_R1RHO:
         return return_index_from_disp_point(cdp.spin_lock_nu1[key], exp_type=exp_type)
 
 
@@ -1152,8 +1232,10 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
     """
 
     # Checks.
-    if ref and exp_type not in EXP_TYPE_LIST_FIXED_TIME:
-        raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
+    if ref:
+        for id in loop_spectrum_ids(exp_type=exp_type, frq=frq, point=point, time=time):
+            if get_curve_type(id) == 'exponential':
+                raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
 
     # The key.
     if ref:
@@ -1177,14 +1259,14 @@ def return_key_from_disp_point_index(frq_index=None, disp_point_index=None):
     """
 
     # Insert the reference point (always at index 0).
-    if exp_type in EXP_TYPE_LIST_FIXED_TIME:
+    if has_fixed_time_exp_type():
         disp_point_index += 1
 
     # The frequency.
     frq = return_value_from_frq_index(frq_index)
 
     # CPMG data.
-    if exp_type in EXP_TYPE_LIST_CPMG:
+    if exp_type == EXP_TYPE_CPMG:
         point = cdp.cpmg_frqs_list[disp_point_index]
         points = cdp.cpmg_frqs
 

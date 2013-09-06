@@ -35,8 +35,8 @@ from lib.mathematics import round_to_next_order
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import count_frq, loop_cluster, loop_frq
-from specific_analyses.relax_disp.variables import EXP_TYPE_LIST_VAR_TIME, MODEL_R2EFF, MODEL_M61B
+from specific_analyses.relax_disp.disp_data import count_frq, has_exponential_exp_type, loop_cluster, loop_frq
+from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_M61B
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -744,9 +744,8 @@ def param_num(spins=None):
     # The R2eff model.
     if cdp.model_type == 'R2eff':
         # Exponential curves (with clustering).
-        for id in cdp.exp_type:
-            if cdp.exp_type[id] in EXP_TYPE_LIST_VAR_TIME:
-                return 2 * len(spins)
+        if has_exponential_exp_type():
+            return 2 * len(spins)
 
         # Fixed time period experiments (with clustering).
         return 1 * len(spins)
