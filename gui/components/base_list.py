@@ -246,6 +246,19 @@ class Base_list(object):
         self.observer_register(remove=True)
 
 
+    def generate_popup_menu(self, id=None):
+        """Create and return the popup menu.
+
+        @keyword id:    The ID string for the row that was clicked on.
+        @type id:       str
+        @return:        The popup menu.
+        @rtype:         list of dict of wxID, str, str, method
+        """
+
+        # Default to returning the first initialised menu.
+        return self.popup_menus
+
+
     def init_element(self, sizer):
         """Initialise the GUI element.
 
@@ -311,8 +324,20 @@ class Base_list(object):
         @type event:    wx event
         """
 
+        # Obtain the position.
+        pos = event.GetPosition()
+
+        # Find the item clicked on.
+        item, flags = self.element.HitTest(pos)
+
+        # Get the ID string.
+        id = self.element.GetItemText(item)
+
+        # Get the menu.
+        popup_menus = self.generate_popup_menu(id=id)
+
         # No popup menus defined.
-        if self.popup_menus == []:
+        if popup_menus == []:
             return
 
         # Execution lock, so do nothing.
@@ -323,9 +348,9 @@ class Base_list(object):
         menu = wx.Menu()
 
         # Loop over the menu items.
-        for i in range(len(self.popup_menus)):
+        for i in range(len(popup_menus)):
             # Alias.
-            info = self.popup_menus[i]
+            info = popup_menus[i]
 
             # Add the menu item.
             menu.AppendItem(build_menu_item(menu, id=info['id'], text=info['text'], icon=info['icon']))

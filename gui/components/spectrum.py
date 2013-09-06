@@ -35,13 +35,14 @@ from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.spectrum import replicated_flags, replicated_ids
 from status import Status; status = Status()
+from specific_analyses.relax_disp.disp_data import is_cpmg_exp_type, is_r1rho_exp_type
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', exp_type_flag=False, relax_times_flag=False, frq_flag=False, spin_lock_flag=False, cpmg_frq_flag=False):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', noe_flag=False, relax_fit_flag=False, relax_disp_flag=False):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -60,25 +61,19 @@ class Spectra_list(Base_list):
         @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
-        @keyword exp_type_flag:     A flag which if True will activate the experiment type parts of the GUI element.
-        @type exp_type_flag:        bool
-        @keyword relax_times_flag:  A flag which if True will activate the relaxation time parts of the GUI element.
-        @type relax_times_flag:     bool
-        @keyword frq_flag:          A flag which if True will activate the spectrometer frequency parts of the GUI element.
-        @type frq_flag:             bool
-        @keyword spin_lock_flag:    A flag which if True will activate the spin-lock field strength parts of the GUI element.
-        @type spin_lock_flag:       bool
-        @keyword cpmg_frq_flag:     A flag which if True will activate the spin-lock field strength parts of the GUI element.
-        @type cpmg_frq_flag:        bool
+        @keyword noe_flag:          A flag which when True will enable the steady-state NOE portions of the wizard.
+        @type noe_flag:             bool
+        @keyword relax_fit_flag:    A flag which when True will enable the relaxation curve-fitting portions of the wizard.
+        @type relax_fit_flag:       bool
+        @keyword relax_disp_flag:   A flag which when True will enable the relaxation dispersion portions of the wizard.
+        @type relax_disp_flag:      bool
         """
 
         # Store the arguments.
         self.fn_add = fn_add
-        self.exp_type_flag = exp_type_flag
-        self.relax_times_flag = relax_times_flag
-        self.frq_flag = frq_flag
-        self.spin_lock_flag = spin_lock_flag
-        self.cpmg_frq_flag = cpmg_frq_flag
+        self.noe_flag = noe_flag
+        self.relax_fit_flag = relax_fit_flag
+        self.relax_disp_flag = relax_disp_flag
 
         # Initialise the base class.
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
@@ -381,6 +376,79 @@ class Spectra_list(Base_list):
         return True
 
 
+    def generate_popup_menu(self, id=None):
+        """Create the popup menu.
+
+        @keyword id:    The spectrum ID string for the row that was clicked on.
+        @type id:       str
+        @return:        The popup menu.
+        @rtype:         list of dict of wxID, str, str, method
+        """
+
+        # The right click popup menu.
+        popup_menus = [
+            {
+                'id': wx.NewId(),
+                'text': "Set the &baseplane RMSD",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
+                'method': self.action_spectrum_baseplane_rmsd
+            }, {
+                'id': wx.NewId(),
+                'text': "&Delete the peak intensities",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
+                'method': self.action_spectrum_delete
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the number of integration &points",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
+                'method': self.action_spectrum_integration_points
+            }, {
+                'id': wx.NewId(),
+                'text': "Specify which spectra are &replicated",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
+                'method': self.action_spectrum_replicated
+            }
+        ]
+        if self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the &experiment type",
+                'icon': None,
+                'method': self.action_relax_disp_exp_type
+            })
+        if self.relax_fit_flag or self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the relaxation &time",
+                'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
+                'method': self.action_relax_fit_relax_time
+            })
+        if self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the spectrometer &frequency",
+                'icon': fetch_icon("relax.spectrometer"),
+                'method': self.action_spectrometer_frq
+            })
+        if self.relax_disp_flag and is_r1rho_exp_type(id):
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': u("Set the spin-&lock field strength \u03BD1"),
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_spin_lock_field
+            })
+        if self.relax_disp_flag and is_cpmg_exp_type(id):
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': u("Set the &CPMG pulse frequency \u03BDCPMG"),
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_cpmg_frq
+            })
+
+        # Return the menu.
+        return popup_menus
+
+
     def noe_spectrum_type(self, index):
         """Add the NOE spectral type info to the element.
 
@@ -530,66 +598,6 @@ class Spectra_list(Base_list):
             }
         ]
 
-        # The right click popup menu.
-        self.popup_menus = [
-            {
-                'id': wx.NewId(),
-                'text': "Set the &baseplane RMSD",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
-                'method': self.action_spectrum_baseplane_rmsd
-            }, {
-                'id': wx.NewId(),
-                'text': "&Delete the peak intensities",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
-                'method': self.action_spectrum_delete
-            }, {
-                'id': wx.NewId(),
-                'text': "Set the number of integration &points",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
-                'method': self.action_spectrum_integration_points
-            }, {
-                'id': wx.NewId(),
-                'text': "Specify which spectra are &replicated",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
-                'method': self.action_spectrum_replicated
-            }
-        ]
-        if self.exp_type_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': "Set the &experiment type",
-                'icon': None,
-                'method': self.action_relax_disp_exp_type
-            })
-        if self.relax_times_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': "Set the relaxation &time",
-                'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
-                'method': self.action_relax_fit_relax_time
-            })
-        if self.frq_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': "Set the spectrometer &frequency",
-                'icon': fetch_icon("relax.spectrometer"),
-                'method': self.action_spectrometer_frq
-            })
-        if self.spin_lock_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': u("Set the spin-&lock field strength \u03BD1"),
-                'icon': fetch_icon("relax.relax_disp"),
-                'method': self.action_relax_disp_spin_lock_field
-            })
-        if self.cpmg_frq_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': u("Set the &CPMG pulse frequency \u03BDCPMG"),
-                'icon': fetch_icon("relax.relax_disp"),
-                'method': self.action_relax_disp_cpmg_frq
-            })
-
 
     def update_data(self):
         """Method called from self.build_element_safe() to update the list data."""
@@ -619,19 +627,19 @@ class Spectra_list(Base_list):
             index += 1
 
         # The experiment type.
-        if self.exp_type_flag and self.add_exp_type(index):
+        if self.relax_disp_flag and self.add_exp_type(index):
             index += 1
 
         # The spectrometer frequency.
-        if self.frq_flag and self.add_frqs(index):
+        if self.relax_disp_flag and self.add_frqs(index):
             index += 1
 
         # The spin-lock field strength or CPMG pulse frequency.
-        if (self.spin_lock_flag or self.cpmg_frq_flag) and self.add_disp_point(index):
+        if self.relax_disp_flag and self.add_disp_point(index):
             index += 1
 
         # The relaxation times.
-        if self.relax_times_flag and self.relax_times(index):
+        if (self.relax_fit_flag or self.relax_disp_flag) and self.relax_times(index):
             index += 1
 
         # The replicated spectra.

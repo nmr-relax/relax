@@ -206,7 +206,7 @@ class Auto_noe(Base_analysis):
 
         # Add the peak list selection GUI element, with spacing.
         box.AddSpacer(40)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, noe_flag=True)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)

@@ -215,7 +215,7 @@ class Auto_rx(Base_analysis):
 
         # Add the peak list wizard and selection GUI element, with spacing.
         box.AddSpacer(20)
-        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_times=True)
+        self.peak_intensity = Spectra_list(gui=self.gui, parent=self, box=box, id=str(self.data_index), fn_add=self.peak_wizard_launch, relax_fit_flag=True)
         box.AddSpacer(10)
 
         # The optimisation settings.
