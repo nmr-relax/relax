@@ -163,15 +163,18 @@ class Spectra_list(Base_list):
             uf_store['relax_disp.relax_time'](time=time, spectrum_id=id)
 
 
-    def action_relax_disp_spin_lock_field(self, event):
+    def action_relax_disp_spin_lock_field(self, event=None, item=None):
         """Launch the relax_disp.spin_lock_field user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
