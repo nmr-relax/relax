@@ -155,6 +155,51 @@ class Relax_disp(SystemTestCase):
         self.interpreter.model_selection(method='AIC', modsel_pipe='final', bundle='relax_disp', pipes=['No Rex', 'CR72'])
 
 
+    def test_curve_type_cpmg_fixed_time(self):
+        """Test the curve type detection using the Dr. Flemming Hansen's CPMG fixed time test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The type.
+        curve_type = get_curve_type(id='500_133.33.in')
+        self.assertEqual(curve_type, 'fixed time')
+
+
+    def test_curve_type_r1rho_exponential(self, model=None):
+        """Test the curve type detection using the 'M61' exponential test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_on_res_m61'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The type.
+        curve_type = get_curve_type(id='nu_2000_ncyc9')
+        self.assertEqual(curve_type, 'exponential')
+
+
+    def test_curve_type_r1rho_fixed_time(self, model=None):
+        """Test the curve type detection using the 'TP02' fixed time test data."""
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The type.
+        curve_type = get_curve_type(id='nu_1000.0_500MHz')
+        self.assertEqual(curve_type, 'fixed time')
+
+
     def test_dpl94_data_to_dpl94(self):
         """Test the relaxation dispersion 'DPL94' model curve fitting to fixed time synthetic data."""
 
