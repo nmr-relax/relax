@@ -685,9 +685,6 @@ sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
 spin.name(name='N')
 spin.isotope(isotope='15N')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference.in',    '500_MHz'+sep+'reference.in_sparky',           None,  500e6],
@@ -734,6 +731,9 @@ data = [
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
     spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -879,21 +879,6 @@ spin.isotope(isotope='15N')
 will set up the spin information required for loading the peak intensity data from Sparky peak lists and for the analysis of the dispersion data.
 
 
-% Experiment type.
-%~~~~~~~~~~~~~~~~~
-
-\subsection{Dispersion script mode -- experiment type}
-
-The next step is to specify the type of dispersion experiment which was performed:
-
-\begin{lstlisting}[firstnumber=42]
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-\end{lstlisting}
-
-See the \uf{relax\_disp.exp\_type} user function on page~\pageref{uf: relax_disp.exp_type} for a list of all the dispersion experiment types which are currently supported.
-
-
 % Loading the data.
 %~~~~~~~~~~~~~~~~~~
 
@@ -901,7 +886,7 @@ See the \uf{relax\_disp.exp\_type} user function on page~\pageref{uf: relax_disp
 
 To load the peak intensities\index{peak!intensity} into relax, a large data structure is first defined:
 
-\begin{lstlisting}[firstnumber=45]
+\begin{lstlisting}[firstnumber=42]
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference.in',    '500_MHz'+sep+'reference.in_sparky',           None,  500e6],
@@ -949,7 +934,7 @@ In Python terminology, this is a list of lists data structure.  It is essentiall
 
 The Python \pycode{for} loop starts with the lines:
 
-\begin{lstlisting}[firstnumber=87]
+\begin{lstlisting}[firstnumber=84]
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
 \end{lstlisting}
@@ -958,12 +943,21 @@ and includes all subsequently indented lines.  This line of code takes the eleme
 
 The first user function in the block loads the peak intensity data from the peak lists:
 
-\begin{lstlisting}[firstnumber=89]
+\begin{lstlisting}[firstnumber=86]
     # Load the peak intensities.
     spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
 \end{lstlisting}
 
-This assumes that peak heights were measured.  All data will be tagged with the given ID string.  For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.  The next user function sets the CPMG frequencies for each spectrum:
+This assumes that peak heights were measured.  All data will be tagged with the given ID string.  For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.
+The next step is to specify the dispersion experiment type for each spectrum:
+
+\begin{lstlisting}[firstnumber=89]
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+\end{lstlisting}
+
+This can either be \pycode{`CPMG'} or \pycode{`R1rho'}.
+The next user function sets the CPMG frequencies for each spectrum:
 
 \begin{lstlisting}[firstnumber=92]
     # Set the relaxation dispersion CPMG frequencies.
