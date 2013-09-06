@@ -79,6 +79,9 @@ r2eff = u("R\u2082eff")
 if win:
     i0 = "I0"
     kex = "kex"
+    phi_ex = u("phi_ex")
+    phi_exB = u("phi_exB")
+    phi_exC = u("phi_exC")
     r1rho = "R1rho"
     r1rho_prime = "R1rho'"
     r2a = "R2A"
