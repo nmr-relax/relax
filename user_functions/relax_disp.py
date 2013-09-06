@@ -237,58 +237,35 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "exp_type",
-    default = "cpmg fixed",
+    default = "CPMG",
     py_type = "str",
     desc_short = "experiment type",
     desc = "The type of relaxation dispersion experiment performed.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "CPMG, fixed time",
-        "CPMG, full exponential",
-        u("R\u2081\u1D68, fixed time"),
-        u("R\u2081\u1D68, full exponential")
+        "CPMG",
+        u("R\u2081\u1D68")
     ],
     wiz_combo_data = [
-        "cpmg fixed",
-        "cpmg exponential",
-        "r1rho fixed",
-        "r1rho exponential"
+        "CPMG",
+        "R1rho"
     ],
     wiz_read_only = True
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Peak intensities should already be loaded using the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID.  To allow for different data types to be analysed together, each spectrum ID must be associated an experiment type.")
+uf.desc[-1].add_paragraph("For each peak intensity set loaded into relax, the type of experiment it comes from needs to be specified.  By specifying this for each spectrum ID, multiple experiment types can be analysed simultaneously.  This is assuming that an appropriate dispersion model exists for the experiment combination.")
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
-uf.desc[-1].add_item_list_element("'cpmg fixed'", "The fixed relaxation time period CPMG-type experiments,")
-uf.desc[-1].add_item_list_element("'cpmg exponential'", "The full exponential curve CPMG-type experiments,")
-uf.desc[-1].add_item_list_element("'r1rho fixed'", "The fixed relaxation time period R1rho-type experiments,")
-uf.desc[-1].add_item_list_element("'r1rho exponential'", "The full exponential curve R1rho-type experiments.")
-uf.desc[-1].add_paragraph("For the full exponential curve experiment types, 2-parameter exponentials will be fit to obtain R2eff/R1rho for each spin system as part of the optimisation of the dispersion model.")
-uf.desc[-1].add_paragraph("For the fixed time period experiment types, the R2eff/R1rho values are directly calculated prior to optimisation using the formula:")
-uf.desc[-1].add_verbatim("""
-                  -1         / I1(nu) \ 
-    R2eff(nu) = ------- * ln | ------ |,
-                relax_T      \   I0   /
-""")
-uf.desc[-1].add_paragraph("where nu is either the CPMG frequency in Hz or the spin-lock field strength in Hz, relax_T is the fixed delay time, I0 is the reference peak intensity when relax_T is zero, and I1 is the peak intensity in a spectrum for a given nu_CPMG frequency.  The error is calculated with the formula:")
-uf.desc[-1].add_verbatim("""
-                               _____________________________________
-                   1          / / sigma_I0 \ 2    / sigma_I1(nu) \ 2
-    sigma(nu) = ------- * \  /  | -------- |   +  | ------------ |  
-                relax_T    \/   \    I0    /      \      I1      /
-
-""")
-uf.desc[-1].add_paragraph("where sigma is the standard deviation.")
+uf.desc[-1].add_item_list_element("'CPMG'", "The CPMG-type experiments,")
+uf.desc[-1].add_item_list_element("'R1rho'", "The R1rho-type experiments.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To pick the experiment type 'cpmg fixed' for all selected spins, type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type('cpmg fixed')")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type(exp_type='cpmg fixed')")
+uf.desc[-1].add_paragraph("To set the experiment type to 'CPMG' for the spectrum ID 'nu_4500.0_800MHz', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type('nu_4500.0_800MHz', 'CPMG')")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='CPMG')")
 uf.backend = exp_type
 uf.menu_text = "&exp_type"
-uf.wizard_height_desc = 500
-uf.wizard_size = (1000, 700)
+uf.wizard_size = (800, 550)
 uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
