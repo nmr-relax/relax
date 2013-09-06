@@ -276,6 +276,26 @@ class Relax_disp(GuiTestCase):
             wizard._apply(None)
         wizard._skip(None)
 
+        # Flush all wx events (to allow the spectrum list GUI element to populate all its rows).
+        wx.Yield()
+
+        # Simulate right clicking in the spectrum list element to test the popup menu.
+        analysis.peak_intensity.on_right_click(Fake_right_click())
+
+        # Simulate the popup menu entries to catch bugs there (just apply the user functions with the currently set values).
+        analysis.peak_intensity.action_relax_disp_cpmg_frq(item=4)
+        uf_store['relax_disp.cpmg_frq'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_relax_disp_exp_type(item=5)
+        uf_store['relax_disp.exp_type'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_relax_disp_relax_time(item=0)
+        uf_store['relax_disp.relax_time'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_spectrometer_frq(item=10)
+        uf_store['spectrometer.frequency'].wizard._go_next()
+        interpreter.flush()
+
         # Set up the models to use.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_CPMG_2SITE_EXPANDED]
         for i in range(len(analysis.model_field.models)):
@@ -489,3 +509,14 @@ class Relax_disp(GuiTestCase):
 
             # Increment the spin index.
             spin_index += 1
+
+
+
+class Fake_right_click:
+    """Simulate a grid_cell_right_click event ."""
+
+    def GetPosition(self):
+        """Overwrite the GetPosition() method."""
+
+        # Return roughly the position of the forth row.
+        return (10, 65)
