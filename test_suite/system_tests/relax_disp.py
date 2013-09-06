@@ -1056,6 +1056,60 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(res61L.chi2, 65.99987828890289, 5)
 
 
+    def test_kteilum_fmpoulsen_makke_cpmg_data_to_tsmfk01(self):
+        """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.
+
+        The comparison is to Figure 2.  This dataset is the 0.48 M GuHCl, but similar results are expected. The reported results are expected to
+        be in rad.s^-1. Conversion into relax stored values is preferably.
+
+        {Representative 15N CPMG relaxation dispersion curve measured on the cross peaks from residue L61 in folded ACBP at pH 5.3, 1 M GuHCl, and 40C.}
+          1. The dotted line represents a residue-specific fit of all parameters in Eq. 1.
+            - ka = 11.3 +/- 0.7 s^{-1}
+            - dw = (2.45 +/- 0.09) * 10^3 s^{-1}
+            - R2 = 8.0 +/- 0.5 s^{-1}.
+          2. The solid line represents a global fit of ka to all protein residues and a residue-specific fit of dw and R2.}
+            -.ka = 10.55 +/- 0.08 s^{-1}
+            - dw = (2.44 +/- 0.08) * 10^3 s^{-1}
+            - R2 = 8.4 +/- 0.3 s^{-1}.
+
+        Conversion of paper results to relax results is performed by
+          - dw(ppm) = dw(rad.s^-1) * 10^6 * 1/(2*pi) * (gyro1H/(gyro15N*spectrometer_freq)) = 2.45E3 * 1E6 / (2 * math.pi) * (26.7522212E7/(-2.7126E7 * 599.8908622E6)) = -6.41 ppm.
+        """
+
+        # Base data setup.
+        self.setup_kteilum_fmpoulsen_makke_cpmg_data(model='TSMFK01')
+
+        # Alias the spins.
+        res61L = cdp.mol[0].res[0].spin[0]
+
+        print res61L.params
+
+        # Set the initial parameter values.
+        res61L.r2a = [8]
+        res61L.dw = 6.5
+        res61L.kA = 11.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:61)"))
+        print("%-20s %20.15g" % ("R2A (600 MHz)", res61L.r2a[0]))
+        print("%-20s %20.15g" % ("dw", res61L.dw))
+        print("%-20s %20.15g" % ("kA", res61L.kA))
+        print("%-20s %20.15g\n" % ("chi2", res61L.chi2))
+
+        # Checks for residue :61. Reference values from paper
+
+        self.assertAlmostEqual(res61L.r2a[0], 8.4, -1)
+        self.assertAlmostEqual(res61L.dw, 6.41, 2)
+        self.assertAlmostEqual(res61L.kA, 10.55, 0)
+        self.assertAlmostEqual(res61L.chi2, 60.0, 5)
+
+
     def test_m61_data_to_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
 
