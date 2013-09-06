@@ -453,6 +453,26 @@ class Relax_disp(GuiTestCase):
             wizard._apply(None)
         wizard._skip(None)
 
+        # Flush all wx events (to allow the spectrum list GUI element to populate all its rows).
+        wx.Yield()
+
+        # Simulate right clicking in the spectrum list element to test the popup menu.
+        analysis.peak_intensity.on_right_click(Fake_right_click())
+
+        # Simulate the popup menu entries to catch bugs there (just apply the user functions with the currently set values).
+        analysis.peak_intensity.action_relax_disp_spin_lock_field(item=4)
+        uf_store['relax_disp.spin_lock_field'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_relax_disp_exp_type(item=5)
+        uf_store['relax_disp.exp_type'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_relax_disp_relax_time(item=0)
+        uf_store['relax_disp.relax_time'].wizard._go_next()
+        interpreter.flush()
+        analysis.peak_intensity.action_spectrometer_frq(item=10)
+        uf_store['spectrometer.frequency'].wizard._go_next()
+        interpreter.flush()
+
         # Deselect all but the 'TP02' model.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_TP02]
         for i in range(len(analysis.model_field.models)):
