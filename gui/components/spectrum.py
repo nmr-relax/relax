@@ -104,7 +104,7 @@ class Spectra_list(Base_list):
         if frq == None:
             uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
         else:
-            uf_store['relax_disp.cpmg_frq'](frq=frq, spectrum_id=id)
+            uf_store['relax_disp.cpmg_frq'](cpmg_frq=frq, spectrum_id=id)
 
 
     def action_relax_disp_exp_type(self, event=None, item=None):
