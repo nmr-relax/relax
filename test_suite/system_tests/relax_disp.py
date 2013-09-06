@@ -986,7 +986,7 @@ class Relax_disp(SystemTestCase):
         self.setup_kteilum_fmpoulsen_makke_cpmg_data(model='CR72')
 
         # Alias the spins.
-        res61L = cdp.mol[0].res[56].spin[0]
+        res61L = cdp.mol[0].res[0].spin[0]
 
         # Set the initial parameter values.
         res61L.r2 = [8]
@@ -1024,7 +1024,7 @@ class Relax_disp(SystemTestCase):
         self.setup_kteilum_fmpoulsen_makke_cpmg_data(model='CR72 full')
 
         # Alias the spins.
-        res61L = cdp.mol[0].res[56].spin[0]
+        res61L = cdp.mol[0].res[0].spin[0]
 
         # Set the initial parameter values.
         res61L.r2a = [8]
