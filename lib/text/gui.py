@@ -28,10 +28,13 @@ Some of these text elements are operating system dependent due to the incomplete
 # relax module imports.
 from compat import SYSTEM, u
 
-# Windows.
+# OS Flags.
 win = False
+mac = False
 if SYSTEM == 'Windows':
     win = True
+if SYSTEM == 'Darwin':
+    mac = True
 
 # Relaxation data GUI text elements.
 r1 = u("R\u2081")
@@ -56,3 +59,6 @@ if win:
     local_tm = u("local \u03C4m")
     tm = u("\u03C4m")
     rex = "Rex"
+if mac:
+    local_tm = u("local \u03C4m")
+    tm = u("\u03C4m")
