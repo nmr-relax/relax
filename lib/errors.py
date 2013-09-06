@@ -751,6 +751,14 @@ class RelaxNoFrqError(BaseError):
 # Spectral data errors.
 #######################
 
+# No peak intensity data.
+class RelaxNoPeakIntensityError(BaseError):
+    def __init__(self, spectrum_id=None):
+        if spectrum_id == None:
+            self.text = "No peak intensity data has been loaded."
+        else:
+            self.text = "Peak intensity data for the '%s' spectrum ID does not exist."
+
 # No spectral data.
 class RelaxNoSpectraError(BaseError):
     def __init__(self, spectrum_id):
