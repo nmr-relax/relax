@@ -1061,8 +1061,7 @@ class Relax_disp(SystemTestCase):
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.
 
-        The comparison is to Figure 2.  This dataset is the 0.48 M GuHCl, but similar results are expected. The reported results are expected to
-        be in rad.s^-1. Conversion into relax stored values is preferably.
+        The comparison is to Figure 2.  This dataset is the 0.48 M GuHCl, but similar results are expected.  The reported results are expected to be in rad.s^-1.  Conversion into relax stored values is preferably.
 
         {Representative 15N CPMG relaxation dispersion curve measured on the cross peaks from residue L61 in folded ACBP at pH 5.3, 1 M GuHCl, and 40C.}
           1. The dotted line represents a residue-specific fit of all parameters in Eq. 1.
