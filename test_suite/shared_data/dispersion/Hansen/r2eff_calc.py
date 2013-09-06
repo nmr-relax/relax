@@ -91,7 +91,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='cpmg fixed')
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)

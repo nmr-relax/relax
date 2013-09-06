@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20886
+                                  relax repository checkout r20890
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -79,7 +79,7 @@ for i in range(len(data)):
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho exponential')
+    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='R1rho')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])
@@ -131,8 +131,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc1', exp_type='R1rho')
+Setting the 'nu_1000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc1', field=1000)
 Setting the 'nu_1000_ncyc1' spectrum spin-lock field strength to 1.0 kHz.
@@ -161,8 +161,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc2', exp_type='R1rho')
+Setting the 'nu_1000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc2', field=1000)
 Setting the 'nu_1000_ncyc2' spectrum spin-lock field strength to 1.0 kHz.
@@ -191,8 +191,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc3', exp_type='R1rho')
+Setting the 'nu_1000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc3', field=1000)
 Setting the 'nu_1000_ncyc3' spectrum spin-lock field strength to 1.0 kHz.
@@ -221,8 +221,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc4', exp_type='R1rho')
+Setting the 'nu_1000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc4', field=1000)
 Setting the 'nu_1000_ncyc4' spectrum spin-lock field strength to 1.0 kHz.
@@ -251,8 +251,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc5', exp_type='R1rho')
+Setting the 'nu_1000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc5', field=1000)
 Setting the 'nu_1000_ncyc5' spectrum spin-lock field strength to 1.0 kHz.
@@ -281,8 +281,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc6', exp_type='R1rho')
+Setting the 'nu_1000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc6', field=1000)
 Setting the 'nu_1000_ncyc6' spectrum spin-lock field strength to 1.0 kHz.
@@ -311,8 +311,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc7', exp_type='R1rho')
+Setting the 'nu_1000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc7', field=1000)
 Setting the 'nu_1000_ncyc7' spectrum spin-lock field strength to 1.0 kHz.
@@ -341,8 +341,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc8', exp_type='R1rho')
+Setting the 'nu_1000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc8', field=1000)
 Setting the 'nu_1000_ncyc8' spectrum spin-lock field strength to 1.0 kHz.
@@ -371,8 +371,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_1000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1000_ncyc9', exp_type='R1rho')
+Setting the 'nu_1000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000_ncyc9', field=1000)
 Setting the 'nu_1000_ncyc9' spectrum spin-lock field strength to 1.0 kHz.
@@ -401,8 +401,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc1', exp_type='R1rho')
+Setting the 'nu_1500_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc1', field=1500)
 Setting the 'nu_1500_ncyc1' spectrum spin-lock field strength to 1.5 kHz.
@@ -431,8 +431,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc2', exp_type='R1rho')
+Setting the 'nu_1500_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc2', field=1500)
 Setting the 'nu_1500_ncyc2' spectrum spin-lock field strength to 1.5 kHz.
@@ -461,8 +461,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc3', exp_type='R1rho')
+Setting the 'nu_1500_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc3', field=1500)
 Setting the 'nu_1500_ncyc3' spectrum spin-lock field strength to 1.5 kHz.
@@ -491,8 +491,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc4', exp_type='R1rho')
+Setting the 'nu_1500_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc4', field=1500)
 Setting the 'nu_1500_ncyc4' spectrum spin-lock field strength to 1.5 kHz.
@@ -521,8 +521,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc5', exp_type='R1rho')
+Setting the 'nu_1500_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc5', field=1500)
 Setting the 'nu_1500_ncyc5' spectrum spin-lock field strength to 1.5 kHz.
@@ -551,8 +551,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc6', exp_type='R1rho')
+Setting the 'nu_1500_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc6', field=1500)
 Setting the 'nu_1500_ncyc6' spectrum spin-lock field strength to 1.5 kHz.
@@ -581,8 +581,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc7', exp_type='R1rho')
+Setting the 'nu_1500_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc7', field=1500)
 Setting the 'nu_1500_ncyc7' spectrum spin-lock field strength to 1.5 kHz.
@@ -611,8 +611,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc8', exp_type='R1rho')
+Setting the 'nu_1500_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc8', field=1500)
 Setting the 'nu_1500_ncyc8' spectrum spin-lock field strength to 1.5 kHz.
@@ -641,8 +641,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_1500_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_1500_ncyc9', exp_type='R1rho')
+Setting the 'nu_1500_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500_ncyc9', field=1500)
 Setting the 'nu_1500_ncyc9' spectrum spin-lock field strength to 1.5 kHz.
@@ -671,8 +671,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc1', exp_type='R1rho')
+Setting the 'nu_2000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc1', field=2000)
 Setting the 'nu_2000_ncyc1' spectrum spin-lock field strength to 2.0 kHz.
@@ -701,8 +701,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc2', exp_type='R1rho')
+Setting the 'nu_2000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc2', field=2000)
 Setting the 'nu_2000_ncyc2' spectrum spin-lock field strength to 2.0 kHz.
@@ -731,8 +731,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc3', exp_type='R1rho')
+Setting the 'nu_2000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc3', field=2000)
 Setting the 'nu_2000_ncyc3' spectrum spin-lock field strength to 2.0 kHz.
@@ -761,8 +761,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc4', exp_type='R1rho')
+Setting the 'nu_2000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc4', field=2000)
 Setting the 'nu_2000_ncyc4' spectrum spin-lock field strength to 2.0 kHz.
@@ -791,8 +791,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc5', exp_type='R1rho')
+Setting the 'nu_2000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc5', field=2000)
 Setting the 'nu_2000_ncyc5' spectrum spin-lock field strength to 2.0 kHz.
@@ -821,8 +821,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc6', exp_type='R1rho')
+Setting the 'nu_2000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc6', field=2000)
 Setting the 'nu_2000_ncyc6' spectrum spin-lock field strength to 2.0 kHz.
@@ -851,8 +851,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc7', exp_type='R1rho')
+Setting the 'nu_2000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc7', field=2000)
 Setting the 'nu_2000_ncyc7' spectrum spin-lock field strength to 2.0 kHz.
@@ -881,8 +881,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc8', exp_type='R1rho')
+Setting the 'nu_2000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc8', field=2000)
 Setting the 'nu_2000_ncyc8' spectrum spin-lock field strength to 2.0 kHz.
@@ -911,8 +911,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_2000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2000_ncyc9', exp_type='R1rho')
+Setting the 'nu_2000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000_ncyc9', field=2000)
 Setting the 'nu_2000_ncyc9' spectrum spin-lock field strength to 2.0 kHz.
@@ -941,8 +941,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc1', exp_type='R1rho')
+Setting the 'nu_2500_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc1', field=2500)
 Setting the 'nu_2500_ncyc1' spectrum spin-lock field strength to 2.5 kHz.
@@ -971,8 +971,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc2', exp_type='R1rho')
+Setting the 'nu_2500_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc2', field=2500)
 Setting the 'nu_2500_ncyc2' spectrum spin-lock field strength to 2.5 kHz.
@@ -1001,8 +1001,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc3', exp_type='R1rho')
+Setting the 'nu_2500_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc3', field=2500)
 Setting the 'nu_2500_ncyc3' spectrum spin-lock field strength to 2.5 kHz.
@@ -1031,8 +1031,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc4', exp_type='R1rho')
+Setting the 'nu_2500_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc4', field=2500)
 Setting the 'nu_2500_ncyc4' spectrum spin-lock field strength to 2.5 kHz.
@@ -1061,8 +1061,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc5', exp_type='R1rho')
+Setting the 'nu_2500_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc5', field=2500)
 Setting the 'nu_2500_ncyc5' spectrum spin-lock field strength to 2.5 kHz.
@@ -1091,8 +1091,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc6', exp_type='R1rho')
+Setting the 'nu_2500_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc6', field=2500)
 Setting the 'nu_2500_ncyc6' spectrum spin-lock field strength to 2.5 kHz.
@@ -1121,8 +1121,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc7', exp_type='R1rho')
+Setting the 'nu_2500_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc7', field=2500)
 Setting the 'nu_2500_ncyc7' spectrum spin-lock field strength to 2.5 kHz.
@@ -1151,8 +1151,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc8', exp_type='R1rho')
+Setting the 'nu_2500_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc8', field=2500)
 Setting the 'nu_2500_ncyc8' spectrum spin-lock field strength to 2.5 kHz.
@@ -1181,8 +1181,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_2500_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_2500_ncyc9', exp_type='R1rho')
+Setting the 'nu_2500_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500_ncyc9', field=2500)
 Setting the 'nu_2500_ncyc9' spectrum spin-lock field strength to 2.5 kHz.
@@ -1211,8 +1211,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc1', exp_type='R1rho')
+Setting the 'nu_3000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc1', field=3000)
 Setting the 'nu_3000_ncyc1' spectrum spin-lock field strength to 3.0 kHz.
@@ -1241,8 +1241,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc2', exp_type='R1rho')
+Setting the 'nu_3000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc2', field=3000)
 Setting the 'nu_3000_ncyc2' spectrum spin-lock field strength to 3.0 kHz.
@@ -1271,8 +1271,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc3', exp_type='R1rho')
+Setting the 'nu_3000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc3', field=3000)
 Setting the 'nu_3000_ncyc3' spectrum spin-lock field strength to 3.0 kHz.
@@ -1301,8 +1301,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc4', exp_type='R1rho')
+Setting the 'nu_3000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc4', field=3000)
 Setting the 'nu_3000_ncyc4' spectrum spin-lock field strength to 3.0 kHz.
@@ -1331,8 +1331,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc5', exp_type='R1rho')
+Setting the 'nu_3000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc5', field=3000)
 Setting the 'nu_3000_ncyc5' spectrum spin-lock field strength to 3.0 kHz.
@@ -1361,8 +1361,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc6', exp_type='R1rho')
+Setting the 'nu_3000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc6', field=3000)
 Setting the 'nu_3000_ncyc6' spectrum spin-lock field strength to 3.0 kHz.
@@ -1391,8 +1391,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc7', exp_type='R1rho')
+Setting the 'nu_3000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc7', field=3000)
 Setting the 'nu_3000_ncyc7' spectrum spin-lock field strength to 3.0 kHz.
@@ -1421,8 +1421,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc8', exp_type='R1rho')
+Setting the 'nu_3000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc8', field=3000)
 Setting the 'nu_3000_ncyc8' spectrum spin-lock field strength to 3.0 kHz.
@@ -1451,8 +1451,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_3000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3000_ncyc9', exp_type='R1rho')
+Setting the 'nu_3000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000_ncyc9', field=3000)
 Setting the 'nu_3000_ncyc9' spectrum spin-lock field strength to 3.0 kHz.
@@ -1481,8 +1481,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc1', exp_type='R1rho')
+Setting the 'nu_3500_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc1', field=3500)
 Setting the 'nu_3500_ncyc1' spectrum spin-lock field strength to 3.5 kHz.
@@ -1511,8 +1511,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc2', exp_type='R1rho')
+Setting the 'nu_3500_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc2', field=3500)
 Setting the 'nu_3500_ncyc2' spectrum spin-lock field strength to 3.5 kHz.
@@ -1541,8 +1541,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc3', exp_type='R1rho')
+Setting the 'nu_3500_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc3', field=3500)
 Setting the 'nu_3500_ncyc3' spectrum spin-lock field strength to 3.5 kHz.
@@ -1571,8 +1571,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc4', exp_type='R1rho')
+Setting the 'nu_3500_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc4', field=3500)
 Setting the 'nu_3500_ncyc4' spectrum spin-lock field strength to 3.5 kHz.
@@ -1601,8 +1601,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc5', exp_type='R1rho')
+Setting the 'nu_3500_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc5', field=3500)
 Setting the 'nu_3500_ncyc5' spectrum spin-lock field strength to 3.5 kHz.
@@ -1631,8 +1631,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc6', exp_type='R1rho')
+Setting the 'nu_3500_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc6', field=3500)
 Setting the 'nu_3500_ncyc6' spectrum spin-lock field strength to 3.5 kHz.
@@ -1661,8 +1661,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc7', exp_type='R1rho')
+Setting the 'nu_3500_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc7', field=3500)
 Setting the 'nu_3500_ncyc7' spectrum spin-lock field strength to 3.5 kHz.
@@ -1691,8 +1691,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc8', exp_type='R1rho')
+Setting the 'nu_3500_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc8', field=3500)
 Setting the 'nu_3500_ncyc8' spectrum spin-lock field strength to 3.5 kHz.
@@ -1721,8 +1721,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_3500_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_3500_ncyc9', exp_type='R1rho')
+Setting the 'nu_3500_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500_ncyc9', field=3500)
 Setting the 'nu_3500_ncyc9' spectrum spin-lock field strength to 3.5 kHz.
@@ -1751,8 +1751,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc1', exp_type='R1rho')
+Setting the 'nu_4000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc1', field=4000)
 Setting the 'nu_4000_ncyc1' spectrum spin-lock field strength to 4.0 kHz.
@@ -1781,8 +1781,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc2', exp_type='R1rho')
+Setting the 'nu_4000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc2', field=4000)
 Setting the 'nu_4000_ncyc2' spectrum spin-lock field strength to 4.0 kHz.
@@ -1811,8 +1811,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc3', exp_type='R1rho')
+Setting the 'nu_4000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc3', field=4000)
 Setting the 'nu_4000_ncyc3' spectrum spin-lock field strength to 4.0 kHz.
@@ -1841,8 +1841,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc4', exp_type='R1rho')
+Setting the 'nu_4000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc4', field=4000)
 Setting the 'nu_4000_ncyc4' spectrum spin-lock field strength to 4.0 kHz.
@@ -1871,8 +1871,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc5', exp_type='R1rho')
+Setting the 'nu_4000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc5', field=4000)
 Setting the 'nu_4000_ncyc5' spectrum spin-lock field strength to 4.0 kHz.
@@ -1901,8 +1901,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc6', exp_type='R1rho')
+Setting the 'nu_4000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc6', field=4000)
 Setting the 'nu_4000_ncyc6' spectrum spin-lock field strength to 4.0 kHz.
@@ -1931,8 +1931,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc7', exp_type='R1rho')
+Setting the 'nu_4000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc7', field=4000)
 Setting the 'nu_4000_ncyc7' spectrum spin-lock field strength to 4.0 kHz.
@@ -1961,8 +1961,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc8', exp_type='R1rho')
+Setting the 'nu_4000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc8', field=4000)
 Setting the 'nu_4000_ncyc8' spectrum spin-lock field strength to 4.0 kHz.
@@ -1991,8 +1991,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_4000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4000_ncyc9', exp_type='R1rho')
+Setting the 'nu_4000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000_ncyc9', field=4000)
 Setting the 'nu_4000_ncyc9' spectrum spin-lock field strength to 4.0 kHz.
@@ -2021,8 +2021,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc1', exp_type='R1rho')
+Setting the 'nu_4500_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc1', field=4500)
 Setting the 'nu_4500_ncyc1' spectrum spin-lock field strength to 4.5 kHz.
@@ -2051,8 +2051,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc2', exp_type='R1rho')
+Setting the 'nu_4500_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc2', field=4500)
 Setting the 'nu_4500_ncyc2' spectrum spin-lock field strength to 4.5 kHz.
@@ -2081,8 +2081,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc3', exp_type='R1rho')
+Setting the 'nu_4500_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc3', field=4500)
 Setting the 'nu_4500_ncyc3' spectrum spin-lock field strength to 4.5 kHz.
@@ -2111,8 +2111,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc4', exp_type='R1rho')
+Setting the 'nu_4500_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc4', field=4500)
 Setting the 'nu_4500_ncyc4' spectrum spin-lock field strength to 4.5 kHz.
@@ -2141,8 +2141,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc5', exp_type='R1rho')
+Setting the 'nu_4500_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc5', field=4500)
 Setting the 'nu_4500_ncyc5' spectrum spin-lock field strength to 4.5 kHz.
@@ -2171,8 +2171,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc6', exp_type='R1rho')
+Setting the 'nu_4500_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc6', field=4500)
 Setting the 'nu_4500_ncyc6' spectrum spin-lock field strength to 4.5 kHz.
@@ -2201,8 +2201,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc7', exp_type='R1rho')
+Setting the 'nu_4500_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc7', field=4500)
 Setting the 'nu_4500_ncyc7' spectrum spin-lock field strength to 4.5 kHz.
@@ -2231,8 +2231,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc8', exp_type='R1rho')
+Setting the 'nu_4500_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc8', field=4500)
 Setting the 'nu_4500_ncyc8' spectrum spin-lock field strength to 4.5 kHz.
@@ -2261,8 +2261,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_4500_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_4500_ncyc9', exp_type='R1rho')
+Setting the 'nu_4500_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500_ncyc9', field=4500)
 Setting the 'nu_4500_ncyc9' spectrum spin-lock field strength to 4.5 kHz.
@@ -2291,8 +2291,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc1', exp_type='R1rho')
+Setting the 'nu_5000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc1', field=5000)
 Setting the 'nu_5000_ncyc1' spectrum spin-lock field strength to 5.0 kHz.
@@ -2321,8 +2321,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc2', exp_type='R1rho')
+Setting the 'nu_5000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc2', field=5000)
 Setting the 'nu_5000_ncyc2' spectrum spin-lock field strength to 5.0 kHz.
@@ -2351,8 +2351,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc3', exp_type='R1rho')
+Setting the 'nu_5000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc3', field=5000)
 Setting the 'nu_5000_ncyc3' spectrum spin-lock field strength to 5.0 kHz.
@@ -2381,8 +2381,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc4', exp_type='R1rho')
+Setting the 'nu_5000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc4', field=5000)
 Setting the 'nu_5000_ncyc4' spectrum spin-lock field strength to 5.0 kHz.
@@ -2411,8 +2411,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc5', exp_type='R1rho')
+Setting the 'nu_5000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc5', field=5000)
 Setting the 'nu_5000_ncyc5' spectrum spin-lock field strength to 5.0 kHz.
@@ -2441,8 +2441,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc6', exp_type='R1rho')
+Setting the 'nu_5000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc6', field=5000)
 Setting the 'nu_5000_ncyc6' spectrum spin-lock field strength to 5.0 kHz.
@@ -2471,8 +2471,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc7', exp_type='R1rho')
+Setting the 'nu_5000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc7', field=5000)
 Setting the 'nu_5000_ncyc7' spectrum spin-lock field strength to 5.0 kHz.
@@ -2501,8 +2501,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc8', exp_type='R1rho')
+Setting the 'nu_5000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc8', field=5000)
 Setting the 'nu_5000_ncyc8' spectrum spin-lock field strength to 5.0 kHz.
@@ -2531,8 +2531,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_5000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5000_ncyc9', exp_type='R1rho')
+Setting the 'nu_5000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000_ncyc9', field=5000)
 Setting the 'nu_5000_ncyc9' spectrum spin-lock field strength to 5.0 kHz.
@@ -2561,8 +2561,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc1', exp_type='R1rho')
+Setting the 'nu_5500_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc1', field=5500)
 Setting the 'nu_5500_ncyc1' spectrum spin-lock field strength to 5.5 kHz.
@@ -2591,8 +2591,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc2', exp_type='R1rho')
+Setting the 'nu_5500_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc2', field=5500)
 Setting the 'nu_5500_ncyc2' spectrum spin-lock field strength to 5.5 kHz.
@@ -2621,8 +2621,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc3', exp_type='R1rho')
+Setting the 'nu_5500_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc3', field=5500)
 Setting the 'nu_5500_ncyc3' spectrum spin-lock field strength to 5.5 kHz.
@@ -2651,8 +2651,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc4', exp_type='R1rho')
+Setting the 'nu_5500_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc4', field=5500)
 Setting the 'nu_5500_ncyc4' spectrum spin-lock field strength to 5.5 kHz.
@@ -2681,8 +2681,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc5', exp_type='R1rho')
+Setting the 'nu_5500_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc5', field=5500)
 Setting the 'nu_5500_ncyc5' spectrum spin-lock field strength to 5.5 kHz.
@@ -2711,8 +2711,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc6', exp_type='R1rho')
+Setting the 'nu_5500_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc6', field=5500)
 Setting the 'nu_5500_ncyc6' spectrum spin-lock field strength to 5.5 kHz.
@@ -2741,8 +2741,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc7', exp_type='R1rho')
+Setting the 'nu_5500_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc7', field=5500)
 Setting the 'nu_5500_ncyc7' spectrum spin-lock field strength to 5.5 kHz.
@@ -2771,8 +2771,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc8', exp_type='R1rho')
+Setting the 'nu_5500_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc8', field=5500)
 Setting the 'nu_5500_ncyc8' spectrum spin-lock field strength to 5.5 kHz.
@@ -2801,8 +2801,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_5500_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_5500_ncyc9', exp_type='R1rho')
+Setting the 'nu_5500_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500_ncyc9', field=5500)
 Setting the 'nu_5500_ncyc9' spectrum spin-lock field strength to 5.5 kHz.
@@ -2831,8 +2831,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc1', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc1', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc1' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc1', exp_type='R1rho')
+Setting the 'nu_6000_ncyc1' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc1', field=6000)
 Setting the 'nu_6000_ncyc1' spectrum spin-lock field strength to 6.0 kHz.
@@ -2861,8 +2861,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc2', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc2', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc2' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc2', exp_type='R1rho')
+Setting the 'nu_6000_ncyc2' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc2', field=6000)
 Setting the 'nu_6000_ncyc2' spectrum spin-lock field strength to 6.0 kHz.
@@ -2891,8 +2891,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc3', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc3', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc3' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc3', exp_type='R1rho')
+Setting the 'nu_6000_ncyc3' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc3', field=6000)
 Setting the 'nu_6000_ncyc3' spectrum spin-lock field strength to 6.0 kHz.
@@ -2921,8 +2921,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc4', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc4', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc4' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc4', exp_type='R1rho')
+Setting the 'nu_6000_ncyc4' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc4', field=6000)
 Setting the 'nu_6000_ncyc4' spectrum spin-lock field strength to 6.0 kHz.
@@ -2951,8 +2951,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc5', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc5', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc5' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc5', exp_type='R1rho')
+Setting the 'nu_6000_ncyc5' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc5', field=6000)
 Setting the 'nu_6000_ncyc5' spectrum spin-lock field strength to 6.0 kHz.
@@ -2981,8 +2981,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc6', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc6', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc6' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc6', exp_type='R1rho')
+Setting the 'nu_6000_ncyc6' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc6', field=6000)
 Setting the 'nu_6000_ncyc6' spectrum spin-lock field strength to 6.0 kHz.
@@ -3011,8 +3011,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc7', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc7', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc7' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc7', exp_type='R1rho')
+Setting the 'nu_6000_ncyc7' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc7', field=6000)
 Setting the 'nu_6000_ncyc7' spectrum spin-lock field strength to 6.0 kHz.
@@ -3041,8 +3041,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc8', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc8', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc8' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc8', exp_type='R1rho')
+Setting the 'nu_6000_ncyc8' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc8', field=6000)
 Setting the 'nu_6000_ncyc8' spectrum spin-lock field strength to 6.0 kHz.
@@ -3071,8 +3071,8 @@ The following intensities have been loaded into the relax data store:
 
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000_ncyc9', spin_id=None)
 
-relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc9', exp_type='r1rho exponential')
-Setting the 'nu_6000_ncyc9' spectrum tothe R1rho-type experiment consisting of full exponential curves for each dispersion point.
+relax> relax_disp.exp_type(spectrum_id='nu_6000_ncyc9', exp_type='R1rho')
+Setting the 'nu_6000_ncyc9' spectrum tothe R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000_ncyc9', field=6000)
 Setting the 'nu_6000_ncyc9' spectrum spin-lock field strength to 6.0 kHz.

@@ -68,7 +68,7 @@ for i in range(len(data)):
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='r1rho exponential')
+    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='R1rho')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])

@@ -47,7 +47,7 @@ spin.create(res_name='Trp', res_num=1, spin_name='NE1')
 spin.isotope(isotope='15N')
 
 # Set the relaxation dispersion experiment type.
-relax_disp.exp_type('r1rho fixed')
+relax_disp.exp_type('R1rho')
 
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = []

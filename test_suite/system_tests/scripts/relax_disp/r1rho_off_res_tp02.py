@@ -65,7 +65,7 @@ for frq_index in range(len(frq)):
     spectrum.baseplane_rmsd(spectrum_id='ref_%s' % frq_label[frq_index], error=error)
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id='ref_%s' % frq_label[frq_index], exp_type='r1rho fixed')
+    relax_disp.exp_type(spectrum_id='ref_%s' % frq_label[frq_index], exp_type='R1rho')
 
     # Set as the reference.
     relax_disp.spin_lock_field(spectrum_id='ref_%s' % frq_label[frq_index], field=None)
@@ -82,7 +82,7 @@ for frq_index in range(len(frq)):
         spectrum.baseplane_rmsd(spectrum_id=id, error=error)
 
         # Set the relaxation dispersion experiment type.
-        relax_disp.exp_type(spectrum_id=id, exp_type='r1rho fixed')
+        relax_disp.exp_type(spectrum_id=id, exp_type='R1rho')
 
         # Set the relaxation dispersion spin-lock field strength (nu1).
         relax_disp.spin_lock_field(spectrum_id=id, field=field)

@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20831
+                                  relax repository checkout r20890
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -113,7 +113,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='cpmg fixed')
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -178,8 +178,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        25707.455    
 :71@N        39274.345    
 
-relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='cpmg fixed')
-Setting the '500_reference.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='CPMG')
+Setting the '500_reference.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_reference.in', cpmg_frq=None)
 Setting the '500_reference.in' spectrum CPMG frequency None Hz.
@@ -203,8 +203,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        15885.628    
 :71@N        31792.844    
 
-relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='cpmg fixed')
-Setting the '500_66.667.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='CPMG')
+Setting the '500_66.667.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_66.667.in', cpmg_frq=66.6666)
 Setting the '500_66.667.in' spectrum CPMG frequency 66.6666 Hz.
@@ -228,8 +228,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        16627.668    
 :71@N        31972.777    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='cpmg fixed')
-Setting the '500_133.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='CPMG')
+Setting the '500_133.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in', cpmg_frq=133.3333)
 Setting the '500_133.33.in' spectrum CPMG frequency 133.3333 Hz.
@@ -253,8 +253,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        16276.208    
 :71@N        32117.182    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='cpmg fixed')
-Setting the '500_133.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='CPMG')
+Setting the '500_133.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in.bis', cpmg_frq=133.3333)
 Setting the '500_133.33.in.bis' spectrum CPMG frequency 133.3333 Hz.
@@ -278,8 +278,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        16710.653    
 :71@N        32347.697    
 
-relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='cpmg fixed')
-Setting the '500_200.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='CPMG')
+Setting the '500_200.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_200.in', cpmg_frq=200.0)
 Setting the '500_200.in' spectrum CPMG frequency 200.0 Hz.
@@ -303,8 +303,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        17581.482    
 :71@N        32478.272    
 
-relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='cpmg fixed')
-Setting the '500_266.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='CPMG')
+Setting the '500_266.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_266.67.in', cpmg_frq=266.6666)
 Setting the '500_266.67.in' spectrum CPMG frequency 266.6666 Hz.
@@ -328,8 +328,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        17741.116    
 :71@N        32488.116    
 
-relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='cpmg fixed')
-Setting the '500_333.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='CPMG')
+Setting the '500_333.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_333.33.in', cpmg_frq=333.3333)
 Setting the '500_333.33.in' spectrum CPMG frequency 333.3333 Hz.
@@ -353,8 +353,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        18430.466    
 :71@N        32799.529    
 
-relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='cpmg fixed')
-Setting the '500_400.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='CPMG')
+Setting the '500_400.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_400.in', cpmg_frq=400.0)
 Setting the '500_400.in' spectrum CPMG frequency 400.0 Hz.
@@ -378,8 +378,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        18723.854    
 :71@N        33034.747    
 
-relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='cpmg fixed')
-Setting the '500_466.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='CPMG')
+Setting the '500_466.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_466.67.in', cpmg_frq=466.6666)
 Setting the '500_466.67.in' spectrum CPMG frequency 466.6666 Hz.
@@ -403,8 +403,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        18880.359    
 :71@N        33277.779    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='cpmg fixed')
-Setting the '500_533.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='CPMG')
+Setting the '500_533.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in', cpmg_frq=533.3333)
 Setting the '500_533.33.in' spectrum CPMG frequency 533.3333 Hz.
@@ -428,8 +428,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        19431.29     
 :71@N        33369.196    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='cpmg fixed')
-Setting the '500_533.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='CPMG')
+Setting the '500_533.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in.bis', cpmg_frq=533.3333)
 Setting the '500_533.33.in.bis' spectrum CPMG frequency 533.3333 Hz.
@@ -453,8 +453,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        19295.116    
 :71@N        33330.505    
 
-relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='cpmg fixed')
-Setting the '500_600.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='CPMG')
+Setting the '500_600.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_600.in', cpmg_frq=600.0)
 Setting the '500_600.in' spectrum CPMG frequency 600.0 Hz.
@@ -478,8 +478,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        19615.342    
 :71@N        33505.785    
 
-relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='cpmg fixed')
-Setting the '500_666.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='CPMG')
+Setting the '500_666.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_666.67.in', cpmg_frq=666.6666)
 Setting the '500_666.67.in' spectrum CPMG frequency 666.6666 Hz.
@@ -503,8 +503,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        19856.831    
 :71@N        33364.821    
 
-relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='cpmg fixed')
-Setting the '500_733.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='CPMG')
+Setting the '500_733.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_733.33.in', cpmg_frq=733.3333)
 Setting the '500_733.33.in' spectrum CPMG frequency 733.3333 Hz.
@@ -528,8 +528,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        20053.047    
 :71@N        33390.102    
 
-relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='cpmg fixed')
-Setting the '500_800.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='CPMG')
+Setting the '500_800.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_800.in', cpmg_frq=800.0)
 Setting the '500_800.in' spectrum CPMG frequency 800.0 Hz.
@@ -553,8 +553,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        19936.355    
 :71@N        33362.913    
 
-relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='cpmg fixed')
-Setting the '500_866.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='CPMG')
+Setting the '500_866.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_866.67.in', cpmg_frq=866.6666)
 Setting the '500_866.67.in' spectrum CPMG frequency 866.6666 Hz.
@@ -578,8 +578,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        20182.933    
 :71@N        33594.549    
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='cpmg fixed')
-Setting the '500_933.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='CPMG')
+Setting the '500_933.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in', cpmg_frq=933.3333)
 Setting the '500_933.33.in' spectrum CPMG frequency 933.3333 Hz.
@@ -603,8 +603,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        20069.04     
 :71@N        33655.205    
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='cpmg fixed')
-Setting the '500_933.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='CPMG')
+Setting the '500_933.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in.bis', cpmg_frq=933.3333)
 Setting the '500_933.33.in.bis' spectrum CPMG frequency 933.3333 Hz.
@@ -628,8 +628,8 @@ The following intensities have been loaded into the relax data store:
 :70@N        20229.099    
 :71@N        33574.087    
 
-relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='cpmg fixed')
-Setting the '500_1000.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='CPMG')
+Setting the '500_1000.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_1000.in', cpmg_frq=1000.0)
 Setting the '500_1000.in' spectrum CPMG frequency 1000.0 Hz.
@@ -652,8 +652,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        75506.418    
 
-relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='cpmg fixed')
-Setting the '800_reference.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='CPMG')
+Setting the '800_reference.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_reference.in', cpmg_frq=None)
 Setting the '800_reference.in' spectrum CPMG frequency None Hz.
@@ -676,8 +676,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        38763.157    
 
-relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='cpmg fixed')
-Setting the '800_66.667.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='CPMG')
+Setting the '800_66.667.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_66.667.in', cpmg_frq=66.6666)
 Setting the '800_66.667.in' spectrum CPMG frequency 66.6666 Hz.
@@ -700,8 +700,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        40007.044    
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='cpmg fixed')
-Setting the '800_133.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='CPMG')
+Setting the '800_133.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in', cpmg_frq=133.3333)
 Setting the '800_133.33.in' spectrum CPMG frequency 133.3333 Hz.
@@ -724,8 +724,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        39866.015    
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='cpmg fixed')
-Setting the '800_133.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='CPMG')
+Setting the '800_133.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in.bis', cpmg_frq=133.3333)
 Setting the '800_133.33.in.bis' spectrum CPMG frequency 133.3333 Hz.
@@ -748,8 +748,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        40695.053    
 
-relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='cpmg fixed')
-Setting the '800_200.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='CPMG')
+Setting the '800_200.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_200.in', cpmg_frq=200.0)
 Setting the '800_200.in' spectrum CPMG frequency 200.0 Hz.
@@ -772,8 +772,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        41033.292    
 
-relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='cpmg fixed')
-Setting the '800_266.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='CPMG')
+Setting the '800_266.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_266.67.in', cpmg_frq=266.6666)
 Setting the '800_266.67.in' spectrum CPMG frequency 266.6666 Hz.
@@ -796,8 +796,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        42886.468    
 
-relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='cpmg fixed')
-Setting the '800_333.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='CPMG')
+Setting the '800_333.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_333.33.in', cpmg_frq=333.3333)
 Setting the '800_333.33.in' spectrum CPMG frequency 333.3333 Hz.
@@ -820,8 +820,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        43297.363    
 
-relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='cpmg fixed')
-Setting the '800_400.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='CPMG')
+Setting the '800_400.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_400.in', cpmg_frq=400.0)
 Setting the '800_400.in' spectrum CPMG frequency 400.0 Hz.
@@ -844,8 +844,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        44655.415    
 
-relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='cpmg fixed')
-Setting the '800_466.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='CPMG')
+Setting the '800_466.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_466.67.in', cpmg_frq=466.6666)
 Setting the '800_466.67.in' spectrum CPMG frequency 466.6666 Hz.
@@ -868,8 +868,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        46303.662    
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='cpmg fixed')
-Setting the '800_533.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='CPMG')
+Setting the '800_533.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in', cpmg_frq=533.3333)
 Setting the '800_533.33.in' spectrum CPMG frequency 533.3333 Hz.
@@ -892,8 +892,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        47040.817    
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='cpmg fixed')
-Setting the '800_533.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='CPMG')
+Setting the '800_533.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in.bis', cpmg_frq=533.3333)
 Setting the '800_533.33.in.bis' spectrum CPMG frequency 533.3333 Hz.
@@ -916,8 +916,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        47902.702    
 
-relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='cpmg fixed')
-Setting the '800_600.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='CPMG')
+Setting the '800_600.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_600.in', cpmg_frq=600.0)
 Setting the '800_600.in' spectrum CPMG frequency 600.0 Hz.
@@ -940,8 +940,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        48972.729    
 
-relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='cpmg fixed')
-Setting the '800_666.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='CPMG')
+Setting the '800_666.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_666.67.in', cpmg_frq=666.6666)
 Setting the '800_666.67.in' spectrum CPMG frequency 666.6666 Hz.
@@ -964,8 +964,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        49560.47     
 
-relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='cpmg fixed')
-Setting the '800_733.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='CPMG')
+Setting the '800_733.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_733.33.in', cpmg_frq=733.3333)
 Setting the '800_733.33.in' spectrum CPMG frequency 733.3333 Hz.
@@ -988,8 +988,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        51244.752    
 
-relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='cpmg fixed')
-Setting the '800_800.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='CPMG')
+Setting the '800_800.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_800.in', cpmg_frq=800.0)
 Setting the '800_800.in' spectrum CPMG frequency 800.0 Hz.
@@ -1012,8 +1012,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        51656.057    
 
-relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='cpmg fixed')
-Setting the '800_866.67.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='CPMG')
+Setting the '800_866.67.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_866.67.in', cpmg_frq=866.6666)
 Setting the '800_866.67.in' spectrum CPMG frequency 866.6666 Hz.
@@ -1036,8 +1036,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        51189.967    
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='cpmg fixed')
-Setting the '800_933.33.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='CPMG')
+Setting the '800_933.33.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in', cpmg_frq=933.3333)
 Setting the '800_933.33.in' spectrum CPMG frequency 933.3333 Hz.
@@ -1060,8 +1060,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        52254.914    
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='cpmg fixed')
-Setting the '800_933.33.in.bis' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='CPMG')
+Setting the '800_933.33.in.bis' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in.bis', cpmg_frq=933.3333)
 Setting the '800_933.33.in.bis' spectrum CPMG frequency 933.3333 Hz.
@@ -1084,8 +1084,8 @@ The following intensities have been loaded into the relax data store:
 # Spin_ID    Intensity    
 :70@N        52727.575    
 
-relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='cpmg fixed')
-Setting the '800_1000.in' spectrum tothe fixed relaxation time period CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='CPMG')
+Setting the '800_1000.in' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_1000.in', cpmg_frq=1000.0)
 Setting the '800_1000.in' spectrum CPMG frequency 1000.0 Hz.
@@ -1200,6 +1200,7 @@ relax> relax_disp.select_model(model='R2eff')
 R2eff/R1rho value and error determination.
 
 relax> calc(verbosity=1)
+{'CPMG': [0.03]}
 Calculating the R2eff/R1rho values for fixed relaxation time period data.
 Spin ':70@N'.
 Spin ':71@N'.
