@@ -27,8 +27,9 @@ These functions raise various RelaxErrors to help the user understand what went 
 
 # relax module imports.
 from dep_check import C_module_exp_fn
-from lib.errors import RelaxError, RelaxFuncSetupError
+from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoFrqError, RelaxNoPeakIntensityError
 import specific_analyses
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_R1RHO
 
 
 def check_c_modules():
@@ -54,7 +55,19 @@ def check_disp_points():
 
     # Test if the curve count exists.
     if not hasattr(cdp, 'dispersion_points'):
-        raise RelaxError("The CPMG frequencies or spin-lock field strengths have not been set up.")
+        raise RelaxError("The CPMG frequencies or spin-lock field strengths have not been set for any spectra.")
+
+    # Check each spectrum ID.
+    for id in cdp.spectrum_ids:
+        # CPMG data.
+        if cdp.exp_type[id] == EXP_TYPE_CPMG:
+            if id not in cdp.cpmg_frqs:
+                raise RelaxError("The nu_CPMG frequency has not been set for the '%s' spectrum." % id)
+
+        # R1rho data.
+        elif cdp.exp_type[id] == EXP_TYPE_R1RHO:
+            if id not in cdp.spin_lock_nu1:
+                raise RelaxError("The spin-lock field strength has not been set for the '%s' spectrum." % id)
 
 
 def check_exp_type():
@@ -65,12 +78,12 @@ def check_exp_type():
 
     # Test if the experiment type is set.
     if not hasattr(cdp, 'exp_type'):
-        raise RelaxError("The relaxation dispersion experiment type has not been set for any spectra.")
+        raise RelaxError("The relaxation dispersion experiment types have not been set for any spectra.")
 
     # Check each spectrum ID.
     for id in cdp.spectrum_ids:
         if id not in cdp.exp_type:
-            raise RelaxError("The relaxation dispersion experiment type has not been set for the %s spectrum." % id)
+            raise RelaxError("The relaxation dispersion experiment type has not been set for the '%s' spectrum." % id)
 
 
 def check_exp_type_fixed_time():
@@ -136,6 +149,72 @@ def check_pipe_type():
     function_type = cdp.pipe_type
     if function_type != 'relax_disp':
         raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
+
+
+def check_relax_times():
+    """Check if the spectrometer frequencies have been set up.
+
+    @raises RelaxError: If the spectrometer frequencies have not been set.
+    """
+
+    # Test if the experiment type is set.
+    if not hasattr(cdp, 'relax_times'):
+        raise RelaxError("The relaxation times have not been set for any spectra.")
+
+    # Check each spectrum ID.
+    for id in cdp.spectrum_ids:
+        if id not in cdp.relax_times:
+            raise RelaxError("The relaxation time has not been set for the '%s' spectrum." % id)
+
+
+def check_spectra_id_setup():
+    """Check that the data for each spectra ID is correctly set up.
+
+    This is an alias for the following checks:
+
+        - check_spectrum_ids()
+        - check_exp_type()
+        - check_spectrometer_frq()
+        - check_disp_points()
+        - check_relax_times()
+
+
+    @raises RelaxError: If data is missing.
+    """
+
+    # Perform the checks.
+    check_spectrum_ids()
+    check_exp_type()
+    check_spectrometer_frq()
+    check_disp_points()
+    check_relax_times()
+
+
+def check_spectrometer_frq():
+    """Check if the spectrometer frequencies have been set up.
+
+    @raises RelaxError: If the spectrometer frequencies have not been set.
+    """
+
+    # Test if the experiment type is set.
+    if not hasattr(cdp, 'spectrometer_frq'):
+        raise RelaxError("The spectrometer frequencies have not been set for any spectra.")
+
+    # Check each spectrum ID.
+    for id in cdp.spectrum_ids:
+        if id not in cdp.spectrometer_frq:
+            raise RelaxError("The spectrometer frequency has not been set for the '%s' spectrum." % id)
+
+
+def check_spectrum_ids():
+    """Check if spectrum IDs exist.
+
+    @raises RelaxNoPeakIntensityError:  If no spectrum IDs exist.
+    """
+
+    # The spectrum IDs structure.
+    if not hasattr(cdp, 'spectrum_ids') or len(cdp.spectrum_ids) == 0:
+        raise RelaxNoPeakIntensityError
 
 
 def get_times():
