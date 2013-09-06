@@ -5,7 +5,7 @@ pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 # Create the spins
-script(file='relax_2_spins.py', dir=None)
+script(file='relax_2_spins_trunc.py', dir=None)
 
 # Name the isotope for field strength scaling.
 spin.isotope(isotope='15N')
