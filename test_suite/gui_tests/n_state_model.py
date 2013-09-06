@@ -23,9 +23,25 @@
 """GUI tests for the N-state model related activities."""
 
 # relax module imports.
+from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 from test_suite import system_tests
 
 
 class N_state_model(GuiTestCase, system_tests.n_state_model.N_state_model):
     """Class for testing the N-state model related functions in the GUI."""
+
+    def __init__(self, methodName=None):
+        """Set up the test case class for the system tests."""
+
+        # Execute the base __init__ methods.
+        super(N_state_model, self).__init__(methodName)
+
+        # Tests to skip.
+        blacklist = [
+            'test_populations'
+        ]
+
+        # Skip the blacklisted tests.
+        if methodName in blacklist:
+            status.skipped_tests.append([methodName, None, self._skip_type])
