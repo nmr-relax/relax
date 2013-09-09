@@ -79,10 +79,13 @@ class Model_list:
         # Store some args.
         self.parent = parent
 
-        # Initialise all models as being selected.
+        # Initialise all models as being selected, and create a list with the separators removed.
         self.select = []
-        for i in range(len(self.models)):
-            self.select.append(True)
+        self.models_stripped = []
+        for model in self.models:
+            if model != None:
+                self.select.append(True)
+                self.models_stripped.append(model)
 
         # Initialise the model selection window.
         self.model_win = Model_sel_window(self.models, self.params, size=self.size, border=self.border)
@@ -139,9 +142,9 @@ class Model_list:
         model_list = []
 
         # Add the models if they are selected.
-        for i in range(len(self.models)):
+        for i in range(len(self.select)):
             if self.select[i]:
-                model_list.append(self.models[i])
+                model_list.append(self.models_stripped[i])
 
         # Return the list.
         return model_list
@@ -155,13 +158,13 @@ class Model_list:
         """
 
         # First set all models as being deselected.
-        for i in range(len(self.models)):
+        for i in range(len(self.select)):
             self.select[i] = False
 
         # Select all models in the list.
         for model in value:
             # The model index.
-            index = self.models.index(model)
+            index = self.models_stripped.index(model)
 
             # Set the selected flag.
             self.select[index] = True
@@ -246,7 +249,7 @@ class Model_sel_window(wx.Dialog):
         self.Centre()
         self.SetFont(font.normal)
 
-        # The main box sizer.
+        # The main sizer.
         main_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Pack the sizer into the frame.
@@ -256,26 +259,40 @@ class Model_sel_window(wx.Dialog):
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
 
         # Add a list control.
-        self.model_list = ModelSelListCtrl(self)
+        self.grid_sizer = wx.FlexGridSizer(len(models)+2, 2, 3, 30)
 
-        # The headers.
-        self.model_list.InsertColumn(0, "Model")
-        self.model_list.InsertColumn(1, "Parameters")
-
-        # The widths.
-        self.model_list.SetColumnWidth(0, int(0.4*width))
-        self.model_list.SetColumnWidth(1, int(0.5*width))
+        # The headers (and then a space).
+        text1 = wx.StaticText(self, -1, "Model")
+        text2 = wx.StaticText(self, -1, "Parameters")
+        text1.SetFont(font.title)
+        text2.SetFont(font.title)
+        self.grid_sizer.Add(text1)
+        self.grid_sizer.Add(text2)
+        self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+        self.grid_sizer.Add(wx.StaticText(self, -1, ""))
 
         # Add the models and parameters.
+        self.model_selection = []
         for i in range(len(models)):
-            # Set the text.
-            self.model_list.Append((str_to_gui(models[i]), str_to_gui(params[i])))
+            # No model - i.e. a separator.
+            if models[i] == None:
+                self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+                self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+                continue
+
+            # Create a checkbox for the model.
+            check_box = wx.CheckBox(self, -1, str_to_gui(models[i]))
+            self.model_selection.append(check_box)
+            self.grid_sizer.Add(check_box)
 
             # Set all selections to True.
-            self.model_list.CheckItem(i)
+            self.model_selection[-1].SetValue(True)
+
+            # Add the parameter text.
+            self.grid_sizer.Add(wx.StaticText(self, -1, str_to_gui(params[i])))
 
         # Add the table to the sizer.
-        sizer.Add(self.model_list, 1, wx.ALL|wx.EXPAND, 0)
+        sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
 
     def get_selection(self):
@@ -289,8 +306,8 @@ class Model_sel_window(wx.Dialog):
         select = []
 
         # Loop over the entries.
-        for i in range(self.model_list.GetItemCount()):
-            select.append(self.model_list.IsChecked(i))
+        for i in range(len(self.model_selection)):
+            select.append(self.model_selection[i].GetValue())
 
         # Return the list.
         return select
@@ -304,8 +321,8 @@ class Model_sel_window(wx.Dialog):
         """
 
         # Loop over the entries.
-        for i in range(self.model_list.GetItemCount()):
-            self.model_list.CheckItem(i, check=select[i])
+        for i in range(len(self.model_selection)):
+            self.model_selection[i].SetValue(select[i])
 
 
 
