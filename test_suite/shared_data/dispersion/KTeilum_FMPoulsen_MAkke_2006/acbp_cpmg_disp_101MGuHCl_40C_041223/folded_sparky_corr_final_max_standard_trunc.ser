@@ -1,0 +1,14 @@
+REMARK SeriesTab Input: folded_sparky_corr_final.tab Output: folded_sparky_corr_final_max_standard.ser
+REMARK Mode: Maximum Dimensions: 2
+REMARK Input Region:    X +/- 0 X-ZF: 1
+REMARK Analysis Region: X +/- 0
+REMARK Input Region:    Y +/- 0 Y-ZF: 1
+REMARK Analysis Region: Y +/- 0
+
+VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS Z_A0 Z_A1 Z_A2 Z_A3 Z_A4 Z_A5 Z_A6 Z_A7 Z_A8 Z_A9 Z_A10 Z_A11 Z_A12 Z_A13 Z_A14 Z_A15 Z_A16
+FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f
+
+NULLVALUE -666
+NULLSTRING *
+
+    1  2338.907  4810.541    7.492  115.281 +1.074271e+05 L61N-HN  1.0000  1.8888  0.6073  1.0396  1.0828  0.5905  0.5289  0.7252  0.5381  0.8457  1.0706  0.7393  1.0644  0.6120  0.5982  1.8878  0.9080

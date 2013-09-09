@@ -1,0 +1,1 @@
+spin.create(spin_name='N', spin_num=57, res_name='L', res_num=61, mol_name=None)
