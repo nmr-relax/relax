@@ -659,9 +659,9 @@ class Disp_model_list(Model_list):
     ]
     params = [
         "{%s/%s, %s}" % (r2eff, r1rho, i0),
-        "",
+        None,
         "{%s, ...}" % (r2),
-        "",
+        None,
         "{%s, ..., %s, %s}" % (r2, phi_ex, kex),
         "{%s, ..., %s, kB, %s, kC}" % (r2, phi_exB, phi_exC),
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
@@ -673,13 +673,36 @@ class Disp_model_list(Model_list):
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
         "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
-        "",
+        None,
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., %s, %s}" % (r1rho_prime, phi_ex, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex)
     ]
-    size = (700, 550)
+    model_desc = [
+        "The base model for determining the %s/%s values and errors for all other models." % (r2eff, r1rho),
+        None,
+        "The model for no chemical exchange relaxation.",
+        None,
+        "The original Luz and Meiboom (1963) 2-site fast exchange equation.",
+        "The original Luz and Meiboom (1963) 3-site fast exchange equation.",
+        "The Carver and Richards (1972) 2-site equation for all time scales (with %s = %s)." % (r2a, r2b),
+        "The Carver and Richards (1972) 2-site equation for all time scales.",
+        "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB.",
+        "The Tollinger et al. (2001) 2-site very-slow exchange model.",
+        "The 2-site numerical solution using 3D magnetisation vectors (with %s = %s)." % (r2a, r2b),
+        "The 2-site numerical solution using 3D magnetisation vectors.",
+        "The 2-site numerical solution using complex conjugate matrices (with %s = %s)." % (r2a, r2b),
+        "The 2-site numerical solution using complex conjugate matrices.",
+        "The 2-site numerical solution expanded using Maple by Nikolai Skrynnikov.",
+        None,
+        "The Meiboom (1961) 2-site fast exchange equation.",
+        "The Meiboom (1961) 2-site equation for all time scales with pA >> pB.",
+        "The Davis, Perlman and London (1994) 2-site fast exchange equation.",
+        "The Trott and Palmer (2002) 2-site equation for all time scales.",
+        "The 2-site numerical solution using 3D magnetisation vectors."
+    ]
+    size = (1000, 650)
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
