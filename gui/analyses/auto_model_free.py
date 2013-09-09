@@ -854,7 +854,6 @@ class Local_tm_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
-    size = (800, 350)
     tooltip = "The list model-free models with the %s parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed." % local_tm
     tooltip_button = "Open the model list selector window."
 
@@ -903,7 +902,6 @@ class Mf_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
-    size = (900, 350)
     tooltip = "The list model-free models to optimise as the iterative part of the protocol (see the about window for details).  This really should not be changed."
     tooltip_button = "Open the model list selector window."
 
