@@ -279,7 +279,7 @@ class Model_sel_window(wx.Dialog):
         for title in titles:
             text = wx.StaticText(self, -1, str_to_gui(title))
             text.SetFont(font.title)
-            self.grid_sizer.Add(text)
+            self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
         for i in range(len(titles)):
             self.grid_sizer.Add(wx.StaticText(self, -1, ""))
 
@@ -295,17 +295,21 @@ class Model_sel_window(wx.Dialog):
             # Create a checkbox for the model.
             check_box = wx.CheckBox(self, -1, str_to_gui(models[i]))
             self.model_selection.append(check_box)
-            self.grid_sizer.Add(check_box)
+            self.grid_sizer.Add(check_box, 0, wx.ALIGN_CENTER_VERTICAL)
 
             # Set all selections to True.
             self.model_selection[-1].SetValue(True)
 
             # Add the parameter text.
-            self.grid_sizer.Add(wx.StaticText(self, -1, str_to_gui(params[i])))
+            text = wx.StaticText(self, -1, str_to_gui(params[i]))
+            text.SetFont(font.normal)
+            self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
 
             # Add the description.
             if desc_flag:
-                self.grid_sizer.Add(wx.StaticText(self, -1, str_to_gui(desc[i])))
+                text = wx.StaticText(self, -1, str_to_gui(desc[i]))
+                text.SetFont(font.normal)
+                self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
 
         # Add the table to the sizer.
         sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)
