@@ -1,4 +1,9 @@
-# Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script
+"""Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
+
+To run the script, simply type:
+
+$ ../../../../../relax relax_4_model_sel_trunc.py --tee relax_4_model_sel_trunc.log
+"""
 import os
 from auto_analyses.relax_disp import Relax_disp
 
