@@ -680,5 +680,6 @@ class Disp_model_list(Model_list):
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex)
     ]
+    size = (700, 550)
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
