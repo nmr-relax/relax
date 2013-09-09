@@ -54,9 +54,6 @@ class Model_list:
     params = []
     """The list of parameters of each model in string form."""
 
-    size = (500, 300)
-    """The fixed size of the Window."""
-
     warning = None
     """A warning string which if set will present a warning message to the user prior to allowing them to modify the list of models."""
 
@@ -91,7 +88,7 @@ class Model_list:
                 self.models_stripped.append(model)
 
         # Initialise the model selection window.
-        self.model_win = Model_sel_window(self.models, self.params, self.model_desc, size=self.size, border=self.border)
+        self.model_win = Model_sel_window(self.models, self.params, self.model_desc, border=self.border)
 
         # Horizontal packing for this element.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -228,7 +225,7 @@ class Model_list:
 class Model_sel_window(wx.Dialog):
     """The model selector window object."""
 
-    def __init__(self, models, params, desc, size=None, border=None):
+    def __init__(self, models, params, desc, border=None):
         """Set up the model selector window.
 
         @param models:      The list of models.
@@ -237,8 +234,6 @@ class Model_sel_window(wx.Dialog):
         @type params:       list of str
         @param desc:        The description for each model.
         @type desc:         list of str
-        @keyword size:      The fixed size of the Window.
-        @type size:         tuple of int
         @keyword border:    The border width, in pixels.
         @type border:       int
         """
@@ -247,13 +242,11 @@ class Model_sel_window(wx.Dialog):
         wx.Dialog.__init__(self, None, id=-1, title="Model list selector")
 
         # Initialise some values
-        width = size[0] - 2*border
         desc_flag = False
         if len(desc):
             desc_flag = True
 
         # Set the frame properties.
-        self.SetSize(size)
         self.Centre()
         self.SetFont(font.normal)
 
@@ -313,6 +306,9 @@ class Model_sel_window(wx.Dialog):
 
         # Add the table to the sizer.
         sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)
+
+        # Auto-size the window.
+        self.SetInitialSize()
 
 
     def get_selection(self):
