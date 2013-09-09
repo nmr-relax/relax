@@ -703,6 +703,5 @@ class Disp_model_list(Model_list):
         "The Trott and Palmer (2002) 2-site equation for all time scales.",
         "The 2-site numerical solution using 3D magnetisation vectors."
     ]
-    size = (1000, 650)
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
