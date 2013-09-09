@@ -247,7 +247,6 @@ class Model_sel_window(wx.Dialog):
             desc_flag = True
 
         # Set the frame properties.
-        self.Centre()
         self.SetFont(font.normal)
 
         # The main sizer.
@@ -309,6 +308,7 @@ class Model_sel_window(wx.Dialog):
 
         # Auto-size the window.
         self.SetInitialSize()
+        self.Centre()
 
 
     def get_selection(self):
