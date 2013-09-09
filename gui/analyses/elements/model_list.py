@@ -39,6 +39,9 @@ class Model_list:
     """The model list GUI element."""
 
     # Class variables.
+    border = 10
+    """The border width, in pixels."""
+
     desc = None
     """The short description for the GUI element."""
 
@@ -47,6 +50,9 @@ class Model_list:
 
     params = []
     """The list of parameters of each model in string form."""
+
+    size = (500, 300)
+    """The fixed size of the Window."""
 
     warning = None
     """A warning string which if set will present a warning message to the user prior to allowing them to modify the list of models."""
@@ -79,7 +85,7 @@ class Model_list:
             self.select.append(True)
 
         # Initialise the model selection window.
-        self.model_win = Model_sel_window(self.models, self.params)
+        self.model_win = Model_sel_window(self.models, self.params, size=self.size, border=self.border)
 
         # Horizontal packing for this element.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -216,26 +222,27 @@ class Model_list:
 class Model_sel_window(wx.Dialog):
     """The model selector window object."""
 
-    def __init__(self, models, params):
+    def __init__(self, models, params, size=None, border=None):
         """Set up the model selector window.
 
-        @param models:  The list of models.
-        @type models:   list of str
-        @param params:  The list of parameters corresponding to the models.
-        @type params:   list of str
+        @param models:      The list of models.
+        @type models:       list of str
+        @param params:      The list of parameters corresponding to the models.
+        @type params:       list of str
+        @keyword size:      The fixed size of the Window.
+        @type size:         tuple of int
+        @keyword border:    The border width, in pixels.
+        @type border:       int
         """
 
         # Set up the dialog.
         wx.Dialog.__init__(self, None, id=-1, title="Model list selector")
 
         # Initialise some values
-        size_x = 500
-        size_y = 300
-        border = 10
-        width = size_x - 2*border
+        width = size[0] - 2*border
 
         # Set the frame properties.
-        self.SetSize((size_x, size_y))
+        self.SetSize(size)
         self.Centre()
         self.SetFont(font.normal)
 
