@@ -12,7 +12,7 @@ Data was recorded as FID interleaved.
 
 The data has been re-processed by PhD student Troels Linnet. telinnet AT bio DOT ku DOT dk
 
-This NMRPipe script was used for spectral processing.
+This NMRPipe script was used for spectral processing for experiment in 0.48 M GuHCl (guanidine hydrochloride).
 -----
 nmrproc.com
 -----
@@ -24,6 +24,29 @@ nmrPipe -in test.fid \
 | nmrPipe  -fn ZF -auto -size 8000                    \
 | nmrPipe  -fn FT -auto                               \
 | nmrPipe  -fn PS -p0 214.00 -p1 -21.00 -di -verb     \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5    \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -neg                                \
+| nmrPipe  -fn PS -p0 0.00 -p1 0.00 -di -verb         \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn POLY -auto                             \
+| nmrPipe  -fn EXT -left -sw                          \
+   -ov -out test.ft2
+------------------
+
+This NMRPipe script was used for spectral processing for experiment in 1.01 M GuHCl (guanidine hydrochloride).
+-----
+nmrproc.com
+-----
+#!/bin/csh
+
+nmrPipe -in test.fid \
+| nmrPipe  -fn SOL                                    \
+| nmrPipe  -fn GM  -g1 5 -g2 10 -c 1.0                \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -auto                               \
+| nmrPipe  -fn PS -p0 -138.40 -p1 -43.00 -di -verb     \
 | nmrPipe  -fn TP                                     \
 | nmrPipe  -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5    \
 | nmrPipe  -fn ZF -auto -size 8000                    \
