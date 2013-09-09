@@ -45,6 +45,9 @@ class Model_list:
     desc = None
     """The short description for the GUI element."""
 
+    model_desc = []
+    """The short description for each model."""
+
     models = []
     """The list of names of the model."""
 
@@ -88,7 +91,7 @@ class Model_list:
                 self.models_stripped.append(model)
 
         # Initialise the model selection window.
-        self.model_win = Model_sel_window(self.models, self.params, size=self.size, border=self.border)
+        self.model_win = Model_sel_window(self.models, self.params, self.model_desc, size=self.size, border=self.border)
 
         # Horizontal packing for this element.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -225,13 +228,15 @@ class Model_list:
 class Model_sel_window(wx.Dialog):
     """The model selector window object."""
 
-    def __init__(self, models, params, size=None, border=None):
+    def __init__(self, models, params, desc, size=None, border=None):
         """Set up the model selector window.
 
         @param models:      The list of models.
         @type models:       list of str
         @param params:      The list of parameters corresponding to the models.
         @type params:       list of str
+        @param desc:        The description for each model.
+        @type desc:         list of str
         @keyword size:      The fixed size of the Window.
         @type size:         tuple of int
         @keyword border:    The border width, in pixels.
@@ -243,6 +248,9 @@ class Model_sel_window(wx.Dialog):
 
         # Initialise some values
         width = size[0] - 2*border
+        desc_flag = False
+        if len(desc):
+            desc_flag = True
 
         # Set the frame properties.
         self.SetSize(size)
@@ -259,25 +267,29 @@ class Model_sel_window(wx.Dialog):
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
 
         # Add a list control.
-        self.grid_sizer = wx.FlexGridSizer(len(models)+2, 2, 3, 30)
+        cols = 2
+        if desc_flag:
+            cols += 1
+        self.grid_sizer = wx.FlexGridSizer(len(models)+2, cols, 3, 30)
 
         # The headers (and then a space).
-        text1 = wx.StaticText(self, -1, "Model")
-        text2 = wx.StaticText(self, -1, "Parameters")
-        text1.SetFont(font.title)
-        text2.SetFont(font.title)
-        self.grid_sizer.Add(text1)
-        self.grid_sizer.Add(text2)
-        self.grid_sizer.Add(wx.StaticText(self, -1, ""))
-        self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+        titles = ["Model", "Parameters"]
+        if desc_flag:
+            titles.append("Description")
+        for title in titles:
+            text = wx.StaticText(self, -1, str_to_gui(title))
+            text.SetFont(font.title)
+            self.grid_sizer.Add(text)
+        for i in range(len(titles)):
+            self.grid_sizer.Add(wx.StaticText(self, -1, ""))
 
         # Add the models and parameters.
         self.model_selection = []
         for i in range(len(models)):
             # No model - i.e. a separator.
             if models[i] == None:
-                self.grid_sizer.Add(wx.StaticText(self, -1, ""))
-                self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+                for i in range(len(titles)):
+                    self.grid_sizer.Add(wx.StaticText(self, -1, ""))
                 continue
 
             # Create a checkbox for the model.
@@ -290,6 +302,10 @@ class Model_sel_window(wx.Dialog):
 
             # Add the parameter text.
             self.grid_sizer.Add(wx.StaticText(self, -1, str_to_gui(params[i])))
+
+            # Add the description.
+            if desc_flag:
+                self.grid_sizer.Add(wx.StaticText(self, -1, str_to_gui(desc[i])))
 
         # Add the table to the sizer.
         sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)

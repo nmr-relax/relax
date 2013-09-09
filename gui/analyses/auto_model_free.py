@@ -816,6 +816,18 @@ class Local_tm_list(Model_list):
 
     # Some class variables.
     desc = "Local %s models:" % tm
+    model_desc = [
+        "Model m0 with a local molecular correlation time (%s)." % tm,
+        "Model m1 with a local molecular correlation time (%s)." % tm,
+        "Model m2 with a local molecular correlation time (%s)." % tm,
+        "Model m3 with a local molecular correlation time (%s)." % tm,
+        "Model m4 with a local molecular correlation time (%s)." % tm,
+        "Model m5 with a local molecular correlation time (%s)." % tm,
+        "Model m6 with a local molecular correlation time (%s)." % tm,
+        "Model m7 with a local molecular correlation time (%s)." % tm,
+        "Model m8 with a local molecular correlation time (%s)." % tm,
+        "Model m9 with a local molecular correlation time (%s)." % tm
+    ]
     models = [
         "tm0",
         "tm1",
@@ -842,6 +854,7 @@ class Local_tm_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
+    size = (800, 350)
     tooltip = "The list model-free models with the %s parameter to optimise as the first step of the protocol (see the about window for details).  This really should not be changed." % local_tm
     tooltip_button = "Open the model list selector window."
 
@@ -852,6 +865,18 @@ class Mf_list(Model_list):
 
     # Some class variables.
     desc = "Model-free models:"
+    model_desc = [
+        "No statistically significant internal motions.",
+        "The original model with a statistically insignificant %s." % te,
+        "The original Lipari and Szabo model.",
+        "The original model with chemical exchange relaxation but a statistically insignificant %s." % te,
+        "The original model with chemical exchange relaxation.",
+        "The extended model with a statistically insignificant %s." % tf,
+        "The Clore et al., 1991 extended model-free model.",
+        "The extended model with chemical exchange relaxation but a statistically insignificant %s." % tf,
+        "The extended model with chemical exchange relaxation.",
+        "No statistically significant internal motions but chemical exchange relaxation present."
+    ]
     models = [
         "m0",
         "m1",
@@ -878,6 +903,7 @@ class Mf_list(Model_list):
     ]
     warning = "The model-free models used in dauvergne_protocol auto-analysis should almost never be changed!  The consequences will be unpredictable.  Please proceed only if you are sure of what you are doing.  Would you like to modify the model-free model list?"
     red_flag = True
+    size = (900, 350)
     tooltip = "The list model-free models to optimise as the iterative part of the protocol (see the about window for details).  This really should not be changed."
     tooltip_button = "Open the model list selector window."
 
