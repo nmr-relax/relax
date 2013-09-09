@@ -1,8 +1,8 @@
 
 
 
-                                  relax repository checkout r20904
-                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+                                  relax repository checkout rNone
+                                                None
 
                               Molecular dynamics by NMR data analysis
 
@@ -24,7 +24,7 @@ script = 'r2eff_calc_trunc.py'
 
 To run the script, simply type:
 
-$ ../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
+$ ../../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
 """
 
 import os
