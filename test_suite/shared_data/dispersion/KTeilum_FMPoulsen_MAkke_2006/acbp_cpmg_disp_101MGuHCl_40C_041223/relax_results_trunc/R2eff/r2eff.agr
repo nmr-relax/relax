@@ -1,0 +1,188 @@
+@version 50121
+@page size 842, 595
+@with g0
+@    view 0.15, 0.15, 1.28, 0.85
+@    xaxis  label "Residue number"
+@    xaxis  label char size 1.48
+@    xaxis  tick major size 0.75
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.45
+@    xaxis  ticklabel char size 1.00
+@    yaxis  label "\qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.48
+@    yaxis  tick major size 0.75
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.45
+@    yaxis  ticklabel char size 1.00
+@    legend on
+@    legend box fill pattern 1
+@    legend char size 1.0
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 legend "599.8908627_100.0"
+@    s1 symbol 2
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 legend "599.8908627_1000.0"
+@    s2 symbol 3
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 legend "599.8908627_133.333"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 legend "599.8908627_166.667"
+@    s4 symbol 5
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 legend "599.8908627_200.0"
+@    s5 symbol 6
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 legend "599.8908627_266.667"
+@    s6 symbol 7
+@    s6 symbol size 0.45
+@    s6 symbol linewidth 0.5
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 legend "599.8908627_300.0"
+@    s7 symbol 8
+@    s7 symbol size 0.45
+@    s7 symbol linewidth 0.5
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 legend "599.8908627_33.333"
+@    s8 symbol 9
+@    s8 symbol size 0.45
+@    s8 symbol linewidth 0.5
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 legend "599.8908627_333.333"
+@    s9 symbol 10
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 legend "599.8908627_400.0"
+@    s10 symbol 1
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 legend "599.8908627_466.667"
+@    s11 symbol 2
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 legend "599.8908627_533.333"
+@    s12 symbol 3
+@    s12 symbol size 0.45
+@    s12 symbol linewidth 0.5
+@    s12 errorbar size 0.5
+@    s12 errorbar linewidth 0.5
+@    s12 errorbar riser linewidth 0.5
+@    s12 legend "599.8908627_66.667"
+@    s13 symbol 4
+@    s13 symbol size 0.45
+@    s13 symbol linewidth 0.5
+@    s13 errorbar size 0.5
+@    s13 errorbar linewidth 0.5
+@    s13 errorbar riser linewidth 0.5
+@    s13 legend "599.8908627_666.667"
+@    s14 symbol 5
+@    s14 symbol size 0.45
+@    s14 symbol linewidth 0.5
+@    s14 errorbar size 0.5
+@    s14 errorbar linewidth 0.5
+@    s14 errorbar riser linewidth 0.5
+@    s14 legend "599.8908627_833.333"
+@target G0.S0
+@type xydy
+61                             18.782745054316287             0.577253625034368             
+&
+@target G0.S1
+@type xydy
+61                             9.273190467185955              0.356762934430782             
+&
+@target G0.S2
+@type xydy
+61                             20.927542821265490             0.649652078766085             
+&
+@target G0.S3
+@type xydy
+61                             21.214960128322819             0.646008942649876             
+&
+@target G0.S4
+@type xydy
+61                             19.162863992924262             0.579461461484579             
+&
+@target G0.S5
+@type xydy
+61                             15.954158448176790             0.506130965096816             
+&
+@target G0.S6
+@type xydy
+61                             15.633219886804149             0.491752576369165             
+&
+@target G0.S7
+@type xydy
+61                             19.378789168898106             0.598883774726491             
+&
+@target G0.S8
+@type xydy
+61                             13.392204983052110             0.436516884657795             
+&
+@target G0.S9
+@type xydy
+61                             12.207543452833500             0.408434197431669             
+&
+@target G0.S10
+@type xydy
+61                             10.599028446486102             0.383544872213055             
+&
+@target G0.S11
+@type xydy
+61                             9.951761383399468              0.374658953193042             
+&
+@target G0.S12
+@type xydy
+61                             18.911234714462896             0.576441788106939             
+&
+@target G0.S13
+@type xydy
+61                             9.558840777796155              0.366569307604255             
+&
+@target G0.S14
+@type xydy
+61                             9.462041130200372              0.359854904029812             
+&
+@autoscale
