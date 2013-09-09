@@ -11,7 +11,7 @@ script(file='relax_2_spins.py', dir=None)
 spin.isotope(isotope='15N')
 
 # Read the spectrum from NMRSeriesTab file. The "auto" will generate spectrum name of form: Z_A{i}
-spectrum.read_intensities(file="peaks_list_max_standard.ser", dir='acbp_cpmg_disp_048MGuHCl_40C_041223', spectrum_id='auto', int_method='height')
+spectrum.read_intensities(file="peaks_list_max_standard.ser", dir=None, spectrum_id='auto', int_method='height')
 
 # Set the spectra experimental properties/settings.
 script(file='relax_3_spectra_settings.py', dir=None)

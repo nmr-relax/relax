@@ -2,7 +2,7 @@
 
 To run the script, simply type:
 
-$ ../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
+$ ../../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
 """
 
 import os

@@ -6,10 +6,10 @@ from auto_analyses.relax_disp import Relax_disp
 state.load(state='ini_setup.bz2')
  
 # Set settings for run.
-results_directory = os.path.join(os.getcwd(),"model_sel_analyt")
+results_directory = os.path.join(os.getcwd(), "relax_results")
 pipe_name = 'base pipe'; pipe_bundle = 'relax_disp'
-MODELS = ['R2eff', 'No Rex', 'TSMFK01', 'LM63', 'CR72', 'CR72 full', 'IT99']
-GRID_INC = 21; MC_NUM = 10; MODSEL = 'AIC'
+MODELS = ['R2eff', 'No Rex', 'TSMFK01', 'LM63', 'LM63 3-site', 'CR72', 'CR72 full', 'IT99', 'NS CPMG 2-site 3D', 'NS CPMG 2-site expanded', 'NS CPMG 2-site star']
+GRID_INC = 11; MC_NUM = 50; MODSEL = 'AIC'
  
 # Execute
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=results_directory, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
