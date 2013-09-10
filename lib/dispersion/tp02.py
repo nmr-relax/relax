@@ -77,11 +77,10 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # We assume that A resonates at 0 [s^-1], without loss of generality.
-        Wsl = offset[i]                             # Larmor frequency of spin lock [s^-1].
         W = pA*Wa + pB*Wb                           # Pop-averaged Larmor frequency [s^-1].
-        da = Wa - Wsl                               # Offset of spin-lock from A.
-        db = Wb - Wsl                               # Offset of spin-lock from B.
-        d = W - Wsl                                 # Offset of spin-lock from pop-average.
+        da = Wa - offset[i]                         # Offset of spin-lock from A.
+        db = Wb - offset[i]                         # Offset of spin-lock from B.
+        d = W - offset[i]                           # Offset of spin-lock from pop-average.
         waeff2 = spin_lock_fields[i]**2 + da**2     # Effective field at A.
         wbeff2 = spin_lock_fields[i]**2 + db**2     # Effective field at B.
         weff2 = spin_lock_fields[i]**2 + d**2       # Effective field at pop-average.
@@ -91,7 +90,7 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
 
         # Repetitive calculations (to speed up calculations).
         sin_theta2 = sin(theta)**2
-        R1_cos_theta2 = R1 * cos(theta)**2
+        R1_cos_theta2 = R1 * (1.0 - sin_theta2)
         R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
         # Catch zeros (to avoid pointless mathematical operations).
