@@ -172,6 +172,7 @@ class Auto_relax_disp(Base_analysis):
         wx.CallAfter(self.button_isotope.Enable, enable)
         wx.CallAfter(self.button_r1.Enable, enable)
         wx.CallAfter(self.button_chemical_shift.Enable, enable)
+        wx.CallAfter(self.button_interatom_define.Enable, enable)
         wx.CallAfter(self.peak_intensity.Enable, enable)
         wx.CallAfter(self.model_field.Enable, enable)
         wx.CallAfter(self.button_exec_relax.Enable, enable)
@@ -214,8 +215,14 @@ class Auto_relax_disp(Base_analysis):
         self.gui.Bind(wx.EVT_BUTTON, self.load_cs_data, self.button_chemical_shift)
         sizer.Add(self.button_chemical_shift, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Spacer (this is to be replaced by a button for the interatom.define user function for the MQ dispersion models in the future).
-        sizer.AddStretchSpacer()
+        # Interatomic interaction button.
+        self.button_interatom_define = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Interatomic interaction")
+        self.button_interatom_define.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.dipole_pair", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_interatom_define.SetFont(font.normal)
+        self.button_interatom_define.SetSize((-1, 25))
+        self.button_interatom_define.SetToolTipString("Define the interatomic interations via the interatom.define user function for the MQ dispersion models.")
+        self.gui.Bind(wx.EVT_BUTTON, self.interatom_define, self.button_interatom_define)
+        sizer.Add(self.button_interatom_define, 1, wx.ALL|wx.EXPAND, 0)
 
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
@@ -405,6 +412,17 @@ class Auto_relax_disp(Base_analysis):
 
         # Terminate the event.
         event.Skip()
+
+
+    def interatom_define(self, event=None):
+        """Define the interatomic interactions of the spins via the interatom.define user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['interatom.define'](wx_wizard_modal=True, spin_id1='@N', spin_id2='@H')
 
 
     def load_cs_data(self, event=None):
