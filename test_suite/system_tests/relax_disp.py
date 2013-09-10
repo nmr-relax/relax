@@ -1014,6 +1014,9 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(res61L.kex, 609.262167216419, 0)
         self.assertAlmostEqual(res61L.chi2, 65.99987828889657, 5)
 
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(res61L.k_AB, res61L.kex * (1.0 - res61L.pA))
+
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72_full(self):
         """Optimisation of Kaare Teilum, Flemming M Poulsen, Mikael Akke 2006 "acyl-CoA binding protein" CPMG data to the CR72 dispersion model.

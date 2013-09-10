@@ -716,6 +716,13 @@ def param_conversion(key=None, spins=None, sim_index=None):
             tex = 1.0 / (2.0 * value)
             set_value(value=tex, key=key, spins=spins, sim_index=sim_index, param_name='tex', spin_index=spin_index, frq_index=frq_index)
 
+        # The kex to k_AB conversion.
+        if param_name == 'kex':
+            # Get pA value.
+            pA = get_value(key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index, frq_index=frq_index)
+            k_AB = value * (1.0 - pA)
+            set_value(value=k_AB, key=key, spins=spins, sim_index=sim_index, param_name='k_AB', spin_index=spin_index, frq_index=frq_index)
+
         # The tex to kex conversion.
         if param_name == 'tex':
             kex = 1.0 / (2.0 * value)

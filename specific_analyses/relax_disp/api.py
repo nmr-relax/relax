@@ -1517,6 +1517,9 @@ class Relax_disp(API_base, API_common):
         pairs['pA'] = 'pB'
         pairs['pB'] = 'pA'
 
+        # Add the names of kex-k_AB pair.
+        pairs['k_AB'] = 'kex'
+
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
 

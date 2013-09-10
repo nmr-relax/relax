@@ -417,10 +417,12 @@ class Relax_disp:
             self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
 
-        # The kex and tex parameters.
+        # The k_AB, kex and tex parameters.
         if model in [None, MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
+            self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
             self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
             self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
 
