@@ -298,8 +298,8 @@ class Relax_disp(GuiTestCase):
 
         # Set up the models to use.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_NS_CPMG_2SITE_EXPANDED]
-        for i in range(len(analysis.model_field.models)):
-            if analysis.model_field.models[i] in models:
+        for i in range(len(analysis.model_field.models_stripped)):
+            if analysis.model_field.models_stripped[i] in models:
                 analysis.model_field.select[i] = True
             else:
                 analysis.model_field.select[i] = False
@@ -475,8 +475,8 @@ class Relax_disp(GuiTestCase):
 
         # Deselect all but the 'TP02' model.
         models = [MODEL_R2EFF, MODEL_NOREX, MODEL_TP02]
-        for i in range(len(analysis.model_field.models)):
-            if analysis.model_field.models[i] in models:
+        for i in range(len(analysis.model_field.models_stripped)):
+            if analysis.model_field.models_stripped[i] in models:
                 analysis.model_field.select[i] = True
             else:
                 analysis.model_field.select[i] = False
