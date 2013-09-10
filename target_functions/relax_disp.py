@@ -61,7 +61,7 @@ class Dispersion:
             - 'CR72':  The reduced Carver and Richards (1972) 2-site model for all time scales with R20A = R20B.
             - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
             - 'IT99':  The Ishima and Torchia (1999) 2-site model for all time scales with skewed populations (pA >> pB).
-            - 'TSMFK01':  The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+            - 'TSMFK01':  The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
             - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
             - 'M61 skew':  The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.
@@ -1069,7 +1069,7 @@ class Dispersion:
 
 
     def func_TSMFK01(self, params):
-        """Target function for the the Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+        """Target function for the the Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array

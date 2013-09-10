@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
+"""The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
 Applicable in the limit of slow exchange, when |R2A-R2B| << k_AB, kB << 1/tau_CP. R20A is the transverse relaxation rate of site A in the absence of exchange.
 2*tau_CP is is the time between successive 180 deg. pulses.
 
