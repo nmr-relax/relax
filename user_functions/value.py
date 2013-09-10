@@ -41,6 +41,7 @@ from specific_analyses.model_free import Model_free
 from specific_analyses.relax_fit import Relax_fit
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe import Noe
+from specific_analyses.relax_disp.api import Relax_disp
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -99,6 +100,8 @@ uf.desc.append(Relax_fit.set_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(N_state_model.set_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(Relax_disp.set_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
 uf.desc[-1].add_prompt("relax> value.copy('m1', 'm2', 'csa')")
@@ -142,6 +145,7 @@ uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To show all CSA values, type:")
@@ -287,6 +291,8 @@ uf.desc.append(Relax_fit.set_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(N_state_model.set_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(Relax_disp.set_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To load 15N CSA values from the file 'csa_values' in the directory 'data', where spins are only identified by residue name and number, type one of the following:")
@@ -375,6 +381,9 @@ uf.desc.append(Relax_fit.default_value_doc)
 uf.desc.append(N_state_model.set_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
 uf.desc.append(N_state_model.default_value_doc)
+uf.desc.append(Relax_disp.set_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
+uf.desc.append(Relax_disp.default_value_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the parameter values for the current data pipe to the default values, for all spins, type:")
@@ -474,6 +483,7 @@ uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
+uf.desc.append(Relax_disp.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To write the CSA values to the file 'csa.txt', type one of:")
