@@ -201,13 +201,18 @@ class Dispersion:
         if model in [MODEL_NS_R1RHO_2SITE]:
             self.M0 = zeros(6, float64)
 
-        # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            # The tau_cpmg times and matrix exponential power array.
+        # Some other data structures for the analytical and numerical solutions.
+        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
+            # The tau_cpmg times.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
-            self.power = zeros(self.num_disp_points, int16)
             for i in range(self.num_disp_points):
                 self.tau_cpmg[i] = 0.25 / self.cpmg_frqs[i]
+
+        # Some other data structures for the numerical solutions.
+        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+            # The matrix exponential power array.
+            self.power = zeros(self.num_disp_points, int16)
+            for i in range(self.num_disp_points):
                 self.power[i] = int(round(self.cpmg_frqs[i] * self.relax_time))
 
         # Convert the spin-lock data to rad.s^-1.
