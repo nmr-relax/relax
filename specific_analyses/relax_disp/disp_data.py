@@ -34,7 +34,7 @@ The dispersion data model is based on the following concepts, in order of import
 
 # Python module imports.
 from math import atan, pi, sqrt
-from numpy import float64, int32, ones, zeros
+from numpy import array, float64, int32, ones, zeros
 from random import gauss
 
 # relax module imports.
@@ -1099,7 +1099,7 @@ def return_cpmg_frqs(ref_flag=True):
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
-    @rtype:             list of float
+    @rtype:             numpy rank-1 float64 array
     """
 
     # Initialise.
@@ -1114,7 +1114,7 @@ def return_cpmg_frqs(ref_flag=True):
         cpmg_frqs.append(frq)
 
     # Return the new list.
-    return cpmg_frqs
+    return array(cpmg_frqs, float64)
 
 
 def return_index_from_disp_point(value, exp_type=None):
@@ -1548,7 +1548,7 @@ def return_spin_lock_nu1(ref_flag=True):
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of spin-lock field strengths in Hz.
-    @rtype:             list of float
+    @rtype:             numpy rank-1 float64 array
     """
 
     # Initialise.
@@ -1563,7 +1563,7 @@ def return_spin_lock_nu1(ref_flag=True):
         nu1.append(frq)
 
     # Return the new list.
-    return nu1
+    return array(nu1, float64)
 
 
 def return_value_from_frq_index(frq_index=None):
