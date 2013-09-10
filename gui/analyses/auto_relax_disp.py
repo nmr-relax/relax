@@ -670,8 +670,8 @@ class Disp_model_list(Model_list):
         MODEL_NS_CPMG_2SITE_EXPANDED,
         None,
         MODEL_M61,
-        MODEL_DPL94,
         MODEL_M61B,
+        MODEL_DPL94,
         MODEL_TP02,
         MODEL_NS_R1RHO_2SITE
     ]
