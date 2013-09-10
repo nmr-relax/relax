@@ -58,7 +58,7 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     @type kex:                  float
     @keyword R1:                The R1 relaxation rate.
     @type R1:                   float
-    @keyword spin_lock_fields:  The CPMG nu1 frequencies.
+    @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
@@ -77,18 +77,17 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # We assume that A resonates at 0 [s^-1], without loss of generality.
-        Wsl = offset[i]                     # Larmor frequency of spin lock [s^-1].
-        w1 = spin_lock_fields[i] * 2.0 * pi # Spin-lock field strength.
-        W = pA*Wa + pB*Wb                   # Pop-averaged Larmor frequency [s^-1].
-        da = Wa - Wsl                       # Offset of spin-lock from A.
-        db = Wb - Wsl                       # Offset of spin-lock from B.
-        d = W - Wsl                         # Offset of spin-lock from pop-average.
-        waeff2 = w1**2 + da**2              # Effective field at A.
-        wbeff2 = w1**2 + db**2              # Effective field at B.
-        weff2 = w1**2 + d**2                # Effective field at pop-average.
+        Wsl = offset[i]                             # Larmor frequency of spin lock [s^-1].
+        W = pA*Wa + pB*Wb                           # Pop-averaged Larmor frequency [s^-1].
+        da = Wa - Wsl                               # Offset of spin-lock from A.
+        db = Wb - Wsl                               # Offset of spin-lock from B.
+        d = W - Wsl                                 # Offset of spin-lock from pop-average.
+        waeff2 = spin_lock_fields[i]**2 + da**2     # Effective field at A.
+        wbeff2 = spin_lock_fields[i]**2 + db**2     # Effective field at B.
+        weff2 = spin_lock_fields[i]**2 + d**2       # Effective field at pop-average.
 
         # The rotating frame flip angle.
-        theta = atan(w1 / d)
+        theta = atan(spin_lock_fields[i] / d)
 
         # Repetitive calculations (to speed up calculations).
         sin_theta2 = sin(theta)**2

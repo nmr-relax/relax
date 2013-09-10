@@ -67,7 +67,7 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     @type k_AB:                 float
     @keyword k_BA:              The rate of exchange from site B to A (rad/s).
     @type k_BA:                 float
-    @keyword spin_lock_fields:  The R1rho spin-lock field strengths in Hz.
+    @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword relax_time:        The total relaxation time period for each spin-lock field strength (in seconds).
     @type relax_time:           float
@@ -86,17 +86,16 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         Wsl = offset[i]                     # Larmor frequency of spin lock [s^-1].
-        w1 = spin_lock_fields[i] * 2.0 * pi # Spin-lock field strength.
         dA = Wa - Wsl                       # Offset of spin-lock from A.
         dB = Wb - Wsl                       # Offset of spin-lock from B.
 
         # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-        R = rr1rho_3d(R1=r1, Rinf=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=w1, k_AB=k_AB, k_BA=k_BA)
+        R = rr1rho_3d(R1=r1, Rinf=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
         # A new M0 is obtained:  M0 = [sin(thetaA)*pA sin(thetaB)*pB 0 0 cos(thetaA)*pA cos(thetaB)*pB].
-        thetaA = atan(w1/dA)
-        thetaB = atan(w1/dB)
+        thetaA = atan(spin_lock_fields[i]/dA)
+        thetaB = atan(spin_lock_fields[i]/dB)
         M0[0] = sin(thetaA) * pA
         M0[1] = sin(thetaB) * pB
         M0[4] = cos(thetaA) * pA

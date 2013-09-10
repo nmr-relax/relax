@@ -60,7 +60,7 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     @type theta:                numpy rank-1 float array
     @keyword R1:                The R1 relaxation rate.
     @type R1:                   float
-    @keyword spin_lock_fields:  The CPMG nu1 frequencies.
+    @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
@@ -86,7 +86,7 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
             continue
 
         # Denominator.
-        denom = kex2 + (2.0*pi*spin_lock_fields[i])**2
+        denom = kex2 + spin_lock_fields[i]**2
 
         # Avoid divide by zero.
         if denom == 0.0:
