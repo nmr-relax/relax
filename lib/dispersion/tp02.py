@@ -36,7 +36,7 @@ Links to the copyright licensing agreements from all authors are:
 from math import atan, cos, pi, sin
 
 
-def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Trott and Palmer (2002) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
@@ -60,6 +60,8 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     @type R1:                   float
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
     @type spin_lock_fields:     numpy rank-1 float array
+    @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
+    @type spin_lock_fields2:    numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
@@ -81,9 +83,9 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
         da = Wa - offset[i]                         # Offset of spin-lock from A.
         db = Wb - offset[i]                         # Offset of spin-lock from B.
         d = W - offset[i]                           # Offset of spin-lock from pop-average.
-        waeff2 = spin_lock_fields[i]**2 + da**2     # Effective field at A.
-        wbeff2 = spin_lock_fields[i]**2 + db**2     # Effective field at B.
-        weff2 = spin_lock_fields[i]**2 + d**2       # Effective field at pop-average.
+        waeff2 = spin_lock_fields2[i] + da**2     # Effective field at A.
+        wbeff2 = spin_lock_fields2[i] + db**2     # Effective field at B.
+        weff2 = spin_lock_fields2[i] + d**2       # Effective field at pop-average.
 
         # The rotating frame flip angle.
         theta = atan(spin_lock_fields[i] / d)

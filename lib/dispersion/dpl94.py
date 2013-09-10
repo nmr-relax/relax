@@ -44,7 +44,7 @@ kex is the chemical exchange rate constant, pA and pB are the populations of sta
 from math import cos, pi, sin
 
 
-def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R1rho values for the DPL94 model.
 
     See the module docstring for details.
@@ -60,8 +60,8 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     @type theta:                numpy rank-1 float array
     @keyword R1:                The R1 relaxation rate.
     @type R1:                   float
-    @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
-    @type spin_lock_fields:     numpy rank-1 float array
+    @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
+    @type spin_lock_fields2:    numpy rank-1 float array
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
     @type back_calc:            numpy rank-1 float array
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
@@ -86,7 +86,7 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
             continue
 
         # Denominator.
-        denom = kex2 + spin_lock_fields[i]**2
+        denom = kex2 + spin_lock_fields2[i]
 
         # Avoid divide by zero.
         if denom == 0.0:
