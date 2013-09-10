@@ -270,7 +270,7 @@ class Model_sel_window(wx.Dialog):
             titles.append("Description")
         for title in titles:
             text = wx.StaticText(self, -1, str_to_gui(title))
-            text.SetFont(font.title)
+            text.SetFont(font.subtitle)
             self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
         for i in range(len(titles)):
             self.grid_sizer.Add(wx.StaticText(self, -1, ""))
