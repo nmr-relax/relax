@@ -42,12 +42,14 @@ from lib.list import count_unique_elements, unique_elements
 from lib.mathematics import round_to_next_order
 from lib.statistics import std
 from lib.text.sectioning import subsection
+from multi import Processor_box
 from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
+from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
@@ -285,129 +287,6 @@ class Relax_disp(API_base, API_common):
         return ids
 
 
-    def _grid_search_setup(self, spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
-        """The grid search setup function.
-
-        @keyword spins:             The list of spin data containers for the block.
-        @type spins:                list of SpinContainer instances
-        @keyword param_vector:      The parameter vector.
-        @type param_vector:         numpy array
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
-        @keyword scaling_matrix:    The scaling matrix.
-        @type scaling_matrix:       numpy diagonal matrix
-        @return:                    A tuple of the grid size and the minimisation options.  For the minimisation options, the first dimension corresponds to the model parameter.  The second dimension is a list of the number of increments, the lower bound, and upper bound.
-        @rtype:                     (int, list of lists [int, float, float])
-        """
-
-        # The length of the parameter array.
-        n = len(param_vector)
-
-        # Make sure that the length of the parameter array is > 0.
-        if n == 0:
-            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
-
-        # Lower bounds.
-        if lower != None and len(lower) != n:
-            raise RelaxLenError('lower bounds', n)
-
-        # Upper bounds.
-        if upper != None and len(upper) != n:
-            raise RelaxLenError('upper bounds', n)
-
-        # Increment.
-        if isinstance(inc, list) and len(inc) != n:
-            raise RelaxLenError('increment', n)
-        elif isinstance(inc, int):
-            inc = [inc]*n
-
-        # Set up the default bounds.
-        if not lower:
-            # Init.
-            lower = []
-            upper = []
-
-            # The R2eff model.
-            if cdp.model_type == 'R2eff':
-                for spin_index in range(len(spins)):
-                    # Alias the spin.
-                    spin = spins[spin_index]
-
-                    # Loop over each spectrometer frequency and dispersion point.
-                    for exp_type, frq, point in loop_exp_frq_point():
-                        # Loop over the parameters.
-                        for i in range(len(spin.params)):
-                            # R2eff relaxation rate (from 1 to 40 s^-1).
-                            if spin.params[i] == 'r2eff':
-                                lower.append(1.0)
-                                upper.append(40.0)
-
-                            # Intensity.
-                            elif spin.params[i] == 'i0':
-                                lower.append(0.0001)
-                                upper.append(max(spin.intensities.values()))
-
-            # All other models.
-            else:
-                # The spin specific parameters.
-                for spin in spins:
-                    for i in range(len(spin.params)):
-                        # R2 relaxation rates (from 1 to 40 s^-1).
-                        if spin.params[i] in ['r2', 'r2a', 'r2b']:
-                            lower.append(1.0)
-                            upper.append(40.0)
-
-                        # The pA.pB.dw**2 and pA.dw**2 parameters.
-                        elif spin.params[i] in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
-                            lower.append(0.0)
-                            upper.append(10.0)
-
-                        # Chemical shift difference between states A and B.
-                        elif spin.params[i] == 'dw':
-                            lower.append(0.0)
-                            upper.append(10.0)
-
-                # The cluster specific parameters (only use the values from the first spin of the cluster).
-                spin = spins[0]
-                for i in range(len(spin.params)):
-                    # The population of state A.
-                    if spin.params[i] == 'pA':
-                        if spin.model == MODEL_M61B:
-                            lower.append(0.85)
-                        else:
-                            lower.append(0.5)
-                        upper.append(1.0)
-
-                    # Exchange rates.
-                    elif spin.params[i] in ['kex', 'k_AB', 'kB', 'kC']:
-                        lower.append(1.0)
-                        upper.append(100000.0)
-
-                    # Time of exchange.
-                    elif spin.params[i] in ['tex']:
-                        lower.append(1/200000.0)
-                        upper.append(0.5)
-
-        # The full grid size.
-        grid_size = 1
-        for i in range(n):
-            grid_size *= inc[i]
-
-        # Diagonal scaling of minimisation options.
-        lower_new = []
-        upper_new = []
-        for i in range(n):
-            lower_new.append(lower[i] / scaling_matrix[i, i])
-            upper_new.append(upper[i] / scaling_matrix[i, i])
-
-        # Return the data structures.
-        return grid_size, inc, lower_new, upper_new
-
-
     def _minimise_r2eff(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Optimise the R2eff model by fitting the 2-parameter exponential curves.
 
@@ -466,7 +345,7 @@ class Relax_disp(API_base, API_common):
                 # Get the grid search minimisation options.
                 lower_new, upper_new = None, None
                 if match('^[Gg]rid', min_algor):
-                    grid_size, inc_new, lower_new, upper_new = self._grid_search_setup(spins=[spin], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                    grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
                 # Linear constraints.
                 A, b = None, None
@@ -1103,6 +982,10 @@ class Relax_disp(API_base, API_common):
             # Exit the method.
             return
 
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        processor = processor_box.processor
+
         # The number of time points for the exponential curves (if present).
         num_time_pts = 1
         if hasattr(cdp, 'num_time_pts'):
@@ -1128,166 +1011,20 @@ class Relax_disp(API_base, API_common):
             if skip:
                 continue
 
-            # Test if the spectrometer frequencies have been set.
-            if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61, MODEL_TP02] and not hasattr(cdp, 'spectrometer_frq'):
-                raise RelaxError("The spectrometer frequency information has not been specified.")
-
-            # The R2eff/R1rho data.
-            values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count, sim_index=sim_index)
-
-            # The offset and R1 data for R1rho off-resonance models.
-            chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-            if spins[0].model in [MODEL_DPL94, MODEL_TP02, MODEL_NS_R1RHO_2SITE]:
-                chemical_shifts, offsets, tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count)
-                r1 = return_r1_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=field_count, sim_index=sim_index)
-
-            # Create the initial parameter vector.
-            param_vector = assemble_param_vector(spins=spins)
-
             # Diagonal scaling.
             scaling_matrix = assemble_scaling_matrix(spins=spins, scaling=scaling)
-            if len(scaling_matrix):
-                param_vector = dot(inv(scaling_matrix), param_vector)
 
-            # Get the grid search minimisation options.
-            lower_new, upper_new = None, None
-            if match('^[Gg]rid', min_algor):
-                grid_size, inc_new, lower_new, upper_new = self._grid_search_setup(spins=spins, param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+            # Set up the slave command object.
+            command = Disp_minimise_command(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower, upper=upper, inc=inc, fields=fields)
 
-            # Linear constraints.
-            A, b = None, None
-            if constraints:
-                A, b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
+            # Set up the memo.
+            memo = Disp_memo(spins=spins, sim_index=sim_index, scaling_matrix=scaling_matrix, verbosity=verbosity)
 
-            # Print out.
-            if verbosity >= 1:
-                # Individual spin block section.
-                top = 2
-                if verbosity >= 2:
-                    top += 2
-                subsection(file=sys.stdout, text="Fitting to the spin block %s"%spin_ids, prespace=top)
+            # Add the slave command and memo to the processor queue.
+            processor.add_to_queue(command, memo)
 
-                # Grid search printout.
-                if match('^[Gg]rid', min_algor):
-                    print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
-
-            # Initialise the function to minimise.
-            model = Dispersion(model=spins[0].model, num_params=param_num(spins=spins), num_spins=len(spins), num_frq=field_count, num_disp_points=cdp.dispersion_points, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
-
-            # Grid search.
-            if search('^[Gg]rid', min_algor):
-                results = grid(func=model.func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
-
-                # Unpack the results.
-                param_vector, chi2, iter_count, warning = results
-                f_count = iter_count
-                g_count = 0.0
-                h_count = 0.0
-
-            # Minimisation.
-            else:
-                results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-
-                # Unpack the results.
-                if results == None:
-                    return
-                param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
-
-            # Scaling.
-            if scaling:
-                param_vector = dot(scaling_matrix, param_vector)
-
-            # Disassemble the parameter vector.
-            disassemble_param_vector(param_vector=param_vector, spins=spins, sim_index=sim_index)
-            param_conversion(spins=spins, sim_index=sim_index)
-
-            # Monte Carlo minimisation statistics.
-            if sim_index != None:
-                for spin in spins:
-                    # Chi-squared statistic.
-                    spin.chi2_sim[sim_index] = chi2
-
-                    # Iterations.
-                    spin.iter_sim[sim_index] = iter_count
-
-                    # Function evaluations.
-                    spin.f_count_sim[sim_index] = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count_sim[sim_index] = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count_sim[sim_index] = h_count
-
-                    # Warning.
-                    spin.warning_sim[sim_index] = warning
-
-            # Normal statistics.
-            else:
-                for spin in spins:
-                    # Chi-squared statistic.
-                    spin.chi2 = chi2
-
-                    # Iterations.
-                    spin.iter = iter_count
-
-                    # Function evaluations.
-                    spin.f_count = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count = h_count
-
-                    # Warning.
-                    spin.warning = warning
-
-            # Store the back-calculated values.
-            if sim_index == None:
-                for spin_index in range(len(spins)):
-                    # Alias the spin.
-                    spin = spins[spin_index]
-
-                    # No data.
-                    if not hasattr(spin, 'r2eff'):
-                        continue
-
-                    # Initialise.
-                    if not hasattr(spin, 'r2eff_bc'):
-                        spin.r2eff_bc = {}
-
-                    # Loop over the R2eff data.
-                    for exp_type, frq, point in loop_exp_frq_point():
-                        # The indices.
-                        exp_type_index = return_index_from_exp_type(exp_type=exp_type)
-                        disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
-                        frq_index = return_index_from_frq(frq)
-
-                        # Missing data.
-                        if missing[exp_type_index, spin_index, frq_index, disp_pt_index]:
-                            continue
-
-                        # The R2eff key.
-                        key = return_param_key_from_data(frq=frq, point=point)
-
-                        # Store the back-calculated data.
-                        spin.r2eff_bc[key] = model.back_calc[spin_index, frq_index, disp_pt_index]
-
-            # Optimisation printout.
-            if verbosity:
-                print("\nOptimised parameter values:")
-                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
-                    # The parameter with additional details.
-                    param_text = param_name
-                    if param_name in ['r2', 'r2a', 'r2b']:
-                        frq = return_value_from_frq_index(frq_index)
-                        if frq:
-                            param_text += " (%.3f MHz)" % (frq / 1e6) 
-                    param_text += ":"
-
-                    # The printout.
-                    print("%-20s %25.15f" % (param_text, param_vector[param_index]))
+        # Execute the queued commands.
+        processor.run_queue()
 
 
     def model_desc(self, model_info):
