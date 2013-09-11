@@ -97,6 +97,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('kC', scope='spin', default=10000.0, desc='Approximate chemical exchange rate constant between sites A and C (rad.s^-1)', set='params', py_type=float, grace_string='\\qk\\sC\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('tex', scope='spin', default=1.0/20000.0, desc='The time of exchange (tex = 1/(2kex))', set='params', py_type=float, grace_string='\\q\\xt\\B\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('k_AB', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('k_BA', scope='spin', default=10000.0, desc='The exchange rate from state B to state A', set='params', py_type=float, grace_string='\\qk\\sBA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
 
         # Add the minimisation data.
@@ -1383,6 +1384,7 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
     _table.add_row(["Exchange rate (rad/s)", "'kex'"])
     _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'"])
+    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'"])
     _table.add_row(["Time of exchange (s/rad)", "'tex'"])
     _table.add_row(["Peak intensities (series)", "'intensities'"])
     _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
@@ -1517,8 +1519,9 @@ class Relax_disp(API_base, API_common):
         pairs['pA'] = 'pB'
         pairs['pB'] = 'pA'
 
-        # Add the names of kex-k_AB pair.
+        # Add the names of kex-k_AB pair and kex-k_BA pair.
         pairs['k_AB'] = 'kex'
+        pairs['k_BA'] = 'kex'
 
         # Get the minimisation statistic object names.
         min_names = self.data_names(set='min')
