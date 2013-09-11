@@ -36,7 +36,7 @@ from auto_analyses.relax_disp import Relax_disp
 MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'N2 CPMG 2-site expanded']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 21
+GRID_INC = 11
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 500
