@@ -413,6 +413,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/1000, 1880.19125196059/1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.37893840351891, 4)
 
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
+
 
     def test_hansen_cpmg_data_to_cr72_full(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 full dispersion model.
@@ -471,6 +479,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.dw, 4.46224757598177, 4)
         self.assertAlmostEqual(spin71.kex/1000, 1879.92365648789/1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.37893732634858, 4)
+
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
 
 
     def test_hansen_cpmg_data_to_it99(self):
@@ -625,6 +641,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/1000, 1821.36206334352/1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.37073030640607, 4)
 
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
+
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D_full(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D full' dispersion model.
@@ -684,6 +708,13 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/1000, 1784.38535768035/1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.37073477904824, 4)
 
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_expanded(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site expanded' dispersion model.
@@ -736,6 +767,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.kex/1000, 1804.11925367563/1000, 4)
         self.assertAlmostEqual(spin71.chi2, 1.37066812455524, 4)
 
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
+
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_star(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site star' dispersion model.
@@ -787,6 +826,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.dw, 4.58279535811262, 1)
         self.assertAlmostEqual(spin71.kex/1000, 1822.71231082936/1000, 1)
         self.assertAlmostEqual(spin71.chi2, 1.37073226641439, 1)
+
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_star_full(self):
@@ -846,6 +893,14 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.dw, 4.62165297676464, 2)
         self.assertAlmostEqual(spin71.kex/1000, 1726.04734055636/1000, 2)
         self.assertAlmostEqual(spin71.chi2, 1.37098328375176, 1)
+
+        # Test the conversion to k_AB from kex and pA.
+        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
+        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
+
+        # Test the conversion to k_BA from kex and pA.
+        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
+        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
 
 
     def test_hansen_cpmgfit_input(self):
