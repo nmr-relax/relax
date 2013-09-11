@@ -922,6 +922,28 @@ class Relax_disp(API_base, API_common):
         return values
 
 
+    default_value_doc = Desc_container("Relaxation dispersion default values")
+    _table = uf_tables.add_table(label="table: dispersion default values", caption="Relaxation dispersion default values.")
+    _table.add_headings(["Data type", "Object name", "Value"])
+    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'", "15.0"])
+    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'", "15.0"])
+    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'", "15.0"])
+    _table.add_row(["Population of state A", "'pA'", "0.5"])
+    _table.add_row(["Population of state B", "'pB'", "0.5"])
+    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'", "5.0"])
+    _table.add_row(["The pA.pB.dw**2 parameter of state B (ppm^2)", "'phi_ex_B'", "5.0"])
+    _table.add_row(["The pA.pB.dw**2 parameter of state C (ppm^2)", "'phi_ex_C'", "5.0"])
+    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'", "1.0"])
+    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'", "0.0"])
+    _table.add_row(["Exchange rate (rad/s)", "'kex'", "10000.0"])
+    _table.add_row(["Exchange rate between sites A and B (rad/s)", "'kB'", "10000.0"])
+    _table.add_row(["Exchange rate between sites A and C (rad/s)", "'kC'", "10000.0"])
+    _table.add_row(["Time of exchange (s/rad)", "'tex'", "1.0/20000.0"])
+    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'", "10000.0"])
+    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'", "10000.0"])
+    default_value_doc.add_table(_table.label)
+
+
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model.
 
