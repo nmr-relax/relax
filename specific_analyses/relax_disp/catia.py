@@ -186,7 +186,7 @@ def write_r2eff_files(input_dir='input_r2eff', base_dir=None, force=False):
         set_file.write("Minerror = %s\n" % "(2.%;0.5/s)")
         set_file.write("Basis = (%s)\n" % "Iph_7")
         set_file.write("Format = (%i;%i;%i)\n" % (0, 1, 2))
-        set_file.write("DataDirectory = %s\n" % dir)
+        set_file.write("DataDirectory = %s\n" % (dir+sep))
         set_file.write("Data = (\n")
 
         # Loop over the spins.
