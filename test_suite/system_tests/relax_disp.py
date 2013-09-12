@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
+from os import F_OK, access, sep
 from shutil import rmtree
 from tempfile import mkdtemp
 
@@ -282,6 +282,114 @@ class Relax_disp(SystemTestCase):
         self.assert_('test' not in cdp.clustering)
         self.assertEqual(cdp.clustering['free spins'], [':2@N'])
         self.assertEqual(cdp.clustering['cluster'], [':1@N', ':3@N'])
+
+
+    def test_hansen_catia_input(self):
+        """Conversion of Dr. Flemming Hansen's CPMG R2eff values into input files for CATIA.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Load the state, preserving the temp directory.
+        tmpdir = ds.tmpdir
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_values'
+        self.interpreter.state.load(state, force=True)
+        ds.tmpdir = tmpdir
+
+        # The spin isotopes.
+        self.interpreter.spin.isotope("15N")
+
+        # Generate the input files.
+        self.interpreter.relax_disp.catia_input(dir=ds.tmpdir, force=True)
+
+        # Check the r2eff set files.
+        print("\nChecking the R2eff input set files.")
+        files = ['data_set_500.inp', 'data_set_500.inp']
+        for file in files:
+            self.assert_(access(tmpdir+sep+file, F_OK))
+        data_set_500 = [
+            "ID=500\n",
+            "Sfrq = 500\n",
+            "Temperature = 0.0\n",
+            "Nucleus = N15\n",
+            "Couplednucleus = H1\n",
+            "Time_equil = 0.0\n",
+            "Pwx_cp = 0.0\n",
+            "Taub = 0.0\n",
+            "Time_T2 = 0.03\n",
+            "Xcar = 0.0\n",
+            "Seqfil = CW_CPMG\n",
+            "Minerror = (2.%;0.5/s)\n",
+            "Basis = (Iph_7)\n",
+            "Format = (0;1;2)\n",
+            "DataDirectory = /tmp/tmpNjOGNG/input_r2eff\n",
+            "Data = (\n",
+            " [70N;spin_70_N_500.cpmg];\n",
+            " [71N;spin_71_N_500.cpmg];\n",
+            ")\n",
+        ]
+        file = open(tmpdir+sep+files[0])
+        lines = file.readlines()
+        file.close()
+        for i in range(len(data_set_500)):
+            # Skip the data directory, as this is a random file name.
+            if i == 14:
+                continue
+
+            self.assertEqual(data_set_500[i], lines[i])
+
+        # Check the r2eff files.
+        print("\nChecking the R2eff input files.")
+        files = ['spin_70_N_500.cpmg', 'spin_70_N_800.cpmg', 'spin_71_N_500.cpmg', 'spin_71_N_800.cpmg']
+        for file in files:
+            self.assert_(access(tmpdir+sep+'input_r2eff'+sep+file, F_OK))
+        spin_70_N_500 = [
+            "#        nu_cpmg(Hz)              R2(1/s)              Esd(R2)\n",
+            "  66.666600000000003   16.045540885533605    0.646182586603895\n",
+            " 133.333300000000008   14.877924861181727    0.506206534738327\n",
+            " 200.000000000000000   14.357820247260586    0.623258826244929\n",
+            " 266.666600000000017   12.664494620416516    0.601723131243350\n",
+            " 333.333300000000008   12.363204802467891    0.598039562082036\n",
+            " 400.000000000000000   11.092532381134513    0.582981323247310\n",
+            " 466.666600000000017   10.566090057649893    0.576963907270428\n",
+            " 533.333300000000008    9.805806894657803    0.468279337463354\n",
+            " 600.000000000000000    9.564300692201730    0.565861181427156\n",
+            " 666.666600000000017    9.015633750407980    0.559969731566749\n",
+            " 733.333300000000008    8.607764958055581    0.555675260323333\n",
+            " 800.000000000000000    8.279997179221338    0.552276093478159\n",
+            " 866.666600000000017    8.474535940963516    0.554288038563643\n",
+            " 933.333300000000008    8.158972897365194    0.457722426033180\n",
+            "1000.000000000000000    7.988630509501972    0.549292861468630\n"
+        ]
+        file = open(tmpdir+sep+'input_r2eff'+sep+files[0])
+        lines = file.readlines()
+        file.close()
+        for i in range(len(spin_70_N_500)):
+            self.assertEqual(spin_70_N_500[i], lines[i])
+
+        # Check the main file.
+        print("\nChecking the main CATIA execution file.")
+        main_file = [
+            "ReadDataset(data_set_500.inp)\n",
+            "ReadDataset(data_set_800.inp)\n",
+            "ReadParam_Global(ParamGlobal.inp)\n",
+            "ReadParam_Local(ParamSet1.inp)\n",
+            "\n",
+            "Minimize(print=y;tol=1e-25;maxiter=10000000)\n",
+            "\n",
+            "PrintParam(output/GlobalParam.fit;global)\n",
+            "PrintParam(output/DeltaOmega.fit;DeltaO)\n",
+            "PrintData(output/)\n",
+            "\n",
+            "ChiSq(all;all)\n",
+            "exit(0)\n"
+        ]
+        file = open("%s%sFit.catia" % (ds.tmpdir, sep))
+        lines = file.readlines()
+        file.close()
+        for i in range(len(main_file)):
+            self.assertEqual(main_file[i], lines[i])
+
 
 
     def test_hansen_cpmg_data_auto_analysis(self):
