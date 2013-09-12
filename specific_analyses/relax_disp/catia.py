@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
-# Copyright (C) 2009 Sebastien Morin                                          #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,16 +19,33 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relaxation dispersion analysis."""
+# Module docstring.
+"""Functions for interfacing with Flemming Hansen's CATIA program."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'catia',
-    'checks',
-    'cpmgfit',
-    'disp_data',
-    'parameters',
-    'variables'
-]
+# relax module imports.
+from lib.io import mkdir_nofail
+from pipe_control import pipes
+from pipe_control.mol_res_spin import check_mol_res_spin_data
+from specific_analyses.relax_disp.checks import check_model_type, check_spectra_id_setup
+
+
+def catia_input(file='Fit.catia', dir=None, force=False):
+    """Create the CATIA input files.
+
+    @keyword file:      The main CATIA execution file.
+    @type file:         str
+    @keyword dir:       The optional directory to place the files into.  If None, then the files will be placed into the current directory.
+    @type dir:          str or None
+    @keyword force:     A flag which if True will cause all pre-existing files to be overwritten.
+    @type force:        bool
+    """
+
+    # Data checks.
+    pipes.test()
+    check_mol_res_spin_data()
+    check_spectra_id_setup()
+    check_model_type()
+
+    # Directory creation.
+    if dir != None:
+        mkdir_nofail(dir, verbosity=0)

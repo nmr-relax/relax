@@ -36,6 +36,7 @@ from lib.text.gui import dw, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
+from specific_analyses.relax_disp.catia import catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
@@ -52,6 +53,36 @@ uf_class = uf_info.add_class('relax_disp')
 uf_class.title = "Class for relaxation curve fitting."
 uf_class.menu_text = "&relax_disp"
 uf_class.gui_icon = "relax.relax_disp"
+
+
+# The relax_disp.catia_input user function.
+uf = uf_info.add_uf('relax_disp.catia_input')
+uf.title = "Create the input files for Flemming Hansen's CATIA program."
+uf.title_short = "CATIA input file creation."
+uf.add_keyarg(
+    name = "dir",
+    default = "catia",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory to place the CATIA input files, output directory, etc.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which if set to True will cause the files to be overwritten if they already exist."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will create all of the input file required for CATIA as well as the CATIA results output directory.")
+uf.backend = catia_input
+uf.menu_text = "&catia_input"
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.cluster user function.
