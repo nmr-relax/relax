@@ -61,7 +61,10 @@ def catia_input(file='Fit.catia', dir=None, force=False):
         mkdir_nofail(dir, verbosity=0)
 
     # Create the R2eff files.
-    write_r2eff_files(base_dir=dir, force=force)
+    write_r2eff_files(input_dir='input_r2eff', base_dir=dir, force=force)
+
+    # Create the parameter files.
+    write_param_files(global_file="ParamGlobal.inp", set_file="ParamSet1.inp", dir=dir, force=force)
 
     # Create the main execution file.
     write_main_file(file=file, dir=dir, force=force)
@@ -74,7 +77,7 @@ def write_main_file(file=None, dir=None, f_tol=1e-25, max_iter=10000000, r1=Fals
     @type file:         str
     @keyword dir:       The directory to place the files into.
     @type dir:          str or None
-    @keyword r1:        A flag which if True will cause the R1 data to be used for off-resonance effets.
+    @keyword r1:        A flag which if True will cause the R1 data to be used for off-resonance effects.
     @type r1:           bool
     @keyword force:     A flag which if True will cause a pre-existing file to be overwritten.
     @type force:        bool
@@ -128,8 +131,86 @@ def write_main_file(file=None, dir=None, f_tol=1e-25, max_iter=10000000, r1=Fals
     # Exit the program.
     catia_in.write("exit(0)\n")
 
+    # Close the file.
+    catia_in.close()
 
-def write_r2eff_files(input_dir='input_r2eff', base_dir=None, force=False):
+
+def write_param_files(global_file=None, kex=1500.0, pA=0.95, set_file=None, dir=None, r1=False, force=False):
+    """Create the CATIA parameter files.
+
+    @keyword global_file:   The name of the global parameter file.
+    @type global_file:      str
+    @keyword set_file:      The name of the parameter set file.
+    @type set_file:         str
+    @keyword dir:           The base directory to place the files into.
+    @type dir:              str
+    @keyword r1:            A flag which if True will cause the R1 data to be used for off-resonance effects.
+    @type r1:               bool
+    @keyword force:         A flag which if True will cause a pre-existing file to be overwritten.
+    @type force:            bool
+    """
+
+    # Open the global parameter file.
+    param_file = open_write_file(file_name=global_file, dir=dir, force=force)
+
+    # Set the starting values.
+    param_file.write("kex = %s\n" % kex)
+    param_file.write("pb = %s\n" % (1.0-pA))
+
+    # Close the file.
+    param_file.close()
+
+    # Open the 1st parameter set file.
+    set_file = open_write_file(file_name=set_file, dir=dir, force=force)
+
+    # The parameter format.
+    params = ['Delta0']
+    values = [0.5]
+    if r1:
+        for frq in loop_frq():
+            params.append("R1iph_%s" % frq_label(frq))
+            values.append(1.5)
+    for frq in loop_frq():
+        params.append("R0iph_%s" % frq_label(frq))
+        values.append(5.0)
+    if r1:
+        params.append("Omega")
+        values.append(0.0)
+
+    # Write out the format.
+    set_file.write("format = (")
+    for i in range(len(params)):
+        if i != 0:
+            set_file.write(';')
+        set_file.write(params[i])
+    set_file.write(")\n")
+
+    # Um?!?  The average values maybe?
+    set_file.write("* = (")
+    for i in range(len(values)):
+        if i != 0:
+            set_file.write(';')
+        set_file.write("%s" % values[i])
+    set_file.write(")\n")
+
+    # Close the file.
+    set_file.close()
+
+
+def frq_label(frq):
+    """Convert the frequency in Hz to a label in MHz.
+
+    @param frq: The frequency to convert.
+    @type frq:  float
+    @return:    The frequency in MHz as a label.
+    @rtype:     str
+    """
+
+    # Convert and return.
+    return str(int(frq*1e-6))
+
+
+def write_r2eff_files(input_dir=None, base_dir=None, force=False):
     """Create the CATIA R2eff input files.
 
     @keyword input_dir: The special directory for the R2eff input files.
@@ -193,10 +274,10 @@ def write_r2eff_files(input_dir='input_r2eff', base_dir=None, force=False):
         for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # The file.
             file_name = "spin%s_%i.cpmg" % (spin_id.replace('#', '_').replace(':', '_').replace('@', '_'), frq_string)
-            file = open_write_file(file_name=file_name, dir=dir, force=force)
+            spin_file = open_write_file(file_name=file_name, dir=dir, force=force)
 
             # Write the header.
-            file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
+            spin_file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
 
             # Loop over the dispersion points.
             for point in loop_point(exp_type='CPMG'):
@@ -208,10 +289,10 @@ def write_r2eff_files(input_dir='input_r2eff', base_dir=None, force=False):
                     continue
 
                 # Write out the data.
-                file.write("%20.15f %20.15f %20.15f\n" % (point, spin.r2eff[key], spin.r2eff_err[key]))
+                spin_file.write("%20.15f %20.15f %20.15f\n" % (point, spin.r2eff[key], spin.r2eff_err[key]))
 
             # Close the file.
-            file.close()
+            spin_file.close()
 
             # Add the file name to the set.
             catia_spin_id = "%i%s" % (res_num, spin.name)
