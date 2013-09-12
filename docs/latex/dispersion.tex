@@ -446,6 +446,29 @@ The reference for this equation is:
 
 
 
+% TSMFK01 model.
+%~~~~~~~~~~~~
+
+\subsection{The TSMFK01 2-site CPMG model}
+\label{sect: dispersion: TSMFK01 model}
+\index{relaxation dispersion!TSMFK01 model|textbf}
+
+
+
+This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after Tollinger \textit{et al.}.  Is it selected by setting the model to `TSMFK01'.  A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e., independent of the rate of exchange).  
+
+The equation is:
+\begin{align}
+    \Rtwoeff = \RtwozeroA + \kAB - \kAB \frac{\sin{(\dw \cdot \taucpmg )}}{\dw \cdot \taucpmg}
+\end{align}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{Tollinger01}
+\end{itemize}
+
+
+
 % The numeric CPMG models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
