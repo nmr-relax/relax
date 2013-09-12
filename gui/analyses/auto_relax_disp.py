@@ -124,12 +124,8 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].disp_models = [
                 MODEL_R2EFF,
                 MODEL_NOREX,
-                MODEL_LM63,
                 MODEL_CR72,
-                MODEL_IT99,
                 MODEL_NS_CPMG_2SITE_EXPANDED,
-                MODEL_M61,
-                MODEL_DPL94,
                 MODEL_TP02,
                 MODEL_NS_R1RHO_2SITE
             ]
