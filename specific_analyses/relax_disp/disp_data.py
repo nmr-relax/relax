@@ -40,7 +40,6 @@ from random import gauss
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
 from lib.io import get_file_path, open_write_file
-from lib.list import count_unique_elements, unique_elements
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from pipe_control import pipes
@@ -50,7 +49,7 @@ from pipe_control.spectrum import check_spectrum_id
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_R1RHO
 from stat import S_IRWXU, S_IRGRP, S_IROTH
-from os import chmod, path, sep
+from os import chmod, sep
 
 
 

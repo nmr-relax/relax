@@ -26,17 +26,15 @@
 # Python module imports.
 from copy import deepcopy
 from numpy import array, float64, identity, zeros
-from re import search
 import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
-from lib.mathematics import round_to_next_order
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import count_frq, has_exponential_exp_type, loop_cluster, loop_frq
-from specific_analyses.relax_disp.variables import MODEL_R2EFF, MODEL_M61B
+from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, loop_cluster, loop_frq
+from specific_analyses.relax_disp.variables import MODEL_M61B
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):

@@ -27,9 +27,8 @@
 from copy import deepcopy
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import array, average, dot, float64, identity, log, ones, zeros
+from numpy import dot
 from numpy.linalg import inv
-from random import gauss
 from re import match, search
 import sys
 from types import MethodType
@@ -37,10 +36,7 @@ from types import MethodType
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
-from lib.errors import RelaxError, RelaxLenError, RelaxNoModelError, RelaxNoSpectraError
-from lib.list import count_unique_elements, unique_elements
-from lib.mathematics import round_to_next_order
-from lib.statistics import std
+from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
@@ -48,9 +44,9 @@ from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_frq_point, loop_frq_point_key, loop_frq_point_time, loop_point, loop_time, relax_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_key_from_disp_point_index, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
-from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
