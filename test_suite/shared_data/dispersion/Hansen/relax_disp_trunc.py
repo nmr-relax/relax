@@ -16,7 +16,7 @@ from status import Status; status = Status()
 MODELS = ['R2eff', 'No Rex', 'LM63', 'LM63 3-site', 'CR72', 'CR72 full', 'IT99', 'NS CPMG 2-site 3D', 'NS CPMG 2-site 3D full', 'NS CPMG 2-site expanded', 'NS CPMG 2-site star', 'NS CPMG 2-site star full']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 5
+GRID_INC = 11
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
@@ -41,6 +41,7 @@ sequence.read('fake_sequence.in_trunc', dir=status.install_path + sep+'test_suit
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
+spin.isotope(isotope='15N')
 
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
