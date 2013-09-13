@@ -1,0 +1,98 @@
+
+
+
+                                  relax repository checkout r20990
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'catia.py'
+----------------------------------------------------------------------------------------------------
+"""Script for generating input files for CATIA and running CATIA.
+
+To run:
+
+$ ../../../../../relax --tee catia.log catia.py
+"""
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from status import Status; status = Status()
+
+
+# Load the saved state.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+state.load(data_path+sep+'r2eff_values')
+
+# Set up the spin isotope information.
+spin.isotope('15N')
+
+# Generate the CATIA input files.
+relax_disp.catia_input(dir='.', force=True)
+
+# Execute CATIA.
+relax_disp.catia_execute()
+----------------------------------------------------------------------------------------------------
+
+relax> state.load(state='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/r2eff_values', dir=None, force=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/r2eff_values.bz2' for reading.
+
+relax> spin.isotope(isotope='15N', spin_id=None, force=False)
+
+relax> relax_disp.catia_input(dir='.', force=True)
+Opening the file './data_set_500.inp' for writing.
+Opening the file './input_r2eff/spin_70_N_500.cpmg' for writing.
+Opening the file './input_r2eff/spin_71_N_500.cpmg' for writing.
+Opening the file './data_set_800.inp' for writing.
+Opening the file './input_r2eff/spin_70_N_800.cpmg' for writing.
+Opening the file './input_r2eff/spin_71_N_800.cpmg' for writing.
+Opening the file './ParamGlobal.inp' for writing.
+Opening the file './ParamSet1.inp' for writing.
+Opening the file './Fit.catia' for writing.
+
+relax> relax_disp.catia_execute(dir=None, binary='catia')
+ * 
+ *                         --- CATIA --- 
+ *         (Cpmg, Antitrosy, and Trosy Intelligent Analysis)
+ *                          Version 0.51p
+ * 
+ * Copyright 2007-2008 by D. Flemming Hansen (DFH)
+ * All rights reserved.
+ *
+ * This software and  its related software and  documentation is provided 
+ * 'as is' without express or implied warrenty. The author (DFH) makes no 
+ * warrenties as to any matter  whatsoever  with  respect to the  program 
+ * and the related software and documentation. In particular, any and all 
+ * warranties of merchantability  and  fitness for any particular purpose 
+ * are expressly excluded.
+ *
+ *                                         flemming@pound.med.utoronto.ca
+ *
+ *
+ * If you use this  program to conduct academic  research you should cite 
+ * the program as:
+ * 
+ * CATIA (Cpmg, Anti-trosy, and Trosy Intelligent Analysis)  version 0.51p
+ * (2008); D. Flemming Hansen
+ *
+CATIA>CATIA>CATIA>CATIA>CATIA>CATIA> The parameters:R1iph_500 is required by the basisset Iph_7
+ but is not provided for atom 70N
+ please provide in the LocalParameter set
+ Function FreePrecess_Iph_7()
+
+ CATIA_ABORT has been called with error status: 1
+

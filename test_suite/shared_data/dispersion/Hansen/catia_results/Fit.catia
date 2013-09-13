@@ -1,0 +1,13 @@
+ReadDataset(data_set_500.inp)
+ReadDataset(data_set_800.inp)
+ReadParam_Global(ParamGlobal.inp)
+ReadParam_Local(ParamSet1.inp)
+
+Minimize(print=y;tol=1e-25;maxiter=10000000)
+
+PrintParam(output/GlobalParam.fit;global)
+PrintParam(output/DeltaOmega.fit;DeltaO)
+PrintData(output/)
+
+ChiSq(all;all)
+exit(0)

@@ -1,0 +1,19 @@
+ID=800
+Sfrq = 800
+Temperature = 0.0
+Nucleus = N15
+Couplednucleus = H1
+Time_equil = 0.0
+Pwx_cp = 0.0
+Taub = 0.0
+Time_T2 = 0.03
+Xcar = 0.0
+Seqfil = CW_CPMG
+Minerror = (2.%;0.5/s)
+Basis = (Iph_7)
+Format = (0;1;2)
+DataDirectory = ./input_r2eff/
+Data = (
+ [70N;spin_70_N_800.cpmg];
+ [71N;spin_71_N_800.cpmg];
+)
