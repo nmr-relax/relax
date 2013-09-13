@@ -22,16 +22,88 @@
 # Module docstring.
 """Functions for interfacing with Flemming Hansen's CATIA program."""
 
+# Dependencies.
+import dep_check
+
 # Python module imports.
-from os import sep
+from os import F_OK, access, chdir, getcwd, sep
+PIPE, Popen = None, None
+if dep_check.subprocess_module:
+    from subprocess import PIPE, Popen
+import sys
 
 # relax module imports.
-from lib.errors import RelaxError
-from lib.io import mkdir_nofail, open_write_file
+from lib.errors import RelaxError, RelaxDirError
+from lib.io import mkdir_nofail, open_write_file, test_binary
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type, check_spectra_id_setup
 from specific_analyses.relax_disp.disp_data import loop_frq, loop_point, return_param_key_from_data
+
+
+def catia_execute(file='Fit.catia', dir=None, binary=None):
+    """Create the CATIA input files.
+
+    @keyword file:          The main CATIA execution file.
+    @type file:             str
+    @keyword dir:           The optional directory to place the files into.  If None, then the files will be placed into the current directory.
+    @type dir:              str or None
+    @keyword binary:        The name of the CATIA binary file.  This can include the path to the binary.
+    @type binary:           str
+    """
+
+    # The current directory.
+    orig_dir = getcwd()
+
+    # Test the binary file string corresponds to a valid executable.
+    test_binary(binary)
+
+    # The directory.
+    if dir == None:
+        dir = orig_dir
+    if not access(dir, F_OK):
+        raise RelaxDirError('CATIA', dir)
+
+    # Change to the directory with the CATIA input files.
+    chdir(dir)
+
+    # Catch failures and return to the correct directory.
+    try:
+        # Execute CATIA.
+        cmd = binary + ' < Fit.catia'
+        pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+
+        # Close the pipe.
+        pipe.stdin.close()
+
+        # Write to stdout.
+        for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
+            sys.stdout.write(line)
+
+        # Write to stderr.
+        for line in pipe.stderr.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Write.
+            sys.stderr.write(line)
+
+    # Failure.
+    except:
+        # Change back to the original directory.
+        chdir(orig_dir)
+
+        # Reraise the error.
+        raise
+
+    # Change back to the original directory.
+    chdir(orig_dir)
 
 
 def catia_input(file='Fit.catia', dir=None, output_dir='output', force=False):

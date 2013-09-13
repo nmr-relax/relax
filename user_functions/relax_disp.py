@@ -36,7 +36,7 @@ from lib.text.gui import dw, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
-from specific_analyses.relax_disp.catia import catia_input
+from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
 from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
@@ -53,6 +53,41 @@ uf_class = uf_info.add_class('relax_disp')
 uf_class.title = "Class for relaxation curve fitting."
 uf_class.menu_text = "&relax_disp"
 uf_class.gui_icon = "relax.relax_disp"
+
+
+# The relax_disp.catia_execute user function.
+uf = uf_info.add_uf('relax_disp.catia_execute')
+uf.title = "Perform a relaxation dispersion optimisation using Flemming Hansen's CATIA."
+uf.title_short = "CATIA execution."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory containing all of the CATIA input files.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "binary",
+    default = "catia",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "CATIA executable file",
+    desc = "The name of the executable CATIA program file.",
+    wiz_filesel_style = FD_OPEN,
+    wiz_filesel_preview = False
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("CATIA will be executed as")
+uf.desc[-1].add_prompt("$ catia < Fit.catia")
+uf.desc[-1].add_paragraph("If you would like to use a different CATIA executable file, change the binary name to the appropriate file name.  If the file is not located within the environment's path, include the full path in front of the binary file name.")
+uf.backend = catia_execute
+uf.gui_icon = "oxygen.categories.applications-education"
+uf.menu_text = "catia_e&xecute"
+uf.wizard_size = (800, 600)
+uf.wizard_apply_button = False
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.catia_input user function.
