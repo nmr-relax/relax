@@ -114,6 +114,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will create all of the input file required for CATIA as well as the CATIA results output directory.")
 uf.backend = catia_input
+uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.menu_text = "&catia_input"
 uf.wizard_size = (800, 600)
 uf.wizard_apply_button = False
