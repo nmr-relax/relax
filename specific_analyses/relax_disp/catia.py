@@ -34,15 +34,17 @@ from specific_analyses.relax_disp.checks import check_model_type, check_spectra_
 from specific_analyses.relax_disp.disp_data import loop_frq, loop_point, return_param_key_from_data
 
 
-def catia_input(file='Fit.catia', dir=None, force=False):
+def catia_input(file='Fit.catia', dir=None, output_dir='output', force=False):
     """Create the CATIA input files.
 
-    @keyword file:      The main CATIA execution file.
-    @type file:         str
-    @keyword dir:       The optional directory to place the files into.  If None, then the files will be placed into the current directory.
-    @type dir:          str or None
-    @keyword force:     A flag which if True will cause all pre-existing files to be overwritten.
-    @type force:        bool
+    @keyword file:          The main CATIA execution file.
+    @type file:             str
+    @keyword dir:           The optional directory to place the files into.  If None, then the files will be placed into the current directory.
+    @type dir:              str or None
+    @keyword output_dir:    The CATIA output directory, located within the directory specified by the dir argument.  This directory will be created.
+    @type output_dir:       str
+    @keyword force:         A flag which if True will cause all pre-existing files to be overwritten.
+    @type force:            Bool
     """
 
     # Data checks.
@@ -67,20 +69,25 @@ def catia_input(file='Fit.catia', dir=None, force=False):
     write_param_files(global_file="ParamGlobal.inp", set_file="ParamSet1.inp", dir=dir, force=force)
 
     # Create the main execution file.
-    write_main_file(file=file, dir=dir, force=force)
+    write_main_file(file=file, dir=dir, output_dir=output_dir, force=force)
+
+    # Create the output directory as needed by CATIA (it does not create it itself).
+    mkdir_nofail(dir + sep + output_dir, verbosity=0)
 
 
-def write_main_file(file=None, dir=None, f_tol=1e-25, max_iter=10000000, r1=False, force=False):
+def write_main_file(file=None, dir=None, output_dir=None, f_tol=1e-25, max_iter=10000000, r1=False, force=False):
     """Create the main CATIA execution file.
 
-    @keyword file:      The main CATIA execution file.
-    @type file:         str
-    @keyword dir:       The directory to place the files into.
-    @type dir:          str or None
-    @keyword r1:        A flag which if True will cause the R1 data to be used for off-resonance effects.
-    @type r1:           bool
-    @keyword force:     A flag which if True will cause a pre-existing file to be overwritten.
-    @type force:        bool
+    @keyword file:          The main CATIA execution file.
+    @type file:             str
+    @keyword dir:           The directory to place the files into.
+    @type dir:              str or None
+    @keyword output_dir:    The CATIA output directory, located within the directory specified by the dir argument.  This directory will be created.
+    @type output_dir:       str
+    @keyword r1:            A flag which if True will cause the R1 data to be used for off-resonance effects.
+    @type r1:               bool
+    @keyword force:         A flag which if True will cause a pre-existing file to be overwritten.
+    @type force:            bool
     """
 
     # The file.
@@ -120,9 +127,9 @@ def write_main_file(file=None, dir=None, f_tol=1e-25, max_iter=10000000, r1=Fals
     catia_in.write("\n")
 
     # Plotting.
-    catia_in.write("PrintParam(output/GlobalParam.fit;global)\n")
-    catia_in.write("PrintParam(output/DeltaOmega.fit;DeltaO)\n")
-    catia_in.write("PrintData(output/)\n")
+    catia_in.write("PrintParam(%s/GlobalParam.fit;global)\n" % output_dir)
+    catia_in.write("PrintParam(%s/DeltaOmega.fit;DeltaO)\n" % output_dir)
+    catia_in.write("PrintData(%s/)\n" % output_dir)
     catia_in.write("\n")
 
     # Calculate the chi-squared value (not sure why, it's calculated in the minimisation).
