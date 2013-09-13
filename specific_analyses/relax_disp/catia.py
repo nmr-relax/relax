@@ -186,13 +186,13 @@ def write_main_file(file=None, dir=None, output_dir=None, f_tol=1e-25, max_iter=
             catia_in.write("ReadParam(%s;%s;0;1)\n" % (param, r1_file))
         catia_in.write("\n")
 
-        # Fix these parameters.
-        catia_in.write("FreeLocalParam(all;Omega;false)\n")
-        for frq in loop_frq():
-            frq_label = int(frq*1e-6)
-            param = "R1iph_%s" % frq_label
-            catia_in.write("FreeLocalParam(all;%s;false)\n" % param)
-        catia_in.write("\n")
+    # Fix these off-resonance parameters.
+    catia_in.write("FreeLocalParam(all;Omega;false)\n")
+    for frq in loop_frq():
+        frq_label = int(frq*1e-6)
+        param = "R1iph_%s" % frq_label
+        catia_in.write("FreeLocalParam(all;%s;false)\n" % param)
+    catia_in.write("\n")
 
     # Minimisation.
     catia_in.write("Minimize(print=y;tol=%s;maxiter=%i)\n" % (f_tol, max_iter))
