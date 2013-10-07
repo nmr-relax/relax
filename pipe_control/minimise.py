@@ -27,6 +27,7 @@ from re import search
 
 # relax module imports.
 from lib.errors import RelaxError
+from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
 import specific_analyses
@@ -223,6 +224,13 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Standard minimisation.
     else:
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
+
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
+    # Execute any queued commands.
+    processor.run_queue()
 
 
 def reset_min_stats(data_pipe=None, spin=None):
