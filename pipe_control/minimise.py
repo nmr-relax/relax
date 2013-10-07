@@ -81,6 +81,13 @@ def calc(verbosity=1):
     else:
         calculate(verbosity=verbosity)
 
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
+    # Execute any queued commands.
+    processor.run_queue()
+
 
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
@@ -139,6 +146,13 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Grid search.
     else:
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
+    # Execute any queued commands.
+    processor.run_queue()
 
 
 def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iter=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
