@@ -1019,9 +1019,6 @@ class Relax_disp(API_base, API_common):
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
 
-        # Execute the queued commands.
-        processor.run_queue()
-
 
     def model_desc(self, model_info):
         """Return a description of the model.
