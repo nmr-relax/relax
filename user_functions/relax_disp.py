@@ -32,7 +32,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
+from lib.text.gui import dw, dwH, i0, kex, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -546,7 +546,8 @@ uf.add_keyarg(
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
         "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TP02, r1rho_prime, dw, kex),
-        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex)
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex),
+        "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_MQ_NS_CPMG_2SITE, r2, dw, dwH, kex)
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
@@ -566,7 +567,8 @@ uf.add_keyarg(
         MODEL_M61B,
         MODEL_DPL94,
         MODEL_TP02,
-        MODEL_NS_R1RHO_2SITE
+        MODEL_NS_R1RHO_2SITE,
+        MODEL_MQ_NS_CPMG_2SITE
     ],
     wiz_read_only = True
 )
@@ -599,6 +601,14 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and 
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("The currently supported numeric models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw, kex}.")
+# MQ CPMG-type data.
+uf.desc.append(Desc_container('The MQ CPMG-type experiments'))
+uf.desc[-1].add_paragraph("The currently supported models are:")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MQ_NS_CPMG_2SITE, "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
+# MQ R1rho-type data.
+uf.desc.append(Desc_container('The MQ R1rho-type experiments'))
+uf.desc[-1].add_paragraph("The currently supported models are:")
+uf.desc[-1].add_item_list_element("N/A", "No models are implemented.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
