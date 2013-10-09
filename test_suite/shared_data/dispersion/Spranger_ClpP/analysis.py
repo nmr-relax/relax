@@ -106,17 +106,9 @@ spectrum.replicated(spectrum_ids=['800_ncyc1', '800_ncyc1b'])
 spectrum.replicated(spectrum_ids=['800_ncyc2', '800_ncyc2b'])
 spectrum.replicated(spectrum_ids=['800_ncyc3', '800_ncyc3b'])
 
-# Peak intensity error analysis.
-#spectrum.error_analysis(subset=['600_ref', '600_ncyc12', '600_ncyc1', '600_ncyc10', '600_ncyc2', '600_ncyc8', '600_ncyc3', '600_ncyc6', '600_ncyc4', '600_ncyc5', '600_ncyc1b', '600_ncyc2b', '600_ncyc3b'])
-#spectrum.error_analysis(subset=['800_ref', '800_ncyc12', '800_ncyc1', '800_ncyc10', '800_ncyc2', '800_ncyc8', '800_ncyc3', '800_ncyc6', '800_ncyc4', '800_ncyc5', '800_ncyc1b', '800_ncyc2b', '800_ncyc3b'])
-spectrum.error_analysis()
-
 
 # Auto-analysis execution.
 ##########################
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
-
-
-
