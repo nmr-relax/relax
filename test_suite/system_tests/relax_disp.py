@@ -391,7 +391,6 @@ class Relax_disp(SystemTestCase):
             self.assertEqual(main_file[i], lines[i])
 
 
-
     def test_hansen_cpmg_data_auto_analysis(self):
         """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data.
 
@@ -1486,6 +1485,61 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[0].spin[0].ri_data['R2eff.600'], 15.000)
         self.assertEqual(cdp.mol[0].res[1].spin[0].ri_data['R2eff.600'], 4.2003)
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
+
+
+    def test_sprangers_cpmg_data_auto_analysis(self):
+        """Test of the dispersion auto-analysis using Remco Sprangers' MQ CPMG data.
+
+        This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
+        """
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'sprangers_data.py')
+
+        # The 'No Rex' model checks.
+        self.interpreter.pipe.switch(pipe_name='No Rex')
+        spin135S = cdp.mol[0].res[0].spin[0]
+        spin135F = cdp.mol[0].res[0].spin[1]
+        spin137S = cdp.mol[0].res[1].spin[0]
+        spin137F = cdp.mol[0].res[1].spin[1]
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s %-20s %-20s" % ("Parameter", "Value (:135@S)", "Value (:135@F)", "Value (:137@S)", "Value (:137@F)"))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("R2 (500 MHz)", spin135S.r2[0], spin135F.r2[0], spin137S.r2[0], spin137F.r2[0]))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("R2 (800 MHz)", spin135S.r2[1], spin135F.r2[1], spin137S.r2[1], spin137F.r2[1]))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g\n" % ("chi2", spin135S.chi2, spin135F.chi2, spin137S.chi2, spin137F.chi2))
+        self.assertAlmostEqual(spin135S.r2[0], 33.9759609066454, 4)
+        self.assertAlmostEqual(spin135S.r2[1], 43.0969094834547, 4)
+        self.assertAlmostEqual(spin135S.chi2, 3969.76481864137, 4)
+        self.assertAlmostEqual(spin135F.r2[0], 47.552576922923, 4)
+        self.assertAlmostEqual(spin135F.r2[1], 65.0985264581959, 4)
+        self.assertAlmostEqual(spin135F.chi2, 3815.60336919813, 4)
+        self.assertAlmostEqual(spin137S.r2[0], 32.2534843780118, 4)
+        self.assertAlmostEqual(spin137S.r2[1], 42.3438098884568, 4)
+        self.assertAlmostEqual(spin137S.chi2, 5059.72438767579, 4)
+        self.assertAlmostEqual(spin137F.r2[0], 51.8197781054955, 4)
+        self.assertAlmostEqual(spin137F.r2[1], 66.2604887530423, 4)
+        self.assertAlmostEqual(spin137F.chi2, 1764.08570485219, 4)
+
+        # The 'MQ NS 2-site' model checks.
+        self.interpreter.pipe.switch(pipe_name='MQ NS 2-site')
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.assertAlmostEqual(spin70.r2[0], 6.8058772971170374, 4)
+        self.assertAlmostEqual(spin70.r2[1], 6.6790611414921477, 4)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31009292384617337, 4)
+        self.assertAlmostEqual(spin70.kex/10000, 4763.36556651067/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 106.393365972649, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.9264108615358406, 4)
+        self.assertAlmostEqual(spin71.phi_ex, 0.059254616846279792, 4)
+        self.assertAlmostEqual(spin71.kex/10000, 2543.899105435682/10000, 4)
+        self.assertAlmostEqual(spin71.chi2, 1.4423991744690439, 4)
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
