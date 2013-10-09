@@ -65,6 +65,7 @@ if mac:
 
 # Relaxation dispersion GUI text elements.
 dw = u("d\u03C9")
+dwH = u("d\u03C9H")
 i0 = u("I\u2080")
 kex = u("k\u2091\u2093")
 padw2 = u("pA.d\u03C9\u00B2")
