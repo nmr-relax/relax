@@ -34,6 +34,7 @@ from warnings import warn
 from lib.errors import RelaxError, RelaxImplementError, RelaxNoSpectraError
 from lib.io import write_data
 from lib.spectrum.peak_list import read_peak_list
+from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
@@ -110,14 +111,14 @@ def __errors_repl(subset=None, verbosity=0):
         # Number of spectra.
         num_spectra = len(spectra)
 
-        # Print out.
+        # Printout.
         print("\nReplicated spectra:  " + repr(spectra))
         if verbosity:
-            print("%-5s%-6s%-20s%-20s" % ("Num", "Name", "Average", "SD"))
+            print("%-20s%-20s" % ("Spin_ID", "SD"))
 
         # Calculate the mean value.
         count = 0
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
@@ -135,33 +136,22 @@ def __errors_repl(subset=None, verbosity=0):
             if missing:
                 continue
 
-            # Average intensity.
-            ave_intensity = 0.0
+            # The peak intensities.
+            values = []
             for j in range(num_spectra):
-                ave_intensity = ave_intensity + spin.intensities[spectra[j]]
-            ave_intensity = ave_intensity / num_spectra
+                values.append(spin.intensities[spectra[j]])
 
-            # Sum of squared errors.
-            SSE = 0.0
-            for j in range(num_spectra):
-                SSE = SSE + (spin.intensities[spectra[j]] - ave_intensity) ** 2
+            # The standard deviation.
+            sd = std(values=values, dof=1)
 
-            # Variance.
-            #
-            #                   1
-            #       sigma^2 = ----- * sum({Xi - Xav}^2)]
-            #                 n - 1
-            #
-            var_I = 1.0 / (num_spectra - 1.0) * SSE
-
-            # Print out.
+            # Printout.
             if verbosity:
-                print("%-5i%-6s%-20s%-20s" % (spin.num, spin.name, repr(ave_intensity), repr(var_I)))
+                print("%-20s%-20s" % (spin_id, sd))
 
             # Sum of variances (for average).
             if not id in cdp.var_I:
                 cdp.var_I[id] = 0.0
-            cdp.var_I[id] = cdp.var_I[id] + var_I
+            cdp.var_I[id] = cdp.var_I[id] + sd**2
             count = count + 1
 
         # No data catch.
