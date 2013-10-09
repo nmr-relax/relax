@@ -128,6 +128,25 @@ class Relax_disp:
     def error_analysis(self):
         """Perform an error analysis of the peak intensities for each field strength separately."""
 
+        # Check if intensity errors have already been calculated by the user.
+        precalc = True
+        for spin in spin_loop(skip_desel=True):
+            # No structure.
+            if not hasattr(spin, 'intensity_err'):
+                precalc = False
+                break
+
+            # Determine if a spectrum ID is missing from the list.
+            for id in cdp.spectrum_ids:
+                if id not in spin.intensity_err:
+                    precalc = False
+                    break
+
+        # Skip.
+        if precalc:
+            print("Skipping the error analysis as it has already been performed.")
+            return
+
         # Loop over the spectrometer frequencies.
         for frq in loop_frq():
             # Generate a list of spectrum IDs matching the frequency.
