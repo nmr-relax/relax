@@ -56,9 +56,10 @@ def calc_two_point_r2eff_err(relax_time=None, I_ref=None, I=None, I_ref_err=None
 
     The formula is::
 
-                        / (sigma_I1 / I1(nu1))^2 + (sigma_I0 / I0)^2 \ 
-        sigma_R2 = sqrt | ------------------------------------------ | ,
-                        \                  relax_T                   /
+                                __________________________________
+                      1        / / sigma_I1 \ 2     / sigma_I0 \ 2
+        sigma_R2 = -------    /  | -------- |   +   | -------- |
+                   relax_T  \/   \ I1(nu1)  /       \    I0    /
 
     where relax_T is the fixed delay time, I0 and sigma_I0 are the reference peak intensity and error when relax_T is zero, and I1 and sigma_I1 are the peak intensity and error in the spectrum of interest.
 
