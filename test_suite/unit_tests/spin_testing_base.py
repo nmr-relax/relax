@@ -409,17 +409,16 @@ class Spin_base_class(UnitTestCase):
 
 
     def test_create_spin_fail(self):
-        """Test the failure of spin creation (by supplying two spins with the same number).
+        """Test the failure of spin creation (by supplying two spins with the same name and number).
 
-        The function tested is both pipe_control.mol_res_spin.create_spin() and
-        prompt.spin.create().
+        The function tested is both pipe_control.mol_res_spin.create_spin() and prompt.spin.create().
         """
 
         # Create the first spin.
         self.spin_fns.create(spin_num=1, spin_name='P1', res_num=1, mol_name='Old mol')
 
         # Assert that a RelaxError occurs when the next added spin has the same number as the first.
-        self.assertRaises(RelaxError, self.spin_fns.create, spin_num=1, spin_name='P3', res_num=1, mol_name='Old mol')
+        self.assertRaises(RelaxError, self.spin_fns.create, spin_num=1, spin_name='P1', res_num=1, mol_name='Old mol')
 
 
     def test_delete_spin_name(self):
