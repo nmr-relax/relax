@@ -29,7 +29,7 @@ These functions raise various RelaxErrors to help the user understand what went 
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxFuncSetupError, RelaxNoPeakIntensityError
 import specific_analyses
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_R1RHO
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO
 
 
 def check_c_modules():
@@ -60,12 +60,12 @@ def check_disp_points():
     # Check each spectrum ID.
     for id in cdp.spectrum_ids:
         # CPMG data.
-        if cdp.exp_type[id] == EXP_TYPE_CPMG:
+        if cdp.exp_type[id] in [EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG]:
             if id not in cdp.cpmg_frqs:
                 raise RelaxError("The nu_CPMG frequency has not been set for the '%s' spectrum." % id)
 
         # R1rho data.
-        elif cdp.exp_type[id] == EXP_TYPE_R1RHO:
+        elif cdp.exp_type[id] in [EXP_TYPE_R1RHO, EXP_TYPE_MQ_R1RHO]:
             if id not in cdp.spin_lock_nu1:
                 raise RelaxError("The spin-lock field strength has not been set for the '%s' spectrum." % id)
 
