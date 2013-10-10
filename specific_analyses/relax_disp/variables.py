@@ -129,3 +129,9 @@ MODEL_LIST_MQ_CPMG = [MODEL_NOREX, MODEL_MQ_NS_CPMG_2SITE]
 
 MODEL_LIST_MQ_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_MQ_NS_CPMG_2SITE]
 """The list of the R2eff model together with all dispersion models specifically for MQ CPMG-type experiments."""
+
+MODEL_LIST_MQ_R1RHO = [MODEL_NOREX]
+"""The list of all dispersion models specifically for MQ R1rho-type experiments (excluding the R2eff model)."""
+
+MODEL_LIST_MQ_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX]
+"""The list of the R2eff model together with all dispersion models specifically for MQ R1rho-type experiments."""
