@@ -77,6 +77,24 @@ class Structure(SystemTestCase):
         self.interpreter.sequence.attach_protons()
 
 
+    def test_bug_21187_corrupted_pdb(self):
+        """Catch U{bug #21187<https://gna.org/bugs/?21187>}, the corrupted PDB with all proton atoms numbers set to zero."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('bug_21187_molecule.pdb', dir=path)
+
+        # Load the @N, @H, and @NE1 spins (needed to create the :60@0 spin to trigger the bug later).
+        self.interpreter.structure.load_spins(spin_id='@N', ave_pos=True)
+        self.interpreter.structure.load_spins(spin_id='@NE1', ave_pos=True)
+        self.interpreter.structure.load_spins(spin_id='@H', ave_pos=True)
+
+        # Load the :60@HE1 spin - this clashes with the :60@H spin as both have the spin ID of ':60@0'.
+        self.interpreter.structure.load_spins(spin_id='@HE1', ave_pos=True)
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
