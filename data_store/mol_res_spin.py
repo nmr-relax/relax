@@ -245,14 +245,13 @@ class SpinList(list):
             # Test if the spin number (or name if unnumbered) already exists.
             for i in range(len(self)):
                 # Spin number has been supplied.
-                if spin_num != None:
-                    if self[i].num == spin_num:
-                        raise RelaxError("The spin number '%s' already exists." % spin_num)
+                if spin_num != None and spin_name != None:
+                    if self[i].num == spin_num and self[i].name == spin_name:
+                        raise RelaxError("The spin with name '%s' and number '%s' already exists." % (spin_name, spin_num))
 
                 # No spin numbers.
-                else:
-                    if self[i].name == spin_name:
-                        raise RelaxError("The unnumbered spin name '%s' already exists." % spin_name)
+                if spin_num == None and  self[i].name == spin_name:
+                    raise RelaxError("The unnumbered spin name '%s' already exists." % spin_name)
 
             # Append a new SpinContainer.
             self.append(SpinContainer(spin_name, spin_num, select))
