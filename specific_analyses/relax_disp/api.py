@@ -47,7 +47,7 @@ from specific_analyses.relax_disp.checks import check_c_modules, check_disp_poin
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -636,6 +636,14 @@ class Relax_disp(API_base, API_common):
             for frq in loop_frq():
                 params.append('r2')
             params += ['pA', 'dw', 'kex']
+
+        # NS MQ CPMG 2-site model.
+        elif model == MODEL_MQ_NS_CPMG_2SITE:
+            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['pA', 'dw', 'dwH', 'kex']
 
         # Invalid model.
         else:
