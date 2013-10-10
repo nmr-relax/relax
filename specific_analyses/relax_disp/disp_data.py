@@ -218,7 +218,7 @@ def exp_type(spectrum_id=None, exp_type=None):
 
     # Check the experiment type.
     if exp_type not in EXP_TYPE_LIST:
-        raise RelaxError("The relaxation dispersion experiment '%s' is invalid." % exp_type)
+        raise RelaxError("The relaxation dispersion experiment '%s' is invalid, it must be one of %s." % (exp_type, EXP_TYPE_LIST))
 
     # Initialise the experiment type data structures if needed.
     if not hasattr(cdp, 'exp_type'):
