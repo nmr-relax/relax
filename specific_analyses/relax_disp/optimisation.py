@@ -122,7 +122,7 @@ def grid_search_setup(spins=None, param_vector=None, lower=None, upper=None, inc
                         upper.append(10.0)
 
                     # Chemical shift difference between states A and B.
-                    elif spin.params[i] == 'dw':
+                    elif spin.params[i] in ['dw', 'dwH']:
                         lower.append(0.0)
                         upper.append(10.0)
 

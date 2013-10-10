@@ -103,7 +103,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             scaling_matrix[param_index, param_index] = 1
 
         # Chemical shift difference between states A and B scaling.
-        elif param_name == 'dw':
+        elif param_name in ['dw', 'dwH']:
             scaling_matrix[param_index, param_index] = 1
 
         # The population of state A.
@@ -533,7 +533,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             j += 1
 
         # Chemical exchange difference (dw >= 0).
-        elif param_name == 'dw':
+        elif param_name in ['dw', 'dwH']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             b.append(0.0)
@@ -657,7 +657,7 @@ def loop_parameters(spins=None):
                     # Yield the data.
                     yield 'r2b', param_index, spin_index, frq_index
 
-        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2' and 'dw' (one per spin).
+        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw' and 'dwH' (one per spin).
         for spin_index in range(len(spins)):
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
@@ -675,10 +675,13 @@ def loop_parameters(spins=None):
             if 'dw' in spins[spin_index].params:
                 param_index += 1
                 yield 'dw', param_index, spin_index, None
+            if 'dwH' in spins[spin_index].params:
+                param_index += 1
+                yield 'dwH', param_index, spin_index, None
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw']:
+            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']:
                 param_index += 1
                 yield param, param_index, None, None
 
@@ -774,7 +777,7 @@ def param_num(spins=None):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw']
+    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']
     num = 0
     for spin in spins:
         for i in range(len(spin.params)):
