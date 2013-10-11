@@ -35,6 +35,7 @@ from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.lm63_3site import r2eff_LM63_3site
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
+from lib.dispersion.mq_ns_cpmg_2site import r2eff_mq_ns_cpmg_2site
 from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
 from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
@@ -44,7 +45,7 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -75,6 +76,7 @@ class Dispersion:
             - 'NS CPMG 2-site star':  The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices with R20A = R20B.
             - 'NS CPMG 2-site star full':  The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.
             - 'NS CPMG 2-site expanded':  The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.
+            - 'MQ NS CPMG 2-site':  The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors with R20A = R20B.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -171,7 +173,7 @@ class Dispersion:
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.num_spins)
-        if model in [MODEL_IT99, MODEL_LM63_3SITE]:
+        if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MQ_NS_CPMG_2SITE]:
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
         # Set up the matrices for the numerical solutions.
@@ -193,7 +195,7 @@ class Dispersion:
             self.r180x = r180x_3d()
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        if model in [MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             self.M0 = zeros(2, float64)
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
             self.M0 = zeros(7, float64)
@@ -202,14 +204,14 @@ class Dispersion:
             self.M0 = zeros(6, float64)
 
         # Some other data structures for the analytical and numerical solutions.
-        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
+        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
             # The tau_cpmg times.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             for i in range(self.num_disp_points):
                 self.tau_cpmg[i] = 0.25 / self.cpmg_frqs[i]
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             # The matrix exponential power array.
             self.power = zeros(self.num_disp_points, int16)
             for i in range(self.num_disp_points):
@@ -221,8 +223,13 @@ class Dispersion:
             self.spin_lock_omega1_squared = self.spin_lock_omega1 ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
             self.inv_relax_time = 1.0 / relax_time
+
+        # Special matrices for the multi-quantum CPMG 2-site numerical model.
+        if model == MODEL_MQ_NS_CPMG_2SITE:
+            self.m1 = zeros((2, 2), complex64)
+            self.m2 = zeros((2, 2), complex64)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -259,6 +266,8 @@ class Dispersion:
             self.func = self.func_TP02
         if model == MODEL_NS_R1RHO_2SITE:
             self.func = self.func_ns_r1rho_2site
+        if model == MODEL_MQ_NS_CPMG_2SITE:
+            self.func = self.func_mq_ns_cpmg_2site
 
 
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -773,6 +782,64 @@ class Dispersion:
 
                 # Back calculate the R1rho values.
                 r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_mq_ns_cpmg_2site(self, params):
+        """Target function for the Ishima and Torchia (1999) 2-site model for all timescales with pA >> pB.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        dwH = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Once off parameter conversions.
+        pB = 1.0 - pA
+        k_BA = pA * kex
+        k_AB = pB * kex
+
+        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+        self.M0[0] = pA
+        self.M0[1] = pB
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_mq_ns_cpmg_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
