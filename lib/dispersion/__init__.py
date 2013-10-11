@@ -30,6 +30,7 @@ __all__ = [
     'lm63_3site',
     'm61',
     'm61b',
+    'mq_ns_cpmg_2site',
     'ns_cpmg_2site_3d',
     'ns_cpmg_2site_expanded',
     'ns_cpmg_2site_star',
