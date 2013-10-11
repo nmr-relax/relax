@@ -21,7 +21,7 @@ from status import Status; status = Status()
 MODELS = ['R2eff', 'No Rex', 'MQ NS CPMG 2-site']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 11
+GRID_INC = 4
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
