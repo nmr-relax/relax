@@ -1,0 +1,63 @@
+\begin{sidewaystable}
+\begin{center}
+\begin{small}
+
+% Caption.
+\caption[The dispersion models.]{The dispersion models supported by relax.}
+
+% The tabular environment.
+\begin{tabular}{lllcll}
+
+\\[-5pt]
+\toprule
+
+% Headings.
+Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
+
+\midrule
+
+% Experiment independent models.
+Experiment independent \\
+\cline{1-1}
+R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
+R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
+No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
+
+% CPMG-type models.
+CPMG-type \\
+\cline{1-1}
+LM63                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
+LM63 3-site              & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
+CR72                     & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
+CR72 full                & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
+IT99                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
+TSMFK01                  & Analytic & 2     & $\{\RtwozeroA, \dots, \dw, \kAB\}$                  & $\pA \gg \pB$                     & \citet{Tollinger01} \\
+NS CPMG 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
+NS CPMG 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
+
+% R1rho-type models.
+$\Ronerho$-type \\
+\cline{1-1}
+M61             & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange, on-resonance, $\Rone = \Rtwo$ & \citet{Meiboom61} \\
+DPL94           & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange                     & \citet{Davis94} \\
+M61 skew        & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
+TP02            & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & Not fast exchange                 & \citet{TrottPalmer02} \\
+NS R1rho 2-site & Numeric  & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA > \pB$                       & - \\
+
+% MQ CPMG-type models.
+MQ CPMG-type \\
+\cline{1-1}
+MQ NS CPMG 2-site        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$        & $\pA > \pB$                       & \citet{Korzhnev04a} \\
+
+\bottomrule
+
+% Label.
+\label{table: dispersion models}
+
+\end{tabular}
+\end{small}
+\end{center}
+\end{sidewaystable}

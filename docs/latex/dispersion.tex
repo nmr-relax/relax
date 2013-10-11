@@ -121,7 +121,6 @@ For the MQ CPMG-type experiments, the numeric models currently supported are:
 \end{description}
 
 
-
 % Dispersion model summary.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -131,51 +130,8 @@ Except for `R2eff' and `No Rex', all models can be fit to clusterings of spins, 
 The models are described in more detail below and summarised in Table~\ref{table: CPMG dispersion models} for CPMG-type experiments and Table~\ref{table: R1rho dispersion models} for $\Ronerho$-type experiments.
 The parameters are given in Table~\ref{table: dispersion parameters}.
 
-\begin{sidewaystable}
-\begin{center}
-\caption{The parameters of relaxation dispersion.}
-\begin{longtable}{llll}
-\toprule
-Parameter          & Equation                       & Description                                                                   & Units \\
-\midrule
-$\nucpmg$          & $1 / (2 \taucpmg)$             & CPMG frequency                                                                & Hz \\
-$\taucpmg$         & $1 / (2 \nucpmg)$              & Delay between CPMG $\pi$ pulses                                               & s \\
-$T_\textrm{relax}$ & -                              & The relaxation delay period                                                   & s \\
-$I_0$              & -                              & Reference peak intensity when $T_\textrm{relax}$ is zero                      & - \\
-$I_1$              & -                              & Peak intensity for a given $\nucpmg$ or spin-lock field strength $\omega_1$   & - \\
-$\Rtwozero$        & -                              & $\Rtwo$ relaxation rate in the absence of exchange                            & rad.s$^{-1}$ \\
-$\RtwozeroA$       & -                              & $\Rtwo$ relaxation rate for state A in the absence of exchange                & rad.s$^{-1}$ \\
-$\RtwozeroB$       & -                              & $\Rtwo$ relaxation rate for state B in the absence of exchange                & rad.s$^{-1}$ \\
-$\Ronerhoprime$    & -                              & $\Ronerho$ relaxation rate in the absence of exchange                         & rad.s$^{-1}$ \\
-$\aveoffset$       & $\aveomega - \omegarf$         & The average resonance offset in the rotating frame                            & rad.s$^{-1}$ \\
-$\omegaA$          & -                              & The Larmor frequency of the spin in state A                                   & rad.s$^{-1}$ \\
-$\omegaB$          & -                              & The Larmor frequency of the spin in state B                                   & rad.s$^{-1}$ \\
-$\aveomega$        & $\pA\omegaA + \pB\omegaB$      & The population averaged Larmor frequency of the spin                          & rad.s$^{-1}$ \\
-$\omegaone$        & -                              & Spin-lock field strength, i.e. the amplitude of the rf field                  & rad.s$^{-1}$ \\
-$\omegae$          & $\sqrt(\aveoffset^2 + \omegaone^2)$  & Effective field in the rotating frame                                   & rad.s$^{-1}$ \\
-$\omegarf$         & -                              & Spin-lock offset, i.e. the frequency of the rf field                          & rad.s$^{-1}$ \\
-$\theta$           & $\arctan \left( \frac{\omegaone}{\aveoffset} \right)$  & Rotating frame tilt angle                             & rad \\
-$\kAB$             & $\pB\kex$                      & The forward exchange rate from state A to state B                             & rad.s$^{-1}$ \\
-$\kBA$             & $\pA\kex$                      & The reverse exchange rate from state B to state A                             & rad.s$^{-1}$ \\
-$\kex$             & $1 / (2 \tex)$                 & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
-$\kexB$            & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
-$\kexC$            & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
-$\kB$              & $\approx \kexB$                & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
-$\kC$              & $\approx \kexC$                & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
-$\tex$             & $1 / (2 \kex)$                 & Time of exchange                                                              & s.rad$^{-1}$ \\
-$\pA$              & -                              & Population of state A                                                         & - \\
-$\pB$              & -                              & Population of state B                                                         & - \\
-$\dw$              & -                              & Chemical shift difference between the two states                              & rad.s$^{-1}$ (stored as ppm) \\
-$\dwH$             & -                              & Proton chemical shift difference between the two states (for MQ data)         & rad.s$^{-1}$ (stored as ppm) \\
-$\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
-$\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
-$\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
-\bottomrule
-\label{table: dispersion parameters}
-\end{longtable}
-\end{center}
-\end{sidewaystable}
-
+\input{dispersion_params}
+\input{dispersion_models}
 
 
 % The base models.
@@ -254,34 +210,6 @@ This model is provided for model selection purposes.  In combination with freque
 \section{The analytic CPMG models}
 \label{sect: dispersion: analytic CPMG models}
 \index{relaxation dispersion!Analytic CPMG model|textbf}
-
-\begin{sidewaystable}
-\begin{center}
-\caption{The analytic and numerical models for CPMG-type experiments currently supported within relax}
-\begin{tabular}{lllcll}
-\toprule
-Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
-\midrule                                    
-R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
-R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
-No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
-LM63                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \kex\}$                & Fast exchange                     & \citet{LuzMeiboom63} \\
-LM63 3-site              & Analytic & 3     & $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$  & Fast exchange, $\pA > \pB$ and $\pA > \pC$  & \citet{LuzMeiboom63} \\
-CR72                     & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & \citet{CarverRichards72} \\
-CR72 full                & Analytic & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & \citet{CarverRichards72} \\
-IT99                     & Analytic & 2     & $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$     & $\pA \gg \pB$                     & \citet{IshimaTorchia99} \\
-TSMFK01                  & Analytic & 2     & $\{\RtwozeroA, \dots, \dw, \kAB\}$                  & $\pA \gg \pB$                     & \citet{Tollinger01} \\
-NS CPMG 2-site 3D        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
-NS CPMG 2-site expanded  & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
-\bottomrule
-\label{table: CPMG dispersion models}
-\end{tabular}
-\end{center}
-\end{sidewaystable}
-
 
 
 % LM63 model.
@@ -550,27 +478,6 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \label{sect: dispersion: analytic R1rho models}
 \index{relaxation dispersion!Analytic R1rho model|textbf}
 
-\begin{sidewaystable}
-\begin{center}
-\caption{The analytic and numerical models for $\Ronerho$-type experiments currently supported within relax.}
-\begin{tabular}{lllcll}
-\toprule
-Model code      & Solution & Sites & Parameters                                        & Restriction                       & Reference \\
-\midrule                            
-R2eff           & -        & -     & $\{\Ronerho, \cdots\}$                            & Fixed relaxation time period      & - \\
-R2eff           & -        & -     & $\{\Ronerho, I_0, \cdots\}$                       & Variable relaxation time period   & - \\
-No Rex          & Closed   & 0     & $\{\Ronerhoprime, \cdots\}$                       & -                                 & - \\
-M61             & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange, on-resonance, $\Rone = \Rtwo$ & \citet{Meiboom61} \\
-DPL94           & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$          & Fast exchange                     & \citet{Davis94} \\
-M61 skew        & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
-TP02            & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & Not fast exchange                 & \citet{TrottPalmer02} \\
-NS R1rho 2-site & Numeric  & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$        & $\pA > \pB$                       & - \\
-\bottomrule
-\label{table: R1rho dispersion models}
-\end{tabular}
-\end{center}
-\end{sidewaystable}
-
 
 % M61 model.
 %~~~~~~~~~~~
@@ -662,23 +569,6 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \section{The numeric MQ CPMG models}
 \label{sect: dispersion: numeric MQ CPMG models}
 \index{relaxation dispersion!Numeric MQ CPMG model|textbf}
-
-\begin{sidewaystable}
-\begin{center}
-\caption{The analytic and numerical models for MQ CPMG-type experiments currently supported within relax}
-\begin{tabular}{lllcll}
-\toprule
-Model code               & Solution & Sites & Parameters                                          & Restriction                       & Reference \\
-\midrule                                    
-R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$                              & Fixed relaxation time period      & - \\
-R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
-No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
-MQ NS CPMG 2-site        & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$        & $\pA > \pB$                       & \citet{Korzhnev04a} \\
-\bottomrule
-\label{table: CPMG dispersion models}
-\end{tabular}
-\end{center}
-\end{sidewaystable}
 
 
 % MQ NS CPMG 2-site model.

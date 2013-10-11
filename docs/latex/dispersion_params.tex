@@ -1,0 +1,60 @@
+\begin{sidewaystable}
+\begin{center}
+\begin{small}
+
+% Caption.
+\caption[The parameters of relaxation dispersion.]{The parameters of relaxation dispersion.}
+
+% The tabular environment.
+\begin{tabular}{llll}
+
+\\[-5pt]
+\toprule
+
+% Headings.
+Parameter          & Equation                       & Description                                                                   & Units \\
+
+\midrule
+
+$\nucpmg$          & $1 / (2 \taucpmg)$             & CPMG frequency                                                                & Hz \\
+$\taucpmg$         & $1 / (2 \nucpmg)$              & Delay between CPMG $\pi$ pulses                                               & s \\
+$T_\textrm{relax}$ & -                              & The relaxation delay period                                                   & s \\
+$I_0$              & -                              & Reference peak intensity when $T_\textrm{relax}$ is zero                      & - \\
+$I_1$              & -                              & Peak intensity for a given $\nucpmg$ or spin-lock field strength $\omega_1$   & - \\
+$\Rtwozero$        & -                              & $\Rtwo$ relaxation rate in the absence of exchange                            & rad.s$^{-1}$ \\
+$\RtwozeroA$       & -                              & $\Rtwo$ relaxation rate for state A in the absence of exchange                & rad.s$^{-1}$ \\
+$\RtwozeroB$       & -                              & $\Rtwo$ relaxation rate for state B in the absence of exchange                & rad.s$^{-1}$ \\
+$\Ronerhoprime$    & -                              & $\Ronerho$ relaxation rate in the absence of exchange                         & rad.s$^{-1}$ \\
+$\aveoffset$       & $\aveomega - \omegarf$         & The average resonance offset in the rotating frame                            & rad.s$^{-1}$ \\
+$\omegaA$          & -                              & The Larmor frequency of the spin in state A                                   & rad.s$^{-1}$ \\
+$\omegaB$          & -                              & The Larmor frequency of the spin in state B                                   & rad.s$^{-1}$ \\
+$\aveomega$        & $\pA\omegaA + \pB\omegaB$      & The population averaged Larmor frequency of the spin                          & rad.s$^{-1}$ \\
+$\omegaone$        & -                              & Spin-lock field strength, i.e. the amplitude of the rf field                  & rad.s$^{-1}$ \\
+$\omegae$          & $\sqrt(\aveoffset^2 + \omegaone^2)$  & Effective field in the rotating frame                                   & rad.s$^{-1}$ \\
+$\omegarf$         & -                              & Spin-lock offset, i.e. the frequency of the rf field                          & rad.s$^{-1}$ \\
+$\theta$           & $\arctan \left( \frac{\omegaone}{\aveoffset} \right)$  & Rotating frame tilt angle                             & rad \\
+$\kAB$             & $\pB\kex$                      & The forward exchange rate from state A to state B                             & rad.s$^{-1}$ \\
+$\kBA$             & $\pA\kex$                      & The reverse exchange rate from state B to state A                             & rad.s$^{-1}$ \\
+$\kex$             & $1 / (2 \tex)$                 & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
+$\kexB$            & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
+$\kexC$            & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
+$\kB$              & $\approx \kexB$                & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
+$\kC$              & $\approx \kexC$                & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
+$\tex$             & $1 / (2 \kex)$                 & Time of exchange                                                              & s.rad$^{-1}$ \\
+$\pA$              & -                              & Population of state A                                                         & - \\
+$\pB$              & -                              & Population of state B                                                         & - \\
+$\dw$              & -                              & Chemical shift difference between the two states                              & rad.s$^{-1}$ (stored as ppm) \\
+$\dwH$             & -                              & Proton chemical shift difference between the two states (for MQ data)         & rad.s$^{-1}$ (stored as ppm) \\
+$\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
+$\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
+$\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
+
+\bottomrule
+
+% Label.
+\label{table: dispersion parameters}
+
+\end{tabular}
+\end{small}
+\end{center}
+\end{sidewaystable}
