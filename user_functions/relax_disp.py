@@ -606,7 +606,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical 
 # MQ CPMG-type data.
 uf.desc.append(Desc_container('The MQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported models are:")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_MQ_NS_CPMG_2SITE, "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MQ_NS_CPMG_2SITE, "The reduced numerical solution for the 2-site Bloch-McConnell equations using 2D magnetisation vectors whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
 # MQ R1rho-type data.
 uf.desc.append(Desc_container('The MQ R1rho-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported models are:")
