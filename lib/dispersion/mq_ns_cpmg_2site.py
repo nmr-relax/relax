@@ -44,7 +44,7 @@ from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
 
 
-def populate_m1(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
+def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
     """Matrix for HMQC experiments.
 
     This corresponds to matrix m1 of equation 2.2 from:
@@ -70,34 +70,6 @@ def populate_m1(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
     matrix[0, 1] = k_BA
     matrix[1, 0] = k_AB
     matrix[1, 1] = -k_BA - 1.j*(dwH + dw) - r20
-
-
-def populate_m2(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
-    """Matrix for HMQC experiments.
-
-    This corresponds to matrix m1 of equation 2.2 from:
-
-        - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  J. Am. Chem. Soc., 126, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
-
-    @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 2D complex64 array
-    @keyword r20:           The R2 value in the absence of exchange.
-    @type r20:              float
-    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
-    @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
-    @type dwH:              float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
-    """
-
-    # Fill in the elements.
-    matrix[0, 0] = -k_AB - r20
-    matrix[0, 1] = k_BA
-    matrix[1, 0] = k_AB
-    matrix[1, 1] = -k_BA - 1.j*(dwH - dw) - r20
 
 
 def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -141,8 +113,8 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_m1(matrix=m1, r20=r20, dw=dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
-    populate_m2(matrix=m2, r20=r20, dw=dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m1, r20=r20, dw=dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m2, r20=r20, dw=-dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
