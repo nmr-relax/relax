@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -391,7 +391,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         ## The R20 parameter.
-        #if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED]:
+        #if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED]:
         #    self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
 
@@ -408,7 +408,7 @@ class Relax_disp:
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
+        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
             self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
             self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
@@ -432,12 +432,17 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='padw2', file='padw2.agr', dir=path, force=True)
 
         # The dw parameter.
-        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01]:
+        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01]:
             self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
 
+        # The dwH parameter.
+        if model in [None, MODEL_MQ_NS_CPMG_2SITE]:
+            self.interpreter.value.write(param='dwH', file='dwH.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', file='dwH.agr', dir=path, force=True)
+
         # The k_AB, kex and tex parameters.
-        if model in [None, MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
+        if model in [None, MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
             self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=path, force=True)
             self.interpreter.value.write(param='kex', file='kex.out', dir=path, force=True)
             self.interpreter.value.write(param='tex', file='tex.out', dir=path, force=True)
