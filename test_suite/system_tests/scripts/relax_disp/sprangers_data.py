@@ -107,6 +107,12 @@ spectrum.replicated(spectrum_ids=['800_ncyc1', '800_ncyc1b'])
 spectrum.replicated(spectrum_ids=['800_ncyc2', '800_ncyc2b'])
 spectrum.replicated(spectrum_ids=['800_ncyc3', '800_ncyc3b'])
 
+# Measured chemical shift differences.
+value.set(val=0.625, param='dw', spin_id=":135")
+value.set(val=0.033, param='dwH', spin_id=":135")
+value.set(val=0.981, param='dw', spin_id=":137")
+value.set(val=0.010, param='dwH', spin_id=":137")
+
 
 # Auto-analysis execution.
 ##########################
