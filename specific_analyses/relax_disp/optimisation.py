@@ -31,6 +31,7 @@ from re import search
 import sys
 
 # relax module imports.
+from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
@@ -146,6 +147,23 @@ def grid_search_setup(spins=None, param_vector=None, lower=None, upper=None, inc
                 elif spin.params[i] in ['tex']:
                     lower.append(1/200000.0)
                     upper.append(0.5)
+
+    # Pre-set parameters.
+    index = 0
+    for spin in spins:
+        for param in spin.params:
+            # Get the parameter.
+            if hasattr(spin, param):
+                val = getattr(spin, param)
+
+                # Value already set.
+                if is_float(val) and val != 0.0:
+                    inc[index] = 1
+                    lower[index] = val
+                    upper[index] = val
+
+            # Increment the parameter index.
+            index += 1
 
     # The full grid size.
     grid_size = 1
