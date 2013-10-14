@@ -344,6 +344,21 @@ class Processor(object):
         return time_delta_str
 
 
+    def is_queued(self):
+        """Determine if any slave commands are queued.
+
+        @return:    True if slave commands are in the queue, False otherwise.
+        @rtype:     bool
+        """
+
+        # The standard command queue.
+        if len(self.command_queue):
+            return True
+
+        # Nothing.
+        return False
+
+
     def master_queue_command(self, command, dest):
         """Slave to master processor data transfer - send the result command from the slave.
 
