@@ -100,6 +100,9 @@ for i in range(len(data)):
 # Clustering.
 relax_disp.cluster(cluster_id='cluster', spin_id='@N,NE1')
 
+# Set some parameters to speed up the optimisation.
+value.set(param='kex', val=1500.0)    # Real value of 1000.
+
 
 
 # Auto-analysis execution.

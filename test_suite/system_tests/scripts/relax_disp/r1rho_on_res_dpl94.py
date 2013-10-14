@@ -101,6 +101,9 @@ relax_disp.cluster(cluster_id='cluster', spin_id=':1,2')
 # Read the chemical shift data.
 chemical_shift.read(file="nu_%s_ncyc1.list" % spin_lock[0], dir=data_path)
 
+# Set some parameters to speed up the optimisation.
+value.set(param='kex', val=1500.0)    # Real value of 1000.
+
 
 
 # Auto-analysis execution.
