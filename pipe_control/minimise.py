@@ -54,14 +54,14 @@ def calc(verbosity=1):
     # Deselect spins lacking data:
     overfit_deselect()
 
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
     # Monte Carlo simulation calculation.
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in range(cdp.sim_number):
-            # Print out.
-            if verbosity:
-                print("Simulation " + repr(i+1))
-
             # Status.
             if status.current_analysis:
                 status.auto_analysis[status.current_analysis].mc_number = i
@@ -70,6 +70,10 @@ def calc(verbosity=1):
 
             # Calculation.
             calculate(verbosity=verbosity-1, sim_index=i)
+
+            # Print out.
+            if verbosity and not processor.is_queued():
+                print("Simulation " + repr(i+1))
 
         # Unset the status.
         if status.current_analysis:
@@ -80,10 +84,6 @@ def calc(verbosity=1):
     # Minimisation.
     else:
         calculate(verbosity=verbosity)
-
-    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-    processor_box = Processor_box() 
-    processor = processor_box.processor
 
     # Execute any queued commands.
     processor.run_queue()
@@ -120,14 +120,14 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Deselect spins lacking data:
     overfit_deselect()
 
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
     # Monte Carlo simulation grid search.
     if hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         # Loop over the simulations.
         for i in range(cdp.sim_number):
-            # Print out.
-            if verbosity:
-                print("Simulation " + repr(i+1))
-
             # Status.
             if status.current_analysis:
                 status.auto_analysis[status.current_analysis].mc_number = i
@@ -136,6 +136,10 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
 
             # Optimisation.
             grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+
+            # Print out.
+            if verbosity and not processor.is_queued():
+                print("Simulation " + repr(i+1))
 
         # Unset the status.
         if status.current_analysis:
@@ -146,10 +150,6 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Grid search.
     else:
         grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
-
-    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-    processor_box = Processor_box() 
-    processor = processor_box.processor
 
     # Execute any queued commands.
     processor.run_queue()
@@ -209,6 +209,10 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Deselect spins lacking data:
     overfit_deselect()
 
+    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+    processor_box = Processor_box() 
+    processor = processor_box.processor
+
     # Single Monte Carlo simulation.
     if sim_index != None:
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
@@ -216,10 +220,6 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
         for i in range(cdp.sim_number):
-            # Print out.
-            if verbosity:
-                print("Simulation " + repr(i+1))
-
             # Status.
             if status.current_analysis:
                 status.auto_analysis[status.current_analysis].mc_number = i
@@ -228,6 +228,10 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
             # Optimisation.
             minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+
+            # Print out.
+            if verbosity and not processor.is_queued():
+                print("Simulation " + repr(i+1))
 
         # Unset the status.
         if status.current_analysis:
@@ -238,10 +242,6 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Standard minimisation.
     else:
         minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
-
-    # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
-    processor_box = Processor_box() 
-    processor = processor_box.processor
 
     # Execute any queued commands.
     processor.run_queue()
