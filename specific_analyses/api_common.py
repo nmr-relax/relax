@@ -103,6 +103,10 @@ class API_common:
             if name not in data_cont.params:
                 continue
 
+            # The value already exists.
+            if hasattr(data_cont, name):
+                continue
+
             # The default value.
             param_type = self.PARAMS.get_type(name)
             if param_type == dict:
