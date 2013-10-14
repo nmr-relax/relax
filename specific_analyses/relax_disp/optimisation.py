@@ -41,11 +41,13 @@ from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, 
 from target_functions.relax_disp import Dispersion
 
 
-def grid_search_setup(spins=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
+def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
     """The grid search setup function.
 
     @keyword spins:             The list of spin data containers for the block.
     @type spins:                list of SpinContainer instances
+    @keyword spin_ids:          The corresponding spin ID strings.
+    @type spin_ids:             list of str
     @keyword param_vector:      The parameter vector.
     @type param_vector:         numpy array
     @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
@@ -150,14 +152,18 @@ def grid_search_setup(spins=None, param_vector=None, lower=None, upper=None, inc
 
     # Pre-set parameters.
     index = 0
-    for spin in spins:
-        for param in spin.params:
+    for spin_index in range(len(spins)):
+        for param in spins[spin_index].params:
             # Get the parameter.
-            if hasattr(spin, param):
-                val = getattr(spin, param)
+            if hasattr(spins[spin_index], param):
+                val = getattr(spins[spin_index], param)
 
                 # Value already set.
                 if is_float(val) and val != 0.0:
+                    # Printout.
+                    print("The spin '%s' parameter '%s' is pre-set to %s, skipping it in the grid search." % (spin_ids[spin_index], param, val))
+
+                    # Turn of the grid search for this parameter.
                     inc[index] = 1
                     lower[index] = val
                     upper[index] = val
@@ -279,7 +285,7 @@ class Disp_minimise_command(Slave_command):
         # Get the grid search minimisation options.
         self.lower_new, self.upper_new = None, None
         if search('^[Gg]rid', min_algor):
-            self.grid_size, self.inc_new, self.lower_new, self.upper_new = grid_search_setup(spins=spins, param_vector=self.param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=self.scaling_matrix)
+            self.grid_size, self.inc_new, self.lower_new, self.upper_new = grid_search_setup(spins=spins, spin_ids=spin_ids, param_vector=self.param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=self.scaling_matrix)
 
         # Linear constraints.
         self.A, self.b = None, None

@@ -342,7 +342,7 @@ class Relax_disp(API_base, API_common):
                 # Get the grid search minimisation options.
                 lower_new, upper_new = None, None
                 if match('^[Gg]rid', min_algor):
-                    grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+                    grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], spin_ids=[spin_id], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
 
                 # Linear constraints.
                 A, b = None, None
