@@ -91,85 +91,80 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 
         # The R2eff model.
         if cdp.model_type == 'R2eff':
-            for spin_index in range(len(spins)):
-                # Alias the spin.
-                spin = spins[spin_index]
-
-                # Loop over each spectrometer frequency and dispersion point.
-                for exp_type, frq, point in loop_exp_frq_point():
-                    # Loop over the parameters.
-                    for i in range(len(spin.params)):
-                        # R2eff relaxation rate (from 1 to 40 s^-1).
-                        if spin.params[i] == 'r2eff':
-                            lower.append(1.0)
-                            upper.append(40.0)
-
-                        # Intensity.
-                        elif spin.params[i] == 'i0':
-                            lower.append(0.0001)
-                            upper.append(max(spin.intensities.values()))
-
-        # All other models.
-        else:
-            # The spin specific parameters.
-            for spin in spins:
-                for i in range(len(spin.params)):
-                    # R2 relaxation rates (from 1 to 40 s^-1).
-                    if spin.params[i] in ['r2', 'r2a', 'r2b']:
+            # Loop over each spectrometer frequency and dispersion point.
+            for exp_type, frq, point in loop_exp_frq_point():
+                # Loop over the parameters.
+                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+                    # R2eff relaxation rate (from 1 to 40 s^-1).
+                    if param_name == 'r2eff':
                         lower.append(1.0)
                         upper.append(40.0)
 
-                    # The pA.pB.dw**2 and pA.dw**2 parameters.
-                    elif spin.params[i] in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
-                        lower.append(0.0)
-                        upper.append(10.0)
+                    # Intensity.
+                    elif param_name == 'i0':
+                        lower.append(0.0001)
+                        upper.append(max(spins[spin_index].intensities.values()))
 
-                    # Chemical shift difference between states A and B.
-                    elif spin.params[i] in ['dw', 'dwH']:
-                        lower.append(0.0)
-                        upper.append(10.0)
+        # All other models.
+        else:
+            # Loop over the parameters.
+            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+                # Cluster specific parameter.
+                if spin_index == None:
+                    spin_index = 0
 
-            # The cluster specific parameters (only use the values from the first spin of the cluster).
-            spin = spins[0]
-            for i in range(len(spin.params)):
+                # R2 relaxation rates (from 1 to 40 s^-1).
+                if param_name in ['r2', 'r2a', 'r2b']:
+                    lower.append(1.0)
+                    upper.append(40.0)
+
+                # The pA.pB.dw**2 and pA.dw**2 parameters.
+                elif param_name in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
+                    lower.append(0.0)
+                    upper.append(10.0)
+
+                # Chemical shift difference between states A and B.
+                elif param_name in ['dw', 'dwH']:
+                    lower.append(0.0)
+                    upper.append(10.0)
+
                 # The population of state A.
-                if spin.params[i] == 'pA':
-                    if spin.model == MODEL_M61B:
+                elif param_name == 'pA':
+                    if spins[spin_index].model == MODEL_M61B:
                         lower.append(0.85)
                     else:
                         lower.append(0.5)
                     upper.append(1.0)
 
                 # Exchange rates.
-                elif spin.params[i] in ['kex', 'k_AB', 'kB', 'kC']:
+                elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
                     lower.append(1.0)
                     upper.append(100000.0)
 
                 # Time of exchange.
-                elif spin.params[i] in ['tex']:
+                elif param_name in ['tex']:
                     lower.append(1/200000.0)
                     upper.append(0.5)
 
     # Pre-set parameters.
-    index = 0
-    for spin_index in range(len(spins)):
-        for param in spins[spin_index].params:
-            # Get the parameter.
-            if hasattr(spins[spin_index], param):
-                val = getattr(spins[spin_index], param)
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+        # Cluster specific parameter.
+        if spin_index == None:
+            spin_index = 0
 
-                # Value already set.
-                if is_float(val) and val != 0.0:
-                    # Printout.
-                    print("The spin '%s' parameter '%s' is pre-set to %s, skipping it in the grid search." % (spin_ids[spin_index], param, val))
+        # Get the parameter.
+        if hasattr(spins[spin_index], param_name):
+            val = getattr(spins[spin_index], param_name)
 
-                    # Turn of the grid search for this parameter.
-                    inc[index] = 1
-                    lower[index] = val
-                    upper[index] = val
+            # Value already set.
+            if is_float(val) and val != 0.0:
+                # Printout.
+                print("The spin '%s' parameter '%s' is pre-set to %s, skipping it in the grid search." % (spin_ids[spin_index], param_name, val))
 
-            # Increment the parameter index.
-            index += 1
+                # Turn of the grid search for this parameter.
+                inc[param_index] = 1
+                lower[param_index] = val
+                upper[param_index] = val
 
     # The full grid size.
     grid_size = 1
