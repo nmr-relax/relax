@@ -186,7 +186,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 class Disp_memo(Memo):
     """The relaxation dispersion memo class."""
 
-    def __init__(self, spins=None, sim_index=None, scaling_matrix=None, verbosity=None):
+    def __init__(self, spins=None, cluster_name=None, sim_index=None, scaling_matrix=None, verbosity=None):
         """Initialise the relaxation dispersion memo class.
 
         This is used for handling the optimisation results returned from a slave processor.  It runs on the master processor and is used to store data which is passed to the slave processor and then passed back to the master via the results command.
@@ -194,6 +194,8 @@ class Disp_memo(Memo):
 
         @keyword spins:             The list of spin data container for the cluster.  If this argument is supplied, then the spin_id argument will be ignored.
         @type spins:                list of SpinContainer instances
+        @keyword cluster_name:      The name of the cluster to optimise.  This is used for printouts.
+        @type cluster_name:         list of str
         @keyword sim_index:         The optional MC simulation index.
         @type sim_index:            int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
@@ -207,6 +209,7 @@ class Disp_memo(Memo):
 
         # Store the arguments.
         self.spins = spins
+        self.cluster_name = cluster_name
         self.sim_index = sim_index
         self.scaling_matrix = scaling_matrix
         self.verbosity = verbosity
@@ -510,3 +513,7 @@ class Disp_result_command(Result_command):
 
                 # The printout.
                 print("%-20s %25.15f" % (param_text, param_vector[param_index]))
+
+        # Printout.
+        print("Simulation %s, cluster %s" % (memo.sim_index+1, memo.cluster_name))
+

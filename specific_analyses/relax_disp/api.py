@@ -1024,7 +1024,7 @@ class Relax_disp(API_base, API_common):
             command = Disp_minimise_command(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower, upper=upper, inc=inc, fields=fields)
 
             # Set up the memo.
-            memo = Disp_memo(spins=spins, sim_index=sim_index, scaling_matrix=scaling_matrix, verbosity=verbosity)
+            memo = Disp_memo(spins=spins, cluster_name=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, verbosity=verbosity)
 
             # Add the slave command and memo to the processor queue.
             processor.add_to_queue(command, memo)
