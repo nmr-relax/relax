@@ -47,7 +47,7 @@ from lib.float import isNaN
 def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
     """Matrix for HMQC experiments.
 
-    This corresponds to matrix m1 of equation 2.2 from:
+    This corresponds to matrix m1 and m2 matrices of equation 2.2 from:
 
         - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  J. Am. Chem. Soc., 126, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
 
