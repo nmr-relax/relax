@@ -659,7 +659,7 @@ def loop_point(exp_type=None, skip_ref=True):
         raise RelaxError("The experiment type must be supplied.")
     elif exp_type in [EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG]:
         fields = cdp.cpmg_frqs_list
-    elif exp_type == [EXP_TYPE_R1RHO, EXP_TYPE_MQ_R1RHO]:
+    elif exp_type in [EXP_TYPE_R1RHO, EXP_TYPE_MQ_R1RHO]:
         fields = cdp.spin_lock_nu1_list
     else:
         raise RelaxError("The experiment type '%s' is unknown." % exp_type)
