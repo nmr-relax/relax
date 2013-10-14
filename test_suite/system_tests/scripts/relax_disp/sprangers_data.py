@@ -111,5 +111,9 @@ spectrum.replicated(spectrum_ids=['800_ncyc3', '800_ncyc3b'])
 # Auto-analysis execution.
 ##########################
 
+# Run faster.
+Relax_disp.opt_func_tol = 1e-10
+Relax_disp.opt_max_iterations = 10000
+
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
