@@ -29,7 +29,11 @@ try:
     file = None
 except ImportError:
     io_module = False
-from numpy import float32, float64
+from numpy import complex64, complex128, float32, float64
+try:
+    from numpy import complex256
+except ImportError:
+    complex256 = complex128    # Support for 32-bit numpy versions.
 try:
     from numpy import float16
 except ImportError:
@@ -38,6 +42,31 @@ try:
     from numpy import float128
 except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
+
+
+def is_complex(num):
+    """Check if the given number is a Python or numpy complex.
+
+    @param num: The number to check.
+    @type num:  anything.
+    @return:    True if the number is a complex, False otherwise.
+    @rtype:     bool
+    """
+
+    # Standard complex.
+    if isinstance(num, complex):
+        return True
+
+    # Numpy complex numbers.
+    if isinstance(num, complex64):
+        return True
+    if isinstance(num, complex128):
+        return True
+    if isinstance(num, complex256):
+        return True
+
+    # Not a complex.
+    return False
 
 
 def is_filetype(obj):
