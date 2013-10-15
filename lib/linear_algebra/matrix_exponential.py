@@ -26,6 +26,9 @@
 from numpy import diag, dot, exp, iscomplex
 from numpy.linalg import eig, inv
 
+# relax module imports.
+from lib.check_types import is_complex
+
 
 def matrix_exponential(A):
     """Calculate the exact matrix exponential using the eigenvalue decomposition approach.
@@ -37,7 +40,7 @@ def matrix_exponential(A):
     """
 
     # Is the original matrix real?
-    complex_flag = iscomplex(A[0][0])
+    complex_flag = is_complex(A[0, 0])
 
     # The eigenvalue decomposition.
     W, V = eig(A)
