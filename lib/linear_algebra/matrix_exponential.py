@@ -23,7 +23,7 @@
 """Module for the calculation of the matrix exponential."""
 
 # Python module imports.
-from numpy import diag, dot, exp, iscomplex
+from numpy import array, diag, dot, exp, iscomplex
 from numpy.linalg import eig, inv
 
 # relax module imports.
@@ -50,8 +50,8 @@ def matrix_exponential(A):
 
     # Return the complex matrix.
     if complex_flag:
-        return eA
+        return array(eA)
 
     # Return only the real part.
     else:
-        return eA.real
+        return array(eA.real)
