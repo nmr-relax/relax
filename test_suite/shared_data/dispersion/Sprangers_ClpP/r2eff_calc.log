@@ -33,6 +33,7 @@ from os import sep
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
+from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
@@ -142,6 +143,11 @@ value.set(val=67.5, param='kex')
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+
+# Make the errors 5 times bigger.
+for spin in spin_loop():
+    for key in spin.r2eff_err:
+        spin.r2eff_err[key] = 5.0 * spin.r2eff_err[key]
 
 # Save the program state.
 state.save('r2eff_values', force=True)
