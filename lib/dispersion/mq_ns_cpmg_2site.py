@@ -36,12 +36,11 @@ import dep_check
 from math import fabs, log
 from numpy import array, conj, dot, float64
 from numpy.linalg import matrix_power
-if dep_check.scipy_module:
-    from scipy.linalg import expm
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
+from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
 def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
@@ -119,8 +118,9 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # The M1 and M2 matrices.
-        M1 = expm(m1*tcp[i])
-        M2 = expm(m2*tcp[i])
+        M1 = matrix_exponential(m1*tcp[i])
+        M2 = matrix_exponential(m2*tcp[i])
+
 
         # The complex conjugates M1* and M2*
         M1_star = conj(M1)

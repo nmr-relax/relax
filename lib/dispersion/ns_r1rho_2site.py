@@ -33,12 +33,11 @@ import dep_check
 # Python module imports.
 from math import atan, cos, log, pi, sin, sqrt
 from numpy import dot
-if dep_check.scipy_module:
-    from scipy.linalg import expm
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rr1rho_3d
 from lib.float import isNaN
+from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
 def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
@@ -102,7 +101,7 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
         M0[5] = cos(thetaB) * pB
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = expm(R*relax_time)
+        Rexpo = matrix_exponential(R*relax_time)
 
         # Magnetization evolution.
         Moft = dot(Rexpo, M0)

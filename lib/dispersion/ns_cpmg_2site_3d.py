@@ -36,12 +36,11 @@ import dep_check
 # Python module imports.
 from math import fabs, log
 from numpy import dot
-if dep_check.scipy_module:
-    from scipy.linalg import expm
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
+from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
 def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -93,7 +92,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         Mint = M0
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-        Rexpo = expm(R*tcp[i])
+        Rexpo = matrix_exponential(R*tcp[i])
 
         # Loop over the CPMG elements, propagating the magnetisation.
         for j in range(2*power[i]):
