@@ -114,6 +114,10 @@ value.set(val=0.033, param='dwH', spin_id=":135")
 value.set(val=0.981, param='dw', spin_id=":137")
 value.set(val=0.010, param='dwH', spin_id=":137")
 
+# Optimised parameters from the paper.
+value.set(val=0.5, param='pA')
+value.set(val=67.5, param='kex')
+
 
 # Auto-analysis execution.
 ##########################
