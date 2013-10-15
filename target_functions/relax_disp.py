@@ -224,7 +224,7 @@ class Dispersion:
             self.spin_lock_omega1_squared = self.spin_lock_omega1 ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
             self.inv_relax_time = 1.0 / relax_time
 
         # Special matrices for the multi-quantum CPMG 2-site numerical model.
@@ -823,10 +823,6 @@ class Dispersion:
         k_BA = pA * kex
         k_AB = pB * kex
 
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0[0] = pA
-        self.M0[1] = pB
-
         # Initialise.
         chi2_sum = 0.0
 
@@ -842,7 +838,7 @@ class Dispersion:
                 dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
+                r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
