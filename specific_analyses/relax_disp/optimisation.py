@@ -515,5 +515,5 @@ class Disp_result_command(Result_command):
                 print("%-20s %25.15f" % (param_text, param_vector[param_index]))
 
         # Printout.
-        print("Simulation %s, cluster %s" % (memo.sim_index+1, memo.cluster_name))
-
+        if memo.sim_index != None:
+            print("Simulation %s, cluster %s" % (memo.sim_index+1, memo.cluster_name))
