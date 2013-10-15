@@ -57,5 +57,5 @@ class Test_matrix_exponential(TestCase):
         # Checks.
         for i in range(3):
             for j in range(3):
-                self.assertEqual(eR1_test[i, j], eR1[i, j])
-                self.assertEqual(eR2_test[i, j], eR2[i, j])
+                self.assertAlmostEqual(eR1_test[i, j], eR1[i, j])
+                self.assertAlmostEqual(eR2_test[i, j], eR2[i, j])
