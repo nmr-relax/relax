@@ -1491,6 +1491,111 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_sprangers_data_to_mq_cr72(self, model=None):
+        """Test the 'MQ CR72' model fitting against Remco Sprangers' ClpP data.
+
+        This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
+        """
+
+        # Reset.
+        self.interpreter.reset()
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Sprangers_ClpP'
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # The model data pipe.
+        model = 'MQ CR72'
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
+
+        # Set the model.
+        self.interpreter.relax_disp.select_model(model=model)
+
+        # Cluster everything.
+        self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":135-137")
+
+        # Copy the data.
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
+
+        # Alias the spins.
+        spin135S = cdp.mol[0].res[0].spin[0]
+        spin135F = cdp.mol[0].res[0].spin[1]
+        spin137S = cdp.mol[0].res[1].spin[0]
+        spin137F = cdp.mol[0].res[1].spin[1]
+
+        # Set the cluster specific parameters (only for the first spin).
+        spin135S.pA = 0.500311298403094
+        spin135S.kex = 59.5551680542025
+
+        # Set the initial parameter values.
+        spin135S.r2 = [ 2.89494989792968, 12.6694205621436]
+        spin135S.dw = 1.47777783753308
+        spin135S.dwH = 1.0880818550171
+
+        spin135F.r2 = [ 41.907752972063, 58.1518607839796]
+        spin135F.dw = 0.419799242782033
+        spin135F.dwH = 1.27742823131436
+
+        spin137S.r2 = [ 0.0736711146623223, 13.8168225329927]
+        spin137S.dw = 2.4030348485243
+        spin137S.dwH = 0.00271978588774347
+
+        spin137F.r2 = [ 45.2885284912096, 57.8347181561312]
+        spin137F.dw = 1.5929498838754
+        spin137F.dwH = 0.00605967407110987
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s %-20s %-20s" % ("Parameter", "Value (:135@S)", "Value (:135@F)", "Value (:137@S)", "Value (:137@F)"))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("R2 (500 MHz)", spin135S.r2[0], spin135F.r2[0], spin137S.r2[0], spin137F.r2[0]))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("R2 (800 MHz)", spin135S.r2[1], spin135F.r2[1], spin137S.r2[1], spin137F.r2[1]))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("pA", spin135S.pA, spin135F.pA, spin137S.pA, spin137F.pA))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("dw", spin135S.dw, spin135F.dw, spin137S.dw, spin137F.dw))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("dwH", spin135S.dwH, spin135F.dwH, spin137S.dwH, spin137F.dwH))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g" % ("kex", spin135S.kex, spin135F.kex, spin137S.kex, spin137F.kex))
+        print("%-20s %20.15g %20.15g %20.15g %20.15g\n" % ("chi2", spin135S.chi2, spin135F.chi2, spin137S.chi2, spin137F.chi2))
+
+        # Checks for residue :135S.
+        self.assertAlmostEqual(spin135S.r2[0], 2.89494989792968, 4)
+        self.assertAlmostEqual(spin135S.r2[1], 12.6694205621436, 4)
+        self.assertAlmostEqual(spin135S.pA, 0.500311298403094, 4)
+        self.assertAlmostEqual(spin135S.dw, 1.47777783753308, 4)
+        self.assertAlmostEqual(spin135S.dwH, 1.0880818550171, 4)
+        self.assertAlmostEqual(spin135S.kex, 59.5551680542025, 4)
+        self.assertAlmostEqual(spin135S.chi2, 347.259150126813, 4)
+
+        # Checks for residue :135F.
+        self.assertAlmostEqual(spin135F.r2[0], 41.907752972063, 4)
+        self.assertAlmostEqual(spin135F.r2[1], 58.1518607839796, 4)
+        self.assertAlmostEqual(spin135F.pA, 0.500311298403094, 4)
+        self.assertAlmostEqual(spin135F.dw, 0.419799242782033, 4)
+        self.assertAlmostEqual(spin135F.dwH, 1.27742823131436, 4)
+        self.assertAlmostEqual(spin135F.kex, 59.5551680542025, 4)
+        self.assertAlmostEqual(spin135F.chi2, 347.259150126813, 4)
+
+        # Checks for residue :137S.
+        self.assertAlmostEqual(spin137S.r2[0], 0.0736711146623223, 4)
+        self.assertAlmostEqual(spin137S.r2[1], 13.8168225329927, 4)
+        self.assertAlmostEqual(spin137S.pA, 0.500311298403094, 4)
+        self.assertAlmostEqual(spin137S.dw, 2.4030348485243, 4)
+        self.assertAlmostEqual(spin137S.dwH, 0.00285577518213064, 4)
+        self.assertAlmostEqual(spin137S.kex, 59.5551680542025, 4)
+        self.assertAlmostEqual(spin137S.chi2, 347.259150126813, 4)
+
+        # Checks for residue :137F.
+        self.assertAlmostEqual(spin137F.r2[0], 45.2885284912096, 4)
+        self.assertAlmostEqual(spin137F.r2[1], 57.8347181561312, 4)
+        self.assertAlmostEqual(spin137F.pA, 0.500311298403094, 4)
+        self.assertAlmostEqual(spin137F.dw, 1.5929498838754, 4)
+        self.assertAlmostEqual(spin137F.dwH, 0.00605967407110987, 4)
+        self.assertAlmostEqual(spin137F.kex, 59.5551680542025, 4)
+        self.assertAlmostEqual(spin137F.chi2, 347.259150126813, 4)
+
+
     def test_sprangers_data_to_mq_ns_cpmg_2site(self, model=None):
         """Test the 'MQ NS CPMG 2-site' model fitting against Remco Sprangers' ClpP data.
 
