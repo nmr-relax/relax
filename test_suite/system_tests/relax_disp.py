@@ -1491,7 +1491,7 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
-    def xxx_test_sprangers_cpmg_data_auto_analysis(self):
+    def test_sprangers_cpmg_data_auto_analysis(self):
         """Test of the dispersion auto-analysis using Remco Sprangers' MQ CPMG data.
 
         This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
