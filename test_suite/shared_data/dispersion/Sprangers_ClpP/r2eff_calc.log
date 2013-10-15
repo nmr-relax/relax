@@ -109,7 +109,7 @@ for id, file, int_col, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', res_num_col=1, spin_name_col=2, int_col=int_col)
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='MQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -176,8 +176,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       376544.8     
 :137@F       242397.4     
 
-relax> relax_disp.exp_type(spectrum_id='600_ref', exp_type='CPMG')
-Setting the '600_ref' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ref', exp_type='MQ CPMG')
+Setting the '600_ref' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ref', cpmg_frq=None)
 Setting the '600_ref' spectrum CPMG frequency None Hz.
@@ -201,8 +201,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       252285.016     
 :137@F       123986.2701    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc12', exp_type='CPMG')
-Setting the '600_ncyc12' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc12', exp_type='MQ CPMG')
+Setting the '600_ncyc12' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc12', cpmg_frq=800.0)
 Setting the '600_ncyc12' spectrum CPMG frequency 800.0 Hz.
@@ -226,8 +226,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       166922.3098    
 :137@F       71895.0688     
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc1', exp_type='CPMG')
-Setting the '600_ncyc1' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc1', exp_type='MQ CPMG')
+Setting the '600_ncyc1' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc1', cpmg_frq=66.66666666666667)
 Setting the '600_ncyc1' spectrum CPMG frequency 66.6666666667 Hz.
@@ -251,8 +251,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       250214.0196    
 :137@F       124713.4623    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc10', exp_type='CPMG')
-Setting the '600_ncyc10' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc10', exp_type='MQ CPMG')
+Setting the '600_ncyc10' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc10', cpmg_frq=666.6666666666667)
 Setting the '600_ncyc10' spectrum CPMG frequency 666.666666667 Hz.
@@ -276,8 +276,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       208794.0916    
 :137@F       91601.9775     
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc2', exp_type='CPMG')
-Setting the '600_ncyc2' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc2', exp_type='MQ CPMG')
+Setting the '600_ncyc2' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc2', cpmg_frq=133.33333333333334)
 Setting the '600_ncyc2' spectrum CPMG frequency 133.333333333 Hz.
@@ -301,8 +301,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       247051.0433    
 :137@F       120471.5078    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc8', exp_type='CPMG')
-Setting the '600_ncyc8' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc8', exp_type='MQ CPMG')
+Setting the '600_ncyc8' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc8', cpmg_frq=533.3333333333334)
 Setting the '600_ncyc8' spectrum CPMG frequency 533.333333333 Hz.
@@ -326,8 +326,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       223178.103     
 :137@F       103406.7308    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc3', exp_type='CPMG')
-Setting the '600_ncyc3' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc3', exp_type='MQ CPMG')
+Setting the '600_ncyc3' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc3', cpmg_frq=200.0)
 Setting the '600_ncyc3' spectrum CPMG frequency 200.0 Hz.
@@ -351,8 +351,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       242419.5422    
 :137@F       117829.3761    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc6', exp_type='CPMG')
-Setting the '600_ncyc6' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc6', exp_type='MQ CPMG')
+Setting the '600_ncyc6' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc6', cpmg_frq=400.0)
 Setting the '600_ncyc6' spectrum CPMG frequency 400.0 Hz.
@@ -376,8 +376,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       231650.361     
 :137@F       108448.5968    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc4', exp_type='CPMG')
-Setting the '600_ncyc4' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc4', exp_type='MQ CPMG')
+Setting the '600_ncyc4' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc4', cpmg_frq=266.6666666666667)
 Setting the '600_ncyc4' spectrum CPMG frequency 266.666666667 Hz.
@@ -401,8 +401,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       238691.7487    
 :137@F       113296.5448    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc5', exp_type='CPMG')
-Setting the '600_ncyc5' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc5', exp_type='MQ CPMG')
+Setting the '600_ncyc5' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc5', cpmg_frq=333.33333333333337)
 Setting the '600_ncyc5' spectrum CPMG frequency 333.333333333 Hz.
@@ -426,8 +426,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       165001.9314    
 :137@F       73131.2956     
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc1b', exp_type='CPMG')
-Setting the '600_ncyc1b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc1b', exp_type='MQ CPMG')
+Setting the '600_ncyc1b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc1b', cpmg_frq=66.66666666666667)
 Setting the '600_ncyc1b' spectrum CPMG frequency 66.6666666667 Hz.
@@ -451,8 +451,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       211203.9783    
 :137@F       92692.7658     
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc2b', exp_type='CPMG')
-Setting the '600_ncyc2b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc2b', exp_type='MQ CPMG')
+Setting the '600_ncyc2b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc2b', cpmg_frq=133.33333333333334)
 Setting the '600_ncyc2b' spectrum CPMG frequency 133.333333333 Hz.
@@ -476,8 +476,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       224571.3187    
 :137@F       103891.5256    
 
-relax> relax_disp.exp_type(spectrum_id='600_ncyc3b', exp_type='CPMG')
-Setting the '600_ncyc3b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='600_ncyc3b', exp_type='MQ CPMG')
+Setting the '600_ncyc3b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc3b', cpmg_frq=200.0)
 Setting the '600_ncyc3b' spectrum CPMG frequency 200.0 Hz.
@@ -501,8 +501,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       9348130.0    
 :137@F       4167998.0    
 
-relax> relax_disp.exp_type(spectrum_id='800_ref', exp_type='CPMG')
-Setting the '800_ref' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ref', exp_type='MQ CPMG')
+Setting the '800_ref' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ref', cpmg_frq=None)
 Setting the '800_ref' spectrum CPMG frequency None Hz.
@@ -526,8 +526,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       5418176.148     
 :137@F       1789321.5414    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc12', exp_type='CPMG')
-Setting the '800_ncyc12' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc12', exp_type='MQ CPMG')
+Setting the '800_ncyc12' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc12', cpmg_frq=800.0)
 Setting the '800_ncyc12' spectrum CPMG frequency 800.0 Hz.
@@ -551,8 +551,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       3489656.929     
 :137@F       905289.1656     
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc1', exp_type='CPMG')
-Setting the '800_ncyc1' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc1', exp_type='MQ CPMG')
+Setting the '800_ncyc1' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc1', cpmg_frq=66.66666666666667)
 Setting the '800_ncyc1' spectrum CPMG frequency 66.6666666667 Hz.
@@ -576,8 +576,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       5449959.79     
 :137@F       1721383.174    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc10', exp_type='CPMG')
-Setting the '800_ncyc10' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc10', exp_type='MQ CPMG')
+Setting the '800_ncyc10' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc10', cpmg_frq=666.6666666666667)
 Setting the '800_ncyc10' spectrum CPMG frequency 666.666666667 Hz.
@@ -601,8 +601,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       4245920.646     
 :137@F       1141614.6522    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc2', exp_type='CPMG')
-Setting the '800_ncyc2' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc2', exp_type='MQ CPMG')
+Setting the '800_ncyc2' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc2', cpmg_frq=133.33333333333334)
 Setting the '800_ncyc2' spectrum CPMG frequency 133.333333333 Hz.
@@ -626,8 +626,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       5351804.425     
 :137@F       1688872.7896    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc8', exp_type='CPMG')
-Setting the '800_ncyc8' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc8', exp_type='MQ CPMG')
+Setting the '800_ncyc8' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc8', cpmg_frq=533.3333333333334)
 Setting the '800_ncyc8' spectrum CPMG frequency 533.333333333 Hz.
@@ -651,8 +651,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       4734827.845     
 :137@F       1424204.9166    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc3', exp_type='CPMG')
-Setting the '800_ncyc3' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc3', exp_type='MQ CPMG')
+Setting the '800_ncyc3' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc3', cpmg_frq=200.0)
 Setting the '800_ncyc3' spectrum CPMG frequency 200.0 Hz.
@@ -676,8 +676,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       5196625.467     
 :137@F       1593842.4352    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc6', exp_type='CPMG')
-Setting the '800_ncyc6' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc6', exp_type='MQ CPMG')
+Setting the '800_ncyc6' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc6', cpmg_frq=400.0)
 Setting the '800_ncyc6' spectrum CPMG frequency 400.0 Hz.
@@ -701,8 +701,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       4917116.38     
 :137@F       1477555.291    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc4', exp_type='CPMG')
-Setting the '800_ncyc4' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc4', exp_type='MQ CPMG')
+Setting the '800_ncyc4' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc4', cpmg_frq=266.6666666666667)
 Setting the '800_ncyc4' spectrum CPMG frequency 266.666666667 Hz.
@@ -726,8 +726,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       5007793.241     
 :137@F       1547994.4572    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc5', exp_type='CPMG')
-Setting the '800_ncyc5' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc5', exp_type='MQ CPMG')
+Setting the '800_ncyc5' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc5', cpmg_frq=333.33333333333337)
 Setting the '800_ncyc5' spectrum CPMG frequency 333.333333333 Hz.
@@ -751,8 +751,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       3626139.627    
 :137@F       928629.9544    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc1b', exp_type='CPMG')
-Setting the '800_ncyc1b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc1b', exp_type='MQ CPMG')
+Setting the '800_ncyc1b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc1b', cpmg_frq=66.66666666666667)
 Setting the '800_ncyc1b' spectrum CPMG frequency 66.6666666667 Hz.
@@ -776,8 +776,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       4332858.255     
 :137@F       1192464.2278    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc2b', exp_type='CPMG')
-Setting the '800_ncyc2b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc2b', exp_type='MQ CPMG')
+Setting the '800_ncyc2b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc2b', cpmg_frq=133.33333333333334)
 Setting the '800_ncyc2b' spectrum CPMG frequency 133.333333333 Hz.
@@ -801,8 +801,8 @@ The following intensities have been loaded into the relax data store:
 :137@S       4631998.415     
 :137@F       1457965.7004    
 
-relax> relax_disp.exp_type(spectrum_id='800_ncyc3b', exp_type='CPMG')
-Setting the '800_ncyc3b' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_ncyc3b', exp_type='MQ CPMG')
+Setting the '800_ncyc3b' spectrum tothe MQ CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc3b', cpmg_frq=200.0)
 Setting the '800_ncyc3b' spectrum CPMG frequency 200.0 Hz.
