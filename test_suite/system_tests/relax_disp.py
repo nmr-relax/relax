@@ -1497,6 +1497,9 @@ class Relax_disp(SystemTestCase):
         This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
         """
 
+        # The models to optimise.
+        ds.models = ['R2eff', 'No Rex', 'MQ NS CPMG 2-site']
+
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'sprangers_data.py')
 

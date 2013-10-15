@@ -18,7 +18,8 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'MQ NS CPMG 2-site']
+if not hasattr(ds, 'models'):
+    ds.models = ['R2eff', 'No Rex', 'MQ NS CPMG 2-site']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 4
@@ -122,4 +123,4 @@ Relax_disp.opt_func_tol = 1e-10
 Relax_disp.opt_max_iterations = 10000
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=ds.models, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
