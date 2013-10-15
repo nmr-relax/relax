@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, zeros
+from numpy import array, complex64, float64, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -32,7 +32,7 @@ class Test_matrix_exponential(TestCase):
 
 
     def test_matrix_exponential(self):
-        """Test the Kronecker product function kron_prod()."""
+        """Test the matrix exponential function matrix_exponential() with real matrices."""
 
         # The 3D, rank-2 matrices.
         R1 = array([[1, 4, 5],
@@ -54,8 +54,37 @@ class Test_matrix_exponential(TestCase):
         eR1_test = matrix_exponential(R1)
         eR2_test = matrix_exponential(R2)
 
+        # Printouts.
+        print("Real matrix:\n%s" % eR1)
+        print("Calculated matrix:\n%s" % eR1_test)
+
         # Checks.
         for i in range(3):
             for j in range(3):
                 self.assertAlmostEqual(eR1_test[i, j], eR1[i, j])
                 self.assertAlmostEqual(eR2_test[i, j], eR2[i, j])
+
+
+    def test_matrix_exponential2(self):
+        """Test the matrix exponential function matrix_exponential() with complex matrices."""
+
+        # The 3D, rank-2 matrix.
+        R1 = array([[-0.024156250059605+0.j, 0.021093750372529+0.j],
+                    [ 0.021093750372529+0.j, -0.024156250059605-0.587233662605286j]], complex64)
+
+        # The real matrix exponentials.
+        eR1 = array([[ 0.976344227790833 -4.17836126871407e-05j,  0.0194285903126001 -0.00587434694170952j],
+                     [ 0.0194285865873098 -0.00587435066699982j,  0.812806785106659  -0.540918707847595j]], complex64)
+
+        # The maths.
+        eR1_test = matrix_exponential(R1)
+
+        # Printouts.
+        print("Real matrix:\n[%20.15g %20.15gj, %20.15g %20.15gj],\n[%20.15g %20.15gj, %20.15g %20.15gj]\n" % (eR1[0, 0].real, eR1[0, 0].imag, eR1[0, 1].real, eR1[0, 1].imag, eR1[1, 0].real, eR1[1, 0].imag, eR1[1, 1].real, eR1[1, 1].imag))
+        print("Calculated matrix:\n[%20.15g %20.15gj, %20.15g %20.15gj],\n[%20.15g %20.15gj, %20.15g %20.15gj]\n" % (eR1_test[0, 0].real, eR1_test[0, 0].imag, eR1_test[0, 1].real, eR1_test[0, 1].imag, eR1_test[1, 0].real, eR1_test[1, 0].imag, eR1_test[1, 1].real, eR1_test[1, 1].imag))
+
+        # Checks.
+        for i in range(2):
+            for j in range(2):
+                self.assertAlmostEqual(eR1_test[i, j].real, eR1[i, j].real)
+                self.assertAlmostEqual(eR1_test[i, j].imag, eR1[i, j].imag)
