@@ -1,0 +1,930 @@
+
+
+
+                                  relax repository checkout r21114
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'r2eff_calc.py'
+----------------------------------------------------------------------------------------------------
+"""Script for optimising the 'R2eff' model.
+
+This uses the data from:
+
+    Remco Sprangers, Anna Gribun, Peter M. Hwang, Walid A. Houry, and Lewis E. Kay (2005)  Quantitative NMR spectroscopy of supramolecular complexes: Dynamic side pores in ClpP are important for product release, PNAS, 102 (46), 16678-16683.  (doi: http://dx.doi.org/10.1073/pnas.0507370102)
+"""
+
+# Python module imports.
+from os import sep
+
+# relax module imports.
+from auto_analyses.relax_disp import Relax_disp
+from data_store import Relax_data_store; ds = Relax_data_store()
+from status import Status; status = Status()
+
+
+# Analysis variables.
+#####################
+
+# The dispersion models.
+MODELS = ['R2eff']
+
+# The grid search size (the number of increments per dimension).
+GRID_INC = 5
+
+# The number of Monte Carlo simulations to be used for the error analyses (unused).
+MC_NUM = 3
+
+# The results directory.
+RESULTS_DIR = 'temp'
+
+
+# Set up the data pipe.
+#######################
+
+# Create the data pipe.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
+
+# The path to the data files.
+data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Sprangers_ClpP'
+
+# Create the sequence.
+spin.create(res_num=135, spin_name='S')
+spin.create(res_num=135, spin_name='F')
+spin.create(res_num=137, spin_name='S')
+spin.create(res_num=137, spin_name='F')
+
+# Set the isotope for field strength scaling.
+spin.isotope(isotope='13C')
+
+# The spectral data - spectrum ID, peak list file name, intensity column, CPMG frequency (Hz), spectrometer frequency in Hertz.
+ncyc_frq = 800/12.
+data = [
+    ['600_ref',     '600.out',  6,  None,           600e6],
+    ['600_ncyc12',  '600.out',  7,  ncyc_frq * 12,  600e6],
+    ['600_ncyc1',   '600.out',  8,  ncyc_frq * 1,   600e6],
+    ['600_ncyc10',  '600.out',  9,  ncyc_frq * 10,  600e6],
+    ['600_ncyc2',   '600.out', 10,  ncyc_frq * 2,   600e6],
+    ['600_ncyc8',   '600.out', 11,  ncyc_frq * 8,   600e6],
+    ['600_ncyc3',   '600.out', 12,  ncyc_frq * 3,   600e6],
+    ['600_ncyc6',   '600.out', 13,  ncyc_frq * 6,   600e6],
+    ['600_ncyc4',   '600.out', 14,  ncyc_frq * 4,   600e6],
+    ['600_ncyc5',   '600.out', 15,  ncyc_frq * 5,   600e6],
+    ['600_ncyc1b',  '600.out', 16,  ncyc_frq * 1,   600e6],
+    ['600_ncyc2b',  '600.out', 17,  ncyc_frq * 2,   600e6],
+    ['600_ncyc3b',  '600.out', 18,  ncyc_frq * 3,   600e6],
+    ['800_ref',     '800.out',  6,  None,           800e6],
+    ['800_ncyc12',  '800.out',  7,  ncyc_frq * 12,  800e6],
+    ['800_ncyc1',   '800.out',  8,  ncyc_frq * 1,   800e6],
+    ['800_ncyc10',  '800.out',  9,  ncyc_frq * 10,  800e6],
+    ['800_ncyc2',   '800.out', 10,  ncyc_frq * 2,   800e6],
+    ['800_ncyc8',   '800.out', 11,  ncyc_frq * 8,   800e6],
+    ['800_ncyc3',   '800.out', 12,  ncyc_frq * 3,   800e6],
+    ['800_ncyc6',   '800.out', 13,  ncyc_frq * 6,   800e6],
+    ['800_ncyc4',   '800.out', 14,  ncyc_frq * 4,   800e6],
+    ['800_ncyc5',   '800.out', 15,  ncyc_frq * 5,   800e6],
+    ['800_ncyc1b',  '800.out', 16,  ncyc_frq * 1,   800e6],
+    ['800_ncyc2b',  '800.out', 17,  ncyc_frq * 2,   800e6],
+    ['800_ncyc3b',  '800.out', 18,  ncyc_frq * 3,   800e6]
+]
+
+# Loop over the spectra.
+for id, file, int_col, cpmg_frq, H_frq in data:
+    # Load the peak intensities.
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', res_num_col=1, spin_name_col=2, int_col=int_col)
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+
+    # Set the relaxation dispersion CPMG frequencies.
+    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+
+    # Set the NMR field strength of the spectrum.
+    spectrometer.frequency(id=id, frq=H_frq)
+
+    # Relaxation dispersion CPMG constant time delay T (in s).
+    relax_disp.relax_time(spectrum_id=id, time=0.015)
+
+# Specify the duplicated spectra.
+spectrum.replicated(spectrum_ids=['600_ncyc1', '600_ncyc1b'])
+spectrum.replicated(spectrum_ids=['600_ncyc2', '600_ncyc2b'])
+spectrum.replicated(spectrum_ids=['600_ncyc3', '600_ncyc3b'])
+spectrum.replicated(spectrum_ids=['800_ncyc1', '800_ncyc1b'])
+spectrum.replicated(spectrum_ids=['800_ncyc2', '800_ncyc2b'])
+spectrum.replicated(spectrum_ids=['800_ncyc3', '800_ncyc3b'])
+
+# Measured chemical shift differences.
+value.set(val=0.625, param='dw', spin_id=":135")
+value.set(val=0.033, param='dwH', spin_id=":135")
+value.set(val=0.981, param='dw', spin_id=":137")
+value.set(val=0.010, param='dwH', spin_id=":137")
+value.set(val=0.5, param='pA')
+value.set(val=67.5, param='kex')
+
+
+# Auto-analysis execution.
+##########################
+
+# Do not change!
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+
+# Save the program state.
+state.save('r2eff_values', force=True)
+
+# Save the base data pipe.
+pipe.switch('base pipe')
+results.write('base_pipe', dir=None, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
+
+relax> spin.create(spin_name='S', spin_num=None, res_name=None, res_num=135, mol_name=None)
+
+relax> spin.create(spin_name='F', spin_num=None, res_name=None, res_num=135, mol_name=None)
+
+relax> spin.create(spin_name='S', spin_num=None, res_name=None, res_num=137, mol_name=None)
+
+relax> spin.create(spin_name='F', spin_num=None, res_name=None, res_num=137, mol_name=None)
+
+relax> spin.isotope(isotope='13C', spin_id=None, force=False)
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ref', dim=1, int_method='height', int_col=6, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:135@S       400991.7     
+:135@F       376293.3     
+:137@S       376544.8     
+:137@F       242397.4     
+
+relax> relax_disp.exp_type(spectrum_id='600_ref', exp_type='CPMG')
+Setting the '600_ref' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ref', cpmg_frq=None)
+Setting the '600_ref' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='600_ref', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ref', time=0.015)
+Setting the '600_ref' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc12', dim=1, int_method='height', int_col=7, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       259000.539     
+:135@F       205004.5898    
+:137@S       252285.016     
+:137@F       123986.2701    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc12', exp_type='CPMG')
+Setting the '600_ncyc12' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc12', cpmg_frq=800.0)
+Setting the '600_ncyc12' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc12', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc12', time=0.015)
+Setting the '600_ncyc12' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc1', dim=1, int_method='height', int_col=8, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       182250.7277    
+:135@F       127337.6527    
+:137@S       166922.3098    
+:137@F       71895.0688     
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc1', exp_type='CPMG')
+Setting the '600_ncyc1' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc1', cpmg_frq=66.66666666666667)
+Setting the '600_ncyc1' spectrum CPMG frequency 66.6666666667 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc1', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc1', time=0.015)
+Setting the '600_ncyc1' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc10', dim=1, int_method='height', int_col=9, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       257155.9772    
+:135@F       202746.83      
+:137@S       250214.0196    
+:137@F       124713.4623    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc10', exp_type='CPMG')
+Setting the '600_ncyc10' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc10', cpmg_frq=666.6666666666667)
+Setting the '600_ncyc10' spectrum CPMG frequency 666.666666667 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc10', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc10', time=0.015)
+Setting the '600_ncyc10' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc2', dim=1, int_method='height', int_col=10, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       223312.2777    
+:135@F       161166.4204    
+:137@S       208794.0916    
+:137@F       91601.9775     
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc2', exp_type='CPMG')
+Setting the '600_ncyc2' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc2', cpmg_frq=133.33333333333334)
+Setting the '600_ncyc2' spectrum CPMG frequency 133.333333333 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc2', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc2', time=0.015)
+Setting the '600_ncyc2' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc8', dim=1, int_method='height', int_col=11, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       252584.6718    
+:135@F       196425.1026    
+:137@S       247051.0433    
+:137@F       120471.5078    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc8', exp_type='CPMG')
+Setting the '600_ncyc8' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc8', cpmg_frq=533.3333333333334)
+Setting the '600_ncyc8' spectrum CPMG frequency 533.333333333 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc8', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc8', time=0.015)
+Setting the '600_ncyc8' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc3', dim=1, int_method='height', int_col=12, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       235783.1196    
+:135@F       173094.918     
+:137@S       223178.103     
+:137@F       103406.7308    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc3', exp_type='CPMG')
+Setting the '600_ncyc3' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc3', cpmg_frq=200.0)
+Setting the '600_ncyc3' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc3', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc3', time=0.015)
+Setting the '600_ncyc3' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc6', dim=1, int_method='height', int_col=13, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       248093.5648    
+:135@F       192172.9883    
+:137@S       242419.5422    
+:137@F       117829.3761    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc6', exp_type='CPMG')
+Setting the '600_ncyc6' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc6', cpmg_frq=400.0)
+Setting the '600_ncyc6' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc6', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc6', time=0.015)
+Setting the '600_ncyc6' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc4', dim=1, int_method='height', int_col=14, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       241637.5984    
+:135@F       182615.1385    
+:137@S       231650.361     
+:137@F       108448.5968    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc4', exp_type='CPMG')
+Setting the '600_ncyc4' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc4', cpmg_frq=266.6666666666667)
+Setting the '600_ncyc4' spectrum CPMG frequency 266.666666667 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc4', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc4', time=0.015)
+Setting the '600_ncyc4' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc5', dim=1, int_method='height', int_col=15, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       247171.2839    
+:135@F       188635.8313    
+:137@S       238691.7487    
+:137@F       113296.5448    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc5', exp_type='CPMG')
+Setting the '600_ncyc5' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc5', cpmg_frq=333.33333333333337)
+Setting the '600_ncyc5' spectrum CPMG frequency 333.333333333 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc5', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc5', time=0.015)
+Setting the '600_ncyc5' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc1b', dim=1, int_method='height', int_col=16, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       181208.1492    
+:135@F       126697.9541    
+:137@S       165001.9314    
+:137@F       73131.2956     
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc1b', exp_type='CPMG')
+Setting the '600_ncyc1b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc1b', cpmg_frq=66.66666666666667)
+Setting the '600_ncyc1b' spectrum CPMG frequency 66.6666666667 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc1b', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc1b', time=0.015)
+Setting the '600_ncyc1b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc2b', dim=1, int_method='height', int_col=17, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       224956.3437    
+:135@F       158720.5139    
+:137@S       211203.9783    
+:137@F       92692.7658     
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc2b', exp_type='CPMG')
+Setting the '600_ncyc2b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc2b', cpmg_frq=133.33333333333334)
+Setting the '600_ncyc2b' spectrum CPMG frequency 133.333333333 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc2b', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc2b', time=0.015)
+Setting the '600_ncyc2b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='600.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='600_ncyc3b', dim=1, int_method='height', int_col=18, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/600.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       237066.293     
+:135@F       174299.0566    
+:137@S       224571.3187    
+:137@F       103891.5256    
+
+relax> relax_disp.exp_type(spectrum_id='600_ncyc3b', exp_type='CPMG')
+Setting the '600_ncyc3b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='600_ncyc3b', cpmg_frq=200.0)
+Setting the '600_ncyc3b' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='600_ncyc3b', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='600_ncyc3b', time=0.015)
+Setting the '600_ncyc3b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ref', dim=1, int_method='height', int_col=6, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity    
+:135@S       9705330.0    
+:135@F       6448975.0    
+:137@S       9348130.0    
+:137@F       4167998.0    
+
+relax> relax_disp.exp_type(spectrum_id='800_ref', exp_type='CPMG')
+Setting the '800_ref' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ref', cpmg_frq=None)
+Setting the '800_ref' spectrum CPMG frequency None Hz.
+
+relax> spectrometer.frequency(id='800_ref', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ref', time=0.015)
+Setting the '800_ref' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc12', dim=1, int_method='height', int_col=7, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       5456336.526     
+:135@F       2788536.79      
+:137@S       5418176.148     
+:137@F       1789321.5414    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc12', exp_type='CPMG')
+Setting the '800_ncyc12' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc12', cpmg_frq=800.0)
+Setting the '800_ncyc12' spectrum CPMG frequency 800.0 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc12', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc12', time=0.015)
+Setting the '800_ncyc12' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc1', dim=1, int_method='height', int_col=8, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       3794784.03      
+:135@F       1394913.2925    
+:137@S       3489656.929     
+:137@F       905289.1656     
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc1', exp_type='CPMG')
+Setting the '800_ncyc1' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc1', cpmg_frq=66.66666666666667)
+Setting the '800_ncyc1' spectrum CPMG frequency 66.6666666667 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc1', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc1', time=0.015)
+Setting the '800_ncyc1' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc10', dim=1, int_method='height', int_col=9, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       5503892.643    
+:135@F       2689222.575    
+:137@S       5449959.79     
+:137@F       1721383.174    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc10', exp_type='CPMG')
+Setting the '800_ncyc10' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc10', cpmg_frq=666.6666666666667)
+Setting the '800_ncyc10' spectrum CPMG frequency 666.666666667 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc10', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc10', time=0.015)
+Setting the '800_ncyc10' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc2', dim=1, int_method='height', int_col=10, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       4611972.816     
+:135@F       1898578.24      
+:137@S       4245920.646     
+:137@F       1141614.6522    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc2', exp_type='CPMG')
+Setting the '800_ncyc2' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc2', cpmg_frq=133.33333333333334)
+Setting the '800_ncyc2' spectrum CPMG frequency 133.333333333 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc2', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc2', time=0.015)
+Setting the '800_ncyc2' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc8', dim=1, int_method='height', int_col=11, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       5364135.891     
+:135@F       2672455.24      
+:137@S       5351804.425     
+:137@F       1688872.7896    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc8', exp_type='CPMG')
+Setting the '800_ncyc8' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc8', cpmg_frq=533.3333333333334)
+Setting the '800_ncyc8' spectrum CPMG frequency 533.333333333 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc8', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc8', time=0.015)
+Setting the '800_ncyc8' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc3', dim=1, int_method='height', int_col=12, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       4985628.021     
+:135@F       2129451.545     
+:137@S       4734827.845     
+:137@F       1424204.9166    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc3', exp_type='CPMG')
+Setting the '800_ncyc3' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc3', cpmg_frq=200.0)
+Setting the '800_ncyc3' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc3', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc3', time=0.015)
+Setting the '800_ncyc3' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc6', dim=1, int_method='height', int_col=13, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       5356371.627     
+:135@F       2532512.4825    
+:137@S       5196625.467     
+:137@F       1593842.4352    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc6', exp_type='CPMG')
+Setting the '800_ncyc6' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc6', cpmg_frq=400.0)
+Setting the '800_ncyc6' spectrum CPMG frequency 400.0 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc6', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc6', time=0.015)
+Setting the '800_ncyc6' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc4', dim=1, int_method='height', int_col=14, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       5106944.646    
+:135@F       2311312.64     
+:137@S       4917116.38     
+:137@F       1477555.291    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc4', exp_type='CPMG')
+Setting the '800_ncyc4' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc4', cpmg_frq=266.6666666666667)
+Setting the '800_ncyc4' spectrum CPMG frequency 266.666666667 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc4', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc4', time=0.015)
+Setting the '800_ncyc4' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc5', dim=1, int_method='height', int_col=15, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       5147707.032     
+:135@F       2504136.9925    
+:137@S       5007793.241     
+:137@F       1547994.4572    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc5', exp_type='CPMG')
+Setting the '800_ncyc5' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc5', cpmg_frq=333.33333333333337)
+Setting the '800_ncyc5' spectrum CPMG frequency 333.333333333 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc5', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc5', time=0.015)
+Setting the '800_ncyc5' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc1b', dim=1, int_method='height', int_col=16, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity      
+:135@S       3776343.903    
+:135@F       1400717.37     
+:137@S       3626139.627    
+:137@F       928629.9544    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc1b', exp_type='CPMG')
+Setting the '800_ncyc1b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc1b', cpmg_frq=66.66666666666667)
+Setting the '800_ncyc1b' spectrum CPMG frequency 66.6666666667 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc1b', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc1b', time=0.015)
+Setting the '800_ncyc1b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc2b', dim=1, int_method='height', int_col=17, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       4623619.212     
+:135@F       1930178.2175    
+:137@S       4332858.255     
+:137@F       1192464.2278    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc2b', exp_type='CPMG')
+Setting the '800_ncyc2b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc2b', cpmg_frq=133.33333333333334)
+Setting the '800_ncyc2b' spectrum CPMG frequency 133.333333333 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc2b', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc2b', time=0.015)
+Setting the '800_ncyc2b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.read_intensities(file='800.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP', spectrum_id='800_ncyc3b', dim=1, int_method='height', int_col=18, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=2, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Sprangers_ClpP/800.out' for reading.
+Generic formatted data file.
+
+
+The following intensities have been loaded into the relax data store:
+
+# Spin_ID    Intensity       
+:135@S       4798315.152     
+:135@F       2251337.1725    
+:137@S       4631998.415     
+:137@F       1457965.7004    
+
+relax> relax_disp.exp_type(spectrum_id='800_ncyc3b', exp_type='CPMG')
+Setting the '800_ncyc3b' spectrum tothe CPMG-type experiment.
+
+relax> relax_disp.cpmg_frq(spectrum_id='800_ncyc3b', cpmg_frq=200.0)
+Setting the '800_ncyc3b' spectrum CPMG frequency 200.0 Hz.
+
+relax> spectrometer.frequency(id='800_ncyc3b', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.relax_time(spectrum_id='800_ncyc3b', time=0.015)
+Setting the '800_ncyc3b' spectrum relaxation time period to 0.015 s.
+
+relax> spectrum.replicated(spectrum_ids=['600_ncyc1', '600_ncyc1b'])
+
+relax> spectrum.replicated(spectrum_ids=['600_ncyc2', '600_ncyc2b'])
+
+relax> spectrum.replicated(spectrum_ids=['600_ncyc3', '600_ncyc3b'])
+
+relax> spectrum.replicated(spectrum_ids=['800_ncyc1', '800_ncyc1b'])
+
+relax> spectrum.replicated(spectrum_ids=['800_ncyc2', '800_ncyc2b'])
+
+relax> spectrum.replicated(spectrum_ids=['800_ncyc3', '800_ncyc3b'])
+
+relax> value.set(val=0.625, param='dw', spin_id=':135', error=False)
+
+relax> value.set(val=0.033, param='dwH', spin_id=':135', error=False)
+
+relax> value.set(val=0.981, param='dw', spin_id=':137', error=False)
+
+relax> value.set(val=0.01, param='dwH', spin_id=':137', error=False)
+
+relax> value.set(val=0.5, param='pA', spin_id=None, error=False)
+
+relax> value.set(val=67.5, param='kex', spin_id=None, error=False)
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
+relax> spectrum.error_analysis(subset=['600_ref', '600_ncyc12', '600_ncyc1', '600_ncyc10', '600_ncyc2', '600_ncyc8', '600_ncyc3', '600_ncyc6', '600_ncyc4', '600_ncyc5', '600_ncyc1b', '600_ncyc2b', '600_ncyc3b'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Replicated spectra:  ['600_ncyc1', '600_ncyc1b']
+Standard deviation:  915.989501013
+
+Replicated spectra:  ['600_ncyc2', '600_ncyc2b']
+Standard deviation:  1400.12430883
+
+Replicated spectra:  ['600_ncyc3', '600_ncyc3b']
+Standard deviation:  811.831242263
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  1073.693750881971
+
+relax> spectrum.error_analysis(subset=['800_ref', '800_ncyc12', '800_ncyc1', '800_ncyc10', '800_ncyc2', '800_ncyc8', '800_ncyc3', '800_ncyc6', '800_ncyc4', '800_ncyc5', '800_ncyc1b', '800_ncyc2b', '800_ncyc3b'])
+Intensity measure:  Peak heights.
+Replicated spectra:  Yes.
+All spectra replicated:  No.
+
+Replicated spectra:  ['800_ncyc1', '800_ncyc1b']
+Standard deviation:  49429.299098
+
+Replicated spectra:  ['800_ncyc2', '800_ncyc2b']
+Standard deviation:  37546.6781406
+
+Replicated spectra:  ['800_ncyc3', '800_ncyc3b']
+Standard deviation:  87789.4493098
+
+Variance averaging over all spectra.
+Standard deviation for all spins:  34894.56205198071
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+
+relax> pipe.switch(pipe_name='R2eff')
+
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Spin ':135@S'.
+Spin ':135@F'.
+Spin ':137@S'.
+Spin ':137@F'.
+
+relax> relax_disp.plot_disp_curves(dir='temp/R2eff', force=True)
+Opening the file 'temp/R2eff/disp_135_S.agr' for writing.
+Opening the file 'temp/R2eff/disp_135_F.agr' for writing.
+Opening the file 'temp/R2eff/disp_137_S.agr' for writing.
+Opening the file 'temp/R2eff/disp_137_F.agr' for writing.
+Opening the file 'temp/R2eff/grace2images.py' for writing.
+
+relax> value.write(param='r2eff', file='r2eff.out', dir='temp/R2eff', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file 'temp/R2eff/r2eff.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir='temp/R2eff', force=True, norm=False)
+Opening the file 'temp/R2eff/r2eff.agr' for writing.
+
+relax> results.write(file='results', dir='temp/R2eff', compress_type=1, force=True)
+Opening the file 'temp/R2eff/results.bz2' for writing.
+RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
+
+relax> state.save(state='final_state', dir='temp', compress_type=1, force=True)
+Opening the file 'temp/final_state.bz2' for writing.
+
+relax> state.save(state='r2eff_values', dir=None, compress_type=1, force=True)
+Opening the file 'r2eff_values.bz2' for writing.
+
+relax> pipe.switch(pipe_name='base pipe')
+
+relax> results.write(file='base_pipe', dir=None, compress_type=1, force=True)
+Opening the file 'base_pipe.bz2' for writing.
+
