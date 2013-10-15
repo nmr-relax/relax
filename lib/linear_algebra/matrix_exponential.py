@@ -19,9 +19,36 @@
 #                                                                             #
 ###############################################################################
 
+# Module docstring.
+"""Module for the calculation of the matrix exponential."""
 
-__all__ = [
-    'test___init__',
-    'test_kronecker_prod',
-    'test_matrix_exponential'
-]
+# Python module imports.
+from numpy import diag, dot, exp, iscomplex
+from numpy.linalg import eig, inv
+
+
+def matrix_exponential(A):
+    """Calculate the exact matrix exponential using the eigenvalue decomposition approach.
+
+    @param A:   The square matrix to calculate the matrix exponential of.
+    @type A:    numpy rank-2 array
+    @return:    The matrix exponential.  This will have the same dimensionality as the A matrix.
+    @rtype:     numpy rank-2 array
+    """
+
+    # Is the original matrix real?
+    complex_flag = iscomplex(A[0][0])
+
+    # The eigenvalue decomposition.
+    W, V = eig(A)
+
+    # Calculate the exact exponential.
+    eA = dot(dot(V, diag(exp(W))), inv(V))
+
+    # Return the complex matrix.
+    if complex_flag:
+        return eA
+
+    # Return only the real part.
+    else:
+        return eA.real

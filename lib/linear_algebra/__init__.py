@@ -24,5 +24,6 @@
 
 __all__ = [
     'kronecker_product',
+    'matrix_exponential',
     'matrix_power'
 ]
