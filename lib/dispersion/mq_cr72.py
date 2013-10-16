@@ -28,8 +28,7 @@ The Carver and Richards (1972) 2-site model for all times scales was extended fo
 """
 
 # Python module imports.
-from math import acosh, cos, cosh, log, sin
-from numpy import sqrt
+from numpy import arccosh, cos, cosh, log, sin, sqrt
 
 
 def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -72,17 +71,18 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
     pApBkex2 = k_AB * k_BA
     sqrt_pApBkex2 = sqrt(pApBkex2)
     isqrt_pApBkex2 = 1.j*sqrt_pApBkex2
-    sqrt_pApB = sqrt(pA*pB)
+    sqrt_pBpA = sqrt(pB/pA)
+    ikex = 1.j*kex
 
     # The d+/- values.
-    d = dw + dwH
-    dpos = d + 1.j*kex
-    dneg = d - 1.j*kex
+    d = dwH + dw
+    dpos = d + ikex
+    dneg = d - ikex
 
     # The z+/- values.
-    z = dw - dwH
-    zpos = z + 1.j*kex
-    zneg = z - 1.j*kex
+    z = dwH - dw
+    zpos = z + ikex
+    zneg = z - ikex
 
     # The Psi and zeta values.
     fact = 1.j*dwH + k_BA - k_AB
@@ -118,17 +118,17 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
         mZ = -isqrt_pApBkex2 / (dneg * zneg) * (dneg - 2.0*dw*sin(dneg*delta)/sin((dneg + zneg)*delta))
 
         # The Q value.
-        Q = 1 - mD**2 + mD*mZ - mZ**2 + 0.5*(mD + mZ)*sqrt_pApB
+        Q = 1 - mD**2 + mD*mZ - mZ**2 + 0.5*(mD + mZ)*sqrt_pBpA
         Q = Q.real
 
         # Part of the equation (catch values < 1 to prevent math domain errors).
         part = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-        if part < 1.0:
+        if part.real < 1.0:
             back_calc[i] = 1e100
             continue
 
         # The first eigenvalue.
-        lambda1 = r20_kex - cpmg_frqs[i] * acosh(part)
+        lambda1 = r20_kex - cpmg_frqs[i] * arccosh(part)
 
         # The full formula.
-        back_calc[i] = lambda1.real - cpmg_frqs[i] * log(Q) * power[i]
+        back_calc[i] = lambda1.real - cpmg_frqs[i] * log(Q) / power[i]
