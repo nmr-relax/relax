@@ -114,6 +114,13 @@ For the $\Ronerho$-type experiments, the numeric models currently supported are:
 \end{description}
 
 
+For the MQ CPMG-type experiments, the analytic models currently supported are:
+
+\begin{description}
+\item[`MQ CR72':]\index{relaxation dispersion!MQ CR72 model}  The Carver and Richards (1972) 2-site model for all time scales expanded for MQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ CR72 model} on page~\pageref{sect: dispersion: MQ CR72 model}.
+\end{description}
+
+
 For the MQ CPMG-type experiments, the numeric models currently supported are:
 
 \begin{description}
@@ -566,6 +573,69 @@ This is the model for 2-site exchange for off-resonance $\Ronerho$-type experime
 This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS R1rho 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+
+
+% The analytic MQ CPMG models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{The analytic MQ CPMG models}
+\label{sect: dispersion: analytic MQ CPMG models}
+\index{relaxation dispersion!Analytic MQ CPMG model|textbf}
+
+
+% MQ CR72 model.
+%~~~~~~~~~~~~~~~
+
+\subsection{The MQ CR72 model}
+\label{sect: dispersion: MQ CR72 model}
+\index{relaxation dispersion!MQ CR72 model|textbf}
+
+This is the analytic CR72 model for 2-site exchange on all times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple quantum data by \citet{Korzhnev04a}.
+It is selected by setting the model to `MQ CR72'.
+The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+The equation for the exchange process is 
+\begin{equation}
+    \Rtwoeff = \Re(\lambda_1) - \frac{\nucpmg}{n}\ln(Q),
+\end{equation}
+
+where
+\begin{align}
+    \lambda_1 &= \RtwozeroMQ + \frac{\kex}{2} - \nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big), \\
+    D_\pm     &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
+    \eta_\pm  &= 2^{\frac{2}{3}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
+    \Psi      &= \left( \imath \dwH + \pA\kex - \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
+    \zeta     &= -2\dw \left( \imath \dwH + \pA\kex - \pB\kex \right),
+\end{align}
+
+and where
+\begin{equation}
+    Q = \Re \left( 1 - m_{D+}^2 + m_{D+} m_{Z+} - m_{Z+}^2 + \frac{m_{D+} + m_{Z+}}{2} \sqrt{\frac{\pB}{\pA}} \right),
+\end{equation}
+
+and
+\begin{align}
+    m_{D\pm} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_\pm z_\pm} \left( z_\pm + 2\dw \frac{\sin(z_\pm\delta)}{\sin((d_\pm + z_\pm)\delta)} \right), \\
+    m_{Z\mp} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_\pm z_\pm} \left( d_\pm - 2\dw \frac{\sin(d_\pm\delta)}{\sin((d_\pm + z_\pm)\delta)} \right),
+\end{align}
+
+and
+\begin{align}
+    d_\pm    &= \left( \dwH + \dw \right) \pm \imath\kex, \\
+    z_\pm    &= \left( \dwH - \dw \right) \pm \imath\kex.
+\end{align}
+
+The symbol $\delta$ is half of $\taucpmg$ or
+\begin{equation}
+    \delta = \frac{1}{4\nucpmg}.
+\end{equation}
+
+The references for this model are:
+\begin{itemize}
+\item \bibentry{Korzhnev04a}
+\item \bibentry{Korzhnev04b}
+\end{itemize}
+
 
 
 % The numeric MQ CPMG models.
