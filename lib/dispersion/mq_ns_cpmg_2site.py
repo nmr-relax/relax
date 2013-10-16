@@ -121,7 +121,6 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
         M1 = matrix_exponential(m1*tcp[i])
         M2 = matrix_exponential(m2*tcp[i])
 
-
         # The complex conjugates M1* and M2*
         M1_star = conj(M1)
         M2_star = conj(M2)
