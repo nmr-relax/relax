@@ -1129,10 +1129,47 @@ This will start the auto-analysis.
 
 
 
+% TODO.
+%%%%%%%
+
+\section{To do -- dispersion features yet to be implemented}
+\label{sect: dispersion: TODO}
+
+The capabilities of the relaxation dispersion analysis in relax is expansive but it cannot be called complete.
+There are a number of features and models yet to be implemented.
+Missing features include:
+\begin{itemize}
+\item The handling of off-resonance effects in the models of the numeric solution for CPMG-type data.
+This is specifically the `NS CPMG 2-site 3D' and `NS CPMG 2-site star' models and their `* full' equivalents.
+The necessary infrastructure is in place, but not activated yet (mainly due to a lack of synthetic data to test against).
+\item Multi-state data -- the handling of data from two sets of peaks from the same spin system is not properly supported.
+It is currently handled by assuming each state is a separate spin system but this means that $\dw$, $\dwH$ and related parameters are not shared as they should be.
+\item The van't Hoff analysis of multi-temperature dispersion data (see \url{https://en.wikipedia.org/wiki/Van\_\%27t\_Hoff\_equation}).
+\item HD exchange.
+\end{itemize}
+
+If you would like one of these features, please contact the ``relax-devel at gna.org''\index{mailing list!relax-devel} mailing list.
+The most useful would be if you have synthetic data whereby you know what the true solution should be.
+This can then be incorporated into a relax system test and the feature implemented to allow the test to pass.
+Note that such data should never be emailed to a public mailing list!
+Synthetic data, or experimental data, can be obtained from the literature.
+
+Some of the missing models include:
+\begin{description}
+\item[`NS CPMG 3-site':]\index{relaxation dispersion!NS CPMG 3-site model}  The model of the numeric solution for 3-site exchange for CPMG-type data.
+\item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model of the numeric solution for 3-site exchange for $\Ronerho$-type data.
+\item[`MQ NS $\Ronerho$ 2-site':]\index{relaxation dispersion!MQ NS R1rho 2-site model}  The model of the numeric solution for 2-site exchange for multiple quantum $\Ronerho$-type data.
+\item[`MQ NS CPMG 3-site':]\index{relaxation dispersion!MQ NS CPMG 3-site model}  The model of the numeric solution for 3-site exchange for multiple quantum CPMG-type data.
+\item[`MQ NS $\Ronerho$ 3-site':]\index{relaxation dispersion!MQ NS R1rho 3-site model}  The model of the numeric solution for 3-site exchange for multiple quantum $\Ronerho$-type data.
+\end{description}
+
+Information for how these can be added is given in the next section.
+
+
 % Tutorial - adding models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Tutorial for adding relaxation dispersion models}
 \label{sect: dispersion: model tutorial}
 
-As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!CPMG-type experiment} or $\Ronerho$-type\index{relaxation dispersion!$\Ronerho$-type experiment} experiments in relax.  However it is not too difficult to add new models for your own needs if you have some Python, Matlab, Mathematica, or similar scripting skills.  The steps required are detailed on the \href{http://wiki.nmr-relax.com/}{relax wiki} page for the \href{http://wiki.nmr-relax.com/Tutorial\_for\_adding\_relaxation\_dispersion\_models\_to\_relax}{tutorial for adding relaxation dispersion models to relax}.
+As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!CPMG-type experiment} or $\Ronerho$-type\index{relaxation dispersion!$\Ronerho$-type experiment} experiments in relax.  However it is not too difficult to add new models for your own needs if you have some Python, Matlab, Mathematica, or similar scripting skills.  The steps required are detailed on the \href{http://wiki.nmr-relax.com/}{relax wiki} page \url{http://wiki.nmr-relax.com/Tutorial\_for\_adding\_relaxation\_dispersion\_models\_to\_relax}.
