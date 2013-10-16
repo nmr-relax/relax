@@ -159,22 +159,22 @@ This is the simplest of all models in that the dispersion component of the base 
 
 For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ronerho$ values are determined by direct calculation using the formula
 \begin{equation}
-    R_{2\textrm{eff}}(\nucpmg) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
+    \Rtwoeff(\nucpmg) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
 The values and errors are determined with a single call of the \uf{calc} user function.  The $\Ronerho$ version of the equation is essentially the same:
 \begin{equation}
-    R_{1\rho}(\omega_1) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
+    \Ronerho(\omega_1) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
 \end{equation}
 
 Errors are calculated using the formula
 \begin{equation} \label{eq: dispersion error}
-    \sigma_{\textrm{R}_2} = \frac{1}{T_\textrm{relax}} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
+    \sigma_{\Rtwo} = \frac{1}{T_\textrm{relax}} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
 \end{equation}
 
 In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.  This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
 \begin{equation} \label{eq: IT05 dispersion error}
-    \sigma_{\textrm{R}_2} = \frac{\sigma_{I_1}}{T_\textrm{relax} I_1(\omega_1)} .
+    \sigma_{\Rtwo} = \frac{\sigma_{I_1}}{T_\textrm{relax} I_1(\omega_1)} .
 \end{equation}
 
 This is not implemented in relax as it can be shown by simple simulation that the formula is incorrect (see Figure~\ref{fig: dispersion error comparison}).  This formula significantly underestimates the real errors.  The use of the same $I_0$ value for all dispersion points does not cause a decrease in the $\Rtwoeff$ error but rather a correlation in the errors.
@@ -228,7 +228,7 @@ The original $n$-site Equation~(7) from their paper can be written as:
 
 or rearranged as:
 \begin{equation} \label{eq: Luz-Meiboom}
-    \Rex = \sum_{i=2}^n \frac{\Phi_\textrm{ex,i}}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right) ,
+    \Rex = \sum_{i=2}^n \frac{\Phiexi}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right) ,
 \end{equation}
 
 
@@ -254,7 +254,7 @@ This is the original \citet{LuzMeiboom63} model for 3-site fast exchange for CPM
 It is selected by setting the model to `LM63 3-site'.
 Taking the original Equation~\ref{eq: Luz-Meiboom}, the equation for 3-site exchange is simply:
 \begin{equation}
-    \Rex = \sum_{i=2}^3 \frac{\Phi_\textrm{ex,i}}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right) ,
+    \Rex = \sum_{i=2}^3 \frac{\Phiexi}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right) ,
 \end{equation}
 
 The reference for this equation is:
@@ -307,15 +307,15 @@ This is the model for 2-site exchange on all times scales (with the constraint t
 It is selected by setting the model to `CR72 full'.
 The equation is
 \begin{equation}
-    \Rtwoeff = \frac{1}{2} \Big( \textrm{R}_\textrm{2A}^0 + \textrm{R}_\textrm{2B}^0 + \kex - 2\nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) \Big) ,
+    \Rtwoeff = \frac{1}{2} \Big( \RtwozeroA + \RtwozeroB + \kex - 2\nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) \Big) ,
 \end{equation}
 
 where
 \begin{align}
     D_\pm    &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
     \eta_\pm &= 2^{\frac{2}{3}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
-    \Psi     &= \left( \textrm{R}_\textrm{2A}^0 - \textrm{R}_\textrm{2B}^0 - \pA\kex + \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
-    \zeta    &= 2\dw \left( \textrm{R}_\textrm{2A}^0 - \textrm{R}_\textrm{2B}^0 - \pA\kex + \pB\kex \right).
+    \Psi     &= \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
+    \zeta    &= 2\dw \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right).
 \end{align}
 
 The reference for this equation is:
