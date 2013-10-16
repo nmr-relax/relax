@@ -165,16 +165,16 @@ spin70 = return_spin(":70")
 spin71 = return_spin(":71")
 
 # Set the initial parameter values (from the CR72 model).
-spin70.r2 = [7.011, 9.465]
-spin70.pA = 0.990
-spin70.dw = 5.577
-spin70.kex = 1765.993
-spin70.chi2 = 18.450
-spin71.r2 = [4.978, 10.0]
-spin71.pA = 0.997
-spin71.dw = 4.460
-spin71.kex = 1879.584
-spin71.chi2 = 1.379
+spin70.r2 = [6.972410747346718, 9.404991115575587]
+spin70.pA = 0.989863340969402
+spin70.dw = 5.607897281786709
+spin70.kex = 1758.043421316185459
+spin70.chi2 = 55.341147669668452
+spin71.r2 = [4.981350615734756, 10.0]
+spin71.pA = 0.996612283732306
+spin71.dw = 4.347174100886806
+spin71.kex = 1935.650258540921413
+spin71.chi2 = 5.517033650699763
 
 # Optimisation.
 #grid_search(lower=None, upper=None, inc=6, constraints=True, verbosity=1)
@@ -184,7 +184,7 @@ spin71.dwH = 0.0
 minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
 # Results output.
-results_dir = data_path + sep + model
+results_dir = data_path + sep + 'relax_results' + sep + model
 relax_disp.plot_disp_curves(dir=results_dir, force=True)
 value.write(param='pA', file='pA.out', dir=results_dir, scaling=1.0, comment=None, bc=False, force=True)
 value.write(param='pB', file='pB.out', dir=results_dir, scaling=1.0, comment=None, bc=False, force=True)

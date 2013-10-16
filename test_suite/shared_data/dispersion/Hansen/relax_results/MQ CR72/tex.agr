@@ -28,7 +28,7 @@
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
 @type xy
-70                             0.000290569839625             
-71                             0.000195942996808             
+70                             0.000291556424251             
+71                             0.000278811966193             
 &
 @autoscale
