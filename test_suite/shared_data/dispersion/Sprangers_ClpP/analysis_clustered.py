@@ -27,7 +27,7 @@ GRID_INC = 11
 MC_NUM = 3
 
 # The results directory.
-RESULTS_DIR = 'analysis'
+RESULTS_DIR = 'analysis_clustered'
 
 
 # Set up the data pipe.
@@ -114,9 +114,13 @@ value.set(val=0.010, param='dwH', spin_id=":137")
 #value.set(val=0.5, param='pA')
 #value.set(val=67.5, param='kex')
 
+# Cluster all spins.
+relax_disp.cluster(cluster_id='all', spin_id=":135-137")
+
+
 
 # Auto-analysis execution.
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, pre_run_dir='analysis', models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
