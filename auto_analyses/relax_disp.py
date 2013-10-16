@@ -191,6 +191,9 @@ class Relax_disp:
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR] and MODEL_CR72 in self.models:
             nested_pipe = MODEL_CR72
             analytic = True
+        elif model == MODEL_MQ_NS_CPMG_2SITE and MODEL_MQ_CR72 in self.models:
+            nested_pipe = MODEL_MQ_CR72
+            analytic = True
 
         # No nesting.
         if not nested_pipe:
