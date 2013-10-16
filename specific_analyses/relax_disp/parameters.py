@@ -657,7 +657,7 @@ def loop_parameters(spins=None):
                     # Yield the data.
                     yield 'r2b', param_index, spin_index, frq_index
 
-        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw' and 'dwH' (one per spin).
+        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2' and 'dw' (one per spin).
         for spin_index in range(len(spins)):
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
@@ -675,6 +675,9 @@ def loop_parameters(spins=None):
             if 'dw' in spins[spin_index].params:
                 param_index += 1
                 yield 'dw', param_index, spin_index, None
+
+        # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
+        for spin_index in range(len(spins)):
             if 'dwH' in spins[spin_index].params:
                 param_index += 1
                 yield 'dwH', param_index, spin_index, None
