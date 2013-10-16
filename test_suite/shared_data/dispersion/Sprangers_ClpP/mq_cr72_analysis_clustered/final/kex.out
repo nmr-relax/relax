@@ -1,0 +1,7 @@
+# Parameter description:  The exchange rate.
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   
+None          135        None        None        S                286.743720388767        4.49912072663836    
+None          135        None        None        F                286.743720388767        4.49912072663836    
+None          137        None        None        S                286.743720388767        4.49912072663836    
+None          137        None        None        F                286.743720388767        4.49912072663836    
