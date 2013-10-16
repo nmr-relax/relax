@@ -69,8 +69,7 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
     dw2 = dw**2
     r20_kex = r20 + kex/2.0
     pApBkex2 = k_AB * k_BA
-    sqrt_pApBkex2 = sqrt(pApBkex2)
-    isqrt_pApBkex2 = 1.j*sqrt_pApBkex2
+    isqrt_pApBkex2 = 1.j*sqrt(pApBkex2)
     sqrt_pBpA = sqrt(pB/pA)
     ikex = 1.j*kex
 
@@ -98,7 +97,7 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
     Dneg = 0.5 * (-1.0 + D_part)
 
     # Partial eta+/- values.
-    eta_scale = sqrt(2.0)
+    eta_scale = 2.0**(-3.0/2.0)
     etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
     etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
 
@@ -108,8 +107,8 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
         delta = tcp[i]
 
         # The full eta+/- values.
-        etapos = etapos_part * delta
-        etaneg = etaneg_part * delta
+        etapos = etapos_part / cpmg_frqs[i]
+        etaneg = etaneg_part / cpmg_frqs[i]
 
         # The mD value.
         mD = isqrt_pApBkex2 / (dpos * zpos) * (zpos + 2.0*dw*sin(zpos*delta)/sin((dpos + zpos)*delta))
