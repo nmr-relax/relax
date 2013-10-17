@@ -1,3 +1,137 @@
+Version 3.0.1
+(17 October 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.0.1
+
+    Features:
+        * Improved handling of peak lists.
+        * Simplification of the user function GUI elements for those associated with the free file format.
+        * Support for the reading of chemical shifts into the relax data store with the new  chemical_shift.read user function.
+        * Improvements to the appearance of the GUI by using more unicode.
+        * Redesign of the model list GUI element used in the model-free analysis.
+
+
+    Changes:
+        * The font size is no longer set for the latex2html compiled user manual.
+        * A number of updates and improvements to the document explaining how to setup a Mac OS X framework.  This Framework Python setup is used to build the binary distribution files.
+        * Updated the Mac Framework testing script to handled 4-way binaries (ppc74 included).
+        * Better support for 4-way binaries in the Mac OS X Framework detection script.
+        * Added support for the 'current ar archive random library' file type in the Mac OS X Framework testing script.
+        * Added py2app to the Mac OS X Framework setup instructions.
+        * Shifted code from pipe_control.spectrum to the new lib.spectrum.peak_list relax library module.  This follows from http://thread.gmane.org/gmane.science.nmr.relax.devel/3972/focus=4347.
+        * Added a special script for locating all Python versions and printing out the installed modules.
+        * Large change to the free file format GUI element for the user functions.  The GUI element used in the user function wizard windows has been modified to have both a 'default' form, which is the previous design, and a 'mini' form which is now used for the user functions.  This mini form only uses 1 row, rather than the default of 6 or 8.  It is a read only text element with a button that launches the free file format window.  The amount of space saved is huge.
+        * Improved the text for the mini free file format GUI element.
+        * Updated all of the user function GUI window sizes for the 'mini' free file format GUI element.  This allows much more text of the description to be displayed.
+        * Updated the Mac Framework setup document to help with scipy compilation problems.
+        * Improved the Python seeking and module version print out script for symlinks.  This should now be much more capable of finding all Python versions on a system.
+        * Added support for the Mac OS X Modelfree4 binary results to the Palmer.* system tests.  The Mac OS X Modelfree 4.20 binary produces different results than the Linux binaries, mainly due to a compilation problem.  In the Linux binaries, the results are written out to 4 decimal places.  In the Mac binaries, the results are instead written out to 4 significant figures.  Therefore the number of decimal places are much less than the Linux results.
+        * Syntax error fix for one of the unused scripts in the relax test suite shared data directories.  This problem was encountered by Jack Howarth <howarth att bromo dott med dott uc dott edu> and communicated in a private message.  The issue was found by fink.  This script is never used and will never be used again - it is only there for reference.
+        * Modification of the spectrum.read_intensities user function front end.  The heteronuc and proton arguments have been eliminated.  Instead the new dim argument is used to associate the data with the spins of any dimension in the peak list.
+        * Replaced the 'heteronuc' and 'proton' arguments of the spectrum.read_intensities user function backend with 'dim'.
+        * Created the new lib.spectrum.objects module.  This will hold temporary data structures for representing peak lists and other spectral data.  The module currently contains the Peak_list class which is used to hold peak list data.
+        * Started to shift the spectrum.read_intensities user function backend to use lib.spectrum.peak_list.
+        * The pipe_control.spectrum.read_intensities() function now works with the Peak_list object.
+        * The Peak_list object is now used by the lib.spectrum.peak_list.read_peak_list() function.
+        * The lib.software.sparky.read_list_intensity() function now operates on the Peak_list object.
+        * Changed the spectrum.read_intensities dim argument default to w2 and improved the long description.
+        * Fix for the assignment handling in the lib.software.sparky.read_peak_list() function.  The first element is usually the indirect dimension or w2.
+        * Fix for many of the Peak_list system tests for the user function argument changes.  The heteronuc and proton arguments have been replaced by the dim argument.
+        * The lib.software.xeasy.read_list_intensity() function now operates on the Peak_list object.
+        * The lib.software.nmrview.read_list_intensity() function now operates on the Peak_list object.
+        * The lib.spectrum.peak_list.intensity_generic() function now operates on the Peak_list object.
+        * Fixes for the pipe_control.spectrum.read() function.  An error was referencing a now non-existent variable and the docstring has been fixed.
+        * The Peak_list object can now store peak intensity names.  This is for peak lists such as from NMRPipe seriersTab files where the peak list covers multiple spectra.
+        * The NMRPipe seriesTab peak lists are now supported through the Peak_list object.
+        * Unit test fixes for the spectrum.read_intensities user function argument changes.
+        * Fixes for a few system tests for the spectrum.read_intensities user function argument changes.
+        * Fixes for a few GUI tests for the spectrum.read_intensities user function argument changes.
+        * Changes for the spectrum.read_intensities user function dim argument.  The default is now w1, the indirect dimension in a 2D experiment.  The description has also been fixed.
+        * Fixes for all of the peak intensity reading functions - the w1 and w2 dimensions were swapped.
+        * Updates to the sample scripts for the spectrum.read_intensities user function argument changes.
+        * Updates to the user manual for the spectrum.read_intensities user function argument changes.
+        * Created the Chemical_shift.test_read_sparky system test for the reading of chemical shifts.  This is for the reading of shifts from a Sparky peak list.  It tests the currently non-existent chemical_shift.read user function.
+        * Created some incredibly basic icons for the chemical shift user functions.  These are simply an omega symbol and will need to be replaced by something better in the future.
+        * Created the chemical_shift.read user function.  This includes both the front and back end code.
+        * Shifted all the modules from lib.software to do with peak lists to lib.spectrum.  This is for a more logical organisation, as these modules are solely used by the lib.spectrum.peak_list module.
+        * Renamed all of read_*() functions of the lib.spectrum modules for consistency.  These functions will now be used to read all types of data from a peak list, from the assignments to chemical shifts to peak intensities, and everything in between.
+        * Modified the peak list object.  The peak list dimensionality variable is no longer private, and many values of None are now converted to lists of None so that the peak list data is easier to handle.
+        * Fix for the proton name in the new Chemical_shift.test_read_sparky system test.
+        * Expanded the functionality of the lib.spectrum.sparky.read_list() function.  Now the dimensionality of the peak list is automatically determined, and all peak lists from 1D to 4D are supported.  The chemical shifts are also automatically detected and extracted from the list and placed into the peak list object.  The peak intensity data is also automatically detected,therefore the int_col argument is no longer used.
+        * The lib.spectrum.sparky.read_list() function can now auto-detect the peak volume column and use it for intensities.
+        * Created the Chemical_shift.test_read_xeasy system test.  This is for checking the reading of chemical shifts from a 2D XEasy peak list.
+        * Implemented the reading of chemical shifts in the lib.spectrum.xeasy.read_list() function.
+        * Created the Chemical_shift.test_read_nmrview system test.  This, if not obvious from the name, is for checking the reading of chemical shifts from an NMRView peak list.
+        * Implemented the reading of chemical shifts in the lib.spectrum.nmrview.read_list() function.
+        * Assignments can now contain lowercase letters in Sparky and NMRPipe seriesTab peak lists.
+        * Fix for the unit test for the reading of intensities from Sparky peak lists.
+        * Updated the nmrPipe processing script in the relax user manual.  This is in response to the post by Troels Linnet at http://thread.gmane.org/gmane.science.nmr.relax.user/1520.  The text has also been expanded to better explain spectral processing.
+        * Improvements for the description of the NMRPipe processing script in the R1/R2 chapter of the user manual.
+        * LaTeX fix for the curvefit chapter of the user manual.
+        * The isInf() and isNan() functions of lib.float can now handle values of None.  If None is encountered, the functions simply return False.
+        * The model-free optimisation code now handles minfx returning nothing.  This is due to the fix of bug #21001 (https://gna.org/bugs/?21001) in relax, which is really a fix for an upstream minfx (https://gna.org/projects/minfx/) bug (bug #21090 at https://gna.org/bugs/?21090).
+        * Created the Mf.test_bug_21079_local_tm_global_selection system test.  This is to catch bug #21079 (https://gna.org/bugs/?21079).
+        * Extended the Mf.bug_21079_local_tm_global_selection system test for all Monte Carlo simulation steps.
+        * The model_free.select_model user function GUI element now uses unicode for the model parameters.  The tau character is now used for the tm, te, tf, and ts parameters.  And a superscript 2 is used for the order parameters.
+        * The model lists in the model-free GUI auto-analysis now use unicode for the S2 parameters.
+        * The peak intensity wizard in the GUI is now more robust.  The wizard_update_ids() method can now better handle missing data.  This is encountered if a user skips the first elements of the wizard.
+        * Created Wiz_window.setup_page() for user function wizard pages to allow for simpler GUI tests.  This method can be used to setup any user function wizard page with all its arguments set.  It accepts all keyword arguments and sets these for the wizard page, translating to GUI strings as needed.  This should save a lot of lines in the GUI tests.
+        * Simplified the Noe.test_noe_analysis GUI test by using the new Wiz_window.setup_page() method.
+        * Python 3 fixes for all of the unicode strings in relax.  Instead of using the u"xyz" notation, now unicode("xyz") is being used.  This works as the relax compat module sets the builtin unicode() function to str() for Python 3, as all strings in Python 3 are unicode and hence both the Python 2 u"xyz" and unicode() code are undefined in Python 3.
+        * Defined two new functions called u() in the compat module for better unicode string support.  The two functions are defined differently for Python2 and Python3.  The Python3 function simply returns the text unmodified, as all strings are unicode.  The Python2 function converts the str type to a unicode type.
+        * The new compat.u() function is now being used for all unicode strings.
+        * All "local tm" text in the GUI now uses a subscript m unicode character as well as the tau character.
+        * Created the pipe_control.spectrum.test_spectrum_id() function for checking if a spectrum ID exists.
+        * Renamed pipe_control.spectrum.test_spectrum_id() to check_spectrum_id().  A bug in the function was also removed, and the other code in the module now uses this function.
+        * Created the pipe_control.mol_res_spin.check_mol_res_spin_data() function.  This will check for the existence of molecule, residue and spin data and raise a RelaxError if none exists.
+        * Simplification of the data checks in the pipe_control.spectrum module.  This is using the new pipe_control.*.check*() functions.
+        * Huge speed up of the GUI tests by the removal of the N_state_model.test_populations test.  This problem was identified by running the GUI tests with the '--time' flag.  One one test machine, this single test took ~142 seconds to complete when the entire GUI tests took ~242 seconds (i.e. this one test took up to 60% of the whole test suite).  This test comes directly from a system test, but the equivalent system test only takes about 6 seconds to complete.  The difference is due to the slow generation of the user function GUI pages.
+        * Created the new RelaxNoPeakIntensityError error object.
+        * The compat.SYSTEM variable is now set to 'Windows' when 'Microsoft' is detected.  This is for easier identification of MS Windows systems, as either string could be used.
+        * Created the new gui.text module for holding all of the unicode text for the GUI.  This module contains unicode strings for the various analysis types, which are then all defined in one location.  This is for consistency.
+        * Converted the model-free user function definitions to use the new gui.text module strings.
+        * Shifted the gui.text module to lib.text.gui to avoid a fatal circular import in the GUI.
+        * MS Windows fixes for the GUI for missing unicode font glyphs.
+        * Added some Mac OS X GUI string fixes for missing unicode characters to lib.text.gui.
+        * The size of the model list GUI window can now be changed.
+        * Redesign of the model list GUI element.  The wx.ListCtrl element has been replaced by a wx.FlexGridSizer combined with wx.CheckBox and wx.StaticText.  The result is a much nicer formatting of the element.  The checkboxes in the old element displayed slight rendering problems on all operating systems and did not look neat.  The new design is also more flexible in that models of None are now treated as separators in the window.
+        * The model list GUI element can now display an optional model description column.
+        * Added model descriptions and adjusted the size of the model-free model list GUI elements.
+        * Refinements for the model list GUI window.  The font for all text elements is now set.  And the elements of the wx.FlexGridSizer are now vertically centred so that the text of the checkboxes and text elements line up perfectly.
+        * The size of the model list GUI window is now automatically set to the best fit.
+        * The model list GUI element is now centred after the autosizing.
+        * The titles in the model list GUI window now use a smaller font size.
+        * Update of the description of the interatom.define user function.
+        * Added multi-processor support for Monte Carlo simulations.  This simply involves accessing the multi-processor box singleton and running the processor.run_queue() method within the pipe_control.minimise.minimise() function.  This currently does nothing as the processor queue is always empty.  But if the code in the specific_analyses package is modified to add slave commands to the processor but not execute the run_queue() method, then the Monte Carlo simulations will be automatically parallelised.
+        * Updated the spectrum.error_analysis user function backend to use the lib.statistics.std() function.  This simplifies the code.  It affects only the peak intensity error analysis when spectra have been replicated.
+        * Created the Structure.test_bug_21187_corrupted_pdb system test to catch bug #21187.  The bug at https://gna.org/bugs/?21187 was reported by Martin Ballaschk (https://gna.org/users/mab).
+        * Bug fix for the specific analysis API _data_init_spin() method.  This is used for the API init_spin() method.  This is a latent bug which does not affect any of the current analyses in relax.  It was discovered in the relaxation dispersion branch.
+        * Addded a new is_queued() method to the Processor object of the multi package.  This allows the Processor object for the uni and mpi4py multi-processor to be queried to see if any slave commands have been queued.
+        * Created a unit test for the lib.linear_algebra.matrix_exponential module.  This module does not exist yet, but it will be used to replace the scipy.linalg.expm() function use in the relaxation dispersion branch.
+        * Loosened the lib.linear_algebra.matrix_exponential.matrix_exponential() unit test checks.
+        * Implemented the lib.linear_algebra.matrix_exponential.matrix_exponential() function.  This handles square matrices in either complex or real form.
+        * Created the lib.check_types.is_complex() function.  This is used to determine if a number is a Python or numpy complex type.
+        * The lib.linear_algebra.matrix_exponential.matrix_exponential() function now uses lib.check_types.is_complex().  This fixes the function for complex matrices.
+        * Created a new unit test for lib.linear_algebra.matrix_exponential.matrix_exponential() for complex matrices.
+        * Fix for the new lib.linear_algebra.matrix_exponential.matrix_exponential() function.  This function now returns a numpy array type rather than matrix type.
+
+
+    Bugfixes:
+        * Bibtex fixes required for proper latex2html compilation.
+        * Fix for the Palmer.test_palmer_omp for the different Modelfree4 binaries.  The gcc and pdf binaries are now properly detected and the slightly different results are now correctly checked for.
+        * The graphics.fetch_icon() function can now return either the absolute or relative path to the icon.  This is a partial solution for bug #21042 (https://gna.org/bugs/?21042).
+        * Fix for bug #21042 (https://gna.org/bugs/?21042).  The docs/latex/fetch_docstrings.py now asks the graphics.fetch_icon() function for the relative path to the icon rather than the absolute path.
+        * The fetch_docstrings.py script now asks for the Unix '/' separator through graphics.fetch_icon().  This is a final fix for bug 21042 (https://gna.org/bugs/?21042).  The graphics.fetch_icon() function now accepts the 'sep' argument.  This defaults to os.sep.  But the docs/latex/fetch_docstrings.py script uses the Unix '/' separator to obtain a LaTeX correct path on MS Windows.
+        * Modified the create_mc_data() method to partly fix bug #21079 (https://gna.org/bugs/?21079).  Some spins with local tm models remain selected despite not containing any data.  These are handled explicitly.  Instead of a RelaxNoModelError being raised, the method returns None to indicate that something went wrong.
+        * Final fix for bug #21079 (https://gna.org/bugs/?21079).  This is the failure of the dauvergne_protocol auto-analysis when the "local tm" global model is selected.  The Monte Carlo create_data() method not skips data from the base_data_loop() if the create_mc_data() method returns None.
+        * Fix for bug #21097 (https://gna.org/bugs/?21097).  This was a simple typo.  It has not been encountered before because it is in a rarely encountered RelaxError.
+        * Fix for bibtex warning 'Warning--string name "mb" is undefined'.  Progress sr #3071: https://gna.org/support/index.php?3071 - Implementation of Tollinger/Kay dispersion model (2001).  Following the guide at: http://wiki.nmr-relax.com/Tutorial_for_adding_relaxation_dispersion_models_to_relax.
+        * Fix for latex bibtex string 'cp' instead of 'cj'.  Progress sr #3071: https://gna.org/support/index.php?3071 - Implementation of Tollinger/Kay dispersion model (2001).  Following the guide at: http://wiki.nmr-relax.com/Tutorial_for_adding_relaxation_dispersion_models_to_relax.
+        * Another fix for bibtex string 'cp' instead of 'cj'.  Progress sr #3071: https://gna.org/support/index.php?3071 - Implementation of Tollinger/Kay dispersion model (2001).  Following the guide at: http://wiki.nmr-relax.com/Tutorial_for_adding_relaxation_dispersion_models_to_relax.
+        * Fix for bug #21187 - the corrupted PDB issue with protons atom numbers of zero.  The bug at https://gna.org/bugs/?21187 was reported by Martin Ballaschk (https://gna.org/users/mab).  The fix was to allow for spin containers in the relax data store to have the same atom number, as long as the atom names are different.
+        * Modified the Monte Carlo simulation printout behaviour for the minimisation related user functions.  This is to help in fixing bug #21190 (https://gna.org/bugs/?21190).  This includes the calculate, grid_search, and minimise user functions.  The new multi-processor is_queued() method is used to determine if the optimisation code of the specific analysis has queued rather than run the calculations.  If queued, the 'Simulation X' text will not be printed out.  This avoids printing out all the text at the start before anything has happened.  The specific multi-processor optimisation code must provide it's own printouts when each calculation is complete.
+
+
+
 Version 3.0.0
 (6 August 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.0.0
