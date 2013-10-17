@@ -282,9 +282,9 @@ def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
 def check_spectrum_id(id):
     """Check that the give spectrum ID exists.
 
-    @param id:  The spectrum ID to check for.
-    @type id:   str
-    @raises:    RelaxNoSpectraError if the ID does not exist.
+    @param id:                      The spectrum ID to check for.
+    @type id:                       str
+    @raises RelaxNoSpectraError:    If the ID does not exist.
     """
 
     # Check that the spectrum ID structure exists.

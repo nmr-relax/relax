@@ -185,7 +185,7 @@ def bmrb_write_entity(star, version=None):
 def check_mol_res_spin_data():
     """Check for the presence of molecule, residue, and spin data.
 
-    @raises:    RelaxNoSequenceError if no data is present.
+    @raises RelaxNoSequenceError:   If no data is present.
     """
 
     # Check that the spectrum ID structure exists.
