@@ -98,7 +98,7 @@ $ rsync -av --progress --no-perms --rsh="ssh" bugman@download.gna.org:/upload/re
 
 Then rsync the entire directory contents to download.gna.org/upload/relax/ using the command:
 
-$ rsync --delete -av --progress --no-perms --rsh="ssh" . bugman@download.gna.org:/upload/relax/
+$ rsync --delete -av --progress --no-perms --partial --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
 
 
