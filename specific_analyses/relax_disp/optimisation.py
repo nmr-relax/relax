@@ -229,8 +229,8 @@ class Disp_minimise_command(Slave_command):
         @type spins:                list of SpinContainer instances
         @keyword spin_ids:          The list of spin ID strings corresponding to the spins argument.
         @type spin_ids:             list of str
-        @keyword sim_index:         The optional MC simulation index.
-        @type sim_index:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+        @type sim_index:            None or int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
         @type scaling_matrix:       numpy diagonal matrix
         @keyword min_algor:         The minimisation algorithm to use.
@@ -247,8 +247,6 @@ class Disp_minimise_command(Slave_command):
         @type constraints:          bool
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:            None or int
         @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
         @type lower:                array of numbers
         @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.

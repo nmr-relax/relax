@@ -1278,22 +1278,25 @@ class Relax_disp(SystemTestCase):
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0509100103}.  This is CPMG data with a fixed relaxation time period.  Experiment in 1.01 M GuHCl (guanidine hydrochloride).
 
-        The comparison is to Figure 2, which is for dataset with 1 M GuHCl. The reported results are expected to be in rad.s^-1.  Conversion into relax stored values is preferably.
+        The comparison is to Figure 2, which is for dataset with 1 M GuHCl.  The reported results are expected to be in rad.s^-1.  Conversion into relax stored values is preferably.
 
-        {Representative 15N CPMG relaxation dispersion curve measured on the cross peaks from residue L61 in folded ACBP at pH 5.3, 1 M GuHCl, and 40C.}
-          1. The dotted line represents a residue-specific fit of all parameters in Eq. 1.
-            - k_AB = 11.3 +/- 0.7 s^{-1}
-            - dw = (2.45 +/- 0.09) * 10^3 s^{-1}
-            - R2 = 8.0 +/- 0.5 s^{-1}.
-          2. The solid line represents a global fit of k_AB to all protein residues and a residue-specific fit of dw and R2.}
-            - k_AB = 10.55 +/- 0.08 s^{-1}
-            - dw = (2.44 +/- 0.08) * 10^3 s^{-1}
-            - R2 = 8.4 +/- 0.3 s^{-1}.
+        Representative 15N CPMG relaxation dispersion curve measured on the cross peaks from residue L61 in folded ACBP at pH 5.3, 1 M GuHCl, and 40C:
 
-        Conversion of paper results to relax results is performed by
+          1. The dotted line represents a residue-specific fit of all parameters in Eq. 1:
+            - k_AB = 11.3 +/- 0.7 s^-1,
+            - dw = (2.45 +/- 0.09) * 10^3 s^-1,
+            - R2 = 8.0 +/- 0.5 s^-1.
+
+          2. The solid line represents a global fit of k_AB to all protein residues and a residue-specific fit of dw and R2.:
+            - k_AB = 10.55 +/- 0.08 s^-1,
+            - dw = (2.44 +/- 0.08) * 10^3 s^-1,
+            - R2 = 8.4 +/- 0.3 s^-1.
+
+        Conversion of paper results to relax results is performed by:
+
           - dw(ppm) = dw(rad.s^-1) * 10^6 * 1/(2*pi) * (gyro1H/(gyro15N*spectrometer_freq)) = 2.45E3 * 1E6 / (2 * math.pi) * (26.7522212E7/(-2.7126E7 * 599.8908622E6)) = -6.41 ppm.
 
-        Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl. The precise values are:
+        Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl.  The precise values are:
 
           - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1] 
           - 0.483 0.89623903 2.4503699912708878
