@@ -110,10 +110,6 @@ spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
 spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
 spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
 
-# Peak intensity error analysis.
-spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
-spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
-
 # Deselect unresolved spins.
 deselect.read(file='unresolved', dir=data_path+sep+'500_MHz', res_num_col=1)
 deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)

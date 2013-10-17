@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20448
+                                  relax repository checkout r21156
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -57,9 +57,6 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 spin.create(res_name='Trp', res_num=1, spin_name='N')
 spin.create(res_name='Lys', res_num=2, spin_name='N')
 
-# Set the relaxation dispersion experiment type.
-relax_disp.exp_type('cpmg fixed')
-
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference',   'nu_500MHz_ref.list',             None,  500e6],
@@ -99,7 +96,10 @@ data = [
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
-    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, heteronuc='N', proton='HN', int_method='height')
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -134,20 +134,21 @@ relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=1, mol_
 
 relax> spin.create(spin_name='N', spin_num=None, res_name='Lys', res_num=2, mol_name=None)
 
-relax> relax_disp.exp_type(exp_type='cpmg fixed')
-The fixed relaxation time period CPMG-type experiments.
-
-relax> spectrum.read_intensities(file='nu_500MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_reference', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_ref.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity      
 :1@N         100000000.0    
 :2@N         20000000.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_reference', exp_type='CPMG')
+Setting the '500_reference' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_reference', cpmg_frq=None)
 Setting the '500_reference' spectrum CPMG frequency None Hz.
@@ -160,17 +161,21 @@ Setting the '500_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_reference', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_66.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_66.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         2817793.0    
 :2@N         417494.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_66.6666', exp_type='CPMG')
+Setting the '500_66.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_66.6666', cpmg_frq=66.6666)
 Setting the '500_66.6666' spectrum CPMG frequency 66.6666 Hz.
@@ -183,17 +188,21 @@ Setting the '500_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_66.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_133.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_133.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         3938879.0    
 :2@N         583598.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_133.3333', exp_type='CPMG')
+Setting the '500_133.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.3333', cpmg_frq=133.3333)
 Setting the '500_133.3333' spectrum CPMG frequency 133.3333 Hz.
@@ -206,17 +215,21 @@ Setting the '500_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_133.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_200.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_200.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         5421414.0    
 :2@N         803256.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_200.0', exp_type='CPMG')
+Setting the '500_200.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_200.0', cpmg_frq=200.0)
 Setting the '500_200.0' spectrum CPMG frequency 200.0 Hz.
@@ -229,17 +242,21 @@ Setting the '500_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_200.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_266.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_266.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         7212891.0    
 :2@N         1068688.0    
+
+relax> relax_disp.exp_type(spectrum_id='500_266.6666', exp_type='CPMG')
+Setting the '500_266.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_266.6666', cpmg_frq=266.6666)
 Setting the '500_266.6666' spectrum CPMG frequency 266.6666 Hz.
@@ -252,17 +269,21 @@ Setting the '500_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_266.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_333.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_333.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         9193611.0    
 :2@N         1362158.0    
+
+relax> relax_disp.exp_type(spectrum_id='500_333.3333', exp_type='CPMG')
+Setting the '500_333.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_333.3333', cpmg_frq=333.3333)
 Setting the '500_333.3333' spectrum CPMG frequency 333.3333 Hz.
@@ -275,17 +296,21 @@ Setting the '500_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_333.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_400.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_400.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         11228322.0    
 :2@N         1663629.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_400.0', exp_type='CPMG')
+Setting the '500_400.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_400.0', cpmg_frq=400.0)
 Setting the '500_400.0' spectrum CPMG frequency 400.0 Hz.
@@ -298,17 +323,21 @@ Setting the '500_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_400.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_466.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_466.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         13204117.0    
 :2@N         1956370.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_466.6666', exp_type='CPMG')
+Setting the '500_466.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_466.6666', cpmg_frq=466.6666)
 Setting the '500_466.6666' spectrum CPMG frequency 466.6666 Hz.
@@ -321,17 +350,21 @@ Setting the '500_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_466.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_533.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_533.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         15046060.0    
 :2@N         2229279.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_533.3333', exp_type='CPMG')
+Setting the '500_533.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.3333', cpmg_frq=533.3333)
 Setting the '500_533.3333' spectrum CPMG frequency 533.3333 Hz.
@@ -344,17 +377,21 @@ Setting the '500_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_533.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_600.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_600.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         16715469.0    
 :2@N         2476624.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_600.0', exp_type='CPMG')
+Setting the '500_600.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_600.0', cpmg_frq=600.0)
 Setting the '500_600.0' spectrum CPMG frequency 600.0 Hz.
@@ -367,17 +404,21 @@ Setting the '500_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_600.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_666.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_666.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         18200559.0    
 :2@N         2696661.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_666.6666', exp_type='CPMG')
+Setting the '500_666.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_666.6666', cpmg_frq=666.6666)
 Setting the '500_666.6666' spectrum CPMG frequency 666.6666 Hz.
@@ -390,17 +431,21 @@ Setting the '500_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_666.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_733.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_733.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         19506374.0    
 :2@N         2890135.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_733.3333', exp_type='CPMG')
+Setting the '500_733.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_733.3333', cpmg_frq=733.3333)
 Setting the '500_733.3333' spectrum CPMG frequency 733.3333 Hz.
@@ -413,17 +458,21 @@ Setting the '500_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_733.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_800.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_800.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         20646900.0    
 :2@N         3059120.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_800.0', exp_type='CPMG')
+Setting the '500_800.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_800.0', cpmg_frq=800.0)
 Setting the '500_800.0' spectrum CPMG frequency 800.0 Hz.
@@ -436,17 +485,21 @@ Setting the '500_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_800.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_866.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_866.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         21639859.0    
 :2@N         3206240.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_866.6666', exp_type='CPMG')
+Setting the '500_866.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_866.6666', cpmg_frq=866.6666)
 Setting the '500_866.6666' spectrum CPMG frequency 866.6666 Hz.
@@ -459,17 +512,21 @@ Setting the '500_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_866.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_933.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_933.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         22503635.0    
 :2@N         3334220.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_933.3333', exp_type='CPMG')
+Setting the '500_933.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.3333', cpmg_frq=933.3333)
 Setting the '500_933.3333' spectrum CPMG frequency 933.3333 Hz.
@@ -482,17 +539,21 @@ Setting the '500_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_933.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_1000.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_500MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_1000.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         23255638.0    
 :2@N         3445640.0     
+
+relax> relax_disp.exp_type(spectrum_id='500_1000.0', exp_type='CPMG')
+Setting the '500_1000.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_1000.0', cpmg_frq=1000.0)
 Setting the '500_1000.0' spectrum CPMG frequency 1000.0 Hz.
@@ -505,17 +566,21 @@ Setting the '500_1000.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_1000.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_reference', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_ref.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity      
 :1@N         150000000.0    
 :2@N         25000000.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_reference', exp_type='CPMG')
+Setting the '800_reference' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_reference', cpmg_frq=None)
 Setting the '800_reference' spectrum CPMG frequency None Hz.
@@ -528,17 +593,21 @@ Setting the '800_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_reference', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_66.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_66.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         104919.0     
 :2@N         12954.0      
+
+relax> relax_disp.exp_type(spectrum_id='800_66.6666', exp_type='CPMG')
+Setting the '800_66.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_66.6666', cpmg_frq=66.6666)
 Setting the '800_66.6666' spectrum CPMG frequency 66.6666 Hz.
@@ -551,17 +620,21 @@ Setting the '800_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_66.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_133.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_133.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         247311.0     
 :2@N         30535.0      
+
+relax> relax_disp.exp_type(spectrum_id='800_133.3333', exp_type='CPMG')
+Setting the '800_133.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.3333', cpmg_frq=133.3333)
 Setting the '800_133.3333' spectrum CPMG frequency 133.3333 Hz.
@@ -574,17 +647,21 @@ Setting the '800_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_133.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_200.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_200.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         560297.0     
 :2@N         69179.0      
+
+relax> relax_disp.exp_type(spectrum_id='800_200.0', exp_type='CPMG')
+Setting the '800_200.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_200.0', cpmg_frq=200.0)
 Setting the '800_200.0' spectrum CPMG frequency 200.0 Hz.
@@ -597,17 +674,21 @@ Setting the '800_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_200.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_266.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_266.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         1163725.0    
 :2@N         143684.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_266.6666', exp_type='CPMG')
+Setting the '800_266.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_266.6666', cpmg_frq=266.6666)
 Setting the '800_266.6666' spectrum CPMG frequency 266.6666 Hz.
@@ -620,17 +701,21 @@ Setting the '800_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_266.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_333.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_333.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         2165783.0    
 :2@N         267408.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_333.3333', exp_type='CPMG')
+Setting the '800_333.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_333.3333', cpmg_frq=333.3333)
 Setting the '800_333.3333' spectrum CPMG frequency 333.3333 Hz.
@@ -643,17 +728,21 @@ Setting the '800_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_333.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_400.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_400.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         3613238.0    
 :2@N         446125.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_400.0', exp_type='CPMG')
+Setting the '800_400.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_400.0', cpmg_frq=400.0)
 Setting the '800_400.0' spectrum CPMG frequency 400.0 Hz.
@@ -666,17 +755,21 @@ Setting the '800_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_400.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_466.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_466.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         5471501.0    
 :2@N         675564.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_466.6666', exp_type='CPMG')
+Setting the '800_466.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_466.6666', cpmg_frq=466.6666)
 Setting the '800_466.6666' spectrum CPMG frequency 466.6666 Hz.
@@ -689,17 +782,21 @@ Setting the '800_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_466.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_533.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_533.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity    
 :1@N         7643511.0    
 :2@N         943742.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_533.3333', exp_type='CPMG')
+Setting the '800_533.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.3333', cpmg_frq=533.3333)
 Setting the '800_533.3333' spectrum CPMG frequency 533.3333 Hz.
@@ -712,17 +809,21 @@ Setting the '800_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_533.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_600.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_600.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         10006312.0    
 :2@N         1235476.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_600.0', exp_type='CPMG')
+Setting the '800_600.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_600.0', cpmg_frq=600.0)
 Setting the '800_600.0' spectrum CPMG frequency 600.0 Hz.
@@ -735,17 +836,21 @@ Setting the '800_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_600.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_666.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_666.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         12442494.0    
 :2@N         1536271.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_666.6666', exp_type='CPMG')
+Setting the '800_666.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_666.6666', cpmg_frq=666.6666)
 Setting the '800_666.6666' spectrum CPMG frequency 666.6666 Hz.
@@ -758,17 +863,21 @@ Setting the '800_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_666.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_733.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_733.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         14857390.0    
 :2@N         1834437.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_733.3333', exp_type='CPMG')
+Setting the '800_733.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_733.3333', cpmg_frq=733.3333)
 Setting the '800_733.3333' spectrum CPMG frequency 733.3333 Hz.
@@ -781,17 +890,21 @@ Setting the '800_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_733.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_800.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_800.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         17183791.0    
 :2@N         2121677.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_800.0', exp_type='CPMG')
+Setting the '800_800.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_800.0', cpmg_frq=800.0)
 Setting the '800_800.0' spectrum CPMG frequency 800.0 Hz.
@@ -804,17 +917,21 @@ Setting the '800_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_800.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_866.6666', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_866.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         19379469.0    
 :2@N         2392777.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_866.6666', exp_type='CPMG')
+Setting the '800_866.6666' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_866.6666', cpmg_frq=866.6666)
 Setting the '800_866.6666' spectrum CPMG frequency 866.6666 Hz.
@@ -827,17 +944,21 @@ Setting the '800_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_866.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_933.3333', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_933.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         21421871.0    
 :2@N         2644952.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_933.3333', exp_type='CPMG')
+Setting the '800_933.3333' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.3333', cpmg_frq=933.3333)
 Setting the '800_933.3333' spectrum CPMG frequency 933.3333 Hz.
@@ -850,17 +971,21 @@ Setting the '800_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_933.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_1000.0', heteronuc='N', proton='HN', int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+relax> spectrum.read_intensities(file='nu_800MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
 Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_1000.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
+2D peak list detected.
 
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity     
 :1@N         23302519.0    
 :2@N         2877155.0     
+
+relax> relax_disp.exp_type(spectrum_id='800_1000.0', exp_type='CPMG')
+Setting the '800_1000.0' spectrum tothe CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_1000.0', cpmg_frq=1000.0)
 Setting the '800_1000.0' spectrum CPMG frequency 1000.0 Hz.
@@ -890,16 +1015,7 @@ Spectra ID subset ignored.
 = Relaxation dispersion auto-analysis =
 =======================================
 
-
-relax> spectrum.error_analysis(subset=['500_reference', '500_66.6666', '500_133.3333', '500_200.0', '500_266.6666', '500_333.3333', '500_400.0', '500_466.6666', '500_533.3333', '500_600.0', '500_666.6666', '500_733.3333', '500_800.0', '500_866.6666', '500_933.3333', '500_1000.0'])
-Intensity measure:  Peak heights.
-Replicated spectra:  No.
-Spectra ID subset ignored.
-
-relax> spectrum.error_analysis(subset=['800_reference', '800_66.6666', '800_133.3333', '800_200.0', '800_266.6666', '800_333.3333', '800_400.0', '800_466.6666', '800_533.3333', '800_600.0', '800_666.6666', '800_733.3333', '800_800.0', '800_866.6666', '800_933.3333', '800_1000.0'])
-Intensity measure:  Peak heights.
-Replicated spectra:  No.
-Spectra ID subset ignored.
+Skipping the error analysis as it has already been performed.
 
 
 

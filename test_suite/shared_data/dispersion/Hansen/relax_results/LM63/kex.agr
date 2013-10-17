@@ -16,6 +16,9 @@
 @    yaxis  tick minor linewidth 0.5
 @    yaxis  tick minor size 0.45
 @    yaxis  ticklabel char size 1.00
+@    legend on
+@    legend box fill pattern 1
+@    legend char size 1.0
 @    frame linewidth 0.5
 @    s0 symbol 1
 @    s0 symbol size 0.45
@@ -24,8 +27,8 @@
 @    s0 errorbar linewidth 0.5
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
-@type xydy
-70                             4763.249498203445910           371.989501096174195           
-71                             2544.644789033886809           3577.031308335497215          
+@type xy
+70                             4644.013196898104979          
+71                             2565.502443313092954          
 &
 @autoscale

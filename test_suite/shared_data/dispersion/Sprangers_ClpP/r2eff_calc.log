@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21114
+                                  relax repository checkout r21151
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -15,6 +15,8 @@ and comes with absolutely no warranty.  For details type 'GPL' within the relax 
 
 Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
 the prompt.
+
+ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled.
 
 Processor fabric:  Uni-processor.
 

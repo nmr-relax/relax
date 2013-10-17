@@ -1,8 +1,8 @@
 
 
 
-                                  relax repository checkout rNone
-                                                None
+                                  relax repository checkout r21156
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
 
@@ -69,29 +69,29 @@ NMRPipe SeriesTab formatted data file.
 The following intensities have been loaded into the relax data store:
 
 # Spin_ID    Intensity             
-:61@N        405125.90000000002    
+:61@N        405125.9              
 :61@N        755519.2909100001     
-:61@N        384869.60499999998    
+:61@N        384869.605            
 :61@N        421128.37305000005    
 :61@N        433606.25077000004    
-:61@N        368624.05641000002    
+:61@N        368624.05641          
 :61@N        369069.69490000006    
-:61@N        375389.65893999999    
-:61@N        366355.35136999999    
-:61@N        392891.09782000002    
-:61@N        437009.30833000003    
+:61@N        375389.65894          
+:61@N        366355.35137          
+:61@N        392891.09782          
+:61@N        437009.30833          
 :61@N        382843.9755           
 :61@N        426962.18601000006    
-:61@N        365464.07439000002    
+:61@N        365464.07439          
 :61@N        381263.98449000006    
-:61@N        757261.33228000009    
+:61@N        757261.3322800001     
 :61@N        402938.22014000005    
 
 relax> script(file='relax_3_spectra_settings.py', dir=None)
 script = 'relax_3_spectra_settings.py'
 ----------------------------------------------------------------------------------------------------
 # Loop over the spectra settings.
-ncycfile=open('ncyc.txt','r')
+ncycfile=open('ncyc.txt', 'r')
 
 # Make empty ncyclist
 ncyclist = []
@@ -108,7 +108,7 @@ for line in ncycfile:
     if float(vcpmg) == 0.0:
         vcpmg = None
     else:
-        vcpmg = round(float(vcpmg),3)
+        vcpmg = round(float(vcpmg), 3)
 
     # Add ncyc to list
     ncyclist.append(int(ncyc))
@@ -145,12 +145,12 @@ Setting the 'Z_A0' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2470.0, spectrum_id='Z_A0', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A0', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A0', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A0', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A0', time=0.06)
 Setting the 'Z_A0' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A0', cpmg_frq=466.66699999999997)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A0', cpmg_frq=466.667)
 Setting the 'Z_A0' spectrum CPMG frequency 466.667 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A1', exp_type='CPMG')
@@ -158,9 +158,9 @@ Setting the 'Z_A1' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2340.0, spectrum_id='Z_A1', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A1', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A1', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A1', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A1', time=0.06)
 Setting the 'Z_A1' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A1', cpmg_frq=None)
@@ -171,12 +171,12 @@ Setting the 'Z_A2' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2410.0, spectrum_id='Z_A2', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A2', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A2', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A2', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A2', time=0.06)
 Setting the 'Z_A2' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A2', cpmg_frq=66.667000000000002)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A2', cpmg_frq=66.667)
 Setting the 'Z_A2' spectrum CPMG frequency 66.667 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A3', exp_type='CPMG')
@@ -184,12 +184,12 @@ Setting the 'Z_A3' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A3', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A3', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A3', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A3', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A3', time=0.06)
 Setting the 'Z_A3' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A3', cpmg_frq=533.33299999999997)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A3', cpmg_frq=533.333)
 Setting the 'Z_A3' spectrum CPMG frequency 533.333 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A4', exp_type='CPMG')
@@ -197,9 +197,9 @@ Setting the 'Z_A4' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A4', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A4', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A4', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A4', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A4', time=0.06)
 Setting the 'Z_A4' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A4', cpmg_frq=1000.0)
@@ -210,12 +210,12 @@ Setting the 'Z_A5' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A5', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A5', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A5', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A5', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A5', time=0.06)
 Setting the 'Z_A5' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A5', cpmg_frq=33.332999999999998)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A5', cpmg_frq=33.333)
 Setting the 'Z_A5' spectrum CPMG frequency 33.333 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A6', exp_type='CPMG')
@@ -223,9 +223,9 @@ Setting the 'Z_A6' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A6', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A6', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A6', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A6', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A6', time=0.06)
 Setting the 'Z_A6' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A6', cpmg_frq=166.667)
@@ -236,12 +236,12 @@ Setting the 'Z_A7' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2440.0, spectrum_id='Z_A7', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A7', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A7', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A7', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A7', time=0.06)
 Setting the 'Z_A7' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A7', cpmg_frq=266.66699999999997)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A7', cpmg_frq=266.667)
 Setting the 'Z_A7' spectrum CPMG frequency 266.667 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A8', exp_type='CPMG')
@@ -249,9 +249,9 @@ Setting the 'Z_A8' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2390.0, spectrum_id='Z_A8', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A8', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A8', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A8', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A8', time=0.06)
 Setting the 'Z_A8' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A8', cpmg_frq=133.333)
@@ -262,12 +262,12 @@ Setting the 'Z_A9' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2400.0, spectrum_id='Z_A9', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A9', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A9', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A9', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A9', time=0.06)
 Setting the 'Z_A9' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A9', cpmg_frq=333.33300000000003)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A9', cpmg_frq=333.333)
 Setting the 'Z_A9' spectrum CPMG frequency 333.333 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A10', exp_type='CPMG')
@@ -275,12 +275,12 @@ Setting the 'Z_A10' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A10', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A10', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A10', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A10', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A10', time=0.06)
 Setting the 'Z_A10' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A10', cpmg_frq=833.33299999999997)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A10', cpmg_frq=833.333)
 Setting the 'Z_A10' spectrum CPMG frequency 833.333 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A11', exp_type='CPMG')
@@ -288,9 +288,9 @@ Setting the 'Z_A11' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2460.0, spectrum_id='Z_A11', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A11', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A11', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A11', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A11', time=0.06)
 Setting the 'Z_A11' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A11', cpmg_frq=300.0)
@@ -301,12 +301,12 @@ Setting the 'Z_A12' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2410.0, spectrum_id='Z_A12', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A12', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A12', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A12', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A12', time=0.06)
 Setting the 'Z_A12' spectrum relaxation time period to 0.06 s.
 
-relax> relax_disp.cpmg_frq(spectrum_id='Z_A12', cpmg_frq=666.66700000000003)
+relax> relax_disp.cpmg_frq(spectrum_id='Z_A12', cpmg_frq=666.667)
 Setting the 'Z_A12' spectrum CPMG frequency 666.667 Hz.
 
 relax> relax_disp.exp_type(spectrum_id='Z_A13', exp_type='CPMG')
@@ -314,9 +314,9 @@ Setting the 'Z_A13' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A13', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A13', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A13', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A13', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A13', time=0.06)
 Setting the 'Z_A13' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A13', cpmg_frq=100.0)
@@ -327,9 +327,9 @@ Setting the 'Z_A14' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A14', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A14', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A14', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A14', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A14', time=0.06)
 Setting the 'Z_A14' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A14', cpmg_frq=200.0)
@@ -340,9 +340,9 @@ Setting the 'Z_A15' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2390.0, spectrum_id='Z_A15', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A15', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A15', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A15', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A15', time=0.06)
 Setting the 'Z_A15' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A15', cpmg_frq=None)
@@ -353,9 +353,9 @@ Setting the 'Z_A16' spectrum tothe CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A16', spin_id=None)
 
-relax> spectrometer.frequency(id='Z_A16', frq=599.89086220000002, units='MHz')
+relax> spectrometer.frequency(id='Z_A16', frq=599.8908622, units='MHz')
 
-relax> relax_disp.relax_time(spectrum_id='Z_A16', time=0.059999999999999998)
+relax> relax_disp.relax_time(spectrum_id='Z_A16', time=0.06)
 Setting the 'Z_A16' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A16', cpmg_frq=400.0)

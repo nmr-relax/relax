@@ -1,0 +1,5 @@
+# Parameter description:  The population for state B.
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error    
+None          70         GLY         None        N              0.0103596873667529    None     
+None          71         GLY         None        N             0.00325452817124683    None     

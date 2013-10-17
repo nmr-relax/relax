@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20890
+                                  relax repository checkout r21156
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -15,6 +15,8 @@ and comes with absolutely no warranty.  For details type 'GPL' within the relax 
 
 Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
 the prompt.
+
+ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled.
 
 Processor fabric:  Uni-processor.
 
@@ -930,7 +932,6 @@ relax> relax_disp.select_model(model='R2eff')
 R2eff/R1rho value and error determination.
 
 relax> calc(verbosity=1)
-{'R1rho': [0.1]}
 Calculating the R2eff/R1rho values for fixed relaxation time period data.
 Spin ':1@N'.
 Spin ':2@N'.

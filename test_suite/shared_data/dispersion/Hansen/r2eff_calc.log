@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r20890
+                                  relax repository checkout r21156
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -131,10 +131,6 @@ spectrum.replicated(spectrum_ids=['500_933.33.in', '500_933.33.in.bis'])
 spectrum.replicated(spectrum_ids=['800_133.33.in', '800_133.33.in.bis'])
 spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
 spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
-
-# Peak intensity error analysis.
-spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
-spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
 
 # Deselect unresolved spins.
 deselect.read(file='unresolved', dir=data_path+sep+'500_MHz', res_num_col=1)
@@ -1108,6 +1104,33 @@ relax> spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
 
 relax> spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
 
+relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/unresolved' for reading.
+RelaxWarning: Cannot find the spin :9 within the sequence.
+RelaxWarning: Cannot find the spin :27 within the sequence.
+RelaxWarning: Cannot find the spin :28 within the sequence.
+RelaxWarning: Cannot find the spin :30 within the sequence.
+RelaxWarning: Cannot find the spin :54 within the sequence.
+RelaxWarning: Cannot find the spin :68 within the sequence.
+RelaxWarning: Cannot find the spin :69 within the sequence.
+No spins deselected.
+
+relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/unresolved' for reading.
+RelaxWarning: Cannot find the spin :9 within the sequence.
+RelaxWarning: Cannot find the spin :54 within the sequence.
+RelaxWarning: Cannot find the spin :68 within the sequence.
+RelaxWarning: Cannot find the spin :69 within the sequence.
+No spins deselected.
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+
 relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
 Intensity measure:  Peak heights.
 Replicated spectra:  Yes.
@@ -1142,49 +1165,6 @@ Standard deviation:  753.031245304
 Variance averaging over all spectra.
 Standard deviation for all spins:  312.8048934679047
 
-relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/unresolved' for reading.
-RelaxWarning: Cannot find the spin :9 within the sequence.
-RelaxWarning: Cannot find the spin :27 within the sequence.
-RelaxWarning: Cannot find the spin :28 within the sequence.
-RelaxWarning: Cannot find the spin :30 within the sequence.
-RelaxWarning: Cannot find the spin :54 within the sequence.
-RelaxWarning: Cannot find the spin :68 within the sequence.
-RelaxWarning: Cannot find the spin :69 within the sequence.
-No spins deselected.
-
-relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/unresolved' for reading.
-RelaxWarning: Cannot find the spin :9 within the sequence.
-RelaxWarning: Cannot find the spin :54 within the sequence.
-RelaxWarning: Cannot find the spin :68 within the sequence.
-RelaxWarning: Cannot find the spin :69 within the sequence.
-No spins deselected.
-
-
-
-
-=======================================
-= Relaxation dispersion auto-analysis =
-=======================================
-
-
-relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
-Intensity measure:  Peak heights.
-Replicated spectra:  Yes.
-All spectra replicated:  No.
-
-Variance averaging over all spectra.
-Standard deviation for all spins:  261.96950781449175
-
-relax> spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
-Intensity measure:  Peak heights.
-Replicated spectra:  Yes.
-All spectra replicated:  No.
-
-Variance averaging over all spectra.
-Standard deviation for all spins:  288.5090331359092
-
 
 
 ---------------------
@@ -1200,7 +1180,6 @@ relax> relax_disp.select_model(model='R2eff')
 R2eff/R1rho value and error determination.
 
 relax> calc(verbosity=1)
-{'CPMG': [0.03]}
 Calculating the R2eff/R1rho values for fixed relaxation time period data.
 Spin ':70@N'.
 Spin ':71@N'.
