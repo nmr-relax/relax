@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import glob, os, sys
-import shlex,subprocess
+import shlex, subprocess
 import argparse
 from itertools import chain
 
@@ -14,7 +14,7 @@ parser.add_argument('-t', nargs='+', action='append', dest='types', help='List i
 
 # Lets stop the execution and print help if no arguments are passed
 if len(sys.argv)==1:
-    print('system argument is:',sys.argv)
+    print('system argument is:', sys.argv)
     parser.print_help()
     print('Performing a default PNG conversion')
 
@@ -38,7 +38,7 @@ gracefiles = glob.glob("*.agr")
 if "PNG" in types:
     pngpar = "png.par"
     if not os.path.isfile(pngpar):
-        wpngpar = open(pngpar,"w")
+        wpngpar = open(pngpar, "w")
         wpngpar.write("DEVICE \"PNG\" FONT ANTIALIASING on\n")
         wpngpar.write("DEVICE \"PNG\" OP \"transparent:on\"\n")
         wpngpar.write("DEVICE \"PNG\" OP \"compression:9\"\n")
@@ -50,19 +50,19 @@ for grace in gracefiles:
     fname = grace.split(".agr")[0]
     if "PNG" in types:
         # Produce the argument string
-        im_args = r"xmgrace -hdevice PNG -hardcopy -param %s -printfile %s.png %s"%(pngpar,fname,grace)
+        im_args = r"xmgrace -hdevice PNG -hardcopy -param %s -printfile %s.png %s"%(pngpar, fname, grace)
         # Split the arguments the right way, to call xmgrace
         im_args = shlex.split(im_args)
         return_code = subprocess.call(im_args)
     if "EPS" in types:
-        im_args = r"xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s"%(fname,grace)
+        im_args = r"xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s"%(fname, grace)
         im_args = shlex.split(im_args)
         return_code = subprocess.call(im_args)
     if ("JPG" or "JPEG") in types:
-        im_args = r"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s"%(fname,grace)
+        im_args = r"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s"%(fname, grace)
         im_args = shlex.split(im_args)
         return_code = subprocess.call(im_args)
     if "SVG" in types:
-        im_args = r"xmgrace -hdevice SVG -hardcopy -printfile %s.svg %s"%(fname,grace)
+        im_args = r"xmgrace -hdevice SVG -hardcopy -printfile %s.svg %s"%(fname, grace)
         im_args = shlex.split(im_args)
         return_code = subprocess.call(im_args)

@@ -1,5 +1,5 @@
 # Loop over the spectra settings.
-ncycfile=open('ncyc.txt','r')
+ncycfile=open('ncyc.txt', 'r')
 
 # Make empty ncyclist
 ncyclist = []
@@ -16,7 +16,7 @@ for line in ncycfile:
     if float(vcpmg) == 0.0:
         vcpmg = None
     else:
-        vcpmg = round(float(vcpmg),3)
+        vcpmg = round(float(vcpmg), 3)
 
     # Add ncyc to list
     ncyclist.append(int(ncyc))
