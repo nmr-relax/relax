@@ -1386,8 +1386,8 @@ def return_param_key_from_data(frq=None, point=None):
     if frq == None:
         return "%s" % point
 
-    # Generate and return the key.
-    return "%s_%s" % (frq/1e6, point)
+    # Generate and return the unique key.
+    return "%.8f_%.3f" % (frq/1e6, point)
 
 
 def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim_index=None):
@@ -1519,7 +1519,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 frqs[spin_index, frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
             # Missing data.
-            if key not in spin.r2eff:
+            if key not in spin.r2eff.keys():
                 continue
 
             # The values.
