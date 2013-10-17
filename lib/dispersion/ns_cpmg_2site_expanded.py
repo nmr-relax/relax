@@ -38,6 +38,89 @@ Links to the copyright licensing agreements from all authors are:
     - Paul Schanda, http://article.gmane.org/gmane.science.nmr.relax.devel/4271
     - Mathilde Lescanne, http://article.gmane.org/gmane.science.nmr.relax.devel/4138
     - Dominique Marion, http://article.gmane.org/gmane.science.nmr.relax.devel/4157
+
+The complex path of the code from the original Maple to relax can be described as:
+
+    - p3.analytical (Maple input text file),
+    - Automatically generated FORTRAN,
+    - Manually converted to Matlab by Nikolai (sim_all.tar at https://gna.org/task/?7712#comment5)
+    - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at https://gna.org/task/?7712#comment1)
+    - Converted into Python code for relax (here).
+
+For reference, the original Maple script written by Nikolai for the expansion of the equations is::
+
+    with(linalg):
+    with(tensor):
+    #Ka:=30;
+    #Kb:=1200;
+    #dW:=300;
+    #N:=2;
+    #tcp:=0.040/N;
+    
+    Ksym:=sqrt(Ka*Kb);
+    #dX:=(Ka-Kb+I*dw)/2;	# Ra=Rb
+    dX:=((Ra-Rb)+(Ka-Kb)+I*dw)/2;
+    
+    L:=([[-dX, Ksym], [Ksym, dX]]);
+     
+    # in the end everything is multiplied by exp(-0.5*(Ra+Rb+Ka+Kb)*(Tc+2*tpalmer))
+    # where 0.5*(Ra+Rb) is the same as Rinf, and (Ka+Kb) is kex.
+    
+    y:=eigenvects(L);
+    TP1:=array([[y[1][3][1][1],y[2][3][1][1]],[y[1][3][1][2],y[2][3][1][2]]]);
+    iTP1:=inverse(TP1);
+    P1:=array([[exp(y[1][1]*tcp/2),0],[0,exp(y[2][1]*tcp/2)]]);
+    
+    P1palmer:=array([[exp(y[1][1]*tpalmer),0],[0,exp(y[2][1]*tpalmer)]]);
+    
+    TP2:=map(z->conj(z),TP1);
+    iTP2:=map(z->conj(z),iTP1);
+    P2:=array([[exp(conj(y[1][1])*tcp),0],[0,exp(conj(y[2][1])*tcp)]]);
+    
+    P2palmer:=array([[exp(conj(y[1][1])*tpalmer),0],[0,exp(conj(y[2][1])*tpalmer)]]);
+    
+    cP1:=evalm(TP1&*P1&*iTP1);
+    cP2:=evalm(TP2&*P2&*iTP2);
+    
+    cP1palmer:=evalm(TP1&*P1palmer&*iTP1);
+    cP2palmer:=evalm(TP2&*P2palmer&*iTP2);
+    
+    Ps:=evalm(cP1&*cP2&*cP1);
+    # Ps is symmetric; cf. simplify(Ps[1,2]-Ps[2,1]);
+    Pspalmer:=evalm(cP2palmer&*cP1palmer);
+    
+    
+    dummy:=array([[a,b],[b,c]]);
+    x:=eigenvects(dummy);
+    TG1:=array([[x[1][3][1][1],x[2][3][1][1]],[x[1][3][1][2],x[2][3][1][2]]]);
+    iTG1:=inverse(TG1);
+    G1:=array([[x[1][1]^(N/4),0],[0,x[2][1]^(N/4)]]);
+    GG1:=evalm(TG1&*G1&*iTG1);
+    GG2:=map(z->conj(z),GG1);
+    
+    cGG:=evalm(GG2&*Pspalmer&*GG1);
+    
+    #s0:=array([Kb, Ka]);
+    s0:=array([sqrt(Kb),sqrt(Ka)]);	# accounts for exchange symmetrization
+    st:=evalm(cGG&*s0);
+    #obs:=(1/(Ka+Kb))*st[1];
+    obs:=(sqrt(Kb)/(Ka+Kb))*st[1];  # accounts for exchange symmetrization
+    
+    obs1:=eval(obs,[a=Ps[1,1],b=Ps[1,2],c=Ps[2,2]]);
+    #obs2:=simplify(obs1):
+    
+    print(obs1):
+    
+    cGGref:=evalm(Pspalmer);
+    stref:=evalm(cGGref&*s0);
+    obsref:=(sqrt(Kb)/(Ka+Kb))*stref[1];  # accounts for exchange symmetrization
+    
+    print(obsref):
+    
+    writeto(result_test):
+    
+    fortran([intensity=obs1, intensity_ref=obsref], optimized):
+
 """
 
 # Dependency check module.
