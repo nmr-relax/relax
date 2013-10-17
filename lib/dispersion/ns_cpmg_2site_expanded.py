@@ -41,7 +41,7 @@ Links to the copyright licensing agreements from all authors are:
 
 The complex path of the code from the original Maple to relax can be described as:
 
-    - p3.analytical (Maple input text file),
+    - p3.analytical (Maple input text file at https://gna.org/task/?7712#comment8),
     - Automatically generated FORTRAN,
     - Manually converted to Matlab by Nikolai (sim_all.tar at https://gna.org/task/?7712#comment5)
     - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at https://gna.org/task/?7712#comment1)
@@ -121,6 +121,100 @@ For reference, the original Maple script written by Nikolai for the expansion of
     
     fortran([intensity=obs1, intensity_ref=obsref], optimized):
 
+
+Also for reference, the Matlab code from Nikolai and Martin manually converted from the automatically generated FORTRAN from the previous script into the funNikolai.m file is::
+
+    function residual = funNikolai(optpar)
+
+    % extended Carver's equation derived via Maple, Ra-Rb = 0 by Skrynnikov
+    
+    global nu_0 x y Rcalc rms nfields
+    global Tc
+    
+    Rcalc=zeros(nfields,size(x,2));
+    
+    tau_ex=optpar(1);
+    pb=optpar(2);
+    
+    pa=1-pb;
+    kex=1/tau_ex;
+    Ka=kex*pb;
+    Kb=kex*pa;
+    
+    nu_cpmg=x;
+    tcp=1./(2*nu_cpmg);
+    N=round(Tc./tcp);
+    
+    for k=1:nfields
+        dw=2*pi*nu_0(k)*optpar(3);
+        Rinf=optpar(3+k);
+        
+        t3 = i;
+        t4 = t3*dw;
+        t5 = Kb^2;
+        t8 = 2*t3*Kb*dw;
+        t10 = 2*Kb*Ka;
+        t11 = dw^2;
+        t14 = 2*t3*Ka*dw;
+        t15 = Ka^2;
+        t17 = sqrt(t5-t8+t10-t11+t14+t15);
+        t21 = exp((-Kb+t4-Ka+t17)*tcp/4);
+        t22 = 1/t17;
+        t28 = exp((-Kb+t4-Ka-t17)*tcp/4);
+        t31 = t21*t22*Ka-t28*t22*Ka;
+        t33 = sqrt(t5+t8+t10-t11-t14+t15);
+        t34 = Kb+t4-Ka+t33;
+        t37 = exp((-Kb-t4-Ka+t33)*tcp/2);
+        t39 = 1/t33;
+        t41 = Kb+t4-Ka-t33;
+        t44 = exp((-Kb-t4-Ka-t33)*tcp/2);
+        t47 = t34*t37*t39/2-t41*t44*t39/2;
+        t49 = Kb-t4-Ka-t17;
+        t51 = t21*t49*t22;
+        t52 = Kb-t4-Ka+t17;
+        t54 = t28*t52*t22;
+        t55 = -t51+t54;
+        t60 = t37*t39*Ka-t44*t39*Ka;
+        t62 = t31.*t47+t55.*t60/2;
+        t63 = 1/Ka;
+        t68 = -t52*t63*t51/2+t49*t63*t54/2;
+        t69 = t62.*t68/2;
+        t72 = t37*t41*t39;
+        t76 = t44*t34*t39;
+        t78 = -t34*t63*t72/2+t41*t63*t76/2;
+        t80 = -t72+t76;
+        t82 = t31.*t78/2+t55.*t80/4;
+        t83 = t82.*t55/2;
+        t88 = t52*t21*t22/2-t49*t28*t22/2;
+        t91 = t88.*t47+t68.*t60/2;
+        t92 = t91.*t88;
+        t95 = t88.*t78/2+t68.*t80/4;
+        t96 = t95.*t31;
+        t97 = t69+t83;
+        t98 = t97.^2;
+        t99 = t92+t96;
+        t102 = t99.^2;
+        t108 = t62.*t88+t82.*t31;
+        t112 = sqrt(t98-2*t99.*t97+t102+4*(t91.*t68/2+t95.*t55/2).*t108);
+        t113 = t69+t83-t92-t96-t112;
+        t115 = N/2;
+        t116 = (t69/2+t83/2+t92/2+t96/2+t112/2).^t115;
+        t118 = 1./t112;
+        t120 = t69+t83-t92-t96+t112;
+        t122 = (t69/2+t83/2+t92/2+t96/2-t112/2).^t115;
+        t127 = 1./t108;
+        t139 = 1/(Ka+Kb)*((-t113.*t116.*t118/2+t120.*t122.*t118/2)*Kb+(-t113.*t127.*t116.*t120.*t118/2+t120.*t127.*t122.*t113.*t118/2)*Ka/2);
+        
+        intensity0 = pa;                             % pA
+        intensity = real(t139)*exp(-Tc*Rinf);        % that's "homogeneous" relaxation
+        Rcalc(k,:)=(1/Tc)*log(intensity0./intensity); 
+        
+    end
+    
+    if (size(Rcalc)==size(y))
+        residual=sum(sum((y-Rcalc).^2)); 
+        rms=sqrt(residual/(size(y,1)*size(y,2)));
+    end
 """
 
 # Dependency check module.
