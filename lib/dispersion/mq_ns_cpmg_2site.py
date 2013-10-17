@@ -138,7 +138,7 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
         # Matrices for even n.
         if power[i] % 2 == 0:
             # The power factor (only calculate once).
-            fact = power[i] / 2
+            fact = int(power[i] / 2)
 
             # (M1.M2.M2.M1)^(n/2)
             A = matrix_power(M1_M2_M2_M1, fact)
@@ -155,7 +155,7 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
         # Matrices for odd n.
         else:
             # The power factor (only calculate once).
-            fact = (power[i] - 1) / 2
+            fact = int((power[i] - 1) / 2)
 
             # (M1.M2.M2.M1)^((n-1)/2).M1.M2
             A = matrix_power(M1_M2_M2_M1, fact)
