@@ -86,5 +86,5 @@ class Test_matrix_exponential(TestCase):
         # Checks.
         for i in range(2):
             for j in range(2):
-                self.assertAlmostEqual(eR1_test[i, j].real, eR1[i, j].real)
-                self.assertAlmostEqual(eR1_test[i, j].imag, eR1[i, j].imag)
+                self.assertAlmostEqual(eR1_test[i, j].real, eR1[i, j].real, 5)
+                self.assertAlmostEqual(eR1_test[i, j].imag, eR1[i, j].imag, 5)
