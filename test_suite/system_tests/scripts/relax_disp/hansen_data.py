@@ -19,7 +19,7 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp'
 
 # The numeric flag.
-if not hasattr(ds, 'numeric_flag'):
+if not hasattr(ds, 'numeric_only'):
     ds.numeric_only = False
 
 # The grid search size (the number of increments per dimension).
