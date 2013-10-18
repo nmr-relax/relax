@@ -78,3 +78,7 @@ def deletion(obj=None, name=None, dir=False):
 
         finally:
             del var
+
+    # Already deleted.
+    except OSError:
+        pass
