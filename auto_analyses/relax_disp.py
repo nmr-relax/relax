@@ -47,7 +47,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, model_class='mixed', mc_sim_all_models=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, numeric_only=False, mc_sim_all_models=False):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
@@ -66,8 +66,8 @@ class Relax_disp:
         @type modsel:               str
         @keyword pre_run_dir:       The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
         @type pre_run_dir:          None or str
-        @keyword model_class:       The class of models to use in the model selection.  The default of 'mixed' allows all dispersion models to be used in the analysis.  The value of 'numeric' will activate a pure numeric solution - the analytic models can be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will only use the 'No Rex' and numeric solutions exclusively.
-        @type model_class:          str
+        @keyword numeric_only:      The class of models to use in the model selection.  The default of False allows all dispersion models to be used in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them.
+        @type numeric_only:         bool
         @keyword mc_sim_all_models: A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
         @type mc_sim_all_models:    bool
         """
@@ -91,6 +91,7 @@ class Relax_disp:
         self.mc_sim_num = mc_sim_num
         self.modsel = modsel
         self.pre_run_dir = pre_run_dir
+        self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
 
         # No results directory, so default to the current directory.

@@ -487,7 +487,7 @@ class Relax_disp(SystemTestCase):
             MODEL_CR72,
             MODEL_NS_CPMG_2SITE_EXPANDED
         ]
-        ds.numeric_flag = True
+        ds.numeric_only = True
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')

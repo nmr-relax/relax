@@ -19,10 +19,8 @@ if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = 'temp'
 
 # The numeric flag.
-if hasattr(ds, 'numeric_flag') and ds.numeric_flag:
-    model_class = 'numeric'
-else:
-    model_class = 'mixed'
+if not hasattr(ds, 'numeric_flag'):
+    ds.numeric_only = False
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 5
@@ -60,7 +58,4 @@ Relax_disp.opt_func_tol = 1e-5
 Relax_disp.opt_max_iterations = 10000
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, model_class=model_class)
-
-# Save the program state.
-state.save('devnull', force=True)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, numeric_only=ds.numeric_only)
