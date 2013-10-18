@@ -1652,28 +1652,28 @@ class Relax_disp(SystemTestCase):
         spin137F = cdp.mol[0].res[1].spin[1]
 
         # Set the cluster specific parameters (only for the first spin).
-        spin135S.pA = 0.500311298403094
-        spin135S.kex = 59.5551680542025
+        spin135S.pA = 0.847378444499757
+        spin135S.kex = 264.055604934724329
 
         # Set the initial parameter values.
-        spin135S.r2 = [ 2.89494989792968, 12.6694205621436]
-        spin135S.dw = 1.47777783753308
-        spin135S.dwH = 1.0880818550171
+        spin135S.r2 = [ 30.315119723745390, 37.411874745645299]
+        spin135S.dw = 0.585574008745351
+        spin135S.dwH = 0.000000000000002
 
-        spin135F.r2 = [ 41.907752972063, 58.1518607839796]
-        spin135F.dw = 0.419799242782033
-        spin135F.dwH = 1.27742823131436
+        spin135F.r2 = [ 41.440843383778287, 56.989726795397893]
+        spin135F.dw = 0.856699277665748
+        spin135F.dwH = 0.000000000582587
 
-        spin137S.r2 = [ 0.0736711146623223, 13.8168225329927]
-        spin137S.dw = 2.4030348485243
-        spin137S.dwH = 0.00271978588774347
+        spin137S.r2 = [ 23.051695938570266, 28.352806483953824]
+        spin137S.dw = 0.772904450844973
+        spin137S.dwH = 0.183351478512970
 
-        spin137F.r2 = [ 45.2885284912096, 57.8347181561312]
-        spin137F.dw = 1.5929498838754
-        spin137F.dwH = 0.00605967407110987
+        spin137F.r2 = [ 44.702032074210429, 56.453146052685319]
+        spin137F.dw = 0.984568590342831
+        spin137F.dwH = 0.000000001993458
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-5, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -1687,40 +1687,40 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g %20.15g %20.15g\n" % ("chi2", spin135S.chi2, spin135F.chi2, spin137S.chi2, spin137F.chi2))
 
         # Checks for residue :135S.
-        self.assertAlmostEqual(spin135S.r2[0], 2.89494989792968, 4)
-        self.assertAlmostEqual(spin135S.r2[1], 12.6694205621436, 4)
-        self.assertAlmostEqual(spin135S.pA, 0.500311298403094, 4)
-        self.assertAlmostEqual(spin135S.dw, 1.47777783753308, 4)
-        self.assertAlmostEqual(spin135S.dwH, 1.0880818550171, 4)
-        self.assertAlmostEqual(spin135S.kex, 59.5551680542025, 4)
-        self.assertAlmostEqual(spin135S.chi2, 347.259150126813, 4)
+        self.assertAlmostEqual(spin135S.r2[0], 30.3151197237454, 4)
+        self.assertAlmostEqual(spin135S.r2[1], 37.4118747456453, 4)
+        self.assertAlmostEqual(spin135S.pA, 0.847378444499757, 4)
+        self.assertAlmostEqual(spin135S.dw, 0.585574008745351, 4)
+        self.assertAlmostEqual(spin135S.dwH, 2e-15, 4)
+        self.assertAlmostEqual(spin135S.kex, 264.055604934724, 4)
+        self.assertAlmostEqual(spin135S.chi2, 13.859423588071, 4)
 
         # Checks for residue :135F.
-        self.assertAlmostEqual(spin135F.r2[0], 41.907752972063, 4)
-        self.assertAlmostEqual(spin135F.r2[1], 58.1518607839796, 4)
-        self.assertAlmostEqual(spin135F.pA, 0.500311298403094, 4)
-        self.assertAlmostEqual(spin135F.dw, 0.419799242782033, 4)
-        self.assertAlmostEqual(spin135F.dwH, 1.27742823131436, 4)
-        self.assertAlmostEqual(spin135F.kex, 59.5551680542025, 4)
-        self.assertAlmostEqual(spin135F.chi2, 347.259150126813, 4)
+        self.assertAlmostEqual(spin135F.r2[0], 41.4408433837783, 4)
+        self.assertAlmostEqual(spin135F.r2[1], 56.9897267953979, 4)
+        self.assertAlmostEqual(spin135F.pA, 0.847378444499757, 4)
+        self.assertAlmostEqual(spin135F.dw, 0.856699277665748, 4)
+        self.assertAlmostEqual(spin135F.dwH, 5.82587e-10, 4)
+        self.assertAlmostEqual(spin135F.kex, 264.055604934724, 4)
+        self.assertAlmostEqual(spin135F.chi2, 13.859423588071, 4)
 
         # Checks for residue :137S.
-        self.assertAlmostEqual(spin137S.r2[0], 0.0736711146623223, 4)
-        self.assertAlmostEqual(spin137S.r2[1], 13.8168225329927, 4)
-        self.assertAlmostEqual(spin137S.pA, 0.500311298403094, 4)
-        self.assertAlmostEqual(spin137S.dw, 2.4030348485243, 4)
-        self.assertAlmostEqual(spin137S.dwH, 0.00285577518213064, 4)
-        self.assertAlmostEqual(spin137S.kex, 59.5551680542025, 4)
-        self.assertAlmostEqual(spin137S.chi2, 347.259150126813, 4)
+        self.assertAlmostEqual(spin137S.r2[0], 23.0516959385703, 4)
+        self.assertAlmostEqual(spin137S.r2[1], 28.3528064839538, 4)
+        self.assertAlmostEqual(spin137S.pA, 0.847378444499757, 4)
+        self.assertAlmostEqual(spin137S.dw, 0.772904450844973, 4)
+        self.assertAlmostEqual(spin137S.dwH, 0.18335147851297, 4)
+        self.assertAlmostEqual(spin137S.kex, 264.055604934724, 4)
+        self.assertAlmostEqual(spin137S.chi2, 13.859423588071, 4)
 
         # Checks for residue :137F.
-        self.assertAlmostEqual(spin137F.r2[0], 45.2885284912096, 4)
-        self.assertAlmostEqual(spin137F.r2[1], 57.8347181561312, 4)
-        self.assertAlmostEqual(spin137F.pA, 0.500311298403094, 4)
-        self.assertAlmostEqual(spin137F.dw, 1.5929498838754, 4)
-        self.assertAlmostEqual(spin137F.dwH, 0.00605967407110987, 4)
-        self.assertAlmostEqual(spin137F.kex, 59.5551680542025, 4)
-        self.assertAlmostEqual(spin137F.chi2, 347.259150126813, 4)
+        self.assertAlmostEqual(spin137F.r2[0], 44.7020320742104, 4)
+        self.assertAlmostEqual(spin137F.r2[1], 56.4531460526853, 4)
+        self.assertAlmostEqual(spin137F.pA, 0.847378444499757, 4)
+        self.assertAlmostEqual(spin137F.dw, 0.984568590342831, 4)
+        self.assertAlmostEqual(spin137F.dwH, 2.0931309e-09, 4)
+        self.assertAlmostEqual(spin137F.kex, 264.055604934724, 4)
+        self.assertAlmostEqual(spin137F.chi2, 13.859423588071, 4)
 
 
     def test_tp02_data_to_ns_r1rho_2site(self, model=None):
