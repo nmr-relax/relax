@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_LIST_NUMERIC, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -115,6 +115,27 @@ class Relax_disp:
         status.exec_lock.release()
 
 
+    def is_model_for_selection(self, model=None):
+        """Determine if the model should be used for model selection.
+
+        @keyword model: The model to check.
+        @type model:    str
+        @return:        True if the model should be included in the model selection list, False if not.
+        @rtype:         bool
+        """
+
+        # Skip the 'R2eff' base model.
+        if model == 'R2eff':
+            return False
+
+        # Do not use the analytic models.
+        if self.numeric_only and model in MODEL_LIST_ANALYTIC:
+            return False
+
+        # All models allowed.
+        return True
+
+
     def check_vars(self):
         """Check that the user has set the variables correctly."""
 
@@ -126,6 +147,18 @@ class Relax_disp:
         allowed = ['AIC', 'AICc', 'BIC']
         if self.modsel not in allowed:
             raise RelaxError("The model selection technique '%s' is not in the allowed list of %s." % (self.modsel, allowed))
+
+        # Some warning for the user if the pure numeric solution is selected.
+        if self.numeric_only:
+            # Loop over all models.
+            for model in self.models:
+                # Skip the models used for nesting.
+                if model in [MODEL_CR72, MODEL_MQ_CR72]:
+                    continue
+
+                # Warnings for all other analytic models.
+                if model in MODEL_LIST_ANALYTIC:
+                    warn(RelaxWarning("The analytic model '%s' will be optimised but will not be used in any way in this numeric model only auto-analysis." % model))
 
 
     def error_analysis(self):
@@ -304,7 +337,7 @@ class Relax_disp:
 
             # The name of the data pipe for the model.
             model_pipe = model
-            if model != 'R2eff':
+            if self.is_model_for_selection(model):
                 self.model_pipes.append(model_pipe)
 
             # Check that results do not already exist - i.e. a previous run was interrupted.
