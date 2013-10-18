@@ -223,7 +223,6 @@ import dep_check
 # Python module imports.
 from math import log
 from numpy import add, complex, conj, dot, exp, power, real, sqrt
-from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
