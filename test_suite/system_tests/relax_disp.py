@@ -22,7 +22,6 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-from shutil import rmtree
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -33,6 +32,7 @@ from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.relax_disp.disp_data import get_curve_type
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
 from status import Status; status = Status()
+from test_suite.clean_up import deletion
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
@@ -77,7 +77,8 @@ class Relax_disp(SystemTestCase):
         """Reset the relax data storage object."""
 
         # Remove the temporary directory.
-        rmtree(self.tmpdir)
+        deletion(obj=ds, name='tmpdir', dir=True)
+        deletion(obj=self, name='tmpdir', dir=True)
 
         # Reset the relax data storage object.
         ds.__reset__()
