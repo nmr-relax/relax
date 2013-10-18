@@ -220,6 +220,16 @@ class Auto_relax_disp(Base_analysis):
         self.gui.Bind(wx.EVT_BUTTON, self.interatom_define, self.button_interatom_define)
         sizer.Add(self.button_interatom_define, 1, wx.ALL|wx.EXPAND, 0)
 
+        # value.set button.
+        self.button_value_set = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Value setting")
+        self.button_value_set.SetBitmapLabel(wx.Bitmap(fetch_icon("relax.value", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_value_set.SetFont(font.normal)
+        self.button_value_set.SetSize((-1, 25))
+        tooltip = "Set certain parameters to experimentally determined values.\n\nThis is simply used to speed up optimisation by skipping this parameter in the initial grid search.  The result is that the number of dimensions in the grid search is decreased, resulting in roughly one order of magnitude decrease in time for each parameter in this part of the analysis.  Important to note is that the parameter will be optimised after the initial grid search."
+        self.button_value_set.SetToolTipString(tooltip)
+        self.gui.Bind(wx.EVT_BUTTON, self.value_set, self.button_value_set)
+        sizer.Add(self.button_value_set, 1, wx.ALL|wx.EXPAND, 0)
+
         # Add the element to the box.
         box.Add(sizer, 0, wx.ALL|wx.EXPAND, 0)
 
@@ -622,6 +632,17 @@ class Auto_relax_disp(Base_analysis):
 
             # Update the text.
             self.field_cluster.SetValue(text)
+
+
+    def value_set(self, event=None):
+        """Launch the value.set user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Call the user function.
+        uf_store['value.set'](wx_wizard_modal=True)
 
 
 
