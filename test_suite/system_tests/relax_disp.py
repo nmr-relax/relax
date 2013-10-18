@@ -507,27 +507,6 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.r2[0], 5.83137814994754, 4)
         self.assertAlmostEqual(spin71.chi2, 73.6219146835821, 4)
 
-        # The 'LM63' model checks.
-        self.interpreter.pipe.switch(pipe_name='LM63')
-        spin70 = cdp.mol[0].res[0].spin[0]
-        spin71 = cdp.mol[0].res[1].spin[0]
-        print("\n\nOptimised parameters:\n")
-        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
-        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
-        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
-        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
-        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
-        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        self.assertAlmostEqual(spin70.r2[0], 6.7725779040626, 4)
-        self.assertAlmostEqual(spin70.r2[1], 6.6495102881274, 4)
-        self.assertAlmostEqual(spin70.phi_ex, 0.308228782539112, 4)
-        self.assertAlmostEqual(spin70.kex/10000, 4644.35027966526/10000, 4)
-        self.assertAlmostEqual(spin70.chi2, 137.64638621224, 4)
-        self.assertAlmostEqual(spin71.r2[0], 4.92986568906445, 4)
-        self.assertAlmostEqual(spin71.phi_ex, 0.0595701347673553, 4)
-        self.assertAlmostEqual(spin71.kex/10000, 2566.66176813506/10000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.31424715490254, 4)
-
         # The 'CR72' model checks.  These models have not reached the minima due to the low quality optimisation!
         self.interpreter.pipe.switch(pipe_name='CR72')
         spin70 = cdp.mol[0].res[0].spin[0]
@@ -551,6 +530,37 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.dw, 199.873875627265, 2)
         self.assertAlmostEqual(spin71.kex, 10.7154862578618, 2)
         self.assertAlmostEqual(spin71.chi2, 57.9468501661789, 2)
+
+        # The 'NS CPMG 2-site expanded' model checks.  These models have not reached the minima due to the low quality optimisation!
+        self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded')
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.assertAlmostEqual(spin70.r2[0], 6.96101862173876, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.43558150234607, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989640734323076, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67778572185308, 4)
+        self.assertAlmostEqual(spin70.kex/10000, 1675.71048406429/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 16.9361822411228, 4)
+        self.assertAlmostEqual(spin71.r2[0], 0.000848665494171463, 2)
+        self.assertAlmostEqual(spin71.pA, 0.655296796352596, 2)
+        self.assertAlmostEqual(spin71.dw, 250.635584872988, 2)
+        self.assertAlmostEqual(spin71.kex, 16.910452128491, 2)
+        self.assertAlmostEqual(spin71.chi2, 69.4759976405928, 2)
+
+        # The final data pipe checks.
+        self.interpreter.pipe.switch(pipe_name='final')
+        spin70 = cdp.mol[0].res[0].spin[0]
+        spin71 = cdp.mol[0].res[1].spin[0]
+        self.assertEqual(spin70.model, 'NS CPMG 2-site expanded')
+        self.assertEqual(spin71.model, 'No Rex')
 
 
     def test_hansen_cpmg_data_to_cr72(self):
