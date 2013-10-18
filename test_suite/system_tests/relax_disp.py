@@ -73,17 +73,6 @@ class Relax_disp(SystemTestCase):
         self.tmpdir = ds.tmpdir
 
 
-    def tearDown(self):
-        """Reset the relax data storage object."""
-
-        # Remove the temporary directory.
-        deletion(obj=ds, name='tmpdir', dir=True)
-        deletion(obj=self, name='tmpdir', dir=True)
-
-        # Reset the relax data storage object.
-        ds.__reset__()
-
-
     def setup_hansen_cpmg_data(self, model=None):
         """Set up the data for the test_hansen_cpmg_data_*() system tests.
 
