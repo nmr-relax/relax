@@ -114,6 +114,7 @@ class Auto_relax_disp(Base_analysis):
             ds.relax_gui.analyses[data_index].pipe_bundle = pipe_bundle
 
             # Initialise the variables.
+            ds.relax_gui.analyses[data_index].numeric_only = False
             ds.relax_gui.analyses[data_index].grid_inc = None
             ds.relax_gui.analyses[data_index].mc_sim_num = None
             ds.relax_gui.analyses[data_index].pre_run_dir = None
@@ -284,6 +285,9 @@ class Auto_relax_disp(Base_analysis):
             if model != MODEL_NOREX and model in MODEL_LIST_R1RHO and not has_r1rho_exp_type():
                 model_mismatch.append([model, 'R1rho'])
 
+        # The numeric only solution.
+        data.numeric_only = self.numeric_only.GetValue()
+
         # Increment size.
         data.inc = gui_to_int(self.grid_inc.GetValue())
 
@@ -341,8 +345,14 @@ class Auto_relax_disp(Base_analysis):
         self.model_field = Disp_model_list(self, box)
         self.model_field.set_value(self.data.disp_models)
 
-        # The optimisation settings.
+        # The numeric only solution.
+        tooltip = "The class of models to use in the final model selection.\n\nThe default of False allows all dispersion models to be compared for statistical significance in the analysis (no exchange, the analytic models and the numeric models).  The value of True will activate a pure numeric solution - the analytic models will be optimised, as they are very useful for replacing the grid search for the numeric models, but the final model selection will not include them."
+        self.numeric_only = Boolean_ctrl(box, self, text="Pure numeric solutions:", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
+        # The grid search optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
+        # The MC simulation settings.
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_all_models = Boolean_ctrl(box, self, text="Per model error analysis:", default=False, tooltip="A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
@@ -571,6 +581,12 @@ class Auto_relax_disp(Base_analysis):
         @type upload:       bool
         """
 
+        # The numeric solution only flag.
+        if upload:
+            self.data.numeric_only = self.numeric_only.GetValue()
+        elif hasattr(self.data, 'numeric_only'):
+            self.numeric_only.SetValue(bool(self.data.numeric_only))
+
         # The grid incs.
         if upload:
             self.data.grid_inc = gui_to_int(self.grid_inc.GetValue())
@@ -657,7 +673,7 @@ class Execute_relax_disp(Execute):
         Relax_disp.opt_max_iterations = self.data.opt_max_iterations
 
         # Execute.
-        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models)
+        Relax_disp(pipe_name=self.data.pipe_name, pipe_bundle=self.data.pipe_bundle, results_dir=self.data.save_dir, models=self.data.models, grid_inc=self.data.inc, mc_sim_num=self.data.mc_sim_num, pre_run_dir=self.data.pre_run_dir, mc_sim_all_models=self.data.mc_sim_all_models, numeric_only=self.data.numeric_only)
 
         # Alias the relax data store data.
         data = ds.relax_gui.analyses[self.data_index]
