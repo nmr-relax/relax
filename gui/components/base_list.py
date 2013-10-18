@@ -327,6 +327,9 @@ class Base_list(object):
         # Obtain the position.
         pos = event.GetPosition()
 
+        # Hack to allow the test suite to pass.
+        wx.Yield()
+
         # Find the item clicked on.
         item, flags = self.element.HitTest(pos)
 

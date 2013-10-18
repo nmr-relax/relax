@@ -441,7 +441,7 @@ class Fake_right_click:
         """Simulate the GetPosition() method."""
 
         # Return some random position.
-        return (10, 10)
+        return wx.Point(2, 2)
 
 
     def GetRow(self):
