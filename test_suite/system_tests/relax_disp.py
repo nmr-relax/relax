@@ -546,7 +546,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin70.r2[0], 6.96101862173876, 4)
         self.assertAlmostEqual(spin70.r2[1], 9.43558150234607, 4)
         self.assertAlmostEqual(spin70.pA, 0.989640734323076, 4)
-        self.assertAlmostEqual(spin70.dw, 5.67778572185308, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67778572185308, 3)
         self.assertAlmostEqual(spin70.kex/10000, 1675.71048406429/10000, 4)
         self.assertAlmostEqual(spin70.chi2, 16.9361822411228, 4)
         self.assertAlmostEqual(spin71.r2[0], 0.000848665494171463, 2)
@@ -1093,7 +1093,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.r2b[0]/100, 90.5967627165153/100, 2)
         self.assertAlmostEqual(spin71.pA, 0.996552640812467, 4)
         self.assertAlmostEqual(spin71.dw, 4.63014545224382, 2)
-        self.assertAlmostEqual(spin71.kex/1000, 1737.36993910397/1000, 2)
+        self.assertAlmostEqual(spin71.kex/10000, 1737.36993910397/10000, 2)
         self.assertAlmostEqual(spin71.chi2, 2.2100492324449, 1)
 
         # Test the conversion to k_AB from kex and pA.
