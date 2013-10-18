@@ -71,5 +71,10 @@ def deletion(obj=None, name=None, dir=False):
                 rmtree(var)
             else:
                 delete(var, fail=False)
+
+        # The files no longer exist?  Oh well.
+        except WindowsError:
+            pass
+
         finally:
             del var
