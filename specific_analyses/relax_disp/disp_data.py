@@ -1105,6 +1105,10 @@ def return_cpmg_frqs(ref_flag=True):
     @rtype:             numpy rank-1 float64 array
     """
 
+    # No data.
+    if not hasattr(cdp, 'cpmg_frqs_list'):
+        return None
+
     # Initialise.
     cpmg_frqs = []
 
@@ -1556,6 +1560,10 @@ def return_spin_lock_nu1(ref_flag=True):
     @return:            The list of spin-lock field strengths in Hz.
     @rtype:             numpy rank-1 float64 array
     """
+
+    # No data.
+    if not hasattr(cdp, 'spin_lock_nu1_list'):
+        return None
 
     # Initialise.
     nu1 = []
