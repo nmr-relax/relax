@@ -784,7 +784,7 @@ class Relax_disp(API_base, API_common):
 
         # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model_type == 'R2eff':
-            self.calculate_r2eff()
+            self._calculate_r2eff()
 
         # Calculate the chi-squared value.
         else:
