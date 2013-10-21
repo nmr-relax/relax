@@ -539,4 +539,4 @@ class Fake_right_click:
         """Overwrite the GetPosition() method."""
 
         # Return roughly the position of the forth row.
-        return (10, 65)
+        return wx.Point(10, 65)
