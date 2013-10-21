@@ -634,7 +634,7 @@ class Auto_relax_disp(Base_analysis):
 
         # Nothing yet.
         if not len(cluster_keys):
-            self.field_cluster.SetValue("free spins")
+            wx.CallAfter(self.field_cluster.SetValue, "free spins")
 
         # List the clusters.
         else:
@@ -647,7 +647,7 @@ class Auto_relax_disp(Base_analysis):
                     text += ", %s" % cluster_keys[i]
 
             # Update the text.
-            self.field_cluster.SetValue(text)
+            wx.CallAfter(self.field_cluster.SetValue, text)
 
 
     def value_set(self, event=None):
