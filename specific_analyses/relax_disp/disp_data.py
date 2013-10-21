@@ -1365,7 +1365,10 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
             # Calculate the tilt angle.
             omega1 = point * 2.0 * pi
             Delta_omega = shifts[spin_index, frq_index] - offsets[spin_index, frq_index, disp_pt_index]
-            theta[spin_index, frq_index, disp_pt_index] = atan(omega1 / Delta_omega)
+            if Delta_omega == 0.0:
+                theta[spin_index, frq_index, disp_pt_index] = pi / 2.0
+            else:
+                theta[spin_index, frq_index, disp_pt_index] = atan(omega1 / Delta_omega)
 
     # Return the structures.
     return shifts, offsets, theta
