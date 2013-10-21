@@ -140,7 +140,10 @@ class Relax_disp(API_base, API_common):
         model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_time=cdp.relax_time_list[0], scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        model.func(param_vector)
+        chi2 = model.func(param_vector)
+
+        # Store the chi2 value.
+        spin.chi2 = chi2
 
         # Convert to a dictionary matching the R2eff data structure.
         results = {}
@@ -705,7 +708,7 @@ class Relax_disp(API_base, API_common):
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
-        """Calculate the R2eff values for fixed relaxation time period data.
+        """Calculate the model chi-squared value or the R2eff values for fixed time period data.
 
         @keyword spin_id:   The spin identification string.
         @type spin_id:      None or str
@@ -718,8 +721,23 @@ class Relax_disp(API_base, API_common):
         # Data checks.
         pipes.test()
         check_mol_res_spin_data()
-        check_exp_type()
         check_model_type()
+
+        # Special exponential curve-fitting for the 'R2eff' model.
+        if cdp.model_type == 'R2eff':
+            self.calculate_r2eff()
+
+        # Calculate the chi-squared value.
+        else:
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+
+
+    def calculate_r2eff(self):
+        """Calculate the R2eff values for fixed relaxation time period data."""
+
+        # Data checks.
+        check_exp_type()
         check_disp_points()
         check_exp_type_fixed_time()
 
