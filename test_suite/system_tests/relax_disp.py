@@ -1042,57 +1042,23 @@ class Relax_disp(SystemTestCase):
         spin71 = cdp.mol[0].res[1].spin[0]
 
         # Set the initial parameter values.
-        spin70.r2a = [6.6669125505612326, 7.9099620524116832]
-        spin70.r2b = [5.1682435163389273, 136.91254775378511]
-        spin70.pA = 0.98850730705658107
-        spin70.dw = 5.4558153872989479
-        spin70.kex = 1912.8933749215912
-        spin71.r2a = [4.7063177761402863, 82.050179213698851]
-        spin71.r2b = [89.166191921335241, 82.326667994585918]
-        spin71.pA = 0.99654076024302629
-        spin71.dw = 4.6216529767646399
-        spin71.kex = 1726.0473405563631
+        spin70.r2a = [6.44836878645126, 7.00382877393494]
+        spin70.r2b = [12.2083127421994, 199.862962628402]
+        spin70.pA = 0.987648082613451
+        spin70.dw = 5.30679853807572
+        spin70.kex = 2033.25380420666
+        spin71.r2a = [4.71761264693319, 100.005548136703]
+        spin71.r2b = [85.5648562826238, 100.00128809933]
+        spin71.pA = 0.996552847427452
+        spin71.dw = 4.6242782418569
+        spin71.kex = 1772.41110206135
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=500, constraints=False, scaling=True, verbosity=1)
-
-        # Printout.
-        print("\n\nOptimised parameters:\n")
-        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
-        print("%-20s %20.15g %20.15g" % ("R2A (500 MHz)", spin70.r2a[0], spin71.r2a[0]))
-        print("%-20s %20.15g %20.15g" % ("R2B (500 MHz)", spin70.r2b[0], spin71.r2b[0]))
-        print("%-20s %20.15g %20.15g" % ("R2A (800 MHz)", spin70.r2a[1], spin71.r2a[1]))
-        print("%-20s %20.15g %20.15g" % ("R2B (800 MHz)", spin70.r2b[1], spin71.r2b[1]))
-        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
-        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
-        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
-        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.interpreter.calc()
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2a[0], 6.65003835825478, 1)
-        self.assertAlmostEqual(spin70.r2b[0]/10, 5.31347162207315/10, 1)
-        self.assertAlmostEqual(spin70.r2a[1]/10, 7.87635108190449/10, 2)
-        self.assertAlmostEqual(spin70.r2b[1]/100, 135.708719885307/100, 1)
-        self.assertAlmostEqual(spin70.pA, 0.988469947252028, 4)
-        self.assertAlmostEqual(spin70.dw, 5.45888282996666, 1)
-        self.assertAlmostEqual(spin70.kex/1000, 1916.73326696216/1000, 1)
-        self.assertAlmostEqual(spin70.chi2/10, 14.4262344752791/10, 1)
-
-        # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2a[0], 4.70924871251753, 2)
-        self.assertAlmostEqual(spin71.r2b[0]/100, 89.9629842059918/100, 2)
-        self.assertAlmostEqual(spin71.pA, 0.996550123176172, 4)
-        self.assertAlmostEqual(spin71.dw, 4.62907892982899, 2)
-        self.assertAlmostEqual(spin71.kex/10000, 1744.40043228887/10000, 2)
-        self.assertAlmostEqual(spin71.chi2, 2.20955984709746, 1)
-
-        # Test the conversion to k_AB from kex and pA.
-        self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
-        self.assertEqual(spin71.k_AB, spin71.kex * (1.0 - spin71.pA))
-
-        # Test the conversion to k_BA from kex and pA.
-        self.assertEqual(spin70.k_BA, spin70.kex * spin70.pA)
-        self.assertEqual(spin71.k_BA, spin71.kex * spin71.pA)
+        self.assertAlmostEqual(spin70.chi2, 14.808011089837033, 4)
+        self.assertAlmostEqual(spin71.chi2, 2.2100296821673893, 4)
 
 
     def test_hansen_cpmgfit_input(self):
