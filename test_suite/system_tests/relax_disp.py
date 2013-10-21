@@ -1054,7 +1054,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 1726.0473405563631
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=500, constraints=False, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -1069,22 +1069,22 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2a[0], 6.65078481090512, 2)
-        self.assertAlmostEqual(spin70.r2b[0]/10, 5.32381715451347/10, 1)
-        self.assertAlmostEqual(spin70.r2a[1], 7.88179635634578, 2)
-        self.assertAlmostEqual(spin70.r2b[1]/100, 135.301813064895/100, 2)
-        self.assertAlmostEqual(spin70.pA, 0.988476350902883, 4)
-        self.assertAlmostEqual(spin70.dw, 5.45783086803889, 1)
-        self.assertAlmostEqual(spin70.kex/1000, 1917.34123861444/1000, 1)
-        self.assertAlmostEqual(spin70.chi2/10, 14.4236787048135/10, 1)
+        self.assertAlmostEqual(spin70.r2a[0], 6.65003835825478, 2)
+        self.assertAlmostEqual(spin70.r2b[0]/10, 5.31347162207315/10, 1)
+        self.assertAlmostEqual(spin70.r2a[1], 7.87635108190449, 2)
+        self.assertAlmostEqual(spin70.r2b[1]/100, 135.708719885307/100, 2)
+        self.assertAlmostEqual(spin70.pA, 0.988469947252028, 4)
+        self.assertAlmostEqual(spin70.dw, 5.45888282996666, 1)
+        self.assertAlmostEqual(spin70.kex/1000, 1916.73326696216/1000, 1)
+        self.assertAlmostEqual(spin70.chi2/10, 14.4262344752791/10, 1)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2a[0], 4.70924605140312, 2)
-        self.assertAlmostEqual(spin71.r2b[0]/100, 90.5967627165153/100, 2)
-        self.assertAlmostEqual(spin71.pA, 0.996552640812467, 4)
-        self.assertAlmostEqual(spin71.dw, 4.63014545224382, 2)
-        self.assertAlmostEqual(spin71.kex/10000, 1737.36993910397/10000, 2)
-        self.assertAlmostEqual(spin71.chi2, 2.2100492324449, 1)
+        self.assertAlmostEqual(spin71.r2a[0], 4.70924871251753, 2)
+        self.assertAlmostEqual(spin71.r2b[0]/100, 89.9629842059918/100, 2)
+        self.assertAlmostEqual(spin71.pA, 0.996550123176172, 4)
+        self.assertAlmostEqual(spin71.dw, 4.62907892982899, 2)
+        self.assertAlmostEqual(spin71.kex/10000, 1744.40043228887/10000, 2)
+        self.assertAlmostEqual(spin71.chi2, 2.20955984709746, 1)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
