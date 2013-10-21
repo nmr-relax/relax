@@ -1057,8 +1057,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.calc()
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.chi2, 14.808011089837033, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.2100296821673893, 4)
+        self.assertAlmostEqual(spin70.chi2, 14.808011089837033, 2)
+        self.assertAlmostEqual(spin71.chi2, 2.2100296821673893, 2)
 
 
     def test_hansen_cpmgfit_input(self):
