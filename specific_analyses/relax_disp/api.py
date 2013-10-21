@@ -223,6 +223,65 @@ class Relax_disp(API_base, API_common):
         return results
 
 
+    def _calculate_r2eff(self):
+        """Calculate the R2eff values for fixed relaxation time period data."""
+
+        # Data checks.
+        check_exp_type()
+        check_disp_points()
+        check_exp_type_fixed_time()
+
+        # Printouts.
+        print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
+
+        # Loop over the spins.
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Spin ID printout.
+            print("Spin '%s'." % spin_id)
+
+            # Skip spins which have no data.
+            if not hasattr(spin, 'intensities'):
+                continue
+
+            # Initialise the data structures.
+            if not hasattr(spin, 'r2eff'):
+                spin.r2eff = {}
+            if not hasattr(spin, 'r2eff_err'):
+                spin.r2eff_err = {}
+
+            # Loop over all the data.
+            for exp_type, frq, point, time in loop_exp_frq_point_time():
+                # The three keys.
+                ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
+                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+                param_key = return_param_key_from_data(frq=frq, point=point)
+
+                # Check for missing data.
+                missing = False
+                for i in range(len(ref_keys)):
+                    if ref_keys[i] not in spin.intensities:
+                        missing = True
+                for i in range(len(int_keys)):
+                    if int_keys[i] not in spin.intensities:
+                        missing = True
+                if missing:
+                    continue
+
+                # Average the reference intensity data and errors.
+                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
+                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
+
+                # Average the intensity data and errors.
+                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
+                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True)
+
+                # Calculate the R2eff value.
+                spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
+
+                # Calculate the R2eff error.
+                spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
+
+
     def _cluster(self, cluster_id=None, spin_id=None):
         """Define spin clustering.
 
@@ -731,65 +790,6 @@ class Relax_disp(API_base, API_common):
         else:
             for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
                 self._back_calc_r2eff(spin=spin, spin_id=spin_id)
-
-
-    def calculate_r2eff(self):
-        """Calculate the R2eff values for fixed relaxation time period data."""
-
-        # Data checks.
-        check_exp_type()
-        check_disp_points()
-        check_exp_type_fixed_time()
-
-        # Printouts.
-        print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
-
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Spin ID printout.
-            print("Spin '%s'." % spin_id)
-
-            # Skip spins which have no data.
-            if not hasattr(spin, 'intensities'):
-                continue
-
-            # Initialise the data structures.
-            if not hasattr(spin, 'r2eff'):
-                spin.r2eff = {}
-            if not hasattr(spin, 'r2eff_err'):
-                spin.r2eff_err = {}
-
-            # Loop over all the data.
-            for exp_type, frq, point, time in loop_exp_frq_point_time():
-                # The three keys.
-                ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
-                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
-                param_key = return_param_key_from_data(frq=frq, point=point)
-
-                # Check for missing data.
-                missing = False
-                for i in range(len(ref_keys)):
-                    if ref_keys[i] not in spin.intensities:
-                        missing = True
-                for i in range(len(int_keys)):
-                    if int_keys[i] not in spin.intensities:
-                        missing = True
-                if missing:
-                    continue
-
-                # Average the reference intensity data and errors.
-                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
-                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
-
-                # Average the intensity data and errors.
-                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
-                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True)
-
-                # Calculate the R2eff value.
-                spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
-
-                # Calculate the R2eff error.
-                spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
 
 
     def constraint_algorithm(self):
