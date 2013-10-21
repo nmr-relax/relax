@@ -35,12 +35,12 @@ import dep_check
 # Python module imports.
 from math import fabs, log
 from numpy import array, conj, dot, float64
-from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.linear_algebra.matrix_power import square_matrix_power
 
 
 def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
@@ -141,16 +141,16 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
             fact = int(power[i] / 2)
 
             # (M1.M2.M2.M1)^(n/2)
-            A = matrix_power(M1_M2_M2_M1, fact)
+            A = square_matrix_power(M1_M2_M2_M1, fact)
 
             # (M2*.M1*.M1*.M2*)^(n/2)
-            B = matrix_power(M2_M1_M1_M2_star, fact)
+            B = square_matrix_power(M2_M1_M1_M2_star, fact)
 
             # (M2.M1.M1.M2)^(n/2)
-            C = matrix_power(M2_M1_M1_M2, fact)
+            C = square_matrix_power(M2_M1_M1_M2, fact)
 
             # (M1*.M2*.M2*.M1*)^(n/2)
-            D = matrix_power(M1_M2_M2_M1_star, fact)
+            D = square_matrix_power(M1_M2_M2_M1_star, fact)
 
         # Matrices for odd n.
         else:
@@ -158,19 +158,19 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
             fact = int((power[i] - 1) / 2)
 
             # (M1.M2.M2.M1)^((n-1)/2).M1.M2
-            A = matrix_power(M1_M2_M2_M1, fact)
+            A = square_matrix_power(M1_M2_M2_M1, fact)
             A = dot(A, M1_M2)
 
             # (M1*.M2*.M2*.M1*)^((n-1)/2).M1*.M2*
-            B = matrix_power(M1_M2_M2_M1_star, fact)
+            B = square_matrix_power(M1_M2_M2_M1_star, fact)
             B = dot(B, M1_M2_star)
 
             # (M2.M1.M1.M2)^((n-1)/2).M2.M1
-            C = matrix_power(M2_M1_M1_M2, fact)
+            C = square_matrix_power(M2_M1_M1_M2, fact)
             C = dot(C, M2_M1)
 
             # (M2*.M1*.M1*.M2*)^((n-1)/2).M2*.M1*
-            D = matrix_power(M2_M1_M1_M2_star, fact)
+            D = square_matrix_power(M2_M1_M1_M2_star, fact)
             D = dot(D, M2_M1_star)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
