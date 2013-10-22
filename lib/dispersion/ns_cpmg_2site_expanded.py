@@ -222,7 +222,7 @@ import dep_check
 
 # Python module imports.
 from math import log
-from numpy import add, complex, conj, dot, exp, power, real, sqrt
+from numpy import add, conj, dot, exp, power, real, sqrt
 
 # relax module imports.
 from lib.float import isNaN
@@ -258,66 +258,84 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     @type num_cpmg:             numpy int16, rank-1 array
     """
 
+    # Repeditive calculations.
+    half_tcp = 0.5 * tcp
+    k_AB_plus_k_BA = k_AB + k_BA
+    k_BA_minus_k_AB = k_BA - k_AB
+
     # The expansion factors (in numpy array form for all dispersion points).
-    t3 = complex(0, 1)
+    t3 = 1.j
     t4 = t3 * dw
-    t5 = k_BA * k_BA
-    t8 = 2.0 * t3 * k_BA * dw
+    two_t4 = 2.0 * t4
+    t5 = k_BA**2
+    t8 = two_t4 * k_BA
     t10 = 2.0 * k_BA * k_AB
-    t11 = dw * dw
-    t14 = 2.0 * t3 * k_AB*dw
-    t15 = k_AB * k_AB
-    t17 = sqrt(t5 - t8 + t10 - t11 + t14 + t15)
-    t21 = exp((-k_BA + t4 - k_AB + t17) * tcp/2.0)
+    t11 = dw**2
+    t14 = two_t4 * k_AB
+    t15 = k_AB**2
+    t5_t10_t11_t15 = t5 + t10 - t11 + t15
+    t8_t14 = t8 - t14
+    t17 = sqrt(t5_t10_t11_t15 - t8_t14)
+
+    k_AB_plus_k_BA_minus_t4 = k_AB_plus_k_BA - t4
+    t21 = exp((t17 - k_AB_plus_k_BA_minus_t4) * half_tcp)
     t22 = 1.0/t17
-    t28 = exp((-k_BA + t4 - k_AB - t17) * tcp/2.0)
-    t31 = t21 * t22 * k_AB - t28 * t22 * k_AB
-    t33 = sqrt(t5 + t8 + t10 - t11 - t14 + t15)
-    t34 = k_BA + t4 - k_AB + t33
-    t37 = exp((-k_BA - t4 - k_AB + t33) * tcp)
+    t28 = exp(-(t17 + k_AB_plus_k_BA_minus_t4) * half_tcp)
+    t31 = t22*k_AB * (t21 - t28)
+    t33 = sqrt(t5_t10_t11_t15 + t8_t14)
+
+    k_AB_plus_k_BA_plus_t4 = k_AB_plus_k_BA + t4
+    k_BA_minus_k_AB_plus_t4 = k_BA_minus_k_AB + t4
+    t34 = k_BA_minus_k_AB_plus_t4 + t33
+    t37 = exp((t33 - k_AB_plus_k_BA_plus_t4) * tcp)
     t39 = 1.0/t33
-    t41 = k_BA + t4 - k_AB - t33
-    t44 = exp((-k_BA - t4 - k_AB - t33) * tcp)
-    t47 = t34 * t37 * t39/2.0 - t41 * t44 * t39/2.0
-    t49 = k_BA - t4 - k_AB - t17
+    t41 = k_BA_minus_k_AB_plus_t4 - t33
+    t44 = exp(-(t33 + k_AB_plus_k_BA_plus_t4) * tcp)
+    t47 = 0.5*t39 * (t34*t37 - t41*t44)
+
+    k_BA_minus_k_AB_minus_t4 = k_BA_minus_k_AB - t4
+    t49 = k_BA_minus_k_AB_minus_t4 - t17
     t51 = t21 * t49 * t22
-    t52 = k_BA - t4 - k_AB + t17
+    t52 = k_BA_minus_k_AB_minus_t4 + t17
     t54 = t28 * t52 * t22
     t55 = -t51 + t54
-    t60 = t37 * t39 * k_AB - t44 * t39 * k_AB
-    t62 = t31 * t47 + t55 * t60/2.0
+    t60 = 0.5*t39*k_AB * (t37 - t44)
+    t62 = t31*t47 + t55*t60
     t63 = 1.0/k_AB
-    t68 = -t52 * t63 * t51/2.0 + t49 * t63 * t54/2.0
-    t69 = t62 * t68/2.0
+    t68 = 0.5*t63 * (t49*t54 - t52*t51)
+    t69 = 0.5*t62 * t68
     t72 = t37 * t41 * t39
     t76 = t44 * t34 * t39
-    t78 = -t34 * t63 * t72/2.0 + t41 * t63 * t76/2.0
-    t80 = -t72 + t76
-    t82 = t31 * t78/2.0 + t55 * t80/4.0
+    t78 = 0.5*t63 * (t41*t76 - t34*t72)
+    t80 = 0.5 * (t76 - t72)
+    t82 = 0.5 * (t31*t78 + t55*t80)
     t83 = t82 * t55/2.0
-    t88 = t52 * t21 * t22/2.0 - t49 * t28 * t22/2.0
-    t91 = t88 * t47 + t68 * t60/2.0
+    t88 = 0.5 * t22 * (t52*t21 - t49*t28)
+    t91 = t88 * t47 + t68*t60
     t92 = t91 * t88
-    t95 = t88 * t78/2.0 + t68 * t80/4.0
+    t95 = 0.5 * (t88*t78 + t68*t80)
     t96 = t95 * t31
     t97 = t69 + t83
-    t98 = t97 * t97
+    t98 = t97**2
     t99 = t92 + t96
-    t102 = t99 * t99
+    t102 = t99**2
     t108 = t62 * t88 + t82 * t31
-    t112 = sqrt(t98 - 2.0 * t99 * t97 + t102 + 4.0 * (t91 * t68/2.0 + t95 * t55/2.0) * t108)
-    t113 = t69 + t83 - t92 - t96 - t112
+    t112 = sqrt(t98 - 2.0 * t99 * t97 + t102 + 2.0 * (t91 * t68 + t95 * t55) * t108)
+    t97_t99 = t97 + t99
+    t97_nt99 = t97 - t99
+    t113 = t97_nt99 - t112
     t115 = num_cpmg
-    t116 = power(t69/2.0 + t83/2.0 + t92/2.0 + t96/2.0 + t112/2.0, t115)
+    t116 = power(0.5*(t97_t99 + t112), t115)
     t118 = 1.0/t112
-    t120 = t69 + t83 - t92 - t96 + t112
-    t122 = power(t69/2.0 + t83/2.0 + t92/2.0 + t96/2.0 - t112/2.0, t115)
-    t127 = 1.0/t108
-    t139 = 1.0/(k_AB + k_BA) * ((-t113 * t116 * t118/2.0 + t120 * t122 * t118/2.0) * k_BA + (-t113 * t127 * t116 * t120 * t118/2.0 + t120 * t127 * t122 * t113 * t118/2.0) * k_AB/2.0)
+    t120 = t97_nt99 + t112
+    t122 = power(0.5*(t97_t99 - t112), t115)
+    t127 = 0.5/t108
+    t120_t122 = t120*t122
+    t139 = 0.5/(k_AB + k_BA) * ((t120_t122 - t113*t116)*t118*k_BA + (t120_t122 - t116*t120)*t127*t113*t118*k_AB)
 
     # Calculate the initial and final peak intensities.
     intensity0 = pA
-    intensity = real(t139) * exp(-relax_time * r20)
+    intensity = t139.real * exp(-relax_time * r20)
 
     # The magnetisation vector.
     Mx = intensity / intensity0
