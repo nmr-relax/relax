@@ -97,14 +97,16 @@ class Spectra_list(Base_list):
 
         # The current frequency.
         frq = None
+        frq_flag = False
         if hasattr(cdp, 'cpmg_frqs') and id in cdp.cpmg_frqs.keys():
             frq = cdp.cpmg_frqs[id]
+            frq_flag = True
 
         # Launch the dialog.
-        if frq == None:
-            uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
-        else:
+        if frq_flag:
             uf_store['relax_disp.cpmg_frq'](cpmg_frq=frq, spectrum_id=id)
+        else:
+            uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
 
 
     def action_relax_disp_exp_type(self, event=None, item=None):
@@ -181,14 +183,16 @@ class Spectra_list(Base_list):
 
         # The spin-lock.
         nu1 = None
+        nu1_flag = False
         if hasattr(cdp, 'spin_lock_nu1') and id in cdp.spin_lock_nu1.keys():
             nu1 = cdp.spin_lock_nu1[id]
+            nu1_flag = True
 
         # Launch the dialog.
-        if nu1 == None:
-            uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
-        else:
+        if nu1_flag:
             uf_store['relax_disp.spin_lock_field'](field=nu1, spectrum_id=id)
+        else:
+            uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
 
 
     def action_relax_fit_relax_time(self, event=None, item=None):
