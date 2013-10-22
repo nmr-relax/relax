@@ -21,4 +21,4 @@ script(file='r1rho_3_spectra_settings.py', dir=None)
 
 # Save the program state before run.
 # This state file will also be used for loading, before a later cluster/global fit analysis.
-#state.save('ini_setup_r1rho', force=True)
+state.save('ini_setup_r1rho', force=True)

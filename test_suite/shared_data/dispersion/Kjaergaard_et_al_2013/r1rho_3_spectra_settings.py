@@ -13,6 +13,15 @@ expfile = open('exp_parameters_sort.txt','r')
 expfileslines = expfile.readlines()[:NR_exp]
 expfile.close()
 
+# In MHz
+yOBS = 81.050
+# In ppm
+yCAR = 118.078
+centerPPM_N15 = yCAR
+
+#gyro1H = 26.7522212E7
+#gyro15N = 2.7126E7
+
 writefile = open('omega_rf_ppm.txt','w')
 
 ## Read the chemical shift data.
@@ -58,14 +67,17 @@ for i in range(len(expfileslines)):
         # Set The spin-lock field strength, nu1, in Hz
         relax_disp.spin_lock_field(spectrum_id=sp_id, field=spin_lock_field_strength)
 
-        # Conversion to ppm from Hz.
-        omega_rf_ppm = float(deltadof2) / (set_sfrq * 1E6) * 1E6
-        writefile.write("%s \n"%(omega_rf_ppm))
+        # Calculating the spin-lock offset in ppm, from offsets values provided in Hz.
+        #frq_N15_Hz = set_sfrq * 1E6 * gyro15N / gyro1H
+        frq_N15_Hz = yOBS * 1E6
+        offset_ppm_N15 = float(deltadof2) / frq_N15_Hz * 1E6
+        omega_rf_ppm = centerPPM_N15 + offset_ppm_N15
+        writefile.write("%s %s %s %s\n"%(frq_N15_Hz, centerPPM_N15, offset_ppm_N15, omega_rf_ppm))
 
         # Set The spin-lock offset, omega_rf, in ppm.
         relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
 
-        # Set the relaxation times.
+        # Set the relaxation times (in s).
         relax_fit.relax_time(time=time_sl, spectrum_id=sp_id)
 
         # Set the spectrometer frequency.
