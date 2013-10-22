@@ -63,13 +63,12 @@ for i in range(len(expfileslines)):
         # Set The spin-lock field strength, nu1, in Hz
         relax_disp.spin_lock_field(spectrum_id=sp_id, field=spin_lock_field_strength)
 
-        #omega_rf_ppm = float(deltadof2) * 1E6 * 1/(2 * math.pi) * (1 / ( set_sfrq*1E6 ) )
-        # Conversion to in-direct.
-        omega_rf_ppm = float(deltadof2) * 1E6 * 1/(2 * math.pi) * (gyro1H / (gyro15N * set_sfrq*1E6 ) )
-        writefile.write("%s \n"%(omega_rf_ppm))
+        omega_rf_ppm_direct = float(deltadof2) * 1E6 * 1/(2 * math.pi) * (1 / ( set_sfrq*1E6 ) )
+        omega_rf_ppm_indirect = float(deltadof2) * 1E6 * 1/(2 * math.pi) * (gyro1H / (gyro15N * set_sfrq*1E6 ) )
+        writefile.write("%s %s \n"%(omega_rf_ppm_direct, omega_rf_ppm_indirect))
 
         # Set The spin-lock offset, omega_rf, in ppm.
-        relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
+        relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm_indirect)
 
         # Set the relaxation times.
         relax_fit.relax_time(time=time_sl, spectrum_id=sp_id)
