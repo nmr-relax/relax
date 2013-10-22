@@ -352,7 +352,7 @@ class Spectra_list(Base_list):
                 self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
 
             # Set the spin-lock field strength.
-            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] not in cdp.spin_lock_nu1.keys():
+            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] in cdp.spin_lock_nu1.keys():
                 self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
 
         # Successful.
