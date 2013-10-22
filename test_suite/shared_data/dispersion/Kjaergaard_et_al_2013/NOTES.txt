@@ -172,6 +172,6 @@ foreach line ("`tail -n+2 exp_parameters.txt`")
   cd ..
 end
 
-# The calibration values is found from: Original_data/NCBD_31C_WT_0Murea_t1rho/expList.txt
-power_to_offset_Hz = {'35': 321.1, '39': 509, '41': 640.8, '43': 806.7, '46': 1139.6, '48': 1434.7}
+# The calibration values is found from: Original_data/NCBD_31C_WT_0Murea_t1rho/decayFiles/expList.txt
+spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
 
