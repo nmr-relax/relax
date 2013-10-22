@@ -431,6 +431,7 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.  The following is the set of equations of the expansion used in relax.  It has been modified from the original for speed.  See the \module{lib.dispersion.ns\_cpmg\_2site\_expanded} module for more details including the original code.  Further simplifications can be found in the code.
 
 \begin{subequations}
+\renewcommand{\theequation}{\theparentequation .\arabic{equation}}
 \begin{align}
       t_{3} &= \imath, \\
       t_{4} &= t_{3} \dw, \\
