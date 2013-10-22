@@ -428,6 +428,81 @@ This is the numerical model for 2-site exchange expanded using Maple by Nikolai 
 It is selected by setting the model to `NS CPMG 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
+This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.  The following is the set of equations of the expansion used in relax.  It has been modified from the original for speed.  See the \module{lib.dispersion.ns\_cpmg\_2site\_expanded} module for more details including the original code.  Further simplifications can be found in the code.
+
+\begin{subequations}
+\begin{align}
+      t_{3} &= \imath, \\
+      t_{4} &= t_{3} \dw, \\
+      t_{5} &= \kBA^2, \\
+      t_{8} &= 2 t_{4} \kBA, \\
+     t_{10} &= 2 \kBA \kAB, \\
+     t_{11} &= \dw^2, \\
+     t_{14} &= 2 t_{4} \kAB, \\
+     t_{15} &= \kAB^2, \\
+     t_{17} &= \sqrt{t_{5} - t_{8} + t_{10} - t_{11} + t_{14} + t_{15}}, \\
+     t_{21} &= \exp \left(\frac{(-\kBA + t_{4} - \kAB + t_{17}) \taucpmg}{2} \right), \\
+     t_{22} &= \frac{1}{t_{17}}, \\
+     t_{28} &= \exp \left(\frac{(-\kBA + t_{4} - \kAB - t_{17}) \taucpmg}{2} \right), \\
+     t_{31} &= t_{22} \kAB (t_{21} - t_{28}), \\
+     t_{33} &= \sqrt{t_{5} + t_{8} + t_{10} - t_{11} - t_{14} + t_{15}}, \\
+     t_{34} &= \kBA + t_{4} - \kAB + t_{33}, \\
+     t_{37} &= \exp \left((-\kBA - t_{4} - \kAB + t_{33}) \taucpmg \right), \\
+     t_{39} &= \frac{1}{t_{33}}, \\
+     t_{41} &= \kBA + t_{4} - \kAB - t_{33}, \\
+     t_{44} &= \exp \left((-\kBA - t_{4} - \kAB - t_{33}) \taucpmg \right), \\
+     t_{47} &= \frac{t_{39}}{2} \left(t_{34} t_{37} - t_{41} t_{44} \right), \\
+     t_{49} &= \kBA - t_{4} - \kAB - t_{17}, \\
+     t_{51} &= t_{21} t_{49} t_{22}, \\
+     t_{52} &= \kBA - t_{4} - \kAB + t_{17}, \\
+     t_{54} &= t_{28} t_{52} t_{22}, \\
+     t_{55} &= t_{54} - t_{51}, \\
+     t_{60} &= \frac{1}{2} t_{39} \kAB \left(t_{37} - t_{44} \right), \\
+     t_{62} &= t_{31} t_{47} + t_{55} t_{60}, \\
+     t_{63} &= \frac{1}{\kAB}, \\
+     t_{68} &= \frac{t_{63}}{2} \left(t_{49} t_{54} - t_{52} t_{51} \right), \\
+     t_{69} &= \frac{t_{62} t_{68}}{2}, \\
+     t_{72} &= t_{37} t_{41} t_{39}, \\
+     t_{76} &= t_{44} t_{34} t_{39}, \\
+     t_{78} &= \frac{t_{63}}{2} \left(t_{41} t_{76} - t_{34} t_{72} \right), \\
+     t_{80} &= \frac{1}{2} (t_{76} - t_{72}), \\
+     t_{82} &= \frac{1}{2} (t_{31} t_{78} + t_{55} t_{80}), \\
+     t_{83} &= \frac{t_{82} t_{55}}{2}, \\
+     t_{88} &= \frac{t_{22}}{2} \left(t_{52} t_{21} - t_{49} t_{28} \right), \\
+     t_{91} &= t_{88} t_{47} + t_{68} t_{60}, \\
+     t_{92} &= t_{91} t_{88}, \\
+     t_{95} &= \frac{1}{2} (t_{88} t_{78} + t_{68} t_{80}), \\
+     t_{96} &= t_{95} t_{31}, \\
+     t_{97} &= t_{69} + t_{83}, \\
+     t_{98} &= t_{97}^2, \\
+     t_{99} &= t_{92} + t_{96}, \\
+    t_{102} &= t_{99}^2, \\
+    t_{108} &= t_{62} t_{88} + t_{82} t_{31}, \\
+    t_{112} &= \sqrt{t_{98} - 2 t_{99} t_{97} + t_{102} + 2 (t_{91} t_{68} + t_{95} t_{55}) t_{108}}, \\
+    t_{113} &= t_{97} - t_{99} - t_{112}, \\
+    t_{115} &= n_\textrm{CPMG}, \\
+    t_{116} &= \left( \frac{t_{97} + t_{99} + t_{112}}{2} \right)^{t_{115}}, \\
+    t_{118} &= \frac{1}{t_{112}}, \\
+    t_{120} &= t_{97} - t_{99} + t_{112}, \\
+    t_{122} &= \left( \frac{t_{97} + t_{99} - t_{112}}{2} \right)^{t_{115}}, \\
+    t_{127} &= \frac{1}{2 t_{108}}, \\
+    t_{139} &= \frac{1}{2(\kAB + \kBA)} \Big[ (t_{120} t_{122} - t_{113} t_{116}) t_{118} \kBA \nonumber \\
+            & \qquad \qquad                   + (t_{120} t_{122} - t_{116} t_{120}) t_{113} t_{118} t_{127} \kAB \Big].
+\end{align}
+\end{subequations}
+
+The relative peak intensities, magnitisation, and effective $\Rtwo$ relaxation rate are calculated as
+\begin{subequations}
+\begin{align}
+    I_0 &= \pA, \\
+    I_1 &= \Re(t_{139}) \exp(-T_\textrm{relax} \Rtwozero), \\
+    M_x &= I_1 / I_0, \\
+    \Rtwoeff &= -\frac{1}{T_\textrm{relax}} \cdot \ln \left( M_x \right). \label{eq: R2eff NS CPMG 2-site expanded}
+\end{align}
+\end{subequations}
+
+In these equations $\taucpmg$ and $n_\textrm{CPMG}$ are numpy arrays and hence $t_{139}$ is also a numpy array.  This avoids a Python loop over the dispersion points until the very end of the calculation, required to populate the $\Rtwoeff$ data structure, resulting in very fast calculations.
+
 The reference for this model is:
 \begin{itemize}
 \item \bibentry{Tollinger01}
