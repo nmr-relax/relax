@@ -337,8 +337,8 @@ class Relax_disp(API_base, API_common):
         ids = ['free spins']
 
         # Add the defined IDs.
-        if hasattr(cdp, 'cluster'):
-            for key in list(cdp.cluster.keys()):
+        if hasattr(cdp, 'clustering'):
+            for key in list(cdp.clustering.keys()):
                 if key not in ids:
                     ids.append(key)
 
