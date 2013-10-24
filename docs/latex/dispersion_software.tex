@@ -1,0 +1,71 @@
+\begin{center}
+\begin{small}
+
+% The longtable environment.
+\setlength\LTcapwidth{\textwidth}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{l@{\extracolsep{\fill}}ccccccc}
+
+% Caption.
+\caption[Dispersion software comparison.]{Comparison of the features for the different dispersion software.}
+
+
+% Header.
+\\
+\toprule
+\vspace{25pt} \\
+   & \begin{rotate}{45}CPMGFit\end{rotate} & \begin{rotate}{45}CATIA\end{rotate} & \begin{rotate}{45}NESSY\end{rotate} & \begin{rotate}{45}GUARDD\end{rotate} & \begin{rotate}{45}ShereKhan\end{rotate} & \begin{rotate}{45}GLOVE\end{rotate} & \begin{rotate}{45}relax\end{rotate} \hspace{5pt} \\
+%        & CPMGFit & CATIA & NESSY & GUARDD & ShereKhan & GLOVE & relax \\
+\midrule
+\endhead
+
+% Footer.
+\bottomrule
+\endfoot
+
+% Label.
+\label{table: dispersion software}
+
+%est row                    & \yes & \yes & \yes & \yes & \yes & \yes & \yes \\
+
+% The models.
+\textbf{Dispersion models} \\
+\cmidrule(lr){1-1}
+$\Rtwoeff/\Ronerhoprime$    & \no  & \no  & \yes & \yes & \yes & \yes & \yes \\
+No Rex                      & \no  & \no  & \yes & \no  & \no  & \yes & \yes \\
+
+\vspace{-5pt} \\
+CPMG-type \\
+\cmidrule(lr){1-1}
+LM63                        & \yes & \no  & \yes & \no  & \yes & \yes & \yes \\
+LM63 3-site                 & \yes & \no  & \yes & \no  & \no  & \no  & \yes \\
+CR72                        & \yes & \no  & \yes & \no  & \yes & \yes & \yes \\
+IT99                        & \yes & \no  & \no  & \no  & \no  & \yes & \yes \\
+TSMFK01                     & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+NS 2-site                   & \no  & \yes & \no  & \no  & \yes & \no  & \yes \\
+NS 3-site (linear)          & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+NS 3-site (branched)        & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+MQ CR72                     & \no  & \no  & \no  & \yes & \no  & \yes & \yes \\
+KKKTK04                     & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+
+\vspace{-5pt} \\
+$\Ronerho$-type \\
+\cmidrule(lr){1-1}
+M61                         & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+DPL94                       & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+TP02                        & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+NS 2-site                   & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+NS 3-site (linear)          & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+NS 3-site (branched)        & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+
+\midrule
+\textbf{General features} \\
+\cmidrule(lr){1-1}
+Off-resonance effects (CPMG-type data)          & \no  & \yes & \no  & \no  & \no  & \no  & \no \\
+Off-resonance effects ($\Ronerho$-type data)    & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+Van't Hoff analysis                             & \no  & \no  & \yes & \no  & \no  & \no  & \no \\
+HD exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no \\
+\end{longtable}
+\end{small}
+\end{center}
