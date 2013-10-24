@@ -71,7 +71,7 @@ def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=No
     matrix[1, 1] = -k_BA - 1.j*(dwH + dw) - r20
 
 
-def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -107,8 +107,8 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
     @type num_points:       int
-    @keyword power:         The matrix exponential power array.
-    @type power:            numpy int16, rank-1 array
+    @keyword n:             The n value whereby one CPMG block is defined at 2n.
+    @type n:                numpy int16, rank-1 array
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
@@ -136,9 +136,9 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
         M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
         # Matrices for even n.
-        if power[i] % 2 == 0:
+        if n[i] % 2 == 0:
             # The power factor (only calculate once).
-            fact = int(power[i] / 2)
+            fact = int(n[i] / 2)
 
             # (M1.M2.M2.M1)^(n/2)
             A = square_matrix_power(M1_M2_M2_M1, fact)
@@ -155,7 +155,7 @@ def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2
         # Matrices for odd n.
         else:
             # The power factor (only calculate once).
-            fact = int((power[i] - 1) / 2)
+            fact = int((n[i] - 1) / 2)
 
             # (M1.M2.M2.M1)^((n-1)/2).M1.M2
             A = square_matrix_power(M1_M2_M2_M1, fact)

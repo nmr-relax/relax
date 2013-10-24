@@ -218,6 +218,10 @@ class Dispersion:
             for i in range(self.num_disp_points):
                 self.power[i] = int(round(self.cpmg_frqs[i] * self.relax_time))
 
+        # The strange n definition of Korzhnev.
+        if model == MODEL_MQ_NS_CPMG_2SITE:
+            self.n = 2 * self.power
+
         # Convert the spin-lock data to rad.s^-1.
         if spin_lock_nu1 != None:
             self.spin_lock_omega1 = 2.0 * pi * self.spin_lock_nu1
@@ -896,7 +900,7 @@ class Dispersion:
                 dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_mq_ns_cpmg_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
+                r2eff_mq_ns_cpmg_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, n=self.n)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
