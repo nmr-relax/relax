@@ -27,19 +27,23 @@
 # Experiment types.
 EXP_TYPE_CPMG = 'CPMG'
 EXP_TYPE_R1RHO = 'R1rho'
+EXP_TYPE_DQ_CPMG = 'DQ CPMG'
 EXP_TYPE_MQ_CPMG = 'MQ CPMG'
+EXP_TYPE_ZQ_CPMG = 'ZQ CPMG'
 EXP_TYPE_MQ_R1RHO = 'MQ R1rho'
 
 
 # Experiment type descriptions.
 EXP_TYPE_DESC_CPMG = "the CPMG-type experiment"
 EXP_TYPE_DESC_R1RHO = "the R1rho-type experiment"
-EXP_TYPE_DESC_MQ_CPMG = "the MQ CPMG-type experiment"
-EXP_TYPE_DESC_MQ_R1RHO = "the MQ R1rho-type experiment"
+EXP_TYPE_DESC_DQ_CPMG = "the double quantum (DQ) CPMG-type experiment"
+EXP_TYPE_DESC_MQ_CPMG = "the multiple quantum (MQ) CPMG-type experiment"
+EXP_TYPE_DESC_ZQ_CPMG = "the zero quantum (ZQ) CPMG-type experiment"
+EXP_TYPE_DESC_MQ_R1RHO = "the multiple quantum (MQ) R1rho-type experiment"
 
 
 # The experiment type lists.
-EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO]
+EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG, EXP_TYPE_MQ_R1RHO]
 """The list of all dispersion experiment types."""
 
 
