@@ -22,11 +22,11 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of 2-site Bloch-McConnell equations for MQ CPMG-type experiments.
+"""This is the numeric solution for the 2-site Bloch-McConnell equations for mixed CPMG data types.
 
-The function uses an explicit matrix that contains relaxation, exchange and chemical shift terms.  It does the 180deg pulses in the CPMG train.  The approach of Bloch-McConnell can be found in chapter 3.1 of Palmer, A. G. Chem Rev 2004, 104, 3623-3640.
+This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.  It uses the equations of:
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations for multi-quantum CPMG-type data.  It originates as the m1 and m2 matrices and the fp0() optimization function from the fitting_main_kex.py script from Mathilde Lescanne and Dominique Marion (https://gna.org/task/?7712#comment7 and the files attached in that comment).
+    - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
 """
 
 # Dependency check module.
@@ -71,8 +71,8 @@ def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=No
     matrix[1, 1] = -k_BA - 1.j*(dwH + dw) - r20
 
 
-def r2eff_mq_ns_cpmg_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
-    """The 2-site numerical solution to the Bloch-McConnell equation.
+def r2eff_mmq_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
+    """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, DQ and MQ data.
 
     This function calculates and stores the R2eff values.
 

@@ -36,7 +36,7 @@ from lib.dispersion.lm63_3site import r2eff_LM63_3site
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mq_cr72 import r2eff_mq_cr72
-from lib.dispersion.mq_ns_cpmg_2site import r2eff_mq_ns_cpmg_2site
+from lib.dispersion.mmq_2site import r2eff_mmq_2site
 from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
 from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
@@ -274,7 +274,7 @@ class Dispersion:
         if model == MODEL_MQ_CR72:
             self.func = self.func_mq_CR72
         if model == MODEL_MMQ_2SITE:
-            self.func = self.func_mq_ns_cpmg_2site
+            self.func = self.func_mmq_2site
 
 
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -802,62 +802,8 @@ class Dispersion:
         return chi2_sum
 
 
-    def func_mq_CR72(self, params):
-        """Target function for the CR72 model extended for MQ CPMG data.
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
-        dw = params[self.end_index[0]:self.end_index[1]]
-        dwH = params[self.end_index[1]:self.end_index[2]]
-        pA = params[self.end_index[2]]
-        kex = params[self.end_index[2]+1]
-
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
-        # Initialise.
-        chi2_sum = 0.0
-
-        # Loop over the spins.
-        for spin_index in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for frq_index in range(self.num_frq):
-                # The R20 index.
-                r20_index = frq_index + spin_index*self.num_frq
-
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
-                dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
-
-                # Back calculate the R2eff values.
-                r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
-
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for point_index in range(self.num_disp_points):
-                    if self.missing[spin_index, frq_index, point_index]:
-                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
-
-        # Return the total chi-squared value.
-        return chi2_sum
-
-
-    def func_mq_ns_cpmg_2site(self, params):
-        """Target function for the Ishima and Torchia (1999) 2-site model for all timescales with pA >> pB.
+    def func_mmq_2site(self, params):
+        """Target function for the combined SQ, ZQ, DQ and MQ CPMG numeric solution.
 
         @param params:  The vector of parameter values.
         @type params:   numpy rank-1 float array
@@ -900,7 +846,61 @@ class Dispersion:
                 dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_mq_ns_cpmg_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, n=self.n)
+                r2eff_mmq_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, n=self.n)
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points):
+                    if self.missing[spin_index, frq_index, point_index]:
+                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_mq_CR72(self, params):
+        """Target function for the CR72 model extended for MQ CPMG data.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        dwH = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex = params[self.end_index[2]+1]
+
+        # Once off parameter conversions.
+        pB = 1.0 - pA
+        k_BA = pA * kex
+        k_AB = pB * kex
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R2eff values.
+                r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, power=self.power)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
