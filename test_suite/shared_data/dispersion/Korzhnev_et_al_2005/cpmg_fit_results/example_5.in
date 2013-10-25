@@ -1,0 +1,134 @@
+# The following input file performs minimization of 15N SQ, 1H SQ, 15N/1H DQ, 15N/1H ZQ,
+# 15N/1H MQ and 1H/15N MQ CPMG data for the residue 9 of deuterated 2H/15N G48V Fyn SH3 
+# recorded at 500, 600 and 800 MHz at 25c using the model of two-site exchange.
+
+# Read first 'example_rw.in'
+
+# Reading and processing the data for 15N and 1H SQ coherences first.
+
+read ../ns_500.res d 1 S N15 25 500 0.04 @ c   # 15N SQ data at 500 MHz
+read ../ns_600.res d 1 S N15 25 600 0.04 @ c   # 15N SQ data at 600 MHz
+read ../ns_800.res d 1 S N15 25 800 0.04 @ c   # 15N SQ data at 800 MHz
+
+read ../hs_500.res d 1 S H1 25 500 0.03 @ c    # 1H SQ data at 500 MHz
+read ../hs_600.res d 1 S H1 25 600 0.03 @ c    # 1H SQ data at 600 MHz
+read ../hs_800.res d 1 S H1 25 800 0.03 @ c    # 1H SQ data at 800 MHz
+
+
+# seting initial approximations for exchange parameters
+# performing two seperate optimizations (1) with delta_cs(N)>0, delta_cs(H)<0 and 
+# (2) with delta_cs(N)<0, delta_cs(H)>0
+
+set m 2 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k @ 0 500 u      # set kex(AB) equal to 500 1/s; adjustable (u)
+set p @ 0 0.999999 f # set populations 95%/5%
+set p @ 1 0.05 u     
+set c @ N15 1 0 2.0 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+set c @ H1 1 0 -0.2 u # set 1H chemical shift in state B equals to -0.2, adjustable 
+min                   # perform minimization
+write > d
+write > p
+backup backups/__t1.bk # backup program state
+
+set m 2 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k @ 0 500 u      # set kex(AB) equals to 500 1/s; adjustable (u)
+set p @ 0 0.999999 f # set populations 95%/5%
+set p @ 1 0.05 u     
+set c @ N15 1 0 2.0 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+set c @ H1 1 0  0.2 u # set 1H chemical shift in state B equals to 0.2, adjustable 
+min                   # perform minimization
+write > d
+write > p
+backup backups/__t2.bk # backup program state
+
+
+# Adding the data for 15N/1H DQ, 15N/1H ZQ, 15N/1H MQ and 1H/15N MQ coherences and processing the data.
+
+restore backups/__t1.bk.gz  # restore results of minimization of SQ data with delta_cs(N)>0, delta_cs(H)<0
+
+# Reading new data. 
+read ../dq_500.res d 1 D H1/N15 25 500 0.03 @ c    # 15N/1H DQ data at 500 MHz
+read ../dq_600.res d 1 D H1/N15 25 600 0.03 @ c    # 15N/1H DQ data at 600 MHz
+read ../dq_800.res d 1 D H1/N15 25 800 0.03 @ c    # 15N/1H DQ data at 800 MHz
+
+read ../zq_500.res d 1 Z H1/N15 25 500 0.03 @ c    # 15N/1H ZQ data at 500 MHz
+read ../zq_600.res d 1 Z H1/N15 25 600 0.03 @ c    # 15N/1H ZQ data at 600 MHz
+read ../zq_800.res d 1 Z H1/N15 25 800 0.03 @ c    # 15N/1H ZQ data at 800 MHz
+
+read ../nm_500.res d 1 M N15/H1 25 500 0.02 @ c    # 15N/1H MQ data at 500 MHz
+read ../nm_600.res d 1 M N15/H1 25 600 0.02 @ c    # 15N/1H MQ data at 600 MHz
+read ../nm_800.res d 1 M N15/H1 25 800 0.02 @ c    # 15N/1H MQ data at 800 MHz
+
+read ../hm_500.res d 1 M H1/N15 25 500 0.02 @ c    # 1H/15N MQ data at 500 MHz
+read ../hm_600.res d 1 M H1/N15 25 600 0.02 @ c    # 1H/15N MQ data at 600 MHz
+read ../hm_800.res d 1 M H1/N15 25 800 0.02 @ c    # 1H/15N MQ data at 800 MHz
+
+# checking that all parameters are fixed/unfixed correctly. 
+set m 3 0        # set 3-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k 25 0 @ u
+set k 25 1 0 f
+set k 25 2 0 f
+set p 25 0 @ f
+set p 25 1 @ u
+set c @ N15 0 0 @ f
+set c @ N15 1 0 @ u
+set c @ N15 2 0 @ f
+set c @ H1 0 0 @ f
+set c @ H1 1 0 @ u
+set c @ H1 2 0 @ f
+set r @ S @ @ @ @ @ u g
+set r @ Z @ @ @ @ @ u g
+set r @ D @ @ @ @ @ u g
+set r @ M @ @ @ @ @ u g
+
+min     # perform minimization
+write > d
+write > p    # look at optimized model parameters
+backup backups/fit_6coh_2st+-.bk    # backup program state
+write  backups/fit_6coh_2st+-.par p # write parameters to file
+
+
+restore backups/__t2.bk.gz # restore results of minimization of SQ data with delta_cs(N)>0, delta_cs(H)>0
+
+# Reading new data.
+read ../dq_500.res d 1 D H1/N15 25 500 0.03 @ c    # 15N/1H DQ data at 500 MHz
+read ../dq_600.res d 1 D H1/N15 25 600 0.03 @ c    # 15N/1H DQ data at 600 MHz
+read ../dq_800.res d 1 D H1/N15 25 800 0.03 @ c    # 15N/1H DQ data at 800 MHz
+
+read ../zq_500.res d 1 Z H1/N15 25 500 0.03 @ c    # 15N/1H ZQ data at 500 MHz
+read ../zq_600.res d 1 Z H1/N15 25 600 0.03 @ c    # 15N/1H ZQ data at 600 MHz
+read ../zq_800.res d 1 Z H1/N15 25 800 0.03 @ c    # 15N/1H ZQ data at 800 MHz
+
+read ../nm_500.res d 1 M N15/H1 25 500 0.02 @ c    # 15N/1H MQ data at 500 MHz
+read ../nm_600.res d 1 M N15/H1 25 600 0.02 @ c    # 15N/1H MQ data at 600 MHz
+read ../nm_800.res d 1 M N15/H1 25 800 0.02 @ c    # 15N/1H MQ data at 800 MHz
+
+read ../hm_500.res d 1 M H1/N15 25 500 0.02 @ c    # 1H/15N MQ data at 500 MHz
+read ../hm_600.res d 1 M H1/N15 25 600 0.02 @ c    # 1H/15N MQ data at 600 MHz
+read ../hm_800.res d 1 M H1/N15 25 800 0.02 @ c    # 1H/15N MQ data at 800 MHz
+
+# checking that all parameters are fixed/unfixed correctly.
+set m 3 0        # set 3-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k 25 0 @ u
+set k 25 1 0 f
+set k 25 2 0 f
+set p 25 0 @ f
+set p 25 1 @ u
+set c @ N15 0 0 @ f
+set c @ N15 1 0 @ u
+set c @ N15 2 0 @ f
+set c @ H1 0 0 @ f
+set c @ H1 1 0 @ u
+set c @ H1 2 0 @ f
+set r @ S @ @ @ @ @ u g
+set r @ Z @ @ @ @ @ u g
+set r @ D @ @ @ @ @ u g
+set r @ M @ @ @ @ @ u g
+
+min     # perform minimization
+write > d
+write > p    # look at optimized model parameters
+backup backups/fit_6coh_2st++.bk    # Backup program state
+write  backups/fit_6coh_2st++.par p # Write parameters to file
+
+

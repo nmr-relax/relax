@@ -1,0 +1,50 @@
+# No model set for temperature/pressure dependencies of rate/eq. constants
+# Chemical shifts are given at reference temperature: 0 C;
+# No simultaneous 180 pulse is applied in MQ sequences 
+# Minimization is done. Minimization model is 3
+# F =   5227.19010  DF = 218  P_lvl =      0.00000
+
+# type temp/P        val        err
+PA:        25   0.924556   0.000000   f    
+PB:        25   0.075444   0.031020   u    
+PC:        25   0.000000   0.000000   f    
+
+# type temp/P        val        err
+KAB:       25    187.147     81.088   u    
+KAC:       25      0.000      0.000   f    
+KBC:       25      0.000      0.000   f    
+
+# Covariance matrices for P and KEX variables
+# Temp/P = 25
+# P1         KEX0       
+         1    -0.9967 
+   -0.9967          1 
+
+
+# type   res nucl  ord        val        err
+CS0_A:     1    H    0   0.000000   0.000000   f    
+CS0_B:     1    H    0   0.300945   0.020798   u    
+CS0_C:     1    H    0   0.000000   0.000000   f    
+CS0_A:     1    N    0   0.000000   0.000000   f    
+CS0_B:     1    N    0   5.115756   0.293883   u    
+CS0_C:     1    N    0   0.000000   0.000000   f    
+
+# type   res nucl/coh temp/P   sfrq        val        err
+R2_A:      1      H-S     25    500   6.946873   0.334076   u g    
+R2_A:      1      H-S     25    600   7.410642   0.410358   u g    
+R2_A:      1      H-S     25    800   5.918402   0.276399   u g    
+R2_A:      1      N-S     25    500   8.978380   0.358231   u g    
+R2_A:      1      N-S     25    600  10.090357   0.588123   u g    
+R2_A:      1      N-S     25    800  11.731039   0.505711   u g    
+R2_A:      1      NHZ     25    500   0.214554   0.468005   u g    
+R2_A:      1      NHZ     25    600  -0.000119   0.019618   u g    
+R2_A:      1      NHZ     25    800  -0.000147   0.015970   u g    
+R2_A:      1      NHD     25    500  14.659677   0.935757   u g    
+R2_A:      1      NHD     25    600  18.394242   1.172496   u g    
+R2_A:      1      NHD     25    800  21.380065   1.327566   u g    
+R2_A:      1      HNM     25    500  12.372882   0.792516   u g    
+R2_A:      1      HNM     25    600  13.497981   0.848692   u g    
+R2_A:      1      HNM     25    800  16.742940   0.931048   u g    
+R2_A:      1      NHM     25    500  12.739040   0.833320   u g    
+R2_A:      1      NHM     25    600  13.816917   0.843540   u g    
+R2_A:      1      NHM     25    800  16.762192   0.881074   u g    
