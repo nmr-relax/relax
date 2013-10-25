@@ -1131,14 +1131,16 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
 
         # Loop over spin data.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Check if data exists.
             if not hasattr(spin, 'intensities'):
+                print("No intensity data could be found, deselecting the '%s' spin." % spin_id)
                 spin.select = False
                 continue
 
             # Require 3 or more data points.
             if len(spin.intensities) < 3:
+                print("Only %s intensity points could be found but at least 3 are required, deselecting the '%s' spin." % (len(spin.intensities), spin_id))
                 spin.select = False
                 continue
 
