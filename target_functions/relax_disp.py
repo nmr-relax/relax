@@ -162,7 +162,10 @@ class Dispersion:
             self.scaling_flag = True
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
-        self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
+        if self.model in [MODEL_MMQ_2SITE]:
+            self.back_calc = zeros((self.num_exp, num_spins, num_frq, num_disp_points), float64)
+        else:
+            self.back_calc = zeros((num_spins, num_frq, num_disp_points), float64)
 
         # Initialise the post spin parameter indices.
         self.end_index = []
@@ -441,6 +444,9 @@ class Dispersion:
 
         For the single experiment type models, the first dimension of the values, errors, and missing data structures will be removed to simplify the target functions.
         """
+
+        # The number of experiments.
+        self.num_exp = len(self.exp_types)
 
         # The non-combined data models.
         if not self.model in [MODEL_MMQ_2SITE]:
@@ -834,27 +840,29 @@ class Dispersion:
         # Initialise.
         chi2_sum = 0.0
 
-        # Loop over the spins.
-        for spin_index in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for frq_index in range(self.num_frq):
-                # The R20 index.
-                r20_index = frq_index + spin_index*self.num_frq
+        # Loop over the experiment types.
+        for exp_index in range(self.num_exp):
+            # Loop over the spins.
+            for spin_index in range(self.num_spins):
+                # Loop over the spectrometer frequencies.
+                for frq_index in range(self.num_frq):
+                    # The R20 index.
+                    r20_index = frq_index + spin_index*self.num_frq
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
-                dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
+                    # Convert dw from ppm to rad/s.
+                    dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                    dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
 
-                # Back calculate the R2eff values.
-                r2eff_mmq_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points, n=self.n)
+                    # Back calculate the R2eff values.
+                    r2eff_mmq_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg, back_calc=self.back_calc[exp_index, spin_index, frq_index], num_points=self.num_disp_points, n=self.n)
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for point_index in range(self.num_disp_points):
-                    if self.missing[spin_index, frq_index, point_index]:
-                        self.back_calc[spin_index, frq_index, point_index] = self.values[spin_index, frq_index, point_index]
+                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                    for point_index in range(self.num_disp_points):
+                        if self.missing[exp_index, spin_index, frq_index, point_index]:
+                            self.back_calc[exp_index, spin_index, frq_index, point_index] = self.values[exp_index, spin_index, frq_index, point_index]
 
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[spin_index, frq_index], self.back_calc[spin_index, frq_index], self.errors[spin_index, frq_index])
+                    # Calculate and return the chi-squared value.
+                    chi2_sum += chi2(self.values[exp_index, spin_index, frq_index], self.back_calc[exp_index, spin_index, frq_index], self.errors[exp_index, spin_index, frq_index])
 
         # Return the total chi-squared value.
         return chi2_sum
