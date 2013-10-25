@@ -40,5 +40,8 @@ monte_carlo.initial_values()
 minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 monte_carlo.error_analysis()
 
+# Plot the dispersion curves.
+relax_disp.plot_disp_curves(dir='disp_curves', force=True)
+
 # Save the results.
 state.save('state', dir='sq', compress_type=1, force=True)
