@@ -46,6 +46,12 @@ EXP_TYPE_DESC_MQ_R1RHO = "the multiple quantum (MQ) R1rho-type experiment"
 EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG, EXP_TYPE_MQ_R1RHO]
 """The list of all dispersion experiment types."""
 
+EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG]
+"""The list of all dispersion experiment types for CPMG-type data."""
+
+EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO, EXP_TYPE_MQ_R1RHO]
+"""The list of all dispersion experiment types for R1rho-type data."""
+
 
 # The model names.
 MODEL_R2EFF = 'R2eff'
