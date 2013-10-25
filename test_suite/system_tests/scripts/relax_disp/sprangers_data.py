@@ -19,7 +19,7 @@ from status import Status; status = Status()
 
 # The dispersion models.
 if not hasattr(ds, 'models'):
-    ds.models = ['R2eff', 'No Rex', 'MQ NS CPMG 2-site']
+    ds.models = ['R2eff', 'No Rex', 'MMQ 2-site']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 4

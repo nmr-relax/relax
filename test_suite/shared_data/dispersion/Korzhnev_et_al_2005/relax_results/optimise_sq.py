@@ -14,7 +14,7 @@ pipe.copy('R2eff', pipe_name)
 pipe.switch(pipe_name)
 
 # Change the model.
-relax_disp.select_model('MQ NS CPMG 2-site')
+relax_disp.select_model('MMQ 2-site')
 
 # Manually set the parameter values.
 spin_H = cdp.mol[0].res[0].spin[0]

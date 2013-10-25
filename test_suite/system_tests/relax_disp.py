@@ -1663,7 +1663,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_sprangers_data_to_mq_ns_cpmg_2site(self, model=None):
-        """Test the 'MQ NS CPMG 2-site' model fitting against Remco Sprangers' ClpP data.
+        """Test the 'MMQ 2-site' model fitting against Remco Sprangers' ClpP data.
 
         This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
         """
@@ -1676,7 +1676,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.load(data_path+sep+'r2eff_values')
 
         # The model data pipe.
-        model = 'MQ NS CPMG 2-site'
+        model = 'MMQ 2-site'
         self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
         self.interpreter.pipe.switch(pipe_name=model)
 

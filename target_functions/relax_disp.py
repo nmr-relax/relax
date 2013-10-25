@@ -46,7 +46,7 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -77,7 +77,7 @@ class Dispersion:
             - 'NS CPMG 2-site star':  The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices with R20A = R20B.
             - 'NS CPMG 2-site star full':  The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.
             - 'NS CPMG 2-site expanded':  The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.
-            - 'MQ NS CPMG 2-site':  The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors with R20A = R20B.
+            - 'MMQ 2-site':  The numerical solution for the 2-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZD, DQ, and MQ CPMG data with R20A = R20B.
 
 
         @keyword model:             The relaxation dispersion model to fit.
@@ -174,7 +174,7 @@ class Dispersion:
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.num_spins)
-        if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE]:
+        if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MQ_CR72, MODEL_MMQ_2SITE]:
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
         # Set up the matrices for the numerical solutions.
@@ -196,7 +196,7 @@ class Dispersion:
             self.r180x = r180x_3d()
 
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             self.M0 = zeros(2, float64)
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
             self.M0 = zeros(7, float64)
@@ -205,21 +205,21 @@ class Dispersion:
             self.M0 = zeros(6, float64)
 
         # Some other data structures for the analytical and numerical solutions.
-        if model in [MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
+        if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
             # The tau_cpmg times.
             self.tau_cpmg = zeros(self.num_disp_points, float64)
             for i in range(self.num_disp_points):
                 self.tau_cpmg[i] = 0.25 / self.cpmg_frqs[i]
 
         # Some other data structures for the numerical solutions.
-        if model in [MODEL_MQ_CR72, MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             # The matrix exponential power array.
             self.power = zeros(self.num_disp_points, int16)
             for i in range(self.num_disp_points):
                 self.power[i] = int(round(self.cpmg_frqs[i] * self.relax_time))
 
         # The strange n definition of Korzhnev.
-        if model == MODEL_MQ_NS_CPMG_2SITE:
+        if model == MODEL_MMQ_2SITE:
             self.n = 2 * self.power
 
         # Convert the spin-lock data to rad.s^-1.
@@ -228,11 +228,11 @@ class Dispersion:
             self.spin_lock_omega1_squared = self.spin_lock_omega1 ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_MQ_NS_CPMG_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
             self.inv_relax_time = 1.0 / relax_time
 
         # Special matrices for the multi-quantum CPMG 2-site numerical model.
-        if model == MODEL_MQ_NS_CPMG_2SITE:
+        if model == MODEL_MMQ_2SITE:
             self.m1 = zeros((2, 2), complex64)
             self.m2 = zeros((2, 2), complex64)
 
@@ -273,7 +273,7 @@ class Dispersion:
             self.func = self.func_ns_r1rho_2site
         if model == MODEL_MQ_CR72:
             self.func = self.func_mq_CR72
-        if model == MODEL_MQ_NS_CPMG_2SITE:
+        if model == MODEL_MMQ_2SITE:
             self.func = self.func_mq_ns_cpmg_2site
 
 

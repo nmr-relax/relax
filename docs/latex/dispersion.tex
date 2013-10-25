@@ -121,10 +121,10 @@ For the MQ CPMG-type experiments, the analytic models currently supported are:
 \end{description}
 
 
-For the MQ CPMG-type experiments, the numeric models currently supported are:
+For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the numeric models currently supported are:
 
 \begin{description}
-\item[`MQ NS CPMG 2-site':]\index{relaxation dispersion!MQ NS CPMG 2-site model}  The reduced model for 2-site exchange using 2D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ NS CPMG 2-site model} on page~\pageref{sect: dispersion: MQ NS CPMG 2-site model}.
+\item[`MMQ 2-site':]\index{relaxation dispersion!MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MMQ 2-site model} on page~\pageref{sect: dispersion: MMQ 2-site model}.
 \end{description}
 
 
@@ -734,15 +734,15 @@ The references for this model are:
 \index{relaxation dispersion!Numeric MQ CPMG model|textbf}
 
 
-% MQ NS CPMG 2-site model.
-%~~~~~~~~~~~~~~~~~~~~~~~~~
+% MMQ 2-site model.
+%~~~~~~~~~~~~~~~~~~
 
-\subsection{The MQ NS CPMG 2-site model}
-\label{sect: dispersion: MQ NS CPMG 2-site model}
-\index{relaxation dispersion!MQ NS CPMG 2-site model|textbf}
+\subsection{The MMQ 2-site model}
+\label{sect: dispersion: MMQ 2-site model}
+\index{relaxation dispersion!MMQ 2-site model|textbf}
 
-This is the numerical model for 2-site exchange using 2D magnetisation vectors, as derived by \citep{Korzhnev04a}.
-It is selected by setting the model to `MQ NS CPMG 2-site'.
+This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+It is selected by setting the model to `MMQ 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 The equation for the exchange process is 
 \begin{equation}
@@ -1251,7 +1251,7 @@ Some of the missing models include:
 \item[`NS CPMG 3-site':]\index{relaxation dispersion!NS CPMG 3-site model}  The model of the numeric solution for 3-site exchange for CPMG-type data.
 \item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model of the numeric solution for 3-site exchange for $\Ronerho$-type data.
 \item[`MQ NS $\Ronerho$ 2-site':]\index{relaxation dispersion!MQ NS R1rho 2-site model}  The model of the numeric solution for 2-site exchange for multiple quantum $\Ronerho$-type data.
-\item[`MQ NS CPMG 3-site':]\index{relaxation dispersion!MQ NS CPMG 3-site model}  The model of the numeric solution for 3-site exchange for multiple quantum CPMG-type data.
+\item[`MMQ 3-site':]\index{relaxation dispersion!MMQ 3-site model}  The model of the numeric solution for 3-site exchange for multiple quantum CPMG-type data.
 \item[`MQ NS $\Ronerho$ 3-site':]\index{relaxation dispersion!MQ NS R1rho 3-site model}  The model of the numeric solution for 3-site exchange for multiple quantum $\Ronerho$-type data.
 \end{description}
 
