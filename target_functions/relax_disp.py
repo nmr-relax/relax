@@ -442,8 +442,8 @@ class Dispersion:
         For the single experiment type models, the first dimension of the values, errors, and missing data structures will be removed to simplify the target functions.
         """
 
-        # The CPMG and R1rho single models.
-        if self.model in MODEL_LIST_CPMG + MODEL_LIST_R1RHO + MODEL_LIST_MQ_CPMG + MODEL_LIST_MQ_R1RHO:
+        # The non-combined data models.
+        if not self.model in [MODEL_MMQ_2SITE]:
             # Remove the first dimension of the data structures.
             self.values = self.values[0]
             self.errors = self.errors[0]

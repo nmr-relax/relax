@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -310,12 +310,18 @@ uf.add_keyarg(
     desc = "The type of relaxation dispersion experiment performed.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "CPMG",
-        r1rho
+        "CPMG-type data",
+        "multiple quantum (MQ) CPMG-type data",
+        "zero quantum (ZQ) CPMG-type data",
+        "double quantum (DQ) CPMG-type data",
+        "%s-type data" % r1rho
     ],
     wiz_combo_data = [
-        "CPMG",
-        "R1rho"
+        EXP_TYPE_CPMG,
+        EXP_TYPE_MQ_CPMG,
+        EXP_TYPE_ZQ_CPMG,
+        EXP_TYPE_DQ_CPMG,
+        EXP_TYPE_R1RHO
     ],
     wiz_read_only = True
 )
@@ -324,9 +330,10 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("For each peak intensity set loaded into relax, the type of experiment it comes from needs to be specified.  By specifying this for each spectrum ID, multiple experiment types can be analysed simultaneously.  This is assuming that an appropriate dispersion model exists for the experiment combination.")
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG), "The CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_CPMG), "The multiple quantum (MQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_ZQ_CPMG), "The zero quantum (ZQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_DQ_CPMG), "The double quantum (DQ) CPMG-type experiments,")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_R1RHO), "The R1rho-type experiments.")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_CPMG), "The multi-quantum CPMG-type experiments,")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_R1RHO), "The multi-quantum R1rho-type experiments.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the experiment type to 'CPMG' for the spectrum ID 'nu_4500.0_800MHz', type one of:")
