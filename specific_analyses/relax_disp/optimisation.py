@@ -363,7 +363,7 @@ class Disp_minimise_command(Slave_command):
                 param_text += ":"
 
                 # The printout.
-                print("%-20s %25.15f" % (param_text, param_vector[param_index]))
+                print("%-20s %25.15f" % (param_text, param_vector[param_index]*self.scaling_matrix[param_index, param_index]))
 
         # Printout.
         if self.sim_index != None:
