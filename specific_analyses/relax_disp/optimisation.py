@@ -143,8 +143,8 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 
                 # Time of exchange.
                 elif param_name in ['tex']:
-                    lower.append(1/200000.0)
-                    upper.append(0.5)
+                    lower.append(1/100000.0)
+                    upper.append(1.0)
 
     # Pre-set parameters.
     for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):

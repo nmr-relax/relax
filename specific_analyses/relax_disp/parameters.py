@@ -720,7 +720,7 @@ def param_conversion(key=None, spins=None, sim_index=None):
 
         # The kex to tex conversion.
         if param_name == 'kex':
-            tex = 1.0 / (2.0 * value)
+            tex = 1.0 / value
             set_value(value=tex, key=key, spins=spins, sim_index=sim_index, param_name='tex', spin_index=spin_index, frq_index=frq_index)
 
         # The kex to k_AB and k_BA conversion.
@@ -736,7 +736,7 @@ def param_conversion(key=None, spins=None, sim_index=None):
 
         # The tex to kex conversion.
         if param_name == 'tex':
-            kex = 1.0 / (2.0 * value)
+            kex = 1.0 / value
             set_value(value=kex, key=key, spins=spins, sim_index=sim_index, param_name='kex', spin_index=spin_index, frq_index=frq_index)
 
 
