@@ -44,6 +44,9 @@ MC_NUM = 500
 # The model selection technique to use.
 MODSEL = 'AIC'
 
+# The flag for only using numeric models in the final model selection.
+NUMERIC_ONLY = False
+
 
 # Set up the data pipe.
 #######################
@@ -134,4 +137,4 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, numeric_only=NUMERIC_ONLY)
