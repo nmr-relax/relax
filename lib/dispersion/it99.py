@@ -52,7 +52,7 @@ and therefore::
 from math import pi, sqrt
 
 
-def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the IT99 model.
 
     See the module docstring for details.
@@ -60,10 +60,12 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
 
     @keyword r20:           The R20 parameter value (R2 with no exchange).
     @type r20:              float
-    @keyword phi_ex:        The phi_ex parameter value (pA * pB * delta_omega^2).
-    @type phi_ex:           float
-    @keyword padw2:         The pA.dw^2 parameter value.
-    @type padw2:            float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               float
     @keyword tex:           The tex parameter value (the time of exchange in s/rad).
     @type tex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
@@ -75,11 +77,13 @@ def r2eff_IT99(r20=None, phi_ex=None, padw2=None, tex=None, cpmg_frqs=None, back
     """
 
     # Repetitive calculations (to speed up calculations).
+    dw2 = dw**2
     tex2 = tex**2
+    padw2 = pA * dw2
     pa2dw4 = padw2**2
 
     # The numerator.
-    numer = phi_ex * tex
+    numer = padw2 * pB * tex
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):

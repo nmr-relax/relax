@@ -606,7 +606,7 @@ class Relax_disp(API_base, API_common):
             params = []
             for frq in loop_frq():
                 params.append('r2')
-            params += ['phi_ex', 'padw2', 'tex']
+            params += ['pA', 'dw', 'tex']
 
         # TSMFK01 model.
         elif model == MODEL_TSMFK01:

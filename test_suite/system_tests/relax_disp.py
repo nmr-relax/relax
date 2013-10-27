@@ -694,14 +694,14 @@ class Relax_disp(SystemTestCase):
         spin71 = cdp.mol[0].res[1].spin[0]
 
         # Set the initial parameter values.
-        spin70.r2 = [7, 10]
-        spin70.phi_ex = 0.8
-        spin70.padw2 = 260.0
-        spin70.tex = 2e-4
-        spin71.r2 = [5, 9]
-        spin71.phi_ex = 0.1
-        spin71.padw2 = 0.0001
-        spin71.tex = 1e-4
+        spin70.r2 = [8.8, 16.6]
+        spin70.dw = 10.0
+        spin70.pA = 0.5
+        spin70.tex = 1000.09
+        spin71.r2 = [1, 1]
+        spin71.dw = 10.0
+        spin71.pA = 0.95
+        spin71.tex = 0.1
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-10, grad_tol=None, max_iter=10000, constraints=True, scaling=True, verbosity=1)
@@ -711,23 +711,23 @@ class Relax_disp(SystemTestCase):
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
         print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
-        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
-        print("%-20s %20.15g %20.15g" % ("padw2", spin70.padw2, spin71.padw2))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
         print("%-20s %20.15g %20.15g" % ("tex", spin70.tex, spin71.tex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
         self.assertAlmostEqual(spin70.r2[0], 7.24913359483782, 4)
         self.assertAlmostEqual(spin70.r2[1], 10.0721943688644, 4)
-        self.assertAlmostEqual(spin70.phi_ex, 0.824075664284934, 4)
-        self.assertAlmostEqual(spin70.padw2, 264.941131087762, 4)
+        self.assertAlmostEqual(spin70.dw, 16.302386572665750, 4)
+        self.assertAlmostEqual(spin70.pA, 0.996889589501665, 4)
         self.assertAlmostEqual(spin70.tex*1000, 0.00020445116006575*1000, 4)
         self.assertAlmostEqual(spin70.chi2, 29.7980427316775, 4)
 
         # Checks for residue :71.
         self.assertAlmostEqual(spin71.r2[0], 4.96765137715714, 4)
-        self.assertAlmostEqual(spin71.phi_ex, 0.16487619476159, 4)
-        self.assertAlmostEqual(spin71.padw2, 0.000896297985759929, 3)
+        self.assertAlmostEqual(spin71.dw, 0.812098432417916, 4)
+        self.assertAlmostEqual(spin71.pA, 0.500000087728188, 3)
         self.assertAlmostEqual(spin71.tex*1000, 0.000125225494546911*1000, 4)
         self.assertAlmostEqual(spin71.chi2, 2.33683739438351, 4)
 

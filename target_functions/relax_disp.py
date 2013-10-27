@@ -580,9 +580,12 @@ class Dispersion:
 
         # Unpack the parameter values.
         R20 = params[:self.end_index[0]]
-        phi_ex = params[self.end_index[0]:self.end_index[1]]
-        padw2 = params[self.end_index[1]:self.end_index[2]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
         tex = params[self.end_index[2]]
+
+        # Once off parameter conversions.
+        pB = 1.0 - pA
 
         # Initialise.
         chi2_sum = 0.0
@@ -594,12 +597,11 @@ class Dispersion:
                 # The R20 index.
                 r20_index = frq_index + spin_index*self.num_frq
 
-                # Convert phi_ex and pa.dw^2 from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
-                padw2_scaled = padw2[spin_index] * self.frqs[spin_index, frq_index]**2
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_IT99(r20=R20[r20_index], phi_ex=phi_ex_scaled, padw2=padw2_scaled, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
+                r2eff_IT99(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc[spin_index, frq_index], num_points=self.num_disp_points)
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points):
