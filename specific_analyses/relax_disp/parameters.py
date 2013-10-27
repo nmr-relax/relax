@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, loop_cluster, loop_frq
+from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, loop_cluster, loop_frq, return_value_from_frq_index
 from specific_analyses.relax_disp.variables import MODEL_M61B, MODEL_MMQ_2SITE
 
 
@@ -351,7 +351,7 @@ def get_param_names(spins=None):
     names = []
 
     # Loop over the parameters.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=self.spins, model_type=self.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Set the initial text.
         param_text = param_name
 
