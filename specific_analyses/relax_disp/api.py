@@ -1048,7 +1048,7 @@ class Relax_disp(API_base, API_common):
             scaling_matrix = assemble_scaling_matrix(spins=spins, scaling=scaling)
 
             # Set up the slave command object.
-            command = Disp_minimise_command(model_type=cdp.model_type, spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower, upper=upper, inc=inc, fields=fields)
+            command = Disp_minimise_command(spins=spins, spin_ids=spin_ids, sim_index=sim_index, scaling_matrix=scaling_matrix, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, verbosity=verbosity, lower=lower, upper=upper, inc=inc, fields=fields)
 
             # Set up the memo.
             memo = Disp_memo(spins=spins, sim_index=sim_index, scaling_matrix=scaling_matrix, verbosity=verbosity)

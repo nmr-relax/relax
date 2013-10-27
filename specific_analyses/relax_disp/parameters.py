@@ -54,7 +54,7 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     param_vector = []
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Get the value.
         value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
@@ -93,7 +93,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         return scaling_matrix
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Transversal relaxation rate scaling.
         if param_name in ['r2', 'r2a', 'r2b']:
             scaling_matrix[param_index, param_index] = 10
@@ -336,7 +336,7 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
                     spin.r2b.append(None)
 
     # Loop over the parameters of the cluster, setting the values.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
 
@@ -497,7 +497,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
     j = 0
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Effective transversal relaxation rate.
         if param_name == 'r2eff':
             A.append(zero_array * 0.0)
@@ -587,22 +587,20 @@ def linear_constraints(spins=None, scaling_matrix=None):
     return A, b
 
 
-def loop_parameters(spins=None, model_type=None):
+def loop_parameters(spins=None):
     """Generator function for looping of the parameters of the cluster.
 
-    @keyword spins:         The list of spin data containers for the block.
-    @type spins:            list of SpinContainer instances
-    @keyword model_type:    The current model type.  This is necessary to allow this to run on a slave processor by removing the cdp dependence.
-    @type model_type:       str
-    @return:                The parameter name, the parameter index (for the parameter vector), the spin index (for the cluster), and the frequency index (for parameters with different values per spectrometer field strength).
-    @rtype:                 str, int, int, int
+    @keyword spins: The list of spin data containers for the block.
+    @type spins:    list of SpinContainer instances
+    @return:        The parameter name, the parameter index (for the parameter vector), the spin index (for the cluster), and the frequency index (for parameters with different values per spectrometer field strength).
+    @rtype:         str, int, int, int
     """
 
     # The parameter index.
     param_index = -1
 
     # The R2eff model.
-    if model_type == 'R2eff':
+    if cdp.model_type == 'R2eff':
         # Loop over the spins.
         for spin_index in range(len(spins)):
             # Yield the two parameters.
@@ -704,7 +702,7 @@ def param_conversion(key=None, spins=None, sim_index=None):
     """
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         # Get the value.
         value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
@@ -754,7 +752,7 @@ def param_index_to_param_info(index=None, spins=None):
     """
 
     # Loop over the parameters, yielding when a match is found.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
         if param_index == index:
             return param_name, spin_index, frq_index
 
