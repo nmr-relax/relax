@@ -340,6 +340,34 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
         set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
 
 
+def get_param_names(spins=None):
+    """Generate a list of dispersion parameter names for the given spins.
+
+    @keyword spins:         The list of spin data containers for the block.
+    @type spins:            list of SpinContainer instances
+    """
+
+    # Initialise the structure.
+    names = []
+
+    # Loop over the parameters.
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=self.spins, model_type=self.model_type):
+        # Set the initial text.
+        param_text = param_name
+
+        # The parameters with additional details.
+        if param_name in ['r2', 'r2a', 'r2b']:
+            frq = return_value_from_frq_index(frq_index)
+            if frq:
+                param_text += " (%.3f MHz)" % (frq / 1e6) 
+ 
+        # Append the text.
+        names.append(param_text)
+
+    # Return the structure.
+    return names
+
+
 def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=None, frq_index=None):
     """Return the value for the given parameter.
 

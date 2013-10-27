@@ -216,7 +216,7 @@ class Disp_memo(Memo):
 class Disp_minimise_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, verbosity=0, lower=None, upper=None, inc=None, fields=None):
+    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, verbosity=0, lower=None, upper=None, inc=None, fields=None, param_names=None):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
@@ -252,6 +252,8 @@ class Disp_minimise_command(Slave_command):
         @type inc:                  array of int
         @keyword fields:            The list of unique of spectrometer field strengths.
         @type fields:               int
+        @keyword param_names:       The list of parameter names to use in printouts.
+        @type param_names:          str
         """
 
         # Execute the base class __init__() method.
@@ -269,6 +271,7 @@ class Disp_minimise_command(Slave_command):
         self.grad_tol = grad_tol
         self.max_iterations = max_iterations
         self.fields = fields
+        self.param_names = param_names
 
         # Create the initial parameter vector.
         self.param_vector = assemble_param_vector(spins=self.spins)
@@ -350,17 +353,8 @@ class Disp_minimise_command(Slave_command):
         # Optimisation printout.
         if self.verbosity:
             print("\nOptimised parameter values:")
-            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=self.spins):
-                # The parameter with additional details.
-                param_text = param_name
-                if param_name in ['r2', 'r2a', 'r2b']:
-                    frq = return_value_from_frq_index(frq_index)
-                    if frq:
-                        param_text += " (%.3f MHz)" % (frq / 1e6) 
-                param_text += ":"
-
-                # The printout.
-                print("%-20s %25.15f" % (param_text, param_vector[param_index]*self.scaling_matrix[param_index, param_index]))
+            for i in range(len(param_vector)):
+                print("%-20s %25.15f" % (self.param_names, param_vector[i]*self.scaling_matrix[i, i]))
 
         # Printout.
         if self.sim_index != None:
