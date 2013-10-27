@@ -94,7 +94,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
             # Loop over each spectrometer frequency and dispersion point.
             for exp_type, frq, point in loop_exp_frq_point():
                 # Loop over the parameters.
-                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
                     # R2eff relaxation rate (from 1 to 40 s^-1).
                     if param_name == 'r2eff':
                         lower.append(1.0)
@@ -108,7 +108,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
         # All other models.
         else:
             # Loop over the parameters.
-            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
                 # Cluster specific parameter.
                 if spin_index == None:
                     spin_index = 0
@@ -147,7 +147,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     upper.append(0.5)
 
     # Pre-set parameters.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins, model_type=cdp.model_type):
         # Cluster specific parameter.
         if spin_index == None:
             spin_index = 0
@@ -216,12 +216,14 @@ class Disp_memo(Memo):
 class Disp_minimise_command(Slave_command):
     """Command class for relaxation dispersion optimisation on the slave processor."""
 
-    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, verbosity=0, lower=None, upper=None, inc=None, fields=None):
+    def __init__(self, model_type=None, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, verbosity=0, lower=None, upper=None, inc=None, fields=None):
         """Initialise the base class, storing all the master data to be sent to the slave processor.
 
         This method is run on the master processor whereas the run() method is run on the slave processor.
 
 
+        @keyword model_type:        The model type.
+        @type model_type:           str
         @keyword spins:             The list of spin data container for the cluster.  If this argument is supplied, then the spin_id argument will be ignored.
         @type spins:                list of SpinContainer instances
         @keyword spin_ids:          The list of spin ID strings corresponding to the spins argument.
@@ -258,6 +260,7 @@ class Disp_minimise_command(Slave_command):
         super(Disp_minimise_command, self).__init__()
 
         # Store the arguments needed by the run() method.
+        self.model_type = model_type
         self.spins = spins
         self.spin_ids = spin_ids
         self.sim_index = sim_index
@@ -350,7 +353,7 @@ class Disp_minimise_command(Slave_command):
         # Optimisation printout.
         if self.verbosity:
             print("\nOptimised parameter values:")
-            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=self.spins):
+            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=self.spins, model_type=self.model_type):
                 # The parameter with additional details.
                 param_text = param_name
                 if param_name in ['r2', 'r2a', 'r2b']:
