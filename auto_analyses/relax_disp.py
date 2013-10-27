@@ -419,6 +419,10 @@ class Relax_disp:
         # Dispersion curves.
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
 
+        # The selected models for the final run.
+        if model == None:
+            self.interpreter.value.write(param='model_type', file='model_type.out', dir=path, force=True)
+
         # The R2eff parameter.
         if model == 'R2eff':
             self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=path, force=True)
