@@ -451,14 +451,14 @@ class Relax_disp:
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA and pB parameters.
-        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
+        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02]:
             self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
             self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', file='pB.agr', dir=path, force=True)
 
         # The Phi_ex parameter.
-        if model in [None, MODEL_LM63, MODEL_IT99, MODEL_M61, MODEL_DPL94]:
+        if model in [None, MODEL_LM63, MODEL_M61, MODEL_DPL94]:
             self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', file='phi_ex.agr', dir=path, force=True)
 
@@ -469,13 +469,8 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', file='phi_ex_B.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', file='phi_ex_C.agr', dir=path, force=True)
 
-        # The padw2 parameter.
-        if model in [None, MODEL_IT99]:
-            self.interpreter.value.write(param='padw2', file='padw2.out', dir=path, force=True)
-            self.interpreter.grace.write(x_data_type='res_num', y_data_type='padw2', file='padw2.agr', dir=path, force=True)
-
         # The dw parameter.
-        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61B, MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01]:
+        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01]:
             self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
 
