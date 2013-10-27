@@ -27,6 +27,7 @@ from numpy import ndarray
 import sys
 
 # relax module imports.
+from lib.check_types import is_num
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxParamSetError, RelaxValueError
 from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 from pipe_control import minimise, pipes
@@ -662,9 +663,9 @@ def scale(value, scaling):
     @type scaling:  float
     """
 
-    # None.
-    if value == None:
-        return None
+    # No a number, so return the value unmodified.
+    if not is_num(value):
+        return value
 
     # Scale.
     return value * scaling
