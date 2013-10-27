@@ -98,7 +98,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('k_AB', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('k_BA', scope='spin', default=10000.0, desc='The exchange rate from state B to state A', set='params', py_type=float, grace_string='\\qk\\sBA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
-        self.PARAMS.add('model_type', scope='spin', desc='The dispersion model', py_type=str)
+        self.PARAMS.add('model', scope='spin', desc='The dispersion model', py_type=str)
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)

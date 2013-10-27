@@ -421,7 +421,7 @@ class Relax_disp:
 
         # The selected models for the final run.
         if model == None:
-            self.interpreter.value.write(param='model_type', file='model_type.out', dir=path, force=True)
+            self.interpreter.value.write(param='model', file='model.out', dir=path, force=True)
 
         # The R2eff parameter.
         if model == 'R2eff':
