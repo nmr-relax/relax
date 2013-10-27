@@ -800,10 +800,23 @@ The references for this model are:
 
 
 
+% Clustering.
+%%%%%%%%%%%%%
+
+\section{The clustered relaxation dispersion analysis}
+
+Often in a relaxation dispersion analysis you will wish to fit a number of spin systems together using global parameters such as $\kex$, $\pA$, etc.
+This can be achieved through the concept of clustering.
+A cluster is defined by an ID string can can contain any number of spins.
+Multiple clusters in one analysis can be defined.
+Any spins not included in a cluster will be treated as a free spin whereby all parameters of the dispersion model are local to that spin.
+Spin clusters can be defined using the \uf{relax\_disp.cluster} user function.
+
+
+
 % Script UI.
 %%%%%%%%%%%%
 
-\newpage
 \section{Analysing dispersion in the prompt/script UI mode}
 
 Before reading this section, please read Chapter~\ref{ch: data model} covering the relax data model first.
