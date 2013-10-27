@@ -525,19 +525,19 @@ class Processor(object):
                     else:
                         self.result_list = None
 
+                    # Capture the standard IO streams for the slaves.
+                    self.stdio_capture()
+
                     # Execute each command, one by one.
                     for i, command in enumerate(commands):
-                        # Capture the standard IO streams for the slaves.
-                        self.stdio_capture()
-
                         # Set the completed flag if this is the last command.
                         completed = (i == len(commands)-1)
 
                         # Execute the calculation.
                         command.run(self, completed)
 
-                        # Restore the IO.
-                        self.stdio_restore()
+                    # Restore the IO.
+                    self.stdio_restore()
 
                     # Process the batched results.
                     if self.batched_returns:
