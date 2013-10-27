@@ -495,7 +495,10 @@ class Disp_result_command(Result_command):
                     key = return_param_key_from_data(frq=frq, point=point)
 
                     # Store the back-calculated data.
-                    spin.r2eff_bc[key] = self.back_calc[spin_index, frq_index, disp_pt_index]
+                    if not spins[0].model in [MODEL_MMQ_2SITE]:
+                        spin.r2eff_bc[key] = self.back_calc[exp_type_index, spin_index, frq_index, disp_pt_index]
+                    else:
+                        spin.r2eff_bc[key] = self.back_calc[spin_index, frq_index, disp_pt_index]
 
         # Optimisation printout.
         if memo.verbosity:
