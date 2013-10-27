@@ -37,7 +37,7 @@ from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
 from specific_analyses.relax_disp.disp_data import loop_exp_frq_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_NS_R1RHO_2SITE, MODEL_TP02
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02
 from target_functions.relax_disp import Dispersion
 
 
