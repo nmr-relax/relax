@@ -354,7 +354,7 @@ class Disp_minimise_command(Slave_command):
         if self.verbosity:
             print("\nOptimised parameter values:")
             for i in range(len(param_vector)):
-                print("%-20s %25.15f" % (self.param_names, param_vector[i]*self.scaling_matrix[i, i]))
+                print("%-20s %25.15f" % (self.param_names[i], param_vector[i]*self.scaling_matrix[i, i]))
 
         # Printout.
         if self.sim_index != None:
