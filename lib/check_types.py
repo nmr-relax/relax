@@ -29,7 +29,7 @@ try:
     file = None
 except ImportError:
     io_module = False
-from numpy import complex64, complex128, float32, float64
+from numpy import complex64, complex128, float32, float64, int16, int32
 try:
     from numpy import complex256
 except ImportError:
@@ -42,7 +42,14 @@ try:
     from numpy import float128
 except ImportError:
     float128 = float64    # Support for 32-bit numpy versions.
-
+try:
+    from numpy import int8
+except ImportError:
+    int8 = int16    # Support for old numpy versions.
+try:
+    from numpy import int64
+except ImportError:
+    int64 = int32    # Support for 32-bit numpy versions.
 
 def is_complex(num):
     """Check if the given number is a Python or numpy complex.
@@ -108,6 +115,54 @@ def is_float(num):
     if isinstance(num, float64):
         return True
     if isinstance(num, float128):
+        return True
+
+    # Not a float.
+    return False
+
+
+def is_int(num):
+    """Check if the given number is a Python or numpy int.
+
+    @param num: The number to check.
+    @type num:  anything.
+    @return:    True if the number is a int, False otherwise.
+    @rtype:     bool
+    """
+
+    # Standard int.
+    if isinstance(num, int):
+        return True
+
+    # Numpy int.
+    if isinstance(num, int8):
+        return True
+    if isinstance(num, int16):
+        return True
+    if isinstance(num, int32):
+        return True
+    if isinstance(num, int64):
+        return True
+
+    # Not a int.
+    return False
+
+
+def is_num(num):
+    """Check if the given number is a Python or numpy int or float.
+
+    @param num: The number to check.
+    @type num:  anything.
+    @return:    True if the number is an int or float, False otherwise.
+    @rtype:     bool
+    """
+
+    # A float.
+    if is_float(num):
+        return True
+
+    # An integer.
+    if is_int(num):
         return True
 
     # Not a float.
