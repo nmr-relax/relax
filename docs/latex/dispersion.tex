@@ -1001,10 +1001,10 @@ MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'TSMFK01', 'NS CPMG 2-site 
 
 But note that the selection of which models to use is incredibly important.
 Do not use models which are not suitable for the data as that will cause the final results to contain rubbish.
-If you have $\Ronerho$-type data, the models could be changed to:
+If you have $\Ronerho$-type off-resonance data, the models could be changed to:
 
 \begin{lstlisting}[numbers=none]
-MODELS = ['R2eff', 'No Rex', 'M61', 'DPL72', 'TP02']
+MODELS = ['R2eff', 'No Rex', 'DPL94', 'NS R1rho 2-site']
 \end{lstlisting}
 
 The next variable affects the optimisation precision:
@@ -1034,12 +1034,25 @@ RESULTS_DIR = '.'
 
 The \pycode{MODSEL} variable defines how the best dispersion model for the measured data is chosen:
 
-\begin{lstlisting}[firstnumber=29]
+\begin{lstlisting}[firstnumber=26]
 # The model selection technique to use.
 MODSEL = 'AIC'
 \end{lstlisting}
 
 For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\index{model selection!AICc}, and BIC\index{model selection!BIC} are supported.  For details about these frequentist\index{model selection!frequentist} model selection techniques and their application to NMR data, see \citet{dAuvergneGooley03}.  Post-analysis comparisons can also be preformed if desired.
+The \pycode{NUMERIC\_ONLY} variable can be used to choose if only numeric or all models will be used in the model selection for the final results:
+
+\begin{lstlisting}[firstnumber=29]
+# The flag for only using numeric models in the final model selection.
+NUMERIC_ONLY = False
+\end{lstlisting}
+
+To only use numeric models in the model selection while allowing models such as 'CR72' to be optimised and used as the starting point for the numeric models, change this variable to:
+
+\begin{lstlisting}[numbers=none]
+NUMERIC_ONLY = True
+\end{lstlisting}
+
 The last variable allows spins with insignificant dispersion profiles to be deselected:
 
 \begin{lstlisting}[firstnumber=32]
