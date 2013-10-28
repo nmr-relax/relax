@@ -839,16 +839,26 @@ from auto_analyses.relax_disp import Relax_disp
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'TSMFK01', 'NS CPMG 2-site expanded']
+MODELS = ['R2eff', 'No Rex', 'CR72', 'N2 CPMG 2-site expanded']
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 21
+GRID_INC = 11
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 500
 
+# The results directory.
+RESULTS_DIR = '.'
+
 # The model selection technique to use.
 MODSEL = 'AIC'
+
+# The flag for only using numeric models in the final model selection.
+NUMERIC_ONLY = False
+
+# The R2eff value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+INSIGNIFICANCE = 1.0
+
 
 
 # Set up the data pipe.
@@ -947,7 +957,7 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
 \end{lstlisting}
 
 
@@ -980,13 +990,20 @@ The next part of the script is the definition of a number of analysis variables.
 
 \begin{lstlisting}[firstnumber=14]
 # The dispersion models.
+MODELS = ['R2eff', 'No Rex', 'CR72', 'N2 CPMG 2-site expanded']
+\end{lstlisting}
+
+This list can be expanded to most of the 2-site exchange models, for example as:
+
+\begin{lstlisting}[numbers=none]
 MODELS = ['R2eff', 'No Rex', 'LM63', 'CR72', 'IT99', 'TSMFK01', 'NS CPMG 2-site expanded']
 \end{lstlisting}
 
+But note that the selection of which models to use is incredibly important.
+Do not use models which are not suitable for the data as that will cause the final results to contain rubbish.
 If you have $\Ronerho$-type data, the models could be changed to:
 
 \begin{lstlisting}[numbers=none]
-# The dispersion models.
 MODELS = ['R2eff', 'No Rex', 'M61', 'DPL72', 'TP02']
 \end{lstlisting}
 
@@ -1006,16 +1023,32 @@ The Monte Carlo simulation\index{Monte Carlo simulation} number \pycode{MC\_NUM}
 MC_NUM = 500
 \end{lstlisting}
 
-For accurate parameter errors this number should not be decreased.  Ideally it should be increased however this will significantly increase the total analysis time.
-
-The last variable defines how the best dispersion model for the measured data is chosen:
+For accurate parameter errors this number should not be decreased.
+Ideally it should be increased however this will significantly increase the total analysis time.
+The next variable allows you to change the directory in which all results files from the auto-analysis will be saved.
 
 \begin{lstlisting}[firstnumber=23]
+# The results directory.
+RESULTS_DIR = '.'
+\end{lstlisting}
+
+The \pycode{MODSEL} variable defines how the best dispersion model for the measured data is chosen:
+
+\begin{lstlisting}[firstnumber=29]
 # The model selection technique to use.
 MODSEL = 'AIC'
 \end{lstlisting}
 
 For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\index{model selection!AICc}, and BIC\index{model selection!BIC} are supported.  For details about these frequentist\index{model selection!frequentist} model selection techniques and their application to NMR data, see \citet{dAuvergneGooley03}.  Post-analysis comparisons can also be preformed if desired.
+The last variable allows spins with insignificant dispersion profiles to be deselected:
+
+\begin{lstlisting}[firstnumber=32]
+# The R2eff value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+INSIGNIFICANCE = 1.0
+\end{lstlisting}
+
+This is often needed due to the errors in the dispersion curves being underestimated, hence the 'No Rex' model is not selected when clearly it should be.
+To use all data in the analysis, this variable should be set to 0.0.
 
 
 % Initialisation of the data pipe.
@@ -1025,7 +1058,7 @@ For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\
 
 The data pipe is created using the lines:
 
-\begin{lstlisting}[firstnumber=30]
+\begin{lstlisting}[firstnumber=40]
 # Create the data pipe.
 pipe_name = 'base pipe'
 pipe_bundle = 'relax_disp'
@@ -1044,14 +1077,14 @@ The \uf{pipe.create} user function will then create a relaxation dispersion spec
 
 The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure.read\_pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).  In the case of the sample script, the command:
 
-\begin{lstlisting}[firstnumber=35]
+\begin{lstlisting}[firstnumber=45]
 # Load the sequence.
 sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
 \end{lstlisting}
 
 will load residue names and numbers from the \file{fake\_sequence.in} file into relax, creating one spin per residue.  Then:
 
-\begin{lstlisting}[firstnumber=38]
+\begin{lstlisting}[firstnumber=48]
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
 spin.name(name='N')
 spin.isotope(isotope='15N')
@@ -1067,7 +1100,7 @@ will set up the spin information required for loading the peak intensity data fr
 
 To load the peak intensities\index{peak!intensity} into relax, a large data structure is first defined:
 
-\begin{lstlisting}[firstnumber=42]
+\begin{lstlisting}[firstnumber=52]
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
     ['500_reference.in',    '500_MHz'+sep+'reference.in_sparky',           None,  500e6],
@@ -1115,7 +1148,7 @@ In Python terminology, this is a list of lists data structure.  It is essentiall
 
 The Python \pycode{for} loop starts with the lines:
 
-\begin{lstlisting}[firstnumber=84]
+\begin{lstlisting}[firstnumber=94]
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
 \end{lstlisting}
@@ -1124,7 +1157,7 @@ and includes all subsequently indented lines.  This line of code takes the eleme
 
 The first user function in the block loads the peak intensity data from the peak lists:
 
-\begin{lstlisting}[firstnumber=86]
+\begin{lstlisting}[firstnumber=96]
     # Load the peak intensities.
     spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
 \end{lstlisting}
@@ -1132,7 +1165,7 @@ The first user function in the block loads the peak intensity data from the peak
 This assumes that peak heights were measured.  All data will be tagged with the given ID string.  For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.
 The next step is to specify the dispersion experiment type for each spectrum:
 
-\begin{lstlisting}[firstnumber=89]
+\begin{lstlisting}[firstnumber=99]
     # Set the relaxation dispersion experiment type.
     relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
 \end{lstlisting}
@@ -1140,7 +1173,7 @@ The next step is to specify the dispersion experiment type for each spectrum:
 This can either be \pycode{`CPMG'} or \pycode{`R1rho'}.
 The next user function sets the CPMG frequencies for each spectrum:
 
-\begin{lstlisting}[firstnumber=92]
+\begin{lstlisting}[firstnumber=102]
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
 \end{lstlisting}
@@ -1154,14 +1187,14 @@ For an $\Ronerho$-type experiment, these lines could be changed to:
 
 Then the NMR spectrometer field strength is set:
 
-\begin{lstlisting}[firstnumber=95]
+\begin{lstlisting}[firstnumber=105]
     # Set the NMR field strength of the spectrum.
     spectrometer.frequency(id=id, frq=H_frq)
 \end{lstlisting}
 
 And finally the relaxation time period is set with:
 
-\begin{lstlisting}[firstnumber=98]
+\begin{lstlisting}[firstnumber=108]
     # Relaxation dispersion CPMG constant time delay T (in s).
     relax_disp.relax_time(spectrum_id=id, time=0.030)
 \end{lstlisting}
@@ -1170,7 +1203,7 @@ If exponential data has been collected rather than fixed time period data, then 
 
 Finally, once the \pycode{for} loop has completed, replicated spectra are defined with the commands:
 
-\begin{lstlisting}[firstnumber=101]
+\begin{lstlisting}[firstnumber=111]
 # Specify the duplicated spectra.
 spectrum.replicated(spectrum_ids=['500_133.33.in', '500_133.33.in.bis'])
 spectrum.replicated(spectrum_ids=['500_533.33.in', '500_533.33.in.bis'])
@@ -1188,7 +1221,7 @@ spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
 
 Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user functions:
 
-\begin{lstlisting}[firstnumber=109]
+\begin{lstlisting}[firstnumber=119]
 # Peak intensity error analysis.
 spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
 spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
@@ -1198,7 +1231,7 @@ Here the 500~MHz and 800~MHz peak intensity errors have been calculated separate
 
 Any spins which cannot be resolved due to peak overlap were included in a file called \file{unresolved}.  This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.  The matching spins are excluded from the analysis by the user functions:
 
-\begin{lstlisting}[firstnumber=113]
+\begin{lstlisting}[firstnumber=123]
 # Deselect unresolved spins.
 deselect.read(file='unresolved', dir='500_MHz', res_num_col=1)
 deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
@@ -1211,12 +1244,12 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 
 Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\linebreak[0]{}\_disp} class.  This is the final lines of the script:
 
-\begin{lstlisting}[firstnumber=119]
+\begin{lstlisting}[firstnumber=129]
 # Auto-analysis execution.
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
 \end{lstlisting}
 
 This will start the auto-analysis.
