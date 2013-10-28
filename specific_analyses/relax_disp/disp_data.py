@@ -434,6 +434,10 @@ def insignificance(level=0.0):
 
     # Loop over all spins.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Nothing to do (the R2eff model has no dispersion curves).
+        if spin.model == 'R2eff':
+            continue
+
         # Get all the data.
         values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
@@ -441,6 +445,7 @@ def insignificance(level=0.0):
         desel = True
 
         # Loop over the experiments.
+        max_diff = 0.0
         for exp_index in range(len(values)):
             # Loop over the magnetic fields.
             for frq_index in range(len(values[exp_index, 0])):
@@ -448,9 +453,15 @@ def insignificance(level=0.0):
                 diff = values[exp_index, 0,frq_index].max() - values[exp_index, 0,frq_index].min()
                 if diff > level:
                     desel = False
+                if diff > max_diff:
+                    max_diff = diff
 
         # Deselect the spin.
         if desel:
+            # Printout.
+            print("Deselecting spin '%s', the maximum dispersion curve difference for all curves is %s rad/s." % (spin_id, max_diff))
+
+            # Deselection.
             desel_spin(spin_id)
 
 
