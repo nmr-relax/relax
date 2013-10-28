@@ -1,5 +1,6 @@
 # Parameter description:  The fast exchange factor between sites A and C (ppm^2).
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                   error    
-None          70         GLY         None        N                2.01352699230694    None     
-None          71         GLY         None        N               0.151581828973723    None     
+None          4          GLY         None        N            3.95068762771857e-11    None     
+None          70         GLY         None        N                2.54028263988105    None     
+None          71         GLY         None        N                1.14268842285893    None     

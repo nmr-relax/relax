@@ -1,5 +1,6 @@
 # Parameter description:  The exchange rate from state A to state B.
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                   error    
-None          70         GLY         None        N                 17.359973845675    None     
-None          71         GLY         None        N                6.05539416196403    None     
+None          4          GLY         None        N               0.103201188802937    None     
+None          70         GLY         None        N                17.5653038811939    None     
+None          71         GLY         None        N                6.05537883055284    None     

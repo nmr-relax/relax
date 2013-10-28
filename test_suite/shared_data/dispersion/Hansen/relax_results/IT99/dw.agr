@@ -9,7 +9,7 @@
 @    xaxis  tick minor linewidth 0.5
 @    xaxis  tick minor size 0.45
 @    xaxis  ticklabel char size 1.00
-@    yaxis  label "\q\xDw\B\sH\N\Q (ppm)"
+@    yaxis  label "\q\xDw\B\Q (ppm)"
 @    yaxis  label char size 1.48
 @    yaxis  tick major size 0.75
 @    yaxis  tick major linewidth 0.5
@@ -28,7 +28,8 @@
 @    s0 errorbar riser linewidth 0.5
 @target G0.S0
 @type xy
-70                             0.410096085755018             
-71                             0.658431564930340             
+4                              0.125550498000855             
+70                             16.314900959620076            
+71                             0.812098550682314             
 &
 @autoscale

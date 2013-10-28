@@ -1,5 +1,6 @@
-# Parameter description:  The time of exchange (tex = 1/(2kex)).
+# Parameter description:  The time of exchange (tex = 1/kex).
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                   error    
-None          70         GLY         None        N            0.000298378376059306    None     
-None          71         GLY         None        N            0.000268723789554334    None     
+None          4          GLY         None        N            0.000980127314140282    None     
+None          70         GLY         None        N            0.000587244924340453    None     
+None          71         GLY         None        N            0.000537447990770991    None     
