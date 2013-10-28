@@ -28,7 +28,7 @@ for dir in ['500_MHz', '800_MHz']:
                 continue
 
             # Skip almost all residues (except 70 and 71).
-            if not search('^GLY7[01]', line):
+            if not search('^GLY7[01]', line) and not search('^GLY4N', line):
                 continue
 
             # Write out the data.
