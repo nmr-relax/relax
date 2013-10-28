@@ -2,7 +2,7 @@
 
 To run:
 
-$ ../../../../../relax nessy_save_file.py --tee nessy_save_file.log
+$ ../../../../../relax nessy_save_file.py
 """
 
 # Python module imports.
