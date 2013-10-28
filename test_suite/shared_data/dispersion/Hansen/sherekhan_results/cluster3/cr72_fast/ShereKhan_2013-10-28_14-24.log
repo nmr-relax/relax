@@ -1,0 +1,67 @@
+ShereKhan ver. 1.0
+
+Adam Mazur, Bjoern Hammesfahr, Christian Griesinger, Donghan Lee and Martin Kollmar
+
+Department of NMR-based Structural Biology
+Max-Planck-Institute for Biophysical Chemistry
+Am Fassberg 11
+37077 Goettingen, Germany
+
+Please cite:
+A. Mazur, B. Hammesfahr, C. Griesinger, D. Lee, M. Kollmar; Bioinformatics, 2013, 29(14):1819-1820
+---
+Mon Oct 28 14:26:00 2013
+
+Input data:
+
+Exchange regime: fast
+Model: CR
+
+Grid search for initial parameters:
+
+kex:    min:    100.0  max:  10000.0 nsteps:   6
+phi:    min:    0.010  max:    5.000 nsteps:   6
+
+Initial values:
+kex: 2080.000 phi:    0.010
+
+Residues:
+
+GLY71 
+
+Dataset 1:
+Field, tcp [MHz, s]:
+50.70
+0.030
+#v_cpmg(Hz)   R2(1/s)      Esd(R2)      R2_calc
+# GLY71
+  66.667        7.044        0.225        7.034
+ 133.333        6.781        0.224        6.794
+ 200.000        6.468        0.223        6.555
+ 266.667        6.333        0.223        6.323
+ 333.333        6.323        0.223        6.112
+ 400.000        6.005        0.221        5.929
+ 466.667        5.767        0.220        5.776
+ 533.333        5.477        0.219        5.649
+ 600.000        5.470        0.219        5.544
+ 666.667        5.295        0.219        5.459
+ 733.333        5.436        0.219        5.389
+ 800.000        5.410        0.219        5.331
+ 866.667        5.438        0.219        5.283
+ 933.333        5.177        0.218        5.243
+1000.000        5.227        0.218        5.209
+
+---
+Exchange regime: fast
+Model: CR
+---
+npar=4 nvar=15 ndof=11 chi2=   3.237 chi2/dof=   0.294
+---
+kex: 2470.505  +-  2163.166
+---
+resId:         phi [ppm^2]        R2_0 ( 50.7 MHz) 
+---
+GLY71:    0.060 +-    0.053       4.939 +-    0.368
+---
+Convergence issue.
+
