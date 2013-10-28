@@ -1,128 +1,178 @@
+Parameter conversions
+=====================
+
+For the strange CPMGFit parameter conversions to match the other software, see cpmgfit_results/README.
+
+
 The no exchange model
 =====================
+
+Residue :4
+----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        1.602       1.608         N/A         N/A
+R2 (800)        1.639       1.634         N/A         N/A
+chi2           15.825      18.311         N/A         N/A
 
 Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)       10.563      11.400         N/A         N/A
-R2 (800)       16.141      16.823         N/A         N/A
-chi2         3427.907     860.148         N/A         N/A
-
+R2 (500)       10.534      11.401         N/A         N/A
+R2 (800)       16.111      16.823         N/A         N/A
+chi2         4771.068     860.149         N/A         N/A
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        5.830           -         N/A         N/A
-chi2           47.357           -         N/A         N/A
-
+R2 (500)        5.831       5.969         N/A         N/A
+chi2          103.848      91.093         N/A         N/A
 
 
 The LM63 model
 ==============
 
+Residue :4
+----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        1.583       1.574       1.584           -
+R2 (800)        1.589       1.555       1.584           -
+phi             0.001       0.003       0.002           -
+kex          3086.154    6109.732    3311.807           -
+tex         3.240e-04   1.637e-04   3.019e-04           -
+chi2           13.114       9.923      13.125           -
+
 Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        6.806       7.639       6.866       6.806
-R2 (800)        6.679       7.387       6.866       6.679
-phi             0.310       0.259   1.510e-04       0.310
-kex          4763.249    3906.180       2.342    4763.197
-tau         4.199e-05   5.120e-05       0.427   4.199e-05
-chi2          106.393      78.223     106.471     106.393
-
+R2 (500)        6.751       7.639       6.833       6.751
+R2 (800)        6.593       7.387       6.833       6.593
+phi             0.312       0.259       0.301       0.312
+kex          4703.321    3906.189    4602.992    4703.282
+tex         2.126e-04   2.560e-04   2.172e-04   2.126e-04
+chi2          203.086      78.223     203.263     203.087
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        4.926           -       4.926       4.926
-phi             0.059           -   2.963e-05       0.059
-kex          2544.645           -       1.271    2544.636
-tau         7.860e-04           -       0.786   7.860e-04
-chi2            1.442           -       1.442       1.442
-
+R2 (500)        4.930       5.000       4.930       4.930
+phi             0.060      -0.054       0.060       0.060
+kex          2565.502   -2286.631    2564.760    2565.489
+tex         3.898e-04  -4.373e-04   3.899e-04   3.898e-04
+chi2            3.264      23.481       3.264       3.264
 
 
 The CR72 model
 ==============
 
+Residue :4
+----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        1.571       1.600       1.584       1.583
+R2 (800)        1.588       1.621       1.584       1.589
+pA              1.000       0.999       0.992       0.996
+dw              5.962       1.274       0.615       0.587
+kex           805.794     134.640    1661.100    3065.870
+chi2           12.954      19.621      13.124      13.113
+
 Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        7.011       7.236       6.263       7.011
-R2 (800)        9.465      10.027       6.263       9.465
-pA              0.990       0.989       0.978       0.990
-dw              5.577       5.373       0.937       5.577
-kex          1765.993    1522.059       1.774    1765.988
-chi2           18.450       7.701      65.237      18.450
-
+R2 (500)        6.973       7.236       5.926       6.973
+R2 (800)        9.421      10.027       5.926       9.421
+pA              0.990       0.989       0.979       0.990
+dw              5.611       5.373       6.249       5.611
+kex          1741.670    1522.059    1706.200    1741.668
+chi2           28.813       7.701     103.892      28.814
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        4.978           -       4.983       4.978
-pA              0.997           -       0.994       0.997
-dw              4.460           -       0.757       4.461
-kex          1879.584           -       0.896    1879.618
-chi2            1.379           -       1.382       1.379
-
+R2 (500)        4.981      49.999       4.981       4.981
+pA              0.997       0.962       0.994       0.997
+dw              4.347       6.281       4.499       4.347
+kex          1935.650     -44.848     954.300    1935.674
+chi2            3.138       8.771       3.143       3.138
 
 
 The IT99 model
 ==============
 
+Residue :4
+----------
+
+Param       relax       NESSY       CPMGFit     ShereKhan
+R2 (500)        1.583         N/A       1.583         N/A
+R2 (800)        1.588         N/A       1.583         N/A
+pA              0.500         N/A       0.997         N/A
+dw              0.126         N/A       0.817         N/A
+kex         10148.722         N/A    2521.114         N/A
+tex         9.853e-05         N/A   3.967e-04         N/A
+chi2           13.129         N/A      13.097         N/A
+
 Residue :70
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        7.253         N/A       7.140         N/A
-R2 (800)       10.071         N/A       7.140         N/A
-phi_ex          0.816         N/A   1.217e-04         N/A
-pA.dw^2       264.777         N/A       0.400         N/A
-tex         2.012e-04         N/A       0.459         N/A
-kex          2484.483         N/A       1.089         N/A
-chi2           31.687         N/A     101.690         N/A
-
+R2 (500)        7.246         N/A       6.978         N/A
+R2 (800)       10.061         N/A       6.978         N/A
+pA              0.997         N/A       0.551         N/A
+dw             16.315         N/A       1.050         N/A
+kex          4912.656         N/A    3947.109         N/A
+tex         2.036e-04         N/A   2.534e-04         N/A
+chi2           49.839         N/A     188.188         N/A
 
 Residue :71
 -----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        4.961         N/A       5.093         N/A
-phi_ex          0.165         N/A   1.539e-05         N/A
-pA.dw^2     1.523e-05         N/A       0.978         N/A
-tex         1.256e-04         N/A       3.697         N/A
-kex          3980.533         N/A       0.135         N/A
-chi2            1.450         N/A       1.774         N/A
+R2 (500)        4.968         N/A       5.104         N/A
+pA              0.500         N/A       0.873         N/A
+dw              0.812         N/A       1.055         N/A
+kex          7985.567         N/A     571.363         N/A
+tex         1.252e-04         N/A   1.750e-03         N/A
+chi2            3.296         N/A       4.159         N/A
 
 
+The numeric CPMG models
+=======================
 
-The numeric CPMG models in relax
-================================
+Residue :4
+----------
+
+Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star   ShereKhan
+R2 (500)              1.572                    1.572                 1.570       1.583
+R2 (800)              1.588                    1.588                 1.588       1.589
+pA                    1.000                    1.000                 1.000       0.974
+dw                    5.745                    5.745                 6.002       0.229
+kex                1020.244                 1020.275               825.765    3032.812
+chi2                 12.971                   12.971                12.961      13.112
 
 Residue :70
 -----------
 
-Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star
-R2 (500)              6.996                    6.996                 6.996
-R2 (800)              9.453                    9.453                 9.453
-pA                    0.990                    0.990                 0.990
-dw                    5.645                    5.645                 5.645
-kex                1723.443                 1723.443              1723.078
-chi2                 18.098                   18.098                18.098
-
+Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star   ShereKhan
+R2 (500)              6.959                    6.959                 6.952       6.959
+R2 (800)              9.407                    9.407                 9.388       9.407
+pA                    0.990                    0.990                 0.990       0.990
+dw                    5.675                    5.675                 5.674       5.675
+kex                1702.866                 1702.867              1715.524    1702.868
+chi2                 28.088                   28.089                28.088      28.089
 
 Residue :71
 -----------
 
-Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star
-R2 (500)              4.980                    4.980                 4.980
-pA                    0.997                    0.997                 0.997
-dw                    4.629                    4.629                 4.629
-kex                1805.665                 1805.676              1805.110
-chi2                  1.371                    1.371                 1.371
+Param     NS CPMG 2-site 3D  NS CPMG 2-site expanded   NS CPMG 2-site star   ShereKhan
+R2 (500)              4.983                    4.983                 4.972       4.983
+pA                    0.997                    0.997                 0.997       0.997
+dw                    4.526                    4.526                 4.394       4.525
+kex                1860.635                 1860.645              1930.944    1860.764
+chi2                  3.118                    3.118                 3.118       3.118
