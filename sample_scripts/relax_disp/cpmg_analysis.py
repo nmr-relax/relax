@@ -41,11 +41,18 @@ GRID_INC = 11
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 500
 
+# The results directory.
+RESULTS_DIR = '.'
+
 # The model selection technique to use.
 MODSEL = 'AIC'
 
 # The flag for only using numeric models in the final model selection.
 NUMERIC_ONLY = False
+
+# The R2eff value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+INSIGNIFICANCE = 1.0
+
 
 
 # Set up the data pipe.
@@ -144,4 +151,4 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, numeric_only=NUMERIC_ONLY)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
