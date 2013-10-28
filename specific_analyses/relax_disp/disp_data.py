@@ -45,6 +45,7 @@ from lib.software.grace import write_xy_data, write_xy_header, script_grace2imag
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
+from pipe_control.selection import desel_spin
 from pipe_control.spectrum import check_spectrum_id
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG
@@ -415,6 +416,42 @@ def has_r1rho_exp_type():
 
     # No CPMG experiment types.
     return False
+
+
+def insignificance(level=0.0):
+    """Deselect all spins with insignificant dispersion profiles.
+
+    @keyword level: The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
+    @type level:    float
+    """
+
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # Loop over all spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Get all the data.
+        values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
+        # The flag.
+        desel = True
+
+        # Loop over the experiments.
+        for exp_index in range(len(values)):
+            # Loop over the magnetic fields.
+            for frq_index in range(len(values[exp_index, 0])):
+                # The difference.
+                diff = values[exp_index, 0,frq_index].max() - values[exp_index, 0,frq_index].min()
+                if diff > level:
+                    desel = False
+
+        # Deselect the spin.
+        if desel:
+            desel_spin(spin_id)
 
 
 def is_cpmg_exp_type(id=None):

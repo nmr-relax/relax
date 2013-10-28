@@ -38,7 +38,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
+from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, insignificance, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -344,6 +344,29 @@ uf.menu_text = "&exp_type"
 uf.wizard_size = (800, 550)
 uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.insignificance user function.
+uf = uf_info.add_uf('relax_disp.insignificance')
+uf.title = "Deselect all spins with insignificant dispersion."
+uf.title_short = "Insignificant spin deselection."
+uf.add_keyarg(
+    name = "level",
+    py_type = "float",
+    default = 2.0,
+    desc_short = "insignificance level",
+    desc = "The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.",
+    can_be_none = False
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This can be used to deselect all spins which have insignificant dispersion profiles.  The insignificance value is the R2eff/R1rho value in rad/s by which to judge the dispersion curves by.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.")
+uf.backend = insignificance
+uf.gui_icon = "relax.spin_grey"
+uf.menu_text = "&insignificance"
+uf.wizard_size = (800, 550)
+uf.wizard_apply_button = False
+uf.wizard_image = WIZARD_IMAGE_PATH + 'deselect.png'
 
 
 # The relax_disp.nessy_input user function.
