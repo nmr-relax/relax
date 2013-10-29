@@ -1529,7 +1529,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.sequence.read(file='66.667.in', dir=data_path, res_num_col=1)
 
         # Try reading the file.
-        self.interpreter.relax_disp.r2eff_read(file='66.667.in', dir=data_path, exp_type='CPMG', frq=800e6, res_num_col=1, data_col=2, error_col=3)
+        self.interpreter.relax_disp.r2eff_read(file='66.667.in', dir=data_path, exp_type='CPMG', frq=800e6, disp_frq=66.667, res_num_col=1, data_col=2, error_col=3)
 
         # TODO:  Data checks.
 
