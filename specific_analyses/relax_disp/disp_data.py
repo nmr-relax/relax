@@ -37,12 +37,14 @@ from math import atan, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from random import gauss
 import sys
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
 from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
+from lib.warnings import RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
