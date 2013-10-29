@@ -1633,7 +1633,7 @@ def set_exp_type(spectrum_id=None, exp_type=None):
         cdp.exp_type_list.append(cdp.exp_type[spectrum_id])
 
     # Printout.
-    text = "Setting the '%s' spectrum to" % spectrum_id
+    text = "Setting the '%s' spectrum to " % spectrum_id
     if exp_type == EXP_TYPE_CPMG:
         text += EXP_TYPE_DESC_CPMG + "."
     elif exp_type == EXP_TYPE_MQ_CPMG:
