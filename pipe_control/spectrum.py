@@ -242,6 +242,25 @@ def __errors_volume_no_repl(subset=None):
             spin.intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
 
 
+def add_spectrum_id(spectrum_id=None):
+    """Add the spectrum ID to the data store.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    """
+
+    # Initialise the structure, if needed.
+    if not hasattr(cdp, 'spectrum_ids'):
+        cdp.spectrum_ids = []
+
+    # The ID already exists.
+    if spectrum_id in cdp.spectrum_ids:
+        raise RelaxError("The spectrum ID '%s' already exists." % spectrum_id)
+
+    # Add the ID.
+    cdp.spectrum_ids.append(spectrum_id)
+
+
 def baseplane_rmsd(error=0.0, spectrum_id=None, spin_id=None):
     """Set the peak intensity errors, as defined as the baseplane RMSD.
 
@@ -569,15 +588,12 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     spectrum_ids = spectrum_id
     if isinstance(spectrum_id, str):
         spectrum_ids = [spectrum_id]
-    if not hasattr(cdp, 'spectrum_ids'):
-        cdp.spectrum_ids = []
-        if ncproc != None:
-            cdp.ncproc = {}
+    if ncproc != None and not hasattr(cdp, 'ncproc'):
+        cdp.ncproc = {}
     for i in range(len(spectrum_ids)):
-        if not spectrum_ids[i] in cdp.spectrum_ids:
-            cdp.spectrum_ids.append(spectrum_ids[i])
-            if ncproc != None:
-                cdp.ncproc[spectrum_ids[i]] = ncproc
+        add_spectrum_id(spectrum_ids[i])
+        if ncproc != None:
+            cdp.ncproc[spectrum_ids[i]] = ncproc
 
     # No data.
     if not data_flag:
