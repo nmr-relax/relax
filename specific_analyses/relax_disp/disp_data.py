@@ -201,7 +201,7 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
         cdp.dispersion_points -= 1
 
     # Printout.
-    print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
+    print("The spectrum ID '%s' CPMG frequency is set to %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
 def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
