@@ -1735,9 +1735,9 @@ def spin_lock_field(spectrum_id=None, field=None):
 
     # Printout.
     if field == None:
-        print("Setting the '%s' spectrum as the reference." % spectrum_id)
+        print("The spectrum ID '%s' is set to the reference." % spectrum_id)
     else:
-        print("Setting the '%s' spectrum spin-lock field strength to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
+        print("The spectrum ID '%s' spin-lock field strength is set to %s kHz." % (spectrum_id, cdp.spin_lock_nu1[spectrum_id]/1000.0))
 
 
 def spin_lock_offset(spectrum_id=None, offset=None):
