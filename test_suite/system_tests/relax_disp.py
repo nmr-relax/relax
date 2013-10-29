@@ -557,7 +557,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_hansen_cpmg_data_auto_analysis_r2eff(self):
-        """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data (using the original R2eff data).
+        """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data (using the R2eff data directly instead of peak intensities).
 
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
