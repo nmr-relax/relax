@@ -39,14 +39,15 @@ from random import gauss
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
-from lib.io import get_file_path, open_write_file
+from lib.io import get_file_path, open_write_file, read_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from pipe_control import pipes
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
-from pipe_control.spectrum import check_spectrum_id
+from pipe_control.spectrum import add_spectrum_id, check_spectrum_id
+from pipe_control.spectrometer import set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG
 from stat import S_IRWXU, S_IRGRP, S_IROTH
@@ -1040,6 +1041,113 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
 
     # Add the file to the results file list.
     add_result_file(type='grace', label='Grace', file=file_path)
+
+
+def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+    """Read R2eff/R1rho values directly from a file whereby each row corresponds to a different spin.
+
+    @keyword file:          The name of the file to open.
+    @type file:             str
+    @keyword dir:           The directory containing the file (defaults to the current directory if None).
+    @type dir:              str or None
+    @keyword exp_type:      The relaxation dispersion experiment type.
+    @type exp_type:         str
+    @keyword frq:           The spectrometer frequency in Hertz.
+    @type frq:              float
+    @keyword disp_frq:      For CPMG-type data, the frequency of the CPMG pulse train.  For R1rho-type data, the spin-lock field strength (nu1).  The units must be Hertz.
+    @type disp_frq:         float
+    @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information.  If supplied, spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information.  If supplied, spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information.  If supplied, spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information.  If supplied, spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information.  If supplied, spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword data_col:      The column containing the RDC data in Hz.
+    @type data_col:         int or None
+    @keyword error_col:     The column containing the RDC errors.
+    @type error_col:        int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    """
+
+    # Data checks.
+    pipes.test()
+    check_mol_res_spin_data()
+
+    # Create a key for the global data (the pseudo-spectrum ID).
+    spectrum_id = "%s_%s" % (frq, disp_frq)
+    print("Using the pseudo-spectrum ID of '%s'." % spectrum_id)
+
+    # Loop over the data.
+    data_flag = False
+    for data in read_spin_data(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep):
+        # Unpack.
+        if data_col and error_col:
+            mol_name, res_num, res_name, spin_num, spin_name, value, error = data
+        elif data_col:
+            mol_name, res_num, res_name, spin_num, spin_name, value = data
+            error = None
+        else:
+            mol_name, res_num, res_name, spin_num, spin_name, error = data
+            value = None
+
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError("An invalid error value of zero has been encountered.")
+
+        # Get the corresponding spin container.
+        id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        spin = return_spin(id)
+        if spin == None:
+            warn(RelaxNoSpinWarning(id))
+            continue
+
+        # The dispersion point key.
+        point_key = return_param_key_from_data(frq=frq, point=disp_frq)
+
+        # Store the R2eff data.
+        if data_col:
+            # Initialise if necessary.
+            if not hasattr(spin, 'r2eff'):
+                spin.r2eff = {}
+
+            # Store.
+            spin.r2eff[point_key] = value
+
+        # Store the R2eff error.
+        if error_col:
+            # Initialise if necessary.
+            if not hasattr(spin, 'r2eff_err'):
+                spin.r2eff_err = {}
+
+            # Store.
+            spin.r2eff_err[point_key] = error
+
+        # Data added.
+        data_flag = True
+
+    # Update the global structures.
+    if data_flag:
+        # Store the spectrum ID.
+        add_spectrum_id(spectrum_id)
+
+        # Set the spectrometer frequency information.
+        set_frequency(id=spectrum_id, frq=frq)
+
+        # Set the experiment type.
+        set_exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
+
+        # Set the dispersion point frequency.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            cpmg_frq(spectrum_id=spectrum_id, cpmg_frq=disp_frq)
+        else:
+            spin_lock_field(spectrum_id=spectrum_id, field=disp_frq)
 
 
 def randomise_R1(spin=None, ri_id=None, N=None):

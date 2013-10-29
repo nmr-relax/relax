@@ -38,7 +38,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, relax_time, set_exp_type, spin_lock_field, spin_lock_offset
+from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, relax_time, set_exp_type, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -516,6 +516,144 @@ uf.menu_text = "&plot_exp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
+
+
+# The relax_disp.r2eff_read user function.
+uf = uf_info.add_uf('relax_disp.r2eff_read')
+uf.title = "Read R2eff/R1rho values and errors from a file."
+uf.title_short = "R2eff/R1rho value reading."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file.",
+    wiz_filesel_style = FD_SAVE
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory name.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "exp_type",
+    default = "CPMG",
+    py_type = "str",
+    desc_short = "experiment type",
+    desc = "The type of relaxation dispersion experiment performed.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "Single quantum (SQ) CPMG-type data",
+        "Zero quantum (ZQ) CPMG-type data",
+        "Double quantum (DQ) CPMG-type data",
+        "Multiple quantum (MQ) CPMG-type data",
+        "%s-type data" % r1rho
+    ],
+    wiz_combo_data = [
+        EXP_TYPE_CPMG,
+        EXP_TYPE_ZQ_CPMG,
+        EXP_TYPE_DQ_CPMG,
+        EXP_TYPE_MQ_CPMG,
+        EXP_TYPE_R1RHO
+    ],
+    wiz_read_only = True
+)
+uf.add_keyarg(
+    name = "frq",
+    py_type = "num",
+    desc_short = "spectrometer frequency",
+    desc = "The spectrometer frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
+)
+uf.add_keyarg(
+    name = "disp_frq",
+    py_type = "num",
+    desc_short = "CPMG frequency or spin-lock field strength (Hz)",
+    desc = "For CPMG-type data, the frequency of the CPMG pulse train.  For R1rho-type data, the spin-lock field strength nu1.  The units must be Hertz",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin ID string column",
+    desc = "The spin ID string column used by the generic file format (an alternative to the mol, res, and spin name and number columns).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "mol_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "molecule name column",
+    desc = "The molecule name column used by the generic file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "res_num_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "residue number column",
+    desc = "The residue number column used by the generic file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "res_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "residue name column",
+    desc = "The residue name column used by the generic file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_num_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin number column",
+    desc = "The spin number column used by the generic file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin name column",
+    desc = "The spin name column used by the generic file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "data_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "data column",
+    desc = "The RDC data column.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "error_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "error column",
+    desc = "The experimental error column.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "sep",
+    py_type = "str",
+    arg_type = "free format",
+    desc_short = "column separator",
+    desc = "The column separator used by the generic format (the default is white space).",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This will read R2eff/R1rho data directly from a file.  The format of this text file must be that each row corresponds to a unique spin system and that there is one file per dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1).  The file must be in columnar format and information to identify the spin must be in columns of the file.")
+uf.backend = r2eff_read
+uf.menu_text = "&r2eff_read"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_size = (900, 600)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
 # The relax_disp.relax_time user function.
