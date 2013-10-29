@@ -1634,7 +1634,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope('1H', spin_id='@H')
 
         # Try reading the file.
-        self.interpreter.relax_disp.read_r2eff_spin(file='hs_500.res', dir='..', spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
+        self.interpreter.relax_disp.r2eff_read_spin(file='hs_500.res', dir='..', spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
 
         # TODO:  Data checks.
 
