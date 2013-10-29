@@ -74,7 +74,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "pos",
-    py_type = "float",
+    py_type = "float_object",
     desc_short = "atomic position",
     desc = "The atomic coordinates."
 )
