@@ -1519,6 +1519,37 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_r2eff_read(self):
+        """Test the operation of the relax_disp.r2eff_read user function."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'800_MHz'
+
+        # Read the sequence data.
+        self.interpreter.sequence.read(file='66.667.in', dir=data_path, res_num_col=1)
+
+        # Try reading the file.
+        self.interpreter.relax_disp.r2eff_read(file='66.667.in', dir=data_path, exp_type='CPMG', frq=800e6, res_num_col=1, data_col=2, error_col=3)
+
+        # TODO:  Data checks.
+
+
+    def test_r2eff_read_spin(self):
+        """Test the operation of the relax_disp.r2eff_read_spin user function."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Korzhnev_et_al_2005'
+
+        # Generate the sequence.
+        self.interpreter.spin.create(res_name='Asp', res_num=9, spin_name='H')
+        self.interpreter.spin.isotope('1H', spin_id='@H')
+
+        # Try reading the file.
+        self.interpreter.relax_disp.read_r2eff_spin(file='hs_500.res', dir='..', spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
+
+        # TODO:  Data checks.
+
+
     def test_r2eff_fit_fixed_time(self):
         """Test the relaxation dispersion 'R2eff' model for fixed time data in the auto-analysis."""
 
