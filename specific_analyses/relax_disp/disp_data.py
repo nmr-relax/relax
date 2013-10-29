@@ -36,10 +36,11 @@ The dispersion data model is based on the following concepts, in order of import
 from math import atan, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from random import gauss
+import sys
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
-from lib.io import get_file_path, open_write_file, read_spin_data
+from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from pipe_control import pipes
@@ -1091,6 +1092,13 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
 
     # Loop over the data.
     data_flag = False
+    mol_names = []
+    res_nums = []
+    res_names = []
+    spin_nums = []
+    spin_names = []
+    values = []
+    errors = []
     for data in read_spin_data(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col, error_col=error_col, sep=sep):
         # Unpack.
         if data_col and error_col:
@@ -1136,6 +1144,18 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
 
         # Data added.
         data_flag = True
+
+        # Append the data for printout.
+        mol_names.append(mol_name)
+        res_nums.append(res_num)
+        res_names.append(res_name)
+        spin_nums.append(spin_num)
+        spin_names.append(spin_name)
+        values.append(value)
+        errors.append(error)
+
+    # Print out.
+    write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name='R2eff', error=errors, error_name='R2eff_error')
 
     # Update the global structures.
     if data_flag:
