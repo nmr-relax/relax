@@ -331,7 +331,8 @@ class Relax_disp:
         """Execute the auto-analysis."""
 
         # Peak intensity error analysis.
-        self.error_analysis()
+        if MODEL_R2EFF in self.models:
+            self.error_analysis()
 
         # Loop over the models.
         self.model_pipes = []
