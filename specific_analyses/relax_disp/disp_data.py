@@ -40,8 +40,8 @@ import sys
 from warnings import warn
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSpectraError, RelaxSpinTypeError
-from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_data
+from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
+from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, write_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxNoSpinWarning
@@ -49,7 +49,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
-from pipe_control.spectrum import add_spectrum_id, check_spectrum_id
+from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, get_ids
 from pipe_control.spectrometer import set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG
@@ -1180,6 +1180,146 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
             cpmg_frq(spectrum_id=spectrum_id, cpmg_frq=disp_frq)
         else:
             spin_lock_field(spectrum_id=spectrum_id, field=disp_frq)
+
+
+def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, disp_point_col=None, data_col=None, error_col=None, sep=None):
+    """Read R2eff/R1rho values from file whereby each row is a different dispersion point.
+
+    @keyword spin_id:           The spin ID string.
+    @type spin_id:              str
+    @keyword file:              The name of the file to open.
+    @type file:                 str
+    @keyword dir:               The directory containing the file (defaults to the current directory if None).
+    @type dir:                  str or None
+    @keyword exp_type:          The relaxation dispersion experiment type.
+    @type exp_type:             str
+    @keyword frq:               The spectrometer frequency in Hertz.
+    @type frq:                  float
+    @keyword disp_point_col:    The column containing the dispersion point information.  For CPMG-type data, this is the frequency of the CPMG pulse train.  For R1rho-type data, this is the spin-lock field strength (nu1).  The units must be Hertz.
+    @type disp_point_col:       int
+    @keyword data_col:          The column containing the R2eff/R1rho data in Hz.
+    @type data_col:             int
+    @keyword error_col:         The column containing the R2eff/R1rho errors.
+    @type error_col:            int
+    @keyword sep:               The column separator which, if None, defaults to whitespace.
+    @type sep:                  str or None
+    """
+
+    # Data checks.
+    pipes.test()
+    check_mol_res_spin_data()
+
+    # Get the spin.
+    spin = return_spin(spin_id)
+    if spin == None:
+        raise RelaxNoSpinError(spin_id)
+
+    # Extract the data from the file, removing comments and blank lines.
+    file_data = extract_data(file, dir, sep=sep)
+
+    # Loop over the data.
+    data = []
+    for line in file_data:
+        # Invalid columns.
+        if disp_point_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no dispersion point column can be found." % line))
+            continue
+        if data_col > len(line):
+            warn(RelaxWarning("The R2eff/R1rho data %s is invalid, no data column can be found." % line))
+            continue
+        if error_col > len(line):
+            warn(RelaxWarning("The R2eff/R1rho data %s is invalid, no error column can be found." % line))
+            continue
+
+        # Unpack.
+        disp_point = line[disp_point_col-1]
+        value = line[data_col-1]
+        error = line[error_col-1]
+
+        # Convert and check the dispersion point.
+        try:
+            disp_point = float(disp_point)
+        except ValueError:
+            warn(RelaxWarning("The dispersion point data of the line %s is invalid." % line))
+            continue
+
+        # Convert and check the value.
+        if value == 'None':
+            value = None
+        if value != None:
+            try:
+                value = float(value)
+            except ValueError:
+                warn(RelaxWarning("The R2eff/R1rho value of the line %s is invalid." % line))
+                continue
+
+        # Convert and check the error.
+        if error == 'None':
+            error = None
+        if error != None:
+            try:
+                error = float(error)
+            except ValueError:
+                warn(RelaxWarning("The R2eff/R1rho error of the line %s is invalid." % line))
+                continue
+
+        # Test the error value (cannot be 0.0).
+        if error == 0.0:
+            raise RelaxError("An invalid error value of zero has been encountered.")
+
+        # Create a key for the global data (the pseudo-spectrum ID).
+        spectrum_id = "%s_%s" % (frq, disp_point)
+
+        # The dispersion point key.
+        point_key = return_param_key_from_data(frq=frq, point=disp_point)
+
+        # Store the R2eff data.
+        if data_col:
+            # Initialise if necessary.
+            if not hasattr(spin, 'r2eff'):
+                spin.r2eff = {}
+
+            # Store.
+            spin.r2eff[point_key] = value
+
+        # Store the R2eff error.
+        if error_col:
+            # Initialise if necessary.
+            if not hasattr(spin, 'r2eff_err'):
+                spin.r2eff_err = {}
+
+            # Store.
+            spin.r2eff_err[point_key] = error
+
+        # Update the global structures.
+        if not spectrum_id in get_ids():
+            # Store the spectrum ID.
+            add_spectrum_id(spectrum_id)
+
+            # Set the spectrometer frequency information.
+            set_frequency(id=spectrum_id, frq=frq)
+
+            # Set the experiment type.
+            set_exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
+
+            # Set the dispersion point frequency.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                cpmg_frq(spectrum_id=spectrum_id, cpmg_frq=disp_point)
+            else:
+                spin_lock_field(spectrum_id=spectrum_id, field=disp_point)
+
+        # Append the data for printout.
+        data.append(["%20.15f" % disp_point, "%20.15f" % value, "%20.15f" % error])
+        # Data added.
+        data_flag = True
+
+    # No data, so fail hard!
+    if not len(data):
+        raise RelaxError("No R2eff/R1rho data could be extracted.")
+
+    # Print out.
+    print("The following R2eff/R1rho data has been loaded into the relax data store:\n")
+    write_data(out=sys.stdout, headings=["Disp_point", "R2eff", "R2eff_error"], data=data)
 
 
 def randomise_R1(spin=None, ri_id=None, N=None):
