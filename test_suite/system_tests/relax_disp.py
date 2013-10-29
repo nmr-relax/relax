@@ -282,12 +282,9 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Load the state, preserving the temp directory.
-        tmpdir = ds.tmpdir
-        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_values'
-        self.interpreter.state.load(state, force=True)
-        self.interpreter.deselect.spin(':4')
-        ds.tmpdir = tmpdir
+        # Load the R2eff results file.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_pipe'
+        self.interpreter.results.read(file_name)
 
         # The spin isotopes.
         self.interpreter.spin.isotope("15N")
@@ -299,7 +296,7 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the R2eff input set files.")
         files = ['data_set_500.inp', 'data_set_500.inp']
         for file in files:
-            self.assert_(access(tmpdir+sep+file, F_OK))
+            self.assert_(access(ds.tmpdir+sep+file, F_OK))
         data_set_500 = [
             "ID=500\n",
             "Sfrq = 500\n",
@@ -321,7 +318,7 @@ class Relax_disp(SystemTestCase):
             " [71N;spin_71_N_500.cpmg];\n",
             ")\n",
         ]
-        file = open(tmpdir+sep+files[0])
+        file = open(ds.tmpdir+sep+files[0])
         lines = file.readlines()
         file.close()
         for i in range(len(data_set_500)):
@@ -335,26 +332,26 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the R2eff input files.")
         files = ['spin_70_N_500.cpmg', 'spin_70_N_800.cpmg', 'spin_71_N_500.cpmg', 'spin_71_N_800.cpmg']
         for file in files:
-            self.assert_(access(tmpdir+sep+'input_r2eff'+sep+file, F_OK))
+            self.assert_(access(ds.tmpdir+sep+'input_r2eff'+sep+file, F_OK))
         spin_70_N_500 = [
             "#        nu_cpmg(Hz)              R2(1/s)              Esd(R2)\n",
-            "  66.666600000000003   16.045540885533605    0.412294590350466\n",
-            " 133.333300000000008   14.877924861181727    0.402074347759777\n",
-            " 200.000000000000000   14.357820247260586    0.397668163420325\n",
-            " 266.666600000000017   12.664494620416516    0.383927386846239\n",
-            " 333.333300000000008   12.363204802467891    0.381577098135469\n",
-            " 400.000000000000000   11.092532381134513    0.371969240324889\n",
-            " 466.666600000000017   10.566090057649893    0.368129848631907\n",
-            " 533.333300000000008    9.805806894657803    0.362727290610209\n",
-            " 600.000000000000000    9.564300692201730    0.361045792363254\n",
-            " 666.666600000000017    9.015633750407980    0.357286772920262\n",
-            " 733.333300000000008    8.607764958055581    0.354546700224429\n",
-            " 800.000000000000000    8.279997179221338    0.352377873439218\n",
-            " 866.666600000000017    8.474535940963516    0.353661588122999\n",
-            " 933.333300000000008    8.158972897365194    0.351584456439987\n",
-            "1000.000000000000000    7.988630509501972    0.350474432453979\n"
+            "  66.666600000000003   16.045540885533605    0.310924686180635\n",
+            " 133.333300000000008   14.877924861181727    0.303217270671013\n",
+            " 200.000000000000000   14.357820247260586    0.299894424543361\n",
+            " 266.666600000000017   12.664494620416516    0.289532060485796\n",
+            " 333.333300000000008   12.363204802467891    0.287759631749322\n",
+            " 400.000000000000000   11.092532381134513    0.280514035409862\n",
+            " 466.666600000000017   10.566090057649893    0.277618625949722\n",
+            " 533.333300000000008    9.805806894657803    0.273544382200754\n",
+            " 600.000000000000000    9.564300692201730    0.272276309984954\n",
+            " 666.666600000000017    9.015633750407980    0.269441511838159\n",
+            " 733.333300000000008    8.607764958055581    0.267375134391053\n",
+            " 800.000000000000000    8.279997179221338    0.265739551961997\n",
+            " 866.666600000000017    8.474535940963516    0.266707642726566\n",
+            " 933.333300000000008    8.158972897365194    0.265141210539941\n",
+            "1000.000000000000000    7.988630509501972    0.264304105548559\n",
         ]
-        file = open(tmpdir+sep+'input_r2eff'+sep+files[0])
+        file = open(ds.tmpdir+sep+'input_r2eff'+sep+files[0])
         lines = file.readlines()
         file.close()
         for i in range(len(lines)):
@@ -495,11 +492,11 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
         print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        self.assertAlmostEqual(spin70.r2[0], 10.5340573632181, 4)
-        self.assertAlmostEqual(spin70.r2[1], 16.1113049920324, 4)
-        self.assertAlmostEqual(spin70.chi2, 2832.28562307, 4)
-        self.assertAlmostEqual(spin71.r2[0], 5.83137814994754, 4)
-        self.assertAlmostEqual(spin71.chi2, 73.6219146835821, 4)
+        self.assertAlmostEqual(spin70.r2[0], 10.5342302498099, 4)
+        self.assertAlmostEqual(spin70.r2[1], 16.1112364696603, 4)
+        self.assertAlmostEqual(spin70.chi2, 8973.84809809869, 4)
+        self.assertAlmostEqual(spin71.r2[0], 5.83139245047696, 4)
+        self.assertAlmostEqual(spin71.chi2, 3908.00127775015, 4)
 
         # The 'CR72' model checks.  These models have not reached the minima due to the low quality optimisation!
         self.interpreter.pipe.switch(pipe_name='CR72')
@@ -513,17 +510,17 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
         print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        self.assertAlmostEqual(spin70.r2[0], 6.97532271825192, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.45051817816538, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989800346795472, 4)
-        self.assertAlmostEqual(spin70.dw, 5.61326926915313, 4)
-        self.assertAlmostEqual(spin70.kex/10000, 1713.02295468519/10000, 4)
-        self.assertAlmostEqual(spin70.chi2, 17.3955972313639, 4)
-        self.assertAlmostEqual(spin71.r2[0], 0.589453313816438, 2)
-        self.assertAlmostEqual(spin71.pA, 0.500005674625128, 2)
-        self.assertAlmostEqual(spin71.dw, 199.873875627265, 2)
-        self.assertAlmostEqual(spin71.kex, 10.7154862578618, 2)
-        self.assertAlmostEqual(spin71.chi2, 57.9468501661789, 2)
+        self.assertAlmostEqual(spin70.r2[0], 6.97231098558438, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.40949167240224, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989856881109833, 4)
+        self.assertAlmostEqual(spin70.dw, 5.60903520132766, 4)
+        self.assertAlmostEqual(spin70.kex/10000, 1752.96048901822/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 53.8382161775238, 4)
+        self.assertAlmostEqual(spin71.r2[0], 5.83137944442748, 2)
+        self.assertAlmostEqual(spin71.pA, 0.525362677141359, 2)
+        self.assertAlmostEqual(spin71.dw, 5.62607344890692e-05, 2)
+        self.assertAlmostEqual(spin71.kex, 5.04771424685256e-06, 2)
+        self.assertAlmostEqual(spin71.chi2, 3907.96355683848, 2)
 
         # The 'NS CPMG 2-site expanded' model checks.  These models have not reached the minima due to the low quality optimisation!
         self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded')
@@ -537,24 +534,24 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
         print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
-        self.assertAlmostEqual(spin70.r2[0], 6.96101862173876, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.43558150234607, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989640734323076, 4)
-        self.assertAlmostEqual(spin70.dw, 5.67778572185308, 3)
-        self.assertAlmostEqual(spin70.kex/10000, 1675.71048406429/10000, 4)
-        self.assertAlmostEqual(spin70.chi2, 16.9361822411228, 4)
-        #self.assertAlmostEqual(spin71.r2[0], 0.000848665494171463, 2)
-        #self.assertAlmostEqual(spin71.pA, 0.655296796352596, 2)
-        #self.assertAlmostEqual(spin71.dw, 250.635584872988, 2)
-        #self.assertAlmostEqual(spin71.kex, 16.910452128491, 2)
-        #self.assertAlmostEqual(spin71.chi2, 69.4759976405928, 2)
+        self.assertAlmostEqual(spin70.r2[0], 6.95806310993774, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.39655613780752, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989701113865134, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67340333496965, 3)
+        self.assertAlmostEqual(spin70.kex/10000, 1713.50931613732/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 52.5102634026556, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.91137529958506, 2)
+        self.assertAlmostEqual(spin71.pA, 0.907789033045004, 2)
+        self.assertAlmostEqual(spin71.dw, 5.4874818123363, 2)
+        self.assertAlmostEqual(spin71.kex, 33.8903683174966, 2)
+        self.assertAlmostEqual(spin71.chi2, 286.766727384223, 2)
 
         # The final data pipe checks.
         self.interpreter.pipe.switch(pipe_name='final')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         self.assertEqual(spin70.model, 'NS CPMG 2-site expanded')
-        self.assertEqual(spin71.model, 'No Rex')
+        self.assertEqual(spin71.model, 'NS CPMG 2-site expanded')
 
 
     def test_hansen_cpmg_data_auto_analysis_r2eff(self):
@@ -673,19 +670,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.9752522000508, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.4502142463071, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989800155102415, 4)
-        self.assertAlmostEqual(spin70.dw, 5.61343657055352, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1712.96280544115/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 17.395594997608, 4)
+        self.assertAlmostEqual(spin70.r2[0], 6.97260604007474, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.41009302654463, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989856764756131, 4)
+        self.assertAlmostEqual(spin70.dw, 5.60887354423638, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1752.75852303464/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 53.8382124791236, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.98082001120432, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996612995705823, 4)
-        self.assertAlmostEqual(spin71.dw, 4.34893375911521, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1937.1784079176/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.22439157827035, 4)
+        self.assertAlmostEqual(spin71.r2[0], 5.00310788169096, 4)
+        self.assertAlmostEqual(spin71.pA, 0.985946406482083, 4)
+        self.assertAlmostEqual(spin71.dw, 2.00673221077749, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2480.52477627298/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.6595392846911, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -737,22 +734,22 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2a[0], 7.01193443499926, 4)
-        self.assertAlmostEqual(spin70.r2b[0], 6.21781284622842e-05, 4)
-        self.assertAlmostEqual(spin70.r2a[1], 9.30618449313396, 4)
-        self.assertAlmostEqual(spin70.r2b[1], 27.7706293556294, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989690841471004, 4)
-        self.assertAlmostEqual(spin70.dw, 5.58311178274918, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1727.86626749975/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 16.479033262968, 4)
+        self.assertAlmostEqual(spin70.r2a[0], 6.69755822995605, 4)
+        self.assertAlmostEqual(spin70.r2b[0], 2.75294308690228, 4)
+        self.assertAlmostEqual(spin70.r2a[1], 8.18393516578432, 4)
+        self.assertAlmostEqual(spin70.r2b[1], 97.3047470071814, 4)
+        self.assertAlmostEqual(spin70.pA, 0.988929729034413, 4)
+        self.assertAlmostEqual(spin70.dw, 5.51938354518713, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1892.82682092974/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 48.5815698897158, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2a[0], 4.92135078444124, 4)
-        self.assertAlmostEqual(spin71.r2b[0], 22.276785581656, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996537558351309, 4)
-        self.assertAlmostEqual(spin71.dw, 4.33777787825605, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1922.12839512671/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.22439040805535, 4)
+        self.assertAlmostEqual(spin71.r2a[0], 4.79839795614044, 4)
+        self.assertAlmostEqual(spin71.r2b[0], 12.8793124032989, 4)
+        self.assertAlmostEqual(spin71.pA, 0.978971448838756, 4)
+        self.assertAlmostEqual(spin71.dw, 1.67873004594096, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2527.80893069607/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 14.3394771268074, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -800,19 +797,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 7.24913359483782, 4)
-        self.assertAlmostEqual(spin70.r2[1], 10.0721943688644, 4)
-        self.assertAlmostEqual(spin70.dw, 16.302386572665750, 4)
-        self.assertAlmostEqual(spin70.pA, 0.996889589501665, 4)
-        self.assertAlmostEqual(spin70.tex*1000, 0.00020445116006575*1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 29.7980427316775, 4)
+        self.assertAlmostEqual(spin70.r2[0], 7.24471210050861, 4)
+        self.assertAlmostEqual(spin70.r2[1], 10.057104937161, 4)
+        self.assertAlmostEqual(spin70.dw, 16.3183632118076, 4)
+        self.assertAlmostEqual(spin70.pA, 0.996897633223495, 4)
+        self.assertAlmostEqual(spin70.tex*1000, 0.000203207457799447*1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 93.5135798618572, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.96765137715714, 4)
-        self.assertAlmostEqual(spin71.dw, 0.812098432417916, 4)
-        self.assertAlmostEqual(spin71.pA, 0.500000087728188, 3)
-        self.assertAlmostEqual(spin71.tex*1000, 0.000125225494546911*1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.33683739438351, 4)
+        self.assertAlmostEqual(spin71.r2[0], 2.34239439621247, 4)
+        self.assertAlmostEqual(spin71.dw, 2.1943783862637, 4)
+        self.assertAlmostEqual(spin71.pA, 0.500000000002985, 3)
+        self.assertAlmostEqual(spin71.tex*1000, 3.36270199763213e-05*1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 589.220558758852, 4)
 
 
     def test_hansen_cpmg_data_to_lm63(self):
@@ -837,7 +834,7 @@ class Relax_disp(SystemTestCase):
         spin71.kex = 2500.0
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -849,17 +846,17 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.77242822209793)
-        self.assertAlmostEqual(spin70.r2[1], 6.64980731657647)
-        self.assertAlmostEqual(spin70.phi_ex, 0.308216165020969)
-        self.assertAlmostEqual(spin70.kex, 4644.14994939979)
-        self.assertAlmostEqual(spin70.chi2, 137.646385919032)
+        self.assertAlmostEqual(spin70.r2[0], 6.74362294539099)
+        self.assertAlmostEqual(spin70.r2[1], 6.57406797067481)
+        self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
+        self.assertAlmostEqual(spin70.kex, 4723.09897146338)
+        self.assertAlmostEqual(spin70.chi2, 363.534044873483)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.93018206884413)
-        self.assertAlmostEqual(spin71.phi_ex, 0.0595427749251471)
-        self.assertAlmostEqual(spin71.kex, 2566.18404917873)
-        self.assertAlmostEqual(spin71.chi2, 2.31424598896425)
+        self.assertAlmostEqual(spin71.r2[0], 5.00776657712558)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0553787828347638)
+        self.assertAlmostEqual(spin71.kex, 2781.72293906248)
+        self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
@@ -899,19 +896,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.96115756572771, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.43526089661722, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989640708131005, 4)
-        self.assertAlmostEqual(spin70.dw, 5.67767848775396, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1675.90756479742/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 16.9360832313278, 4)
+        self.assertAlmostEqual(spin70.r2[0], 6.95795694679162, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.39610416109471, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989701013011377, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67328149261418, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1713.76920467368/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 52.5099640741449, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.98289464865291, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996737413473986, 4)
-        self.assertAlmostEqual(spin71.dw, 4.51876106236011, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1862.79421871514/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.21065383641839, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.99893524108981, 4)
+        self.assertAlmostEqual(spin71.pA, 0.986709616684097, 4)
+        self.assertAlmostEqual(spin71.dw, 2.09245158280905, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2438.2766211401/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.1642847949709, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -941,11 +938,11 @@ class Relax_disp(SystemTestCase):
         spin70.pA = 0.9884781357
         spin70.dw = 5.456507396
         spin70.kex = 1906.521189
-        spin71.r2a = [4.928192157, 58.63630533]
-        spin71.r2b = [28.1567729, 70.82765862]
-        spin71.pA = 0.9971352426
-        spin71.dw = 5.000821345
-        spin71.kex = 1654.484828
+        spin71.r2a = [4.99893524108981, 100.0]
+        spin71.r2b = [8.27456243639973, 100.0]
+        spin71.pA = 0.986709616684097
+        spin71.dw = 2.09245158280905
+        spin71.kex = 2438.2766211401
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=False, scaling=True, verbosity=1)
@@ -963,22 +960,22 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2a[0], 6.64075224170421, 4)
-        self.assertAlmostEqual(spin70.r2b[0], 7.33185783828255, 4)
-        self.assertAlmostEqual(spin70.r2a[1], 7.8705138674419, 4)
-        self.assertAlmostEqual(spin70.r2b[1], 137.845238420039, 4)
-        self.assertAlmostEqual(spin70.pA, 0.988417593666782, 4)
-        self.assertAlmostEqual(spin70.dw, 5.43959484783964, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1912.04840067751/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 14.4219294450958, 4)
+        self.assertAlmostEqual(spin70.r2a[0], 6.61176532590473, 4)
+        self.assertAlmostEqual(spin70.r2b[0], 7.50387899360875, 4)
+        self.assertAlmostEqual(spin70.r2a[1], 7.78314290779931, 4)
+        self.assertAlmostEqual(spin70.r2b[1], 141.585225743845, 4)
+        self.assertAlmostEqual(spin70.pA, 0.98840608988332, 4)
+        self.assertAlmostEqual(spin70.dw, 5.44990211080455, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1934.05528550868/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 44.6789561382883, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2a[0], 4.98208888908847, 4)
-        self.assertAlmostEqual(spin71.r2b[0], 5.3141913798609, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996740417356211, 4)
-        self.assertAlmostEqual(spin71.dw, 4.52175288147293, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1859.89477123506/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.21065763538548, 4)
+        self.assertAlmostEqual(spin71.r2a[0], 4.60134401711913, 4)
+        self.assertAlmostEqual(spin71.r2b[0], 13.3245503606781, 4)
+        self.assertAlmostEqual(spin71.pA, 0.966573490518814, 4)
+        self.assertAlmostEqual(spin71.dw, 1.41898411078669, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2580.65330607009/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 13.4934982977585, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -1026,19 +1023,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.96088065283431, 4)
-        self.assertAlmostEqual(spin70.r2[1], 9.43547681910753, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989640848538, 4)
-        self.assertAlmostEqual(spin70.dw, 5.6777500010395, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1675.85201862474/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 16.9361845456949, 4)
+        self.assertAlmostEqual(spin70.r2[0], 6.95829033663875, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.39674323197639, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989701049802211, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67313187621229, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1713.57057149201/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 52.5102661179048, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.98214991947236, 4)
-        self.assertAlmostEqual(spin71.pA, 0.996719201570109, 4)
-        self.assertAlmostEqual(spin71.dw, 4.50406877899137, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 1868.30341816249/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 2.21068411745903, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.9987905893561, 4)
+        self.assertAlmostEqual(spin71.pA, 0.986713290846574, 4)
+        self.assertAlmostEqual(spin71.dw, 2.09275303403072, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2438.21226109404/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.1644155088296, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -1086,19 +1083,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[0], 6.96152150644329, 2)
-        self.assertAlmostEqual(spin70.r2[1], 9.43115345962684, 1)
-        self.assertAlmostEqual(spin70.pA, 0.98964747321538, 3)
-        self.assertAlmostEqual(spin70.dw, 5.67631785444106, 2)
-        self.assertAlmostEqual(spin70.kex/1000, 1680.88938143021/1000, 1)
-        self.assertAlmostEqual(spin70.chi2, 16.9325748871342, 1)
+        self.assertAlmostEqual(spin70.r2[0], 6.95543947938561, 2)
+        self.assertAlmostEqual(spin70.r2[1], 9.38991914134929, 1)
+        self.assertAlmostEqual(spin70.pA, 0.989702750971153, 3)
+        self.assertAlmostEqual(spin70.dw, 5.67527122494516, 2)
+        self.assertAlmostEqual(spin70.kex/1000, 1715.72032391817/1000, 1)
+        self.assertAlmostEqual(spin70.chi2, 52.5011991483842, 1)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[0], 4.98447588852395, 1)
-        self.assertAlmostEqual(spin71.pA, 0.996819131151691, 4)
-        self.assertAlmostEqual(spin71.dw, 4.58710928881276, 1)
-        self.assertAlmostEqual(spin71.kex/1000, 1835.89358409825/1000, 1)
-        self.assertAlmostEqual(spin71.chi2, 2.2089749579694, 1)
+        self.assertAlmostEqual(spin71.r2[0], 4.992594256544, 1)
+        self.assertAlmostEqual(spin71.pA, 0.992258541625787, 4)
+        self.assertAlmostEqual(spin71.dw, 2.75140650899058, 1)
+        self.assertAlmostEqual(spin71.kex/1000, 2106.60885247431/1000, 1)
+        self.assertAlmostEqual(spin71.chi2, 17.3293856656588, 1)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -1128,18 +1125,18 @@ class Relax_disp(SystemTestCase):
         spin70.pA = 0.987648082613451
         spin70.dw = 5.30679853807572
         spin70.kex = 2033.25380420666
-        spin71.r2a = [4.71761264693319, 100.005548136703]
-        spin71.r2b = [85.5648562826238, 100.00128809933]
-        spin71.pA = 0.996552847427452
-        spin71.dw = 4.6242782418569
-        spin71.kex = 1772.41110206135
+        spin71.r2a = [4.992594256544, 6.98674718938435]
+        spin71.r2b = [4.992594256544, 6.98674718938435]
+        spin71.pA = 0.992258541625787
+        spin71.dw = 2.75140650899058
+        spin71.kex = 2106.60885247431
 
         # Low precision optimisation.
         self.interpreter.calc()
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.chi2, 14.808011089837033, 2)
-        self.assertAlmostEqual(spin71.chi2, 2.2100296821673893, 2)
+        self.assertAlmostEqual(spin70.chi2, 45.773987568491123, 2)
+        self.assertAlmostEqual(spin71.chi2, 17.329385665659192, 2)
 
 
     def test_hansen_cpmgfit_input(self):
@@ -1148,12 +1145,9 @@ class Relax_disp(SystemTestCase):
         This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
         """
 
-        # Load the state, preserving the temp directory.
-        tmpdir = ds.tmpdir
-        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_values'
-        self.interpreter.state.load(state, force=True)
-        self.interpreter.deselect.spin(':4')
-        ds.tmpdir = tmpdir
+        # Load the R2eff results file.
+        file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_pipe'
+        self.interpreter.results.read(file_name)
 
         # Set up the model.
         self.interpreter.relax_disp.select_model('LM63')
@@ -1179,36 +1173,36 @@ class Relax_disp(SystemTestCase):
             "@ yaxis ticklabel char size 0.8\n",
             "@ world xmin 0.0\n",
             "data\n",
-            "0.066667             16.045541            0.412295             11.743296           \n",
-            "0.133333             14.877925            0.402074             11.743296           \n",
-            "0.200000             14.357820            0.397668             11.743296           \n",
-            "0.266667             12.664495            0.383927             11.743296           \n",
-            "0.333333             12.363205            0.381577             11.743296           \n",
-            "0.400000             11.092532            0.371969             11.743296           \n",
-            "0.466667             10.566090            0.368130             11.743296           \n",
-            "0.533333             9.805807             0.362727             11.743296           \n",
-            "0.600000             9.564301             0.361046             11.743296           \n",
-            "0.666667             9.015634             0.357287             11.743296           \n",
-            "0.733333             8.607765             0.354547             11.743296           \n",
-            "0.800000             8.279997             0.352378             11.743296           \n",
-            "0.866667             8.474536             0.353662             11.743296           \n",
-            "0.933333             8.158973             0.351584             11.743296           \n",
-            "1.000000             7.988631             0.350474             11.743296           \n",
-            "0.066667             22.224914            0.229200             18.789274           \n",
-            "0.133333             21.230874            0.223887             18.789274           \n",
-            "0.200000             20.603704            0.220633             18.789274           \n",
-            "0.266667             20.327797            0.219225             18.789274           \n",
-            "0.333333             18.855377            0.211949             18.789274           \n",
-            "0.400000             18.537531            0.210430             18.789274           \n",
-            "0.466667             17.508069            0.205633             18.789274           \n",
-            "0.533333             16.035604            0.199088             18.789274           \n",
-            "0.600000             15.168192            0.195401             18.789274           \n",
-            "0.666667             14.431802            0.192367             18.789274           \n",
-            "0.733333             14.034137            0.190764             18.789274           \n",
-            "0.800000             12.920148            0.186404             18.789274           \n",
-            "0.866667             12.653673            0.185389             18.789274           \n",
-            "0.933333             12.610864            0.185227             18.789274           \n",
-            "1.000000             11.969303            0.182831             18.789274           \n"
+            "0.066667             16.045541            0.310925             11.743296           \n",
+            "0.133333             14.877925            0.303217             11.743296           \n",
+            "0.200000             14.357820            0.299894             11.743296           \n",
+            "0.266667             12.664495            0.289532             11.743296           \n",
+            "0.333333             12.363205            0.287760             11.743296           \n",
+            "0.400000             11.092532            0.280514             11.743296           \n",
+            "0.466667             10.566090            0.277619             11.743296           \n",
+            "0.533333             9.805807             0.273544             11.743296           \n",
+            "0.600000             9.564301             0.272276             11.743296           \n",
+            "0.666667             9.015634             0.269442             11.743296           \n",
+            "0.733333             8.607765             0.267375             11.743296           \n",
+            "0.800000             8.279997             0.265740             11.743296           \n",
+            "0.866667             8.474536             0.266708             11.743296           \n",
+            "0.933333             8.158973             0.265141             11.743296           \n",
+            "1.000000             7.988631             0.264304             11.743296           \n",
+            "0.066667             22.224914            0.166231             18.789274           \n",
+            "0.133333             21.230874            0.162377             18.789274           \n",
+            "0.200000             20.603704            0.160017             18.789274           \n",
+            "0.266667             20.327797            0.158996             18.789274           \n",
+            "0.333333             18.855377            0.153719             18.789274           \n",
+            "0.400000             18.537531            0.152617             18.789274           \n",
+            "0.466667             17.508069            0.149138             18.789274           \n",
+            "0.533333             16.035604            0.144391             18.789274           \n",
+            "0.600000             15.168192            0.141717             18.789274           \n",
+            "0.666667             14.431802            0.139516             18.789274           \n",
+            "0.733333             14.034137            0.138354             18.789274           \n",
+            "0.800000             12.920148            0.135192             18.789274           \n",
+            "0.866667             12.653673            0.134456             18.789274           \n",
+            "0.933333             12.610864            0.134338             18.789274           \n",
+            "1.000000             11.969303            0.132601             18.789274           \n"
         ]
         spin2 = [
             "title :71@N\n",
@@ -1226,21 +1220,37 @@ class Relax_disp(SystemTestCase):
             "@ yaxis ticklabel char size 0.8\n",
             "@ world xmin 0.0\n",
             "data\n",
-            "0.066667             7.044342             0.225471             11.743296           \n",
-            "0.133333             6.781033             0.224401             11.743296           \n",
-            "0.200000             6.467623             0.223143             11.743296           \n",
-            "0.266667             6.333340             0.222609             11.743296           \n",
-            "0.333333             6.323238             0.222569             11.743296           \n",
-            "0.400000             6.005245             0.221316             11.743296           \n",
-            "0.466667             5.767052             0.220389             11.743296           \n",
-            "0.533333             5.476968             0.219273             11.743296           \n",
-            "0.600000             5.469949             0.219246             11.743296           \n",
-            "0.666667             5.295113             0.218580             11.743296           \n",
-            "0.733333             5.435648             0.219115             11.743296           \n",
-            "0.800000             5.410400             0.219019             11.743296           \n",
-            "0.866667             5.437554             0.219122             11.743296           \n",
-            "0.933333             5.176844             0.218132             11.743296           \n",
-            "1.000000             5.227232             0.218323             11.743296           \n"
+            "0.066667             7.044342             0.170035             11.743296           \n",
+            "0.133333             6.781033             0.169228             11.743296           \n",
+            "0.200000             6.467623             0.168279             11.743296           \n",
+            "0.266667             6.333340             0.167876             11.743296           \n",
+            "0.333333             6.323238             0.167846             11.743296           \n",
+            "0.400000             6.005245             0.166902             11.743296           \n",
+            "0.466667             5.767052             0.166203             11.743296           \n",
+            "0.533333             5.476968             0.165361             11.743296           \n",
+            "0.600000             5.469949             0.165341             11.743296           \n",
+            "0.666667             5.295113             0.164838             11.743296           \n",
+            "0.733333             5.435648             0.165242             11.743296           \n",
+            "0.800000             5.410400             0.165169             11.743296           \n",
+            "0.866667             5.437554             0.165247             11.743296           \n",
+            "0.933333             5.176844             0.164501             11.743296           \n",
+            "1.000000             5.227232             0.164644             11.743296           \n",
+            "1.000000             5.227232             0.164644             11.743296           \n",
+            "0.066667             11.530903            0.081928             18.789274           \n",
+            "0.133333             10.983094            0.081041             18.789274           \n",
+            "0.200000             10.512403            0.080294             18.789274           \n",
+            "0.266667             9.984805             0.079473             18.789274           \n",
+            "0.333333             9.573163             0.078845             18.789274           \n",
+            "0.400000             9.178810             0.078253             18.789274           \n",
+            "0.466667             8.935719             0.077893             18.789274           \n",
+            "0.533333             8.610147             0.077416             18.789274           \n",
+            "0.600000             8.353778             0.077045             18.789274           \n",
+            "0.666667             8.173729             0.076787             18.789274           \n",
+            "0.733333             8.091607             0.076670             18.789274           \n",
+            "0.800000             7.706420             0.076126             18.789274           \n",
+            "0.866667             7.709125             0.076129             18.789274           \n",
+            "0.933333             7.610856             0.075992             18.789274           \n",
+            "1.000000             7.552584             0.075911             18.789274           \n"
         ]
 
         # Check the batch file.
