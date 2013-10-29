@@ -44,8 +44,9 @@ pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 # The path to the data files.
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 
-# Load the sequence.
-sequence.read('fake_sequence.in', dir=data_path, res_num_col=1, res_name_col=2)
+# Create the sequence.
+spin.create(res_num=70, spin_name='N')
+spin.create(res_num=71, spin_name='N')
 
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
 spin.name(name='N')
