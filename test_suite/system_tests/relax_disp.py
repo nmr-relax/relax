@@ -556,6 +556,84 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(spin71.model, 'No Rex')
 
 
+    def test_hansen_cpmg_data_auto_analysis_r2eff(self):
+        """Test of the dispersion auto-analysis using Dr. Flemming Hansen's CPMG data (using the original R2eff data).
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Set the model.
+        ds.models = [
+            MODEL_NOREX,
+            MODEL_LM63,
+            MODEL_CR72,
+            MODEL_IT99
+        ]
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_r2eff_data.py')
+
+        # The 'No Rex' model checks.
+        self.interpreter.pipe.switch(pipe_name='No Rex')
+        spin70 = return_spin(":70")
+        spin71 = return_spin(":71")
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.assertAlmostEqual(spin70.r2[0], 10.5340573632181, 4)
+        self.assertAlmostEqual(spin70.r2[1], 16.1113049920324, 4)
+        self.assertAlmostEqual(spin70.chi2, 2832.28562307, 4)
+        self.assertAlmostEqual(spin71.r2[0], 5.83137814994754, 4)
+        self.assertAlmostEqual(spin71.chi2, 73.6219146835821, 4)
+
+        # The 'LM63' model checks.
+        self.interpreter.pipe.switch(pipe_name='LM63')
+        spin70 = return_spin(":70")
+        spin71 = return_spin(":71")
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex", spin70.phi_ex, spin71.phi_ex))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.assertAlmostEqual(spin70.r2[0], 6.7725779040626, 4)
+        self.assertAlmostEqual(spin70.r2[1], 6.6495102881274, 4)
+        self.assertAlmostEqual(spin70.phi_ex, 0.308228782539112, 4)
+        self.assertAlmostEqual(spin70.kex/10000, 4644.35027966526/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 137.64638621224, 4)
+        self.assertAlmostEqual(spin71.r2[0], 4.92986568906445, 4)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0595701347673553, 4)
+        self.assertAlmostEqual(spin71.kex/10000, 2566.66176813506/10000, 4)
+        self.assertAlmostEqual(spin71.chi2, 2.31424715490254, 4)
+
+        # The 'CR72' model checks.  These models have not reached the minima due to the low quality optimisation!
+        self.interpreter.pipe.switch(pipe_name='CR72')
+        spin70 = return_spin(":70")
+        spin71 = return_spin(":71")
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[0], spin71.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[1], spin71.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin70.pA, spin71.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin70.dw, spin71.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+        self.assertAlmostEqual(spin70.r2[0], 6.97532271825192, 4)
+        self.assertAlmostEqual(spin70.r2[1], 9.45051817816538, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989800346795472, 4)
+        self.assertAlmostEqual(spin70.dw, 5.61326926915313, 4)
+        self.assertAlmostEqual(spin70.kex/10000, 1713.02295468519/10000, 4)
+        self.assertAlmostEqual(spin70.chi2, 17.3955972313639, 4)
+        self.assertAlmostEqual(spin71.r2[0], 0.589453313816438, 2)
+        self.assertAlmostEqual(spin71.pA, 0.500005674625128, 2)
+        self.assertAlmostEqual(spin71.dw, 199.873875627265, 2)
+        self.assertAlmostEqual(spin71.kex, 10.7154862578618, 2)
+        self.assertAlmostEqual(spin71.chi2, 57.9468501661789, 2)
+
+
     def test_hansen_cpmg_data_to_cr72(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the CR72 dispersion model.
 
