@@ -36,57 +36,57 @@ pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 
 # Load the sequence.
-sequence.read('fake_sequence.in_trunc', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen', res_num_col=1, res_name_col=2)
+sequence.read('fake_sequence.in', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen', res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments.
 spin.name(name='N')
 
 # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
 data = [
-    ['500_reference.in',    '500_MHz'+sep+'reference.in_trunc',           None,  500e6],
-    ['500_66.667.in',       '500_MHz'+sep+'66.667.in_trunc',           66.6666,  500e6],
-    ['500_133.33.in',       '500_MHz'+sep+'133.33.in_trunc',          133.3333,  500e6],
-    ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  500e6],
-    ['500_200.in',          '500_MHz'+sep+'200.in_trunc',             200.0000,  500e6],
-    ['500_266.67.in',       '500_MHz'+sep+'266.67.in_trunc',          266.6666,  500e6],
-    ['500_333.33.in',       '500_MHz'+sep+'333.33.in_trunc',          333.3333,  500e6],
-    ['500_400.in',          '500_MHz'+sep+'400.in_trunc',             400.0000,  500e6],
-    ['500_466.67.in',       '500_MHz'+sep+'466.67.in_trunc',          466.6666,  500e6],
-    ['500_533.33.in',       '500_MHz'+sep+'533.33.in_trunc',          533.3333,  500e6],
-    ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  500e6],
-    ['500_600.in',          '500_MHz'+sep+'600.in_trunc',             600.0000,  500e6],
-    ['500_666.67.in',       '500_MHz'+sep+'666.67.in_trunc',          666.6666,  500e6],
-    ['500_733.33.in',       '500_MHz'+sep+'733.33.in_trunc',          733.3333,  500e6],
-    ['500_800.in',          '500_MHz'+sep+'800.in_trunc',             800.0000,  500e6],
-    ['500_866.67.in',       '500_MHz'+sep+'866.67.in_trunc',          866.6666,  500e6],
-    ['500_933.33.in',       '500_MHz'+sep+'933.33.in_trunc',          933.3333,  500e6],
-    ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  500e6],
-    ['500_1000.in',         '500_MHz'+sep+'1000.in_trunc',           1000.0000,  500e6],
-    ['800_reference.in',    '800_MHz'+sep+'reference.in_trunc',           None,  800e6],
-    ['800_66.667.in',       '800_MHz'+sep+'66.667.in_trunc',           66.6666,  800e6],
-    ['800_133.33.in',       '800_MHz'+sep+'133.33.in_trunc',          133.3333,  800e6],
-    ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  800e6],
-    ['800_200.in',          '800_MHz'+sep+'200.in_trunc',             200.0000,  800e6],
-    ['800_266.67.in',       '800_MHz'+sep+'266.67.in_trunc',          266.6666,  800e6],
-    ['800_333.33.in',       '800_MHz'+sep+'333.33.in_trunc',          333.3333,  800e6],
-    ['800_400.in',          '800_MHz'+sep+'400.in_trunc',             400.0000,  800e6],
-    ['800_466.67.in',       '800_MHz'+sep+'466.67.in_trunc',          466.6666,  800e6],
-    ['800_533.33.in',       '800_MHz'+sep+'533.33.in_trunc',          533.3333,  800e6],
-    ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  800e6],
-    ['800_600.in',          '800_MHz'+sep+'600.in_trunc',             600.0000,  800e6],
-    ['800_666.67.in',       '800_MHz'+sep+'666.67.in_trunc',          666.6666,  800e6],
-    ['800_733.33.in',       '800_MHz'+sep+'733.33.in_trunc',          733.3333,  800e6],
-    ['800_800.in',          '800_MHz'+sep+'800.in_trunc',             800.0000,  800e6],
-    ['800_866.67.in',       '800_MHz'+sep+'866.67.in_trunc',          866.6666,  800e6],
-    ['800_933.33.in',       '800_MHz'+sep+'933.33.in_trunc',          933.3333,  800e6],
-    ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  800e6],
-    ['800_1000.in',         '800_MHz'+sep+'1000.in_trunc',           1000.0000,  800e6]
+    ['500_reference.in',    '500_MHz'+sep+'reference.in',           None,  500e6],
+    ['500_66.667.in',       '500_MHz'+sep+'66.667.in',           66.6666,  500e6],
+    ['500_133.33.in',       '500_MHz'+sep+'133.33.in',          133.3333,  500e6],
+    ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis',      133.3333,  500e6],
+    ['500_200.in',          '500_MHz'+sep+'200.in',             200.0000,  500e6],
+    ['500_266.67.in',       '500_MHz'+sep+'266.67.in',          266.6666,  500e6],
+    ['500_333.33.in',       '500_MHz'+sep+'333.33.in',          333.3333,  500e6],
+    ['500_400.in',          '500_MHz'+sep+'400.in',             400.0000,  500e6],
+    ['500_466.67.in',       '500_MHz'+sep+'466.67.in',          466.6666,  500e6],
+    ['500_533.33.in',       '500_MHz'+sep+'533.33.in',          533.3333,  500e6],
+    ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis',      533.3333,  500e6],
+    ['500_600.in',          '500_MHz'+sep+'600.in',             600.0000,  500e6],
+    ['500_666.67.in',       '500_MHz'+sep+'666.67.in',          666.6666,  500e6],
+    ['500_733.33.in',       '500_MHz'+sep+'733.33.in',          733.3333,  500e6],
+    ['500_800.in',          '500_MHz'+sep+'800.in',             800.0000,  500e6],
+    ['500_866.67.in',       '500_MHz'+sep+'866.67.in',          866.6666,  500e6],
+    ['500_933.33.in',       '500_MHz'+sep+'933.33.in',          933.3333,  500e6],
+    ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis',      933.3333,  500e6],
+    ['500_1000.in',         '500_MHz'+sep+'1000.in',           1000.0000,  500e6],
+    ['800_reference.in',    '800_MHz'+sep+'reference.in',           None,  800e6],
+    ['800_66.667.in',       '800_MHz'+sep+'66.667.in',           66.6666,  800e6],
+    ['800_133.33.in',       '800_MHz'+sep+'133.33.in',          133.3333,  800e6],
+    ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis',      133.3333,  800e6],
+    ['800_200.in',          '800_MHz'+sep+'200.in',             200.0000,  800e6],
+    ['800_266.67.in',       '800_MHz'+sep+'266.67.in',          266.6666,  800e6],
+    ['800_333.33.in',       '800_MHz'+sep+'333.33.in',          333.3333,  800e6],
+    ['800_400.in',          '800_MHz'+sep+'400.in',             400.0000,  800e6],
+    ['800_466.67.in',       '800_MHz'+sep+'466.67.in',          466.6666,  800e6],
+    ['800_533.33.in',       '800_MHz'+sep+'533.33.in',          533.3333,  800e6],
+    ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis',      533.3333,  800e6],
+    ['800_600.in',          '800_MHz'+sep+'600.in',             600.0000,  800e6],
+    ['800_666.67.in',       '800_MHz'+sep+'666.67.in',          666.6666,  800e6],
+    ['800_733.33.in',       '800_MHz'+sep+'733.33.in',          733.3333,  800e6],
+    ['800_800.in',          '800_MHz'+sep+'800.in',             800.0000,  800e6],
+    ['800_866.67.in',       '800_MHz'+sep+'866.67.in',          866.6666,  800e6],
+    ['800_933.33.in',       '800_MHz'+sep+'933.33.in',          933.3333,  800e6],
+    ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis',      933.3333,  800e6],
+    ['800_1000.in',         '800_MHz'+sep+'1000.in',           1000.0000,  800e6]
 ]
 
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
-    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', int_col=2, res_num_col=1)
 
     # Set the relaxation dispersion experiment type.
     relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
@@ -141,6 +141,10 @@ for exp_type, frq, point in loop_exp_frq_point():
 
     # Loop over the spins.
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+        # Skip most spins.
+        if res_num not in [70, 71]:
+            continue
+
         # Write out the data.
         if key in spin.r2eff.keys():
             file.write("%-20i %20.15f %20.15f\n" % (res_num, spin.r2eff[key], spin.r2eff_err[key]))
