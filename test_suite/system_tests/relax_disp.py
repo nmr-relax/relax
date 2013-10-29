@@ -1086,7 +1086,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin70.r2[0], 6.95543947938561, 1)
         self.assertAlmostEqual(spin70.r2[1], 9.38991914134929, 1)
         self.assertAlmostEqual(spin70.pA, 0.989702750971153, 3)
-        self.assertAlmostEqual(spin70.dw, 5.67527122494516, 2)
+        self.assertAlmostEqual(spin70.dw, 5.67527122494516, 1)
         self.assertAlmostEqual(spin70.kex/1000, 1715.72032391817/1000, 1)
         self.assertAlmostEqual(spin70.chi2, 52.5011991483842, 1)
 
