@@ -1631,10 +1631,13 @@ class Relax_disp(SystemTestCase):
 
         # Generate the sequence.
         self.interpreter.spin.create(res_name='Asp', res_num=9, spin_name='H')
+        self.interpreter.spin.create(res_name='Asp', res_num=9, spin_name='N')
         self.interpreter.spin.isotope('1H', spin_id='@H')
+        self.interpreter.spin.isotope('15N', spin_id='@N')
 
         # Try reading the file.
-        self.interpreter.relax_disp.r2eff_read_spin(file='hs_500.res', dir='..', spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
+        self.interpreter.relax_disp.r2eff_read_spin(file='hs_500.res', dir=data_path, spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
+        self.interpreter.relax_disp.r2eff_read_spin(file='ns_500.res', dir=data_path, spin_id=':9@N', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
 
         # TODO:  Data checks.
 
