@@ -31,6 +31,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.bool_element import Boolean_ctrl
+from gui.analyses.elements.float_element import Float_ctrl
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.elements.model_list import Model_list
@@ -366,7 +367,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The insignificance cutoff.
         tooltip = "The %s/%s value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  This does not affect the '%s' model.  Set this value to 0.0 to use all data." % (r2eff, r1rho, MODEL_NOREX)
-        self.insignificance = Text_ctrl(box, self, text="Insignificance level:", default="1.0", tooltip=tooltip, button=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.insignificance = Float_ctrl(box, self, text="Insignificance level:", default=1.0, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
