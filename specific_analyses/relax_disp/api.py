@@ -994,7 +994,6 @@ class Relax_disp(API_base, API_common):
 
         # Data checks.
         check_mol_res_spin_data()
-        check_spectra_id_setup()
         check_model_type()
 
         # Initialise some empty data pipe structures so that the target function set up does not fail.

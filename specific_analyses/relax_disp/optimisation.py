@@ -310,7 +310,9 @@ class Disp_minimise_command(Slave_command):
         self.spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
 
         # The relaxation times.
-        self.relax_times = cdp.relax_time_list[0]
+        self.relax_times = None
+        if hasattr(cdp, 'relax_time_list'):
+            self.relax_times = cdp.relax_time_list[0]
 
 
     def run(self, processor, completed):
