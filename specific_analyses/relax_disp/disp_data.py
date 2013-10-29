@@ -770,8 +770,13 @@ def loop_time():
     """
 
     # Loop over the time points.
-    for time in cdp.relax_time_list:
-        yield time
+    if hasattr(cdp, 'relax_time_list'):
+        for time in cdp.relax_time_list:
+            yield time
+
+    # No times set.
+    else:
+        yield None
 
 
 def num_exp_types():
