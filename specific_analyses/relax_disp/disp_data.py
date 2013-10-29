@@ -1286,18 +1286,23 @@ def return_index_from_disp_point(value, exp_type=None):
 
     # Initialise.
     index = 0
+    ref_correction = False
 
     # CPMG-type experiments.
     if exp_type in EXP_TYPE_LIST_CPMG:
         index = cdp.cpmg_frqs_list.index(value)
+        if None in cdp.cpmg_frqs_list:
+            ref_correction = True
 
     # R1rho-type experiments.
     elif exp_type in EXP_TYPE_LIST_R1RHO:
         index = cdp.spin_lock_nu1_list.index(value)
+        if None in cdp.spin_lock_nu1_list:
+            ref_correction = True
 
     # Remove the reference point (always at index 0).
     for id in loop_spectrum_ids(exp_type=exp_type):
-        if get_curve_type(id) == 'fixed time':
+        if ref_correction and get_curve_type(id) == 'fixed time':
             index -= 1
             break
 
