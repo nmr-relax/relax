@@ -373,8 +373,8 @@ class Relax_disp:
             # Select the model.
             self.interpreter.relax_disp.select_model(model)
 
-            # Copy the R2eff values from R2eff model data pipe.
-            if model != MODEL_R2EFF:
+            # Copy the R2eff values from the R2eff model data pipe.
+            if model != MODEL_R2EFF and MODEL_R2EFF in self.models:
                 self.interpreter.value.copy(pipe_from=MODEL_R2EFF, pipe_to=model, param='r2eff')
 
             # Calculate the R2eff values for the fixed relaxation time period data types.
