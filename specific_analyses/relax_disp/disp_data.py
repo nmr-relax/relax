@@ -204,53 +204,6 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     print("Setting the '%s' spectrum CPMG frequency %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
-def exp_type(spectrum_id=None, exp_type=None):
-    """Select the relaxation dispersion experiment type performed.
-
-    @keyword spectrum_id:   The spectrum ID string.
-    @type spectrum_id:      str
-    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'CPMG' or 'R1rho'.
-    @type exp:              str
-    """
-
-    # Data checks.
-    pipes.test()
-    check_spectrum_id(spectrum_id)
-
-    # Check the experiment type.
-    if exp_type not in EXP_TYPE_LIST:
-        raise RelaxError("The relaxation dispersion experiment '%s' is invalid, it must be one of %s." % (exp_type, EXP_TYPE_LIST))
-
-    # Initialise the experiment type data structures if needed.
-    if not hasattr(cdp, 'exp_type'):
-        cdp.exp_type = {}
-    if not hasattr(cdp, 'exp_type_list'):
-        cdp.exp_type_list = []
-
-    # Store the value.
-    cdp.exp_type[spectrum_id] = exp_type
-
-    # Unique experiments.
-    if cdp.exp_type[spectrum_id] not in cdp.exp_type_list:
-        cdp.exp_type_list.append(cdp.exp_type[spectrum_id])
-
-    # Printout.
-    text = "Setting the '%s' spectrum to" % spectrum_id
-    if exp_type == EXP_TYPE_CPMG:
-        text += EXP_TYPE_DESC_CPMG + "."
-    elif exp_type == EXP_TYPE_MQ_CPMG:
-        text += EXP_TYPE_DESC_MQ_CPMG + "."
-    elif exp_type == EXP_TYPE_DQ_CPMG:
-        text += EXP_TYPE_DESC_DQ_CPMG + "."
-    elif exp_type == EXP_TYPE_ZQ_CPMG:
-        text += EXP_TYPE_DESC_ZQ_CPMG + "."
-    elif exp_type == EXP_TYPE_MQ_R1RHO:
-        text += EXP_TYPE_DESC_MQ_R1RHO + "."
-    elif exp_type == EXP_TYPE_R1RHO:
-        text += EXP_TYPE_DESC_R1RHO + "."
-    print(text)
-
-
 def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
@@ -1647,6 +1600,53 @@ def return_value_from_frq_index(frq_index=None):
 
     # Return the field.
     return cdp.spectrometer_frq_list[frq_index]
+
+
+def set_exp_type(spectrum_id=None, exp_type=None):
+    """Select the relaxation dispersion experiment type performed.
+
+    @keyword spectrum_id:   The spectrum ID string.
+    @type spectrum_id:      str
+    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'CPMG' or 'R1rho'.
+    @type exp:              str
+    """
+
+    # Data checks.
+    pipes.test()
+    check_spectrum_id(spectrum_id)
+
+    # Check the experiment type.
+    if exp_type not in EXP_TYPE_LIST:
+        raise RelaxError("The relaxation dispersion experiment '%s' is invalid, it must be one of %s." % (exp_type, EXP_TYPE_LIST))
+
+    # Initialise the experiment type data structures if needed.
+    if not hasattr(cdp, 'exp_type'):
+        cdp.exp_type = {}
+    if not hasattr(cdp, 'exp_type_list'):
+        cdp.exp_type_list = []
+
+    # Store the value.
+    cdp.exp_type[spectrum_id] = exp_type
+
+    # Unique experiments.
+    if cdp.exp_type[spectrum_id] not in cdp.exp_type_list:
+        cdp.exp_type_list.append(cdp.exp_type[spectrum_id])
+
+    # Printout.
+    text = "Setting the '%s' spectrum to" % spectrum_id
+    if exp_type == EXP_TYPE_CPMG:
+        text += EXP_TYPE_DESC_CPMG + "."
+    elif exp_type == EXP_TYPE_MQ_CPMG:
+        text += EXP_TYPE_DESC_MQ_CPMG + "."
+    elif exp_type == EXP_TYPE_DQ_CPMG:
+        text += EXP_TYPE_DESC_DQ_CPMG + "."
+    elif exp_type == EXP_TYPE_ZQ_CPMG:
+        text += EXP_TYPE_DESC_ZQ_CPMG + "."
+    elif exp_type == EXP_TYPE_MQ_R1RHO:
+        text += EXP_TYPE_DESC_MQ_R1RHO + "."
+    elif exp_type == EXP_TYPE_R1RHO:
+        text += EXP_TYPE_DESC_R1RHO + "."
+    print(text)
 
 
 def spin_has_frq_data(spin=None, frq=None):

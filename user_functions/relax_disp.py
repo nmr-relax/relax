@@ -38,7 +38,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, exp_type, insignificance, plot_disp_curves, plot_exp_curves, relax_time, spin_lock_field, spin_lock_offset
+from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, relax_time, set_exp_type, spin_lock_field, spin_lock_offset
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -339,7 +339,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the experiment type to 'CPMG' for the spectrum ID 'nu_4500.0_800MHz', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type('nu_4500.0_800MHz', 'CPMG')")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='CPMG')")
-uf.backend = exp_type
+uf.backend = set_exp_type
 uf.menu_text = "&exp_type"
 uf.wizard_size = (800, 550)
 uf.wizard_apply_button = False
