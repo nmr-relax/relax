@@ -394,7 +394,12 @@ def insignificance(level=0.0):
             continue
 
         # Get all the data.
-        values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+        try:
+            values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
+        # No R2eff data, so skip the rest.
+        except RelaxError:
+            continue
 
         # The flag.
         desel = True
