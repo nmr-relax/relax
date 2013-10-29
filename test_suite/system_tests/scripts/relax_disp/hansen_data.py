@@ -38,18 +38,13 @@ pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 # The path to the data files.
 data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 
-# Load the saved base pipe
-results.read(data_path+sep+'base_pipe')
+# Load the saved base pipe containing R2eff data.
+results.read(data_path+sep+'r2eff_pipe')
 deselect.spin(":4")
 
 # Set the nuclear isotope data.
 spin.isotope('15N')
 
-# Create the R2eff data pipe and load the results.
-pipe.create(pipe_name='R2eff', bundle=pipe_bundle, pipe_type='relax_disp')
-pipe.switch(pipe_name='R2eff')
-results.read(data_path+sep+'r2eff_pipe')
-deselect.spin(":4")
 
 
 # Auto-analysis execution.
