@@ -310,17 +310,17 @@ uf.add_keyarg(
     desc = "The type of relaxation dispersion experiment performed.",
     wiz_element_type = "combo",
     wiz_combo_choices = [
-        "CPMG-type data",
-        "multiple quantum (MQ) CPMG-type data",
-        "zero quantum (ZQ) CPMG-type data",
-        "double quantum (DQ) CPMG-type data",
+        "Single quantum (SQ) CPMG-type data",
+        "Zero quantum (ZQ) CPMG-type data",
+        "Double quantum (DQ) CPMG-type data",
+        "Multiple quantum (MQ) CPMG-type data",
         "%s-type data" % r1rho
     ],
     wiz_combo_data = [
         EXP_TYPE_CPMG,
-        EXP_TYPE_MQ_CPMG,
         EXP_TYPE_ZQ_CPMG,
         EXP_TYPE_DQ_CPMG,
+        EXP_TYPE_MQ_CPMG,
         EXP_TYPE_R1RHO
     ],
     wiz_read_only = True
@@ -329,10 +329,10 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("For each peak intensity set loaded into relax, the type of experiment it comes from needs to be specified.  By specifying this for each spectrum ID, multiple experiment types can be analysed simultaneously.  This is assuming that an appropriate dispersion model exists for the experiment combination.")
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG), "The CPMG-type experiments,")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_CPMG), "The multiple quantum (MQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG), "The single quantum (SQ) CPMG-type experiments,")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_ZQ_CPMG), "The zero quantum (ZQ) CPMG-type experiments,")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_DQ_CPMG), "The double quantum (DQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_CPMG), "The multiple quantum (MQ) CPMG-type experiments,")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_R1RHO), "The R1rho-type experiments.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
@@ -341,7 +341,8 @@ uf.desc[-1].add_prompt("relax> relax_disp.exp_type('nu_4500.0_800MHz', 'CPMG')")
 uf.desc[-1].add_prompt("relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='CPMG')")
 uf.backend = set_exp_type
 uf.menu_text = "&exp_type"
-uf.wizard_size = (800, 550)
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 600)
 uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
