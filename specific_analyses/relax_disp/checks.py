@@ -88,9 +88,10 @@ def check_exp_type(id=None):
             raise RelaxError("The dispersion experiment type for the experiment ID '%s' has not been set." % id)
 
     # Check each spectrum ID.
-    for id in cdp.spectrum_ids:
-        if id not in cdp.exp_type.keys():
-            raise RelaxError("The relaxation dispersion experiment type has not been set for the '%s' spectrum." % id)
+    else:
+        for id in cdp.spectrum_ids:
+            if id not in cdp.exp_type:
+                raise RelaxError("The relaxation dispersion experiment type has not been set for the '%s' spectrum." % id)
 
 
 def check_exp_type_fixed_time():
