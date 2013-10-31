@@ -1617,10 +1617,115 @@ class Relax_disp(SystemTestCase):
         # Read the sequence data.
         self.interpreter.sequence.read(file='66.667.in', dir=data_path, res_num_col=1)
 
-        # Try reading the file.
-        self.interpreter.relax_disp.r2eff_read(file='66.667.in', dir=data_path, exp_type='CPMG', frq=800e6, disp_frq=66.667, res_num_col=1, data_col=2, error_col=3)
+        # The ID.
+        id = 'test'
 
-        # TODO:  Data checks.
+        # Set up the metadata.
+        self.interpreter.spectrometer.frequency(id=id, frq=800e6)
+        self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+
+        # Try reading the file.
+        self.interpreter.relax_disp.r2eff_read(id=id, file='66.667.in', dir=data_path, disp_frq=66.667, res_num_col=1, data_col=2, error_col=3)
+
+        # Check the global data.
+        data = [
+            ['cpmg_frqs', {'test': 66.667}],
+            ['cpmg_frqs_list', [66.667]],
+            ['dispersion_points', 1],
+            ['exp_type', {'test': 'CPMG'}],
+            ['exp_type_list', ['CPMG']],
+            ['spectrometer_frq', {'test': 800000000.0}],
+            ['spectrometer_frq_count', 1],
+            ['spectrometer_frq_list', [800000000.0]],
+            ['spectrum_ids', ['test']]
+        ]
+        for name, value in data:
+            # Does it exist?
+            self.assert_(hasattr(cdp, name))
+
+            # Check the object.
+            obj = getattr(cdp, name)
+            self.assertEqual(obj, value)
+
+        # Check the spin data.
+        data = [
+            [1,       2.3035747e+04, 8.5467725e+01],
+            [2,       9.9629762e+04, 2.8322033e+02],
+            [3,       9.5663137e+04, 2.8632929e+02],
+            [4,       1.7089893e+05, 3.1089428e+02],
+            [5,       4.7323876e+04, 1.0084269e+02],
+            [6,       2.0199122e+04, 1.0135220e+02],
+            [7,       1.6655488e+05, 3.1609061e+02],
+            [8,       9.0061074e+04, 1.9176585e+02],
+            [10,      8.4726204e+04, 2.8898155e+02],
+            [11,      1.5050233e+05, 4.3138029e+02],
+            [12,      9.2998531e+04, 3.0440191e+02],
+            [13,      1.6343507e+05, 3.3144097e+02],
+            [14,      1.0137301e+05, 3.7314642e+02],
+            [15,      8.3407837e+04, 1.6546473e+02],
+            [16,      1.3819126e+05, 3.3388517e+02],
+            [17,      1.1010490e+05, 3.5639222e+02],
+            [18,      9.4324035e+04, 3.2343585e+02],
+            [19,      1.1135179e+05, 3.0706671e+02],
+            [20,      7.6339410e+04, 1.7377460e+02],
+            [21,      6.2008453e+04, 1.7327150e+02],
+            [22,      1.0590404e+05, 2.4814635e+02],
+            [23,      1.0630198e+05, 2.3601100e+02],
+            [24,      7.2996320e+04, 1.4952465e+02],
+            [25,      9.5486742e+04, 2.7080766e+02],
+            [26,      5.8067989e+04, 1.6820462e+02],
+            [27,     -1.7168510e+04, 2.2519560e+02],
+            [28,      1.6891473e+05, 2.3497525e+02],
+            [29,      9.4038555e+04, 2.0357593e+02],
+            [30,      2.1386951e+04, 2.2153532e+02],
+            [31,      9.3982899e+04, 2.0937056e+02],
+            [32,      8.6097484e+04, 2.3868467e+02],
+            [33,      1.0194337e+05, 2.7370704e+02],
+            [34,      8.5683111e+04, 2.0838076e+02],
+            [35,      8.6985768e+04, 2.0889310e+02],
+            [36,      8.6011237e+04, 1.7498390e+02],
+            [37,      1.0984097e+05, 2.7622998e+02],
+            [38,      8.7017879e+04, 2.6547994e+02],
+            [39,      9.1682649e+04, 5.2777676e+02],
+            [40,      7.6370440e+04, 1.9873214e+02],
+            [41,      9.1393531e+04, 2.4483824e+02],
+            [42,      1.1017111e+05, 2.8020699e+02],
+            [43,      9.4552366e+04, 3.4394150e+02],
+            [44,      1.2858281e+05, 6.8449252e+02],
+            [45,      7.4583525e+04, 1.9544210e+02],
+            [46,      9.2087490e+04, 2.0491066e+02],
+            [47,      9.7507255e+04, 2.5162839e+02],
+            [48,      1.0033842e+05, 2.7566430e+02],
+            [49,      1.3048305e+05, 2.6797466e+02],
+            [50,      1.0546796e+05, 1.9304384e+02],
+            [51,      9.3099697e+04, 2.0773311e+02],
+            [52,      4.6863758e+04, 1.3169068e+02],
+            [53,      6.1055806e+04, 1.5448477e+02],
+            [55,      6.8629994e+04, 1.6868673e+02],
+            [56,      1.1005552e+05, 2.1940465e+02],
+            [57,      1.0572760e+05, 1.9768486e+02],
+            [58,      1.1176950e+05, 3.0009610e+02],
+            [59,      9.8758603e+04, 3.3803895e+02],
+            [60,      9.9517201e+04, 3.5137994e+02],
+            [61,      5.4357946e+04, 2.5896579e+02],
+            [62,      1.0899978e+05, 2.8720371e+02],
+            [63,      8.4549759e+04, 4.1401837e+02],
+            [64,      5.5014550e+04, 2.1135781e+02],
+            [65,      8.0569666e+04, 2.3249709e+02],
+            [66,      1.2936610e+05, 3.5218725e+02],
+            [67,      3.6438010e+04, 8.7924003e+01],
+            [70,      3.8763157e+04, 1.3325040e+02],
+            [71,      8.5711411e+04, 2.9316183e+02],
+            [72,      3.3211541e+04, 1.2182123e+02],
+            [73,      3.2070576e+04, 1.2305430e+02]
+        ]
+        for res_num, value, error in data:
+            # Get the spin.
+            spin = return_spin(spin_id=":%s"%res_num)
+
+            # Check the values.
+            self.assertEqual(spin.r2eff['800.00000000_66.667'], value)
+            self.assertEqual(spin.r2eff_err['800.00000000_66.667'], error)
 
 
     def test_r2eff_read_spin(self):
@@ -1635,11 +1740,92 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope('1H', spin_id='@H')
         self.interpreter.spin.isotope('15N', spin_id='@N')
 
-        # Try reading the file.
-        self.interpreter.relax_disp.r2eff_read_spin(file='hs_500.res', dir=data_path, spin_id=':9@H', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
-        self.interpreter.relax_disp.r2eff_read_spin(file='ns_500.res', dir=data_path, spin_id=':9@N', exp_type='CPMG', frq=500e6, disp_point_col=1, data_col=2, error_col=3)
+        # Build the experiment IDs.
+        H_disp_points = [67.0, 133.0, 267.0, 400.0, 533.0, 667.0, 800.0, 933.0, 1067.0, 1600.0, 2133.0, 2667.0]
+        N_disp_points = [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0]
+        ids = []
+        for value in H_disp_points:
+            ids.append('1H_CPMG_%s' % value)
+        for value in N_disp_points:
+            ids.append('15N_CPMG_%s' % value)
+        print("\n\nThe experiment IDs are %s." % ids)
 
-        # TODO:  Data checks.
+        # Set up the metadata for the experiments.
+        for id in ids:
+            self.interpreter.spectrometer.frequency(id=id, frq=500e6)
+            self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+
+        # Loop over the experiments.
+        for id, file, spin_id in [['1H_CPMG', 'hs_500.res', ':9@H'], ['15N_CPMG', 'ns_500.res', ':9@N']]:
+            # Try reading the file.
+            self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
+
+        # Check the global data.
+        print cdp
+        data = [
+            ['cpmg_frqs', {'1H_CPMG_667.0': 667.0, '1H_CPMG_1067.0': 1067.0, '15N_CPMG_350.0': 350.0, '1H_CPMG_933.0': 933.0, '15N_CPMG_50.0': 50.0, '15N_CPMG_100.0': 100.0, '1H_CPMG_400.0': 400.0, '1H_CPMG_533.0': 533.0, '1H_CPMG_800.0': 800.0, '15N_CPMG_900.0': 900.0, '15N_CPMG_150.0': 150.0, '15N_CPMG_800.0': 800.0, '1H_CPMG_267.0': 267.0, '1H_CPMG_2667.0': 2667.0, '15N_CPMG_300.0': 300.0, '1H_CPMG_133.0': 133.0, '15N_CPMG_700.0': 700.0, '1H_CPMG_67.0': 67.0, '15N_CPMG_400.0': 400.0, '15N_CPMG_250.0': 250.0, '1H_CPMG_2133.0': 2133.0, '1H_CPMG_1600.0': 1600.0, '15N_CPMG_200.0': 200.0, '15N_CPMG_1000.0': 1000.0, '15N_CPMG_500.0': 500.0, '15N_CPMG_600.0': 600.0}],
+            ['cpmg_frqs_list', [50.0, 67.0, 100.0, 133.0, 150.0, 200.0, 250.0, 267.0, 300.0, 350.0, 400.0, 500.0, 533.0, 600.0, 667.0, 700.0, 800.0, 900.0, 933.0, 1000.0, 1067.0, 1600.0, 2133.0, 2667.0]],
+            ['dispersion_points', 24],
+            ['exp_type', {'1H_CPMG_667.0': 'CPMG', '1H_CPMG_1067.0': 'CPMG', '15N_CPMG_350.0': 'CPMG', '1H_CPMG_933.0': 'CPMG', '15N_CPMG_50.0': 'CPMG', '15N_CPMG_100.0': 'CPMG', '1H_CPMG_400.0': 'CPMG', '1H_CPMG_533.0': 'CPMG', '1H_CPMG_800.0': 'CPMG', '15N_CPMG_900.0': 'CPMG', '15N_CPMG_150.0': 'CPMG', '15N_CPMG_800.0': 'CPMG', '1H_CPMG_267.0': 'CPMG', '1H_CPMG_2667.0': 'CPMG', '15N_CPMG_300.0': 'CPMG', '1H_CPMG_133.0': 'CPMG', '15N_CPMG_700.0': 'CPMG', '1H_CPMG_67.0': 'CPMG', '15N_CPMG_400.0': 'CPMG', '15N_CPMG_250.0': 'CPMG', '1H_CPMG_2133.0': 'CPMG', '1H_CPMG_1600.0': 'CPMG', '15N_CPMG_200.0': 'CPMG', '15N_CPMG_1000.0': 'CPMG', '15N_CPMG_500.0': 'CPMG', '15N_CPMG_600.0': 'CPMG'}],
+            ['exp_type_list', ['CPMG']],
+            ['spectrometer_frq', {'1H_CPMG_667.0': 500000000.0, '1H_CPMG_1067.0': 500000000.0, '15N_CPMG_350.0': 500000000.0, '1H_CPMG_933.0': 500000000.0, '15N_CPMG_50.0': 500000000.0, '15N_CPMG_100.0': 500000000.0, '1H_CPMG_400.0': 500000000.0, '1H_CPMG_533.0': 500000000.0, '1H_CPMG_800.0': 500000000.0, '15N_CPMG_900.0': 500000000.0, '15N_CPMG_150.0': 500000000.0, '15N_CPMG_800.0': 500000000.0, '1H_CPMG_267.0': 500000000.0, '1H_CPMG_2667.0': 500000000.0, '15N_CPMG_300.0': 500000000.0, '1H_CPMG_133.0': 500000000.0, '15N_CPMG_700.0': 500000000.0, '1H_CPMG_67.0': 500000000.0, '15N_CPMG_400.0': 500000000.0, '15N_CPMG_250.0': 500000000.0, '1H_CPMG_2133.0': 500000000.0, '1H_CPMG_1600.0': 500000000.0, '15N_CPMG_200.0': 500000000.0, '15N_CPMG_1000.0': 500000000.0, '15N_CPMG_500.0': 500000000.0, '15N_CPMG_600.0': 500000000.0}],
+            ['spectrometer_frq_count', 1],
+            ['spectrometer_frq_list', [500000000.0]],
+            ['spectrum_ids', ['1H_CPMG_67.0', '1H_CPMG_133.0', '1H_CPMG_267.0', '1H_CPMG_400.0', '1H_CPMG_533.0', '1H_CPMG_667.0', '1H_CPMG_800.0', '1H_CPMG_933.0', '1H_CPMG_1067.0', '1H_CPMG_1600.0', '1H_CPMG_2133.0', '1H_CPMG_2667.0', '15N_CPMG_50.0', '15N_CPMG_100.0', '15N_CPMG_150.0', '15N_CPMG_200.0', '15N_CPMG_250.0', '15N_CPMG_300.0', '15N_CPMG_350.0', '15N_CPMG_400.0', '15N_CPMG_500.0', '15N_CPMG_600.0', '15N_CPMG_700.0', '15N_CPMG_800.0', '15N_CPMG_900.0', '15N_CPMG_1000.0']]
+        ]
+        for name, value in data:
+            # Does it exist?
+            self.assert_(hasattr(cdp, name))
+
+            # Check the object.
+            obj = getattr(cdp, name)
+            if not isinstance(data, dict):
+                self.assertEqual(obj, value)
+
+            # Check the global dictionary data.
+            else:
+                for id in ids:
+                    self.assertEqual(obj[id], value[id])
+
+        # Check the spin data.
+        h_data = [
+            [  67.0,  21.47924,   0.42958],
+            [ 133.0,  16.73898,   0.33478],
+            [ 267.0,   9.97357,   0.19947],
+            [ 400.0,   8.23877,   0.24737],
+            [ 533.0,   7.59290,   0.24263],
+            [ 667.0,   7.45843,   0.24165],
+            [ 800.0,   7.11222,   0.23915],
+            [ 933.0,   7.40880,   0.24129],
+            [1067.0,   6.55191,   0.16629],
+            [1600.0,   6.72177,   0.23637],
+            [2133.0,   7.09629,   0.23904],
+            [2667.0,   7.14675,   0.23940]
+        ]
+        for disp_point, value, error in h_data:
+            id = '500.00000000_%.3f' % disp_point
+            self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff[id], value)
+            self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff_err[id], error)
+        n_data = [
+            [  50.0,  27.15767,   0.54315],
+            [ 100.0,  26.55781,   0.53116],
+            [ 150.0,  24.73462,   0.49469],
+            [ 200.0,  20.98617,   0.41972],
+            [ 250.0,  17.82442,   0.35649],
+            [ 300.0,  15.55352,   0.31107],
+            [ 350.0,  13.78958,   0.27579],
+            [ 400.0,  12.48334,   0.24967],
+            [ 500.0,  11.55724,   0.23114],
+            [ 600.0,  10.53874,   0.21077],
+            [ 700.0,  10.07395,   0.20148],
+            [ 800.0,   9.62952,   0.19259],
+            [ 900.0,   9.49994,   0.19000],
+            [1000.0,   8.71350,   0.17427]
+        ]
+        for disp_point, value, error in n_data:
+            id = '500.00000000_%.3f' % disp_point
+            self.assertEqual(cdp.mol[0].res[0].spin[1].r2eff[id], value)
+            self.assertEqual(cdp.mol[0].res[0].spin[1].r2eff_err[id], error)
 
 
     def test_r2eff_fit_fixed_time(self):
