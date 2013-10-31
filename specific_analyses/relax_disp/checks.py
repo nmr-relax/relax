@@ -70,19 +70,26 @@ def check_disp_points():
                 raise RelaxError("The spin-lock field strength has not been set for the '%s' spectrum." % id)
 
 
-def check_exp_type():
-    """Check if the experiment types have been set up.
+def check_exp_type(id=None):
+    """Check if the experiment type have been set up for one or all IDs.
 
-    @raises RelaxError: If the dispersion experiment type has not been set.
+    @param id:          The experiment ID string.  If not set, then all spectrum IDs will be checked.
+    @type id:           None or str
+    @raises RelaxError: When the experiment type for the given ID is missing or, when not given, if the dispersion experiment type has not been set.
     """
 
     # Test if the experiment type is set.
     if not hasattr(cdp, 'exp_type'):
         raise RelaxError("The relaxation dispersion experiment types have not been set for any spectra.")
 
+    # Individual ID.
+    if id != None:
+        if id not in cdp.exp_type.keys():
+            raise RelaxError("The dispersion experiment type for the experiment ID '%s' has not been set." % id)
+
     # Check each spectrum ID.
     for id in cdp.spectrum_ids:
-        if id not in cdp.exp_type:
+        if id not in cdp.exp_type.keys():
             raise RelaxError("The relaxation dispersion experiment type has not been set for the '%s' spectrum." % id)
 
 
