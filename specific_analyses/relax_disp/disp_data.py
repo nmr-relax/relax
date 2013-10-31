@@ -52,7 +52,7 @@ from pipe_control.selection import desel_spin
 from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_MMQ_2SITE
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -492,6 +492,10 @@ def loop_cluster():
     # No clustering, so loop over the sequence.
     if not hasattr(cdp, 'clustering'):
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Skip protons for MMQ data.
+            if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
+                continue
+
             # Return the spin ID as a list.
             yield [spin_id]
 
@@ -511,6 +515,10 @@ def loop_cluster():
                 if not spin.select:
                     continue
 
+                # Skip protons for MMQ data.
+                if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
+                    continue
+
                 # Add the spin ID.
                 spin_id_list.append(spin_id)
 
@@ -522,6 +530,10 @@ def loop_cluster():
             # Skip deselected spins.
             spin = return_spin(spin_id)
             if not spin.select:
+                continue
+
+            # Skip protons for MMQ data.
+            if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
                 continue
 
             # Yield each spin individually.
