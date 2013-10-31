@@ -31,6 +31,7 @@ from lib.errors import RelaxError, RelaxNoFrqError
 from lib.physical_constants import g1H
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
+from pipe_control.spectrum import add_spectrum_id
 
 
 def check_frequency(id=None):
@@ -228,6 +229,9 @@ def set_frequency(id=None, frq=None, units='Hz'):
 
     # Test if the current data pipe exists.
     pipes.test()
+
+    # Add the spectrum ID to the data store if needed.
+    add_spectrum_id(id)
 
     # Set up the data structures if missing.
     if not hasattr(cdp, 'spectrometer_frq'):
