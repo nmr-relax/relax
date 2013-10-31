@@ -49,8 +49,8 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
-from pipe_control.spectrum import add_spectrum_id, check_spectrum_id, get_ids
-from pipe_control.spectrometer import set_frequency
+from pipe_control.spectrum import add_spectrum_id, get_ids
+from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG
 from stat import S_IRWXU, S_IRGRP, S_IROTH
@@ -272,7 +272,7 @@ def get_curve_type(id=None):
     """
 
     # Data check.
-    check_exp_type()
+    check_exp_type(id=id)
 
     # All data.
     if id == None:
@@ -293,6 +293,22 @@ def get_curve_type(id=None):
 
     # Return the type.
     return curve_type
+
+
+def get_exp_type(id=None):
+    """Return the experiment type for the given ID.
+
+    @keyword id:    The spectrum ID.
+    @type id:       str
+    @return:        The experiment type corresponding to the ID.
+    @rtype:         str
+    """
+
+    # Data check.
+    check_exp_type(id=id)
+
+    # Return the type.
+    return cdp.exp_type[id]
 
 
 def has_cpmg_exp_type():
@@ -1056,17 +1072,15 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     add_result_file(type='grace', label='Grace', file=file_path)
 
 
-def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
+def r2eff_read(id=None, file=None, dir=None, disp_frq=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
     """Read R2eff/R1rho values directly from a file whereby each row corresponds to a different spin.
 
+    @keyword id:            The experiment ID string to associate the data with.
+    @type id:               str
     @keyword file:          The name of the file to open.
     @type file:             str
     @keyword dir:           The directory containing the file (defaults to the current directory if None).
     @type dir:              str or None
-    @keyword exp_type:      The relaxation dispersion experiment type.
-    @type exp_type:         str
-    @keyword frq:           The spectrometer frequency in Hertz.
-    @type frq:              float
     @keyword disp_frq:      For CPMG-type data, the frequency of the CPMG pulse train.  For R1rho-type data, the spin-lock field strength (nu1).  The units must be Hertz.
     @type disp_frq:         float
     @keyword spin_id_col:   The column containing the spin ID strings.  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
@@ -1092,10 +1106,15 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
     # Data checks.
     pipes.test()
     check_mol_res_spin_data()
+    check_frequency(id=id)
+    check_exp_type(id=id)
 
-    # Create a key for the global data (the pseudo-spectrum ID).
-    spectrum_id = "%s_%s" % (frq, disp_frq)
-    print("Using the pseudo-spectrum ID of '%s'." % spectrum_id)
+    # Store the spectrum ID.
+    add_spectrum_id(id)
+
+    # Get the metadata.
+    frq = get_frequency(id=id)
+    exp_type = get_exp_type(id=id)
 
     # Loop over the data.
     data_flag = False
@@ -1122,10 +1141,10 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
             raise RelaxError("An invalid error value of zero has been encountered.")
 
         # Get the corresponding spin container.
-        id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
-        spin = return_spin(id)
+        spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_num=spin_num, spin_name=spin_name)
+        spin = return_spin(spin_id)
         if spin == None:
-            warn(RelaxNoSpinWarning(id))
+            warn(RelaxNoSpinWarning(spin_id))
             continue
 
         # The dispersion point key.
@@ -1166,35 +1185,24 @@ def r2eff_read(file=None, dir=None, exp_type=None, frq=None, disp_frq=None, spin
 
     # Update the global structures.
     if data_flag:
-        # Store the spectrum ID.
-        add_spectrum_id(spectrum_id)
-
-        # Set the spectrometer frequency information.
-        set_frequency(id=spectrum_id, frq=frq)
-
-        # Set the experiment type.
-        set_exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
-
         # Set the dispersion point frequency.
         if exp_type in EXP_TYPE_LIST_CPMG:
-            cpmg_frq(spectrum_id=spectrum_id, cpmg_frq=disp_frq)
+            cpmg_frq(spectrum_id=id, cpmg_frq=disp_frq)
         else:
-            spin_lock_field(spectrum_id=spectrum_id, field=disp_frq)
+            spin_lock_field(spectrum_id=id, field=disp_frq)
 
 
-def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, disp_point_col=None, data_col=None, error_col=None, sep=None):
+def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=None, data_col=None, error_col=None, sep=None):
     """Read R2eff/R1rho values from file whereby each row is a different dispersion point.
 
+    @keyword id:                The experiment ID string to associate the data with.  This will be modified to include the dispersion point data as "%s_%s" % (id, disp_point).
+    @type id:                   str
     @keyword spin_id:           The spin ID string.
     @type spin_id:              str
     @keyword file:              The name of the file to open.
     @type file:                 str
     @keyword dir:               The directory containing the file (defaults to the current directory if None).
     @type dir:                  str or None
-    @keyword exp_type:          The relaxation dispersion experiment type.
-    @type exp_type:             str
-    @keyword frq:               The spectrometer frequency in Hertz.
-    @type frq:                  float
     @keyword disp_point_col:    The column containing the dispersion point information.  For CPMG-type data, this is the frequency of the CPMG pulse train.  For R1rho-type data, this is the spin-lock field strength (nu1).  The units must be Hertz.
     @type disp_point_col:       int
     @keyword data_col:          The column containing the R2eff/R1rho data in Hz.
@@ -1219,6 +1227,7 @@ def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, 
 
     # Loop over the data.
     data = []
+    new_ids = []
     for line in file_data:
         # Invalid columns.
         if disp_point_col > len(line):
@@ -1267,8 +1276,20 @@ def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, 
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
 
-        # Create a key for the global data (the pseudo-spectrum ID).
-        spectrum_id = "%s_%s" % (frq, disp_point)
+        # Generate a new spectrum ID.
+        new_id = "%s_%s" % (id, disp_point)
+        new_ids.append(new_id)
+
+        # Data checks.
+        check_frequency(id=new_id)
+        check_exp_type(id=new_id)
+
+        # Store the spectrum ID.
+        add_spectrum_id(new_id)
+
+        # Get the metadata.
+        frq = get_frequency(id=new_id)
+        exp_type = get_exp_type(id=new_id)
 
         # The dispersion point key.
         point_key = return_param_key_from_data(frq=frq, point=disp_point)
@@ -1291,25 +1312,15 @@ def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, 
             # Store.
             spin.r2eff_err[point_key] = error
 
-        # Update the global structures.
-        if not spectrum_id in get_ids():
-            # Store the spectrum ID.
-            add_spectrum_id(spectrum_id)
-
-            # Set the spectrometer frequency information.
-            set_frequency(id=spectrum_id, frq=frq)
-
-            # Set the experiment type.
-            set_exp_type(spectrum_id=spectrum_id, exp_type=exp_type)
-
-            # Set the dispersion point frequency.
-            if exp_type in EXP_TYPE_LIST_CPMG:
-                cpmg_frq(spectrum_id=spectrum_id, cpmg_frq=disp_point)
-            else:
-                spin_lock_field(spectrum_id=spectrum_id, field=disp_point)
+        # Set the dispersion point frequency.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            cpmg_frq(spectrum_id=new_id, cpmg_frq=disp_point)
+        else:
+            spin_lock_field(spectrum_id=new_id, field=disp_point)
 
         # Append the data for printout.
         data.append(["%20.15f" % disp_point, "%20.15f" % value, "%20.15f" % error])
+
         # Data added.
         data_flag = True
 
@@ -1318,6 +1329,7 @@ def r2eff_read_spin(spin_id=None, file=None, dir=None, exp_type=None, frq=None, 
         raise RelaxError("No R2eff/R1rho data could be extracted.")
 
     # Print out.
+    print("Using the experiment IDs %s." % new_ids)
     print("The following R2eff/R1rho data has been loaded into the relax data store:\n")
     write_data(out=sys.stdout, headings=["Disp_point", "R2eff", "R2eff_error"], data=data)
 
@@ -1898,7 +1910,9 @@ def set_exp_type(spectrum_id=None, exp_type=None):
 
     # Data checks.
     pipes.test()
-    check_spectrum_id(spectrum_id)
+
+    # Add the spectrum ID to the data store if needed.
+    add_spectrum_id(spectrum_id)
 
     # Check the experiment type.
     if exp_type not in EXP_TYPE_LIST:

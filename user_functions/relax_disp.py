@@ -524,6 +524,15 @@ uf = uf_info.add_uf('relax_disp.r2eff_read')
 uf.title = "Read R2eff/R1rho values and errors from a file."
 uf.title_short = "R2eff/R1rho value reading."
 uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "partial experiment ID string",
+    desc = "The partial experiment ID string to identify this data with.  The full ID string will be constructed as this ID followed by an underscore and then the dispersion point value from the file.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
+uf.add_keyarg(
     name = "file",
     py_type = "str",
     arg_type = "file sel",
@@ -538,35 +547,6 @@ uf.add_keyarg(
     desc_short = "directory name",
     desc = "The directory name.",
     can_be_none = True
-)
-uf.add_keyarg(
-    name = "exp_type",
-    default = "CPMG",
-    py_type = "str",
-    desc_short = "experiment type",
-    desc = "The type of relaxation dispersion experiment performed.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = [
-        "Single quantum (SQ) CPMG-type data",
-        "Zero quantum (ZQ) CPMG-type data",
-        "Double quantum (DQ) CPMG-type data",
-        "Multiple quantum (MQ) CPMG-type data",
-        "%s-type data" % r1rho
-    ],
-    wiz_combo_data = [
-        EXP_TYPE_CPMG,
-        EXP_TYPE_ZQ_CPMG,
-        EXP_TYPE_DQ_CPMG,
-        EXP_TYPE_MQ_CPMG,
-        EXP_TYPE_R1RHO
-    ],
-    wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "frq",
-    py_type = "num",
-    desc_short = "spectrometer frequency",
-    desc = "The spectrometer frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
 )
 uf.add_keyarg(
     name = "disp_frq",
@@ -649,11 +629,12 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will read R2eff/R1rho data directly from a file.  The format of this text file must be that each row corresponds to a unique spin system and that there is one file per dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1).  The file must be in columnar format and information to identify the spin must be in columns of the file.")
+uf.desc[-1].add_paragraph("This will read R2eff/R1rho data directly from a file.  The data will be associated with an experiment ID string.  A partial ID is to be supplied and then the full ID string will be constructed as this ID followed by an underscore and then the dispersion point value from the file (as '%s_%s' % (id, disp_point)).  The full IDs must already exist and have been used to set the type of dispersion experiment the data is from, spectrometer proton frequency of the data, and if needed the time of the relaxation period.")
+uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a unique spin system and that there is one file per dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1).  The file must be in columnar format and information to identify the spin must be in columns of the file.")
 uf.backend = r2eff_read
 uf.menu_text = "&r2eff_read"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_size = (900, 600)
+uf.wizard_size = (1000, 600)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
@@ -661,6 +642,15 @@ uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 uf = uf_info.add_uf('relax_disp.r2eff_read_spin')
 uf.title = "Read R2eff/R1rho values and errors for a single spin from a file."
 uf.title_short = "Spin R2eff/R1rho value reading."
+uf.add_keyarg(
+    name = "id",
+    py_type = "str",
+    desc_short = "experiment ID string",
+    desc = "The experiment ID string to identify this data with.",
+    wiz_element_type = 'combo',
+    wiz_combo_iter = spectrum.get_ids,
+    wiz_read_only = True
+)
 uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
@@ -686,37 +676,9 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
-    name = "exp_type",
-    default = "CPMG",
-    py_type = "str",
-    desc_short = "experiment type",
-    desc = "The type of relaxation dispersion experiment performed.",
-    wiz_element_type = "combo",
-    wiz_combo_choices = [
-        "Single quantum (SQ) CPMG-type data",
-        "Zero quantum (ZQ) CPMG-type data",
-        "Double quantum (DQ) CPMG-type data",
-        "Multiple quantum (MQ) CPMG-type data",
-        "%s-type data" % r1rho
-    ],
-    wiz_combo_data = [
-        EXP_TYPE_CPMG,
-        EXP_TYPE_ZQ_CPMG,
-        EXP_TYPE_DQ_CPMG,
-        EXP_TYPE_MQ_CPMG,
-        EXP_TYPE_R1RHO
-    ],
-    wiz_read_only = True
-)
-uf.add_keyarg(
-    name = "frq",
-    py_type = "num",
-    desc_short = "spectrometer frequency",
-    desc = "The spectrometer frequency in Hertz.  See the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."
-)
-uf.add_keyarg(
     name = "disp_point_col",
     default = 1,
+    min = 1,
     py_type = "int",
     desc_short = "dispersion point column",
     desc = "The column containing the CPMG frequency or spin-lock field strength (Hz)."
@@ -724,6 +686,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "data_col",
     default = 2,
+    min = 1,
     py_type = "int",
     desc_short = "R2eff/R1rho data column",
     desc = "The column containing the R2eff or R1rho data."
@@ -731,6 +694,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "error_col",
     default = 3,
+    min = 1,
     py_type = "int",
     desc_short = "R2eff/R1rho error column",
     desc = "The column containing the R2eff or R1rho error."
@@ -746,11 +710,12 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will read R2eff/R1rho data for a single spin directly from a file.  The format of this text file must be that each row corresponds to a  dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1) and that there is one file per unique spin system.  The file must be in columnar format.")
+uf.desc[-1].add_paragraph("This will read R2eff/R1rho data for a single spin directly from a file.  The data will be associated with an experiment ID string.  This ID can be used for setting the type of dispersion experiment the data is from, spectrometer proton frequency of the data, and the time of the relaxation period.")
+uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a  dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1) and that there is one file per unique spin system.  The file must be in columnar format.")
 uf.backend = r2eff_read_spin
 uf.menu_text = "&r2eff_read_spin"
 uf.gui_icon = "oxygen.actions.document-open"
-uf.wizard_size = (900, 600)
+uf.wizard_size = (900, 700)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
