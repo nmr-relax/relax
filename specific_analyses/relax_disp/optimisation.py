@@ -313,7 +313,7 @@ class Disp_minimise_command(Slave_command):
         self.relax_times = None
         if hasattr(cdp, 'relax_time_list'):
             self.relax_times = cdp.relax_time_list[0]
-        if self.relax_times == None and model in MODEL_LIST_CPMG_NUM:
+        if self.relax_times == None and spins[0].model in MODEL_LIST_CPMG_NUM:
             raise RelaxError("The spectrometer frequency information has not been specified.")
 
 
