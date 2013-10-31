@@ -58,7 +58,7 @@ def check_disp_points():
         raise RelaxError("The CPMG frequencies or spin-lock field strengths have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         # CPMG data.
         if cdp.exp_type[id] in EXP_TYPE_LIST_CPMG:
             if id not in cdp.cpmg_frqs:
@@ -87,11 +87,14 @@ def check_exp_type(id=None):
         if id not in cdp.exp_type.keys():
             raise RelaxError("The dispersion experiment type for the experiment ID '%s' has not been set." % id)
 
-    # Check each spectrum ID.
+    # Check that at least one spectrum ID is set.
     else:
+        found = False
         for id in cdp.spectrum_ids:
-            if id not in cdp.exp_type:
-                raise RelaxError("The relaxation dispersion experiment type has not been set for the '%s' spectrum." % id)
+            if id in cdp.exp_type:
+                found = True
+        if not found:
+            raise RelaxError("The relaxation dispersion experiment type has not been set any spectra.")
 
 
 def check_exp_type_fixed_time():
@@ -170,7 +173,7 @@ def check_relax_times():
         raise RelaxError("The relaxation times have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         if id not in cdp.relax_times:
             raise RelaxError("The relaxation time has not been set for the '%s' spectrum." % id)
 
@@ -209,7 +212,7 @@ def check_spectrometer_frq():
         raise RelaxError("The spectrometer frequencies have not been set for any spectra.")
 
     # Check each spectrum ID.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         if id not in cdp.spectrometer_frq:
             raise RelaxError("The spectrometer frequency has not been set for the '%s' spectrum." % id)
 
@@ -242,7 +245,7 @@ def get_times():
         return times
 
     # Loop over all spectra IDs.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         # No time set.
         if id not in cdp.relax_times:
             continue

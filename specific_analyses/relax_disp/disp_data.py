@@ -235,7 +235,7 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
 
     # Loop over all spectrum IDs, returning the matching ID.
     ids = []
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         # The spectrometer frequency.
         frq2 = None
         if hasattr(cdp, 'spectrometer_frq'):
@@ -270,9 +270,6 @@ def get_curve_type(id=None):
     @return:        The curve type - either 'fixed time' or 'exponential'.
     @rtype:         str
     """
-
-    # Data check.
-    check_exp_type(id=id)
 
     # All data.
     if id == None:
@@ -343,7 +340,7 @@ def has_exponential_exp_type():
         return False
 
     # Loop over all spectra IDs.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         if get_curve_type(id) == 'exponential':
             return True
 
@@ -363,7 +360,7 @@ def has_fixed_time_exp_type():
         return False
 
     # Loop over all experiment types.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         if get_curve_type(id) == 'fixed time':
             return True
 
@@ -1646,7 +1643,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
         raise RelaxError("The spin-lock offsets have not been set.")
 
     # Loop over all spectrum IDs.
-    for id in cdp.spectrum_ids:
+    for id in cdp.exp_type.keys():
         # The data.
         exp_type = cdp.exp_type[id]
         frq = cdp.spectrometer_frq[id]
