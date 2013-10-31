@@ -143,6 +143,23 @@ def frequency_checks(frq):
         warn(RelaxWarning("The proton frequency of %s Hz appears to be too high." % frq))
 
 
+def get_frequency(id=None):
+    """Return the frequency corresponding to the given ID.
+
+    @param id:  The experiment ID string.
+    @type id:   str
+    @return:    The spectrometer proton frequency in Hertz for the given ID.
+    @rtype:     float
+    """
+
+    # Checks.
+    pipes.test()
+    check_frequency(id=id)
+
+    # Return the frequency in Hz.
+    return cdp.spectrometer_frq[id]
+
+
 def get_frequencies(units='Hz'):
     """Return a list of all the current spectrometer frequencies.
 
