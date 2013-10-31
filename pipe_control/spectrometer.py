@@ -33,6 +33,18 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 
 
+def check_frequency(id=None):
+    """Check that the frequency for the given ID has been set.
+
+    @param id:          The experiment ID string.
+    @type id:           str
+    """
+
+    # Check for the ID.
+    if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq.keys():
+        raise RelaxNoFrqError(id=id)
+
+
 def copy_frequencies(pipe_from=None, pipe_to=None, id=None):
     """Copy the frequency information from one data pipe to another.
 
@@ -88,12 +100,9 @@ def delete_frequencies(id=None):
     @type id:       str
     """
 
-    # Test if the current pipe exists.
+    # Checks.
     pipes.test()
-
-    # Test if data exists.
-    if not hasattr(cdp, 'spectrometer_frq') or id not in cdp.spectrometer_frq:
-        raise RelaxNoFrqError(id)
+    check_frequency(id=id)
 
     # Delete the frequency.
     frq = cdp.spectrometer_frq[id]
