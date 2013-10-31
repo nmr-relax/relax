@@ -333,7 +333,7 @@ class Disp_minimise_command(Slave_command):
                 print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % self.grid_size)
 
         # Initialise the function to minimise.
-        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), num_disp_points=self.dispersion_points, exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, spin_lock_offsets=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_time=self.relax_times, scaling_matrix=self.scaling_matrix)
+        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, spin_lock_offsets=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_time=self.relax_times, scaling_matrix=self.scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', self.min_algor):
@@ -502,7 +502,7 @@ class Disp_result_command(Result_command):
                     frq_index = return_index_from_frq(frq)
 
                     # Missing data.
-                    if self.missing[exp_type_index, spin_index, frq_index, disp_pt_index]:
+                    if self.missing[exp_type_index][spin_index][frq_index][disp_pt_index]:
                         continue
 
                     # The R2eff key.
@@ -510,6 +510,6 @@ class Disp_result_command(Result_command):
 
                     # Store the back-calculated data.
                     if memo.spins[0].model in [MODEL_MMQ_2SITE]:
-                        spin.r2eff_bc[key] = self.back_calc[exp_type_index, spin_index, frq_index, disp_pt_index]
+                        spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][disp_pt_index]
                     else:
-                        spin.r2eff_bc[key] = self.back_calc[spin_index, frq_index, disp_pt_index]
+                        spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][disp_pt_index]

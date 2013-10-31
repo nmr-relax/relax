@@ -423,9 +423,9 @@ def insignificance(level=0.0):
         max_diff = 0.0
         for exp_index in range(len(values)):
             # Loop over the magnetic fields.
-            for frq_index in range(len(values[exp_index, 0])):
+            for frq_index in range(len(values[exp_index][0])):
                 # The difference.
-                diff = values[exp_index, 0,frq_index].max() - values[exp_index, 0,frq_index].min()
+                diff = values[exp_index][0][frq_index].max() - values[exp_index][0][frq_index].min()
                 if diff > level:
                     desel = False
                 if diff > max_diff:
@@ -1794,17 +1794,30 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     @keyword sim_index:     The index of the simulation to return the data of.  This should be None if the normal data is required.
     @type sim_index:        None or int
     @return:                The numpy array structures of the R2eff/R1rho values, errors, missing data, and corresponding Larmor frequencies.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.  For the Larmor frequency structure, the third dimension is omitted.
-    @rtype:                 numpy rank-3 float array, numpy rank-3 float array, numpy rank-3 int array, numpy rank-2 int array
+    @rtype:                 list of numpy float arrays, list of numpy float arrays, list of numpy float arrays, numpy rank-2 int array
     """
 
     # The counts.
     exp_num = num_exp_types()
     spin_num = len(spins)
 
-    # Initialise the data structures for the target function (errors are set to one to avoid divide by zero for missing data in the chi-squared function).
-    values = zeros((exp_num, spin_num, field_count, cdp.dispersion_points), float64)
-    errors = ones((exp_num, spin_num, field_count, cdp.dispersion_points), float64)
-    missing = ones((exp_num, spin_num, field_count, cdp.dispersion_points), int32)
+    # Initialise the data structures for the target function.
+    exp_types = []
+    values = []
+    errors = []
+    missing = []
+    for exp_i in range(exp_num):
+        values.append([])
+        errors.append([])
+        missing.append([])
+        for spin_i in range(spin_num):
+            values[-1].append([])
+            errors[-1].append([])
+            missing[-1].append([])
+            for field_i in range(field_count):
+                values[-1][-1].append([])
+                errors[-1][-1].append([])
+                missing[-1][-1].append([])
     frqs = zeros((spin_num, field_count), float64)
 
     # Pack the R2eff/R1rho data.
@@ -1829,6 +1842,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
             frq_index = return_index_from_frq(frq)
 
+            # Add the experiment type.
+            if exp_type not in exp_types:
+                exp_types.append(exp_type)
+
             # The key.
             key = return_param_key_from_data(frq=frq, point=point)
 
@@ -1838,26 +1855,33 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # Missing data.
             if key not in spin.r2eff.keys():
+                values[exp_type_index][spin_index][frq_index].append(0.0)
+                errors[exp_type_index][spin_index][frq_index].append(1.0)
+                missing[exp_type_index][spin_index][frq_index].append(1)
                 continue
+            else:
+                missing[exp_type_index][spin_index][frq_index].append(0)
 
             # The values.
             if sim_index == None:
-                values[exp_type_index, spin_index, frq_index, disp_pt_index] = spin.r2eff[key]
+                values[exp_type_index][spin_index][frq_index].append(spin.r2eff[key])
             else:
-                values[exp_type_index, spin_index, frq_index, disp_pt_index] = spin.r2eff_sim[sim_index][key]
+                values[exp_type_index][spin_index][frq_index].append(spin.r2eff_sim[sim_index][key])
 
             # The errors.
-            errors[exp_type_index, spin_index, frq_index, disp_pt_index] = spin.r2eff_err[key]
-
-            # Flip the missing flag to off.
-            missing[exp_type_index, spin_index, frq_index, disp_pt_index] = 0
+            errors[exp_type_index][spin_index][frq_index].append(spin.r2eff_err[key])
 
     # No R2eff/R1rho data for the spin cluster.
     if not data_flag:
         raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
 
-    # The experiment types.
-    exp_types = cdp.exp_type_list
+    # Convert to numpy arrays.
+    for exp_type_index in range(exp_num):
+        for spin_index in range(spin_num):
+            for frq_index in range(field_count):
+                values[exp_type_index][spin_index][frq_index] = array(values[exp_type_index][spin_index][frq_index], float64)
+                errors[exp_type_index][spin_index][frq_index] = array(errors[exp_type_index][spin_index][frq_index], float64)
+                missing[exp_type_index][spin_index][frq_index] = array(missing[exp_type_index][spin_index][frq_index], int32)
 
     # Return the structures.
     return values, errors, missing, frqs, exp_types

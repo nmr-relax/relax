@@ -143,7 +143,7 @@ class Relax_disp(API_base, API_common):
             relax_time = cdp.relax_time_list[0]
 
         # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, num_disp_points=cdp.dispersion_points, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_time=relax_time, scaling_matrix=scaling_matrix)
+        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=return_cpmg_frqs(ref_flag=False), spin_lock_nu1=return_spin_lock_nu1(ref_flag=False), chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_time=relax_time, scaling_matrix=scaling_matrix)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = model.func(param_vector)
@@ -163,11 +163,11 @@ class Relax_disp(API_base, API_common):
             param_key = return_param_key_from_data(frq=frq, point=point)
 
             # Skip missing data.
-            if missing[exp_type_index, 0, frq_index, point_index]:
+            if missing[exp_type_index][0][frq_index][point_index]:
                 continue
 
             # Store the result.
-            results[param_key] = model.back_calc[0, frq_index, point_index]
+            results[param_key] = model.back_calc[0][frq_index][point_index]
 
         # Return the back calculated R2eff values.
         return results
