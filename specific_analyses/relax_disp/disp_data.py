@@ -1402,13 +1402,15 @@ def relax_time(time=0.0, spectrum_id=None):
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
-def return_cpmg_frqs(ref_flag=True):
+def return_cpmg_frqs(spins=None, ref_flag=True):
     """Return the list of nu_CPMG frequencies.
 
+    @keyword spins:     The list of spins for which to check is CPMG data exists for.
+    @type spins:        list of SpinContainer instances
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
-    @rtype:             numpy rank-1 float64 array
+    @rtype:             list of lists of numpy rank-1 float64 array
     """
 
     # No data.
@@ -1418,16 +1420,45 @@ def return_cpmg_frqs(ref_flag=True):
     # Initialise.
     cpmg_frqs = []
 
-    # Loop over the frequencies.
-    for frq in cdp.cpmg_frqs_list:
-        if frq == None and not ref_flag:
-            continue
+    # First loop over the experiment types.
+    for exp_type in loop_exp():
+        # Add a new dimension.
+        cpmg_frqs.append([])
 
-        # Add the frequency.
-        cpmg_frqs.append(frq)
+        # Then loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # Add a new dimension.
+            cpmg_frqs[-1].append([])
 
-    # Return the new list.
-    return array(cpmg_frqs, float64)
+            # Loop over the frequencies.
+            for point in cdp.cpmg_frqs_list:
+                # Skip frequencies of None.
+                if point == None:
+                    continue
+
+                # The data key.
+                key = return_param_key_from_data(frq=frq, point=point)
+
+                # Loop over the spins.
+                flag = False
+                for spin in spins:
+                    # The data is present.
+                    if key in spin.r2eff.keys():
+                        flag = True
+                        break
+
+                # No data.
+                if not flag:
+                    continue
+
+                # Add the data.
+                cpmg_frqs[-1][-1].append(point)
+
+            # Convert to a numpy array.
+            cpmg_frqs[-1][-1] = array(cpmg_frqs[-1][-1], float64)
+
+    # Return the data.
+    return cpmg_frqs
 
 
 def return_index_from_disp_point(value, exp_type=None):
@@ -1887,9 +1918,11 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     return values, errors, missing, frqs, exp_types
 
 
-def return_spin_lock_nu1(ref_flag=True):
+def return_spin_lock_nu1(spins=None, ref_flag=True):
     """Return the list of spin-lock field strengths.
 
+    @keyword spins:     The list of spins for which to check is CPMG data exists for.
+    @type spins:        list of SpinContainer instances
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of spin-lock field strengths in Hz.
@@ -1902,6 +1935,46 @@ def return_spin_lock_nu1(ref_flag=True):
 
     # Initialise.
     nu1 = []
+
+    # First loop over the experiment types.
+    for exp_type in loop_exp():
+        # Add a new dimension.
+        nu1.append([])
+
+        # Then loop over the spectrometer frequencies.
+        for frq in loop_frq():
+            # Add a new dimension.
+            nu1[-1].append([])
+
+            # Loop over the frequencies.
+            for point in cdp.spin_lock_nu1_list:
+                # Skip frequencies of None.
+                if point == None:
+                    continue
+
+                # The data key.
+                key = return_param_key_from_data(frq=frq, point=point)
+
+                # Loop over the spins.
+                flag = False
+                for spin in spins:
+                    # The data is present.
+                    if key in spin.r2eff.keys():
+                        flag = True
+                        break
+
+                # No data.
+                if not flag:
+                    continue
+
+                # Add the data.
+                nu1[-1][-1].append(point)
+
+            # Convert to a numpy array.
+            nu1[-1][-1] = array(nu1[-1][-1], float64)
+
+    # Return the data.
+    return nu1
 
     # Loop over the frequencies.
     for frq in cdp.spin_lock_nu1_list:
