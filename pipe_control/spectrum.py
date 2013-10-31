@@ -255,7 +255,7 @@ def add_spectrum_id(spectrum_id=None):
 
     # The ID already exists.
     if spectrum_id in cdp.spectrum_ids:
-        raise RelaxError("The spectrum ID '%s' already exists." % spectrum_id)
+        return
 
     # Add the ID.
     cdp.spectrum_ids.append(spectrum_id)
