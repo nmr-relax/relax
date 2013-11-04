@@ -28,6 +28,8 @@ import pipe_control
 from pipe_control import pipes
 import specific_analyses
 
+# This script is used to batch convert the Grace *.agr files into graphics files using the Grace
+# program itself.
 
 def script_grace2images(file=None):
     """Write a python "grace to PNG/EPS/SVG..." conversion script..
@@ -40,6 +42,11 @@ def script_grace2images(file=None):
 
     # Write to file
     file.write("#!/usr/bin/env python\n")
+    file.write("#\n")
+    file.write("# This script is used to batch convert the Grace *.agr files into graphics bitmap files using the\n")
+    file.write("# Grace program itself.  Therefore you will need to install on your system xmgrace,\n")
+    file.write("# (http://plasma-gate.weizmann.ac.il/Grace/), qtgrace (http://sourceforge.net/projects/qtgrace/)\n")
+    file.write("# or gracegtk (http://sourceforge.net/projects/gracegtk/).\n")
     file.write("\n")
     file.write("import glob, os, sys\n")
     file.write("import shlex, subprocess\n")
