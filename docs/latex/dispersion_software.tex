@@ -78,9 +78,12 @@ Parallelisation via MPI for running on clusters & \no  & \no  & \no  & \no  & \n
 Off-resonance effects (CPMG-type data)          & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  \\
 Off-resonance effects ($\Ronerho$-type data)    & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
 Support for CEST-type data                      & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  \\
-Van't Hoff analysis                             & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  \\
+Van't Hoff analysis                             & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  \\
+Arrhenius analysis                              & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
 ZZ exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
 HD exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+
+\pagebreak
 
 \vspace{-5pt} \\
 \textbf{User interface} \\
@@ -89,8 +92,8 @@ Graphical user interface (GUI)                  & \no  & \no  & \no  & \yes & \y
 Web user interface (Web UI)                     & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
 Scripting user interface (Script UI)            & \no  & \yes & \yes & \no  & \no  & \yes & \yes & \no  & \yes \\
 Shell interface                                 & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  \\
-
-\pagebreak
+Temperature and field-dependent simulator UI    & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+\quad (for planning future experiments) \\
 
 \vspace{-5pt} \\
 \textbf{Optimisation algorithms} \\
@@ -101,11 +104,12 @@ Nelder-Mead simplex                             & \no  & \no  & \no  & \no  & \n
 Levenberg-Maquardt                              & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
 Numeric gradient approximation                  & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
 Logarithmic-barrier constraint algorithm        & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \yes \\
+Visualisation of the chi-squared space          & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \yes \\
 
 \vspace{-5pt} \\
 \textbf{Error propagation} \\
 \cmidrule(lr){1-1}
-Covariance matrix (lowest quality)              & \yes & \yes & \yes & \no  & \no  & \no  & \yes & \no  & \no  \\
+Covariance matrix (lowest quality)              & \yes & \yes & \yes & \no  & \yes & \no  & \yes & \no  & \no  \\
 Jackknife simulations (for missing errors)      & \yes & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  \\
 Bootstrapping simulations (false errors)        & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
 Currently unknown (please update)               & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
@@ -117,7 +121,7 @@ Monte Carlo simulations (gold standard)         & \yes & \no  & \no  & \yes & \y
 Akaike's Information Criterion (AIC)            & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \yes \\
 Small sample size AIC (AICc)                    & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \yes \\
 Bayesian Information Criterion (BIC)            & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
-F-testing (ANOVA statistics)                    & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  \\
+F-testing (ANOVA statistics)                    & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  \\
 
 \vspace{-5pt} \\
 \textbf{Programming languages} \\
@@ -125,7 +129,7 @@ F-testing (ANOVA statistics)                    & \no  & \no  & \no  & \yes & \n
 Python                      & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \yes & \yes \\
 C                           & \no  & \yes & \yes & \no  & \no  & \yes & \yes & \no  & \yes \\
 Perl                        & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  \\
-Matlab                      & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+MATLAB                      & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
 FORTRAN                     & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
 
 \vspace{-5pt} \\
