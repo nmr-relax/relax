@@ -82,6 +82,7 @@ Van't Hoff analysis                             & \no  & \no  & \no  & \yes & \y
 Arrhenius analysis                              & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
 ZZ exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
 HD exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+Dispersion data back calculation (BC)           & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \yes \\
 
 \pagebreak
 
@@ -92,16 +93,16 @@ Graphical user interface (GUI)                  & \no  & \no  & \no  & \yes & \y
 Web user interface (Web UI)                     & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
 Scripting user interface (Script UI)            & \no  & \yes & \yes & \no  & \no  & \yes & \yes & \no  & \yes \\
 Shell interface                                 & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  \\
-Temperature and field-dependent simulator UI    & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
-\quad (for planning future experiments) \\
+Temperature and field-dependent simulator     \\
+UI for experimental planning (data BC)          & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
 
 \vspace{-5pt} \\
-\textbf{Optimisation algorithms} \\
+\textbf{Optimisation} \\
 \cmidrule(lr){1-1}
-Grid search                                     & \yes & \no  & \no  & \yes & \yes & \yes & \yes & \no  & \yes \\
+Grid search algorithm                           & \yes & \no  & \no  & \yes & \yes & \yes & \yes & \no  & \yes \\
 Grid search (via scripting)                     & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  \\
-Nelder-Mead simplex                             & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
-Levenberg-Maquardt                              & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
+Nelder-Mead simplex algorithm                   & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+Levenberg-Maquardt algorithm                    & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
 Numeric gradient approximation                  & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
 Logarithmic-barrier constraint algorithm        & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \yes \\
 Visualisation of the chi-squared space          & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \yes \\
