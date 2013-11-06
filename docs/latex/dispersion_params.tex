@@ -1,20 +1,26 @@
-\begin{sidewaystable}
+\begin{landscape}
 \begin{center}
 \begin{small}
+
+% The tabular environment.
+\begin{longtable}{llll}
 
 % Caption.
 \caption[The parameters of relaxation dispersion.]{The parameters of relaxation dispersion.}
 
-% The tabular environment.
-\begin{tabular}{llll}
-
-\\[-5pt]
+% Header.
+\\
 \toprule
-
-% Headings.
 Parameter          & Equation                       & Description                                                                   & Units \\
-
 \midrule
+\endhead
+
+% Footer.
+\bottomrule
+\endfoot
+
+% Label.
+\label{table: dispersion parameters}
 
 $\nucpmg$          & $1 / (2 \taucpmg)$             & CPMG frequency                                                                & Hz \\
 $\taucpmg$         & $1 / (2 \nucpmg)$              & Delay between CPMG $\pi$ pulses                                               & s \\
@@ -36,25 +42,27 @@ $\theta$           & $\arctan \left( \frac{\omegaone}{\aveoffset} \right)$  & Ro
 $\kAB$             & $\pB\kex$                      & The forward exchange rate from state A to state B                             & rad.s$^{-1}$ \\
 $\kBA$             & $\pA\kex$                      & The reverse exchange rate from state B to state A                             & rad.s$^{-1}$ \\
 $\kex$             & $1 / \tex$                     & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
-$\kexB$            & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
-$\kexC$            & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
-$\kB$              & $\approx \kexB$                & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
-$\kC$              & $\approx \kexC$                & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
+$\kexAB$           & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
+$\kexAC$           & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
+$\kexBC$           & $\kBC + \kCB$                  & Chemical exchange rate constant between sites B and C                         & rad.s$^{-1}$ \\
+$\kB$              & $\approx \kexAB$               & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
+$\kC$              & $\approx \kexAC$               & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
 $\tex$             & $1 / \kex$                     & Time of exchange                                                              & s.rad$^{-1}$ \\
 $\pA$              & -                              & Population of state A                                                         & - \\
 $\pB$              & -                              & Population of state B                                                         & - \\
-$\dw$              & -                              & Chemical shift difference between the two states                              & rad.s$^{-1}$ (stored as ppm) \\
+$\dw$              & -                              & Chemical shift difference between the two states (A and B)                    & rad.s$^{-1}$ (stored as ppm) \\
+$\dwAB$            & -                              & Chemical shift difference between sites A and B                               & rad.s$^{-1}$ (stored as ppm) \\
+$\dwAC$            & -                              & Chemical shift difference between sites A and C                               & rad.s$^{-1}$ (stored as ppm) \\
+$\dwBC$            & -                              & Chemical shift difference between sites B and C                               & rad.s$^{-1}$ (stored as ppm) \\
 $\dwH$             & -                              & Proton chemical shift difference between the two states (for MQ data)         & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHAB$           & -                              & Proton chemical shift difference between sites A and B (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHAC$           & -                              & Proton chemical shift difference between sites A and C (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHBC$           & -                              & Proton chemical shift difference between sites B and C (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
 $\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
 $\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
 $\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
 
-\bottomrule
-
-% Label.
-\label{table: dispersion parameters}
-
-\end{tabular}
+\end{longtable}
 \end{small}
 \end{center}
-\end{sidewaystable}
+\end{landscape}
