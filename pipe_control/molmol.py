@@ -138,13 +138,19 @@ class Molmol:
                     if not access(file_path, F_OK):
                         file_path = None
 
-                # The file path using the relative path.
+                # The file path using the absolute path.
                 if file_path == None and hasattr(mol, 'file_path_abs') and mol.file_path_abs != None:
                     file_path = mol.file_path_abs + sep + mol.file_name
                     if not access(file_path, F_OK):
                         file_path = None
 
-                # Fall back.
+                # Hmmm, maybe the absolute path no longer exists and we are in a results subdirectory?
+                if file_path == None and hasattr(mol, 'file_path') and mol.file_path != None:
+                    file_path = pardir + sep + mol.file_path + sep + mol.file_name
+                    if not access(file_path, F_OK):
+                        file_path = None
+
+                # Fall back to the current directory.
                 if file_path == None:
                     file_path = mol.file_name
 
