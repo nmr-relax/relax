@@ -22,8 +22,8 @@ Model name               & Solution & Sites & Parameters                        
 % Label.
 \label{table: dispersion models}
 
-\\[-5pt]
 % Experiment independent models.
+\\[-5pt]
 Experiment independent \\
 \cline{1-1}
 \\[-5pt]
@@ -31,8 +31,8 @@ R2eff                    & -        & -     & $\{\Rtwoeff, \cdots\}$            
 R2eff                    & -        & -     & $\{\Rtwoeff, I_0, \cdots\}$                         & Variable relaxation time period   & - \\
 No Rex                   & Closed   & 0     & $\{\Rtwozero, \cdots\}$                             & -                                 & - \\
 
-\\[-5pt]
 % CPMG-type models.
+\\[-5pt]
 CPMG-type \\
 \cline{1-1}
 \\[-5pt]
@@ -49,26 +49,26 @@ NS CPMG 2-site 3D full   & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, 
 NS CPMG 2-site star      & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \kex\}$              & $\pA > \pB$                       & - \\
 NS CPMG 2-site star full & Numeric  & 2     & $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$ & $\pA > \pB$                       & - \\
 
-\\[-5pt]
 % MQ CPMG-type models.
+\\[-5pt]
 MQ CPMG-type \\
 \cline{1-1}
 \\[-5pt]
 MQ CR72                  & Analytic & 2     & $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$        & $\pA > \pB$                       & \citet{Korzhnev04a} \\
 
-\\[-5pt]
 % SQ, ZQ, DQ and MQ CPMG-type models.
+\clearpage
 MMQ CPMG-type \\
 \cline{1-1}
 \\[-5pt]
 MMQ 2-site               & Numeric  & 2     & $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$        & $\pA > \pB$                       & \citet{Korzhnev05} \\
-MMQ 3-site (linear)      & Numeric  & 3     & $\{\Rtwozero, \dots, \pA, \pB, \dwAB, \dwAC,$       & $\pA > \pB$ and $\pA > \pC$       & \citet{Korzhnev05} \\
+MMQ 3-site (linear)\footnotemark[1]      & Numeric  & 3     & $\{\Rtwozero, \dots, \pA, \pB, \dwAB, \dwAC,$       & $\pA > \pB$ and $\pA > \pC$       & \citet{Korzhnev05} \\
                          &          &       & $\dwHAB, \dwHAC, \kexAB, \kexAC\}$ \\
-MMQ 3-site (branched)    & Numeric  & 3     & $\{\Rtwozero, \dots, \pA, \pB, \dwAB, \dwAC$        & $\pA > \pB$ and $\pA > \pC$       & \citet{Korzhnev05} \\
+MMQ 3-site (branched)\footnotemark[1]    & Numeric  & 3     & $\{\Rtwozero, \dots, \pA, \pB, \dwAB, \dwAC$        & $\pA > \pB$ and $\pA > \pC$       & \citet{Korzhnev05} \\
                          &          &       & $, \dwHAB, \dwHAC, \dwHBC, \kexAB, \kexAC, \kexBC\}$ \\
 
 % R1rho-type models.
-\clearpage
+\\[-5pt]
 $\Ronerho$-type \\
 \cline{1-1}
 \\[-5pt]
@@ -77,13 +77,15 @@ M61                      & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \
 DPL94                    & Analytic & 2     & $\{\Ronerhoprime, \dots, \Phiex, \kex\}$            & Fast exchange                     & \citet{Davis94} \\
 M61 skew                 & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$          & $\pA \gg \pB$, on-resonance       & \citet{Meiboom61} \\
 TP02                     & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$          & Not fast exchange                 & \citet{TrottPalmer02} \\
-TP04                     & Analytic & N     & $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$    & One site dominant        & \citet{TrottPalmer04} \\
-MP05                     & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$          & $\pA > \pB$                       & \citet{MiloushevPalmer05} \\
+TP04\footnotemark[1]     & Analytic & N     & $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$    & One site dominant        & \citet{TrottPalmer04} \\
+MP05\footnotemark[1]     & Analytic & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$          & $\pA > \pB$                       & \citet{MiloushevPalmer05} \\
 NS R1rho 2-site          & Numeric  & 2     & $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$          & $\pA > \pB$                       & - \\
-NS R1rho 3-site (linear) & Numeric  & 3     & $\{\Ronerhoprime, \dots, \pA, \pB, \dwAB, \dwAC,$   & $\pA > \pB$ and $\pA > \pC$       & - \\
+NS R1rho 3-site (linear)\footnotemark[1] & Numeric  & 3     & $\{\Ronerhoprime, \dots, \pA, \pB, \dwAB, \dwAC,$   & $\pA > \pB$ and $\pA > \pC$       & - \\
                          &          &       & $\dwHAB, \dwHAC, \kexAB, \kexAC\}$ \\
-NS R1rho 3-site (branched) & Numeric & 3    & $\{\Ronerhoprime, \dots, \pA, \pB, \dwAB, \dwAC$    & $\pA > \pB$ and $\pA > \pC$       & - \\
+NS R1rho 3-site (branched)\footnotemark[1] & Numeric & 3    & $\{\Ronerhoprime, \dots, \pA, \pB, \dwAB, \dwAC$    & $\pA > \pB$ and $\pA > \pC$       & - \\
                          &          &       & $, \dwHAB, \dwHAC, \dwHBC, \kexAB, \kexAC, \kexBC\}$ \\
+
+\footnotetext[1]{Not implemented yet}
 
 \end{longtable}
 \end{small}
