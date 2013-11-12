@@ -1592,6 +1592,23 @@ def get_spin_ids(selection=None):
     return spin_ids
 
 
+def is_pseudoatom(spin=None):
+    """Check if the given spin container corresponds to a pseudo-atom.
+
+    @keyword spin:  The spin container to check.
+    @type spin:     SpinContainer instance
+    @return:        True if this is a pseudo-atom, False otherwise.
+    @rtype:         bool
+    """
+
+    # Check for the 'members' data structure.
+    if hasattr(spin, 'members'):
+        return True
+
+    # Normal atom.
+    return False
+
+
 def index_molecule(mol_name=None, pipe=None):
     """Return the index of the molecule of the given name.
 
