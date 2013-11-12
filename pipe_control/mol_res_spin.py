@@ -2379,6 +2379,25 @@ def one_letter_code(res_names):
     return seq
 
 
+def pseudoatom_loop(spin=None):
+    """Loop over the atoms of the given pseudo-atom spin container.
+
+    @keyword spin:  The pseudo-atom spin container.
+    @type spin:     SpinContainer instance
+    @return:        The spins of the pseudo-atom.
+    @rtype:         SpinContainer instance
+    """
+
+    # Check for the 'members' data structure.
+    if not hasattr(spin, 'members'):
+        return
+
+    # Loop over the members.
+    for spin_id in spin.members:
+        # Yield the spin containers.
+        yield return_spin(spin_id=spin_id)
+
+
 def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):
     """Generator function for looping over all the residues of the given selection.
 
