@@ -658,7 +658,7 @@ def unit_vectors(ave=True):
     # Loop over the interatomic data containers.
     no_vectors = True
     pos_info = False
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(skip_desel=False):
         # Get the spin info.
         spin1 = return_spin(interatom.spin_id1)
         spin2 = return_spin(interatom.spin_id2)
