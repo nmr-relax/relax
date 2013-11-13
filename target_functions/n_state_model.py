@@ -980,7 +980,7 @@ class N_state_opt:
                     # Calculate the RDC for state c (this is the pc partial derivative).
                     for j in range(self.num_interatom):
                         if self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                            self.drdc_theta[param_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.A[align_index])
+                            self.drdc_theta[param_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.A[align_index])
 
                     # Calculate the PCS for state c (this is the pc partial derivative).
                     for j in range(self.num_spins):
@@ -1155,11 +1155,11 @@ class N_state_opt:
                     # Calculate the RDC Hessian component.
                     for j in range(self.num_interatom):
                         if self.fixed_tensors[align_index] and self.rdc_flag[align_index] and not self.missing_rdc[align_index, j]:
-                            self.d2rdc_theta[pc_index, align_index*5+0, align_index, j] = self.d2rdc_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[0])
-                            self.d2rdc_theta[pc_index, align_index*5+1, align_index, j] = self.d2rdc_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[1])
-                            self.d2rdc_theta[pc_index, align_index*5+2, align_index, j] = self.d2rdc_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[2])
-                            self.d2rdc_theta[pc_index, align_index*5+3, align_index, j] = self.d2rdc_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[3])
-                            self.d2rdc_theta[pc_index, align_index*5+4, align_index, j] = self.d2rdc_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j, c], self.dA[4])
+                            self.d2rdc_theta[pc_index, align_index*5+0, align_index, j] = self.d2rdc_theta[align_index*5+0, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.dA[0])
+                            self.d2rdc_theta[pc_index, align_index*5+1, align_index, j] = self.d2rdc_theta[align_index*5+1, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.dA[1])
+                            self.d2rdc_theta[pc_index, align_index*5+2, align_index, j] = self.d2rdc_theta[align_index*5+2, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.dA[2])
+                            self.d2rdc_theta[pc_index, align_index*5+3, align_index, j] = self.d2rdc_theta[align_index*5+3, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.dA[3])
+                            self.d2rdc_theta[pc_index, align_index*5+4, align_index, j] = self.d2rdc_theta[align_index*5+4, pc_index, align_index, j] = rdc_tensor(self.dip_const[j], self.dip_vect[j][c], self.dA[4])
 
                     # Calculate the PCS Hessian component.
                     for j in range(self.num_spins):
