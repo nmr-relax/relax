@@ -182,8 +182,33 @@ def check_rdcs(interatom, spin1, spin2):
         raise RelaxSpinTypeError(interatom.spin_id1)
     if not hasattr(spin2, 'isotope'):
         raise RelaxSpinTypeError(interatom.spin_id2)
-    if not hasattr(interatom, 'r'):
-        raise RelaxNoValueError("averaged interatomic distance")
+    if is_pseudoatom(spin1) and is_pseudoatom(spin2):
+        raise RelaxError("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet.")
+
+    # Interatomic distance checking (pseudo-atoms).
+    if is_pseudoatom(spin1) or is_pseudoatom(spin2):
+        # Alias the pseudo and normal atoms.
+        pseudospin = spin1
+        base_spin_id = interatom.spin_id2
+        pseudospin_id = interatom.spin_id1
+        if is_pseudoatom(spin2):
+            pseudospin = spin2
+            base_spin_id = interatom.spin_id1
+            pseudospin_id = interatom.spin_id2
+
+        # Loop over the atoms of the pseudo-atom.
+        for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
+            # Get the corresponding interatomic data container.
+            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+
+            # Check.
+            if not hasattr(pseudo_interatom, 'r'):
+                raise RelaxError("The averaged interatomic distance between spins '%s' and '%s' for the pseudo-atom '%s' has not been set yet." % (spin_id, base_spin_id, pseudospin_id))
+
+    # Interatomic distance checking (normal atoms).
+    else:
+        if not hasattr(interatom, 'r'):
+            raise RelaxError("The averaged interatomic distance between spins '%s' and '%s' has not been set yet." % (interatom.spin_id1, interatom.spin_id2))
 
     # Everything is ok.
     return True
@@ -554,7 +579,6 @@ def return_rdc_data(sim_index=None):
             pseudo_unit_vect = []
             pseudo_rdc_const = []
             for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
-
                 # Get the corresponding interatomic data container.
                 pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
 
