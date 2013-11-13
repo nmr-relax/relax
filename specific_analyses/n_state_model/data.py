@@ -665,32 +665,8 @@ def return_rdc_data(sim_index=None):
             value = None
             error = None
 
-            # Pseudo-atom set up.
-            if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
-                # Skip non-Me groups.
-                if (hasattr(spin1, 'members') and len(spin1.members) != 3) or (hasattr(spin2, 'members') and len(spin2.members) != 3):
-                    continue
-
-                # The RDC for the Me-pseudo spin where:
-                #     <D> = -1/3 Dpar.
-                # See Verdier, et al., JMR, 2003, 163, 353-359.
-                if sim_index != None:
-                    value = -3.0 * interatom.rdc_sim[align_id][sim_index]
-                else:
-                    value = -3.0 * interatom.rdc[align_id]
-
-                # The error.
-                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                    # T values.
-                    if T_flags[-1][-1]:
-                        error = -3.0 * sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
-
-                    # D values.
-                    else:
-                        error = -3.0 * interatom.rdc_err[align_id]
-
             # Normal set up.
-            elif align_id in interatom.rdc.keys():
+            if align_id in interatom.rdc.keys():
                 # The RDC.
                 if sim_index != None:
                     value = interatom.rdc_sim[align_id][sim_index]
