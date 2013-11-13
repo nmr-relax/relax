@@ -1592,6 +1592,23 @@ def get_spin_ids(selection=None):
     return spin_ids
 
 
+def is_pseudoatom(spin=None):
+    """Check if the given spin container corresponds to a pseudo-atom.
+
+    @keyword spin:  The spin container to check.
+    @type spin:     SpinContainer instance
+    @return:        True if this is a pseudo-atom, False otherwise.
+    @rtype:         bool
+    """
+
+    # Check for the 'members' data structure.
+    if hasattr(spin, 'members'):
+        return True
+
+    # Normal atom.
+    return False
+
+
 def index_molecule(mol_name=None, pipe=None):
     """Return the index of the molecule of the given name.
 
@@ -2360,6 +2377,33 @@ def one_letter_code(res_names):
 
     # Return the sequence.
     return seq
+
+
+def pseudoatom_loop(spin=None, return_id=False):
+    """Loop over the atoms of the given pseudo-atom spin container.
+
+    @keyword spin:      The pseudo-atom spin container.
+    @type spin:         SpinContainer instance
+    @keyword return_id: A flag which if True will cause the spin identification string of the current spin to be returned in addition to the spin container.
+    @type return_id:    bool
+    @return:            The spins of the pseudo-atom.
+    @rtype:             SpinContainer instance
+    """
+
+    # Check for the 'members' data structure.
+    if not hasattr(spin, 'members'):
+        return
+
+    # Loop over the members.
+    for spin_id in spin.members:
+        # Get the spin container.
+        spin = return_spin(spin_id=spin_id)
+
+        # Yield the data.
+        if return_id:
+            yield spin, spin_id
+        else:
+            yield spin
 
 
 def residue_loop(selection=None, pipe=None, full_info=False, return_id=False):

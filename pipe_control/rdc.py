@@ -41,7 +41,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, return_spin
 
 
 def back_calc(align_id=None):
@@ -509,13 +509,19 @@ def q_factors(spin_id=None):
             g1 = return_gyromagnetic_ratio(spin1.isotope)
             g2 = return_gyromagnetic_ratio(spin2.isotope)
 
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
-            if norm2_flag and dj != None and dj_new != dj:
-                warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+            # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
+            if  norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
+                warn(RelaxWarning("Pseudo-atoms are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
                 norm2_flag = False
-            else:
-                dj = dj_new
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            if norm2_flag:
+                dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
+                if dj != None and dj_new != dj:
+                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                    norm2_flag = False
+                else:
+                    dj = dj_new
 
             # Increment the number of data sets.
             N = N + 1
@@ -676,16 +682,18 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id2, line)))
             continue
 
-        # Test the error value (cannot be 0.0).
-        if error == 0.0:
-            raise RelaxError("An invalid error value of zero has been encountered.")
-
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
 
         # Create the container if needed.
         if interatom == None:
             interatom = create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+
+        # Test the error value (a value of 0.0 will cause the interatomic container to be deselected).
+        if error == 0.0:
+            interatom.select = False
+            warn(RelaxWarning("An error value of zero has been encountered, deselecting the interatomic container between spin '%s' and '%s'." % (spin_id1, spin_id2)))
+            continue
 
         # Store the data type as global data (need for the conversion of RDC data).
         if not hasattr(interatom, 'rdc_data_types'):

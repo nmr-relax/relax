@@ -80,7 +80,7 @@ from status import Status; status = Status()
 class Stereochem_analysis:
     """Class for performing the relative stereochemistry analysis."""
 
-    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id1_col=None, rdc_spin_id2_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
+    def __init__(self, stage=1, results_dir=None, num_ens=10000, num_models=10, configs=None, snapshot_dir='snapshots', snapshot_min=None, snapshot_max=None, pseudo=None, noe_file=None, noe_norm=None, rdc_name=None, rdc_file=None, rdc_spin_id1_col=None, rdc_spin_id2_col=None, rdc_data_col=None, rdc_error_col=None, bond_length=None, bond_length_file=None, log=None, bucket_num=200, lower_lim_noe=0.0, upper_lim_noe=600.0, lower_lim_rdc=0.0, upper_lim_rdc=1.0):
         """Set up for the stereochemistry analysis.
 
         @keyword stage:             Stage of analysis (see the module docstring above for the options).  
@@ -117,8 +117,10 @@ class Stereochem_analysis:
         @type rdc_data_col:         int
         @keyword rdc_error_col:     The error column of the RDC file.
         @type rdc_error_col:        int
-        @keyword bond_length:       The bond length value in meters.
-        @type bond_length:          float
+        @keyword bond_length:       The bond length value in meters.  This overrides the bond_length_file argument.
+        @type bond_length:          float or None
+        @keyword bond_length_file:  The file of bond lengths for each atom pair in meters.  The first and second columns must be the spin ID strings and the third column must contain the data.
+        @type bond_length_file:     float or None
         @keyword log:               Log file output flag (only for certain stages).
         @type log:                  bool
         @keyword bucket_num:        Number of buckets for the distribution plots.
@@ -159,6 +161,7 @@ class Stereochem_analysis:
         self.rdc_data_col = rdc_data_col
         self.rdc_error_col = rdc_error_col
         self.bond_length = bond_length
+        self.bond_length_file = bond_length_file
         self.log = log
         self.bucket_num = bucket_num
         self.lower_lim_noe = lower_lim_noe
@@ -611,7 +614,9 @@ class Stereochem_analysis:
             sys.stdout = open(self.results_dir+sep+"logs" + sep + "RDC_%s_analysis.log" % self.rdc_name, 'w')
 
         # The dipolar constant.
-        d = 3.0 / (2.0*pi) * dipolar_constant(g13C, g1H, self.bond_length)
+        d = 0.0
+        if self.bond_length != None:
+            d = 3.0 / (2.0*pi) * dipolar_constant(g13C, g1H, self.bond_length)
 
         # Create a directory for the save files.
         dir = self.results_dir + sep + "RDC_%s_results" % self.rdc_name
@@ -646,8 +651,11 @@ class Stereochem_analysis:
             self.interpreter.rdc.read(align_id=self.rdc_file, file=self.rdc_file, spin_id1_col=self.rdc_spin_id1_col, spin_id2_col=self.rdc_spin_id2_col, data_col=self.rdc_data_col, error_col=self.rdc_error_col)
 
             # Define the magnetic dipole-dipole relaxation interaction.
-            self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
-            self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@Q*', ave_dist=self.bond_length)
+            if self.bond_length != None:
+                self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+                self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@Q*', ave_dist=self.bond_length)
+            else:
+                self.interpreter.interatom.read_dist(file=self.bond_length_file, spin_id1_col=1, spin_id2_col=2, data_col=3)
 
             # Set the nuclear isotope.
             self.interpreter.spin.isotope(isotope='13C', spin_id='@C*')
@@ -676,7 +684,10 @@ class Stereochem_analysis:
 
                 # Get the positional information, then load the CH vectors.
                 self.interpreter.structure.get_pos(ave_pos=False)
-                self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+                if self.bond_length != None:
+                    self.interpreter.interatom.set_dist(spin_id1='@C*', spin_id2='@H*', ave_dist=self.bond_length)
+                else:
+                    self.interpreter.interatom.read_dist(file=self.bond_length_file, spin_id1_col=1, spin_id2_col=2, data_col=3)
                 self.interpreter.interatom.unit_vectors(ave=False)
 
                 # Minimisation.

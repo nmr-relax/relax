@@ -203,14 +203,14 @@ class N_state_model(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_rdcs_menthol.py')
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -9.784232367053e-05)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -7.158933725824e-05)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, 4.467570786770e-06)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 5.153319781627e-06)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 1.801211682780e-04)
-        self.assertAlmostEqual(cdp.chi2, 1044.9572886805781)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -2.183595975281820e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -7.014379141006286e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -1.744959310458587e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 3.646699595026552e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 2.592895195459969e-04)
+        self.assertAlmostEqual(cdp.chi2, 728.32717233107246)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.81262759306400001)
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.7547452273747645)
 
 
     def test_absolute_T(self):
@@ -918,6 +918,44 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[0].rdc_bc['A'], 4.1319413321530014)
         self.assertAlmostEqual(cdp.interatomic[1].rdc_bc['A'], -9.5802642470087989)
         self.assertAlmostEqual(cdp.interatomic[2].rdc_bc['A'], -16.244078605100817)
+
+
+    def test_pyrotartaric_anhydride_rdcs(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) RDC data."""
+
+        # The setup.
+        ds.abs_data = False
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000278497, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000253196, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+
+
+    def test_pyrotartaric_anhydride_absT(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) absolute T (J+D) data."""
+
+        # The setup.
+        ds.abs_data = True
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000278497, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000253196, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
 
 
     def test_rdc_tensor(self):

@@ -97,8 +97,8 @@ RDC_SPIN_ID2_COL = 2
 RDC_DATA_COL = 3
 RDC_ERROR_COL = None
 
-# Bond length.
-BOND_LENGTH = 1.117 * 1e-10
+# Bond length file.
+BOND_LENGTH_FILE = path_str + sep + "distances"
 
 # Log file output (only for certain stages).
 LOG = True
@@ -131,7 +131,7 @@ analysis = Stereochem_analysis(
     rdc_spin_id2_col=RDC_SPIN_ID2_COL,
     rdc_data_col=RDC_DATA_COL,
     rdc_error_col=RDC_ERROR_COL,
-    bond_length=BOND_LENGTH,
+    bond_length_file=BOND_LENGTH_FILE,
     log=LOG,
     bucket_num=BUCKET_NUM,
     lower_lim_noe=LOWER_LIM_NOE,

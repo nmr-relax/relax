@@ -351,7 +351,7 @@ def id_match(spin_id=None, interatom=None, pipe=None):
     return False
 
 
-def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True):
+def interatomic_loop(selection1=None, selection2=None, pipe=None, skip_desel=True):
     """Generator function for looping over all the interatomic data containers.
 
     @keyword selection1:    The optional spin ID selection of the first atom.
@@ -360,8 +360,8 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True)
     @type selection2:       str
     @keyword pipe:          The data pipe containing the spin.  Defaults to the current data pipe.
     @type pipe:             str
-    @keyword selected:      A flag which if True will only return selected interatomic data containers.
-    @type selected:         bool
+    @keyword skip_desel:    A flag which if True will cause only selected interatomic data containers to be returned.
+    @type skip_desel:       bool
     """
 
     # The data pipe.
@@ -386,7 +386,7 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True)
     # Loop over the containers, yielding them.
     for i in range(len(dp.interatomic)):
         # Skip deselected containers.
-        if selected and not dp.interatomic[i].select:
+        if skip_desel and not dp.interatomic[i].select:
             continue
 
         # Aliases.
@@ -458,7 +458,7 @@ def read_dist(file=None, dir=None, unit='meter', spin_id1_col=None, spin_id2_col
 
     # Extract the data from the file, and clean it up.
     file_data = extract_data(file, dir, sep=sep)
-    file_data = strip(file_data, comments=False)
+    file_data = strip(file_data, comments=True)
 
     # Loop over the RDC data.
     data = []
@@ -658,7 +658,7 @@ def unit_vectors(ave=True):
     # Loop over the interatomic data containers.
     no_vectors = True
     pos_info = False
-    for interatom in interatomic_loop():
+    for interatom in interatomic_loop(skip_desel=False):
         # Get the spin info.
         spin1 = return_spin(interatom.spin_id1)
         spin2 = return_spin(interatom.spin_id2)

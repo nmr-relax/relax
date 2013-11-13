@@ -30,7 +30,7 @@ __all__ = [
 
 # Python module imports.
 from copy import deepcopy
-from math import acos, cos, pi, sqrt
+from math import acos, cos, pi
 from minfx.generic import generic_minimise
 from minfx.grid import grid
 from numpy import array, dot, float64, ones, zeros
@@ -44,7 +44,6 @@ from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelErr
 from lib.float import isNaN, isInf
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
-from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from lib.structure.cones import Iso_cone
 from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from lib.structure.internal.object import Internal
@@ -56,7 +55,7 @@ from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, opt_uses_j_couplings, tensor_loop
+from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, opt_uses_j_couplings, return_pcs_data, return_rdc_data, tensor_loop
 from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_model_index, param_num, update_model
 from target_functions.n_state_model import N_state_opt
 from target_functions.potential import quad_pot
@@ -377,310 +376,6 @@ class N_state_model(API_base, API_common):
         return atomic_pos, paramag_centre
 
 
-    def _minimise_setup_pcs(self, sim_index=None):
-        """Set up the data structures for optimisation using PCSs as base data sets.
-
-        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:    None or int
-        @return:            The assembled data structures for using PCSs as the base data for optimisation.  These include:
-                                - the PCS values.
-                                - the unit vectors connecting the paramagnetic centre (the electron spin) to
-                                - the PCS weight.
-                                - the nuclear spin.
-                                - the pseudocontact shift constants.
-        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-1 array, numpy rank-1 array)
-        """
-
-        # Data setup tests.
-        if not hasattr(cdp, 'paramagnetic_centre') and (hasattr(cdp, 'paramag_centre_fixed') and cdp.paramag_centre_fixed):
-            raise RelaxError("The paramagnetic centre has not yet been specified.")
-        if not hasattr(cdp, 'temperature'):
-            raise RelaxError("The experimental temperatures have not been set.")
-        if not hasattr(cdp, 'spectrometer_frq'):
-            raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
-
-        # Initialise.
-        pcs = []
-        pcs_err = []
-        pcs_weight = []
-        temp = []
-        frq = []
-
-        # The PCS data.
-        for i in range(len(cdp.align_ids)):
-            # Alias the ID.
-            align_id = cdp.align_ids[i]
-
-            # Skip non-optimised data.
-            if not opt_uses_align_data(align_id):
-                continue
-
-            # Append empty arrays to the PCS structures.
-            pcs.append([])
-            pcs_err.append([])
-            pcs_weight.append([])
-
-            # Get the temperature for the PCS constant.
-            if align_id in cdp.temperature:
-                temp.append(cdp.temperature[align_id])
-
-            # The temperature must be given!
-            else:
-                raise RelaxError("The experimental temperature for the alignment ID '%s' has not been set." % align_id)
-
-            # Get the spectrometer frequency in Tesla units for the PCS constant.
-            if align_id in cdp.spectrometer_frq:
-                frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / g1H)
-
-            # The frequency must be given!
-            else:
-                raise RelaxError("The spectrometer frequency for the alignment ID '%s' has not been set." % align_id)
-
-            # Spin loop.
-            j = 0
-            for spin in spin_loop():
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Skip spins without PCS data.
-                if not hasattr(spin, 'pcs'):
-                    continue
-
-                # Append the PCSs to the list.
-                if align_id in spin.pcs.keys():
-                    if sim_index != None:
-                        pcs[-1].append(spin.pcs_sim[align_id][sim_index])
-                    else:
-                        pcs[-1].append(spin.pcs[align_id])
-                else:
-                    pcs[-1].append(None)
-
-                # Append the PCS errors.
-                if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
-                    pcs_err[-1].append(spin.pcs_err[align_id])
-                else:
-                    pcs_err[-1].append(None)
-
-                # Append the weight.
-                if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
-                    pcs_weight[-1].append(spin.pcs_weight[align_id])
-                else:
-                    pcs_weight[-1].append(1.0)
-
-                # Spin index.
-                j = j + 1
-
-        # Convert to numpy objects.
-        pcs = array(pcs, float64)
-        pcs_err = array(pcs_err, float64)
-        pcs_weight = array(pcs_weight, float64)
-
-        # Convert the PCS from ppm to no units.
-        pcs = pcs * 1e-6
-        pcs_err = pcs_err * 1e-6
-
-        # Return the data structures.
-        return pcs, pcs_err, pcs_weight, temp, frq
-
-
-    def _minimise_setup_rdcs(self, sim_index=None):
-        """Set up the data structures for optimisation using RDCs as base data sets.
-
-        @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:    None or int
-        @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
-                                - rdc, the RDC values.
-                                - rdc_err, the RDC errors.
-                                - rdc_weight, the RDC weights.
-                                - vectors, the interatomic vectors.
-                                - rdc_const, the dipolar constants.
-                                - absolute, the absolute value flags (as 1's and 0's).
-                                - T_flags, the flags for T = J+D type data (as 1's and 0's).
-                                - j_couplings, the J coupling values if the RDC data type is set to T = J+D.
-        @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-3 array, numpy rank-2 array, numpy rank-2 array)
-        """
-
-        # Initialise.
-        rdc = []
-        rdc_err = []
-        rdc_weight = []
-        unit_vect = []
-        rdc_const = []
-        absolute = []
-        T_flags = []
-        j_couplings = []
-
-        # The unit vectors, RDC constants, and J couplings.
-        for interatom in interatomic_loop():
-            # Get the spins.
-            spin1 = return_spin(interatom.spin_id1)
-            spin2 = return_spin(interatom.spin_id2)
-
-            # RDC checks.
-            if not check_rdcs(interatom, spin1, spin2):
-                continue
-
-            # Add the vectors.
-            if lib.arg_check.is_float(interatom.vector[0], raise_error=False):
-                unit_vect.append([interatom.vector])
-            else:
-                unit_vect.append(interatom.vector)
-
-            # Gyromagnetic ratios.
-            g1 = return_gyromagnetic_ratio(spin1.isotope)
-            g2 = return_gyromagnetic_ratio(spin2.isotope)
-
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
-
-            # Store the J coupling.
-            if opt_uses_j_couplings():
-                j_couplings.append(interatom.j_coupling)
-
-        # Fix the unit vector data structure.
-        num = None
-        for rdc_index in range(len(unit_vect)):
-            # Number of vectors.
-            if num == None:
-                if unit_vect[rdc_index] != None:
-                    num = len(unit_vect[rdc_index])
-                continue
-
-            # Check.
-            if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
-                raise RelaxError("The number of interatomic vectors for all no match:\n%s" % unit_vect)
-
-        # Missing unit vectors.
-        if num == None:
-            raise RelaxError("No interatomic vectors could be found.")
-
-        # Update None entries.
-        for i in range(len(unit_vect)):
-            if unit_vect[i] == None:
-                unit_vect[i] = [[None, None, None]]*num
-
-        # The RDC data.
-        for i in range(len(cdp.align_ids)):
-            # Alias the ID.
-            align_id = cdp.align_ids[i]
-
-            # Skip non-optimised data.
-            if not opt_uses_align_data(align_id):
-                continue
-
-            # Append empty arrays to the RDC structures.
-            rdc.append([])
-            rdc_err.append([])
-            rdc_weight.append([])
-            absolute.append([])
-            T_flags.append([])
-
-            # Interatom loop.
-            for interatom in interatomic_loop():
-                # Get the spins.
-                spin1 = return_spin(interatom.spin_id1)
-                spin2 = return_spin(interatom.spin_id2)
-
-                # Skip deselected spins.
-                if not spin1.select or not spin2.select:
-                    continue
-
-                # Only use interatomic data containers with RDC and vector data.
-                if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
-                    continue
-
-                # T-type data.
-                if align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
-                    T_flags[-1].append(True)
-                else:
-                    T_flags[-1].append(False)
-
-                # Check for J couplings if the RDC data type is T = J+D.
-                if T_flags[-1][-1] and not hasattr(interatom, 'j_coupling'):
-                    continue
-
-                # Defaults of None.
-                value = None
-                error = None
-
-                # Pseudo-atom set up.
-                if (hasattr(spin1, 'members') or hasattr(spin2, 'members')) and align_id in interatom.rdc.keys():
-                    # Skip non-Me groups.
-                    if (hasattr(spin1, 'members') and len(spin1.members) != 3) or (hasattr(spin2, 'members') and len(spin2.members) != 3):
-                        continue
-
-                    # The RDC for the Me-pseudo spin where:
-                    #     <D> = -1/3 Dpar.
-                    # See Verdier, et al., JMR, 2003, 163, 353-359.
-                    if sim_index != None:
-                        value = -3.0 * interatom.rdc_sim[align_id][sim_index]
-                    else:
-                        value = -3.0 * interatom.rdc[align_id]
-
-                    # The error.
-                    if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                        # T values.
-                        if T_flags[-1][-1]:
-                            error = -3.0 * sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
-
-                        # D values.
-                        else:
-                            error = -3.0 * interatom.rdc_err[align_id]
-
-                # Normal set up.
-                elif align_id in interatom.rdc.keys():
-                    # The RDC.
-                    if sim_index != None:
-                        value = interatom.rdc_sim[align_id][sim_index]
-                    else:
-                        value = interatom.rdc[align_id]
-
-                    # The error.
-                    if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-                        # T values.
-                        if T_flags[-1][-1]:
-                            error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
-
-                        # D values.
-                        else:
-                            error = interatom.rdc_err[align_id]
-
-                # Append the RDCs to the list.
-                rdc[-1].append(value)
-
-                # Append the RDC errors.
-                rdc_err[-1].append(error)
-
-                # Append the weight.
-                if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
-                    rdc_weight[-1].append(interatom.rdc_weight[align_id])
-                else:
-                    rdc_weight[-1].append(1.0)
-
-                # Append the absolute value flag.
-                if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
-                    absolute[-1].append(interatom.absolute_rdc[align_id])
-                else:
-                    absolute[-1].append(False)
-
-        # Convert to numpy objects.
-        rdc = array(rdc, float64)
-        rdc_err = array(rdc_err, float64)
-        rdc_weight = array(rdc_weight, float64)
-        unit_vect = array(unit_vect, float64)
-        rdc_const = array(rdc_const, float64)
-        absolute = array(absolute, float64)
-        T_flags = array(T_flags, float64)
-        if opt_uses_j_couplings():
-            j_couplings = array(j_couplings, float64)
-        else:
-            j_couplings = None
-
-        # Return the data structures.
-        return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute, T_flags, j_couplings
-
-
     def _minimise_setup_tensors(self, sim_index=None):
         """Set up the data structures for optimisation using alignment tensors as base data sets.
 
@@ -836,12 +531,12 @@ class N_state_model(API_base, API_common):
         # Get the data structures for optimisation using PCSs as base data sets.
         pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, temp, frq = self._minimise_setup_pcs(sim_index=sim_index)
+            pcs, pcs_err, pcs_weight, temp, frq = return_pcs_data(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
-        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings = None, None, None, None, None, None, None, None
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = None, None, None, None, None, None, None, None, None
         if 'rdc' in data_types:
-            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings = self._minimise_setup_rdcs(sim_index=sim_index)
+            rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = return_rdc_data(sim_index=sim_index)
 
         # Get the fixed tensors.
         fixed_tensors = None
@@ -870,7 +565,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, rdc_pseudo_flags=rdc_pseudo_flags, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
