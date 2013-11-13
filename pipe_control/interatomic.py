@@ -400,10 +400,6 @@ def interatomic_loop(selection1=None, selection2=None, pipe=None, selected=True)
         res2 =  cdp.mol[mol_index2].res[res_index2]
         spin2 = cdp.mol[mol_index2].res[res_index2].spin[spin_index2]
 
-        # Skip if either spin is deselected.
-        if not spin1.select or not spin2.select:
-            continue
-
         # The different selection combinations.
         if select_obj:
             sel1 = select_obj.contains_spin(spin_name=spin1.name, spin_num=spin1.num, res_name=res1.name, res_num=res1.num, mol=mol1.name)
