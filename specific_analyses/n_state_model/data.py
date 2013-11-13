@@ -553,7 +553,6 @@ def return_rdc_data(sim_index=None):
             # Loop over the atoms of the pseudo-atom, storing the data.
             pseudo_unit_vect = []
             pseudo_rdc_const = []
-            pseudo_j_couplings = []
             for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
 
                 # Get the corresponding interatomic data container.
@@ -572,17 +571,12 @@ def return_rdc_data(sim_index=None):
                 # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
                 pseudo_rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, pseudo_interatom.r))
 
-                # Store the J coupling.
-                if opt_uses_j_couplings():
-                    pseudo_j_couplings.append(pseudo_interatom.j_coupling)
-
             # Reorder the unit vectors so that the structure and pseudo-atom dimensions are swapped.
             pseudo_unit_vect = transpose(array(pseudo_unit_vect, float64), (1, 0, 2))
 
             # Block append the pseudo-data.
             unit_vect.append(pseudo_unit_vect)
             rdc_const.append(pseudo_rdc_const)
-            j_couplings.append(pseudo_j_couplings)
 
         # Normal atom.
         else:
@@ -598,9 +592,9 @@ def return_rdc_data(sim_index=None):
             # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
             rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
 
-            # Store the J coupling.
-            if opt_uses_j_couplings():
-                j_couplings.append(interatom.j_coupling)
+        # Store the measured J coupling.
+        if opt_uses_j_couplings():
+            j_couplings.append(interatom.j_coupling)
 
     # Fix the unit vector data structure.
     num = None
@@ -737,9 +731,7 @@ def return_rdc_data(sim_index=None):
     rdc_weight = array(rdc_weight, float64)
     absolute = array(absolute, int32)
     T_flags = array(T_flags, int32)
-    if opt_uses_j_couplings():
-        j_couplings = array(j_couplings, float64)
-    else:
+    if not opt_uses_j_couplings():
         j_couplings = None
     pseudo_flags = array(pseudo_flags, int32)
 
