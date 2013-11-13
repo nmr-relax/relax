@@ -224,6 +224,137 @@ def ave_rdc_tensor_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
     return dj * grad
 
 
+def ave_rdc_tensor_pseudoatom(dj, vect, N, A, weights=None):
+    """Calculate the ensemble and pseudo-atom averaged RDC, using the 3D tensor.
+
+    This function calculates the average RDC for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The RDC for each pseudo-atom is calculated and then averaged.  The formula for this ensemble and pseudo-atom average RDC value is::
+
+                         _N_        _M_
+                         \        1 \         T
+        Dij(theta)  = dj  >  pc . -  >  mu_jcd . Ai . mu_jcd,
+                         /__      M /__
+                         c=1        d=1
+
+    where:
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - c is the index over the states or multiple structures,
+        - d is the index over the pseudo-atoms,
+        - theta is the parameter vector,
+        - dj is the dipolar constant for spin j,
+        - N is the total number of states or structures,
+        - M is the total number of pseudo-atoms,
+        - pc is the population probability or weight associated with state c (equally weighted to 1/N if weights are not provided),
+        - mu_jcd is the unit vector corresponding to spin j, state c, and pseudo-atom d,
+        - Ai is the alignment tensor.
+
+    The dipolar constant is defined as::
+
+        dj = 3 / (2pi) d',
+
+    where the factor of 2pi is to convert from units of rad.s^-1 to Hertz, the factor of 3 is associated with the alignment tensor and the pure dipolar constant in SI units is::
+
+               mu0 gI.gS.h_bar
+        d' = - --- ----------- ,
+               4pi    r**3
+
+    where:
+        - mu0 is the permeability of free space,
+        - gI and gS are the gyromagnetic ratios of the I and S spins,
+        - h_bar is Dirac's constant which is equal to Planck's constant divided by 2pi,
+        - r is the distance between the two spins.
+
+
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           list of float
+    @param vect:        The unit vector matrix.  The first dimension corresponds to the structural index, the second dimension to the pseudo-atom index, and the third dimension is the coordinates of the unit vector.
+    @type vect:         numpy matrix
+    @param N:           The total number of structures.
+    @type N:            int
+    @param A:           The alignment tensor.
+    @type A:            numpy rank-2 3D tensor
+    @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
+    @type weights:      numpy rank-1 array or None
+    @return:            The average RDC value.
+    @rtype:             float
+    """
+
+    # Calculate M.
+    M = len(dj)
+
+    # Initial back-calculated RDC value.
+    val = 0.0
+
+    # Loop over the pseudo-atoms, calculating the average RDC for the structural ensemble.
+    for d in range(M):
+        val += ave_rdc_tensor(dj[d], vect[:, d, :], N, A, weights)
+
+    # Average.
+    val = val / M
+
+    # Return the averaged value.
+    return val
+
+
+def ave_rdc_tensor_pseudoatom_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
+    """Calculate the ensemble and pseudo-atom average RDC gradient element for Amn, using the 3D tensor.
+
+    This function calculates the average RDC gradient for a set of XH bond vectors from a structural ensemble, using the 3D tensorial form of the alignment tensor.  The formula for this ensemble average RDC gradient element is::
+
+                          _N_        _M_
+        dDij(theta)       \        1 \         T   dAi
+        -----------  = dj  >  pc . -  >  mu_jcd . ---- . mu_jcd,
+           dAmn           /__      M /__          dAmn
+                          c=1        d=1
+
+    where:
+        - i is the alignment tensor index,
+        - j is the index over spins,
+        - m, the index over the first dimension of the alignment tensor m = {x, y, z}.
+        - n, the index over the second dimension of the alignment tensor n = {x, y, z},
+        - c is the index over the states or multiple structures,
+        - d is the index over the pseudo-atoms,
+        - theta is the parameter vector,
+        - Amn is the matrix element of the alignment tensor,
+        - dj is the dipolar constant for spin j,
+        - N is the total number of states or structures,
+        - M is the total number of pseudo-atoms,
+        - pc is the population probability or weight associated with state c (equally weighted to 1/N if weights are not provided),
+        - mu_jc is the unit vector corresponding to spin j and state c,
+        - dAi/dAmn is the partial derivative of the alignment tensor with respect to element Amn.
+
+
+    @param dj:          The dipolar constant for spin j.
+    @type dj:           float
+    @param vect:        The unit XH bond vector matrix.  The first dimension corresponds to the structural index, the second dimension is the coordinates of the unit vector.
+    @type vect:         numpy matrix
+    @param N:           The total number of structures.
+    @type N:            int
+    @param dAi_dAmn:    The alignment tensor derivative with respect to parameter Amn.
+    @type dAi_dAmn:     numpy rank-2 3D tensor
+    @keyword weights:   The weights for each member of the ensemble (the last member need not be supplied).
+    @type weights:      numpy rank-1 array
+    @return:            The average RDC gradient element.
+    @rtype:             float
+    """
+
+    # Calculate M.
+    M = len(dj)
+
+    # Initial back-calculated RDC value.
+    grad = 0.0
+
+    # Loop over the pseudo-atoms, calculating the average RDC for the structural ensemble.
+    for d in range(M):
+        grad += ave_rdc_tensor_dDij_dAmn(dj[d], vect[:, d, :], N, dAi_dAmn, weights)
+
+    # Average.
+    grad = grad / M
+
+    # Return the average RDC gradient element.
+    return grad
+
+
 def rdc_tensor(dj, mu, A):
     """Calculate the RDC, using the 3D alignment tensor.
 
