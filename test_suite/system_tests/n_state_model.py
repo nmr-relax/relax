@@ -203,14 +203,14 @@ class N_state_model(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'absolute_rdcs_menthol.py')
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -9.784232367053e-05)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -7.158933725824e-05)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axy, 4.467570786770e-06)
-        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 5.153319781627e-06)
-        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 1.801211682780e-04)
-        self.assertAlmostEqual(cdp.chi2, 1044.9572886805781)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -2.183595975281820e-04)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, -7.014379141006286e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -1.744959310458587e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 3.646699595026552e-05)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, 2.592895195459969e-04)
+        self.assertAlmostEqual(cdp.chi2, 728.32717233107246)
         self.assertAlmostEqual(cdp.q_rdc, 0.0)
-        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.81262759306400001)
+        self.assertAlmostEqual(cdp.q_rdc_norm2, 0.7547452273747645)
 
 
     def test_absolute_T(self):
