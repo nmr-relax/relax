@@ -676,16 +676,18 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
             warn(RelaxWarning("The spin ID '%s' cannot be found in the current data pipe, skipping the data %s." % (spin_id2, line)))
             continue
 
-        # Test the error value (cannot be 0.0).
-        if error == 0.0:
-            raise RelaxError("An invalid error value of zero has been encountered.")
-
         # Get the interatomic data container.
         interatom = return_interatom(spin_id1, spin_id2)
 
         # Create the container if needed.
         if interatom == None:
             interatom = create_interatom(spin_id1=spin_id1, spin_id2=spin_id2)
+
+        # Test the error value (a value of 0.0 will cause the interatomic container to be deselected).
+        if error == 0.0:
+            interatom.select = False
+            warn(RelaxWarning("An error value of zero has been encountered, deselecting the interatomic container between spin '%s' and '%s'." % (spin_id1, spin_id2)))
+            continue
 
         # Store the data type as global data (need for the conversion of RDC data).
         if not hasattr(interatom, 'rdc_data_types'):
