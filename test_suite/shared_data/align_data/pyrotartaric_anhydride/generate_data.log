@@ -1,0 +1,300 @@
+
+
+
+                                  relax repository checkout r21413
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'generate_data.py'
+----------------------------------------------------------------------------------------------------
+# Python module imports.
+from numpy import dot, float64, transpose, zeros
+from os import sep
+from re import search
+
+# relax module imports.
+from pipe_control.interatomic import return_interatom
+from status import Status; status = Status()
+
+
+def convert_tensor(A):
+    """Convert the rank-1, 5D tensor form into a rank-2, 3D tensor."""
+
+    # Convert the tensor into numpy matrix form.
+    tensor = zeros((3, 3), float64)
+    tensor[0, 0] = A[0]
+    tensor[0, 1] = tensor[1, 0] = A[2]
+    tensor[0, 2] = tensor[2, 0] = A[3]
+    tensor[1, 1] = A[1]
+    tensor[1, 2] = tensor[2, 1] = A[4]
+    tensor[2, 2] = -A[0]-A[1]
+
+    # Return the tensor.
+    return tensor
+
+
+# Path of the files.
+str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+# Create the data pipe.
+pipe.create('pcb3lyp_R', 'N-state')
+
+# Load the structure.
+structure.read_pdb(file='pyrotartaric_anhydride.pdb', dir=str_path)
+
+# Set up the 13C and 1H spins information.
+structure.load_spins(spin_id='@C*', ave_pos=False)
+structure.load_spins(spin_id='@H*', ave_pos=False)
+
+# Set up the pseudo-atoms.
+spin.create_pseudo(spin_name='Q9', members=['@10', '@11', '@12'], averaging="linear")
+sequence.display()
+
+# Define the nuclear isotopes of all spins and pseudo-spins.
+spin.isotope(isotope='13C', spin_id='@C*')
+spin.isotope(isotope='1H', spin_id='@H*')
+spin.isotope(isotope='1H', spin_id='@Q*')
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.read_dist(file='R_prop_car.txt', unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=5)
+interatom.unit_vectors(ave=False)
+
+# A randomly rotated, synthetic tensor {Cxx, Cyy, Cxy, Cxz, Cyz} with Ca=1 and Cr=0.5.
+C = [-0.351261, 0.556994, -0.506392, 0.560544, -0.286367]
+
+# Convert to a 3D matrix.
+tensor = convert_tensor(C)
+
+# Scale to become a realistic alignment tensor (Pr matrix elements between 0 and 1, and small tensor).
+tensor = tensor / 2000.0
+
+# The dipolar constant.
+h = 6.62606876e-34      # Planck constant.
+h_bar = h / ( 2.0*pi )  # Dirac constant.
+mu0 = 4.0 * pi * 1e-7   # Permeability of free space.
+gc = 6.728 * 1e7        # 13C gyromagnetic ratio.
+gh = 26.7522212e7       # 1H gyromagnetic ratio.
+kappa = -3. * 1.0/(2.0*pi) * mu0/(4.0*pi) * gc * gh * h_bar
+
+# The input data.
+file = open('R_prop_car.txt')
+data = file.readlines()
+file.close()
+
+# Open the results files.
+rdc_file = open('R_rdcs', 'w')
+rdc_file.write("%-10s %-10s %20s %20s %20s %10s %20s\n" % ("#spin_id1", "spin_id2", "RDC", "abs(T)", "abs(J)", "J_sign", "dist"))
+
+# Loop over the data.
+for line in data:
+    # Skip lines with no data.
+    if not search('^ ', line):
+        continue
+
+    # Split up the line.
+    spin_id1, spin_id2, j, j_sign, dist = line.split()
+
+    # Get the interatomic data container.
+    interatom = return_interatom(spin_id1, spin_id2)
+
+    # The dipolar constant.
+    r = float(dist) * 1e-10
+    if r == 0.0:
+        dip_const = 1e100
+    else:
+        dip_const = kappa / r**3
+
+    # J-coupling.
+    j = float(j) * int(j_sign)
+
+    # Calculate the RDC.
+    rdc = dip_const * dot(transpose(interatom.vector), dot(tensor, interatom.vector))
+
+    # T value.
+    t = abs(j + rdc)
+
+    # Write out the data.
+    rdc_file.write("%-10s %-10s %20.11f %20.11f %20.11f %10s %20s\n" % (spin_id1, spin_id2, rdc, t, abs(j), j_sign, dist))
+
+# Print out the tensor.
+print('\n')
+print("The tensor to find is:")
+print(tensor)
+print('\n')
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='pcb3lyp_R', pipe_type='N-state', bundle=None)
+
+relax> structure.read_pdb(file='pyrotartaric_anhydride.pdb', dir='/data/edau/relax/relax-trunk2/test_suite/shared_data/structures', read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, merge=False)
+
+Internal relax PDB parser.
+Opening the file '/data/edau/relax/relax-trunk2/test_suite/shared_data/structures/pyrotartaric_anhydride.pdb' for reading.
+Adding molecule 'pyrotartaric_anhydride_mol1' to model None (from the original molecule number 1 of model None)
+
+relax> structure.load_spins(spin_id='@C*', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name                     res_num    res_name    spin_num    spin_name    
+pyrotartaric_anhydride_mol1    0          None        1           C            
+pyrotartaric_anhydride_mol1    0          None        3           C            
+pyrotartaric_anhydride_mol1    0          None        4           C            
+pyrotartaric_anhydride_mol1    0          None        5           C            
+pyrotartaric_anhydride_mol1    0          None        9           C            
+
+relax> structure.load_spins(spin_id='@H*', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name                     res_num    res_name    spin_num    spin_name    
+pyrotartaric_anhydride_mol1    0          None        6           H            
+pyrotartaric_anhydride_mol1    0          None        7           H            
+pyrotartaric_anhydride_mol1    0          None        8           H            
+pyrotartaric_anhydride_mol1    0          None        10          H            
+pyrotartaric_anhydride_mol1    0          None        11          H            
+pyrotartaric_anhydride_mol1    0          None        12          H            
+
+relax> spin.create_pseudo(spin_name='Q9', spin_num=None, res_id=None, members=['@10', '@11', '@12'], averaging='linear')
+
+relax> sequence.display(sep=None, mol_name_flag=True, res_num_flag=True, res_name_flag=True, spin_num_flag=True, spin_name_flag=True)
+# mol_name                     res_num    res_name    spin_num    spin_name    
+pyrotartaric_anhydride_mol1    0          None        1           C            
+pyrotartaric_anhydride_mol1    0          None        3           C            
+pyrotartaric_anhydride_mol1    0          None        4           C            
+pyrotartaric_anhydride_mol1    0          None        5           C            
+pyrotartaric_anhydride_mol1    0          None        9           C            
+pyrotartaric_anhydride_mol1    0          None        6           H            
+pyrotartaric_anhydride_mol1    0          None        7           H            
+pyrotartaric_anhydride_mol1    0          None        8           H            
+pyrotartaric_anhydride_mol1    0          None        10          H            
+pyrotartaric_anhydride_mol1    0          None        11          H            
+pyrotartaric_anhydride_mol1    0          None        12          H            
+pyrotartaric_anhydride_mol1    0          None        None        Q9           
+
+relax> spin.isotope(isotope='13C', spin_id='@C*', force=False)
+
+relax> spin.isotope(isotope='1H', spin_id='@H*', force=False)
+
+relax> spin.isotope(isotope='1H', spin_id='@Q*', force=False)
+
+relax> interatom.read_dist(file='R_prop_car.txt', dir=None, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=5, sep=None)
+Opening the file 'R_prop_car.txt' for reading.
+Creating an interatomic data container between the spins '@9' and '@10'.
+Creating an interatomic data container between the spins '@9' and '@11'.
+Creating an interatomic data container between the spins '@9' and '@12'.
+Creating an interatomic data container between the spins '@9' and '@Q9'.
+Creating an interatomic data container between the spins '@4' and '@6'.
+Creating an interatomic data container between the spins '@5' and '@7'.
+Creating an interatomic data container between the spins '@5' and '@8'.
+Creating an interatomic data container between the spins '@1' and '@6'.
+Creating an interatomic data container between the spins '@3' and '@6'.
+Creating an interatomic data container between the spins '@5' and '@6'.
+Creating an interatomic data container between the spins '@9' and '@6'.
+Creating an interatomic data container between the spins '@1' and '@7'.
+Creating an interatomic data container between the spins '@3' and '@7'.
+Creating an interatomic data container between the spins '@4' and '@7'.
+Creating an interatomic data container between the spins '@9' and '@7'.
+Creating an interatomic data container between the spins '@1' and '@8'.
+Creating an interatomic data container between the spins '@3' and '@8'.
+Creating an interatomic data container between the spins '@4' and '@8'.
+Creating an interatomic data container between the spins '@9' and '@8'.
+Creating an interatomic data container between the spins '@3' and '@Q9'.
+Creating an interatomic data container between the spins '@4' and '@Q9'.
+Creating an interatomic data container between the spins '@5' and '@Q9'.
+Creating an interatomic data container between the spins '@3' and '@10'.
+Creating an interatomic data container between the spins '@4' and '@10'.
+Creating an interatomic data container between the spins '@5' and '@10'.
+Creating an interatomic data container between the spins '@3' and '@11'.
+Creating an interatomic data container between the spins '@4' and '@11'.
+Creating an interatomic data container between the spins '@5' and '@11'.
+Creating an interatomic data container between the spins '@3' and '@12'.
+Creating an interatomic data container between the spins '@4' and '@12'.
+Creating an interatomic data container between the spins '@5' and '@12'.
+The following averaged distances have been read:
+
+# Spin_ID_1    Spin_ID_2    Ave_distance(meters)      
+'@9'           '@10'        1.0898410000000001e-10    
+'@9'           '@11'        1.0907240000000001e-10    
+'@9'           '@12'        1.0919479999999999e-10    
+'@9'           '@Q9'        9.999e-07                 
+'@4'           '@6'         1.0951360000000002e-10    
+'@5'           '@7'         1.0934950000000001e-10    
+'@5'           '@8'         1.0889819999999999e-10    
+'@1'           '@6'         2.996136e-10              
+'@3'           '@6'         2.091217e-10              
+'@5'           '@6'         2.1635450000000002e-10    
+'@9'           '@6'         2.150225e-10              
+'@1'           '@7'         2.1149010000000002e-10    
+'@3'           '@7'         3.04344e-10               
+'@4'           '@7'         2.192949e-10              
+'@9'           '@7'         2.67371e-10               
+'@1'           '@8'         2.139021e-10              
+'@3'           '@8'         3.252832e-10              
+'@4'           '@8'         2.219687e-10              
+'@9'           '@8'         3.256413e-10              
+'@3'           '@Q9'        9.999e-07                 
+'@4'           '@Q9'        9.999e-07                 
+'@5'           '@Q9'        9.999e-07                 
+'@3'           '@10'        2.778083e-10              
+'@4'           '@10'        2.168145e-10              
+'@5'           '@10'        3.527661e-10              
+'@3'           '@11'        3.473732e-10              
+'@4'           '@11'        2.1595209999999999e-10    
+'@5'           '@11'        2.888372e-10              
+'@3'           '@12'        2.8261090000000005e-10    
+'@4'           '@12'        2.1738e-10                
+'@5'           '@12'        2.84923e-10               
+
+relax> interatom.unit_vectors(ave=False)
+No averaging of the vectors.
+Calculated 1 C-H unit vector between the spins '@9' and '@10'.
+Calculated 1 C-H unit vector between the spins '@9' and '@11'.
+Calculated 1 C-H unit vector between the spins '@9' and '@12'.
+Calculated 1 C-Q9 unit vector between the spins '@9' and '@Q9'.
+Calculated 1 C-H unit vector between the spins '@4' and '@6'.
+Calculated 1 C-H unit vector between the spins '@5' and '@7'.
+Calculated 1 C-H unit vector between the spins '@5' and '@8'.
+Calculated 1 C-H unit vector between the spins '@1' and '@6'.
+Calculated 1 C-H unit vector between the spins '@3' and '@6'.
+Calculated 1 C-H unit vector between the spins '@5' and '@6'.
+Calculated 1 C-H unit vector between the spins '@9' and '@6'.
+Calculated 1 C-H unit vector between the spins '@1' and '@7'.
+Calculated 1 C-H unit vector between the spins '@3' and '@7'.
+Calculated 1 C-H unit vector between the spins '@4' and '@7'.
+Calculated 1 C-H unit vector between the spins '@9' and '@7'.
+Calculated 1 C-H unit vector between the spins '@1' and '@8'.
+Calculated 1 C-H unit vector between the spins '@3' and '@8'.
+Calculated 1 C-H unit vector between the spins '@4' and '@8'.
+Calculated 1 C-H unit vector between the spins '@9' and '@8'.
+Calculated 1 C-Q9 unit vector between the spins '@3' and '@Q9'.
+Calculated 1 C-Q9 unit vector between the spins '@4' and '@Q9'.
+Calculated 1 C-Q9 unit vector between the spins '@5' and '@Q9'.
+Calculated 1 C-H unit vector between the spins '@3' and '@10'.
+Calculated 1 C-H unit vector between the spins '@4' and '@10'.
+Calculated 1 C-H unit vector between the spins '@5' and '@10'.
+Calculated 1 C-H unit vector between the spins '@3' and '@11'.
+Calculated 1 C-H unit vector between the spins '@4' and '@11'.
+Calculated 1 C-H unit vector between the spins '@5' and '@11'.
+Calculated 1 C-H unit vector between the spins '@3' and '@12'.
+Calculated 1 C-H unit vector between the spins '@4' and '@12'.
+Calculated 1 C-H unit vector between the spins '@5' and '@12'.
+
+
+The tensor to find is:
+[[-0.0001756305 -0.000253196   0.000280272 ]
+ [-0.000253196   0.000278497  -0.0001431835]
+ [ 0.000280272  -0.0001431835 -0.0001028665]]
+
+
+
