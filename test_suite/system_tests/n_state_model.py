@@ -920,6 +920,44 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[2].rdc_bc['A'], -16.244078605100817)
 
 
+    def test_pyrotartaric_anhydride_rdcs(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) RDC data."""
+
+        # The setup.
+        ds.abs_data = False
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000278497, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000253196, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+
+
+    def test_pyrotartaric_anhydride_absT(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) absolute T (J+D) data."""
+
+        # The setup.
+        ds.abs_data = True
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000278497, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000253196, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+
+
     def test_rdc_tensor(self):
         """Test the calculation of an alignment tensor from RDC data."""
 
