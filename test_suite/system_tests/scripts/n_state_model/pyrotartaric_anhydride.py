@@ -39,7 +39,7 @@ self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@H*')
 self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@Q*')
 
 # Define the magnetic dipole-dipole relaxation interaction.
-self._execute_uf(uf_name='interatom.read_dist', file='R_rdcs', dir=data_path, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=5)
+self._execute_uf(uf_name='interatom.read_dist', file='R_rdcs', dir=data_path, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=7)
 self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
 # Load the J and J+D data.
