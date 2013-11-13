@@ -41,7 +41,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, return_spin
 
 
 def back_calc(align_id=None):
@@ -509,13 +509,19 @@ def q_factors(spin_id=None):
             g1 = return_gyromagnetic_ratio(spin1.isotope)
             g2 = return_gyromagnetic_ratio(spin2.isotope)
 
-            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
-            dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
-            if norm2_flag and dj != None and dj_new != dj:
-                warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+            # Skip the 2Da^2(4 + 3R)/5 normalised Q factor if pseudo-atoms are present.
+            if  norm2_flag and (is_pseudoatom(spin1) or is_pseudoatom(spin2)):
+                warn(RelaxWarning("Pseudo-atoms are present, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
                 norm2_flag = False
-            else:
-                dj = dj_new
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            if norm2_flag:
+                dj_new = 3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r)
+                if dj != None and dj_new != dj:
+                    warn(RelaxWarning("The dipolar constant is not the same for all RDCs, skipping the Q factor normalised with 2Da^2(4 + 3R)/5."))
+                    norm2_flag = False
+                else:
+                    dj = dj_new
 
             # Increment the number of data sets.
             N = N + 1
