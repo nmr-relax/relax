@@ -13,7 +13,7 @@ from status import Status; status = Status()
 
 # Setup for stand-alone operation.
 if not hasattr(ds, 'abs_data'):
-    ds.abs_data = True
+    ds.abs_data = 'mix'
 
 # Path of the files.
 str_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
@@ -42,13 +42,22 @@ self._execute_uf(uf_name='spin.isotope', isotope='1H', spin_id='@Q*')
 self._execute_uf(uf_name='interatom.read_dist', file='R_rdcs', dir=data_path, unit='Angstrom', spin_id1_col=1, spin_id2_col=2, data_col=7)
 self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 
+# Load the short range RDC data and long range J and J+D data.
+if ds.abs_data == 'mix':
+    # Short range RDCs.
+    self._execute_uf(uf_name='rdc.read', align_id='test', file='R_rdcs_short_range', dir=data_path, data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=4, absolute=False)
+
+    # Long range J and J+D data.
+    self._execute_uf(uf_name='rdc.read', align_id='test', file='R_rdcs_long_range', dir=data_path, data_type='T', spin_id1_col=1, spin_id2_col=2, data_col=4, absolute=True)
+    self._execute_uf(uf_name='j_coupling.read', file='R_rdcs_long_range', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=5, sign_col=6)
+
 # Load the J and J+D data.
-if ds.abs_data:
+elif ds.abs_data == 'T':
     self._execute_uf(uf_name='rdc.read', align_id='test', file='R_rdcs', dir=data_path, data_type='T', spin_id1_col=1, spin_id2_col=2, data_col=4, absolute=True)
     self._execute_uf(uf_name='j_coupling.read', file='R_rdcs', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=5, sign_col=6)
 
 # Load the RDC data.
-else:
+elif ds.abs_data == 'D':
     self._execute_uf(uf_name='rdc.read', align_id='test', file='R_rdcs', dir=data_path, spin_id1_col=1, spin_id2_col=2, data_col=3)
 
 # Set up the model.
