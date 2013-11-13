@@ -61,7 +61,7 @@ self._execute_uf(uf_name='deselect.spin', spin_id='@12')
 
 # Minimisation.
 self._execute_uf(uf_name='grid_search', inc=4)
-self._execute_uf(uf_name='minimise', min_algor='newton')
+self._execute_uf(uf_name='minimise', min_algor='simplex')
 
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')
