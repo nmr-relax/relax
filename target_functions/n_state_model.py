@@ -951,6 +951,10 @@ class N_state_opt:
                             self.drdc_theta[align_index*5+3, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[3], weights=self.probs)
                             self.drdc_theta[align_index*5+4, align_index, j] = ave_rdc_tensor_dDij_dAmn(self.dip_const[j], self.dip_vect[j], self.N, self.dA[4], weights=self.probs)
 
+                        # Add the J coupling to convert into the back-calculated T = J+D value.
+                        if self.T_flags[align_index, j]:
+                            raise RelaxError("Gradients for T = J+D data have not been implemented yet.")
+
             # Construct the Amn partial derivative components for the PCS.
             if not self.fixed_tensors[align_index]:
                 for j in range(self.num_spins):
