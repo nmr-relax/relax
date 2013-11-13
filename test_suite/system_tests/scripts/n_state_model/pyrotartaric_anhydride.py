@@ -60,14 +60,14 @@ self._execute_uf(uf_name='deselect.spin', spin_id='@11')
 self._execute_uf(uf_name='deselect.spin', spin_id='@12')
 
 # Minimisation.
-self._execute_uf(uf_name='grid_search', inc=11)
+self._execute_uf(uf_name='grid_search', inc=4)
 self._execute_uf(uf_name='minimise', min_algor='newton')
 
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')
 
 # Create a correlation plot.
-self._execute_uf(uf_name='rdc.corr_plot', force=True)
+self._execute_uf(uf_name='rdc.corr_plot', file='devnull', force=True)
 
 # Save the state.
 self._execute_uf(uf_name='state.save', state='devnull', force=True)
