@@ -38,7 +38,7 @@ from target_functions.chi2 import chi2, dchi2_element, d2chi2_element
 class N_state_opt:
     """Class containing the target function of the optimisation of the N-state model."""
 
-    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, T_flags=None, j_couplings=None, rdc_pseudo_flags=None, temp=None, frq=None, dip_const=None, absolute_rdc=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
+    def __init__(self, model=None, N=None, init_params=None, probs=None, full_tensors=None, red_data=None, red_errors=None, full_in_ref_frame=None, fixed_tensors=None, pcs=None, pcs_errors=None, pcs_weights=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, T_flags=None, j_couplings=None, rdc_pseudo_flags=None, pcs_pseudo_flags=None, temp=None, frq=None, dip_const=None, absolute_rdc=None, atomic_pos=None, paramag_centre=None, scaling_matrix=None, centre_fixed=True):
         """Set up the class instance for optimisation.
 
         The N-state models
@@ -141,6 +141,8 @@ class N_state_opt:
         @type j_couplings:          numpy rank-1 array
         @keyword rdc_pseudo_flags:  The array of flags specifying if one of the atoms of the interatomic pair for the RDC are pseudo-atoms.  The indices correspond to the interatomic pairs.
         @type rdc_pseudo_flags:     numpy rank-1 int32 array
+        @keyword pcs_pseudo_flags:  The array of flags specifying if one of the atoms of the interatomic pair for the PCS are pseudo-atoms.  The indices correspond to the interatomic pairs.
+        @type pcs_pseudo_flags:     numpy rank-1 int32 array
         @keyword temp:              The temperature of each experiment, used for the PCS.
         @type temp:                 numpy rank-1 array
         @keyword frq:               The frequency of each alignment, used for the PCS.
@@ -171,6 +173,7 @@ class N_state_opt:
         self.T_flags = T_flags
         self.j_couplings = j_couplings
         self.rdc_pseudo_flags = rdc_pseudo_flags
+        self.pcs_pseudo_flags = pcs_pseudo_flags
         self.temp = temp
         self.frq = frq
         self.atomic_pos = atomic_pos
