@@ -532,7 +532,7 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
+        pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = None, None, None, None, None, None
         if 'pcs' in data_types:
             pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = return_pcs_data(sim_index=sim_index)
 
