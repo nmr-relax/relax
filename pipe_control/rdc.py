@@ -1179,8 +1179,8 @@ def setup_pseudoatom_rdc():
         flag2 = is_pseudoatom(spin2)
 
         # No pseudo-atoms, so do nothing.
-        if not flag1 and not flag2:
-            return
+        if not (flag1 or flag2):
+            continue
 
         # Both are pseudo-atoms.
         if flag1 and flag2:
