@@ -130,6 +130,25 @@ class RelaxNoPDBFileWarning(BaseWarning):
         self.text = "The PDB file %s cannot be found, no structures will be loaded." % file
 
 
+# Nuclear warnings.
+###################
+
+# Nucleus not set.
+class RelaxNucleusWarning(BaseWarning):
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The type of nucleus for the spin '%s' has not yet been set." % spin_id
+        else:
+            self.text = "The type of nucleus has not yet been set."
+
+# Spin type not set.
+class RelaxSpinTypeWarning(BaseWarning):
+    def __init__(self, spin_id=None):
+        if spin_id != None:
+            self.text = "The nuclear isotope type for the spin '%s' has not yet been set.  Please use the spin.isotope user function to set the type." % spin_id
+        else:
+            self.text = "The nuclear isotope type has not yet been set.  Please use the spin.isotope user function to set the type."
+
 # File warnings.
 ################
 
