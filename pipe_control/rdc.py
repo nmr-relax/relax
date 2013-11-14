@@ -922,6 +922,9 @@ def return_rdc_data(sim_index=None):
     @rtype:             tuple of (numpy rank-2 float64 array, numpy rank-2 float64 array, numpy rank-2 float64 array, list of numpy rank-3 float64 arrays, list of lists of floats, numpy rank-2 int32 array, numpy rank-2 int32 array, numpy rank-2 float64 array, numpy rank-1 int32 array)
     """
 
+    # Sort out pseudo-atoms first.  This only needs to be called once.
+    setup_pseudoatom_rdc()
+
     # Initialise.
     rdc = []
     rdc_err = []
@@ -935,9 +938,6 @@ def return_rdc_data(sim_index=None):
 
     # The unit vectors, RDC constants, and J couplings.
     for interatom in interatomic_loop():
-        # Sort out pseudo-atoms first.  This only needs to be called once.
-        setup_pseudoatom_rdcs(interatom)
-
         # Get the spins.
         spin1 = return_spin(interatom.spin_id1)
         spin2 = return_spin(interatom.spin_id2)
@@ -1162,7 +1162,7 @@ def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
             interatom.rdc_err[id] = sd
 
 
-def setup_pseudoatom_rdcs(interatom):
+def setup_pseudoatom_rdc(interatom):
     """Make sure that the interatom system is properly set up for pseudo-atoms and RDCs.
 
     Interatomic data containers between the non-pseudo-atom and the pseudo-atom members will be deselected.
@@ -1172,41 +1172,43 @@ def setup_pseudoatom_rdcs(interatom):
     @type interatom:    InteratomContainer instance
     """
 
-    # Get the spins.
-    spin1 = return_spin(interatom.spin_id1)
-    spin2 = return_spin(interatom.spin_id2)
+    # Loop over all interatomic data containers.
+    for interatom in interatomic_loop():
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
 
-    # Checks.
-    flag1 = is_pseudoatom(spin1)
-    flag2 = is_pseudoatom(spin2)
+        # Checks.
+        flag1 = is_pseudoatom(spin1)
+        flag2 = is_pseudoatom(spin2)
 
-    # No pseudo-atoms, so do nothing.
-    if not flag1 and not flag2:
-        return
+        # No pseudo-atoms, so do nothing.
+        if not flag1 and not flag2:
+            return
 
-    # Both are pseudo-atoms.
-    if flag1 and flag2:
-        warn(RelaxWarning("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet, deselecting the interatomic data container for the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-        interatom.select = False
+        # Both are pseudo-atoms.
+        if flag1 and flag2:
+            warn(RelaxWarning("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet, deselecting the interatomic data container for the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            interatom.select = False
 
-    # Alias the pseudo and normal atoms.
-    pseudospin = spin1
-    base_spin_id = interatom.spin_id2
-    pseudospin_id = interatom.spin_id1
-    if flag2:
-        pseudospin = spin2
-        base_spin_id = interatom.spin_id1
-        pseudospin_id = interatom.spin_id2
+        # Alias the pseudo and normal atoms.
+        pseudospin = spin1
+        base_spin_id = interatom.spin_id2
+        pseudospin_id = interatom.spin_id1
+        if flag2:
+            pseudospin = spin2
+            base_spin_id = interatom.spin_id1
+            pseudospin_id = interatom.spin_id2
 
-    # Loop over the atoms of the pseudo-atom.
-    for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
-        # Get the corresponding interatomic data container.
-        pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+        # Loop over the atoms of the pseudo-atom.
+        for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
+            # Get the corresponding interatomic data container.
+            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
 
-        # Deselect if needed.
-        if pseudo_interatom.select:
-            warn(RelaxWarning("Deselecting the interatomic data container for the spin pair '%s' and '%s' as it is part of the pseudo-atom system of the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, base_spin_id, pseudospin_id)))
-            pseudo_interatom.select = False
+            # Deselect if needed.
+            if pseudo_interatom.select:
+                warn(RelaxWarning("Deselecting the interatomic data container for the spin pair '%s' and '%s' as it is part of the pseudo-atom system of the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, base_spin_id, pseudospin_id)))
+                pseudo_interatom.select = False
 
 
 def weight(align_id=None, spin_id=None, weight=1.0):
