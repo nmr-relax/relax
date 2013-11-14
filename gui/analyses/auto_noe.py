@@ -30,7 +30,7 @@ import wx
 # relax module imports.
 from auto_analyses.noe import NOE_calc
 from data_store import Relax_data_store; ds = Relax_data_store()
-from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH
+from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.analyses.execute import Execute
@@ -39,7 +39,6 @@ from gui.base_classes import Container
 from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
 from gui.message import error_message, Missing_data
-from gui import paths
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
@@ -199,7 +198,7 @@ class Auto_noe(Base_analysis):
         self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]:", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the NOE values will be located in the file 'noe.600.out'.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=fetch_icon('oxygen.actions.document-open-folder', "16x16"), default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)

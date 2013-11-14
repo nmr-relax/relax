@@ -28,7 +28,7 @@ from wx.lib import buttons, scrolledpanel
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from gui import paths
+from graphics import IMAGE_PATH, fetch_icon
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
@@ -66,7 +66,7 @@ class Wiz_page(wx.Panel):
     art_spacing = 20
     divider = None
     height_element = 27
-    image_path = paths.IMAGE_PATH + "relax.gif"
+    image_path = IMAGE_PATH + "relax.gif"
     main_text = ''
     setup_fail = False
     size_button = (100, 33)
@@ -339,13 +339,13 @@ class Wiz_window(wx.Dialog):
 
     # Some class variables.
     _size_button = (100, 33)
-    ICON_APPLY = paths.icon_22x22.dialog_ok_apply
-    ICON_BACK = paths.icon_22x22.go_previous_view
-    ICON_CANCEL = paths.icon_22x22.dialog_cancel
-    ICON_FINISH = paths.icon_22x22.dialog_ok
-    ICON_NEXT = paths.icon_22x22.go_next_view
-    ICON_OK = paths.icon_22x22.dialog_ok
-    ICON_SKIP = paths.icon_22x22.skip
+    ICON_APPLY = fetch_icon('oxygen.actions.dialog-ok-apply', "22x22")
+    ICON_BACK = fetch_icon('oxygen.actions.go-previous-view', "22x22")
+    ICON_CANCEL = fetch_icon('oxygen.actions.dialog-cancel', "22x22")
+    ICON_FINISH = fetch_icon('oxygen.actions.dialog-ok', "22x22")
+    ICON_NEXT = fetch_icon('oxygen.actions.go-next-view', "22x22")
+    ICON_OK = fetch_icon('oxygen.actions.dialog-ok', "22x22")
+    ICON_SKIP = fetch_icon('oxygen.actions.arrow-right-double-relax-blue', "22x22")
     TEXT_APPLY = " Apply"
     TEXT_BACK = " Back"
     TEXT_CANCEL = " Cancel"

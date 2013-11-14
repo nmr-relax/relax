@@ -27,7 +27,7 @@ from copy import deepcopy
 import wx
 
 # relax module imports.
-from gui.paths import icon_16x16
+from graphics import fetch_icon
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, int_to_gui, str_to_gui
 from lib.errors import RelaxError
 
@@ -206,14 +206,14 @@ class Combo_list:
         # The add button.
         button = None
         if index == 0:
-            button = wx.BitmapButton(self._parent, -1, wx.Bitmap(icon_16x16.add, wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(self._parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((27, 27))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             self._parent.Bind(wx.EVT_BUTTON, self._add, button)
 
         # The delete button.
         elif index == self._min_length:
-            button = wx.BitmapButton(self._parent, -1, wx.Bitmap(icon_16x16.remove, wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(self._parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((27, 27))
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
             self._parent.Bind(wx.EVT_BUTTON, self._delete, button)

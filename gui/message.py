@@ -27,11 +27,11 @@ import wx.lib.buttons
 import wx.lib.scrolledpanel
 
 # relax module imports.
+from graphics import fetch_icon
 import gui
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import bitmap_setup
-from gui.paths import icon_22x22, icon_48x48
 from status import Status; status = Status()
 
 
@@ -89,7 +89,7 @@ class Missing_data(wx.Dialog):
         sizer = gui.misc.add_border(main_sizer, border=10, packing=wx.HORIZONTAL)
 
         # Add the graphic.
-        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(icon_48x48.user_busy))
+        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(fetch_icon('oxygen.status.user-busy', "48x48")))
         sizer.Add(bitmap)
 
         # Spacing.
@@ -179,7 +179,7 @@ class Question(wx.Dialog):
         sizer = gui.misc.add_border(main_sizer, border=self.border, packing=wx.HORIZONTAL)
 
         # Add the graphic.
-        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(icon_48x48.dialog_warning_relax))
+        bitmap = wx.StaticBitmap(self, -1, bitmap_setup(fetch_icon('oxygen.status.dialog-warning-relax-blue', "48x48")))
         sizer.Add(bitmap)
 
         # Spacing.
@@ -200,7 +200,7 @@ class Question(wx.Dialog):
 
         # The yes button.
         button_yes = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " Yes")
-        button_yes.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+        button_yes.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.dialog-ok', "22x22"), wx.BITMAP_TYPE_ANY))
         button_yes.SetFont(font.normal)
         button_yes.SetMinSize((self.width_button, self.height_button))
         button_sizer.Add(button_yes, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -211,7 +211,7 @@ class Question(wx.Dialog):
 
         # The no button.
         button_no = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, " No")
-        button_no.SetBitmapLabel(wx.Bitmap(icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+        button_no.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.dialog-cancel', "22x22"), wx.BITMAP_TYPE_ANY))
         button_no.SetFont(font.normal)
         button_no.SetMinSize((self.width_button, self.height_button))
         button_sizer.Add(button_no, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)

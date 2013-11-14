@@ -27,7 +27,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
-from gui import paths
+from graphics import fetch_icon
 from gui.fonts import font
 from gui.message import Question
 from gui.misc import add_border
@@ -106,7 +106,7 @@ class Model_list:
         sizer.AddSpacer((self.parent.spacer_horizontal, -1))
 
         # Add the button.
-        self.button = self.parent.add_button_open(sizer, self.parent, icon=paths.icon_16x16.flag_blue, text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
+        self.button = self.parent.add_button_open(sizer, self.parent, icon=fetch_icon("oxygen.actions.flag-blue", "16x16"), text="Modify", fn=self.modify, width=self.parent.width_button, height=label.GetSize()[1]+8)
 
         # Tooltip.
         if self.tooltip:
@@ -214,11 +214,11 @@ class Model_list:
 
         # Change the flag to red to indicate to the user that changing the models is a bad thing!
         if False in self.select:
-            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_red, wx.BITMAP_TYPE_ANY))
+            self.button.SetBitmapLabel(wx.Bitmap(fetch_icon("oxygen.actions.flag-red", "16x16"), wx.BITMAP_TYPE_ANY))
 
         # Otherwise set it to blue (in case all models are selected again).
         else:
-            self.button.SetBitmapLabel(wx.Bitmap(paths.icon_16x16.flag_blue, wx.BITMAP_TYPE_ANY))
+            self.button.SetBitmapLabel(wx.Bitmap(fetch_icon("oxygen.actions.flag-blue", "16x16"), wx.BITMAP_TYPE_ANY))
 
 
 

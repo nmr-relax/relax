@@ -34,7 +34,6 @@ import wx.lib.mixins.listctrl
 from auto_analyses import dauvergne_protocol
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import ANALYSIS_IMAGE_PATH, IMAGE_PATH, fetch_icon
-from gui import paths
 from gui.about import About_base
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
@@ -474,7 +473,7 @@ class Auto_model_free(Base_analysis):
 
         # An about button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "About")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.about, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.help-about', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Information about this automatic analysis")
 
@@ -510,7 +509,7 @@ class Auto_model_free(Base_analysis):
         Text_ctrl(box, self, text="The data pipe bundle:", default=self.data.pipe_bundle, tooltip="This is the data pipe bundle associated with this analysis.", editable=False, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=fetch_icon('oxygen.actions.document-open-folder', "16x16"), default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)
@@ -540,7 +539,7 @@ class Auto_model_free(Base_analysis):
         self.max_iter = Spin_ctrl(box, self, text="Maximum interations:", default=self.data.max_iter, tooltip="The maximum number of iterations for the protocol.  This is the limit for the global looping over the optimisation of the model-free models, model elimination, model selection and then optimisation of the diffusion tensor.", min=25, max=100, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The calculation mode.
-        self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised separately.", tooltip_button="Open the protocol mode selection window.", icon=paths.icon_16x16.system_run, fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.mode = Text_ctrl(box, self, text="Protocol mode:", default='Fully automated', tooltip="Select if the dauvergne_protocol analysis will be fully automated or whether the individual global models will be optimised separately.", tooltip_button="Open the protocol mode selection window.", icon=fetch_icon('oxygen.actions.system_run', "16x16"), fn=self.mode_dialog, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Stretchable spacing (with a minimal space).
         box.AddSpacer(30)
@@ -965,7 +964,7 @@ class Protocol_mode_sel_window(wx.Dialog):
         sub_sizer.AddStretchSpacer()
 
         # The button.
-        button = wx.BitmapButton(self, -1, wx.Bitmap(paths.icon_48x48.go_bottom, wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(self, -1, wx.Bitmap(fetch_icon('oxygen.actions.go_bottom', "48x48"), wx.BITMAP_TYPE_ANY))
         button.SetMinSize((80, 80))
         button.SetToolTipString("Perform a fully automated analysis, looping over global models I to V and terminating with the final run.  Please click on the 'About' button for more information.")
         sub_sizer.Add(button, 3, wx.EXPAND, 0)

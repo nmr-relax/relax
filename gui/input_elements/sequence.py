@@ -27,7 +27,7 @@ import wx
 import wx.lib.mixins.listctrl
 
 # relax module imports.
-from gui import paths
+from graphics import fetch_icon
 from gui.input_elements.combo_list import Combo_list
 from gui.fonts import font
 from gui.misc import add_border
@@ -175,7 +175,7 @@ class Sequence:
             sub_sizer.AddSpacer(5)
 
             # The edit button.
-            button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.edit_rename, wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.edit_rename', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Edit the values.")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -553,7 +553,7 @@ class Sequence_window(wx.Dialog):
         if self.dim == None or (isinstance(self.dim, tuple) and self.dim[0] == None):
             # The add button.
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.add, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
             button.SetToolTipString("Add a row to the list.")
             button.SetMinSize(self.SIZE_BUTTON)
@@ -565,7 +565,7 @@ class Sequence_window(wx.Dialog):
 
             # The delete all button.
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
-            button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit_delete', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
             button.SetToolTipString("Delete all items.")
             button.SetMinSize(self.SIZE_BUTTON)
@@ -577,7 +577,7 @@ class Sequence_window(wx.Dialog):
 
         # The Ok button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Ok")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_ok, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.dialog-ok', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
