@@ -1061,7 +1061,6 @@ def return_rdc_data(sim_index=None):
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
 
-            print interatom.spin_id1, interatom.spin_id2
             # RDC checks.
             if not check_rdcs(interatom):
                 continue
