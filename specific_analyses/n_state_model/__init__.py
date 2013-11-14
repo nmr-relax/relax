@@ -314,7 +314,7 @@ class N_state_model(API_base, API_common):
                 spin2 = return_spin(interatom.spin_id2)
 
                 # RDC checks.
-                if not check_rdcs(interatom, spin1, spin2):
+                if not check_rdcs(interatom):
                     continue
 
                 # Containers with RDC data.

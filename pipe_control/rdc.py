@@ -37,7 +37,7 @@ from lib.alignment.rdc import ave_rdc_tensor
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from lib.warnings import RelaxWarning
+from lib.warnings import RelaxWarning, RelaxSpinTypeWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
@@ -190,25 +190,17 @@ def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxNoRDCError(rdc_id)
 
 
-def check_rdcs(interatom, spin1, spin2):
-    """Check if the RDCs for the given interatomic data container should be used.
+def check_rdcs(interatom):
+    """Check if all data required for calculating the RDC is present.
 
     @param interatom:   The interatomic data container.
     @type interatom:    InteratomContainer instance
-    @param spin1:       The first spin container.
-    @type spin1:        SpinContainer instance
-    @param spin2:       The second spin container.
-    @type spin2:        SpinContainer instance
-    @return:            True if the RDCs should be used, False otherwise.
+    @return:            True if all data required for calculating the RDC is present, False otherwise.
+    @rtype:             bool
     """
 
     # Skip deselected interatomic data containers.
     if not interatom.select:
-        return False
-
-    # Skip deselected spins.
-    # FIXME:  These checks could be fatal in the future if a user has good RDCs and one of the two spins are deselected!
-    if not spin1.select or not spin2.select:
         return False
 
     # Only use interatomic data containers with RDC data.
@@ -219,33 +211,22 @@ def check_rdcs(interatom, spin1, spin2):
     if opt_uses_j_couplings() and not hasattr(interatom, 'j_coupling'):
         return False
 
-    # RDC data exists but the interatomic vectors are missing?
-    if not hasattr(interatom, 'vector'):
-        # Throw a warning.
-        warn(RelaxWarning("RDC data exists but the interatomic vectors are missing, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+    # Get the spins.
+    spin1 = return_spin(interatom.spin_id1)
+    spin2 = return_spin(interatom.spin_id2)
 
-        # Jump to the next spin.
-        return False
-
-    # Skip non-Me pseudo-atoms for the first spin.
-    if hasattr(spin1, 'members') and len(spin1.members) != 3:
-        warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-        return False
-
-    # Skip non-Me pseudo-atoms for the second spin.
-    if hasattr(spin2, 'members') and len(spin2.members) != 3:
-        warn(RelaxWarning("Only methyl group pseudo atoms are supported due to their fast rotation, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
-        return False
-
-    # Checks.
+    # Spin information checks.
     if not hasattr(spin1, 'isotope'):
-        raise RelaxSpinTypeError(interatom.spin_id1)
+        warn(RelaxSpinTypeWarning(interatom.spin_id1))
+        return False
     if not hasattr(spin2, 'isotope'):
-        raise RelaxSpinTypeError(interatom.spin_id2)
+        warn(RelaxSpinTypeWarning(interatom.spin_id2))
+        return False
     if is_pseudoatom(spin1) and is_pseudoatom(spin2):
-        raise RelaxError("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet.")
+        warn(RelaxWarning("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet."))
+        return False
 
-    # Interatomic distance checking (pseudo-atoms).
+    # Pseudo-atom checks.
     if is_pseudoatom(spin1) or is_pseudoatom(spin2):
         # Alias the pseudo and normal atoms.
         pseudospin = spin1
@@ -261,14 +242,27 @@ def check_rdcs(interatom, spin1, spin2):
             # Get the corresponding interatomic data container.
             pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
 
+            # Unit vector check.
+            if not hasattr(pseudo_interatom, 'vector'):
+                warn(RelaxWarning("The interatomic vector is missing for the spin pair '%s' and '%s' of the pseudo-atom '%s', skipping the RDC for the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, pseudospin_id, base_spin_id, pseudospin_id)))
+                return False
+
             # Check.
             if not hasattr(pseudo_interatom, 'r'):
-                raise RelaxError("The averaged interatomic distance between spins '%s' and '%s' for the pseudo-atom '%s' has not been set yet." % (spin_id, base_spin_id, pseudospin_id))
+                warn(RelaxWarning("The averaged interatomic distance between spins '%s' and '%s' for the pseudo-atom '%s' has not been set yet." % (spin_id, base_spin_id, pseudospin_id)))
+                return False
 
-    # Interatomic distance checking (normal atoms).
+    # Normal atoms checks.
     else:
+        # Unit vector check.
+        if not hasattr(interatom, 'vector'):
+            warn(RelaxWarning("The interatomic vector is missing, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
+
+        # Distance information check.
         if not hasattr(interatom, 'r'):
-            raise RelaxError("The averaged interatomic distance between spins '%s' and '%s' has not been set yet." % (interatom.spin_id1, interatom.spin_id2))
+            warn(RelaxWarning("The averaged interatomic distance between spins '%s' and '%s' has not been set yet." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
 
     # Everything is ok.
     return True
@@ -946,7 +940,7 @@ def return_rdc_data(sim_index=None):
         spin2 = return_spin(interatom.spin_id2)
 
         # RDC checks.
-        if not check_rdcs(interatom, spin1, spin2):
+        if not check_rdcs(interatom):
             continue
 
         # Gyromagnetic ratios.
@@ -1064,12 +1058,9 @@ def return_rdc_data(sim_index=None):
             spin1 = return_spin(interatom.spin_id1)
             spin2 = return_spin(interatom.spin_id2)
 
-            # Skip deselected spins.
-            if not spin1.select or not spin2.select:
-                continue
-
-            # Only use interatomic data containers with RDC and vector data.
-            if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'vector'):
+            print interatom.spin_id1, interatom.spin_id2
+            # RDC checks.
+            if not check_rdcs(interatom):
                 continue
 
             # T-type data.
