@@ -1206,7 +1206,7 @@ def setup_pseudoatom_rdcs(interatom):
 
         # Deselect if needed.
         if pseudo_interatom.select:
-            warn(RelaxWarning("Deselecting the interatomic data container for the spin pair '%s' and '%s' is it is part of the pseudo-atom system of the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, base_spin_id, pseudospin_id)))
+            warn(RelaxWarning("Deselecting the interatomic data container for the spin pair '%s' and '%s' as it is part of the pseudo-atom system of the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, base_spin_id, pseudospin_id)))
             pseudo_interatom.select = False
 
 
