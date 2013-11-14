@@ -39,7 +39,7 @@ from lib.io import open_write_file, read_spin_data, write_spin_data
 from lib.physical_constants import g1H, pcs_constant
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import grace, pipes
-from pipe_control.align_tensor import get_tensor_index
+from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_index_loop, spin_loop
 
 
@@ -504,6 +504,44 @@ def display(align_id=None, bc=False):
     write(align_id=align_id, file=sys.stdout, bc=bc)
 
 
+def opt_uses_pcs(align_id):
+    """Determine if the PCS data for the given alignment ID is needed for optimisation.
+
+    @param align_id:    The alignment ID string.
+    @type align_id:     str
+    @return:            True if the PCS data is to be used for optimisation, False otherwise.
+    @rtype:             bool
+    """
+
+    # No alignment IDs.
+    if not hasattr(cdp, 'pcs_ids'):
+        return False
+
+    # No PCS data for the alignment.
+    if align_id not in cdp.pcs_ids:
+        return False
+
+    # Is the tensor optimised?
+    tensor_flag = opt_uses_tensor(get_tensor_object(align_id))
+
+    # Is the paramagnetic position optimised?
+    pos_flag = False
+    if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+        pos_flag = True
+
+    # Are the populations optimised?
+    prob_flag = False
+    if cdp.model == 'population':
+        prob_flag = True
+
+    # Not used.
+    if not tensor_flag and not pos_flag and not prob_flag:
+        return False
+
+    # The PCS data is to be used for optimisation.
+    return True
+
+
 def q_factors(spin_id=None):
     """Calculate the Q-factors for the PCS data.
 
@@ -709,6 +747,113 @@ def read(align_id=None, file=None, dir=None, file_data=None, spin_id_col=None, m
         cdp.align_ids.append(align_id)
     if align_id not in cdp.pcs_ids:
         cdp.pcs_ids.append(align_id)
+
+
+def return_pcs_data(sim_index=None):
+    """Set up the data structures for optimisation using PCSs as base data sets.
+
+    @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+    @type sim_index:    None or int
+    @return:            The assembled data structures for using PCSs as the base data for optimisation.  These include:
+                            - the PCS values.
+                            - the unit vectors connecting the paramagnetic centre (the electron spin) to
+                            - the PCS weight.
+                            - the nuclear spin.
+                            - the pseudocontact shift constants.
+    @rtype:             tuple of (numpy rank-2 array, numpy rank-2 array, numpy rank-2 array, numpy rank-1 array, numpy rank-1 array)
+    """
+
+    # Data setup tests.
+    if not hasattr(cdp, 'paramagnetic_centre') and (hasattr(cdp, 'paramag_centre_fixed') and cdp.paramag_centre_fixed):
+        raise RelaxError("The paramagnetic centre has not yet been specified.")
+    if not hasattr(cdp, 'temperature'):
+        raise RelaxError("The experimental temperatures have not been set.")
+    if not hasattr(cdp, 'spectrometer_frq'):
+        raise RelaxError("The spectrometer frequencies of the experiments have not been set.")
+
+    # Initialise.
+    pcs = []
+    pcs_err = []
+    pcs_weight = []
+    temp = []
+    frq = []
+
+    # The PCS data.
+    for i in range(len(cdp.align_ids)):
+        # Alias the ID.
+        align_id = cdp.align_ids[i]
+
+        # Skip non-optimised data.
+        if not opt_uses_align_data(align_id):
+            continue
+
+        # Append empty arrays to the PCS structures.
+        pcs.append([])
+        pcs_err.append([])
+        pcs_weight.append([])
+
+        # Get the temperature for the PCS constant.
+        if align_id in cdp.temperature:
+            temp.append(cdp.temperature[align_id])
+
+        # The temperature must be given!
+        else:
+            raise RelaxError("The experimental temperature for the alignment ID '%s' has not been set." % align_id)
+
+        # Get the spectrometer frequency in Tesla units for the PCS constant.
+        if align_id in cdp.spectrometer_frq:
+            frq.append(cdp.spectrometer_frq[align_id] * 2.0 * pi / g1H)
+
+        # The frequency must be given!
+        else:
+            raise RelaxError("The spectrometer frequency for the alignment ID '%s' has not been set." % align_id)
+
+        # Spin loop.
+        j = 0
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Skip spins without PCS data.
+            if not hasattr(spin, 'pcs'):
+                continue
+
+            # Append the PCSs to the list.
+            if align_id in spin.pcs.keys():
+                if sim_index != None:
+                    pcs[-1].append(spin.pcs_sim[align_id][sim_index])
+                else:
+                    pcs[-1].append(spin.pcs[align_id])
+            else:
+                pcs[-1].append(None)
+
+            # Append the PCS errors.
+            if hasattr(spin, 'pcs_err') and align_id in spin.pcs_err.keys():
+                pcs_err[-1].append(spin.pcs_err[align_id])
+            else:
+                pcs_err[-1].append(None)
+
+            # Append the weight.
+            if hasattr(spin, 'pcs_weight') and align_id in spin.pcs_weight.keys():
+                pcs_weight[-1].append(spin.pcs_weight[align_id])
+            else:
+                pcs_weight[-1].append(1.0)
+
+            # Spin index.
+            j = j + 1
+
+    # Convert to numpy objects.
+    pcs = array(pcs, float64)
+    pcs_err = array(pcs_err, float64)
+    pcs_weight = array(pcs_weight, float64)
+
+    # Convert the PCS from ppm to no units.
+    pcs = pcs * 1e-6
+    pcs_err = pcs_err * 1e-6
+
+    # Return the data structures.
+    return pcs, pcs_err, pcs_weight, temp, frq
 
 
 def set_errors(align_id=None, spin_id=None, sd=None):

@@ -49,13 +49,16 @@ from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from lib.structure.internal.object import Internal
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pcs, pipes, rdc
+from pipe_control.align_tensor import opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.pcs import return_pcs_data
+from pipe_control.rdc import check_rdcs, return_rdc_data
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, opt_uses_j_couplings, return_pcs_data, return_rdc_data, tensor_loop
+from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, num_data_points, tensor_loop
 from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_model_index, param_num, update_model
 from target_functions.n_state_model import N_state_opt
 from target_functions.potential import quad_pot
@@ -270,7 +273,7 @@ class N_state_model(API_base, API_common):
         align_index = 0
         for i in range(len(cdp.align_ids)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # The alignment ID.
@@ -1460,7 +1463,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in range(len(cdp.align_tensors)):
                 # Skip non-optimised tensors.
-                if not opt_tensor(cdp.align_tensors[i]):
+                if not opt_uses_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Set up the number of simulations.
