@@ -1162,14 +1162,10 @@ def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
             interatom.rdc_err[id] = sd
 
 
-def setup_pseudoatom_rdc(interatom):
+def setup_pseudoatom_rdc():
     """Make sure that the interatom system is properly set up for pseudo-atoms and RDCs.
 
     Interatomic data containers between the non-pseudo-atom and the pseudo-atom members will be deselected.
-
-
-    @param interatom:   The interatomic data container.
-    @type interatom:    InteratomContainer instance
     """
 
     # Loop over all interatomic data containers.
