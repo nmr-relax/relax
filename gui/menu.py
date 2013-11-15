@@ -29,7 +29,6 @@ import wx
 
 # relax module imports.
 from graphics import fetch_icon
-from gui import paths
 from gui.components.menu import build_menu_item
 from gui.uf_objects import build_uf_menus, Uf_storage; uf_store = Uf_storage()
 from status import Status; status = Status()
@@ -77,17 +76,17 @@ class Menu:
 
         # The 'File' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_NEW, text="&New analysis\tCtrl+N", icon=paths.icon_16x16.new))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE, text="&Close analysis", icon=paths.icon_16x16.document_close))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE_ALL, text="&Close all analyses", icon=paths.icon_16x16.dialog_close))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_NEW, text="&New analysis\tCtrl+N", icon=fetch_icon('oxygen.actions.document-new', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE, text="&Close analysis", icon=fetch_icon('oxygen.actions.document-close', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_CLOSE_ALL, text="&Close all analyses", icon=fetch_icon('oxygen.actions.dialog-close', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_OPEN, text="&Open relax state\tCtrl+O", icon=paths.icon_16x16.document_open))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=paths.icon_16x16.document_save))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=paths.icon_16x16.document_save_as))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_OPEN, text="&Open relax state\tCtrl+O", icon=fetch_icon('oxygen.actions.document-open', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE, text="S&ave relax state\tCtrl+S", icon=fetch_icon('oxygen.actions.document-save', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_SAVE_AS, text="Save as...\tCtrl+Shift+S", icon=fetch_icon('oxygen.actions.document-save-as', "16x16")))
         menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXPORT_BMRB, text="Export for BMRB deposition", icon=fetch_icon('relax.bmrb')))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXIT, text="E&xit\tCtrl+Q", icon=paths.icon_16x16.exit))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_FILE_EXIT, text="E&xit\tCtrl+Q", icon=fetch_icon('oxygen.actions.system-shutdown', "16x16")))
         self.menubar.Append(menu, "&File")
 
         # The 'File' menu actions.
@@ -102,11 +101,11 @@ class Menu:
 
         # The 'View' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_CONTROLLER, text="&Controller\tCtrl+Z", icon=paths.icon_16x16.preferences_system_performance))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin viewer\tCtrl+T", icon=paths.icon_16x16.spin))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_RESULTS, text="&Results viewer\tCtrl+R", icon=paths.icon_16x16.view_statistics))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PIPE_EDIT, text="&Data pipe editor\tCtrl+D", icon=paths.icon_16x16.pipe))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PROMPT, text="relax &prompt\tCtrl+P", icon=paths.icon_16x16.relax_prompt))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_CONTROLLER, text="&Controller\tCtrl+Z", icon=fetch_icon('oxygen.apps.preferences-system-performance', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_SPIN_VIEW, text="&Spin viewer\tCtrl+T", icon=fetch_icon('relax.spin', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_RESULTS, text="&Results viewer\tCtrl+R", icon=fetch_icon('oxygen.actions.view-statistics', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PIPE_EDIT, text="&Data pipe editor\tCtrl+D", icon=fetch_icon('relax.pipe', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_VIEW_PROMPT, text="relax &prompt\tCtrl+P", icon=fetch_icon('oxygen.mimetypes.application-x-executable-script', "16x16")))
         self.menubar.Append(menu, "&View")
 
         # The 'View' actions.
@@ -121,18 +120,18 @@ class Menu:
 
         # The 'Tools' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=paths.icon_16x16.document_properties))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_SYS_INFO, text="System &information", icon=paths.icon_16x16.help_about))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_FORMAT, text="&Free file format settings", icon=fetch_icon('oxygen.actions.document-properties', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_TOOLS_SYS_INFO, text="System &information", icon=fetch_icon('oxygen.actions.help-about', "16x16")))
 
         # The 'Tools->Test suite" sub-menu.
-        test_suite_item = build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=paths.icon_16x16.uf_script)
+        test_suite_item = build_menu_item(menu, id=self.MENU_TOOLS_TEST_SUITE, text="&Test suite", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16"))
         sub_menu = wx.Menu()
         test_suite_item.SetSubMenu(sub_menu)
-        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_ALL, text="&Full test suite", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_ALL, text="&Full test suite", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
         sub_menu.AppendSeparator()
-        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=paths.icon_16x16.uf_script))
-        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=paths.icon_16x16.uf_script))
-        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=paths.icon_16x16.uf_script))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
         menu.AppendItem(test_suite_item)
         self.menubar.Append(menu, "&Tools")
 
@@ -146,12 +145,12 @@ class Menu:
 
         # The 'Help' menu entries.
         menu = wx.Menu()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MANUAL, text="relax user &manual\tF1", icon=paths.icon_16x16.manual))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MANUAL, text="relax user &manual\tF1", icon=fetch_icon('oxygen.mimetypes.application-pdf', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MAIL, text="Mailing list &contact (relax-users@gna.org)", icon=paths.icon_16x16.contact))
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_REFS, text="&References", icon=paths.icon_16x16.ref))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_MAIL, text="Mailing list &contact (relax-users@gna.org)", icon=fetch_icon('oxygen.actions.mail-mark-unread-new', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_REFS, text="&References", icon=fetch_icon('oxygen.actions.flag-blue', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=paths.icon_16x16.gnu_head))
+        menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_GPL, text="&Licence", icon=fetch_icon('relax.gnu-head-mini', "16x16")))
         menu.AppendSeparator()
         menu.AppendItem(build_menu_item(menu, id=self.MENU_HELP_ABOUT, text="About rela&x", icon=fetch_icon("relax.relax")))
         self.menubar.Append(menu, "&Help")

@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi, sqrt
-from numpy import float64, ones, zeros
+from numpy import array, int32, float64, ones, transpose, zeros
 from numpy.linalg import norm
 import sys
 from warnings import warn
@@ -37,11 +37,11 @@ from lib.alignment.rdc import ave_rdc_tensor
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoJError, RelaxNoRDCError, RelaxNoSequenceError, RelaxSpinTypeError
 from lib.io import extract_data, open_write_file, strip, write_data
 from lib.physical_constants import dipolar_constant, return_gyromagnetic_ratio
-from lib.warnings import RelaxWarning
+from lib.warnings import RelaxWarning, RelaxSpinTypeWarning
 from pipe_control import grace, pipes
-from pipe_control.align_tensor import get_tensor_index
+from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import consistent_interatomic_data, create_interatom, interatomic_loop, return_interatom
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, return_spin
+from pipe_control.mol_res_spin import exists_mol_res_spin_data, is_pseudoatom, pseudoatom_loop, return_spin
 
 
 def back_calc(align_id=None):
@@ -188,6 +188,84 @@ def check_pipe_setup(pipe=None, rdc_id=None, sequence=False, N=False, tensors=Fa
         raise RelaxNoRDCError()
     elif rdc and rdc_id and rdc_id not in dp.rdc_ids:
         raise RelaxNoRDCError(rdc_id)
+
+
+def check_rdcs(interatom):
+    """Check if all data required for calculating the RDC is present.
+
+    @param interatom:   The interatomic data container.
+    @type interatom:    InteratomContainer instance
+    @return:            True if all data required for calculating the RDC is present, False otherwise.
+    @rtype:             bool
+    """
+
+    # Skip deselected interatomic data containers.
+    if not interatom.select:
+        return False
+
+    # Only use interatomic data containers with RDC data.
+    if not hasattr(interatom, 'rdc'):
+        return False
+
+    # Only use interatomic data containers with RDC and J coupling data.
+    if opt_uses_j_couplings() and not hasattr(interatom, 'j_coupling'):
+        return False
+
+    # Get the spins.
+    spin1 = return_spin(interatom.spin_id1)
+    spin2 = return_spin(interatom.spin_id2)
+
+    # Spin information checks.
+    if not hasattr(spin1, 'isotope'):
+        warn(RelaxSpinTypeWarning(interatom.spin_id1))
+        return False
+    if not hasattr(spin2, 'isotope'):
+        warn(RelaxSpinTypeWarning(interatom.spin_id2))
+        return False
+    if is_pseudoatom(spin1) and is_pseudoatom(spin2):
+        warn(RelaxWarning("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet."))
+        return False
+
+    # Pseudo-atom checks.
+    if is_pseudoatom(spin1) or is_pseudoatom(spin2):
+        # Alias the pseudo and normal atoms.
+        pseudospin = spin1
+        base_spin_id = interatom.spin_id2
+        pseudospin_id = interatom.spin_id1
+        if is_pseudoatom(spin2):
+            pseudospin = spin2
+            base_spin_id = interatom.spin_id1
+            pseudospin_id = interatom.spin_id2
+
+        # Loop over the atoms of the pseudo-atom.
+        for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
+            # Get the corresponding interatomic data container.
+            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+
+            # Unit vector check.
+            if not hasattr(pseudo_interatom, 'vector'):
+                warn(RelaxWarning("The interatomic vector is missing for the spin pair '%s' and '%s' of the pseudo-atom '%s', skipping the RDC for the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, pseudospin_id, base_spin_id, pseudospin_id)))
+                return False
+
+            # Check.
+            if not hasattr(pseudo_interatom, 'r'):
+                warn(RelaxWarning("The averaged interatomic distance between spins '%s' and '%s' for the pseudo-atom '%s' has not been set yet." % (spin_id, base_spin_id, pseudospin_id)))
+                return False
+
+    # Normal atoms checks.
+    else:
+        # Unit vector check.
+        if not hasattr(interatom, 'vector'):
+            warn(RelaxWarning("The interatomic vector is missing, skipping the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
+
+        # Distance information check.
+        if not hasattr(interatom, 'r'):
+            warn(RelaxWarning("The averaged interatomic distance between spins '%s' and '%s' has not been set yet." % (interatom.spin_id1, interatom.spin_id2)))
+            return False
+
+    # Everything is ok.
+    return True
 
 
 def convert(value, data_type, align_id, to_intern=False):
@@ -441,6 +519,61 @@ def display(align_id=None, bc=False):
     write(align_id=align_id, file=sys.stdout, bc=bc)
 
 
+def opt_uses_j_couplings():
+    """Determine of J couplings are needed for optimisation.
+
+    @return:    True if J couplings are required, False otherwise.
+    @rtype:     bool
+    """
+
+    # Loop over the alignments.
+    for align_id in cdp.align_ids:
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
+                return True
+
+    # No J values required.
+    return False
+
+
+def opt_uses_rdc(align_id):
+    """Determine if the RDC data for the given alignment ID is needed for optimisation.
+
+    @param align_id:    The alignment ID string.
+    @type align_id:     str
+    @return:            True if the RDC data is to be used for optimisation, False otherwise.
+    @rtype:             bool
+    """
+
+    # No alignment IDs.
+    if not hasattr(cdp, 'rdc_ids'):
+        return False
+
+    # No RDC data for the alignment.
+    if align_id not in cdp.rdc_ids:
+        return False
+
+    # Is the tensor optimised?
+    tensor_flag = opt_uses_tensor(get_tensor_object(align_id))
+
+    # Is the paramagnetic position optimised?
+    pos_flag = False
+    if hasattr(cdp, 'paramag_centre_fixed') and not cdp.paramag_centre_fixed:
+        pos_flag = True
+
+    # Are the populations optimised?
+    prob_flag = False
+    if cdp.model == 'population':
+        prob_flag = True
+
+    # Not used.
+    if not tensor_flag and not pos_flag and not prob_flag:
+        return False
+
+    # The RDC data is to be used for optimisation.
+    return True
+
+
 def q_factors(spin_id=None):
     """Calculate the Q-factors for the RDC data.
 
@@ -615,7 +748,7 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
 
     # Extract the data from the file, and remove comments and blank lines.
     file_data = extract_data(file, dir, sep=sep)
-    file_data = strip(file_data, comments=False)
+    file_data = strip(file_data, comments=True)
 
     # Loop over the RDC data.
     data = []
@@ -771,6 +904,231 @@ def read(align_id=None, file=None, dir=None, file_data=None, data_type='D', spin
         cdp.rdc_ids.append(align_id)
 
 
+def return_rdc_data(sim_index=None):
+    """Set up the data structures for optimisation using RDCs as base data sets.
+
+    @keyword sim_index: The index of the simulation to optimise.  This should be None if normal optimisation is desired.
+    @type sim_index:    None or int
+    @return:            The assembled data structures for using RDCs as the base data for optimisation.  These include:
+                            - rdc, the RDC values.
+                            - rdc_err, the RDC errors.
+                            - rdc_weight, the RDC weights.
+                            - vectors, the interatomic vectors (pseudo-atom dependent).
+                            - rdc_const, the dipolar constants (pseudo-atom dependent).
+                            - absolute, the absolute value flags (as 1's and 0's).
+                            - T_flags, the flags for T = J+D type data (as 1's and 0's).
+                            - j_couplings, the J coupling values if the RDC data type is set to T = J+D.
+                            - pseudo_flags, the list of flags indicating if the interatomic data contains a pseudo-atom (as 1's and 0's).
+    @rtype:             tuple of (numpy rank-2 float64 array, numpy rank-2 float64 array, numpy rank-2 float64 array, list of numpy rank-3 float64 arrays, list of lists of floats, numpy rank-2 int32 array, numpy rank-2 int32 array, numpy rank-2 float64 array, numpy rank-1 int32 array)
+    """
+
+    # Sort out pseudo-atoms first.  This only needs to be called once.
+    setup_pseudoatom_rdc()
+
+    # Initialise.
+    rdc = []
+    rdc_err = []
+    rdc_weight = []
+    unit_vect = []
+    rdc_const = []
+    absolute = []
+    T_flags = []
+    j_couplings = []
+    pseudo_flags = []
+
+    # The unit vectors, RDC constants, and J couplings.
+    for interatom in interatomic_loop():
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
+
+        # RDC checks.
+        if not check_rdcs(interatom):
+            continue
+
+        # Gyromagnetic ratios.
+        g1 = return_gyromagnetic_ratio(spin1.isotope)
+        g2 = return_gyromagnetic_ratio(spin2.isotope)
+
+        # Pseudo atoms.
+        if is_pseudoatom(spin1) and is_pseudoatom(spin2):
+            raise RelaxError("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet.")
+        if is_pseudoatom(spin1) or is_pseudoatom(spin2):
+            # Set the flag.
+            pseudo_flags.append(1)
+
+            # Alias the pseudo and normal atoms.
+            if is_pseudoatom(spin1):
+                pseudospin = spin1
+                base_spin = spin2
+                pseudospin_id = interatom.spin_id1
+                base_spin_id = interatom.spin_id2
+            else:
+                pseudospin = spin2
+                base_spin = spin1
+                pseudospin_id = interatom.spin_id2
+                base_spin_id = interatom.spin_id1
+
+            # Loop over the atoms of the pseudo-atom, storing the data.
+            pseudo_unit_vect = []
+            pseudo_rdc_const = []
+            for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
+                # Get the corresponding interatomic data container.
+                pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+
+                # Check.
+                if pseudo_interatom == None:
+                    raise RelaxError("The interatomic data container between the spins '%s' and '%s' for the pseudo-atom '%s' is not defined." % (base_spin_id, spin_id, pseudospin_id))
+
+                # Add the vectors.
+                if is_float(interatom.vector[0]):
+                    pseudo_unit_vect.append([pseudo_interatom.vector])
+                else:
+                    pseudo_unit_vect.append(pseudo_interatom.vector)
+
+                # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+                pseudo_rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, pseudo_interatom.r))
+
+            # Reorder the unit vectors so that the structure and pseudo-atom dimensions are swapped.
+            pseudo_unit_vect = transpose(array(pseudo_unit_vect, float64), (1, 0, 2))
+
+            # Block append the pseudo-data.
+            unit_vect.append(pseudo_unit_vect)
+            rdc_const.append(pseudo_rdc_const)
+
+        # Normal atom.
+        else:
+            # Set the flag.
+            pseudo_flags.append(0)
+
+            # Add the vectors.
+            if is_float(interatom.vector[0]):
+                unit_vect.append([interatom.vector])
+            else:
+                unit_vect.append(interatom.vector)
+
+            # Calculate the RDC dipolar constant (in Hertz, and the 3 comes from the alignment tensor), and append it to the list.
+            rdc_const.append(3.0/(2.0*pi) * dipolar_constant(g1, g2, interatom.r))
+
+        # Store the measured J coupling.
+        if opt_uses_j_couplings():
+            j_couplings.append(interatom.j_coupling)
+
+    # Fix the unit vector data structure.
+    num = None
+    for rdc_index in range(len(unit_vect)):
+        # Convert to numpy structures.
+        unit_vect[rdc_index] = array(unit_vect[rdc_index], float64)
+
+        # Number of vectors.
+        if num == None:
+            if unit_vect[rdc_index] != None:
+                num = len(unit_vect[rdc_index])
+            continue
+
+        # Check.
+        if unit_vect[rdc_index] != None and len(unit_vect[rdc_index]) != num:
+            raise RelaxError("The number of interatomic vectors for all no match:\n%s" % unit_vect[rdc_index])
+
+    # Missing unit vectors.
+    if num == None:
+        raise RelaxError("No interatomic vectors could be found.")
+
+    # Update None entries.
+    for i in range(len(unit_vect)):
+        if unit_vect[i] == None:
+            unit_vect[i] = [[None, None, None]]*num
+
+    # The RDC data.
+    for i in range(len(cdp.align_ids)):
+        # Alias the ID.
+        align_id = cdp.align_ids[i]
+
+        # Skip non-optimised data.
+        if not opt_uses_align_data(align_id):
+            continue
+
+        # Append empty arrays to the RDC structures.
+        rdc.append([])
+        rdc_err.append([])
+        rdc_weight.append([])
+        absolute.append([])
+        T_flags.append([])
+
+        # Interatom loop.
+        for interatom in interatomic_loop():
+            # Get the spins.
+            spin1 = return_spin(interatom.spin_id1)
+            spin2 = return_spin(interatom.spin_id2)
+
+            # RDC checks.
+            if not check_rdcs(interatom):
+                continue
+
+            # T-type data.
+            if align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
+                T_flags[-1].append(True)
+            else:
+                T_flags[-1].append(False)
+
+            # Check for J couplings if the RDC data type is T = J+D.
+            if T_flags[-1][-1] and not hasattr(interatom, 'j_coupling'):
+                continue
+
+            # Defaults of None.
+            value = None
+            error = None
+
+            # Normal set up.
+            if align_id in interatom.rdc.keys():
+                # The RDC.
+                if sim_index != None:
+                    value = interatom.rdc_sim[align_id][sim_index]
+                else:
+                    value = interatom.rdc[align_id]
+
+                # The error.
+                if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
+                    # T values.
+                    if T_flags[-1][-1]:
+                        error = sqrt(interatom.rdc_err[align_id]**2 + interatom.j_coupling_err**2)
+
+                    # D values.
+                    else:
+                        error = interatom.rdc_err[align_id]
+
+            # Append the RDCs to the list.
+            rdc[-1].append(value)
+
+            # Append the RDC errors.
+            rdc_err[-1].append(error)
+
+            # Append the weight.
+            if hasattr(interatom, 'rdc_weight') and align_id in interatom.rdc_weight.keys():
+                rdc_weight[-1].append(interatom.rdc_weight[align_id])
+            else:
+                rdc_weight[-1].append(1.0)
+
+            # Append the absolute value flag.
+            if hasattr(interatom, 'absolute_rdc') and align_id in interatom.absolute_rdc.keys():
+                absolute[-1].append(interatom.absolute_rdc[align_id])
+            else:
+                absolute[-1].append(False)
+
+    # Convert to numpy objects.
+    rdc = array(rdc, float64)
+    rdc_err = array(rdc_err, float64)
+    rdc_weight = array(rdc_weight, float64)
+    absolute = array(absolute, int32)
+    T_flags = array(T_flags, int32)
+    if not opt_uses_j_couplings():
+        j_couplings = None
+    pseudo_flags = array(pseudo_flags, int32)
+
+    # Return the data structures.
+    return rdc, rdc_err, rdc_weight, unit_vect, rdc_const, absolute, T_flags, j_couplings, pseudo_flags
+
+
 def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
     """Set the RDC errors if not already present.
 
@@ -802,6 +1160,51 @@ def set_errors(align_id=None, spin_id1=None, spin_id2=None, sd=None):
         # Set the error.
         for id in align_ids:
             interatom.rdc_err[id] = sd
+
+
+def setup_pseudoatom_rdc():
+    """Make sure that the interatom system is properly set up for pseudo-atoms and RDCs.
+
+    Interatomic data containers between the non-pseudo-atom and the pseudo-atom members will be deselected.
+    """
+
+    # Loop over all interatomic data containers.
+    for interatom in interatomic_loop():
+        # Get the spins.
+        spin1 = return_spin(interatom.spin_id1)
+        spin2 = return_spin(interatom.spin_id2)
+
+        # Checks.
+        flag1 = is_pseudoatom(spin1)
+        flag2 = is_pseudoatom(spin2)
+
+        # No pseudo-atoms, so do nothing.
+        if not (flag1 or flag2):
+            continue
+
+        # Both are pseudo-atoms.
+        if flag1 and flag2:
+            warn(RelaxWarning("Support for both spins being in a dipole pair being pseudo-atoms is not implemented yet, deselecting the interatomic data container for the spin pair '%s' and '%s'." % (interatom.spin_id1, interatom.spin_id2)))
+            interatom.select = False
+
+        # Alias the pseudo and normal atoms.
+        pseudospin = spin1
+        base_spin_id = interatom.spin_id2
+        pseudospin_id = interatom.spin_id1
+        if flag2:
+            pseudospin = spin2
+            base_spin_id = interatom.spin_id1
+            pseudospin_id = interatom.spin_id2
+
+        # Loop over the atoms of the pseudo-atom.
+        for spin, spin_id in pseudoatom_loop(pseudospin, return_id=True):
+            # Get the corresponding interatomic data container.
+            pseudo_interatom = return_interatom(spin_id1=spin_id, spin_id2=base_spin_id)
+
+            # Deselect if needed.
+            if pseudo_interatom.select:
+                warn(RelaxWarning("Deselecting the interatomic data container for the spin pair '%s' and '%s' as it is part of the pseudo-atom system of the spin pair '%s' and '%s'." % (pseudo_interatom.spin_id1, pseudo_interatom.spin_id2, base_spin_id, pseudospin_id)))
+                pseudo_interatom.select = False
 
 
 def weight(align_id=None, spin_id=None, weight=1.0):

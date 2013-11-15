@@ -28,8 +28,8 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+from graphics import fetch_icon
 from gui.fonts import font
-from gui.paths import icon_16x16
 from gui.string_conv import str_to_gui
 
 
@@ -39,7 +39,7 @@ class Text_ctrl:
     This consists of three elements:  wx.StaticText, wx.TextCtrl, and wx.Button.
     """
 
-    def __init__(self, box, parent, text="", default="", tooltip=None, tooltip_button=None, button_text=" Change", control=wx.TextCtrl, icon=icon_16x16.open, fn=None, editable=True, button=False, width_text=200, width_button=80, spacer=0):
+    def __init__(self, box, parent, text="", default="", tooltip=None, tooltip_button=None, button_text=" Change", control=wx.TextCtrl, icon=fetch_icon('oxygen.actions.document-open', "16x16"), fn=None, editable=True, button=False, width_text=200, width_button=80, spacer=0):
         """Create a text selection element for the frame.
 
         This consists of a horizontal layout with a static text element, a text control, and an optional button.

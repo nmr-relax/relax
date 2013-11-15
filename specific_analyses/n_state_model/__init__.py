@@ -49,13 +49,16 @@ from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from lib.structure.internal.object import Internal
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pcs, pipes, rdc
+from pipe_control.align_tensor import opt_uses_align_data, opt_uses_tensor
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.pcs import return_pcs_data
+from pipe_control.rdc import check_rdcs, return_rdc_data
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, check_rdcs, num_data_points, opt_tensor, opt_uses_align_data, opt_uses_j_couplings, return_pcs_data, return_rdc_data, tensor_loop
+from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, num_data_points, tensor_loop
 from specific_analyses.n_state_model.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, param_model_index, param_num, update_model
 from target_functions.n_state_model import N_state_opt
 from target_functions.potential import quad_pot
@@ -270,7 +273,7 @@ class N_state_model(API_base, API_common):
         align_index = 0
         for i in range(len(cdp.align_ids)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # The alignment ID.
@@ -311,7 +314,7 @@ class N_state_model(API_base, API_common):
                 spin2 = return_spin(interatom.spin_id2)
 
                 # RDC checks.
-                if not check_rdcs(interatom, spin1, spin2):
+                if not check_rdcs(interatom):
                     continue
 
                 # Containers with RDC data.
@@ -529,9 +532,9 @@ class N_state_model(API_base, API_common):
             full_tensors, red_tensor_elem, red_tensor_err, full_in_ref_frame = self._minimise_setup_tensors(sim_index=sim_index)
 
         # Get the data structures for optimisation using PCSs as base data sets.
-        pcs, pcs_err, pcs_weight, temp, frq = None, None, None, None, None
+        pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = None, None, None, None, None, None
         if 'pcs' in data_types:
-            pcs, pcs_err, pcs_weight, temp, frq = return_pcs_data(sim_index=sim_index)
+            pcs, pcs_err, pcs_weight, temp, frq, pcs_pseudo_flags = return_pcs_data(sim_index=sim_index)
 
         # Get the data structures for optimisation using RDCs as base data sets.
         rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = None, None, None, None, None, None, None, None, None
@@ -565,7 +568,7 @@ class N_state_model(API_base, API_common):
                 centre_fixed = cdp.paramag_centre_fixed
 
         # Set up the class instance containing the target function.
-        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, rdc_pseudo_flags=rdc_pseudo_flags, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
+        model = N_state_opt(model=cdp.model, N=cdp.N, init_params=param_vector, probs=probs, full_tensors=full_tensors, red_data=red_tensor_elem, red_errors=red_tensor_err, full_in_ref_frame=full_in_ref_frame, fixed_tensors=fixed_tensors, pcs=pcs, rdcs=rdcs, pcs_errors=pcs_err, rdc_errors=rdc_err, T_flags=T_flags, j_couplings=j_couplings, rdc_pseudo_flags=rdc_pseudo_flags, pcs_pseudo_flags=pcs_pseudo_flags, pcs_weights=pcs_weight, rdc_weights=rdc_weight, rdc_vect=rdc_vector, temp=temp, frq=frq, dip_const=rdc_dj, absolute_rdc=absolute_rdc, atomic_pos=atomic_pos, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, centre_fixed=centre_fixed)
 
         # Return the data.
         return model, param_vector, data_types, scaling_matrix
@@ -1460,7 +1463,7 @@ class N_state_model(API_base, API_common):
             # Loop over the alignments, adding the alignment tensor parameters to the tensor data container.
             for i in range(len(cdp.align_tensors)):
                 # Skip non-optimised tensors.
-                if not opt_tensor(cdp.align_tensors[i]):
+                if not opt_uses_tensor(cdp.align_tensors[i]):
                     continue
 
                 # Set up the number of simulations.

@@ -27,7 +27,6 @@ from wx.lib import buttons
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from graphics import IMAGE_PATH, fetch_icon
-from gui import paths
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.input_elements.value import Value
@@ -148,7 +147,7 @@ class Free_file_format:
             if self.save_flag:
                 # Build the button.
                 button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Save the free file format settings within the relax data store.")
                 button.SetMinSize(self.size_square_button)
@@ -166,7 +165,7 @@ class Free_file_format:
             if self.reset_flag:
                 # Build the button.
                 button = buttons.ThemedGenBitmapTextButton(self.parent, -1, None, "")
-                button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+                button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
                 button.SetFont(font.normal)
                 button.SetToolTipString("Reset the free file format settings to the original values.")
                 button.SetMinSize(self.size_square_button)
@@ -599,7 +598,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
 
         # The save button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Save")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.save, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.document-save', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Save the free file format settings within the relax data store.")
         button.SetMinSize(self.SIZE_BUTTON)
@@ -611,7 +610,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
 
         # The reset button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.edit_delete, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit_delete', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Reset the free file format settings to the original values.")
         button.SetMinSize(self.SIZE_BUTTON)
@@ -623,7 +622,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
 
         # The cancel button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Cancel")
-        button.SetBitmapLabel(wx.Bitmap(paths.icon_22x22.dialog_cancel, wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.dialog-cancel', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)

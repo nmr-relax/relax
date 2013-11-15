@@ -31,7 +31,8 @@ from warnings import warn
 from lib.errors import RelaxNoModelError
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pipes
-from specific_analyses.n_state_model.data import base_data_types, opt_tensor, opt_uses_align_data
+from pipe_control.align_tensor import opt_uses_align_data, opt_uses_tensor
+from specific_analyses.n_state_model.data import base_data_types
 
 
 def assemble_param_vector(sim_index=None):
@@ -57,7 +58,7 @@ def assemble_param_vector(sim_index=None):
     if opt_uses_align_data():
         for i in range(len(cdp.align_tensors)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # Add the parameters.
@@ -149,7 +150,7 @@ def assemble_scaling_matrix(data_types=None, scaling=True):
     tensor_num = 0
     for i in range(len(cdp.align_tensors)):
         # Skip non-optimised tensors.
-        if not opt_tensor(cdp.align_tensors[i]):
+        if not opt_uses_tensor(cdp.align_tensors[i]):
             continue
 
         # Add the 5 alignment parameters.
@@ -200,7 +201,7 @@ def disassemble_param_vector(param_vector=None, data_types=None, sim_index=None)
         tensor_num = 0
         for i in range(len(cdp.align_tensors)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # Normal tensors.
@@ -383,7 +384,7 @@ def linear_constraints(data_types=None, scaling_matrix=None):
         # Loop over the alignments.
         for i in range(len(cdp.align_tensors)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # Add 5 parameters.
@@ -494,7 +495,7 @@ def param_num():
         # Loop over the alignments.
         for i in range(len(cdp.align_tensors)):
             # Skip non-optimised tensors.
-            if not opt_tensor(cdp.align_tensors[i]):
+            if not opt_uses_tensor(cdp.align_tensors[i]):
                 continue
 
             # Add 5 tensor parameters.

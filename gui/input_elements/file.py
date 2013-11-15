@@ -26,7 +26,7 @@
 import wx
 
 # relax module imports.
-from gui import paths
+from graphics import fetch_icon
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.misc import open_file
@@ -112,7 +112,7 @@ class Selector_file:
         sub_sizer.AddSpacer(5)
 
         # The file selection button.
-        button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.open, wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
         button.SetMinSize((height_element, height_element))
         button.SetToolTipString("Select the file.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -124,7 +124,7 @@ class Selector_file:
             sub_sizer.AddSpacer(5)
 
             # The preview button.
-            button = wx.BitmapButton(parent, -1, wx.Bitmap(paths.icon_16x16.document_preview, wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-preview', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Preview")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)

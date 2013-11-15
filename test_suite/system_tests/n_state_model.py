@@ -21,7 +21,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array
+from numpy import array, float64
 from numpy.linalg import norm
 from os import listdir, sep
 from tempfile import mkdtemp
@@ -34,6 +34,7 @@ from pipe_control.align_tensor import calc_chi_tensor
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_index_loop, spin_loop
 from pipe_control.pipes import get_pipe
+from pipe_control.rdc import return_rdc_data
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
 
@@ -920,11 +921,11 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.interatomic[2].rdc_bc['A'], -16.244078605100817)
 
 
-    def test_pyrotartaric_anhydride_rdcs(self):
-        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) RDC data."""
+    def test_pyrotartaric_anhydride_absT(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) absolute T (J+D) data."""
 
         # The setup.
-        ds.abs_data = False
+        ds.abs_data = 'T'
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
@@ -939,14 +940,45 @@ class N_state_model(SystemTestCase):
         self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
 
 
-    def test_pyrotartaric_anhydride_absT(self):
-        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) absolute T (J+D) data."""
+    def test_pyrotartaric_anhydride_mix(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using short range RDC and long range (1J, 2J & 3J) absolute T (J+D) data."""
 
         # The setup.
-        ds.abs_data = True
+        ds.abs_data = 'mix'
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Test the optimised values.
+        self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayy, 0.000278497, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axy, -0.000253196, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Axz, 0.000280272, 5)
+        self.assertAlmostEqual(cdp.align_tensors[0].Ayz, -0.0001431835, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+
+
+    def test_pyrotartaric_anhydride_rdcs(self):
+        """Pyrotarctic anhydride alignment tensor optimisation using long range (1J, 2J & 3J) RDC data."""
+
+        # The setup.
+        ds.abs_data = 'D'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'n_state_model'+sep+'pyrotartaric_anhydride.py')
+
+        # Get the RDC data.
+        rdcs, rdc_err, rdc_weight, rdc_vector, rdc_dj, absolute_rdc, T_flags, j_couplings, rdc_pseudo_flags = return_rdc_data()
+
+        # The data as it should be.
+        ids = ['@9 - @Q9', '@4 - @6', '@5 - @7', '@5 - @8', '@1 - @6', '@3 - @6', '@5 - @6', '@9 - @6', '@1 - @7', '@3 - @7', '@4 - @7', '@9 - @7', '@1 - @8', '@3 - @8', '@4 - @8', '@9 - @8', '@3 - @Q9', '@4 - @Q9', '@5 - @Q9']
+        real_rdcs = array([7.051710295953332, 14.64956993990, -9.80224941614,  4.49085022708,  1.16041049951,  0.57071216172,  3.68667449742, -2.26063357144, -4.77232431456, -0.17007443173,  2.37501105989,  1.64523216045, -0.94447557779,  0.06213688971,  1.48958862680,  0.21349779284, -1.2400897128766667, -1.8997427023766667, -0.0129325208733333], float64)
+
+        # Check the RDC data.
+        for i in range(len(ids)):
+            print("Spin pair '%s'." % ids[i])
+            self.assertEqual(real_rdcs[i], rdcs[0, i])
 
         # Test the optimised values.
         self.assertAlmostEqual(cdp.align_tensors[0].Axx, -0.0001756305, 5)

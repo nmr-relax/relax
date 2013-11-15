@@ -28,7 +28,6 @@ import wx
 
 # relax module imports.
 from graphics import fetch_icon
-from gui import paths
 from gui.components.menu import build_menu_item
 from gui.message import Question
 from gui.string_conv import gui_to_str
@@ -106,16 +105,16 @@ class Mol_res_spin_tree(wx.Window):
         icon_list = wx.ImageList(self.icon_size, self.icon_size)
 
         # The normal icons.
-        self.icon_mol_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule, wx.BITMAP_TYPE_ANY))
-        self.icon_mol_unfold_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_unfolded, wx.BITMAP_TYPE_ANY))
-        self.icon_res_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue, wx.BITMAP_TYPE_ANY))
-        self.icon_spin_index = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin, wx.BITMAP_TYPE_ANY))
+        self.icon_mol_index = icon_list.Add(wx.Bitmap(fetch_icon("relax.molecule", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_mol_unfold_index = icon_list.Add(wx.Bitmap(fetch_icon("relax.molecule_unfolded", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_res_index = icon_list.Add(wx.Bitmap(fetch_icon("relax.residue", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_spin_index = icon_list.Add(wx.Bitmap(fetch_icon("relax.spin", "22x22"), wx.BITMAP_TYPE_ANY))
 
         # The deselected icons.
-        self.icon_mol_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_grey, wx.BITMAP_TYPE_ANY))
-        self.icon_mol_unfold_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.molecule_unfolded_grey, wx.BITMAP_TYPE_ANY))
-        self.icon_res_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.residue_grey, wx.BITMAP_TYPE_ANY))
-        self.icon_spin_index_desel = icon_list.Add(wx.Bitmap(paths.icon_22x22.spin_grey, wx.BITMAP_TYPE_ANY))
+        self.icon_mol_index_desel = icon_list.Add(wx.Bitmap(fetch_icon("relax.molecule_grey", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_mol_unfold_index_desel = icon_list.Add(wx.Bitmap(fetch_icon("relax.molecule_unfolded_grey", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_res_index_desel = icon_list.Add(wx.Bitmap(fetch_icon("relax.residue_grey", "22x22"), wx.BITMAP_TYPE_ANY))
+        self.icon_spin_index_desel = icon_list.Add(wx.Bitmap(fetch_icon("relax.spin_grey", "22x22"), wx.BITMAP_TYPE_ANY))
 
         # Set the icon list.
         self.tree.SetImageList(icon_list)
@@ -530,7 +529,7 @@ class Mol_res_spin_tree(wx.Window):
         menu = wx.Menu()
 
         # The load spins entry.
-        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=paths.icon_16x16.spin)
+        item = build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="Load spins", icon=fetch_icon("relax.spin", "16x16"))
         menu.AppendItem(item)
         if status.exec_lock.locked():
             item.Enable(False)
@@ -659,7 +658,7 @@ class Mol_res_spin_tree(wx.Window):
 
         # Add some menu items for the spin user functions.
         items.append(build_menu_item(menu, id=self.MENU_ROOT_MOLECULE_CREATE, text="&Add a molecule", icon=fetch_icon("oxygen.actions.list-add-relax-blue")))
-        items.append(build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="&Load spins", icon=paths.icon_16x16.spin))
+        items.append(build_menu_item(menu, id=self.MENU_ROOT_LOAD_SPINS, text="&Load spins", icon=fetch_icon("relax.spin", "16x16")))
 
         # Add the items and activate them.
         for item in items:

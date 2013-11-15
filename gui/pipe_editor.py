@@ -34,7 +34,6 @@ from gui.fonts import font
 from gui.icons import relax_icons
 from gui.message import Question
 from gui.misc import add_border, bitmap_setup
-from gui.paths import icon_16x16, icon_22x22
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from lib.errors import RelaxError
@@ -157,14 +156,14 @@ class Pipe_editor(wx.Frame):
             items.append(build_menu_item(menu, parent=self, text="&Add the pipe to a bundle", icon=fetch_icon("relax.pipe_bundle"), fn=self.pipe_bundle))
 
         # Menu entry:  delete the data pipe.
-        items.append(build_menu_item(menu, parent=self, text="&Delete the pipe", icon=icon_16x16.remove, fn=self.pipe_delete))
+        items.append(build_menu_item(menu, parent=self, text="&Delete the pipe", icon=fetch_icon('oxygen.actions.list-remove', "16x16"), fn=self.pipe_delete))
  
         # Menu entry:  switch to this data pipe.
-        items.append(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=icon_16x16.pipe_switch, fn=self.pipe_switch))
+        items.append(build_menu_item(menu, parent=self, text="&Switch to this pipe", icon=fetch_icon('oxygen.actions.system-switch-user', "16x16"), fn=self.pipe_switch))
  
         # Menu entry:  new auto-analysis tab.
         if pipe_bundle and self.gui.analysis.page_index_from_bundle(pipe_bundle) == None and pipe_type in ['noe', 'r1', 'r2', 'mf', 'relax_disp']:
-            items.append(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=icon_16x16.new, fn=self.associate_auto))
+            items.append(build_menu_item(menu, parent=self, text="&Associate with a new auto-analysis", icon=fetch_icon('oxygen.actions.document-new', "16x16"), fn=self.associate_auto))
  
         # Set up the entries.
         for item in items:
@@ -201,7 +200,7 @@ class Pipe_editor(wx.Frame):
 
         # The create button.
         self.button_create = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Create")
-        self.button_create.SetBitmapLabel(wx.Bitmap(icon_22x22.add, wx.BITMAP_TYPE_ANY))
+        self.button_create.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_create.SetFont(font.normal)
         self.button_create.SetToolTipString("Create a new data pipe.")
         button_sizer.Add(self.button_create, 1, wx.ALL|wx.EXPAND, 0)
@@ -209,7 +208,7 @@ class Pipe_editor(wx.Frame):
 
         # The copy button.
         self.button_copy = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Copy")
-        self.button_copy.SetBitmapLabel(wx.Bitmap(icon_22x22.copy, wx.BITMAP_TYPE_ANY))
+        self.button_copy.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_copy.SetFont(font.normal)
         self.button_copy.SetToolTipString("Copy a data pipe.")
         button_sizer.Add(self.button_copy, 1, wx.ALL|wx.EXPAND, 0)
@@ -217,7 +216,7 @@ class Pipe_editor(wx.Frame):
 
         # The delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(icon_22x22.list_remove, wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list_remove', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetToolTipString("Delete a data pipe.")
         button_sizer.Add(self.button_delete, 1, wx.ALL|wx.EXPAND, 0)
@@ -225,7 +224,7 @@ class Pipe_editor(wx.Frame):
 
         # The hybridise button.
         self.button_hybrid = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Hybridise")
-        self.button_hybrid.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_hybrid, wx.BITMAP_TYPE_ANY))
+        self.button_hybrid.SetBitmapLabel(wx.Bitmap(fetch_icon('relax.pipe_hybrid', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_hybrid.SetFont(font.normal)
         self.button_hybrid.SetToolTipString("Hybridise data pipes.")
         button_sizer.Add(self.button_hybrid, 1, wx.ALL|wx.EXPAND, 0)
@@ -233,7 +232,7 @@ class Pipe_editor(wx.Frame):
 
         # The switch button.
         self.button_switch = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Switch")
-        self.button_switch.SetBitmapLabel(wx.Bitmap(icon_22x22.pipe_switch, wx.BITMAP_TYPE_ANY))
+        self.button_switch.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.system-switch-user', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_switch.SetFont(font.normal)
         self.button_switch.SetToolTipString("Switch data pipes.")
         button_sizer.Add(self.button_switch, 1, wx.ALL|wx.EXPAND, 0)

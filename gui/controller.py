@@ -30,12 +30,11 @@ import wx.stc
 
 # relax module imports.
 from compat import Queue
-from graphics import IMAGE_PATH
+from graphics import IMAGE_PATH, fetch_icon
 from gui.components.menu import build_menu_item
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.misc import add_border, bitmap_setup
-from gui.paths import icon_16x16
 from gui.string_conv import str_to_gui
 from info import Info_box
 from lib.io import SplitIO
@@ -1007,17 +1006,17 @@ class LogCtrl(wx.stc.StyledTextCtrl):
         menu = wx.Menu()
 
         # Add the entries.
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_find, text="&Find", icon=icon_16x16.edit_find))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_find, text="&Find", icon=fetch_icon('oxygen.actions.edit-find', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_copy, text="&Copy", icon=icon_16x16.edit_copy))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_select_all, text="&Select all", icon=icon_16x16.edit_select_all))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_copy, text="&Copy", icon=fetch_icon('oxygen.actions.edit-copy', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_select_all, text="&Select all", icon=fetch_icon('oxygen.actions.edit-select-all', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=icon_16x16.zoom_in))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=icon_16x16.zoom_out))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=icon_16x16.zoom_original))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_in, text="Zoom &in", icon=fetch_icon('oxygen.actions.zoom-in', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_out, text="Zoom &out", icon=fetch_icon('oxygen.actions.zoom-out', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_zoom_orig, text="Original &zoom", icon=fetch_icon('oxygen.actions.zoom-original', "16x16")))
         menu.AppendSeparator()
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_start, text="&Go to start", icon=icon_16x16.go_top))
-        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_end, text="&Go to end", icon=icon_16x16.go_bottom))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_start, text="&Go to start", icon=fetch_icon('oxygen.actions.go-top', "16x16")))
+        menu.AppendItem(build_menu_item(menu, id=self.menu_id_goto_end, text="&Go to end", icon=fetch_icon('oxygen.actions.go-bottom', "16x16")))
 
         # Pop up the menu.
         if status.show_gui:

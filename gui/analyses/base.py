@@ -29,8 +29,7 @@ from wx.lib import buttons
 from wx.lib import scrolledpanel
  
 # relax module imports.
-from graphics import IMAGE_PATH
-from gui import paths
+from graphics import IMAGE_PATH, fetch_icon
 from gui.analyses.elements.text_element import Text_ctrl
 from gui.fonts import font
 from gui.misc import add_border, bitmap_setup
@@ -91,7 +90,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         self.Bind(wx.EVT_SIZE, self.resize)
 
 
-    def add_button_open(self, box, parent, icon=paths.icon_16x16.open, text=" Change", fn=None, width=-1, height=-1):
+    def add_button_open(self, box, parent, icon=fetch_icon('oxygen.actions.document-open', "16x16"), text=" Change", fn=None, width=-1, height=-1):
         """Add a button for opening and changing files and directories.
 
         @param box:         The box element to pack the control into.
@@ -210,7 +209,7 @@ class Base_analysis(scrolledpanel.ScrolledPanel):
         """
 
         # Add the element.
-        self.spin_systems = Text_ctrl(box, self, text="Spin systems:", button_text=" Spin editor", default=self.spin_count(), tooltip="The currently loaded molecule, residue and spin sequence.", tooltip_button="Launch the spin editor window for modifying the molecule, residue and spin sequence.", icon=paths.icon_16x16.spin, fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.spin_systems = Text_ctrl(box, self, text="Spin systems:", button_text=" Spin editor", default=self.spin_count(), tooltip="The currently loaded molecule, residue and spin sequence.", tooltip_button="Launch the spin editor window for modifying the molecule, residue and spin sequence.", icon=fetch_icon('relax.spin', "16x16"), fn=self.launch_spin_editor, editable=False, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
 
     def add_static_text(self, box, parent, text='', width=-1, height=-1):

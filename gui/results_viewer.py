@@ -29,11 +29,11 @@ from wx.lib import buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from graphics import fetch_icon
 from gui.fonts import font
 from gui.icons import relax_icons
 from gui.interpreter import Interpreter; interpreter = Interpreter()
 from gui.misc import add_border, open_file
-from gui.paths import icon_22x22
 from gui.string_conv import gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.pipes import cdp_name, pipe_names
@@ -88,7 +88,7 @@ class Results_viewer(wx.Frame):
 
         # Add the open button.
         self.button_open = buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Open")
-        self.button_open.SetBitmapLabel(wx.Bitmap(icon_22x22.document_open, wx.BITMAP_TYPE_ANY))
+        self.button_open.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.document-open', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_open.SetFont(font.normal)
         self.button_open.SetMinSize((103, 33))
         self.Bind(wx.EVT_BUTTON, self.open_result_file, self.button_open)

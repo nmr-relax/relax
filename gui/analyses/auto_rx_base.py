@@ -29,7 +29,7 @@ import wx
 # relax module imports.
 from auto_analyses.relax_fit import Relax_fit
 from data_store import Relax_data_store; ds = Relax_data_store()
-from gui import paths
+from graphics import fetch_icon
 from gui.analyses.base import Base_analysis
 from gui.analyses.elements.spin_element import Spin_ctrl
 from gui.analyses.elements.text_element import Text_ctrl
@@ -208,7 +208,7 @@ class Auto_rx(Base_analysis):
         self.field_nmr_frq = Text_ctrl(box, self, text="NMR frequency label [MHz]:", default=self.data.frq, tooltip="This label is added to the output files.  For example if the label is '600', the %s values will be located in the file '%s.600.out'." % (self.gui_label, self.label.lower()), width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the results directory GUI element.
-        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=paths.icon_16x16.open_folder, default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.field_results_dir = Text_ctrl(box, self, text="Results directory:", icon=fetch_icon('oxygen.actions.document-open-folder', "16x16"), default=self.data.save_dir, tooltip="The directory in which all automatically created files will be saved.", tooltip_button="Select the results directory.", fn=self.results_directory, button=True, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # Add the spin GUI element.
         self.add_spin_systems(box, self)

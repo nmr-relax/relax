@@ -37,6 +37,7 @@ from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.io import write_data
 from lib.warnings import RelaxWarning
+import pipe_control
 from pipe_control import pipes
 from pipe_control.angles import wrap_angles
 
@@ -1160,6 +1161,62 @@ def num_tensors(skip_fixed=True):
 
     # Return the count.
     return count
+
+
+def opt_uses_align_data(align_id=None):
+    """Determine if the PCS or RDC data for the given alignment ID is needed for optimisation.
+
+    @keyword align_id:  The optional alignment ID string.
+    @type align_id:     str
+    @return:            True if alignment data is to be used for optimisation, False otherwise.
+    @rtype:             bool
+    """
+
+    # No alignment IDs.
+    if not hasattr(cdp, 'align_ids'):
+        return False
+
+    # Convert the align IDs to an array, or take all IDs.
+    if align_id:
+        align_ids = [align_id]
+    else:
+        align_ids = cdp.align_ids
+
+    # Check the PCS and RDC.
+    for align_id in align_ids:
+        if pipe_control.pcs.opt_uses_pcs(align_id) or pipe_control.rdc.opt_uses_rdc(align_id):
+            return True
+
+    # No alignment data is used for optimisation.
+    return False
+
+
+def opt_uses_tensor(tensor):
+    """Determine if the given tensor is to be optimised.
+
+    @param tensor:  The alignment tensor to check.
+    @type tensor:   AlignmentTensor object.
+    @return:        True if the tensor is to be optimised, False otherwise.
+    @rtype:         bool
+    """
+
+    # Combine all RDC and PCS IDs.
+    ids = []
+    if hasattr(cdp, 'rdc_ids'):
+        ids += cdp.rdc_ids
+    if hasattr(cdp, 'pcs_ids'):
+        ids += cdp.pcs_ids
+
+    # No RDC or PCS data for the alignment, so skip the tensor as it will not be optimised.
+    if tensor.align_id not in ids:
+        return False
+
+    # Fixed tensor.
+    if tensor.fixed:
+        return False
+
+    # The tensor is to be optimised.
+    return True
 
 
 def reduction(full_tensor=None, red_tensor=None):
