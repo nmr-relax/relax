@@ -52,7 +52,7 @@ from pipe_control.selection import desel_spin
 from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_MQ_R1RHO, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_MMQ_2SITE
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_MMQ_2SITE
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -2047,8 +2047,6 @@ def set_exp_type(spectrum_id=None, exp_type=None):
         text += EXP_TYPE_DESC_DQ_CPMG + "."
     elif exp_type == EXP_TYPE_ZQ_CPMG:
         text += EXP_TYPE_DESC_ZQ_CPMG + "."
-    elif exp_type == EXP_TYPE_MQ_R1RHO:
-        text += EXP_TYPE_DESC_MQ_R1RHO + "."
     elif exp_type == EXP_TYPE_R1RHO:
         text += EXP_TYPE_DESC_R1RHO + "."
     print(text)

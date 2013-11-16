@@ -30,7 +30,6 @@ EXP_TYPE_R1RHO = 'R1rho'
 EXP_TYPE_DQ_CPMG = 'DQ CPMG'
 EXP_TYPE_MQ_CPMG = 'MQ CPMG'
 EXP_TYPE_ZQ_CPMG = 'ZQ CPMG'
-EXP_TYPE_MQ_R1RHO = 'MQ R1rho'
 
 
 # Experiment type descriptions.
@@ -39,17 +38,16 @@ EXP_TYPE_DESC_R1RHO = "the R1rho-type experiment"
 EXP_TYPE_DESC_DQ_CPMG = "the double quantum (DQ) CPMG-type experiment"
 EXP_TYPE_DESC_MQ_CPMG = "the multiple quantum (MQ) CPMG-type experiment"
 EXP_TYPE_DESC_ZQ_CPMG = "the zero quantum (ZQ) CPMG-type experiment"
-EXP_TYPE_DESC_MQ_R1RHO = "the multiple quantum (MQ) R1rho-type experiment"
 
 
 # The experiment type lists.
-EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG, EXP_TYPE_MQ_R1RHO]
+EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG]
 """The list of all dispersion experiment types."""
 
 EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG]
 """The list of all dispersion experiment types for CPMG-type data."""
 
-EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO, EXP_TYPE_MQ_R1RHO]
+EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO]
 """The list of all dispersion experiment types for R1rho-type data."""
 
 
@@ -145,12 +143,6 @@ MODEL_LIST_MQ_CPMG = [MODEL_NOREX, MODEL_MQ_CR72, MODEL_MMQ_2SITE]
 
 MODEL_LIST_MQ_CPMG_FULL = [MODEL_R2EFF, MODEL_NOREX, MODEL_MQ_CR72, MODEL_MMQ_2SITE]
 """The list of the R2eff model together with all dispersion models specifically for MQ CPMG-type experiments."""
-
-MODEL_LIST_MQ_R1RHO = [MODEL_NOREX]
-"""The list of all dispersion models specifically for MQ R1rho-type experiments (excluding the R2eff model)."""
-
-MODEL_LIST_MQ_R1RHO_FULL = [MODEL_R2EFF, MODEL_NOREX]
-"""The list of the R2eff model together with all dispersion models specifically for MQ R1rho-type experiments."""
 
 MODEL_LIST_ANALYTIC = [MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_TSMFK01,MODEL_M61, MODEL_M61B, MODEL_DPL94, MODEL_TP02, MODEL_MP05, MODEL_MQ_CR72]
 """The list of all analytic models."""
