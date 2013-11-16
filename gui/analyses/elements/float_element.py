@@ -29,7 +29,6 @@ import wx.lib.buttons
 
 # relax module imports.
 from gui.fonts import font
-from gui.paths import icon_16x16
 from gui.string_conv import str_to_gui
 
 

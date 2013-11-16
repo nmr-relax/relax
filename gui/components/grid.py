@@ -30,7 +30,7 @@ import wx.lib.buttons
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from gui import paths
+from graphics import fetch_icon
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
 from gui.message import error_message
@@ -305,7 +305,7 @@ class Grid_base:
         button_sizer = wx.BoxSizer(wx.VERTICAL)
 
         # Add peaklist button
-        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(paths.icon_16x16.add, wx.BITMAP_TYPE_ANY))
+        add_pkl = wx.BitmapButton(self.parent, -1, bitmap=wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "16x16"), wx.BITMAP_TYPE_ANY))
         add_pkl.SetMinSize((50, 50))
         self.gui.Bind(wx.EVT_BUTTON, self.load_peaklist, add_pkl)
         button_sizer.Add(add_pkl, 0, wx.ADJUST_MINSIZE, 0)
