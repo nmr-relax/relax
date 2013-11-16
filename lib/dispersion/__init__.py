@@ -31,6 +31,7 @@ __all__ = [
     'm61',
     'm61b',
     'mmq_2site',
+    'mp05',
     'mq_cr72',
     'ns_cpmg_2site_3d',
     'ns_cpmg_2site_expanded',
