@@ -21,7 +21,7 @@ if not hasattr(ds, 'models'):
 GRID_INC = 4
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-MC_NUM = 3
+MC_NUM = 1
 
 
 # Set up the data pipe.
@@ -110,7 +110,7 @@ chemical_shift.read(file='ref_500MHz.list', dir=data_path)
 
 # Run faster.
 Relax_disp.opt_func_tol = 1e-10
-Relax_disp.opt_max_iterations = 10000
+Relax_disp.opt_max_iterations = 2000
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=ds.models, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
