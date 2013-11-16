@@ -104,6 +104,7 @@ For the $\Ronerho$-type experiments, the analytic models currently supported are
 \item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} 2-site fast exchange equation for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: DPL94 model} on page~\pageref{sect: dispersion: DPL94 model}.
 \item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  This model is disabled by default in the dispersion auto-analysis.  See Section~\ref{sect: dispersion: M61 skew model} on page~\pageref{sect: dispersion: M61 skew model}.
 \item[`TP02':]\index{relaxation dispersion!TP02 model}  The \citet{TrottPalmer02} 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: TP02 model} on page~\pageref{sect: dispersion: TP02 model}.
+\item[`MP05':]\index{relaxation dispersion!MP05 model}  The \citet{MiloushevPalmer05} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: MP05 model} on page~\pageref{sect: dispersion: MP05 model}.
 \end{description}
 
 
@@ -634,6 +635,27 @@ This is the model for 2-site exchange for off-resonance $\Ronerho$-type experime
 \end{equation}
 
 
+% MP05 model.
+%~~~~~~~~~~~~
+
+\subsection{The MP05 2-site exchange $\Ronerho$ model}
+\label{sect: dispersion: MP05 model}
+\index{relaxation dispersion!MP05 model|textbf}
+
+This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{MiloushevPalmer05}.  It is selected by setting the model to `MP05'.  The equation for the exchange process is:
+\begin{align}
+    \Ronerho = & \Rone\cos^2\theta + \Ronerhoprime\sin^2\theta \\
+               & + \frac{\sin^2\theta\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2 - \sin^2\theta\pA\pB\dw^2 \left(
+                        1 + \frac{2\kex^2 \left( \pA\omega_\textrm{Aeff}^2 + \pB\omega_\textrm{Beff}^2 \right)}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2 + \omega_\textrm{eff}^2\kex^2}
+                    \right)}
+\end{align}
+
+The reference for this equation is:
+\begin{itemize}
+\item \bibentry{MiloushevPalmer05}
+\end{itemize}
+
+
 
 % The numeric R1rho models.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -839,7 +861,6 @@ Some of the missing models include:
 \begin{description}
 \item[`TAP03':]\index{relaxation dispersion!TAP03 model}  The $\Ronerho$-type data \citet{Trott03} 2-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
 \item[`TP04':]\index{relaxation dispersion!TP04 model}  The $\Ronerho$-type data \citet{TrottPalmer04} N-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$.
-\item[`MP05':]\index{relaxation dispersion!TP04 model}  The $\Ronerho$-type data \citet{MiloushevPalmer05} 2-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
 \item[`MMQ 3-site linear':]\index{relaxation dispersion!MMQ 3-site linear model}  The model of the numeric solution for linear 3-site exchange for combined proton-heteronuclear SQ, ZQ, DQ and MQ (MMQ) CPMG-type data.
 \item[`MMQ 3-site branched':]\index{relaxation dispersion!MMQ 3-site branched model}  Similar to the `MMQ 3-site linear' model but with one of the $\kex$ parameters not set to zero.
 \item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model of the numeric solution for linear 3-site exchange for $\Ronerho$-type data.
