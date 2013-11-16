@@ -33,7 +33,7 @@ from auto_analyses.relax_disp import Relax_disp
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'DPL94', 'NS R1rho 2-site']
+MODELS = ['R2eff', 'No Rex', 'MP05', 'NS R1rho 2-site']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
