@@ -156,7 +156,7 @@ class Relax_disp:
             # Loop over all models.
             for model in self.models:
                 # Skip the models used for nesting.
-                if model in [MODEL_CR72, MODEL_MQ_CR72]:
+                if model in [MODEL_CR72, MODEL_MQ_CR72, MODEL_MP05]:
                     continue
 
                 # Warnings for all other analytic models.
@@ -232,6 +232,9 @@ class Relax_disp:
             analytic = True
         elif model == MODEL_MMQ_2SITE and MODEL_MQ_CR72 in self.models:
             nested_pipe = MODEL_MQ_CR72
+            analytic = True
+        if model == MODEL_NS_R1RHO_2SITE and MODEL_MP05 in self.models:
+            nested_pipe = MODEL_MP05
             analytic = True
 
         # No nesting.
