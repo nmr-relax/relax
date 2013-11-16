@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plo
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -779,6 +779,7 @@ uf.add_keyarg(
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
         "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_TP02, r1rho_prime, dw, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_MP05, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_MQ_CR72, r2, dw, dwH, kex),
         "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_MMQ_2SITE, r2, dw, dwH, kex)
@@ -801,6 +802,7 @@ uf.add_keyarg(
         MODEL_M61B,
         MODEL_DPL94,
         MODEL_TP02,
+        MODEL_MP05,
         MODEL_NS_R1RHO_2SITE,
         MODEL_MQ_CR72,
         MODEL_MMQ_2SITE
@@ -834,6 +836,7 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61, "The Meiboom (1961) 2-site
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_M61B, "The Meiboom (1961) 2-site equation for all time scales with pA >> pB and with parameters {R1rho', ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_DPL94, "The Davis, Perlman and London (1994) 2-site fast exchange equation with parameters {R1rho', ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TP02, "The Trott and Palmer (2002) 2-site equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MP05, "The Miloushev and Palmer (2005) 2-site off-resonance equation for all time scales with parameters {R1rho', ..., pA, dw, kex}.")
 uf.desc[-1].add_paragraph("The currently supported numeric models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw, kex}.")
 # MQ CPMG-type data.
