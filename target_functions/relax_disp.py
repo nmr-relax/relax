@@ -36,6 +36,7 @@ from lib.dispersion.lm63 import r2eff_LM63
 from lib.dispersion.lm63_3site import r2eff_LM63_3site
 from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
+from lib.dispersion.mp05 import r1rho_MP05
 from lib.dispersion.mq_cr72 import r2eff_mq_cr72
 from lib.dispersion.mmq_2site import r2eff_mmq_2site
 from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
@@ -47,7 +48,7 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_MQ_R1RHO, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_MQ_R1RHO, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -70,6 +71,7 @@ class Dispersion:
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
             - 'M61 skew':  The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.
             - 'TP02':  The Trott and Palmer (2002) 2-site exchange model for R1rho-type experiments.
+            - 'MP05':  The Miloushev and Palmer (2005) off-resonance 2-site exchange model for R1rho-type experiments.
 
         The following numerical models are currently supported:
 
@@ -126,7 +128,7 @@ class Dispersion:
             raise RelaxError("No errors have been supplied to the target function.")
         if missing == None:
             raise RelaxError("No missing data information has been supplied to the target function.")
-        if model in [MODEL_DPL94, MODEL_TP02]:
+        if model in [MODEL_DPL94, MODEL_TP02, MODEL_MP05]:
             if chemical_shifts == None:
                 raise RelaxError("Chemical shifts must be supplied for the '%s' R1rho off-resonance dispersion model." % model)
             if r1 == None:
@@ -298,6 +300,8 @@ class Dispersion:
             self.func = self.func_DPL94
         if model == MODEL_TP02:
             self.func = self.func_TP02
+        if model == MODEL_MP05:
+            self.func = self.func_MP05
         if model == MODEL_NS_R1RHO_2SITE:
             self.func = self.func_ns_r1rho_2site
         if model == MODEL_MQ_CR72:
@@ -824,6 +828,56 @@ class Dispersion:
 
                 # Back calculate the R1rho values.
                 r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for point_index in range(self.num_disp_points[0][frq_index]):
+                    if self.missing[spin_index][frq_index][point_index]:
+                        self.back_calc[spin_index][frq_index][point_index] = self.values[spin_index][frq_index][point_index]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[spin_index][frq_index], self.back_calc[spin_index][frq_index], self.errors[spin_index][frq_index])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def func_MP05(self, params):
+        """Target function for the Miloushev and Palmer (2005) R1rho off-resonance 2-site model.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Once off parameter conversions.
+        pB = 1.0 - pA
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for spin_index in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for frq_index in range(self.num_frq):
+                # The R20 index.
+                r20_index = frq_index + spin_index*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+
+                # Back calculate the R1rho values.
+                r1rho_MP05(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[spin_index, frq_index], spin_lock_fields=self.spin_lock_omega1[0][frq_index], spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points[0][frq_index]):
