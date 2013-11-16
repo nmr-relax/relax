@@ -47,7 +47,7 @@ from specific_analyses.relax_disp.checks import check_c_modules, check_disp_poin
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -133,7 +133,7 @@ class Relax_disp(API_base, API_common):
 
         # The offset and R1 data for R1rho off-resonance models.
         chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-        if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_NS_R1RHO_2SITE]:
+        if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
             chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
             r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
@@ -697,6 +697,14 @@ class Relax_disp(API_base, API_common):
         # TP02 model.
         elif model == MODEL_TP02:
             print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
+            params = []
+            for frq in loop_frq():
+                params.append('r2')
+            params += ['pA', 'dw', 'kex']
+
+        # MP05 model.
+        elif model == MODEL_MP05:
+            print("The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments.")
             params = []
             for frq in loop_frq():
                 params.append('r2')
