@@ -2146,6 +2146,39 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin2.chi2, 0.000133191682505916, 4)
 
 
+    def test_tp02_data_to_mp05(self):
+        """Test the dispersion 'MP05' model fitting against the 'TP02' test data."""
+
+        # Fixed time variable and the models.
+        ds.fixed = True
+        ds.models = ['R2eff', 'MP05']
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_off_res_tp02.py')
+
+        # The original parameters.
+        r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
+        pA = 0.7654321
+        kex = 1234.56789
+        delta_omega = [7.0, 9.0]
+
+        # Switch to the 'MP05' model data pipe, then check for each spin.
+        self.interpreter.pipe.switch('MP05')
+        spin_index = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            # Printout.
+            print("\nSpin %s." % spin_id)
+
+            # Check the fitted parameters.
+            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index][0]/10, 4)
+            self.assertAlmostEqual(spin.r2[1]/10, r1rho_prime[spin_index][1]/10, 4)
+            self.assertAlmostEqual(spin.dw, delta_omega[spin_index], 3)
+            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 3)
+
+            # Increment the spin index.
+            spin_index += 1
+
+
     def test_tp02_data_to_tp02(self):
         """Test the relaxation dispersion 'TP02' model curve fitting to fixed time synthetic data."""
 
