@@ -2156,11 +2156,32 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_off_res_tp02.py')
 
-        # The original parameters.
-        r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
-        pA = 0.7654321
-        kex = 1234.56789
-        delta_omega = [7.0, 9.0]
+        # The original TP02 parameters.
+        #r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
+        #pA = 0.7654321
+        #kex = 1234.56789
+        #delta_omega = [7.0, 9.0]
+
+        # The equivalent MP05 parameters.
+        r1rho_prime = [[10.0058087306952, 15.0058071785643], [11.9997883441526, 17.9972824143268]]
+        pA = [0.775054986621315, 0.806128964050712]
+        kex = [1235.20228577117, 1220.23684410068]
+        delta_omega = [7.08193971314044, 9.69856821121164]
+        chi2 = [0.0370400968687155, 8.28321387676908e-06]
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[0], spin2.r2[0]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[1], spin2.r2[1]))
+        print("%-20s %20.15g %20.15g" % ("pA", spin1.pA, spin2.pA))
+        print("%-20s %20.15g %20.15g" % ("dw", spin1.dw, spin2.dw))
+        print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Switch to the 'MP05' model data pipe, then check for each spin.
         self.interpreter.pipe.switch('MP05')
@@ -2172,8 +2193,10 @@ class Relax_disp(SystemTestCase):
             # Check the fitted parameters.
             self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index][0]/10, 4)
             self.assertAlmostEqual(spin.r2[1]/10, r1rho_prime[spin_index][1]/10, 4)
+            self.assertAlmostEqual(spin.pA, pA[spin_index], 3)
             self.assertAlmostEqual(spin.dw, delta_omega[spin_index], 3)
-            self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 3)
+            self.assertAlmostEqual(spin.kex/1000.0, kex[spin_index]/1000.0, 3)
+            self.assertAlmostEqual(spin.chi2, chi2[spin_index], 3)
 
             # Increment the spin index.
             spin_index += 1
