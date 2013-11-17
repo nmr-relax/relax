@@ -37,7 +37,7 @@ from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
 from specific_analyses.relax_disp.disp_data import loop_exp_frq_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_CPMG_NUM, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TP02
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_CPMG_NUM, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
 
 
@@ -289,7 +289,7 @@ class Disp_minimise_command(Slave_command):
             self.A, self.b = linear_constraints(spins=spins, scaling_matrix=scaling_matrix)
 
         # Test if the spectrometer frequencies have been set.
-        if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61, MODEL_TP02, MODEL_MP05] and not hasattr(cdp, 'spectrometer_frq'):
+        if spins[0].model in [MODEL_LM63, MODEL_CR72, MODEL_CR72_FULL, MODEL_M61, MODEL_TP02, MODEL_TAP03, MODEL_MP05] and not hasattr(cdp, 'spectrometer_frq'):
             raise RelaxError("The spectrometer frequency information has not been specified.")
 
         # The R2eff/R1rho data.
@@ -297,7 +297,7 @@ class Disp_minimise_command(Slave_command):
 
         # The offset and R1 data for R1rho off-resonance models.
         self.chemical_shifts, self.offsets, self.tilt_angles, self.r1 = None, None, None, None
-        if spins[0].model in [MODEL_DPL94, MODEL_TP02, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
+        if spins[0].model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
             self.chemical_shifts, self.offsets, self.tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields))
             self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
 
