@@ -89,6 +89,11 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
         # The gamma factor.
         gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2[i]) / (sigma2 + kex2 + spin_lock_fields2[i])
 
+        # Bad gamma.
+        if gamma < 0.0:
+            back_calc[i] = 1e100
+            continue
+
         # We assume that A resonates at 0 [s^-1], without loss of generality.
         da = Wa - offset[i]                         # Offset of spin-lock from A.
         db = Wb - offset[i]                         # Offset of spin-lock from B.
