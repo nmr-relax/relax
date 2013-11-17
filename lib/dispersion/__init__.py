@@ -38,6 +38,7 @@ __all__ = [
     'ns_cpmg_2site_star',
     'ns_r1rho_2site',
     'ns_matrices',
+    'tap03',
     'tp02',
     'tsmfk01',
     'two_point'
