@@ -26,7 +26,7 @@
 
 This module is for the function, gradient and Hessian of the TAP03 model.  The model is named after the reference:
 
-    - Trott, O., Abergel, D., and Palmer, A. (2003).  An average-magnetization analysis of R1rho relaxation outside of the fast exchange.  Mol. Phys., 101, 753–763.  (U{DOI: 10.1080/0026897021000054826<http://dx.doi.org/10.1080/0026897021000054826>}).
+    - Trott, O., Abergel, D., and Palmer, A. (2003).  An average-magnetization analysis of R1rho relaxation outside of the fast exchange.  Mol. Phys., 101, 753-763.  (U{DOI: 10.1080/0026897021000054826<http://dx.doi.org/10.1080/0026897021000054826>}).
 
 The code was copied from the TP02 model (via the MP05 model), hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (https://gna.org/task/?7712).  This is code from Nikolai Skrynnikov and Martin Tollinger.
 
