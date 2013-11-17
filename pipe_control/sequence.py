@@ -355,6 +355,41 @@ def read(file=None, dir=None, file_data=None, spin_id_col=None, mol_name_col=Non
     write_spin_data(sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
+def return_attached_protons(spin_id=None):
+    """Return a list of all proton spin containers attached to the given spin.
+
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      str
+    @return:            The list of proton spin containers attached to the given spin.
+    @rtype:             list of SpinContainer instances
+    """
+
+    # Initialise.
+    spin_list = []
+
+    # Get all interatomic data containers.
+    interatoms = return_interatom_list(spin_id)
+
+    # No containers.
+    if not len(interatoms):
+        return spin_list
+
+    # Loop over the containers.
+    for i in range(len(interatoms)):
+        # Get the attached spin.
+        if interatoms[i].spin_id1 == spin_id:
+            attached = return_spin(interatoms[i].spin_id2)
+        else:
+            attached = return_spin(interatoms[i].spin_id1)
+
+        # Is it a proton?
+        if (hasattr(attached, 'element') and attached.element == 'H') or attached.name == 'H':
+            spin_list.append(attached)
+
+    # Return the list.
+    return spin_list
+
+
 def validate_sequence(data, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None):
     """Test if the sequence data is valid.
 
