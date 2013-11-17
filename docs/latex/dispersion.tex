@@ -579,9 +579,11 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \label{sect: dispersion: M61 model}
 \index{relaxation dispersion!M61 model|textbf}
 
-This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments.  It is selected by setting the model to `M61', here named after \citet{Meiboom61}.  The equation for the exchange process is:
+This is the model for 2-site fast exchange for on-resonance $\Ronerho$-type data.
+It is selected by setting the model to `M61', here named after \citet{Meiboom61}.
+The equation for the exchange process is
 \begin{equation}
-    \Ronerho = \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} .
+    \Ronerho = \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2}.
 \end{equation}
 
 The reference for this equation is:
@@ -597,12 +599,15 @@ The reference for this equation is:
 \label{sect: dispersion: M61 skew model}
 \index{relaxation dispersion!M61 skew model|textbf}
 
-This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type experiments from \citet{Meiboom61}.  It is selected by setting the model to `M61 skew'.  The equation for the exchange process is:
+This is the second model for 2-site fast exchange for on-resonance $\Ronerho$-type data from \citet{Meiboom61}.
+It is selected by setting the model to `M61 skew'.
+The equation for the exchange process is
 \begin{equation}
-    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2} .
+    \Ronerho = \Ronerhoprime + \frac{\pA^2\pB\dw^2\kex}{\kex^2 + \pA^2\dw^2 + \omegaone^2}.
 \end{equation}
 
-Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.  Hence this model is disabled in the dispersion auto-analysis.
+Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.
+Hence this model is disabled in the dispersion auto-analysis.
 
 
 % DPL94 model.
@@ -612,9 +617,13 @@ Care must be taken as this model appears to have infinite lines of solutions -- 
 \label{sect: dispersion: DPL94 model}
 \index{relaxation dispersion!DPL94 model|textbf}
 
-This is the model for 2-site fast exchange for $\Ronerho$-type experiments.  It is selected by setting the model to `DPL94', here named after \citet{Davis94}.  It extends the \citet{Meiboom61} model to off-resonance data.  The model collapses to the M61 model for on-resonance data.  The equation for the exchange process is:
+This is the model for 2-site fast exchange for $\Ronerho$-type data.
+It is selected by setting the model to `DPL94', here named after \citet{Davis94}.
+It extends the \citet{Meiboom61} model to off-resonance data.
+The model collapses to the M61 model for on-resonance data.
+The equation for the exchange process is
 \begin{equation}
-    \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta ,
+    \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta,
 \end{equation}
 
 where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
@@ -630,15 +639,30 @@ where $\theta$ is the rotating frame tilt angle.  The reference for this equatio
 \label{sect: dispersion: TP02 model}
 \index{relaxation dispersion!TP02 model|textbf}
 
-This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{TrottPalmer02}.
+This is the model for 2-site exchange for off-resonance $\Ronerho$-type data from \citet{TrottPalmer02}.
 It is selected by setting the model to `TP02'.
-The equation for the exchange process is:
+The equation for the exchange process is
 \begin{equation}
-    \Ronerho = \Rone\cos^2\theta + \left( \Ronerhoprime + \frac{\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2} \right) \sin^2\theta.
+    \Ronerho = \Rone\cos^2\theta + \Ronerhoprime\sin^2\theta + \frac{\sin^2\theta\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2},
 \end{equation}
+
+in which
+\begin{subequations}
+\begin{align}
+    \delta_A &= \omegaA - \omegarf, \\
+    \delta_B &= \omegaB - \omegarf, \\
+    \aveomega &= \pA\omegaA + \pB\omegaB, \\
+    \aveoffset &= \aveomega - \omegarf, \\
+    \omega_\textrm{Aeff}^2 &= \omegaone^2 + \delta_A^2, \\
+    \omega_\textrm{Beff}^2 &= \omegaone^2 + \delta_B^2, \\
+    \omega_\textrm{eff}^2 &= \omegaone^2 + \aveoffset^2, \\
+    \theta &= \arctan \left( \frac{\omegaone}{\aveoffset} \right).
+\end{align}
+\end{subequations}
 
 The equation is accurate only when populations are highly skewed with $\pA \gg \pB$.
 And it is valid only for exchange processes which are not fast.
+Note that this model has been superseded by the `TAP03' and `MP05' models.
 The reference for this equation is:
 \begin{itemize}
 \item \bibentry{TrottPalmer02}
@@ -652,7 +676,7 @@ The reference for this equation is:
 \label{sect: dispersion: TAP03 model}
 \index{relaxation dispersion!TAP03 model|textbf}
 
-This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{Trott03}.
+This is the model for 2-site exchange for off-resonance $\Ronerho$-type data from \citet{Trott03}.
 It is selected by setting the model to `TAP03'.
 The equation for the exchange process is
 \begin{align}
@@ -661,11 +685,9 @@ The equation for the exchange process is
                         \frac{\sin^2\hat\theta\pA\pB\dw^2\kex}{\hat\omega_\textrm{Aeff}^2\hat\omega_\textrm{Beff}^2/\hat\omega_\textrm{eff}^2 + \kex^2 - 2\sin^2\hat\theta\pA\pB\dw^2 + (1 - \gamma)\omegaone^2},
 \end{align}
 
-in which
+in which, in addition to those parameters defined above for the `TP02' model,
 \begin{subequations}
 \begin{align}
-    \delta_A &= \omegaA - \omegarf, \\
-    \delta_B &= \omegaB - \omegarf, \\
     \sigma &= \pB\delta_A + \pA\delta_B, \\
     \gamma &= 1 - \pA\pB\dw^2 \frac{\sigma^2 - \kex^2 + \omegaone^2}{\left( \sigma^2 + \kex^2 + \omegaone^2 \right)^2}, \\
     \hat\omega_\textrm{Aeff}^2 &= \gamma\omegaone^2 + \delta_A^2, \\
@@ -690,14 +712,18 @@ The reference for this equation is:
 \label{sect: dispersion: MP05 model}
 \index{relaxation dispersion!MP05 model|textbf}
 
-This is the model for 2-site exchange for off-resonance $\Ronerho$-type experiments from \citet{MiloushevPalmer05}.  It is selected by setting the model to `MP05'.  The equation for the exchange process is:
+This is the model for 2-site exchange for off-resonance $\Ronerho$-type data for all time scales from \citet{MiloushevPalmer05}.
+It is selected by setting the model to `MP05'.
+The equation for the exchange process is
 \begin{align}
-    \Ronerho = & \Rone\cos^2\theta + \Ronerhoprime\sin^2\theta \\
+    \Ronerho = & \Rone\cos^2\theta + \Ronerhoprime\sin^2\theta \nonumber \\
                & + \frac{\sin^2\theta\pA\pB\dw^2\kex}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2/\omega_\textrm{eff}^2 + \kex^2 - \sin^2\theta\pA\pB\dw^2 \left(
                         1 + \frac{2\kex^2 \left( \pA\omega_\textrm{Aeff}^2 + \pB\omega_\textrm{Beff}^2 \right)}{\omega_\textrm{Aeff}^2\omega_\textrm{Beff}^2 + \omega_\textrm{eff}^2\kex^2}
-                    \right)}
+                    \right)},
 \end{align}
 
+in which the parameters are defined as in the `TP02' model above.
+This model supersedes both the `TP02' and `TAP03' models.
 The reference for this equation is:
 \begin{itemize}
 \item \bibentry{MiloushevPalmer05}
