@@ -77,8 +77,6 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     Wb = omega + dw             # Larmor frequency [s^-1].
     kex2 = kex**2
     W = pA*Wa + pB*Wb           # Pop-averaged Larmor frequency [s^-1].
-    sigma = pB*Wa + pA*Wb
-    sigma2 = sigma**2
 
     # The numerator.
     phi_ex = pA * pB * dw**2
@@ -86,27 +84,33 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
 
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
+        # The factors.
+        da = Wa - offset[i]                         # Offset of spin-lock from A.
+        db = Wb - offset[i]                         # Offset of spin-lock from B.
+        d = W - offset[i]                           # Offset of spin-lock from pop-average.
+
         # The gamma factor.
-        gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2[i]) / (sigma2 + kex2 + spin_lock_fields2[i])
+        sigma = pB*da + pA*db
+        sigma2 = sigma**2
+        gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2[i]) / (sigma2 + kex2 + spin_lock_fields2[i])**2
 
         # Bad gamma.
         if gamma < 0.0:
             back_calc[i] = 1e100
             continue
 
-        # We assume that A resonates at 0 [s^-1], without loss of generality.
-        da = Wa - offset[i]                         # Offset of spin-lock from A.
-        db = Wb - offset[i]                         # Offset of spin-lock from B.
-        d = W - offset[i]                           # Offset of spin-lock from pop-average.
-        waeff2 = spin_lock_fields2[i] + gamma*da**2     # Effective field at A.
-        wbeff2 = spin_lock_fields2[i] + gamma*db**2     # Effective field at B.
-        weff2 = spin_lock_fields2[i] + gamma*d**2       # Effective field at pop-average.
+        # Special omega values.
+        waeff2 = gamma*spin_lock_fields2[i] + da**2     # Effective field at A.
+        wbeff2 = gamma*spin_lock_fields2[i] + db**2     # Effective field at B.
+        weff2 = gamma*spin_lock_fields2[i] + d**2       # Effective field at pop-average.
 
         # The rotating frame flip angle.
-        theta = atan(sqrt(gamma)*spin_lock_fields[i] / d)
+        theta = atan(spin_lock_fields[i] / d)
+        hat_theta = atan(sqrt(gamma)*spin_lock_fields[i] / d)
 
         # Repetitive calculations (to speed up calculations).
         sin_theta2 = sin(theta)**2
+        hat_sin_theta2 = sin(hat_theta)**2
         R1_cos_theta2 = R1 * (1.0 - sin_theta2)
         R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
@@ -116,7 +120,7 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
             continue
 
         # Denominator.
-        denom = waeff2*wbeff2/weff2 + kex2 - 2.0*sin_theta2*phi_ex*kex + (1.0 - gamma)*spin_lock_fields2[i]
+        denom = waeff2*wbeff2/weff2 + kex2 - 2.0*hat_sin_theta2*phi_ex + (1.0 - gamma)*spin_lock_fields2[i]
  
         # Avoid divide by zero.
         if denom == 0.0:
@@ -124,4 +128,4 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
             continue
 
         # R1rho calculation.
-        back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom / gamma
+        back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2 + hat_sin_theta2 * numer / denom / gamma
