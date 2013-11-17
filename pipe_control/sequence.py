@@ -377,7 +377,7 @@ def return_attached_protons(spin_id=None):
     # Loop over the containers.
     for i in range(len(interatoms)):
         # Get the attached spin.
-        if interatoms[i].spin_id1 == spin_id
+        if interatoms[i].spin_id1 == spin_id:
             attached = return_spin(interatoms[i].spin_id2)
         else:
             attached = return_spin(interatoms[i].spin_id1)
