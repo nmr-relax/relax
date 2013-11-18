@@ -928,14 +928,8 @@ def num_exp_types():
     @rtype:     int
     """
 
-    # Start the count.
+    # The count.
     count = len(cdp.exp_type_list)
-
-    # The 1H experiment types for MMQ data.
-    if has_proton_sq_cpmg():
-        count += 1
-    if has_proton_mq_cpmg():
-        count += 1
 
     # Return the count.
     return count
