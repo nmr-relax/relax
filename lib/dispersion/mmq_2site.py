@@ -62,7 +62,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
+def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -84,8 +84,10 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, r20=None, pA=None, pB=None, dw
     @type m1:               numpy rank-2, 2D complex64 array
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
-    @keyword r20:           The R2 value in the absence of exchange.
-    @type r20:              float
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
@@ -111,8 +113,8 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, r20=None, pA=None, pB=None, dw
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=r20, R20B=r20, dw=dw+dwH, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
-    populate_matrix(matrix=m2, R20A=r20, R20B=r20, dw=-dw+dwH, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dw+dwH, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dw+dwH, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -183,7 +185,7 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, r20=None, pA=None, pB=None, dw
             back_calc[i]= -inv_tcpmg * log(Mx / pA)
 
 
-def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dwX=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dwX=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -201,8 +203,10 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     @type m1:               numpy rank-2, 2D complex64 array
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
-    @keyword r20:           The R2 value in the absence of exchange.
-    @type r20:              float
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
@@ -226,8 +230,8 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=r20, R20B=r20, dw=dwX, k_AB=k_AB, k_BA=k_BA)
-    populate_matrix(matrix=m2, R20A=r20, R20B=r20, dw=-dwX, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dwX, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dwX, k_AB=k_AB, k_BA=k_BA)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
