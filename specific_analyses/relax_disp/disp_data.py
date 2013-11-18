@@ -519,7 +519,7 @@ def insignificance(level=0.0):
 
         # Get all the data.
         try:
-            values, errors, missing, frqs, exp_types = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+            values, errors, missing, frqs, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # No R2eff data, so skip the rest.
         except RelaxError:
@@ -1946,11 +1946,13 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     errors = []
     missing = []
     frqs = []
+    relax_times = []
     for exp_i in range(exp_num):
         values.append([])
         errors.append([])
         missing.append([])
         frqs.append([])
+        relax_times.append([])
         for spin_i in range(spin_num):
             values[-1].append([])
             errors[-1].append([])
@@ -1961,6 +1963,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 errors[-1][-1].append([])
                 missing[-1][-1].append([])
                 frqs[-1][-1].append(None)
+        for field_i in range(field_count):
+            relax_times[-1].append(None)
 
     # Pack the R2eff/R1rho data.
     data_flag = False
@@ -2039,11 +2043,39 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             # The errors.
             errors[exp_type_index][spin_index][frq_index].append(current_spin.r2eff_err[key])
 
+            # The relaxation times.
+            for id in cdp.spectrum_ids:
+                # Non-matching data.
+                if cdp.spectrometer_frq[id] != frq:
+                    continue
+                if cdp.exp_type[id] != exp_type:
+                    continue
+                if exp_type in EXP_TYPE_LIST_CPMG:
+                    if id not in cdp.cpmg_frqs.keys() or cdp.cpmg_frqs[id] != point:
+                        continue
+                else:
+                    if id not in cdp.spin_lock_nu1.keys() or  cdp.spin_lock_nu1[id] != point:
+                        continue
+
+                # Found.
+                relax_time = cdp.relax_times[id]
+                break
+
+            # Check the value if already set.
+            if relax_times[exp_type_index][frq_index] != None:
+                if relax_times[exp_type_index][frq_index] != relax_time:
+                    raise RelaxError("The relaxation times do not match for all experiments.")
+                continue
+
+            # Store the time.
+            relax_times[exp_type_index][frq_index] = relax_time
+
     # No R2eff/R1rho data for the spin cluster.
     if not data_flag:
         raise RelaxError("No R2eff/R1rho data could be found for the spin cluster %s." % spin_ids)
 
     # Convert to numpy arrays.
+    relax_times = array(relax_times, float64)
     for exp_type_index in range(exp_num):
         for spin_index in range(spin_num):
             for frq_index in range(field_count):
@@ -2052,7 +2084,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 missing[exp_type_index][spin_index][frq_index] = array(missing[exp_type_index][spin_index][frq_index], int32)
 
     # Return the structures.
-    return values, errors, missing, frqs, exp_types
+    return values, errors, missing, frqs, exp_types, relax_times
 
 
 def return_spin_lock_nu1(spins=None, spin_ids=None, ref_flag=True):

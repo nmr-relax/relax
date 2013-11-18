@@ -53,7 +53,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_time=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -114,9 +114,9 @@ class Dispersion:
         @keyword tilt_angles:       The spin-lock rotating frame tilt angle for each spin.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength, and the third is the dispersion points.
         @type tilt_angles:          numpy rank-3 float array
         @keyword r1:                The R1 relaxation rates for each spin and field strength.  This is only used for off-resonance R1rho models.
-        @type r1:                   numpy rank-2 float array.
-        @keyword relax_time:        The fixed time period for relaxation (in seconds).
-        @type relax_time:           float
+        @type r1:                   numpy rank-2 float array
+        @keyword relax_times:       The experiment specific fixed time period for relaxation (in seconds).  The first dimension is the experiment type and the second is the field strength.
+        @type relax_times:          numpy rank-2 float array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
         """
@@ -152,7 +152,7 @@ class Dispersion:
         self.spin_lock_offsets = spin_lock_offsets
         self.tilt_angles = tilt_angles
         self.r1 = r1
-        self.relax_time = relax_time
+        self.relax_times = relax_times
         self.scaling_matrix = scaling_matrix
 
         # Create the structure for holding the back-calculated R2eff values (matching the dimensions of the values structure).
@@ -232,12 +232,12 @@ class Dispersion:
         if model in MODEL_LIST_CPMG_NUM:
             # The matrix exponential power array.
             self.power = []
-            for exp_type_index in range(len(values)):
+            for exp_type_index in range(self.num_exp):
                 self.power.append([])
-                for frq_index in range(len(values[exp_type_index][0])):
+                for frq_index in range(self.num_frq):
                     self.power[exp_type_index].append(zeros(self.num_disp_points[exp_type_index][frq_index], int16))
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
-                        self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_time))
+                        self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
 
         # The strange n definition of Korzhnev.
         if model == MODEL_MMQ_2SITE:
@@ -262,7 +262,7 @@ class Dispersion:
 
         # The inverted relaxation delay.
         if model in [MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
-            self.inv_relax_time = 1.0 / relax_time
+            self.inv_relax_times = 1.0 / relax_times
 
         # Special storage matrices for the multi-quantum CPMG 2-site numerical model.
         if model == MODEL_MMQ_2SITE:
@@ -399,7 +399,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
+                r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points[0][frq_index]):
@@ -459,7 +459,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], dw=dw_frq, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
+                r2eff_ns_cpmg_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], dw=dw_frq, inv_tcpmg=self.inv_relax_times[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points[0][frq_index]):
@@ -966,7 +966,7 @@ class Dispersion:
                         aliased_dwH = dw_frq
 
                     # Back calculate the R2eff values for each experiment type.
-                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20[r20_index], R20B=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index], n=self.n[exp_index][frq_index])
+                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20[r20_index], R20B=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[0][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index], n=self.n[exp_index][frq_index])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for point_index in range(self.num_disp_points[exp_index][frq_index]):
@@ -1161,7 +1161,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_time, inv_relax_time=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], num_cpmg=self.power[0][frq_index])
+                r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_times[0][frq_index], inv_relax_time=self.inv_relax_times[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], num_cpmg=self.power[0][frq_index])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points[0][frq_index]):
@@ -1267,7 +1267,7 @@ class Dispersion:
                 dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
-                ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], r1=self.r1[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][frq_index], relax_time=self.relax_time, inv_relax_time=self.inv_relax_time, back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
+                ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], r1=self.r1[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][frq_index], relax_time=self.relax_times[0][frq_index], inv_relax_time=self.inv_relax_times[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for point_index in range(self.num_disp_points[0][frq_index]):
