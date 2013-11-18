@@ -127,7 +127,7 @@ def catia_input(file='Fit.catia', dir=None, output_dir='output', force=False):
 
     # Check that this is CPMG data.
     for id in cdp.spectrum_ids:
-        if cdp.exp_type[id] != 'CPMG':
+        if cdp.exp_type[id] != 'SQ CPMG':
             raise RelaxError("Only CPMG type data is supported.")
 
     # Directory creation.
@@ -359,7 +359,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
             spin_file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
 
             # Loop over the dispersion points.
-            for point in loop_point(exp_type='CPMG'):
+            for point in loop_point(exp_type='SQ CPMG'):
                 # The key.
                 key = return_param_key_from_data(frq=frq, point=point)
 

@@ -49,7 +49,7 @@ from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -487,9 +487,9 @@ class Dispersion:
             # Alias the r2eff functions.
             self.r2eff_mmq = []
             for exp_index in range(self.num_exp):
-                if self.exp_types[exp_index] in [EXP_TYPE_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_ZQ_CPMG]:
+                if self.exp_types[exp_index] in [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ]:
                     self.r2eff_mmq.append(r2eff_mmq_2site_sq_dq_zq)
-                elif self.exp_types[exp_index] in [EXP_TYPE_MQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]:
+                elif self.exp_types[exp_index] in [EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ]:
                     self.r2eff_mmq.append(r2eff_mmq_2site_mq)
 
         # The single data type models.
@@ -501,11 +501,11 @@ class Dispersion:
             self.back_calc = self.back_calc[0]
 
             # Check that the data is correct.
-            if self.model != MODEL_NOREX and self.model in MODEL_LIST_CPMG and self.exp_types[0] != EXP_TYPE_CPMG:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_CPMG and self.exp_types[0] != EXP_TYPE_CPMG_SQ:
                 raise RelaxError("The '%s' CPMG model is not compatible with the '%s' experiment type." % (self.model, self.exp_types[0]))
             if self.model != MODEL_NOREX and self.model in MODEL_LIST_R1RHO and self.exp_types[0] != EXP_TYPE_R1RHO:
                 raise RelaxError("The '%s' R1rho model is not compatible with the '%s' experiment type." % (self.model, self.exp_types[0]))
-            if self.model != MODEL_NOREX and self.model in MODEL_LIST_MQ_CPMG and self.exp_types[0] != EXP_TYPE_MQ_CPMG:
+            if self.model != MODEL_NOREX and self.model in MODEL_LIST_MQ_CPMG and self.exp_types[0] != EXP_TYPE_CPMG_MQ:
                 raise RelaxError("The '%s' CPMG model is not compatible with the '%s' experiment type." % (self.model, self.exp_types[0]))
 
 
@@ -950,18 +950,18 @@ class Dispersion:
                     dwH_frq = dwH[spin_index] * self.frqs[exp_index][spin_index][frq_index]
 
                     # Alias the dw frequency combinations.
-                    if self.exp_types[exp_index] == EXP_TYPE_CPMG:
+                    if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
                         aliased_dw = dw_frq
-                    elif self.exp_types[exp_index] == EXP_TYPE_PROTON_SQ_CPMG:
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
                         aliased_dw = dwH_frq
-                    elif self.exp_types[exp_index] == EXP_TYPE_DQ_CPMG:
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_DQ:
                         aliased_dw = dwH_frq + dw_frq
-                    elif self.exp_types[exp_index] == EXP_TYPE_ZQ_CPMG:
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_ZQ:
                         aliased_dw = dwH_frq - dw_frq
-                    elif self.exp_types[exp_index] == EXP_TYPE_MQ_CPMG:
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_MQ:
                         aliased_dw = dw_frq
                         aliased_dwH = dwH_frq
-                    elif self.exp_types[exp_index] == EXP_TYPE_PROTON_MQ_CPMG:
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_MQ:
                         aliased_dw = dwH_frq
                         aliased_dwH = dw_frq
 

@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21316
+                                  relax repository checkout r21498
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -113,7 +113,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', int_col=2, res_num_col=1)
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -167,7 +167,7 @@ for i in range(1, 100):
 results.write('base_pipe', dir=None, force=True)
 
 # Save the program state.
-state.save('r2eff_values', force=True)
+state.save('r2eff_values', dir=None, force=True)
 ----------------------------------------------------------------------------------------------------
 
 relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
@@ -326,8 +326,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        27308.616    
 :73@N        17387.446    
 
-relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='CPMG')
-The spectrum ID '500_reference.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='SQ CPMG')
+The spectrum ID '500_reference.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_reference.in', cpmg_frq=None)
 The spectrum ID '500_reference.in' CPMG frequency is set to None Hz.
@@ -413,8 +413,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15189.406    
 :73@N        15887.294    
 
-relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='CPMG')
-The spectrum ID '500_66.667.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='SQ CPMG')
+The spectrum ID '500_66.667.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_66.667.in', cpmg_frq=66.6666)
 The spectrum ID '500_66.667.in' CPMG frequency is set to 66.6666 Hz.
@@ -500,8 +500,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15490.596    
 :73@N        15466.502    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='CPMG')
-The spectrum ID '500_133.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_133.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in', cpmg_frq=133.3333)
 The spectrum ID '500_133.33.in' CPMG frequency is set to 133.3333 Hz.
@@ -587,8 +587,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15424.051    
 :73@N        15564.511    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_133.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_133.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in.bis', cpmg_frq=133.3333)
 The spectrum ID '500_133.33.in.bis' CPMG frequency is set to 133.3333 Hz.
@@ -674,8 +674,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        16024.446    
 :73@N        15026.479    
 
-relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='CPMG')
-The spectrum ID '500_200.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='SQ CPMG')
+The spectrum ID '500_200.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_200.in', cpmg_frq=200.0)
 The spectrum ID '500_200.in' CPMG frequency is set to 200.0 Hz.
@@ -761,8 +761,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        16854.22     
 :73@N        15165.716    
 
-relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='CPMG')
-The spectrum ID '500_266.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_266.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_266.67.in', cpmg_frq=266.6666)
 The spectrum ID '500_266.67.in' CPMG frequency is set to 266.6666 Hz.
@@ -848,8 +848,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        17577.352    
 :73@N        15437.358    
 
-relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='CPMG')
-The spectrum ID '500_333.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_333.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_333.33.in', cpmg_frq=333.3333)
 The spectrum ID '500_333.33.in' CPMG frequency is set to 333.3333 Hz.
@@ -935,8 +935,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        17979.475    
 :73@N        15219.128    
 
-relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='CPMG')
-The spectrum ID '500_400.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='SQ CPMG')
+The spectrum ID '500_400.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_400.in', cpmg_frq=400.0)
 The spectrum ID '500_400.in' CPMG frequency is set to 400.0 Hz.
@@ -1022,8 +1022,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19245.661    
 :73@N        15467.302    
 
-relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='CPMG')
-The spectrum ID '500_466.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_466.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_466.67.in', cpmg_frq=466.6666)
 The spectrum ID '500_466.67.in' CPMG frequency is set to 466.6666 Hz.
@@ -1109,8 +1109,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19755.821    
 :73@N        15755.719    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='CPMG')
-The spectrum ID '500_533.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_533.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in', cpmg_frq=533.3333)
 The spectrum ID '500_533.33.in' CPMG frequency is set to 533.3333 Hz.
@@ -1196,8 +1196,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19454.139    
 :73@N        15872.749    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_533.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_533.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in.bis', cpmg_frq=533.3333)
 The spectrum ID '500_533.33.in.bis' CPMG frequency is set to 533.3333 Hz.
@@ -1283,8 +1283,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19942.905    
 :73@N        15787.241    
 
-relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='CPMG')
-The spectrum ID '500_600.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='SQ CPMG')
+The spectrum ID '500_600.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_600.in', cpmg_frq=600.0)
 The spectrum ID '500_600.in' CPMG frequency is set to 600.0 Hz.
@@ -1370,8 +1370,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        20695.265    
 :73@N        15430.429    
 
-relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='CPMG')
-The spectrum ID '500_666.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_666.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_666.67.in', cpmg_frq=666.6666)
 The spectrum ID '500_666.67.in' CPMG frequency is set to 666.6666 Hz.
@@ -1457,8 +1457,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        20610.17     
 :73@N        15347.914    
 
-relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='CPMG')
-The spectrum ID '500_733.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_733.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_733.33.in', cpmg_frq=733.3333)
 The spectrum ID '500_733.33.in' CPMG frequency is set to 733.3333 Hz.
@@ -1544,8 +1544,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21181.203    
 :73@N        15224.33     
 
-relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='CPMG')
-The spectrum ID '500_800.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='SQ CPMG')
+The spectrum ID '500_800.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_800.in', cpmg_frq=800.0)
 The spectrum ID '500_800.in' CPMG frequency is set to 800.0 Hz.
@@ -1631,8 +1631,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21504.577    
 :73@N        15418.535    
 
-relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='CPMG')
-The spectrum ID '500_866.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_866.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_866.67.in', cpmg_frq=866.6666)
 The spectrum ID '500_866.67.in' CPMG frequency is set to 866.6666 Hz.
@@ -1718,8 +1718,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21420.534    
 :73@N        15551.25     
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='CPMG')
-The spectrum ID '500_933.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_933.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in', cpmg_frq=933.3333)
 The spectrum ID '500_933.33.in' CPMG frequency is set to 933.3333 Hz.
@@ -1805,8 +1805,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21097.418    
 :73@N        15474.072    
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_933.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_933.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in.bis', cpmg_frq=933.3333)
 The spectrum ID '500_933.33.in.bis' CPMG frequency is set to 933.3333 Hz.
@@ -1892,8 +1892,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21461.571    
 :73@N        15689.319    
 
-relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='CPMG')
-The spectrum ID '500_1000.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='SQ CPMG')
+The spectrum ID '500_1000.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_1000.in', cpmg_frq=1000.0)
 The spectrum ID '500_1000.in' CPMG frequency is set to 1000.0 Hz.
@@ -1982,8 +1982,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        73997.834     
 :73@N        29813.262     
 
-relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='CPMG')
-The spectrum ID '800_reference.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='SQ CPMG')
+The spectrum ID '800_reference.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_reference.in', cpmg_frq=None)
 The spectrum ID '800_reference.in' CPMG frequency is set to None Hz.
@@ -2072,8 +2072,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        33211.541    
 :73@N        32070.576    
 
-relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='CPMG')
-The spectrum ID '800_66.667.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='SQ CPMG')
+The spectrum ID '800_66.667.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_66.667.in', cpmg_frq=66.6666)
 The spectrum ID '800_66.667.in' CPMG frequency is set to 66.6666 Hz.
@@ -2162,8 +2162,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        34000.102     
 :73@N        26866.432     
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='CPMG')
-The spectrum ID '800_133.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_133.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in', cpmg_frq=133.3333)
 The spectrum ID '800_133.33.in' CPMG frequency is set to 133.3333 Hz.
@@ -2252,8 +2252,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        33900.1       
 :73@N        25991.649     
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_133.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_133.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in.bis', cpmg_frq=133.3333)
 The spectrum ID '800_133.33.in.bis' CPMG frequency is set to 133.3333 Hz.
@@ -2342,8 +2342,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        34825.146    
 :73@N        28287.357    
 
-relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='CPMG')
-The spectrum ID '800_200.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='SQ CPMG')
+The spectrum ID '800_200.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_200.in', cpmg_frq=200.0)
 The spectrum ID '800_200.in' CPMG frequency is set to 200.0 Hz.
@@ -2432,8 +2432,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        35733.938     
 :73@N        27503.41      
 
-relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='CPMG')
-The spectrum ID '800_266.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_266.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_266.67.in', cpmg_frq=266.6666)
 The spectrum ID '800_266.67.in' CPMG frequency is set to 266.6666 Hz.
@@ -2522,8 +2522,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        36602.997     
 :73@N        28550.78      
 
-relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='CPMG')
-The spectrum ID '800_333.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_333.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_333.33.in', cpmg_frq=333.3333)
 The spectrum ID '800_333.33.in' CPMG frequency is set to 333.3333 Hz.
@@ -2612,8 +2612,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        39107.538     
 :73@N        31162.509     
 
-relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='CPMG')
-The spectrum ID '800_400.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='SQ CPMG')
+The spectrum ID '800_400.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_400.in', cpmg_frq=400.0)
 The spectrum ID '800_400.in' CPMG frequency is set to 400.0 Hz.
@@ -2702,8 +2702,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        40902.075     
 :73@N        29867.965     
 
-relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='CPMG')
-The spectrum ID '800_466.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_466.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_466.67.in', cpmg_frq=466.6666)
 The spectrum ID '800_466.67.in' CPMG frequency is set to 466.6666 Hz.
@@ -2792,8 +2792,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        42816.877     
 :73@N        31685.46      
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='CPMG')
-The spectrum ID '800_533.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_533.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in', cpmg_frq=533.3333)
 The spectrum ID '800_533.33.in' CPMG frequency is set to 533.3333 Hz.
@@ -2882,8 +2882,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        42668.756     
 :73@N        31758.764     
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_533.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_533.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in.bis', cpmg_frq=533.3333)
 The spectrum ID '800_533.33.in.bis' CPMG frequency is set to 533.3333 Hz.
@@ -2972,8 +2972,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        45224.729     
 :73@N        28913.476     
 
-relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='CPMG')
-The spectrum ID '800_600.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='SQ CPMG')
+The spectrum ID '800_600.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_600.in', cpmg_frq=600.0)
 The spectrum ID '800_600.in' CPMG frequency is set to 600.0 Hz.
@@ -3062,8 +3062,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        46615.226     
 :73@N        29263.491     
 
-relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='CPMG')
-The spectrum ID '800_666.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_666.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_666.67.in', cpmg_frq=666.6666)
 The spectrum ID '800_666.67.in' CPMG frequency is set to 666.6666 Hz.
@@ -3152,8 +3152,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        47517.117     
 :73@N        30899.03      
 
-relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='CPMG')
-The spectrum ID '800_733.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_733.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_733.33.in', cpmg_frq=733.3333)
 The spectrum ID '800_733.33.in' CPMG frequency is set to 733.3333 Hz.
@@ -3242,8 +3242,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        50479.278     
 :73@N        33490.941     
 
-relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='CPMG')
-The spectrum ID '800_800.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='SQ CPMG')
+The spectrum ID '800_800.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_800.in', cpmg_frq=800.0)
 The spectrum ID '800_800.in' CPMG frequency is set to 800.0 Hz.
@@ -3332,8 +3332,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        51206.894     
 :73@N        32108.792     
 
-relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='CPMG')
-The spectrum ID '800_866.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_866.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_866.67.in', cpmg_frq=866.6666)
 The spectrum ID '800_866.67.in' CPMG frequency is set to 866.6666 Hz.
@@ -3422,8 +3422,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        51533.083     
 :73@N        31916.531     
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='CPMG')
-The spectrum ID '800_933.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_933.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in', cpmg_frq=933.3333)
 The spectrum ID '800_933.33.in' CPMG frequency is set to 933.3333 Hz.
@@ -3512,8 +3512,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        52547.865     
 :73@N        32332.518     
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_933.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_933.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in.bis', cpmg_frq=933.3333)
 The spectrum ID '800_933.33.in.bis' CPMG frequency is set to 933.3333 Hz.
@@ -3602,8 +3602,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        53798.71      
 :73@N        30040.923     
 
-relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='CPMG')
-The spectrum ID '800_1000.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='SQ CPMG')
+The spectrum ID '800_1000.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_1000.in', cpmg_frq=1000.0)
 The spectrum ID '800_1000.in' CPMG frequency is set to 1000.0 Hz.
@@ -3769,14 +3769,160 @@ Standard deviation for all spins:  171.9706260076397
 - The 'R2eff' model -
 ---------------------
 
-Detected the presence of results files for the 'R2eff' model - loading these instead of performing optimisation for a second time.
 
-relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
 
 relax> pipe.switch(pipe_name='R2eff')
 
-relax> results.read(file='results', dir='temp/R2eff')
-Opening the file 'temp/R2eff/results.bz2' for reading.
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Spin ':1@N'.
+Spin ':2@N'.
+Spin ':3@N'.
+Spin ':4@N'.
+Spin ':5@N'.
+Spin ':6@N'.
+Spin ':7@N'.
+Spin ':8@N'.
+Spin ':10@N'.
+Spin ':11@N'.
+Spin ':12@N'.
+Spin ':13@N'.
+Spin ':14@N'.
+Spin ':15@N'.
+Spin ':16@N'.
+Spin ':17@N'.
+Spin ':18@N'.
+Spin ':19@N'.
+Spin ':20@N'.
+Spin ':21@N'.
+Spin ':22@N'.
+Spin ':23@N'.
+Spin ':24@N'.
+Spin ':25@N'.
+Spin ':26@N'.
+Spin ':29@N'.
+Spin ':31@N'.
+Spin ':32@N'.
+Spin ':33@N'.
+Spin ':34@N'.
+Spin ':35@N'.
+Spin ':36@N'.
+Spin ':37@N'.
+Spin ':38@N'.
+Spin ':39@N'.
+Spin ':40@N'.
+Spin ':41@N'.
+Spin ':42@N'.
+Spin ':43@N'.
+Spin ':44@N'.
+Spin ':45@N'.
+Spin ':46@N'.
+Spin ':47@N'.
+Spin ':48@N'.
+Spin ':49@N'.
+Spin ':50@N'.
+Spin ':51@N'.
+Spin ':52@N'.
+Spin ':53@N'.
+Spin ':55@N'.
+Spin ':56@N'.
+Spin ':57@N'.
+Spin ':58@N'.
+Spin ':59@N'.
+Spin ':60@N'.
+Spin ':61@N'.
+Spin ':62@N'.
+Spin ':63@N'.
+Spin ':64@N'.
+Spin ':65@N'.
+Spin ':66@N'.
+Spin ':67@N'.
+Spin ':70@N'.
+Spin ':71@N'.
+Spin ':72@N'.
+Spin ':73@N'.
+
+relax> relax_disp.plot_disp_curves(dir='temp/R2eff', force=True)
+Opening the file 'temp/R2eff/disp_1_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_2_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_3_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_4_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_5_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_6_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_7_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_8_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_10_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_11_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_12_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_13_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_14_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_15_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_16_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_17_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_18_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_19_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_20_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_21_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_22_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_23_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_24_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_25_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_26_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_29_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_31_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_32_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_33_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_34_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_35_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_36_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_37_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_38_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_39_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_40_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_41_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_42_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_43_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_44_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_45_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_46_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_47_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_48_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_49_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_50_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_51_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_52_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_53_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_55_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_56_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_57_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_58_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_59_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_60_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_61_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_62_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_63_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_64_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_65_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_66_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_67_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_70_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_71_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_72_N.agr' for writing.
+Opening the file 'temp/R2eff/disp_73_N.agr' for writing.
+Opening the file 'temp/R2eff/grace2images.py' for writing.
+
+relax> value.write(param='r2eff', file='r2eff.out', dir='temp/R2eff', scaling=1.0, comment=None, bc=False, force=True)
+Opening the file 'temp/R2eff/r2eff.out' for writing.
+
+relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir='temp/R2eff', force=True, norm=False)
+Opening the file 'temp/R2eff/r2eff.agr' for writing.
+
+relax> results.write(file='results', dir='temp/R2eff', compress_type=1, force=True)
+Opening the file 'temp/R2eff/results.bz2' for writing.
 RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
 
 relax> state.save(state='final_state', dir='temp', compress_type=1, force=True)

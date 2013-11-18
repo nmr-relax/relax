@@ -42,7 +42,7 @@ from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plo
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_R2EFF, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.setup import relax_disp_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -304,7 +304,7 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "exp_type",
-    default = "CPMG",
+    default = EXP_TYPE_CPMG_SQ,
     py_type = "str",
     desc_short = "experiment type",
     desc = "The type of relaxation dispersion experiment performed.",
@@ -314,13 +314,17 @@ uf.add_keyarg(
         "Zero quantum (ZQ) CPMG-type data",
         "Double quantum (DQ) CPMG-type data",
         "Multiple quantum (MQ) CPMG-type data",
+        "1H single quantum (SQ) CPMG-type data",
+        "1H multiple quantum (SQ) CPMG-type data",
         "%s-type data" % r1rho
     ],
     wiz_combo_data = [
-        EXP_TYPE_CPMG,
-        EXP_TYPE_ZQ_CPMG,
-        EXP_TYPE_DQ_CPMG,
-        EXP_TYPE_MQ_CPMG,
+        EXP_TYPE_CPMG_SQ,
+        EXP_TYPE_CPMG_ZQ,
+        EXP_TYPE_CPMG_DQ,
+        EXP_TYPE_CPMG_MQ,
+        EXP_TYPE_CPMG_PROTON_SQ,
+        EXP_TYPE_CPMG_PROTON_MQ,
         EXP_TYPE_R1RHO
     ],
     wiz_read_only = True
@@ -329,16 +333,18 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("For each peak intensity set loaded into relax, the type of experiment it comes from needs to be specified.  By specifying this for each spectrum ID, multiple experiment types can be analysed simultaneously.  This is assuming that an appropriate dispersion model exists for the experiment combination.")
 uf.desc[-1].add_paragraph("The currently supported experiments include:")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG), "The single quantum (SQ) CPMG-type experiments,")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_ZQ_CPMG), "The zero quantum (ZQ) CPMG-type experiments,")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_DQ_CPMG), "The double quantum (DQ) CPMG-type experiments,")
-uf.desc[-1].add_item_list_element(repr(EXP_TYPE_MQ_CPMG), "The multiple quantum (MQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_SQ), "The single quantum (SQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_ZQ), "The zero quantum (ZQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_DQ), "The double quantum (DQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_MQ), "The multiple quantum (MQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_PROTON_SQ), "The 1H single quantum (SQ) CPMG-type experiments,")
+uf.desc[-1].add_item_list_element(repr(EXP_TYPE_CPMG_PROTON_MQ), "The 1H multiple quantum (MQ) CPMG-type experiments,")
 uf.desc[-1].add_item_list_element(repr(EXP_TYPE_R1RHO), "The R1rho-type experiments.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To set the experiment type to 'CPMG' for the spectrum ID 'nu_4500.0_800MHz', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type('nu_4500.0_800MHz', 'CPMG')")
-uf.desc[-1].add_prompt("relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='CPMG')")
+uf.desc[-1].add_paragraph("To set the experiment type to 'SQ CPMG' for the spectrum ID 'nu_4500.0_800MHz', type one of:")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type('nu_4500.0_800MHz', 'SQ CPMG')")
+uf.desc[-1].add_prompt("relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='SQ CPMG')")
 uf.backend = set_exp_type
 uf.menu_text = "&exp_type"
 uf.wizard_height_desc = 400

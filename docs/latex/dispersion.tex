@@ -1104,7 +1104,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -1360,10 +1360,10 @@ The next step is to specify the dispersion experiment type for each spectrum:
 
 \begin{lstlisting}[firstnumber=99]
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 \end{lstlisting}
 
-This can either be \pycode{`CPMG'} or \pycode{`R1rho'}.
+This can be \pycode{`SQ CPMG'}, \pycode{`DQ CPMG'},  \pycode{`ZQ CPMG'},  \pycode{`MQ CPMG'},  \pycode{`1H SQ CPMG'}, \pycode{`1H MQ CPMG'} or \pycode{`R1rho'}.
 The next user function sets the CPMG frequencies for each spectrum:
 
 \begin{lstlisting}[firstnumber=102]

@@ -53,7 +53,7 @@ from pipe_control.sequence import return_attached_protons
 from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_LIST_MMQ
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_LIST_MMQ
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -390,7 +390,7 @@ def has_disp_data(spins=None, spin_ids=None, exp_type=None, frq=None, point=None
     for spin_index in range(len(spins)):
         # Alias the correct spin.
         current_spin = spins[spin_index]
-        if exp_type in [EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]:
+        if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
             current_spin = return_attached_protons(spin_ids[spin_index])[0]
 
         # The data is present.
@@ -451,21 +451,8 @@ def has_proton_sq_cpmg():
     @rtype:     bool
     """
 
-    # No SQ CPMG data at all.
-    if EXP_TYPE_CPMG not in cdp.exp_type_list:
-        return False
-
-    # Loop over all spins.
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-        # Skip spins for which the model is not of the MMQ type.
-        if spin.model not in MODEL_LIST_MMQ:
-            continue
-
-        # Skip non-proton spins.
-        if spin.isotope != '1H':
-            continue
-
-        # The data must exist.
+    # Proton SQ CPMG data is present.
+    if EXP_TYPE_CPMG_PROTON_SQ in cdp.exp_type_list:
         return True
 
     # No 1H SQ CPMG data.
@@ -482,21 +469,8 @@ def has_proton_mq_cpmg():
     @rtype:     bool
     """
 
-    # No MQ CPMG data at all.
-    if EXP_TYPE_MQ_CPMG not in cdp.exp_type_list:
-        return False
-
-    # Loop over all spins.
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-        # Skip spins for which the model is not of the MMQ type.
-        if spin.model not in MODEL_LIST_MMQ:
-            continue
-
-        # Skip non-proton spins.
-        if spin.isotope != '1H':
-            continue
-
-        # The data must exist.
+    # Proton MQ CPMG data is present.
+    if EXP_TYPE_CPMG_PROTON_MQ in cdp.exp_type_list:
         return True
 
     # No 1H MQ CPMG data.
@@ -685,12 +659,6 @@ def loop_exp():
     # Yield each unique experiment type.
     for exp_type in cdp.exp_type_list:
         yield exp_type
-
-    # The 1H experiment types for MMQ data.
-    if has_proton_sq_cpmg():
-        yield EXP_TYPE_PROTON_SQ_CPMG
-    if has_proton_mq_cpmg():
-        yield EXP_TYPE_PROTON_MQ_CPMG
 
 
 def loop_exp_frq():
@@ -1659,20 +1627,6 @@ def return_index_from_exp_type(exp_type=None):
     # The number of experiments.
     num = len(cdp.exp_type_list)
 
-    # MMQ-type SQ data (one index past the end).
-    if exp_type == EXP_TYPE_PROTON_SQ_CPMG:
-        return num
-
-    # MMQ-type MQ data (on index past the end).
-    if exp_type == EXP_TYPE_PROTON_MQ_CPMG:
-        # Both SQ and MQ proton data present.
-        if EXP_TYPE_PROTON_SQ_CPMG in cdp.exp_type_list:
-            return num + 1
-
-        # Only MQ proton data.
-        else:
-            return num
-
 
 def return_index_from_frq(value):
     """Convert the dispersion point data into the corresponding index.
@@ -2054,7 +2008,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # Alias the correct spin.
             current_spin = spin
-            if exp_type in [EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]:
+            if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
                 current_spin = proton
 
             # The indices.
@@ -2179,7 +2133,7 @@ def set_exp_type(spectrum_id=None, exp_type=None):
 
     @keyword spectrum_id:   The spectrum ID string.
     @type spectrum_id:      str
-    @keyword exp:           The relaxation dispersion experiment type.  It can be one of 'CPMG' or 'R1rho'.
+    @keyword exp:           The relaxation dispersion experiment type.
     @type exp:              str
     """
 
@@ -2208,14 +2162,18 @@ def set_exp_type(spectrum_id=None, exp_type=None):
 
     # Printout.
     text = "The spectrum ID '%s' is now set to " % spectrum_id
-    if exp_type == EXP_TYPE_CPMG:
-        text += EXP_TYPE_DESC_CPMG + "."
-    elif exp_type == EXP_TYPE_MQ_CPMG:
-        text += EXP_TYPE_DESC_MQ_CPMG + "."
-    elif exp_type == EXP_TYPE_DQ_CPMG:
-        text += EXP_TYPE_DESC_DQ_CPMG + "."
-    elif exp_type == EXP_TYPE_ZQ_CPMG:
-        text += EXP_TYPE_DESC_ZQ_CPMG + "."
+    if exp_type == EXP_TYPE_CPMG_SQ:
+        text += EXP_TYPE_DESC_CPMG_SQ + "."
+    elif exp_type == EXP_TYPE_CPMG_MQ:
+        text += EXP_TYPE_DESC_CPMG_MQ + "."
+    elif exp_type == EXP_TYPE_CPMG_DQ:
+        text += EXP_TYPE_DESC_CPMG_DQ + "."
+    elif exp_type == EXP_TYPE_CPMG_ZQ:
+        text += EXP_TYPE_DESC_CPMG_ZQ + "."
+    elif exp_type == EXP_TYPE_CPMG_PROTON_SQ:
+        text += EXP_TYPE_DESC_CPMG_PROTON_SQ + "."
+    elif exp_type == EXP_TYPE_CPMG_PROTON_MQ:
+        text += EXP_TYPE_DESC_CPMG_PROTON_MQ + "."
     elif exp_type == EXP_TYPE_R1RHO:
         text += EXP_TYPE_DESC_R1RHO + "."
     print(text)

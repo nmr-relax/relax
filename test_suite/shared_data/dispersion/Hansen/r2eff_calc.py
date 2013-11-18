@@ -91,7 +91,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', int_col=2, res_num_col=1)
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -145,4 +145,4 @@ for i in range(1, 100):
 results.write('base_pipe', dir=None, force=True)
 
 # Save the program state.
-state.save('r2eff_values', force=True)
+state.save('r2eff_values', dir=None, force=True)

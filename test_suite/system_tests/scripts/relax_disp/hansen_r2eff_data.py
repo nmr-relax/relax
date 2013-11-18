@@ -89,7 +89,7 @@ data = [
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the NMR field strength of the spectrum.
     spectrometer.frequency(id=id, frq=H_frq)

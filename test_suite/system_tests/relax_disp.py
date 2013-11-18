@@ -30,7 +30,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from specific_analyses.relax_disp.disp_data import generate_r20_key, get_curve_type
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.clean_up import deletion
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -406,8 +406,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.save('analysis_heights', dir=status.install_path, force=True)
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex')
@@ -488,8 +488,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex')
@@ -581,8 +581,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.save('analysis_r2eff', dir=status.install_path, force=True)
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
         self.interpreter.pipe.switch(pipe_name='No Rex')
@@ -659,8 +659,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 7.0, r20_key2: 9.0}
@@ -723,8 +723,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2a = {r20_key1: 7.0, r20_key2: 9.0}
@@ -794,8 +794,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 8.8, r20_key2: 16.6}
@@ -850,8 +850,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 7.0, r20_key2: 7.0}
@@ -901,8 +901,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 6.994165925, r20_key2: 9.428129427}
@@ -965,8 +965,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2a = {r20_key1: 6.644753428, r20_key2: 7.891776687}
@@ -1036,8 +1036,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 7.0, r20_key2: 9.0}
@@ -1100,8 +1100,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2 = {r20_key1: 6.996327746, r20_key2: 9.452051268}
@@ -1164,8 +1164,8 @@ class Relax_disp(SystemTestCase):
         spin71 = return_spin(":71")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # Set the initial parameter values.
         spin70.r2a = {r20_key1: 6.44836878645126, r20_key2: 7.00382877393494}
@@ -1342,7 +1342,7 @@ class Relax_disp(SystemTestCase):
         res61L = cdp.mol[0].res[0].spin[0]
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=599.89086220e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
 
         # Set the initial parameter values.
         res61L.r2 = {r20_key1: 8.0}
@@ -1390,7 +1390,7 @@ class Relax_disp(SystemTestCase):
         res61L = cdp.mol[0].res[0].spin[0]
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=599.89086220e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
 
         # Set the initial parameter values.
         res61L.r2a = {r20_key1: 8.0}
@@ -1446,7 +1446,7 @@ class Relax_disp(SystemTestCase):
         res61L = cdp.mol[0].res[0].spin[0]
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=599.89086220e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086220e6)
 
         # Set the initial parameter values.
         res61L.r2a = {r20_key1: 8.0}
@@ -1512,7 +1512,7 @@ class Relax_disp(SystemTestCase):
         res61L = cdp.mol[0].res[0].spin[0]
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG, frq=599.89086270e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.89086270e6)
 
         # Set the initial parameter values.
         res61L.r2a = {r20_key1: 8.0}
@@ -1693,7 +1693,7 @@ class Relax_disp(SystemTestCase):
 
         # Set up the metadata.
         self.interpreter.spectrometer.frequency(id=id, frq=800e6)
-        self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+        self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
         # Try reading the file.
         self.interpreter.relax_disp.r2eff_read(id=id, file='66.667.in', dir=data_path, disp_frq=66.667, res_num_col=1, data_col=2, error_col=3)
@@ -1703,8 +1703,8 @@ class Relax_disp(SystemTestCase):
             ['cpmg_frqs', {'test': 66.667}],
             ['cpmg_frqs_list', [66.667]],
             ['dispersion_points', 1],
-            ['exp_type', {'test': 'CPMG'}],
-            ['exp_type_list', ['CPMG']],
+            ['exp_type', {'test': 'SQ CPMG'}],
+            ['exp_type_list', ['SQ CPMG']],
             ['spectrometer_frq', {'test': 800000000.0}],
             ['spectrometer_frq_count', 1],
             ['spectrometer_frq_list', [800000000.0]],
@@ -1824,7 +1824,7 @@ class Relax_disp(SystemTestCase):
         # Set up the metadata for the experiments.
         for id in ids:
             self.interpreter.spectrometer.frequency(id=id, frq=500e6)
-            self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+            self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
         # Loop over the experiments.
         for id, file, spin_id in [['1H_CPMG', 'hs_500.res', ':9@H'], ['15N_CPMG', 'ns_500.res', ':9@N']]:
@@ -1837,8 +1837,8 @@ class Relax_disp(SystemTestCase):
             ['cpmg_frqs', {'1H_CPMG_667.0': 667.0, '1H_CPMG_1067.0': 1067.0, '15N_CPMG_350.0': 350.0, '1H_CPMG_933.0': 933.0, '15N_CPMG_50.0': 50.0, '15N_CPMG_100.0': 100.0, '1H_CPMG_400.0': 400.0, '1H_CPMG_533.0': 533.0, '1H_CPMG_800.0': 800.0, '15N_CPMG_900.0': 900.0, '15N_CPMG_150.0': 150.0, '15N_CPMG_800.0': 800.0, '1H_CPMG_267.0': 267.0, '1H_CPMG_2667.0': 2667.0, '15N_CPMG_300.0': 300.0, '1H_CPMG_133.0': 133.0, '15N_CPMG_700.0': 700.0, '1H_CPMG_67.0': 67.0, '15N_CPMG_400.0': 400.0, '15N_CPMG_250.0': 250.0, '1H_CPMG_2133.0': 2133.0, '1H_CPMG_1600.0': 1600.0, '15N_CPMG_200.0': 200.0, '15N_CPMG_1000.0': 1000.0, '15N_CPMG_500.0': 500.0, '15N_CPMG_600.0': 600.0}],
             ['cpmg_frqs_list', [50.0, 67.0, 100.0, 133.0, 150.0, 200.0, 250.0, 267.0, 300.0, 350.0, 400.0, 500.0, 533.0, 600.0, 667.0, 700.0, 800.0, 900.0, 933.0, 1000.0, 1067.0, 1600.0, 2133.0, 2667.0]],
             ['dispersion_points', 24],
-            ['exp_type', {'1H_CPMG_667.0': 'CPMG', '1H_CPMG_1067.0': 'CPMG', '15N_CPMG_350.0': 'CPMG', '1H_CPMG_933.0': 'CPMG', '15N_CPMG_50.0': 'CPMG', '15N_CPMG_100.0': 'CPMG', '1H_CPMG_400.0': 'CPMG', '1H_CPMG_533.0': 'CPMG', '1H_CPMG_800.0': 'CPMG', '15N_CPMG_900.0': 'CPMG', '15N_CPMG_150.0': 'CPMG', '15N_CPMG_800.0': 'CPMG', '1H_CPMG_267.0': 'CPMG', '1H_CPMG_2667.0': 'CPMG', '15N_CPMG_300.0': 'CPMG', '1H_CPMG_133.0': 'CPMG', '15N_CPMG_700.0': 'CPMG', '1H_CPMG_67.0': 'CPMG', '15N_CPMG_400.0': 'CPMG', '15N_CPMG_250.0': 'CPMG', '1H_CPMG_2133.0': 'CPMG', '1H_CPMG_1600.0': 'CPMG', '15N_CPMG_200.0': 'CPMG', '15N_CPMG_1000.0': 'CPMG', '15N_CPMG_500.0': 'CPMG', '15N_CPMG_600.0': 'CPMG'}],
-            ['exp_type_list', ['CPMG']],
+            ['exp_type', {'1H_CPMG_667.0': 'SQ CPMG', '1H_CPMG_1067.0': 'SQ CPMG', '15N_CPMG_350.0': 'SQ CPMG', '1H_CPMG_933.0': 'SQ CPMG', '15N_CPMG_50.0': 'SQ CPMG', '15N_CPMG_100.0': 'SQ CPMG', '1H_CPMG_400.0': 'SQ CPMG', '1H_CPMG_533.0': 'SQ CPMG', '1H_CPMG_800.0': 'SQ CPMG', '15N_CPMG_900.0': 'SQ CPMG', '15N_CPMG_150.0': 'SQ CPMG', '15N_CPMG_800.0': 'SQ CPMG', '1H_CPMG_267.0': 'SQ CPMG', '1H_CPMG_2667.0': 'SQ CPMG', '15N_CPMG_300.0': 'SQ CPMG', '1H_CPMG_133.0': 'SQ CPMG', '15N_CPMG_700.0': 'SQ CPMG', '1H_CPMG_67.0': 'SQ CPMG', '15N_CPMG_400.0': 'SQ CPMG', '15N_CPMG_250.0': 'SQ CPMG', '1H_CPMG_2133.0': 'SQ CPMG', '1H_CPMG_1600.0': 'SQ CPMG', '15N_CPMG_200.0': 'SQ CPMG', '15N_CPMG_1000.0': 'SQ CPMG', '15N_CPMG_500.0': 'SQ CPMG', '15N_CPMG_600.0': 'SQ CPMG'}],
+            ['exp_type_list', ['SQ CPMG']],
             ['spectrometer_frq', {'1H_CPMG_667.0': 500000000.0, '1H_CPMG_1067.0': 500000000.0, '15N_CPMG_350.0': 500000000.0, '1H_CPMG_933.0': 500000000.0, '15N_CPMG_50.0': 500000000.0, '15N_CPMG_100.0': 500000000.0, '1H_CPMG_400.0': 500000000.0, '1H_CPMG_533.0': 500000000.0, '1H_CPMG_800.0': 500000000.0, '15N_CPMG_900.0': 500000000.0, '15N_CPMG_150.0': 500000000.0, '15N_CPMG_800.0': 500000000.0, '1H_CPMG_267.0': 500000000.0, '1H_CPMG_2667.0': 500000000.0, '15N_CPMG_300.0': 500000000.0, '1H_CPMG_133.0': 500000000.0, '15N_CPMG_700.0': 500000000.0, '1H_CPMG_67.0': 500000000.0, '15N_CPMG_400.0': 500000000.0, '15N_CPMG_250.0': 500000000.0, '1H_CPMG_2133.0': 500000000.0, '1H_CPMG_1600.0': 500000000.0, '15N_CPMG_200.0': 500000000.0, '15N_CPMG_1000.0': 500000000.0, '15N_CPMG_500.0': 500000000.0, '15N_CPMG_600.0': 500000000.0}],
             ['spectrometer_frq_count', 1],
             ['spectrometer_frq_list', [500000000.0]],
@@ -1961,8 +1961,8 @@ class Relax_disp(SystemTestCase):
         spin135S.kex = 286.743720388766860
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_MQ_CPMG, frq=600e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_MQ_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=600e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
 
         # Set the initial parameter values.
         spin135S.r2 = {r20_key1: 31.529250951747834, r20_key2: 38.638249554769878}
@@ -2082,8 +2082,8 @@ class Relax_disp(SystemTestCase):
         spin137F = cdp.mol[0].res[1].spin[1]
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_MQ_CPMG, frq=800e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_MQ_CPMG, frq=800e6)
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
 
         # Set the cluster specific parameters (only for the first spin).
         spin135S.pA = 0.847378444499757

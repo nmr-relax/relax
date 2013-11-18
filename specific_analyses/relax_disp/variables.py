@@ -25,29 +25,29 @@
 
 
 # Experiment types.
-EXP_TYPE_CPMG = 'CPMG'
+EXP_TYPE_CPMG_SQ = 'SQ CPMG'
+EXP_TYPE_CPMG_DQ = 'DQ CPMG'
+EXP_TYPE_CPMG_MQ = 'MQ CPMG'
+EXP_TYPE_CPMG_ZQ = 'ZQ CPMG'
+EXP_TYPE_CPMG_PROTON_SQ = '1H SQ CPMG'
+EXP_TYPE_CPMG_PROTON_MQ = '1H MQ CPMG'
 EXP_TYPE_R1RHO = 'R1rho'
-EXP_TYPE_DQ_CPMG = 'DQ CPMG'
-EXP_TYPE_MQ_CPMG = 'MQ CPMG'
-EXP_TYPE_ZQ_CPMG = 'ZQ CPMG'
-
-# Special MMQ experiment types.
-EXP_TYPE_PROTON_SQ_CPMG = '1H SQ CPMG'
-EXP_TYPE_PROTON_MQ_CPMG = '1H MQ CPMG'
 
 # Experiment type descriptions.
-EXP_TYPE_DESC_CPMG = "the CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_SQ = "the standard single quantum (SQ) CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_DQ = "the double quantum (DQ) CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_MQ = "the multiple quantum (MQ) CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_ZQ = "the zero quantum (ZQ) CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_PROTON_SQ = "the 1H single quantum (SQ) CPMG-type experiment"
+EXP_TYPE_DESC_CPMG_PROTON_MQ = "the 1H multiple quantum (MQ) CPMG-type experiment"
 EXP_TYPE_DESC_R1RHO = "the R1rho-type experiment"
-EXP_TYPE_DESC_DQ_CPMG = "the double quantum (DQ) CPMG-type experiment"
-EXP_TYPE_DESC_MQ_CPMG = "the multiple quantum (MQ) CPMG-type experiment"
-EXP_TYPE_DESC_ZQ_CPMG = "the zero quantum (ZQ) CPMG-type experiment"
 
 
 # The experiment type lists.
-EXP_TYPE_LIST = [EXP_TYPE_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG]
+EXP_TYPE_LIST = [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_R1RHO]
 """The list of all dispersion experiment types."""
 
-EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_ZQ_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]
+EXP_TYPE_LIST_CPMG = [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]
 """The list of all dispersion experiment types for CPMG-type data."""
 
 EXP_TYPE_LIST_R1RHO = [EXP_TYPE_R1RHO]
