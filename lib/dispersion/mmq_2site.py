@@ -47,7 +47,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     @type R20A:             float
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
     @type R20B:             float
-    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dwX and dwH.
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
     @type dw:               float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
@@ -62,7 +62,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
+def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -108,6 +108,8 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None,
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
     @type num_points:       int
+    @keyword power:         The matrix exponential power array.
+    @type power:            numpy int16, rank-1 array
     @keyword n:             The n value whereby one CPMG block is defined at 2n.
     @type n:                numpy int16, rank-1 array
     """
@@ -185,7 +187,7 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None,
             back_calc[i]= -inv_tcpmg * log(Mx / pA)
 
 
-def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dwX=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -213,6 +215,8 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     @type pB:               float
     @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw:               float
+    @keyword dwH:           Unused - this is simply to match the r2eff_mmq_2site_mq() function arguments.
+    @type dwH:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
@@ -227,11 +231,13 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     @type num_points:       int
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int16, rank-1 array
+    @keyword n:             The n value whereby one CPMG block is defined at 2n.
+    @type n:                numpy int16, rank-1 array
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dwX, k_AB=k_AB, k_BA=k_BA)
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dwX, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
