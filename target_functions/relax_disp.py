@@ -49,7 +49,7 @@ from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_MQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_NUM, MODEL_LIST_FULL, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -101,12 +101,12 @@ class Dispersion:
         @type errors:               list of lists of lists of numpy rank-1 float arrays
         @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The dimensions must correspond to those of the values argument.
         @type missing:              list of lists of lists of numpy rank-1 int arrays
-        @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first two of the value, error and missing structures.
-        @type frqs:                 numpy rank-2 float array
+        @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first three of the value, error and missing structures.
+        @type frqs:                 list of lists of numpy rank-1 float arrays
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
-        @type cpmg_frqs:            list of lists of numpy rank-1 float array
+        @type cpmg_frqs:            list of lists of lists of floats
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
-        @type spin_lock_nu1:        list of lists of numpy rank-1 float array
+        @type spin_lock_nu1:        list of lists of lists of floats
         @keyword chemical_shifts:   The chemical shifts for all spins in the cluster in rad/s.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block) and the second dimension is the spectrometer field strength.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.
         @type chemical_shifts:      numpy rank-2 float array
         @keyword spin_lock_offsets: The structure of spin-lock offsets for each spin, each field, and each data point.  This is only used for off-resonance R1rho models.  The first dimension is that of the spin cluster (each element corresponds to a different spin in the block), the second dimension is the spectrometer field strength and the third is the dispersion points.
@@ -342,7 +342,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -396,7 +396,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
@@ -456,7 +456,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_ns_cpmg_2site_star(Rr=self.Rr, Rex=self.Rex, RCS=self.RCS, R=self.R, M0=self.M0, r20a=R20A[r20_index], r20b=R20B[r20_index], dw=dw_frq, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
@@ -581,7 +581,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
+                phi_ex_scaled = phi_ex[spin_index] * self.frqs[0][spin_index][frq_index]**2
 
                 # Back calculate the R2eff values.
                 r1rho_DPL94(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, theta=self.tilt_angles[spin_index, frq_index], R1=self.r1[spin_index, frq_index], spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -631,7 +631,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_IT99(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -685,7 +685,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-                frq2 = self.frqs[spin_index, frq_index]**2
+                frq2 = self.frqs[0][spin_index][frq_index]**2
                 rex_B_scaled = rex_B[spin_index] * frq2
                 rex_C_scaled = rex_C[spin_index] * frq2
 
@@ -733,7 +733,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
+                phi_ex_scaled = phi_ex[spin_index] * self.frqs[0][spin_index][frq_index]**2
 
                 # Back calculate the R2eff values.
                 r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -779,7 +779,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[spin_index] * self.frqs[spin_index, frq_index]**2
+                phi_ex_scaled = phi_ex[spin_index] * self.frqs[0][spin_index][frq_index]**2
 
                 # Back calculate the R2eff values.
                 r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -826,7 +826,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R1rho values.
                 r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -876,7 +876,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R1rho values.
                 r1rho_MP05(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[spin_index, frq_index], spin_lock_fields=self.spin_lock_omega1[0][frq_index], spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -935,8 +935,8 @@ class Dispersion:
                     r20_index = frq_index + spin_index*self.num_frq
 
                     # Convert dw from ppm to rad/s.
-                    dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
-                    dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
+                    dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
+                    dwH_frq = dwH[spin_index] * self.frqs[exp_index][spin_index][frq_index]
 
                     # Back calculate the R2eff values.
                     r2eff_mmq_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], n=self.n[exp_index][frq_index])
@@ -989,8 +989,8 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
-                dwH_frq = dwH[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
+                dwH_frq = dwH[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
@@ -1131,7 +1131,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_time, inv_relax_time=self.inv_relax_time, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], num_cpmg=self.power[0][frq_index])
@@ -1237,7 +1237,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], r1=self.r1[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][frq_index], relax_time=self.relax_time, inv_relax_time=self.inv_relax_time, back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -1287,7 +1287,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R1rho values.
                 r1rho_TAP03(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[spin_index, frq_index], spin_lock_fields=self.spin_lock_omega1[0][frq_index], spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -1337,7 +1337,7 @@ class Dispersion:
                 r20_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R1rho values.
                 r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[spin_index, frq_index], offset=self.spin_lock_offsets[spin_index, frq_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[spin_index, frq_index], spin_lock_fields=self.spin_lock_omega1[0][frq_index], spin_lock_fields2=self.spin_lock_omega1_squared[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
@@ -1383,7 +1383,7 @@ class Dispersion:
                 r20a_index = frq_index + spin_index*self.num_frq
 
                 # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[spin_index, frq_index]
+                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_TSMFK01(r20a=R20A[r20a_index], dw=dw_frq, k_AB=k_AB, tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index])
