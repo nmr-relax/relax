@@ -30,7 +30,7 @@ This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.  It uses the equa
 """
 
 # Python module imports.
-from numpy import array, dot, float64, log
+from numpy import array, conj, dot, float64, log
 
 # relax module imports.
 from lib.float import isNaN
