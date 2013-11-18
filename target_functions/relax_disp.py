@@ -181,9 +181,9 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.num_spins * self.num_frq)
+        self.end_index.append(self.num_exp * self.num_spins * self.num_frq)
         if model in [MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.end_index.append(2 * self.num_spins * self.num_frq)
+            self.end_index.append(2 * self.num_exp * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.num_spins)
@@ -932,7 +932,7 @@ class Dispersion:
                 # Loop over the spectrometer frequencies.
                 for frq_index in range(self.num_frq):
                     # The R20 index.
-                    r20_index = frq_index + spin_index*self.num_frq
+                    r20_index = frq_index + exp_index*self.num_frq + spin_index*self.num_frq*self.num_exp
 
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
