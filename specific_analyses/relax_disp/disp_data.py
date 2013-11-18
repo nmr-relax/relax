@@ -49,10 +49,11 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
+from pipe_control.sequence import return_attached_protons
 from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_MMQ_2SITE
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG, EXP_TYPE_DESC_CPMG, EXP_TYPE_DESC_DQ_CPMG, EXP_TYPE_DESC_R1RHO, EXP_TYPE_DESC_MQ_CPMG, EXP_TYPE_DESC_ZQ_CPMG, EXP_TYPE_DQ_CPMG, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_MQ_CPMG, EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG, EXP_TYPE_R1RHO, EXP_TYPE_ZQ_CPMG, MODEL_LIST_MMQ
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -328,6 +329,45 @@ def has_cpmg_exp_type():
     return False
 
 
+def has_disp_data(spins=None, spin_ids=None, exp_type=None, frq=None, point=None):
+    """Determine if dispersion data exists for the given data combination.
+
+    @keyword spins:     The list of spin containers in the cluster.
+    @type spins:        list of SpinContainer instances
+    @keyword spin_ids:  The list of spin IDs for the cluster.
+    @type spin_ids:     list of str
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency.
+    @type frq:          float
+    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:        float
+    @return:            True if dispersion data exists, False otherwise.
+    @rtype:             bool
+    """
+
+    # Skip reference spectra.
+    if point == None:
+        return False
+
+    # The key.
+    key = return_param_key_from_data(frq=frq, point=point)
+
+    # Loop over the spins.
+    for spin_index in range(len(spins)):
+        # Alias the correct spin.
+        current_spin = spins[spin_index]
+        if exp_type in [EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]:
+            current_spin = return_attached_protons(spin_ids[spin_index])[0]
+
+        # The data is present.
+        if key in current_spin.r2eff.keys():
+            return True
+
+    # No data.
+    return False
+
+
 def has_exponential_exp_type():
     """Determine if the current data pipe contains exponential curves.
 
@@ -365,6 +405,68 @@ def has_fixed_time_exp_type():
             return True
 
     # No exponential data.
+    return False
+
+
+def has_proton_sq_cpmg():
+    """Determine if the current data pipe contains proton SQ CPMG data.
+
+    This is only for the MMQ models.
+
+
+    @return:    True if proton SQ CPMG data exists, False otherwise.
+    @rtype:     bool
+    """
+
+    # No SQ CPMG data at all.
+    if EXP_TYPE_CPMG not in cdp.exp_type_list:
+        return False
+
+    # Loop over all spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Skip spins for which the model is not of the MMQ type.
+        if spin.model not in MODEL_LIST_MMQ:
+            continue
+
+        # Skip non-proton spins.
+        if spin.isotope != '1H':
+            continue
+
+        # The data must exist.
+        return True
+
+    # No 1H SQ CPMG data.
+    return False
+
+
+def has_proton_mq_cpmg():
+    """Determine if the current data pipe contains proton MQ CPMG data.
+
+    This is only for the MMQ models.
+
+
+    @return:    True if proton MQ CPMG data exists, False otherwise.
+    @rtype:     bool
+    """
+
+    # No MQ CPMG data at all.
+    if EXP_TYPE_MQ_CPMG not in cdp.exp_type_list:
+        return False
+
+    # Loop over all spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Skip spins for which the model is not of the MMQ type.
+        if spin.model not in MODEL_LIST_MMQ:
+            continue
+
+        # Skip non-proton spins.
+        if spin.isotope != '1H':
+            continue
+
+        # The data must exist.
+        return True
+
+    # No 1H MQ CPMG data.
     return False
 
 
@@ -493,7 +595,7 @@ def loop_cluster():
     if not hasattr(cdp, 'clustering'):
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # Skip protons for MMQ data.
-            if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
+            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
 
             # Return the spin ID as a list.
@@ -516,7 +618,7 @@ def loop_cluster():
                     continue
 
                 # Skip protons for MMQ data.
-                if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
+                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                     continue
 
                 # Add the spin ID.
@@ -533,7 +635,7 @@ def loop_cluster():
                 continue
 
             # Skip protons for MMQ data.
-            if spin.model in [MODEL_MMQ_2SITE] and spin.isotope == '1H':
+            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
 
             # Yield each spin individually.
@@ -550,6 +652,12 @@ def loop_exp():
     # Yield each unique experiment type.
     for exp_type in cdp.exp_type_list:
         yield exp_type
+
+    # The 1H experiment types for MMQ data.
+    if has_proton_sq_cpmg():
+        yield EXP_TYPE_PROTON_SQ_CPMG
+    if has_proton_mq_cpmg():
+        yield EXP_TYPE_PROTON_MQ_CPMG
 
 
 def loop_exp_frq():
@@ -819,8 +927,17 @@ def num_exp_types():
     @rtype:     int
     """
 
+    # Start the count.
+    count = len(cdp.exp_type_list)
+
+    # The 1H experiment types for MMQ data.
+    if has_proton_sq_cpmg():
+        count += 1
+    if has_proton_mq_cpmg():
+        count += 1
+
     # Return the count.
-    return len(cdp.exp_type_list)
+    return count
 
 
 def plot_disp_curves(dir=None, force=None):
@@ -1402,11 +1519,13 @@ def relax_time(time=0.0, spectrum_id=None):
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
-def return_cpmg_frqs(spins=None, ref_flag=True):
+def return_cpmg_frqs(spins=None, spin_ids=None, ref_flag=True):
     """Return the list of nu_CPMG frequencies.
 
     @keyword spins:     The list of spins for which to check is CPMG data exists for.
     @type spins:        list of SpinContainer instances
+    @keyword spin_ids:  The list of spin IDs for the cluster.
+    @type spin_ids:     list of str
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
@@ -1432,23 +1551,8 @@ def return_cpmg_frqs(spins=None, ref_flag=True):
 
             # Loop over the frequencies.
             for point in cdp.cpmg_frqs_list:
-                # Skip frequencies of None.
-                if point == None:
-                    continue
-
-                # The data key.
-                key = return_param_key_from_data(frq=frq, point=point)
-
-                # Loop over the spins.
-                flag = False
-                for spin in spins:
-                    # The data is present.
-                    if key in spin.r2eff.keys():
-                        flag = True
-                        break
-
                 # No data.
-                if not flag:
+                if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
                     continue
 
                 # Add the data.
@@ -1516,7 +1620,25 @@ def return_index_from_exp_type(exp_type=None):
         raise RelaxError("The experiment type has not been supplied.")
 
     # Return the index.
-    return cdp.exp_type_list.index(exp_type)
+    if exp_type in cdp.exp_type_list:
+        return cdp.exp_type_list.index(exp_type)
+
+    # The number of experiments.
+    num = len(cdp.exp_type_list)
+
+    # MMQ-type SQ data (one index past the end).
+    if exp_type == EXP_TYPE_PROTON_SQ_CPMG:
+        return num
+
+    # MMQ-type MQ data (on index past the end).
+    if exp_type == EXP_TYPE_PROTON_MQ_CPMG:
+        # Both SQ and MQ proton data present.
+        if EXP_TYPE_PROTON_SQ_CPMG in cdp.exp_type_list:
+            return num + 1
+
+        # Only MQ proton data.
+        else:
+            return num
 
 
 def return_index_from_frq(value):
@@ -1832,30 +1954,55 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     exp_num = num_exp_types()
     spin_num = len(spins)
 
+    # MMQ flags.
+    proton_sq_flag = has_proton_sq_cpmg()
+    proton_mq_flag = has_proton_mq_cpmg()
+    proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
     # Initialise the data structures for the target function.
     exp_types = []
     values = []
     errors = []
     missing = []
+    frqs = []
     for exp_i in range(exp_num):
         values.append([])
         errors.append([])
         missing.append([])
+        frqs.append([])
         for spin_i in range(spin_num):
             values[-1].append([])
             errors[-1].append([])
             missing[-1].append([])
+            frqs[-1].append([])
             for field_i in range(field_count):
                 values[-1][-1].append([])
                 errors[-1][-1].append([])
                 missing[-1][-1].append([])
-    frqs = zeros((spin_num, field_count), float64)
+                frqs[-1][-1].append(None)
 
     # Pack the R2eff/R1rho data.
     data_flag = False
     for spin_index in range(spin_num):
         # Alias the spin.
         spin = spins[spin_index]
+        spin_id = spin_ids[spin_index]
+
+        # Get the attached proton.
+        if proton_mmq_flag:
+            # Get all protons.
+            proton_spins = return_attached_protons(spin_id)
+
+            # Only one allowed.
+            if len(proton_spins) > 1:
+                raise RelaxError("Only one attached proton is supported for the MMQ-type models.")
+
+            # Missing proton.
+            if not len(proton_spins):
+                raise RelaxError("No proton attached to the spin '%s' could be found.  This is required for the MMQ-type models." % spin_id)
+
+            # Alias the single proton.
+            proton = proton_spins[0]
 
         # No data.
         if not hasattr(spin, 'r2eff'):
@@ -1868,6 +2015,15 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
         # Loop over the R2eff data.
         for exp_type, frq, point in loop_exp_frq_point():
+            # No data.
+            if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
+                continue
+
+            # Alias the correct spin.
+            current_spin = spin
+            if exp_type in [EXP_TYPE_PROTON_SQ_CPMG, EXP_TYPE_PROTON_MQ_CPMG]:
+                current_spin = proton
+
             # The indices.
             exp_type_index = return_index_from_exp_type(exp_type=exp_type)
             disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
@@ -1882,10 +2038,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # The Larmor frequency for this spin and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
             if frq != None:
-                frqs[spin_index, frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+                frqs[exp_type_index][spin_index][frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(current_spin.isotope) * 1e-6
 
             # Missing data.
-            if key not in spin.r2eff.keys():
+            if key not in current_spin.r2eff.keys():
                 values[exp_type_index][spin_index][frq_index].append(0.0)
                 errors[exp_type_index][spin_index][frq_index].append(1.0)
                 missing[exp_type_index][spin_index][frq_index].append(1)
@@ -1895,12 +2051,12 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # The values.
             if sim_index == None:
-                values[exp_type_index][spin_index][frq_index].append(spin.r2eff[key])
+                values[exp_type_index][spin_index][frq_index].append(current_spin.r2eff[key])
             else:
-                values[exp_type_index][spin_index][frq_index].append(spin.r2eff_sim[sim_index][key])
+                values[exp_type_index][spin_index][frq_index].append(current_spin.r2eff_sim[sim_index][key])
 
             # The errors.
-            errors[exp_type_index][spin_index][frq_index].append(spin.r2eff_err[key])
+            errors[exp_type_index][spin_index][frq_index].append(current_spin.r2eff_err[key])
 
     # No R2eff/R1rho data for the spin cluster.
     if not data_flag:
@@ -1918,11 +2074,13 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     return values, errors, missing, frqs, exp_types
 
 
-def return_spin_lock_nu1(spins=None, ref_flag=True):
+def return_spin_lock_nu1(spins=None, spin_ids=None, ref_flag=True):
     """Return the list of spin-lock field strengths.
 
     @keyword spins:     The list of spins for which to check is CPMG data exists for.
     @type spins:        list of SpinContainer instances
+    @keyword spin_ids:  The list of spin IDs for the cluster.
+    @type spin_ids:     list of str
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of spin-lock field strengths in Hz.
@@ -1948,23 +2106,12 @@ def return_spin_lock_nu1(spins=None, ref_flag=True):
 
             # Loop over the frequencies.
             for point in cdp.spin_lock_nu1_list:
-                # Skip frequencies of None.
+                # Skip reference points.
                 if point == None:
                     continue
 
-                # The data key.
-                key = return_param_key_from_data(frq=frq, point=point)
-
-                # Loop over the spins.
-                flag = False
-                for spin in spins:
-                    # The data is present.
-                    if key in spin.r2eff.keys():
-                        flag = True
-                        break
-
                 # No data.
-                if not flag:
+                if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
                     continue
 
                 # Add the data.
@@ -1975,17 +2122,6 @@ def return_spin_lock_nu1(spins=None, ref_flag=True):
 
     # Return the data.
     return nu1
-
-    # Loop over the frequencies.
-    for frq in cdp.spin_lock_nu1_list:
-        if frq == None and not ref_flag:
-            continue
-
-        # Add the frequency.
-        nu1.append(frq)
-
-    # Return the new list.
-    return array(nu1, float64)
 
 
 def return_value_from_frq_index(frq_index=None):

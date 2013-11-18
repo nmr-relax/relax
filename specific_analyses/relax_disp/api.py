@@ -138,8 +138,8 @@ class Relax_disp(API_base, API_common):
             r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # The dispersion data.
-        cpmg_frqs = return_cpmg_frqs(spins=[spin], ref_flag=False)
-        spin_lock_nu1 = return_spin_lock_nu1(spins=[spin], ref_flag=False)
+        cpmg_frqs = return_cpmg_frqs(spins=[spin], spin_ids=[spin_id], ref_flag=False)
+        spin_lock_nu1 = return_spin_lock_nu1(spins=[spin], spin_ids=[spin_id], ref_flag=False)
 
         # The relaxation time period.
         relax_time = None

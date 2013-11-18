@@ -306,8 +306,8 @@ class Disp_minimise_command(Slave_command):
 
         # The dispersion data.
         self.dispersion_points = cdp.dispersion_points
-        self.cpmg_frqs = return_cpmg_frqs(spins=spins, ref_flag=False)
-        self.spin_lock_nu1 = return_spin_lock_nu1(spins=spins, ref_flag=False)
+        self.cpmg_frqs = return_cpmg_frqs(spins=spins, spin_ids=spin_ids, ref_flag=False)
+        self.spin_lock_nu1 = return_spin_lock_nu1(spins=spins, spin_ids=spin_ids, ref_flag=False)
 
         # The relaxation times.
         self.relax_times = None
