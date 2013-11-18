@@ -29,35 +29,26 @@ This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.  It uses the equa
     - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
 """
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
-from math import fabs, log
-from numpy import array, conj, dot, float64
+from numpy import array, dot, float64, log
 
 # relax module imports.
-from lib.dispersion.ns_matrices import rcpmg_3d
 from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=None):
-    """Matrix for HMQC experiments.
-
-    This corresponds to matrix m1 and m2 matrices of equation 2.2 from:
-
-        - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  J. Am. Chem. Soc., 126, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
+def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None):
+    """The Bloch-McConnell matrix for 2-site exchange.
 
     @keyword matrix:        The matrix to populate.
     @type matrix:           numpy rank-2, 2D complex64 array
-    @keyword r20:           The R2 value in the absence of exchange.
-    @type r20:              float
-    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dwX and dwH.
     @type dw:               float
-    @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
-    @type dwH:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
@@ -65,14 +56,22 @@ def populate_matrix(matrix=None, r20=None, dw=None, dwH=None, k_AB=None, k_BA=No
     """
 
     # Fill in the elements.
-    matrix[0, 0] = -k_AB - r20
+    matrix[0, 0] = -k_AB - R20A
     matrix[0, 1] = k_BA
     matrix[1, 0] = k_AB
-    matrix[1, 1] = -k_BA - 1.j*(dwH + dw) - r20
+    matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
-    """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, DQ and MQ data.
+def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, r20=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, n=None):
+    """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
+
+    The notation used here comes from:
+
+        - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
+
+    and:
+
+        - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
 
     This function calculates and stores the R2eff values.
 
@@ -112,18 +111,18 @@ def r2eff_mmq_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, 
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, r20=r20, dw=dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
-    populate_matrix(matrix=m2, r20=r20, dw=-dw, dwH=dwH, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m1, R20A=r20, R20B=r20, dw=dw+dwH, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
+    populate_matrix(matrix=m2, R20A=r20, R20B=r20, dw=-dw+dwH, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
         # The M1 and M2 matrices.
-        M1 = matrix_exponential(m1*tcp[i])
-        M2 = matrix_exponential(m2*tcp[i])
+        M1 = matrix_exponential(m1*tcp[i])    # Equivalent to D+.
+        M2 = matrix_exponential(m2*tcp[i])    # Equivalent to Z-.
 
         # The complex conjugates M1* and M2*
-        M1_star = conj(M1)
-        M2_star = conj(M2)
+        M1_star = conj(M1)    # Equivalent to D+*.
+        M2_star = conj(M2)    # Equivalent to Z-*.
 
         # Repetitive dot products (minimised for speed).
         M1_M2 = dot(M1, M2)
@@ -176,9 +175,76 @@ def r2eff_mmq_2site(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         A_B = dot(A, B)
         C_D = dot(C, D)
-        Mx = dot(dot(F_vector, (A_B + C_D)), M0)
-        Mx = Mx.real / (2.0 * pA)
+        Mx = (A_B[0, 0] + C_D[0, 0])*M0[0] + (A_B[0, 1] + C_D[0, 1])*M0[1]
+        Mx = Mx.real
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_tcpmg * log(Mx)
+            back_calc[i]= -inv_tcpmg * log(Mx / pA)
+
+
+def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, r20=None, pA=None, pB=None, dwX=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+    """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
+
+    The notation used here comes from:
+
+        - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
+
+    This function calculates and stores the R2eff values.
+
+
+    @keyword M0:            This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    @type M0:               numpy float64, rank-1, 7D array
+    @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
+    @type F_vector:         numpy rank-1, 2D float64 array
+    @keyword m1:            A complex numpy matrix to be populated.
+    @type m1:               numpy rank-2, 2D complex64 array
+    @keyword m2:            A complex numpy matrix to be populated.
+    @type m2:               numpy rank-2, 2D complex64 array
+    @keyword r20:           The R2 value in the absence of exchange.
+    @type r20:              float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
+    @type dw:               float
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
+    @type inv_tcpmg:        float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy rank-1 float array
+    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
+    @type back_calc:        numpy rank-1 float array
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
+    @type num_points:       int
+    @keyword power:         The matrix exponential power array.
+    @type power:            numpy int16, rank-1 array
+    """
+
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    populate_matrix(matrix=m1, R20A=r20, R20B=r20, dw=dwX, k_AB=k_AB, k_BA=k_BA)
+    populate_matrix(matrix=m2, R20A=r20, R20B=r20, dw=-dwX, k_AB=k_AB, k_BA=k_BA)
+
+    # Loop over the time points, back calculating the R2eff values.
+    for i in range(num_points):
+        # The A+/- matrices.
+        A_pos = matrix_exponential(m1*tcp[i])
+        A_neg = matrix_exponential(m2*tcp[i])
+
+        # The evolution for one n.
+        evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+
+        # The full evolution.
+        evol = square_matrix_power(evol_block, power[i])
+
+        # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+        Mx = dot(F_vector, dot(evol, M0))
+        Mx = Mx.real
+        if Mx <= 0.0 or isNaN(Mx):
+            back_calc[i] = 1e99
+        else:
+            back_calc[i] = -inv_tcpmg * log(Mx / pA)

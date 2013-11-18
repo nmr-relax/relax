@@ -38,7 +38,7 @@ from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
 from lib.dispersion.mq_cr72 import r2eff_mq_cr72
-from lib.dispersion.mmq_2site import r2eff_mmq_2site
+from lib.dispersion.mmq_2site import r2eff_mmq_2site_mq, r2eff_mmq_2site_sq_dq_zq
 from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
 from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
@@ -264,10 +264,12 @@ class Dispersion:
         if model in [MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
             self.inv_relax_time = 1.0 / relax_time
 
-        # Special matrices for the multi-quantum CPMG 2-site numerical model.
+        # Special storage matrices for the multi-quantum CPMG 2-site numerical model.
         if model == MODEL_MMQ_2SITE:
             self.m1 = zeros((2, 2), complex64)
             self.m2 = zeros((2, 2), complex64)
+            self.m3 = zeros((2, 2), complex64)
+            self.m4 = zeros((2, 2), complex64)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -938,8 +940,19 @@ class Dispersion:
                     dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
                     dwH_frq = dwH[spin_index] * self.frqs[exp_index][spin_index][frq_index]
 
-                    # Back calculate the R2eff values.
-                    r2eff_mmq_2site(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], n=self.n[exp_index][frq_index])
+                    # Back calculate the R2eff values for each experiment type.
+                    if self.exp_types[exp_index] == EXP_TYPE_CPMG:
+                        r2eff_mmq_2site_sq_dq_zq(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dwX=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    elif self.exp_types[exp_index] == EXP_TYPE_PROTON_SQ_CPMG:
+                        r2eff_mmq_2site_sq_dq_zq(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dwX=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    elif self.exp_types[exp_index] == EXP_TYPE_DQ_CPMG:
+                        r2eff_mmq_2site_sq_dq_zq(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dwX=dwH_frq+dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    elif self.exp_types[exp_index] == EXP_TYPE_ZQ_CPMG:
+                        r2eff_mmq_2site_sq_dq_zq(M0=self.M0, m1=self.m1, m2=self.m2, r20=R20[r20_index], pA=pA, pB=pB, dwX=dwH_frq-dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    elif self.exp_types[exp_index] == EXP_TYPE_MQ_CPMG:
+                        r2eff_mmq_2site_mq(M0=self.M0, m1=self.m1, m2=self.m2, m3=self.m3, m4=self.m4, r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    elif self.exp_types[exp_index] == EXP_TYPE_PROTON_MQ_CPMG:
+                        r2eff_mmq_2site_mq(M0=self.M0, m1=self.m1, m2=self.m2, m3=self.m3, m4=self.m4, r20=R20[r20_index], pA=pA, pB=pB, dw=dwH_frq, dwH=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_time, tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for point_index in range(self.num_disp_points[exp_index][frq_index]):
