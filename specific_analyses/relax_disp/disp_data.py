@@ -58,6 +58,9 @@ from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
 
+# Module variables.
+R20_KEY_FORMAT = "%s - %.8f MHz"
+
 
 def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, sim_index=None, error=False):
     """Return the average peak intensity for the spectrometer frequency, dispersion point, and relaxation time.
@@ -209,6 +212,21 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     print("The spectrum ID '%s' CPMG frequency is set to %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
 
 
+def decompose_r20_key(key=None):
+    """Decompose the unique R20 key into the experiment type and spectrometer frequency.
+
+    @keyword key:       The unique R20 key.
+    @type key:          str
+    @return:            The experiment and the spectrometer frequency in Hz.
+    @rtype:             str, float
+    """
+
+    # Loop over the experiments and frequencies until the matching key is found.
+    for exp_type, frq in loop_exp_frq():
+        if key == generate_r20_key(exp_type=exp_type, frq=frq):
+            return exp_type, frq
+
+
 def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
@@ -261,6 +279,21 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
 
     # Return the IDs.
     return ids
+
+
+def generate_r20_key(exp_type=None, frq=None):
+    """Generate the unique R20 key from the experiment type and spectrometer frequency.
+
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency in Hz.
+    @type frq:          float
+    @return:            The unique R20 key.
+    @rtype:             str
+    """
+
+    # Generate and return the unique key.
+    return R20_KEY_FORMAT % (exp_type, frq/1e6)
 
 
 def get_curve_type(id=None):

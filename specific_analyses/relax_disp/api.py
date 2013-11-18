@@ -80,9 +80,9 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('spin_lock_nu1', scope='spin', py_type=dict, grace_string='\\qSpin-lock field strength (Hz)\\Q')
         self.PARAMS.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=list, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A in the absence of exchange', set='params', py_type=list, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self.PARAMS.add('r2b', scope='spin', default=15.0, desc='The transversal relaxation rate for state B in the absence of exchange', set='params', py_type=list, grace_string='\\qR\\s2,B\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2', scope='spin', default=15.0, desc='The transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2a', scope='spin', default=15.0, desc='The transversal relaxation rate for state A in the absence of exchange', set='params', py_type=dict, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('r2b', scope='spin', default=15.0, desc='The transversal relaxation rate for state B in the absence of exchange', set='params', py_type=dict, grace_string='\\qR\\s2,B\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('pA', scope='spin', default=0.5, desc='The population for state A', set='params', py_type=float, grace_string='\\qp\\sA\\N\\Q', err=True, sim=True)
         self.PARAMS.add('pB', scope='spin', default=0.5, desc='The population for state B', set='params', py_type=float, grace_string='\\qp\\sB\\N\\Q', err=True, sim=True)
         self.PARAMS.add('phi_ex', scope='spin', default=5.0, desc='The phi_ex = pA.pB.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N = \\q p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
@@ -572,175 +572,107 @@ class Relax_disp(API_base, API_common):
         # The model for no chemical exchange relaxation.
         elif model == MODEL_NOREX:
             print("The model for no chemical exchange relaxation.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
+            params = ['r2']
 
         # LM63 model.
         elif model == MODEL_LM63:
             print("The Luz and Meiboom (1963) 2-site fast exchange model.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex', 'kex']
+            params = ['r2', 'phi_ex', 'kex']
 
         # LM63 3-site model.
         elif model == MODEL_LM63_3SITE:
             print("The Luz and Meiboom (1963) 3-site fast exchange model.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex_B', 'phi_ex_C', 'kB', 'kC']
+            params = ['r2', 'phi_ex_B', 'phi_ex_C', 'kB', 'kC']
 
         # Full CR72 model.
         elif model == MODEL_CR72_FULL:
             print("The full Carver and Richards (1972) 2-site model for all time scales.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2a')
-            for frq in loop_frq():
-                params.append('r2b')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
 
         # Reduced CR72 model.
         elif model == MODEL_CR72:
             print("The reduced Carver and Richards (1972) 2-site model for all time scales, whereby the simplification R20A = R20B is assumed.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # IT99 model.
         elif model == MODEL_IT99:
             print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'tex']
+            params = ['r2', 'pA', 'dw', 'tex']
 
         # TSMFK01 model.
         elif model == MODEL_TSMFK01:
             print("The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2a')
-            params += ['dw', 'k_AB']
+            params = ['r2a', 'dw', 'k_AB']
 
         # Full NS CPMG 2-site 3D model.
         elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2a')
-            for frq in loop_frq():
-                params.append('r2b')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
 
         # Reduced NS CPMG 2-site 3D model.
         elif model == MODEL_NS_CPMG_2SITE_3D:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # NS CPMG 2-site expanded model.
         elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
             print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # Full NS CPMG 2-site star model.
         elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
             print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2a')
-            for frq in loop_frq():
-                params.append('r2b')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
 
         # Reduced NS CPMG 2-site star model.
         elif model == MODEL_NS_CPMG_2SITE_STAR:
             print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # M61 model.
         elif model == MODEL_M61:
             print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex', 'kex']
+            params = ['r2', 'phi_ex', 'kex']
 
         # M61 skew model.
         elif model == MODEL_M61B:
             print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # DPL94 model.
         elif model == MODEL_DPL94:
             print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['phi_ex', 'kex']
+            params = ['r2', 'phi_ex', 'kex']
 
         # TP02 model.
         elif model == MODEL_TP02:
             print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # TAP03 model.
         elif model == MODEL_TAP03:
             print("The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # MP05 model.
         elif model == MODEL_MP05:
             print("The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # Reduced NS R1rho 2-site model.
         elif model == MODEL_NS_R1RHO_2SITE:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'kex']
+            params = ['r2', 'pA', 'dw', 'kex']
 
         # MQ CR72 model.
         elif model == MODEL_MQ_CR72:
             print("The Carver and Richards (1972) 2-site model for all time scales expanded for MQ CPMG data by Korzhnev et al., 2004.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'dwH', 'kex']
+            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
 
         # NS MQ CPMG 2-site model.
         elif model == MODEL_MMQ_2SITE:
             print("The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = []
-            for frq in loop_frq():
-                params.append('r2')
-            params += ['pA', 'dw', 'dwH', 'kex']
+            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
 
         # Invalid model.
         else:

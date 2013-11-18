@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, loop_cluster, loop_frq, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq, return_value_from_frq_index
 from specific_analyses.relax_disp.variables import MODEL_M61B, MODEL_MMQ_2SITE
 
 
@@ -54,9 +54,9 @@ def assemble_param_vector(spins=None, key=None, sim_index=None):
     param_vector = []
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Get the value.
-        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
+        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
 
         # Add to the vector.
         param_vector.append(value)
@@ -93,7 +93,7 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
         return scaling_matrix
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Transversal relaxation rate scaling.
         if param_name in ['r2', 'r2a', 'r2b']:
             scaling_matrix[param_index, param_index] = 10
@@ -305,39 +305,27 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
         # The R2 parameter.
         if 'r2' in spin.params:
             if sim_index != None:
-                spin.r2_sim[sim_index] = []
-                for frq in loop_frq():
-                    spin.r2_sim[sim_index].append(None)
+                spin.r2_sim[sim_index] = {}
             else:
-                spin.r2 = []
-                for frq in loop_frq():
-                    spin.r2.append(None)
+                spin.r2 = {}
 
         # The R2A parameter.
         if 'r2a' in spin.params:
             if sim_index != None:
-                spin.r2a_sim[sim_index] = []
-                for frq in loop_frq():
-                    spin.r2a_sim[sim_index].append(None)
+                spin.r2a_sim[sim_index] = {}
             else:
-                spin.r2a = []
-                for frq in loop_frq():
-                    spin.r2a.append(None)
+                spin.r2a = {}
 
         # The R2B parameter.
         if 'r2b' in spin.params:
             if sim_index != None:
-                spin.r2b_sim[sim_index] = []
-                for frq in loop_frq():
-                    spin.r2b_sim[sim_index].append(None)
+                spin.r2b_sim[sim_index] = {}
             else:
-                spin.r2b = []
-                for frq in loop_frq():
-                    spin.r2b.append(None)
+                spin.r2b = {}
 
     # Loop over the parameters of the cluster, setting the values.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
-        set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
+        set_value(value=param_vector[param_index], key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
 
 
 def get_param_names(spins=None):
@@ -351,15 +339,13 @@ def get_param_names(spins=None):
     names = []
 
     # Loop over the parameters.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Set the initial text.
         param_text = param_name
 
         # The parameters with additional details.
         if param_name in ['r2', 'r2a', 'r2b']:
-            frq = return_value_from_frq_index(frq_index)
-            if frq:
-                param_text += " (%.3f MHz)" % (frq / 1e6) 
+            param_text += " (%s)" % r20_key
  
         # Append the text.
         names.append(param_text)
@@ -368,7 +354,7 @@ def get_param_names(spins=None):
     return names
 
 
-def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=None, frq_index=None):
+def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=None, r20_key=None):
     """Return the value for the given parameter.
 
     @keyword key:           The key for the R2eff and I0 parameters.
@@ -381,38 +367,44 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
     @type param_name:       str
     @keyword spin_index:    The spin index (for the cluster).
     @type spin_index:       int
-    @keyword frq_index:     The frequency index (for parameters with different values per spectrometer field strength).
-    @type frq_index:        int
+    @keyword r20_key:       The unique R20 parameter key.
+    @type r20_key:          str
     @return:                The parameter value.
     @rtype:                 float
     """
 
+    # Default value of 0.0.
+    value = 0.0
+
     # Spin specific parameters.
     if spin_index != None:
-        # Set the simulation value.
+        # Get the simulation value.
         if sim_index != None:
-            # Get the simulation structure.
+            # Get the simulation object.
             sim_obj = getattr(spins[spin_index], param_name+'_sim')
 
-            # Frequency specific parameter.
-            if frq_index != None:
-                value = sim_obj[sim_index][frq_index]
+            # R20 parameter.
+            if r20_key != None:
+                if r20_key in sim_obj[sim_index].keys():
+                    value = sim_obj[sim_index][r20_key]
 
-            # Set the normal value.
+            # All other parameters.
             else:
                 value = sim_obj[sim_index]
 
-        # Frequency specific parameter.
-        elif frq_index != None:
-            obj = getattr(spins[spin_index], param_name)
-            if obj == []:
-                value = 0.0
-            else:
-                value = obj[frq_index]
-
-        # Set the normal value.
+        # Get the normal value.
         else:
-            value = getattr(spins[spin_index], param_name)
+            # Get the object.
+            obj = getattr(spins[spin_index], param_name)
+
+            # R20 parameter.
+            if r20_key != None:
+                if r20_key in obj.keys():
+                    value = obj[r20_key]
+
+            # All other parameters.
+            else:
+                value = getattr(spins[spin_index], param_name)
 
     # Cluster specific parameters - use the parameter value from the first spin.
     else:
@@ -426,7 +418,7 @@ def get_value(key=None, spins=None, sim_index=None, param_name=None, spin_index=
 
     # The R2eff model parameters.
     if key != None:
-        if not key in value:
+        if not key in value.keys():
             value = 0.0
         else:
             value = value[key]
@@ -525,7 +517,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
     j = 0
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Effective transversal relaxation rate.
         if param_name == 'r2eff':
             A.append(zero_array * 0.0)
@@ -620,8 +612,8 @@ def loop_parameters(spins=None):
 
     @keyword spins: The list of spin data containers for the block.
     @type spins:    list of SpinContainer instances
-    @return:        The parameter name, the parameter index (for the parameter vector), the spin index (for the cluster), and the frequency index (for parameters with different values per spectrometer field strength).
-    @rtype:         str, int, int, int
+    @return:        The parameter name, the parameter index (for the parameter vector), the spin index (for the cluster), and the R20 parameter key (for R20, R20A, and R20B parameters stored as dictionaries).
+    @rtype:         str, int, int, str
     """
 
     # The parameter index.
@@ -646,45 +638,21 @@ def loop_parameters(spins=None):
         for spin_index in range(len(spins)):
             # The R2 parameter.
             if 'r2' in spins[0].params:
-                # Reset the frequency index.
-                frq_index = -1
-
-                # Loop over the spectrometer frequencies.
-                for frq in loop_frq():
-                    # First increment the indices.
-                    frq_index += 1
+                for exp_type, frq in loop_exp_frq():
                     param_index += 1
-
-                    # Yield the data.
-                    yield 'r2', param_index, spin_index, frq_index
+                    yield 'r2', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
             # The R2A parameter.
             if 'r2a' in spins[0].params:
-                # Reset the frequency index.
-                frq_index = -1
-
-                # Loop over the spectrometer frequencies.
-                for frq in loop_frq():
-                    # First increment the indices.
-                    frq_index += 1
+                for exp_type, frq in loop_exp_frq():
                     param_index += 1
-
-                    # Yield the data.
-                    yield 'r2a', param_index, spin_index, frq_index
+                    yield 'r2a', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
             # The R2B parameter.
             if 'r2b' in spins[0].params:
-                # Reset the frequency index.
-                frq_index = -1
-
-                # Loop over the spectrometer frequencies.
-                for frq in loop_frq():
-                    # First increment the indices.
-                    frq_index += 1
+                for exp_type, frq in loop_exp_frq():
                     param_index += 1
-
-                    # Yield the data.
-                    yield 'r2b', param_index, spin_index, frq_index
+                    yield 'r2b', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
         # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2' and 'dw' (one per spin).
         for spin_index in range(len(spins)):
@@ -730,40 +698,42 @@ def param_conversion(key=None, spins=None, sim_index=None):
     """
 
     # Loop over the parameters of the cluster.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Get the value.
-        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, frq_index=frq_index)
+        value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
 
         # The pA to pB conversion.
         if param_name == 'pA':
             pB = 1.0 - value
-            set_value(value=pB, key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=pB, key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index)
 
         # The pB to pA conversion.
         if param_name == 'pB':
             pA = 1.0 - value
-            set_value(value=pA, key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=pA, key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index)
 
         # The kex to tex conversion.
         if param_name == 'kex':
             tex = 1.0 / value
-            set_value(value=tex, key=key, spins=spins, sim_index=sim_index, param_name='tex', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=tex, key=key, spins=spins, sim_index=sim_index, param_name='tex', spin_index=spin_index)
 
         # The kex to k_AB and k_BA conversion.
         if param_name == 'kex' and 'pA' in spins[0].params:
             # Get pA value.
-            pA = get_value(key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index, frq_index=frq_index)
+            pA = get_value(key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index)
+
             # Calculate k_AB value and set it.
             k_AB = value * (1.0 - pA)
-            set_value(value=k_AB, key=key, spins=spins, sim_index=sim_index, param_name='k_AB', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=k_AB, key=key, spins=spins, sim_index=sim_index, param_name='k_AB', spin_index=spin_index)
+
             # Calculate k_BA value and set it.
             k_BA = value * pA
-            set_value(value=k_BA, key=key, spins=spins, sim_index=sim_index, param_name='k_BA', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=k_BA, key=key, spins=spins, sim_index=sim_index, param_name='k_BA', spin_index=spin_index)
 
         # The tex to kex conversion.
         if param_name == 'tex':
             kex = 1.0 / value
-            set_value(value=kex, key=key, spins=spins, sim_index=sim_index, param_name='kex', spin_index=spin_index, frq_index=frq_index)
+            set_value(value=kex, key=key, spins=spins, sim_index=sim_index, param_name='kex', spin_index=spin_index)
 
 
 def param_index_to_param_info(index=None, spins=None):
@@ -780,9 +750,9 @@ def param_index_to_param_info(index=None, spins=None):
     """
 
     # Loop over the parameters, yielding when a match is found.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         if param_index == index:
-            return param_name, spin_index, frq_index
+            return param_name, spin_index, r20_key
 
 
 def param_num(spins=None):
@@ -793,6 +763,9 @@ def param_num(spins=None):
     @return:                The number of model parameters.
     @rtype:                 int
     """
+
+    # Initialise the number.
+    num = 0
 
     # The R2eff model.
     if cdp.model_type == 'R2eff':
@@ -808,24 +781,32 @@ def param_num(spins=None):
         if len(spin.params) != len(spins[0].params):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
+    # Count the number of R20 parameters.
+    r20_params = ['r2', 'r2a', 'r2b']
+    for spin in spins:
+        for i in range(len(spin.params)):
+            if spin.params[i] in r20_params:
+                for exp_type, frq in loop_exp_frq():
+                    num += 1
+
     # Count the number of spin specific parameters for all spins.
-    spin_params = ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']
-    num = 0
+    spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']
     for spin in spins:
         for i in range(len(spin.params)):
             if spin.params[i] in spin_params:
                 num += 1
 
     # Count all other parameters, but only for a single spin.
+    all_params = r20_params + spin_params
     for i in range(len(spins[0].params)):
-        if not spins[0].params[i] in spin_params:
+        if not spins[0].params[i] in all_params:
             num += 1
 
     # Return the number.
     return num
 
 
-def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, frq_index=None):
+def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None, spin_index=None, r20_key=None):
     """Return the value for the given parameter.
 
     @keyword value:         The parameter value to set.
@@ -840,48 +821,43 @@ def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None,
     @type param_name:       str
     @keyword spin_index:    The spin index (for the cluster).
     @type spin_index:       int
-    @keyword frq_index:     The frequency index (for parameters with different values per spectrometer field strength).
-    @type frq_index:        int
+    @keyword r20_key:       The unique R20 parameter key.
+    @type r20_key:          str
     """
 
     # Spin specific parameters.
     if spin_index != None:
-        # Get the object.
-        if sim_index != None:
-            obj = getattr(spins[spin_index], param_name+'_sim')
-        else:
-            obj = getattr(spins[spin_index], param_name)
-
         # Set the simulation value.
         if sim_index != None:
-            # Frequency specific parameter.
-            if frq_index != None:
-                if key != None:
-                    obj[sim_index][frq_index][key] = value
-                else:
-                    obj[sim_index][frq_index] = value
+            # Get the simulation object.
+            obj = getattr(spins[spin_index], param_name+'_sim')
 
-            # Set the normal value.
+            # R20 parameter.
+            if r20_key != None:
+                obj[sim_index][r20_key] = value
+
+            # All other parameters.
             else:
                 if key != None:
                     obj[sim_index][key] = value
                 else:
                     obj[sim_index] = value
 
-        # Frequency specific parameter.
-        elif frq_index != None:
-            obj = getattr(spins[spin_index], param_name)
-            if key != None:
-                obj[frq_index][key] = value
-            else:
-                obj[frq_index] = value
-
         # Set the normal value.
         else:
-            if key != None:
-                obj[key] = value
+            # Get the object.
+            obj = getattr(spins[spin_index], param_name)
+
+            # R20 parameter.
+            if r20_key != None:
+                obj[r20_key] = value
+
+            # Set the normal value.
             else:
-                setattr(spins[spin_index], param_name, value)
+                if key != None:
+                    obj[key] = value
+                else:
+                    setattr(spins[spin_index], param_name, value)
 
     # Cluster specific parameters.
     else:

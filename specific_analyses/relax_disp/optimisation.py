@@ -94,7 +94,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
             # Loop over each spectrometer frequency and dispersion point.
             for exp_type, frq, point in loop_exp_frq_point():
                 # Loop over the parameters.
-                for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+                for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
                     # R2eff relaxation rate (from 1 to 40 s^-1).
                     if param_name == 'r2eff':
                         lower.append(1.0)
@@ -108,7 +108,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
         # All other models.
         else:
             # Loop over the parameters.
-            for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+            for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
                 # Cluster specific parameter.
                 if spin_index == None:
                     spin_index = 0
@@ -147,7 +147,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     upper.append(1.0)
 
     # Pre-set parameters.
-    for param_name, param_index, spin_index, frq_index in loop_parameters(spins=spins):
+    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
         # Cluster specific parameter.
         if spin_index == None:
             spin_index = 0
