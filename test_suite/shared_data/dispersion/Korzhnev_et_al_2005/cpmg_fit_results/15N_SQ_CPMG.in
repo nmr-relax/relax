@@ -1,0 +1,24 @@
+# The following input file performs minimization of 15N SQ, 1H SQ, 15N/1H DQ, 15N/1H ZQ,
+# 15N/1H MQ and 1H/15N MQ CPMG data for the residue 9 of deuterated 2H/15N G48V Fyn SH3 
+# recorded at 500, 600 and 800 MHz at 25c using the model of two-site exchange.
+
+# Read first 'example_rw.in'
+
+# Reading and processing the data for 15N and 1H SQ coherences first.
+
+read ../ns_500.res d 1 S N15 25 500 0.04 @ c   # 15N SQ data at 500 MHz
+read ../ns_600.res d 1 S N15 25 600 0.04 @ c   # 15N SQ data at 600 MHz
+read ../ns_800.res d 1 S N15 25 800 0.04 @ c   # 15N SQ data at 800 MHz
+
+# seting initial approximations for exchange parameters
+# performing two seperate optimizations (1) with delta_cs(N)>0, delta_cs(H)<0 and 
+# (2) with delta_cs(N)<0, delta_cs(H)>0
+
+set m 2 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k @ 0 500 u      # set kex(AB) equal to 500 1/s; adjustable (u)
+set p @ 0 0.999999 f # set populations 95%/5%
+set p @ 1 0.05 u     
+set c @ N15 1 0 2.0 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+min                   # perform minimization
+write > d
+write > p
