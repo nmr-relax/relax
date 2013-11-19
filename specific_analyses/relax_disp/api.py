@@ -267,7 +267,6 @@ class Relax_disp(API_base, API_common):
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                 # Average the reference intensity data and errors.
-                print spin
                 ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
                 ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
 
