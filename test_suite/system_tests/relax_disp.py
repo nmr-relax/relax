@@ -1647,11 +1647,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 15N ZQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 6.016000, '600': 6.769954, '800': 6.890713},
+            - r2 = {'500': 6.016000, '601': 6.769957, '800': 6.890714},
             - pA = 0.943672,
-            - kex = 382.634,
-            - dw = 27.240643,
-            - dwH = -2.933241,
+            - kex = 382.636,
+            - dw = 0.845133,
+            - dwH = 0.088235,
             - chi2 = 23.71851.
         """
 
@@ -1667,11 +1667,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 6.016000, r20_key2: 6.769954, r20_key3: 6.890713}
-        spin.pA = 0.943672
-        spin.kex = 382.634
-        spin.dw = 27.240643
-        spin.dwH = -2.933241
+        spin.r2 = {r20_key1: 5.91297173859543, r20_key2: 6.66919500895295, r20_key3: 6.79000166117068}
+        spin.pA = 0.942921993217604
+        spin.kex = 371.076657461446
+        spin.dw = 2.30604327221814
+        spin.dwH = 0.576576043850393
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1702,14 +1702,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 6.016000, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 6.769954, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 6.890713, 4)
-        self.assertAlmostEqual(spin.pA, 0.943672, 4)
-        self.assertAlmostEqual(spin.dw, 27.240643, 4)
-        self.assertAlmostEqual(spin.dwH, -2.933241, 4)
-        self.assertAlmostEqual(spin.kex/1000, 382.634/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 23.71851, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 5.91297173859543, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 6.66919500895295, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 6.79000166117068, 4)
+        self.assertAlmostEqual(spin.pA, 0.942921993217604, 4)
+        self.assertAlmostEqual(spin.dw, 2.30604327221814, 4)
+        self.assertAlmostEqual(spin.dwH, 0.576576043850393, 4)
+        self.assertAlmostEqual(spin.kex/1000, 371.076657461446/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 24.7968738407662, 4)
 
 
     def test_korzhnev_2005_1h_mq_data(self):
