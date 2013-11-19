@@ -24,13 +24,13 @@ read ../hm_800.res d 1 M H1/N15 25 800 0.02 @ c    # 1H/15N MQ data at 800 MHz
 # (2) with delta_cs(N)<0, delta_cs(H)>0
 
 set m 2 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
-set k @ 0 211.105 u      # set kex(AB) equal to 500 1/s; adjustable (u)
+set k @ 0 368.075 u      # set kex(AB) equal to 500 1/s; adjustable (u)
 set p @ 0 0.999999 f # set populations 95%/5%
-set p @ 1 0.066867 u     
+set p @ 1 0.055678 u     
 set c @ N15 0 0 @ f
-set c @ N15 1 0 5.098305 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+set c @ N15 1 0 4.413451 u  # set 15N chemical shift in state B equals to 2.0, adjustable
 set c @ H1 0 0 @ f
-set c @ H1 1 0 0.298763 u # set 1H chemical shift in state B equals to -0.2, adjustable 
+set c @ H1 1 0 -0.271799 u # set 1H chemical shift in state B equals to -0.2, adjustable 
 set r @ M @ @ @ @ @ u g
 min                   # perform minimization
 write > d
