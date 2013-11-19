@@ -2063,6 +2063,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
         spin_id = spin_ids[spin_index]
 
         # Get the attached proton.
+        proton = None
         if proton_mmq_flag:
             # Get all protons.
             proton_spins = return_attached_protons(spin_id)
@@ -2079,7 +2080,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             proton = proton_spins[0]
 
         # No data.
-        if not hasattr(spin, 'r2eff'):
+        if not hasattr(spin, 'r2eff') and not hasattr(proton, 'r2eff'):
             continue
         data_flag = True
 
