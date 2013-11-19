@@ -35,7 +35,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
-from specific_analyses.relax_disp.disp_data import loop_exp_frq_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import has_disp_data, loop_exp_frq, loop_exp_frq_point, loop_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
 from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_CPMG_NUM, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
@@ -186,7 +186,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 class Disp_memo(Memo):
     """The relaxation dispersion memo class."""
 
-    def __init__(self, spins=None, sim_index=None, scaling_matrix=None, verbosity=None):
+    def __init__(self, spins=None, spin_ids=None, sim_index=None, scaling_matrix=None, verbosity=None):
         """Initialise the relaxation dispersion memo class.
 
         This is used for handling the optimisation results returned from a slave processor.  It runs on the master processor and is used to store data which is passed to the slave processor and then passed back to the master via the results command.
@@ -194,6 +194,8 @@ class Disp_memo(Memo):
 
         @keyword spins:             The list of spin data container for the cluster.  If this argument is supplied, then the spin_id argument will be ignored.
         @type spins:                list of SpinContainer instances
+        @keyword spin_ids:          The spin ID strings for the cluster.
+        @type spin_ids:             list of str
         @keyword sim_index:         The optional MC simulation index.
         @type sim_index:            int
         @keyword scaling_matrix:    The diagonal, square scaling matrix.
@@ -207,6 +209,7 @@ class Disp_memo(Memo):
 
         # Store the arguments.
         self.spins = spins
+        self.spin_ids = spin_ids
         self.sim_index = sim_index
         self.scaling_matrix = scaling_matrix
         self.verbosity = verbosity
@@ -488,21 +491,27 @@ class Disp_result_command(Result_command):
                     spin.r2eff_bc = {}
 
                 # Loop over the R2eff data.
-                for exp_type, frq, point in loop_exp_frq_point():
-                    # The indices.
-                    exp_type_index = return_index_from_exp_type(exp_type=exp_type)
-                    disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
-                    frq_index = return_index_from_frq(frq)
+                for exp_type, frq in loop_exp_frq():
+                    disp_pt_index = -1
+                    for point in loop_point(exp_type=exp_type):
+                        # No data.
+                        if not has_disp_data(spins=memo.spins, spin_ids=memo.spin_ids, exp_type=exp_type, frq=frq, point=point):
+                            continue
 
-                    # Missing data.
-                    if self.missing[exp_type_index][spin_index][frq_index][disp_pt_index]:
-                        continue
+                        # The indices.
+                        exp_type_index = return_index_from_exp_type(exp_type=exp_type)
+                        disp_pt_index += 1
+                        frq_index = return_index_from_frq(frq)
 
-                    # The R2eff key.
-                    key = return_param_key_from_data(frq=frq, point=point)
+                        # Missing data.
+                        if self.missing[exp_type_index][spin_index][frq_index][disp_pt_index]:
+                            continue
 
-                    # Store the back-calculated data.
-                    if memo.spins[0].model in [MODEL_MMQ_2SITE]:
-                        spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][disp_pt_index]
-                    else:
-                        spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][disp_pt_index]
+                        # The R2eff key.
+                        key = return_param_key_from_data(frq=frq, point=point)
+
+                        # Store the back-calculated data.
+                        if memo.spins[0].model in [MODEL_MMQ_2SITE]:
+                            spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][disp_pt_index]
+                        else:
+                            spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][disp_pt_index]
