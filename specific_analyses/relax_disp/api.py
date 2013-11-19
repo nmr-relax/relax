@@ -36,7 +36,7 @@ from types import MethodType
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
-from lib.errors import RelaxError
+from lib.errors import RelaxError, RelaxImplementError
 from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
@@ -115,6 +115,10 @@ class Relax_disp(API_base, API_common):
         @return:            The back-calculated R2eff/R1rho value for the given spin.
         @rtype:             numpy rank-1 float array
         """
+
+        # Skip protons for MMQ data.
+        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            return
 
         # Create the initial parameter vector.
         param_vector = assemble_param_vector(spins=[spin])
@@ -695,14 +699,28 @@ class Relax_disp(API_base, API_common):
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
+            # MMQ flags.
+            proton_sq_flag = has_proton_sq_cpmg()
+            proton_mq_flag = has_proton_mq_cpmg()
+            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
             # Loop over the sequence.
             for spin, spin_id in spin_loop(return_id=True):
+                # Skip protons for MMQ data.
+                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                    continue
+
                 # Skip deselected spins.
                 if not spin.select:
                     continue
 
+                # Get the attached proton.
+                proton = None
+                if proton_mmq_flag:
+                    proton = return_attached_protons(spin_id)[0]
+
                 # Skip spins with no R2eff/R1rho values.
-                if not hasattr(spin, 'r2eff'):
+                if not hasattr(spin, 'r2eff') and not hasattr(proton, 'r2eff'):
                     continue
 
                 # Yield the spin container and ID.
@@ -1115,11 +1133,17 @@ class Relax_disp(API_base, API_common):
         @rtype:         list of float
         """
 
-        # Get the spin container.
-        spin = return_spin(spin_id)
+        # The R2eff model.
+        if cdp.model_type == 'R2eff':
+            # Unpack the data.
+            spin, exp_type, frq, point = data_id
 
-        # Return the data.
-        return spin.intensities
+            # Return the data.
+            return spin.intensities
+
+        # All other models.
+        else:
+            raise RelaxImplementError
 
 
     return_data_name_doc =  Desc_container("Relaxation dispersion curve fitting data type string matching patterns")
@@ -1167,8 +1191,23 @@ class Relax_disp(API_base, API_common):
             # Unpack the data.
             spin, spin_id = data_id
 
+            # MMQ flags.
+            proton_sq_flag = has_proton_sq_cpmg()
+            proton_mq_flag = has_proton_mq_cpmg()
+            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
+            # Get the attached proton.
+            proton = None
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
+
             # The errors.
-            return spin.r2eff_err
+            r2eff_err = {}
+            if hasattr(spin, 'r2eff_err'):
+                r2eff_err.update(spin.r2eff_err)
+            if hasattr(proton, 'r2eff_err'):
+                r2eff_err.update(proton.r2eff_err)
+            return r2eff_err
 
         # Return the error list.
         return errors
@@ -1297,10 +1336,14 @@ class Relax_disp(API_base, API_common):
         # Set the Monte Carlo parameter values.
         #######################################
 
-        # Loop over the residues.
+        # Loop over the spins.
         for spin in spin_loop():
-            # Skip deselected residues.
+            # Skip deselected spins.
             if not spin.select:
+                continue
+
+            # Skip protons for MMQ data.
+            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
 
             # Loop over all the data names.
@@ -1391,8 +1434,20 @@ class Relax_disp(API_base, API_common):
             # Unpack the data.
             spin, spin_id = data_id
 
+            # MMQ flags.
+            proton_sq_flag = has_proton_sq_cpmg()
+            proton_mq_flag = has_proton_mq_cpmg()
+            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
+            # Get the attached proton.
+            proton = None
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
+
             # Pack the data.
             spin.r2eff_sim = sim_data
+            if proton != None:
+                proton.r2eff_sim = sim_data
 
 
     def sim_return_param(self, model_info, index):

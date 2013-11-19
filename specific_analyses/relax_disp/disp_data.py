@@ -1049,6 +1049,25 @@ def plot_disp_curves(dir=None, force=None):
     for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Loop over each spin.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+            # Skip protons for MMQ data.
+            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                continue
+
+            # MMQ flags.
+            proton_sq_flag = has_proton_sq_cpmg()
+            proton_mq_flag = has_proton_mq_cpmg()
+            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
+            # Get the attached proton.
+            proton = None
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
+
+            # Alias the correct spin.
+            current_spin = spin
+            if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                current_spin = proton
+
             # The unique file name.
             file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
             if num_exp_types() > 1:
@@ -1086,16 +1105,16 @@ def plot_disp_curves(dir=None, force=None):
                     key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
-                    if key not in spin.r2eff:
+                    if key not in current_spin.r2eff:
                         continue
 
                     # Add the data.
-                    data[-1].append([point, spin.r2eff[key]])
+                    data[-1].append([point, current_spin.r2eff[key]])
 
                     # Add the error.
-                    if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
+                    if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
                         err = True
-                        data[-1][-1].append(spin.r2eff_err[key])
+                        data[-1][-1].append(current_spin.r2eff_err[key])
 
             # Add the back-calculated data.
             for frq, frq_index in loop_frq(return_indices=True):
@@ -1117,11 +1136,11 @@ def plot_disp_curves(dir=None, force=None):
                     key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
-                    if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                    if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
                         continue
 
                     # Add the data.
-                    data[-1].append([point, spin.r2eff_bc[key]])
+                    data[-1].append([point, current_spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
@@ -1144,16 +1163,16 @@ def plot_disp_curves(dir=None, force=None):
                     key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
-                    if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
+                    if key not in current_spin.r2eff or not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
                         continue
 
                     # Add the data.
-                    data[-1].append([point, spin.r2eff[key] - spin.r2eff_bc[key]])
+                    data[-1].append([point, current_spin.r2eff[key] - current_spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
                         err = True
-                        data[-1][-1].append(spin.r2eff_err[key])
+                        data[-1][-1].append(current_spin.r2eff_err[key])
 
             # The axis labels.
             if exp_type in EXP_TYPE_LIST_CPMG:
@@ -1234,9 +1253,28 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
 
             # Loop over each spin.
             for spin, id in spin_loop(return_id=True, skip_desel=True):
+                # Skip protons for MMQ data.
+                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                    continue
+
                 # No data present.
                 if not hasattr(spin, 'intensities'):
                     continue
+
+                # MMQ flags.
+                proton_sq_flag = has_proton_sq_cpmg()
+                proton_mq_flag = has_proton_mq_cpmg()
+                proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
+                # Get the attached proton.
+                proton = None
+                if proton_mmq_flag:
+                    proton = return_attached_protons(spin_id)[0]
+
+                # Alias the correct spin.
+                current_spin = spin
+                if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                    current_spin = proton
 
                 # Append a new set structure and set the name to the spin ID.
                 data[graph_index].append([])
@@ -1251,15 +1289,15 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     # Loop over each key.
                     for key in keys:
                         # No key present.
-                        if key not in spin.intensities:
+                        if key not in current_spin.intensities:
                             continue
 
                         # Add the data.
-                        if hasattr(spin, 'intensity_err'):
-                            data[graph_index][-1].append([time, spin.intensities[key], spin.intensity_err[key]])
+                        if hasattr(current_spin, 'intensity_err'):
+                            data[graph_index][-1].append([time, current_spin.intensities[key], spin.intensity_err[key]])
                             err = True
                         else:
-                            data[graph_index][-1].append([time, spin.intensities[key]])
+                            data[graph_index][-1].append([time, current_spin.intensities[key]])
 
             # Increment the frq index.
             graph_index += 1
