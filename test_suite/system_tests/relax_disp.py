@@ -30,7 +30,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from specific_analyses.relax_disp.disp_data import generate_r20_key, get_curve_type
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.clean_up import deletion
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -132,6 +132,75 @@ class Relax_disp(SystemTestCase):
 
         # Copy the data.
         self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
+
+
+    def setup_korzhnev_2005_data(self, data_list=[]):
+        """Set up the data for the test_korzhnev_2005_data_*() system tests using the 'MMQ 2-site' model.
+
+        This loads the proton-heteronuclear SQ, ZQ, DQ, and MQ (MMQ) data from:
+
+            - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005)  Multiple-site exchange in proteins studied with a suite of six
+NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  127, 15602-15611 (U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}).
+
+        It consists of the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
+
+
+        @keyword data_list: The list of data to load.  It can contain 'SQ', '1H SQ', 'ZQ', 'DQ', 'MQ', and '1H MQ'.
+        @type data_list:    list of str
+        """
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Korzhnev_et_al_2005'
+        self.interpreter.pipe.create(pipe_name='Korzhnev et al., 2005', pipe_type='relax_disp')
+
+        # Create the spin system.
+        self.interpreter.spin.create(res_name='Asp', res_num=9, spin_name='N')
+        self.interpreter.spin.element('N', spin_id='@N')
+        self.interpreter.spin.isotope('15N', spin_id='@N')
+
+        # The spectral data - experiment ID, R2eff file name, experiment type, spin ID string, spectrometer frequency in Hertz, relaxation time.
+        data = [
+            ['1H SQ', '1H_CPMG_500_MHz',  'hs_500.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 500e6, 0.03],
+            ['1H SQ', '1H_CPMG_600_MHz',  'hs_600.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 600e6, 0.03],
+            ['1H SQ', '1H_CPMG_800_MHz',  'hs_800.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 800e6, 0.03],
+            ['SQ',    '15N_CPMG_500_MHz', 'ns_500.res', EXP_TYPE_CPMG_SQ,        ':9@N', 500e6, 0.04],
+            ['SQ',    '15N_CPMG_600_MHz', 'ns_600.res', EXP_TYPE_CPMG_SQ,        ':9@N', 600e6, 0.04],
+            ['SQ',    '15N_CPMG_800_MHz', 'ns_800.res', EXP_TYPE_CPMG_SQ,        ':9@N', 800e6, 0.04]
+        ]
+        cpmg_frqs_1h_sq = [67.0, 133.0, 267.0, 400.0, 533.0, 667.0, 800.0, 933.0, 1067.0, 1600.0, 2133.0, 2667.0]
+        cpmg_frqs_sq = [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0]
+
+        # Loop over the files, reading in the data.
+        for data_type, id, file, exp_type, spin_id, H_frq, relax_time in data:
+            # Skip undesired data.
+            if data_type not in data_list:
+                continue
+
+            # Alias the CPMG frequencies.
+            if data_type == 'SQ':
+                cpmg_frqs = cpmg_frqs_sq
+            elif data_type == '1H SQ':
+                cpmg_frqs = cpmg_frqs_1h_sq
+
+            # Loop over each CPMG frequency.
+            for cpmg_frq in cpmg_frqs:
+                # The id.
+                new_id = "%s_%s" % (id, cpmg_frq)
+
+                # Set the NMR field strength.
+                self.interpreter.spectrometer.frequency(id=new_id, frq=H_frq)
+
+                # Set the relaxation dispersion experiment type.
+                self.interpreter.relax_disp.exp_type(spectrum_id=new_id, exp_type=exp_type)
+
+                # Relaxation dispersion CPMG constant time delay T (in s).
+                self.interpreter.relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
+
+            # Read the R2eff data.
+            self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
+
+        # Change the model.
+        self.interpreter.relax_disp.select_model('MMQ 2-site')
 
 
     def test_bug_21081_disp_cluster_fail(self):
@@ -1327,6 +1396,74 @@ class Relax_disp(SystemTestCase):
             print("%s\"%s\\n\"," % (" "*12, lines[i][:-1]))
         for i in range(len(lines)):
             self.assertEqual(spin2[i], lines[i])
+
+
+    def test_korzhnev_2005_15N_sq_data(self):
+        """Optimisation of the Korzhnev et al., 2005 15N SQ CPMG data using the 'MMQ 2-site' model.
+
+        This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
+
+        Here only the 15N SQ data will be optimised.  The values found by cpmg_fit using just this data are:
+
+            - r2 = {'500': 8.400699, '600': 8.847946, '800': 10.289079},
+            - pA = 0.950701,
+            - kex = 435.592,
+            - dw = 4.356895,
+            - chi2 = 17.49720.
+        """
+
+        # Base data setup.
+        self.setup_korzhnev_2005_data(data_list=['SQ'])
+
+        # Alias the spin.
+        spin = return_spin(":9")
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
+        r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+
+        # Set the initial parameter values.
+        spin.r2 = {r20_key1: 8.334232330326190, r20_key2: 8.756773997879968, r20_key3: 10.219320492033058}
+        spin.pA = 0.950310172115387
+        spin.kex = 433.176323890829849
+        spin.dw = 4.356737157889636
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+
+        # Monte Carlo simulations.
+        self.interpreter.monte_carlo.setup(number=2)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise(min_algor='simplex', max_iter=10)
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Plot the dispersion curves.
+        self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir, force=True)
+
+        # Save the results.
+        self.interpreter.state.save('state', dir=ds.tmpdir, compress_type=1, force=True)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s" % ("Parameter", "Value (:9)"))
+        print("%-20s %20.15g" % ("R2 (500 MHz)", spin.r2[r20_key1]))
+        print("%-20s %20.15g" % ("R2 (600 MHz)", spin.r2[r20_key2]))
+        print("%-20s %20.15g" % ("R2 (800 MHz)", spin.r2[r20_key3]))
+        print("%-20s %20.15g" % ("pA", spin.pA))
+        print("%-20s %20.15g" % ("dw", spin.dw))
+        print("%-20s %20.15g" % ("kex", spin.kex))
+        print("%-20s %20.15g\n" % ("chi2", spin.chi2))
+
+        # Checks for residue :9.
+        self.assertAlmostEqual(spin.r2[r20_key1], 8.334232330326190, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 8.756773997879968, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 10.219320492033058, 4)
+        self.assertAlmostEqual(spin.pA, 0.950310172115387, 4)
+        self.assertAlmostEqual(spin.dw, 4.356737157889636, 4)
+        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 17.37460582872912, 4)
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
