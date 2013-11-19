@@ -41,6 +41,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
+from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, write_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
@@ -146,18 +147,18 @@ def count_frq():
     return cdp.spectrometer_frq_count
 
 
-def count_relax_times(exp_type=None):
+def count_relax_times(exp_type_index=None):
     """Count the number of relaxation times present.
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @return:            The relaxation time count for the given experiment.
-    @rtype:             int
+    @keyword exp_type_index:    The experiment type index.
+    @type exp_type_index:       str
+    @return:                    The relaxation time count for the given experiment.
+    @rtype:                     int
     """
 
     # Loop.
     times = []
-    for frq, point, time in loop_frq_point_time(exp_type=exp_type):
+    for frq, point, time in loop_frq_point_time(exp_type_index=exp_type_index):
         if time not in times:
             times.append(time)
 
@@ -227,19 +228,21 @@ def decompose_r20_key(key=None):
             return exp_type, frq
 
 
-def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
+def find_intensity_keys(exp_type=None, frq=None, point=None, time=None, raise_error=True):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @keyword frq:       The spectrometer frequency.
-    @type frq:          Float
-    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @type point:        Float
-    @keyword time:      The relaxation time period.
-    @type time:         Float
-    @return:            The keys corresponding to the spectrometer frequency, dispersion point, and relaxation time.
-    @rtype:             List of str
+    @keyword exp_type:      The experiment type.
+    @type exp_type:         str
+    @keyword frq:           The spectrometer frequency.
+    @type frq:              float
+    @keyword point:         The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:            float
+    @keyword time:          The relaxation time period.
+    @type time:             float
+    @keyword raise_error:   A flag which if True will cause a RelaxError to be raised if no keys could be found.
+    @type raise_error:      bool
+    @return:                The keys corresponding to the spectrometer frequency, dispersion point, and relaxation time.
+    @rtype:                 list of str
     """
 
     # Check.
@@ -261,17 +264,19 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None):
             frq2 = cdp.spectrometer_frq[id]
 
         # Matching frequency and dispersion point.
-        if frq2 == frq and disp_data[id] == point:
+        if frq2 == frq and id in disp_data.keys() and disp_data[id] == point:
             # The reference point, so checking the time is pointless (and can fail as specifying the time should not be necessary).
             if point == None:
                 ids.append(id)
 
             # Matching time.
+            elif time == None:
+                ids.append(id)
             elif cdp.relax_times[id] == time:
                 ids.append(id)
 
     # Check for missing IDs.
-    if len(ids) == 0:
+    if raise_error and len(ids) == 0:
         if point == None:
             raise RelaxError("No reference intensity data could be found corresponding to the spectrometer frequency of %s MHz and relaxation time of %s s." % (frq*1e-6, time))
         else:
@@ -319,7 +324,7 @@ def get_curve_type(id=None):
     else:
         # Determine the curve type.
         curve_type = 'exponential'
-        if count_relax_times(cdp.exp_type[id]) == 1:
+        if count_relax_times(cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
             curve_type = 'fixed time'
 
     # Return the type.
@@ -649,83 +654,112 @@ def loop_cluster():
             yield [spin_id]
 
 
-def loop_exp():
+def loop_exp(return_indices=False):
     """Generator method for looping over all experiment types.
 
-    @return:    The experiment type.
-    @rtype:     str
+    @keyword return_indices:    A flag which if True will cause the experiment type index to be returned as well.
+    @type return_indices:       bool
+    @return:                    The experiment type, and the index if asked.
+    @rtype:                     str, (int)
     """
 
-    # Yield each unique experiment type.
+    # Initialise the index.
+    exp_type_index = -1
+
+    # Loop over the experiment types.
     for exp_type in cdp.exp_type_list:
-        yield exp_type
+        # Increment the index.
+        exp_type_index += 1
+
+        # Yield each unique experiment type.
+        if return_indices:
+            yield exp_type, exp_type_index
+        else:
+            yield exp_type
 
 
-def loop_exp_frq():
+def loop_exp_frq(return_indices=False):
     """Generator method for looping over the exp and frq data.
     
     These are the experiment types and spectrometer frequencies.
 
 
-    @return:    The experiment type and spectrometer frequency in Hz.
-    @rtype:     str, float
+    @keyword return_indices:    A flag which if True will cause the experiment type and spectrometer frequency indices to be returned as well.
+    @type return_indices:       bool
+    @return:                    The experiment type and spectrometer frequency in Hz, and the indices if asked.
+    @rtype:                     str, float, (int, int)
     """
 
     # First loop over the experiment types.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Then loop over the spectrometer frequencies.
-        for frq in loop_frq():
+        for frq, frq_index in loop_frq(return_indices=True):
             # Yield the data.
-            yield exp_type, frq
+            if return_indices:
+                yield exp_type, frq, exp_type_index, frq_index
+            else:
+                yield exp_type, frq
 
 
-def loop_exp_frq_point():
+def loop_exp_frq_point(return_indices=False):
     """Generator method for looping over the exp, frq, and point data.
     
     These are the experiment types, spectrometer frequencies and dispersion points.
 
 
-    @return:    The experiment type, spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @rtype:     str, float, float
+    @keyword return_indices:    A flag which if True will cause the experiment type, spectrometer frequency and dispersion point indices to be returned as well.
+    @type return_indices:       bool
+    @return:                    The experiment type, spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the indices if asked.
+    @rtype:                     str, float, float, (int, int, int)
     """
 
     # First loop over the experiment types.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Then loop over the spectrometer frequencies.
-        for frq in loop_frq():
+        for frq, frq_index in loop_frq(return_indices=True):
             # And finally the dispersion points.
-            for point in loop_point(exp_type=exp_type):
+            for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                 # Yield the data.
-                yield exp_type, frq, point
+                if return_indices:
+                    yield exp_type, frq, point, exp_type_index, frq_index, point_index
+                else:
+                    yield exp_type, frq, point
 
 
-def loop_exp_frq_point_time():
+def loop_exp_frq_point_time(return_indices=False):
     """Generator method for looping over the exp, frq, point, and time data.
     
     These are the experiment types, spectrometer frequencies, dispersion points, and relaxation times.
 
 
-    @return:    The experiment type, spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation time.
-    @rtype:     str, float, float, float
+    @keyword return_indices:    A flag which if True will cause the experiment type, spectrometer frequency, dispersion point, and relaxation time indices to be returned as well.
+    @type return_indices:       bool
+    @return:                    The experiment type, spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), the relaxation time, and the indices if asked.
+    @rtype:                     str, float, float, float, (int, int, int, int)
     """
 
     # First loop over the experiment types.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Then the spectrometer frequencies.
-        for frq in loop_frq():
+        for frq, frq_index in loop_frq(return_indices=True):
             # Then the dispersion points.
-            for point in loop_point(exp_type=exp_type):
+            for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                 # Finally the relaxation times.
-                for time in loop_time():
+                for time, time_index in loop_time(return_indices=True):
                     # Yield all data.
-                    yield exp_type, frq, point, time
+                    if return_indices:
+                        yield exp_type, frq, point, time, exp_type_index, frq_index, point_index, time_index
+                    else:
+                        yield exp_type, frq, point, time
 
 
-def loop_frq():
+def loop_frq(return_indices=False):
     """Generator method for looping over all spectrometer frequencies.
 
-    @return:    The spectrometer frequency in Hz
-    @rtype:     float
+    @keyword return_indices:    A flag which if True will cause the spectrometer frequency index to be returned as well.
+    @type return_indices:       bool
+    @return:                    The spectrometer frequency in Hz, and the index if asked.
+    @rtype:                     float, (int)
     """
 
     # Handle missing frequency data.
@@ -733,93 +767,134 @@ def loop_frq():
     if hasattr(cdp, 'spectrometer_frq_list'):
         frqs = cdp.spectrometer_frq_list
 
-    # Yield each unique spectrometer field strength.
+    # Initialise the index.
+    frq_index = -1
+
+    # Loop over the spectrometer frequencies.
     for field in frqs:
-        yield field
+        # Increment the index.
+        frq_index += 1
+
+        # Yield each unique spectrometer field strength.
+        if return_indices:
+            yield field, frq_index
+        else:
+            yield field
 
 
-def loop_frq_point(exp_type=None):
+def loop_frq_point(exp_type_index=None, return_indices=False):
     """Generator method for looping over the spectrometer frequencies and dispersion points.
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @return:    The spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @rtype:     float, float
+    @keyword exp_type_index:    The experiment type index.
+    @type exp_type_index:       str
+    @keyword return_indices:    A flag which if True will cause the spectrometer frequency and dispersion point indices to be returned as well.
+    @type return_indices:       bool
+    @return:                    The spectrometer frequency in Hz and dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @rtype:                     float, float, (int, int)
     """
 
     # First loop over the spectrometer frequencies.
-    for frq in loop_frq():
+    for frq, frq_index in loop_frq(return_indices=True):
         # Then the dispersion points.
-        for point in loop_point(exp_type=exp_type):
+        for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
             # Yield the data.
-            yield frq, point
+            if return_indices:
+                yield frq, point, frq_index, point_index
+            else:
+                yield frq, point
 
 
-def loop_frq_point_key(exp_type=None):
+def loop_frq_point_key(exp_type_index=None):
     """Generator method for looping over the spectrometer frequencies and dispersion points (returning the key).
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @return:    The key corresponding to the spectrometer frequency and dispersion point.
-    @rtype:     str
+    @keyword exp_type_index:    The experiment type index.
+    @type exp_type_index:       int
+    @return:                    The key corresponding to the spectrometer frequency and dispersion point.
+    @rtype:                     str
     """
 
     # First loop over the spectrometer frequencies.
-    for frq in loop_frq():
+    for frq, frq_index in loop_frq(return_indices=True):
         # Then the dispersion points.
-        for point in loop_point(exp_type=exp_type):
+        for point in loop_point(exp_type_index=exp_type_index, frq_index=frq_index):
             # Generate and yield the key.
             yield return_param_key_from_data(frq=frq, point=point)
 
 
-def loop_frq_point_time(exp_type=None):
+def loop_frq_point_time(exp_type_index=None, return_indices=False):
     """Generator method for looping over the spectrometer frequencies, dispersion points, and relaxation times.
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @return:    The spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation time.
-    @rtype:     float, float, float
+    @keyword exp_type_index:    The experiment type index.
+    @type exp_type_index:       int
+    @keyword return_indices:    A flag which if True will cause the spectrometer frequency, dispersion point, and relaxation time indices to be returned as well.
+    @type return_indices:       bool
+    @return:                    The spectrometer frequency in Hz, dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the relaxation time.
+    @rtype:                     float, float, float
     """
 
     # First loop over the spectrometer frequencies.
-    for frq in loop_frq():
+    for frq, frq_index in loop_frq(return_indices=True):
         # Then the dispersion points.
-        for point in loop_point(exp_type=exp_type):
+        for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
             # Finally the relaxation times.
-            for time in loop_time():
+            for time, time_index in loop_time(return_indices=True):
                 # Yield all data.
-                yield frq, point, time
+                if return_indices:
+                    yield frq, point, time, frq_index, point_index, time_index
+                else:
+                    yield frq, point, time
 
 
-def loop_point(exp_type=None, skip_ref=True):
+def loop_point(exp_type_index=None, frq_index=None, skip_ref=True, return_indices=False):
     """Generator method for looping over the dispersion points.
 
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @keyword skip_ref:  A flag which if True will cause the reference point to be skipped.
-    @type skip_ref:     bool
-    @return:            Dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @rtype:             float
+    @keyword exp_type_index:    The experiment type index.
+    @type exp_type_index:       int
+    @keyword frq_index:         The spectrometer frequency index.
+    @type frq_index:            int
+    @keyword skip_ref:          A flag which if True will cause the reference point to be skipped.
+    @type skip_ref:             bool
+    @keyword return_indices:    A flag which if True will cause the experiment type index to be returned as well.
+    @type return_indices:       bool
+    @return:                    Dispersion point data for the given indices (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz), and the index if asked.
+    @rtype:                     float, (int)
     """
 
-    # CPMG type data.
-    if exp_type == None:
-        raise RelaxError("The experiment type must be supplied.")
-    elif exp_type in EXP_TYPE_LIST_CPMG:
-        fields = cdp.cpmg_frqs_list
-    elif exp_type in EXP_TYPE_LIST_R1RHO:
-        fields = cdp.spin_lock_nu1_list
+    # Checks.
+    if exp_type_index == None:
+        raise RelaxError("The experiment type index must be supplied.")
+    if frq_index == None:
+        raise RelaxError("The spectrometer frequency index must be supplied.")
+
+    # Assemble the dispersion data.
+    ref_flag = not skip_ref
+    if cdp.exp_type_list[exp_type_index] in EXP_TYPE_LIST_CPMG:
+        fields = return_cpmg_frqs(ref_flag=ref_flag)
+    elif cdp.exp_type_list[exp_type_index] in EXP_TYPE_LIST_R1RHO:
+        fields = return_spin_lock_nu1(ref_flag=ref_flag)
     else:
-        raise RelaxError("The experiment type '%s' is unknown." % exp_type)
+        raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type_list[exp_type_index])
+
+    # Alias the correct structure.
+    fields = fields[exp_type_index][frq_index]
+
+    # Initialise the index.
+    point_index = -1
 
     # Loop over the field data.
     for field in fields:
-        # Skip the reference.
-        if skip_ref and field == None:
+        # Skip the reference (the None value will be converted to the numpy nan value).
+        if skip_ref and isNaN(field):
             continue
 
+        # Increment the index.
+        point_index += 1
+
         # Yield each unique field strength or frequency.
-        yield field
+        if return_indices:
+            yield field, point_index
+        else:
+            yield field
 
 
 def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
@@ -904,21 +979,36 @@ def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
         yield id
 
 
-def loop_time():
+def loop_time(return_indices=False):
     """Generator method for looping over the relaxation times.
 
-    @return:    The relaxation time.
-    @rtype:     float
+    @keyword return_indices:    A flag which if True will cause the relaxation time index to be returned as well.
+    @type return_indices:       bool
+    @return:                    The relaxation time.
+    @rtype:                     float
     """
+
+    # Initialise the index.
+    time_index = -1
 
     # Loop over the time points.
     if hasattr(cdp, 'relax_time_list'):
         for time in cdp.relax_time_list:
-            yield time
+            # Increment the index.
+            time_index += 1
+
+            # Yield each unique relaxation time.
+            if return_indices:
+                yield time, time_index
+            else:
+                yield time
 
     # No times set.
     else:
-        yield None
+        if return_indices:
+            yield None, None
+        else:
+            yield None
 
 
 def num_exp_types():
@@ -956,7 +1046,7 @@ def plot_disp_curves(dir=None, force=None):
         raise RelaxNoSequenceError
 
     # Loop over each experiment type.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Loop over each spin.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # The unique file name.
@@ -977,7 +1067,7 @@ def plot_disp_curves(dir=None, force=None):
             # Loop over the spectrometer frequencies.
             graph_index = 0
             err = False
-            for frq in loop_frq():
+            for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
@@ -991,16 +1081,16 @@ def plot_disp_curves(dir=None, force=None):
                 set_labels.append(label)
 
                 # Loop over the dispersion points.
-                for disp_point in loop_point(exp_type=exp_type):
+                for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=disp_point)
+                    key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
                     if key not in spin.r2eff:
                         continue
 
                     # Add the data.
-                    data[-1].append([disp_point, spin.r2eff[key]])
+                    data[-1].append([point, spin.r2eff[key]])
 
                     # Add the error.
                     if hasattr(spin, 'r2eff_err') and key in spin.r2eff_err:
@@ -1008,7 +1098,7 @@ def plot_disp_curves(dir=None, force=None):
                         data[-1][-1].append(spin.r2eff_err[key])
 
             # Add the back-calculated data.
-            for frq in loop_frq():
+            for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
@@ -1022,23 +1112,23 @@ def plot_disp_curves(dir=None, force=None):
                 set_labels.append(label)
 
                 # Loop over the dispersion points.
-                for disp_point in loop_point(exp_type=exp_type):
+                for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=disp_point)
+                    key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
                     if not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
                         continue
 
                     # Add the data.
-                    data[-1].append([disp_point, spin.r2eff_bc[key]])
+                    data[-1].append([point, spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
                         data[-1][-1].append(None)
 
             # Add the residuals for statistical comparison.
-            for frq in loop_frq():
+            for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
                 data.append([])
 
@@ -1049,16 +1139,16 @@ def plot_disp_curves(dir=None, force=None):
                 set_labels.append(label)
 
                 # Loop over the dispersion points.
-                for disp_point in loop_point(exp_type=exp_type):
+                for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=disp_point)
+                    key = return_param_key_from_data(frq=frq, point=point)
 
                     # No data present.
                     if key not in spin.r2eff or not hasattr(spin, 'r2eff_bc') or key not in spin.r2eff_bc:
                         continue
 
                     # Add the data.
-                    data[-1].append([disp_point, spin.r2eff[key] - spin.r2eff_bc[key]])
+                    data[-1].append([point, spin.r2eff[key] - spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
@@ -1136,9 +1226,9 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     # Loop over the spectrometer frequencies.
     graph_index = 0
     err = False
-    for exp_type, frq in loop_exp_frq():
+    for exp_type, frq, exp_type_index, frq_index in loop_exp_frq(return_indices=True):
         # Loop over the dispersion points.
-        for disp_point in loop_point(exp_type=exp_type):
+        for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
             # Create a new graph.
             data.append([])
 
@@ -1156,7 +1246,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Loop over the relaxation time periods.
                 for time in cdp.relax_time_list:
                     # The key.
-                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=disp_point, time=time)
+                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
                     # Loop over each key.
                     for key in keys:
@@ -1514,13 +1604,9 @@ def relax_time(time=0.0, spectrum_id=None):
     print("Setting the '%s' spectrum relaxation time period to %s s." % (spectrum_id, cdp.relax_times[spectrum_id]))
 
 
-def return_cpmg_frqs(spins=None, spin_ids=None, ref_flag=True):
+def return_cpmg_frqs(ref_flag=True):
     """Return the list of nu_CPMG frequencies.
 
-    @keyword spins:     The list of spins for which to check is CPMG data exists for.
-    @type spins:        list of SpinContainer instances
-    @keyword spin_ids:  The list of spin IDs for the cluster.
-    @type spin_ids:     list of str
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
@@ -1535,26 +1621,32 @@ def return_cpmg_frqs(spins=None, spin_ids=None, ref_flag=True):
     cpmg_frqs = []
 
     # First loop over the experiment types.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Add a new dimension.
         cpmg_frqs.append([])
 
         # Then loop over the spectrometer frequencies.
-        for frq in loop_frq():
+        for frq, frq_index in loop_frq(return_indices=True):
             # Add a new dimension.
-            cpmg_frqs[-1].append([])
+            cpmg_frqs[exp_type_index].append([])
 
             # Loop over the frequencies.
             for point in cdp.cpmg_frqs_list:
+                if (not ref_flag) and point == None:
+                    continue
+
+                # Fetch all of the matching intensity keys.
+                keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, raise_error=False)
+
                 # No data.
-                if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
+                if not len(keys):
                     continue
 
                 # Add the data.
-                cpmg_frqs[-1][-1].append(point)
+                cpmg_frqs[exp_type_index][frq_index].append(point)
 
             # Convert to a numpy array.
-            cpmg_frqs[-1][-1] = array(cpmg_frqs[-1][-1], float64)
+            cpmg_frqs[exp_type_index][frq_index] = array(cpmg_frqs[exp_type_index][frq_index], float64)
 
     # Return the data.
     return cpmg_frqs
@@ -1773,10 +1865,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
         data_flag = True
 
         # Loop over the spectrometer frequencies.
-        for frq in loop_frq():
-            # The index.
-            frq_index = return_index_from_frq(frq)
-
+        for frq, frq_index in loop_frq(return_indices=True):
             # Convert the shift from ppm to rad/s and store it.
             shifts[spin_index, frq_index] = spin.chemical_shift * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
@@ -1999,20 +2088,11 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             raise RelaxSpinTypeError(spin_id=spin_ids[spin_index])
 
         # Loop over the R2eff data.
-        for exp_type, frq, point in loop_exp_frq_point():
-            # No data.
-            if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
-                continue
-
+        for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
             # Alias the correct spin.
             current_spin = spin
             if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
                 current_spin = proton
-
-            # The indices.
-            exp_type_index = return_index_from_exp_type(exp_type=exp_type)
-            disp_pt_index = return_index_from_disp_point(point, exp_type=exp_type)
-            frq_index = return_index_from_frq(frq)
 
             # Add the experiment type.
             if exp_type not in exp_types:
@@ -2087,13 +2167,9 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     return values, errors, missing, frqs, exp_types, relax_times
 
 
-def return_spin_lock_nu1(spins=None, spin_ids=None, ref_flag=True):
+def return_spin_lock_nu1(ref_flag=True):
     """Return the list of spin-lock field strengths.
 
-    @keyword spins:     The list of spins for which to check is CPMG data exists for.
-    @type spins:        list of SpinContainer instances
-    @keyword spin_ids:  The list of spin IDs for the cluster.
-    @type spin_ids:     list of str
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of spin-lock field strengths in Hz.
@@ -2108,30 +2184,33 @@ def return_spin_lock_nu1(spins=None, spin_ids=None, ref_flag=True):
     nu1 = []
 
     # First loop over the experiment types.
-    for exp_type in loop_exp():
+    for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Add a new dimension.
         nu1.append([])
 
         # Then loop over the spectrometer frequencies.
-        for frq in loop_frq():
+        for frq, frq_index in loop_frq(return_indices=True):
             # Add a new dimension.
-            nu1[-1].append([])
+            nu1[exp_type_index].append([])
 
             # Loop over the frequencies.
             for point in cdp.spin_lock_nu1_list:
                 # Skip reference points.
-                if point == None:
+                if (not ref_flag) and point == None:
                     continue
 
+                # Fetch all of the matching intensity keys.
+                keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, raise_error=False)
+
                 # No data.
-                if not has_disp_data(spins=spins, spin_ids=spin_ids, exp_type=exp_type, frq=frq, point=point):
+                if not len(keys):
                     continue
 
                 # Add the data.
-                nu1[-1][-1].append(point)
+                nu1[exp_type_index][frq_index].append(point)
 
             # Convert to a numpy array.
-            nu1[-1][-1] = array(nu1[-1][-1], float64)
+            nu1[exp_type_index][frq_index] = array(nu1[exp_type_index][frq_index], float64)
 
     # Return the data.
     return nu1

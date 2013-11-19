@@ -324,7 +324,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
         isotope = 'N15'
 
     # Loop over the frequencies.
-    for frq in loop_frq():
+    for frq, frq_index in loop_frq(return_indices=True):
         # The frequency string in MHz.
         frq_string = int(frq*1e-6)
 
@@ -359,7 +359,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
             spin_file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
 
             # Loop over the dispersion points.
-            for point in loop_point(exp_type='SQ CPMG'):
+            for point, point_index in loop_point(exp_type_index=0, frq_index=frq_index, return_indices=True):
                 # The key.
                 key = return_param_key_from_data(frq=frq, point=point)
 

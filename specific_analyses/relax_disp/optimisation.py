@@ -309,8 +309,8 @@ class Disp_minimise_command(Slave_command):
 
         # The dispersion data.
         self.dispersion_points = cdp.dispersion_points
-        self.cpmg_frqs = return_cpmg_frqs(spins=spins, spin_ids=spin_ids, ref_flag=False)
-        self.spin_lock_nu1 = return_spin_lock_nu1(spins=spins, spin_ids=spin_ids, ref_flag=False)
+        self.cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        self.spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
 
 
     def run(self, processor, completed):
@@ -491,27 +491,16 @@ class Disp_result_command(Result_command):
                     spin.r2eff_bc = {}
 
                 # Loop over the R2eff data.
-                for exp_type, frq in loop_exp_frq():
-                    disp_pt_index = -1
-                    for point in loop_point(exp_type=exp_type):
-                        # No data.
-                        if not has_disp_data(spins=memo.spins, spin_ids=memo.spin_ids, exp_type=exp_type, frq=frq, point=point):
-                            continue
+                for exp_type, frq,  point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+                    # Missing data.
+                    if self.missing[exp_type_index][spin_index][frq_index][point_index]:
+                        continue
 
-                        # The indices.
-                        exp_type_index = return_index_from_exp_type(exp_type=exp_type)
-                        disp_pt_index += 1
-                        frq_index = return_index_from_frq(frq)
+                    # The R2eff key.
+                    key = return_param_key_from_data(frq=frq, point=point)
 
-                        # Missing data.
-                        if self.missing[exp_type_index][spin_index][frq_index][disp_pt_index]:
-                            continue
-
-                        # The R2eff key.
-                        key = return_param_key_from_data(frq=frq, point=point)
-
-                        # Store the back-calculated data.
-                        if memo.spins[0].model in [MODEL_MMQ_2SITE]:
-                            spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][disp_pt_index]
-                        else:
-                            spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][disp_pt_index]
+                    # Store the back-calculated data.
+                    if memo.spins[0].model in [MODEL_MMQ_2SITE]:
+                        spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][point_index]
+                    else:
+                        spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][point_index]

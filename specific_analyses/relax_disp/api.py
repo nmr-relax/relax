@@ -47,7 +47,7 @@ from specific_analyses.relax_disp.checks import check_c_modules, check_disp_poin
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -138,8 +138,8 @@ class Relax_disp(API_base, API_common):
             r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # The dispersion data.
-        cpmg_frqs = return_cpmg_frqs(spins=[spin], spin_ids=[spin_id], ref_flag=False)
-        spin_lock_nu1 = return_spin_lock_nu1(spins=[spin], spin_ids=[spin_id], ref_flag=False)
+        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
 
         # Initialise the relaxation dispersion fit functions.
         model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix)
@@ -152,12 +152,7 @@ class Relax_disp(API_base, API_common):
 
         # Convert to a dictionary matching the R2eff data structure.
         results = {}
-        for exp_type, frq, point in loop_exp_frq_point():
-            # The indices.
-            exp_type_index = return_index_from_exp_type(exp_type=exp_type)
-            frq_index = return_index_from_frq(frq)
-            point_index = return_index_from_disp_point(point, exp_type=exp_type)
-
+        for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
             # The parameter key.
             param_key = return_param_key_from_data(frq=frq, point=point)
 
@@ -165,8 +160,13 @@ class Relax_disp(API_base, API_common):
             if missing[exp_type_index][0][frq_index][point_index]:
                 continue
 
-            # Store the result.
-            results[param_key] = model.back_calc[0][frq_index][point_index]
+            # Store the result for the MMQ experiment types.
+            if spin.model in MODEL_LIST_MMQ:
+                results[param_key] = model.back_calc[exp_type_index][0][frq_index][point_index]
+
+            # Store the result for the single experiment types.
+            else:
+                results[param_key] = model.back_calc[0][frq_index][point_index]
 
         # Return the back calculated R2eff values.
         return results
@@ -255,9 +255,7 @@ class Relax_disp(API_base, API_common):
                 spin.r2eff_err = {}
 
             # Loop over all the data.
-            print spin.intensities
             for exp_type, frq, point, time in loop_exp_frq_point_time():
-                print  exp_type, frq, point, time
                 # The three keys.
                 ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
