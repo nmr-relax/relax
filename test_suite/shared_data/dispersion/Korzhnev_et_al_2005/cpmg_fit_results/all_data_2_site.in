@@ -1,0 +1,34 @@
+# Reading and processing the data for 1H SQ coherences.
+
+read ../ns_500.res d 1 S N15 25 500 0.04 @ c   # 15N SQ data at 500 MHz
+read ../ns_600.res d 1 S N15 25 600 0.04 @ c   # 15N SQ data at 600 MHz
+read ../ns_800.res d 1 S N15 25 800 0.04 @ c   # 15N SQ data at 800 MHz
+read ../hs_500.res d 1 S H1 25 500 0.03 @ c    # 1H SQ data at 500 MHz
+read ../hs_600.res d 1 S H1 25 600 0.03 @ c    # 1H SQ data at 600 MHz
+read ../hs_800.res d 1 S H1 25 800 0.03 @ c    # 1H SQ data at 800 MHz
+read ../dq_500.res d 1 D H1/N15 25 500 0.03 @ c    # 15N/1H DQ data at 500 MHz
+read ../dq_600.res d 1 D H1/N15 25 600 0.03 @ c    # 15N/1H DQ data at 600 MHz
+read ../dq_800.res d 1 D H1/N15 25 800 0.03 @ c    # 15N/1H DQ data at 800 MHz
+read ../zq_500.res d 1 Z H1/N15 25 500 0.03 @ c    # 15N/1H ZQ data at 500 MHz
+read ../zq_600.res d 1 Z H1/N15 25 600 0.03 @ c    # 15N/1H ZQ data at 600 MHz
+read ../zq_800.res d 1 Z H1/N15 25 800 0.03 @ c    # 15N/1H ZQ data at 800 MHz
+read ../nm_500.res d 1 M N15/H1 25 500 0.02 @ c    # 15N/1H MQ data at 500 MHz
+read ../nm_600.res d 1 M N15/H1 25 600 0.02 @ c    # 15N/1H MQ data at 600 MHz
+read ../nm_800.res d 1 M N15/H1 25 800 0.02 @ c    # 15N/1H MQ data at 800 MHz
+read ../hm_500.res d 1 M H1/N15 25 500 0.02 @ c    # 1H/15N MQ data at 500 MHz
+read ../hm_600.res d 1 M H1/N15 25 600 0.02 @ c    # 1H/15N MQ data at 600 MHz
+read ../hm_800.res d 1 M H1/N15 25 800 0.02 @ c    # 1H/15N MQ data at 800 MHz
+
+# seting initial approximations for exchange parameters
+# performing two seperate optimizations (1) with delta_cs(N)>0, delta_cs(H)<0 and 
+# (2) with delta_cs(N)<0, delta_cs(H)>0
+
+set m 2 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k @ 0 187.147 u      # set kex(AB) equal to 500 1/s; adjustable (u)
+set p @ 0 0.999999 f # set populations 95%/5%
+set p @ 1 0.075444 u     
+set c @ N15 0 0 5.115756 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+set c @ H1 0 0 0.300945 u # set 1H chemical shift in state B equals to -0.2, adjustable 
+min                   # perform minimization
+write > d
+write > p
