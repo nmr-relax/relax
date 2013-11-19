@@ -62,7 +62,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
+def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -179,8 +179,8 @@ def r2eff_mmq_2site_mq(M0=None, m1=None, m2=None, R20A=None, R20B=None, pA=None,
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         A_B = dot(A, B)
         C_D = dot(C, D)
-        Mx = (A_B[0, 0] + C_D[0, 0])*M0[0] + (A_B[0, 1] + C_D[0, 1])*M0[1]
-        Mx = Mx.real
+        Mx = dot(dot(F_vector, (A_B + C_D)), M0)
+        Mx = Mx.real / 2.0
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
         else:
