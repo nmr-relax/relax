@@ -1,0 +1,808 @@
+
+
+
+                                  relax repository checkout r21506
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'optimise.py'
+----------------------------------------------------------------------------------------------------
+"""Optimise the SQ data in relax.
+
+To run this, type:
+
+$ rm -f optimise.log; ../../../../../../relax --tee optimise.log optimise.py
+"""
+
+# relax module imports.
+from specific_analyses.relax_disp.disp_data import generate_r20_key
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ
+
+
+# Create a data pipe.
+pipe.create('R2eff', 'relax_disp')
+
+# Create the spin system.
+spin.create(res_name='Asp', res_num=9, spin_name='H')
+spin.create(res_name='Asp', res_num=9, spin_name='N')
+spin.element('H', spin_id='@H')
+spin.element('N', spin_id='@N')
+spin.isotope('1H', spin_id='@H')
+spin.isotope('15N', spin_id='@N')
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1=':9@N', spin_id2=':9@H', direct_bond=True)
+
+# The spectral data - experiment ID, R2eff file name, experiment type, spin ID string, spectrometer frequency in Hertz, relaxation time.
+data = [
+    ['ZQ_CPMG_500_MHz', 'zq_500.res', EXP_TYPE_CPMG_ZQ, ':9@N', 500e6, 0.03],
+    ['ZQ_CPMG_600_MHz', 'zq_600.res', EXP_TYPE_CPMG_ZQ, ':9@N', 600e6, 0.03],
+    ['ZQ_CPMG_800_MHz', 'zq_800.res', EXP_TYPE_CPMG_ZQ, ':9@N', 800e6, 0.03]
+]
+cpmg_frqs = [33.0, 67.0, 133.0, 200.0, 267.0, 333.0, 400.0, 467.0, 533.0, 667.0, 800.0, 933.0, 1067.0]
+
+# Loop over the files, reading in the data.
+for id, file, exp_type, spin_id, H_frq, relax_time in data:
+    # Loop over each CPMG frequency.
+    for cpmg_frq in cpmg_frqs:
+        # The id.
+        new_id = "%s_%s" % (id, cpmg_frq)
+
+        # Set the NMR field strength.
+        spectrometer.frequency(id=new_id, frq=H_frq)
+
+        # Set the relaxation dispersion experiment type.
+        relax_disp.exp_type(spectrum_id=new_id, exp_type=exp_type)
+
+        # Relaxation dispersion CPMG constant time delay T (in s).
+        relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
+
+    # Read the R2eff data.
+    relax_disp.r2eff_read_spin(id=id, file=file, dir='../..', spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
+
+# Change the model.
+relax_disp.select_model('MMQ 2-site')
+
+# The R20 keys.
+r20_key_sq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+r20_key_sq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
+r20_key_sq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+r20_key_1h_sq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
+r20_key_1h_sq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=600e6)
+r20_key_1h_sq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
+r20_key_zq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
+r20_key_zq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
+r20_key_zq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+r20_key_dq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
+r20_key_dq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
+r20_key_dq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
+r20_key_mq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=500e6)
+r20_key_mq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=600e6)
+r20_key_mq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
+r20_key_1h_mq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
+r20_key_1h_mq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
+r20_key_1h_mq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
+
+# Manually set the parameter values to the relax results (the cpmg_fit results are strange!).
+spin = cdp.mol[0].res[0].spin[1]
+spin.r2 = {
+    r20_key_zq_500: 5.91297173859543,
+    r20_key_zq_600: 6.66919500895295,
+    r20_key_zq_800: 6.79000166117068
+}
+spin.pA = 0.942921993217604
+spin.kex = 371.076657461446
+spin.dw = 2.30604327221814
+spin.dwH = 0.576576043850393
+
+# Optimisation.
+minimise(min_algor='simplex')
+
+# Monte Carlo simulations.
+monte_carlo.setup(number=3)
+monte_carlo.create_data(method='back_calc')
+monte_carlo.initial_values()
+minimise(min_algor='simplex', max_iter=100)
+monte_carlo.error_analysis()
+
+# Plot the dispersion curves.
+relax_disp.plot_disp_curves(dir='.', force=True)
+
+# Save the results.
+state.save('state', compress_type=1, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle=None)
+
+relax> spin.create(spin_name='H', spin_num=None, res_name='Asp', res_num=9, mol_name=None)
+
+relax> spin.create(spin_name='N', spin_num=None, res_name='Asp', res_num=9, mol_name=None)
+
+relax> spin.element(element='H', spin_id='@H', force=False)
+
+relax> spin.element(element='N', spin_id='@N', force=False)
+
+relax> spin.isotope(isotope='1H', spin_id='@H', force=False)
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> interatom.define(spin_id1=':9@N', spin_id2=':9@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1    Spin_ID_2    
+':9@N'         ':9@H'       
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_33.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_33.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_33.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_33.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_33.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_67.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_67.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_67.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_67.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_67.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_133.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_133.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_133.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_133.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_133.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_200.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_200.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_200.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_200.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_200.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_267.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_267.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_267.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_267.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_267.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_333.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_333.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_333.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_333.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_333.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_400.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_400.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_400.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_400.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_400.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_467.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_467.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_467.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_467.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_467.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_533.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_533.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_533.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_533.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_533.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_667.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_667.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_667.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_667.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_667.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_800.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_800.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_800.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_800.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_800.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_933.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_933.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_933.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_933.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_933.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_500_MHz_1067.0', frq=500000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_500_MHz_1067.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_500_MHz_1067.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_500_MHz_1067.0', time=0.03)
+Setting the 'ZQ_CPMG_500_MHz_1067.0' spectrum relaxation time period to 0.03 s.
+
+relax> relax_disp.r2eff_read_spin(id='ZQ_CPMG_500_MHz', spin_id=':9@N', file='zq_500.res', dir='../..', disp_point_col=1, data_col=2, error_col=3, sep=None)
+Opening the file '../../zq_500.res' for reading.
+The spectrum ID 'ZQ_CPMG_500_MHz_33.0' CPMG frequency is set to 33.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_67.0' CPMG frequency is set to 67.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_133.0' CPMG frequency is set to 133.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_200.0' CPMG frequency is set to 200.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_267.0' CPMG frequency is set to 267.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_333.0' CPMG frequency is set to 333.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_400.0' CPMG frequency is set to 400.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_467.0' CPMG frequency is set to 467.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_533.0' CPMG frequency is set to 533.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_667.0' CPMG frequency is set to 667.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_800.0' CPMG frequency is set to 800.0 Hz.
+The spectrum ID 'ZQ_CPMG_500_MHz_933.0' CPMG frequency is set to 933.0 Hz.
+Using the experiment IDs ['ZQ_CPMG_500_MHz_33.0', 'ZQ_CPMG_500_MHz_67.0', 'ZQ_CPMG_500_MHz_133.0', 'ZQ_CPMG_500_MHz_200.0', 'ZQ_CPMG_500_MHz_267.0', 'ZQ_CPMG_500_MHz_333.0', 'ZQ_CPMG_500_MHz_400.0', 'ZQ_CPMG_500_MHz_467.0', 'ZQ_CPMG_500_MHz_533.0', 'ZQ_CPMG_500_MHz_667.0', 'ZQ_CPMG_500_MHz_800.0', 'ZQ_CPMG_500_MHz_933.0'].
+The following R2eff/R1rho data has been loaded into the relax data store:
+
+# Disp_point            R2eff                   R2eff_error             
+  33.000000000000000      18.544770000000000       0.741790000000000    
+  67.000000000000000      16.514669999999999       0.660590000000000    
+ 133.000000000000000      10.803490000000000       0.432140000000000    
+ 200.000000000000000       8.325419999999999       0.333020000000000    
+ 267.000000000000000       7.235040000000000       0.289400000000000    
+ 333.000000000000000       6.889130000000000       0.275570000000000    
+ 400.000000000000000       6.515130000000000       0.260610000000000    
+ 467.000000000000000       6.251600000000000       0.250060000000000    
+ 533.000000000000000       6.374040000000000       0.254960000000000    
+ 667.000000000000000       6.232320000000000       0.249290000000000    
+ 800.000000000000000       6.170270000000000       0.246810000000000    
+ 933.000000000000000       6.451310000000000       0.258050000000000    
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_33.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_33.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_33.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_33.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_33.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_67.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_67.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_67.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_67.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_67.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_133.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_133.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_133.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_133.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_133.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_200.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_200.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_200.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_200.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_200.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_267.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_267.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_267.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_267.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_267.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_333.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_333.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_333.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_333.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_333.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_400.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_400.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_400.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_400.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_400.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_467.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_467.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_467.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_467.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_467.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_533.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_533.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_533.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_533.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_533.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_667.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_667.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_667.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_667.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_667.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_800.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_800.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_800.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_800.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_800.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_933.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_933.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_933.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_933.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_933.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_600_MHz_1067.0', frq=600000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_600_MHz_1067.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_600_MHz_1067.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_600_MHz_1067.0', time=0.03)
+Setting the 'ZQ_CPMG_600_MHz_1067.0' spectrum relaxation time period to 0.03 s.
+
+relax> relax_disp.r2eff_read_spin(id='ZQ_CPMG_600_MHz', spin_id=':9@N', file='zq_600.res', dir='../..', disp_point_col=1, data_col=2, error_col=3, sep=None)
+Opening the file '../../zq_600.res' for reading.
+The spectrum ID 'ZQ_CPMG_600_MHz_33.0' CPMG frequency is set to 33.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_67.0' CPMG frequency is set to 67.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_133.0' CPMG frequency is set to 133.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_200.0' CPMG frequency is set to 200.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_267.0' CPMG frequency is set to 267.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_333.0' CPMG frequency is set to 333.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_400.0' CPMG frequency is set to 400.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_467.0' CPMG frequency is set to 467.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_533.0' CPMG frequency is set to 533.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_667.0' CPMG frequency is set to 667.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_800.0' CPMG frequency is set to 800.0 Hz.
+The spectrum ID 'ZQ_CPMG_600_MHz_933.0' CPMG frequency is set to 933.0 Hz.
+Using the experiment IDs ['ZQ_CPMG_600_MHz_33.0', 'ZQ_CPMG_600_MHz_67.0', 'ZQ_CPMG_600_MHz_133.0', 'ZQ_CPMG_600_MHz_200.0', 'ZQ_CPMG_600_MHz_267.0', 'ZQ_CPMG_600_MHz_333.0', 'ZQ_CPMG_600_MHz_400.0', 'ZQ_CPMG_600_MHz_467.0', 'ZQ_CPMG_600_MHz_533.0', 'ZQ_CPMG_600_MHz_667.0', 'ZQ_CPMG_600_MHz_800.0', 'ZQ_CPMG_600_MHz_933.0'].
+The following R2eff/R1rho data has been loaded into the relax data store:
+
+# Disp_point            R2eff                   R2eff_error             
+  33.000000000000000      20.994479999999999       0.839780000000000    
+  67.000000000000000      19.016130000000000       0.760650000000000    
+ 133.000000000000000      12.426330000000000       0.497230000000000    
+ 200.000000000000000      10.197270000000000       0.407890000000000    
+ 267.000000000000000       9.721399999999999       0.458480000000000    
+ 333.000000000000000       8.034940000000001       0.435860000000000    
+ 400.000000000000000       7.712380000000000       0.431660000000000    
+ 467.000000000000000       7.703030000000000       0.431540000000000    
+ 533.000000000000000       7.314080000000000       0.426530000000000    
+ 667.000000000000000       7.299390000000000       0.426350000000000    
+ 800.000000000000000       6.647380000000000       0.418090000000000    
+ 933.000000000000000       6.999720000000000       0.422530000000000    
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_33.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_33.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_33.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_33.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_33.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_67.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_67.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_67.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_67.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_67.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_133.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_133.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_133.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_133.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_133.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_200.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_200.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_200.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_200.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_200.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_267.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_267.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_267.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_267.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_267.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_333.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_333.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_333.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_333.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_333.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_400.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_400.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_400.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_400.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_400.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_467.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_467.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_467.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_467.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_467.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_533.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_533.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_533.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_533.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_533.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_667.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_667.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_667.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_667.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_667.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_800.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_800.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_800.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_800.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_800.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_933.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_933.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_933.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_933.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_933.0' spectrum relaxation time period to 0.03 s.
+
+relax> spectrometer.frequency(id='ZQ_CPMG_800_MHz_1067.0', frq=800000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> relax_disp.exp_type(spectrum_id='ZQ_CPMG_800_MHz_1067.0', exp_type='ZQ CPMG')
+The spectrum ID 'ZQ_CPMG_800_MHz_1067.0' is now set to the zero quantum (ZQ) CPMG-type experiment.
+
+relax> relax_disp.relax_time(spectrum_id='ZQ_CPMG_800_MHz_1067.0', time=0.03)
+Setting the 'ZQ_CPMG_800_MHz_1067.0' spectrum relaxation time period to 0.03 s.
+
+relax> relax_disp.r2eff_read_spin(id='ZQ_CPMG_800_MHz', spin_id=':9@N', file='zq_800.res', dir='../..', disp_point_col=1, data_col=2, error_col=3, sep=None)
+Opening the file '../../zq_800.res' for reading.
+The spectrum ID 'ZQ_CPMG_800_MHz_33.0' CPMG frequency is set to 33.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_67.0' CPMG frequency is set to 67.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_133.0' CPMG frequency is set to 133.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_200.0' CPMG frequency is set to 200.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_267.0' CPMG frequency is set to 267.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_333.0' CPMG frequency is set to 333.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_400.0' CPMG frequency is set to 400.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_467.0' CPMG frequency is set to 467.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_533.0' CPMG frequency is set to 533.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_667.0' CPMG frequency is set to 667.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_800.0' CPMG frequency is set to 800.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_933.0' CPMG frequency is set to 933.0 Hz.
+The spectrum ID 'ZQ_CPMG_800_MHz_1067.0' CPMG frequency is set to 1067.0 Hz.
+Using the experiment IDs ['ZQ_CPMG_800_MHz_33.0', 'ZQ_CPMG_800_MHz_67.0', 'ZQ_CPMG_800_MHz_133.0', 'ZQ_CPMG_800_MHz_200.0', 'ZQ_CPMG_800_MHz_267.0', 'ZQ_CPMG_800_MHz_333.0', 'ZQ_CPMG_800_MHz_400.0', 'ZQ_CPMG_800_MHz_467.0', 'ZQ_CPMG_800_MHz_533.0', 'ZQ_CPMG_800_MHz_667.0', 'ZQ_CPMG_800_MHz_800.0', 'ZQ_CPMG_800_MHz_933.0', 'ZQ_CPMG_800_MHz_1067.0'].
+The following R2eff/R1rho data has been loaded into the relax data store:
+
+# Disp_point            R2eff                   R2eff_error             
+  33.000000000000000      24.098389999999998       0.963940000000000    
+  67.000000000000000      22.581070000000000       0.903240000000000    
+ 133.000000000000000      17.796029999999998       0.711840000000000    
+ 200.000000000000000      13.554140000000000       0.542170000000000    
+ 267.000000000000000      10.998480000000001       0.439940000000000    
+ 333.000000000000000       9.698230000000001       0.387930000000000    
+ 400.000000000000000       8.615190000000000       0.344610000000000    
+ 467.000000000000000       8.060570000000000       0.322420000000000    
+ 533.000000000000000       7.483890000000000       0.299360000000000    
+ 667.000000000000000       7.946680000000000       0.317870000000000    
+ 800.000000000000000       7.211550000000000       0.288460000000000    
+ 933.000000000000000       6.728530000000000       0.269140000000000    
+1067.000000000000000       7.019760000000000       0.280790000000000    
+
+relax> relax_disp.select_model(model='MMQ 2-site')
+The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+No R2eff data could be found, deselecting the ':9@H' spin.
+
+
+Fitting to the spin block [':9@N']
+----------------------------------
+
+
+
+Logarithmic barrier function
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7378980659       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7378980659       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7378980659       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.73789806594667
+	Iterations:       214
+	Function calls:   597
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 1        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.796284083        
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.796284083        
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.796284083        
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796284083018001
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 2        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968679432       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968679432       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968679432       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796867943188708
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 3        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968737818       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968737818       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968737818       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873781790417
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 4        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738402       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738402       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738402       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873840176435
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 5        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873840760291
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 6        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873840766132
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 7        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873840766192
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+k: 8        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+Entering sub-algorithm.
+	
+	Simplex minimisation
+	~~~~~~~~~~~~~~~~~~~~
+
+	k: 0        xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 100      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+	k: 200      xk: [   0.5912971739,    0.6669195009,    0.6790001661,     2.306043272,    0.5765760439,    0.9429219932,   0.03710766575]    fk: 24.7968738408       
+
+	Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+	Function value:   24.796873840766192
+	Iterations:       212
+	Function calls:   588
+	Gradient calls:   0
+	Hessian calls:    0
+	Warning:          None
+
+
+Parameter values: [0.59129717385953173, 0.66691950089529817, 0.67900016611708591, 2.3060432722181115, 0.57657604385045325, 0.94292199321760317, 0.037107665746145241]
+Function value:   24.796873840766192
+Iterations:       1910
+Function calls:   5301
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+Optimised parameter values:
+r2 (ZQ CPMG - 500.00000000 MHz)         5.912971738595317
+r2 (ZQ CPMG - 600.00000000 MHz)         6.669195008952982
+r2 (ZQ CPMG - 800.00000000 MHz)         6.790001661170859
+dw                           2.306043272218111
+dwH                          0.576576043850453
+pA                           0.942921993217603
+kex                        371.076657461452385
+
+relax> monte_carlo.setup(number=3)
+
+relax> monte_carlo.create_data(method='back_calc')
+
+relax> monte_carlo.initial_values()
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
+Simulation 1, cluster [':9@N']
+Simulation 2, cluster [':9@N']
+Simulation 3, cluster [':9@N']
+
+relax> monte_carlo.error_analysis()
+
+relax> relax_disp.plot_disp_curves(dir='.', force=True)
+Opening the file './disp_9_N.agr' for writing.
+Opening the file './grace2images.py' for writing.
+
+relax> state.save(state='state', dir=None, compress_type=1, force=True)
+Opening the file 'state.bz2' for writing.
+

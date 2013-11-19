@@ -26,11 +26,11 @@ interatom.define(spin_id1=':9@N', spin_id2=':9@H', direct_bond=True)
 
 # The spectral data - experiment ID, R2eff file name, experiment type, spin ID string, spectrometer frequency in Hertz, relaxation time.
 data = [
-    ['15N_CPMG_500_MHz', 'ns_500.res', EXP_TYPE_CPMG_SQ, ':9@N', 500e6, 0.04],
-    ['15N_CPMG_600_MHz', 'ns_600.res', EXP_TYPE_CPMG_SQ, ':9@N', 600e6, 0.04],
-    ['15N_CPMG_800_MHz', 'ns_800.res', EXP_TYPE_CPMG_SQ, ':9@N', 800e6, 0.04]
+    ['ZQ_CPMG_500_MHz', 'zq_500.res', EXP_TYPE_CPMG_ZQ, ':9@N', 500e6, 0.03],
+    ['ZQ_CPMG_600_MHz', 'zq_600.res', EXP_TYPE_CPMG_ZQ, ':9@N', 600e6, 0.03],
+    ['ZQ_CPMG_800_MHz', 'zq_800.res', EXP_TYPE_CPMG_ZQ, ':9@N', 800e6, 0.03]
 ]
-cpmg_frqs = [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0]
+cpmg_frqs = [33.0, 67.0, 133.0, 200.0, 267.0, 333.0, 400.0, 467.0, 533.0, 667.0, 800.0, 933.0, 1067.0]
 
 # Loop over the files, reading in the data.
 for id, file, exp_type, spin_id, H_frq, relax_time in data:
@@ -74,32 +74,17 @@ r20_key_1h_mq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6
 r20_key_1h_mq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
 r20_key_1h_mq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
 
-# Manually set the parameter values to the cpmg_fit results for all data.
+# Manually set the parameter values to the relax results (the cpmg_fit results are strange!).
 spin = cdp.mol[0].res[0].spin[1]
 spin.r2 = {
-    r20_key_sq_500: 8.481132,
-    r20_key_sq_600: 8.977845,
-    r20_key_sq_800: 10.490257,
-    r20_key_1h_sq_500: 6.778902,
-    r20_key_1h_sq_600: 7.097458,
-    r20_key_1h_sq_800: 5.635893,
-    r20_key_zq_500: 6.043942,
-    r20_key_zq_600: 6.827802,
-    r20_key_zq_800: 6.946693,
-    r20_key_dq_500: 8.693570,
-    r20_key_dq_600: 10.744672,
-    r20_key_dq_800: 12.647869,
-    r20_key_mq_500: 9.245925,
-    r20_key_mq_600: 9.949255,
-    r20_key_mq_800: 12.053031,
-    r20_key_1h_mq_500: 7.887264,
-    r20_key_1h_mq_600: 8.506481,
-    r20_key_1h_mq_800: 11.276893
+    r20_key_zq_500: 5.91297173859543,
+    r20_key_zq_600: 6.66919500895295,
+    r20_key_zq_800: 6.79000166117068
 }
-spin.pA = 0.944322
-spin.kex = 368.075
-spin.dw = 4.413451
-spin.dwH = -0.271799
+spin.pA = 0.942921993217604
+spin.kex = 371.076657461446
+spin.dw = 2.30604327221814
+spin.dwH = 0.576576043850393
 
 # Optimisation.
 minimise(min_algor='simplex')

@@ -26,11 +26,11 @@ interatom.define(spin_id1=':9@N', spin_id2=':9@H', direct_bond=True)
 
 # The spectral data - experiment ID, R2eff file name, experiment type, spin ID string, spectrometer frequency in Hertz, relaxation time.
 data = [
-    ['15N_CPMG_500_MHz', 'ns_500.res', EXP_TYPE_CPMG_SQ, ':9@N', 500e6, 0.04],
-    ['15N_CPMG_600_MHz', 'ns_600.res', EXP_TYPE_CPMG_SQ, ':9@N', 600e6, 0.04],
-    ['15N_CPMG_800_MHz', 'ns_800.res', EXP_TYPE_CPMG_SQ, ':9@N', 800e6, 0.04]
+    ['1H_SQ_CPMG_500_MHz', 'hs_500.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 500e6, 0.03],
+    ['1H_SQ_CPMG_600_MHz', 'hs_600.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 600e6, 0.03],
+    ['1H_SQ_CPMG_800_MHz', 'hs_800.res', EXP_TYPE_CPMG_PROTON_SQ, ':9@H', 800e6, 0.03]
 ]
-cpmg_frqs = [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 600.0, 700.0, 800.0, 900.0, 1000.0]
+cpmg_frqs = [67.0, 133.0, 267.0, 400.0, 533.0, 667.0, 800.0, 933.0, 1067.0, 1600.0, 2133.0, 2667.0]
 
 # Loop over the files, reading in the data.
 for id, file, exp_type, spin_id, H_frq, relax_time in data:
@@ -102,7 +102,7 @@ spin.dw = 4.413451
 spin.dwH = -0.271799
 
 # Optimisation.
-minimise(min_algor='simplex')
+minimise(min_algor='simplex', max_iter=100)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)

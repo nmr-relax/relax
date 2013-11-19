@@ -1,0 +1,150 @@
+@version 50121
+@page size 842, 595
+@with g0
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.48
+@    xaxis  tick major size 0.75
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.45
+@    xaxis  ticklabel char size 1.00
+@    yaxis  label "\qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.48
+@    yaxis  tick major size 0.75
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.45
+@    yaxis  ticklabel char size 1.00
+@    legend on
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 2
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 3
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 legend "Back-calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 5
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 legend "Back-calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 6
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 legend "Back-calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 7
+@    s6 symbol size 0.45
+@    s6 symbol linewidth 0.5
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 legend "Residuals (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.45
+@    s7 symbol linewidth 0.5
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 legend "Residuals (600.0 MHz)"
+@    s8 symbol 9
+@    s8 symbol size 0.45
+@    s8 symbol linewidth 0.5
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 legend "Residuals (800.0 MHz)"
+@target G0.S0
+@type xydy
+67.0                           21.479240000000001             0.429580000000000             
+133.0                          16.738980000000002             0.334780000000000             
+267.0                          9.973570000000000              0.199470000000000             
+400.0                          8.238770000000001              0.247370000000000             
+533.0                          7.592900000000000              0.242630000000000             
+667.0                          7.458430000000000              0.241650000000000             
+800.0                          7.112220000000000              0.239150000000000             
+933.0                          7.408800000000000              0.241290000000000             
+1067.0                         6.551910000000000              0.166290000000000             
+1600.0                         6.721770000000000              0.236370000000000             
+2133.0                         7.096290000000000              0.239040000000000             
+2667.0                         7.146750000000000              0.239400000000000             
+&
+@target G0.S1
+@type xydy
+67.0                           23.445460000000001             0.468910000000000             
+133.0                          19.768950000000000             0.426460000000000             
+267.0                          11.707560000000001             0.236780000000000             
+400.0                          8.868470000000000              0.307510000000000             
+533.0                          8.369920000000000              0.302950000000000             
+667.0                          7.718830000000000              0.297090000000000             
+800.0                          7.232220000000000              0.292780000000000             
+933.0                          6.950050000000000              0.290310000000000             
+1067.0                         7.439580000000000              0.208320000000000             
+1600.0                         7.645880000000000              0.296440000000000             
+2133.0                         7.788530000000000              0.297710000000000             
+2667.0                         7.587850000000000              0.295920000000000             
+&
+@target G0.S2
+@type xydy
+67.0                           24.387730000000001             0.487750000000000             
+133.0                          22.619000000000000             0.452380000000000             
+267.0                          14.016249999999999             0.280320000000000             
+400.0                          9.268480000000000              0.194240000000000             
+533.0                          8.144980000000000              0.187800000000000             
+667.0                          7.413840000000000              0.183730000000000             
+800.0                          6.698590000000000              0.179820000000000             
+933.0                          6.219090000000000              0.177260000000000             
+1067.0                         6.132810000000000              0.125020000000000             
+1600.0                         5.828130000000000              0.175190000000000             
+2133.0                         5.369680000000000              0.172800000000000             
+2667.0                         5.569820000000000              0.173840000000000             
+&
+@target G0.S3
+@type xydy
+&
+@target G0.S4
+@type xydy
+&
+@target G0.S5
+@type xydy
+&
+@target G0.S6
+@type xydy
+&
+@target G0.S7
+@type xydy
+&
+@target G0.S8
+@type xydy
+&
+@autoscale
