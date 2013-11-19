@@ -261,7 +261,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
     file.write("data\n")
     for exp_type, frq, point in loop_exp_frq_point():
         # The parameter key.
-        param_key = return_param_key_from_data(frq=frq, point=point)
+        param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
         # No data.
         if param_key not in spin.r2eff:

@@ -389,7 +389,7 @@ def has_disp_data(spins=None, spin_ids=None, exp_type=None, frq=None, point=None
         return False
 
     # The key.
-    key = return_param_key_from_data(frq=frq, point=point)
+    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
     # Loop over the spins.
     for spin_index in range(len(spins)):
@@ -818,7 +818,7 @@ def loop_frq_point_key(exp_type_index=None):
         # Then the dispersion points.
         for point in loop_point(exp_type_index=exp_type_index, frq_index=frq_index):
             # Generate and yield the key.
-            yield return_param_key_from_data(frq=frq, point=point)
+            yield return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
 
 def loop_frq_point_time(exp_type_index=None, return_indices=False):
@@ -1102,7 +1102,7 @@ def plot_disp_curves(dir=None, force=None):
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=point)
+                    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # No data present.
                     if key not in current_spin.r2eff:
@@ -1133,7 +1133,7 @@ def plot_disp_curves(dir=None, force=None):
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=point)
+                    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # No data present.
                     if not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
@@ -1160,7 +1160,7 @@ def plot_disp_curves(dir=None, force=None):
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
                     # The data key.
-                    key = return_param_key_from_data(frq=frq, point=point)
+                    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # No data present.
                     if key not in current_spin.r2eff or not hasattr(current_spin, 'r2eff_bc') or key not in current_spin.r2eff_bc:
@@ -1397,7 +1397,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, spin_id_col=None, mo
             continue
 
         # The dispersion point key.
-        point_key = return_param_key_from_data(frq=frq, point=disp_frq)
+        point_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=disp_frq)
 
         # Store the R2eff data.
         if data_col:
@@ -1541,7 +1541,7 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
         exp_type = get_exp_type(id=new_id)
 
         # The dispersion point key.
-        point_key = return_param_key_from_data(frq=frq, point=disp_point)
+        point_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=disp_point)
 
         # Store the R2eff data.
         if data_col:
@@ -1950,7 +1950,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None)
     return shifts, offsets, theta
 
 
-def return_param_key_from_data(frq=None, point=None):
+def return_param_key_from_data(exp_type=None, frq=None, point=None):
     """Generate the unique key from the spectrometer frequency and dispersion point.
 
     @keyword frq:   The spectrometer frequency in Hz.
@@ -1961,12 +1961,17 @@ def return_param_key_from_data(frq=None, point=None):
     @rtype:         str
     """
 
+    # Convert the experiment type.
+    if exp_type == None:
+        raise RelaxError("The experiment type must be supplied.")
+    exp_type = exp_type.replace(' ', '_').lower()
+
     # No frequency info.
     if frq == None:
-        return "%s" % point
+        return "%s_%.3f" % (exp_type, point)
 
     # Generate and return the unique key.
-    return "%.8f_%.3f" % (frq/1e6, point)
+    return "%s_%.8f_%.3f" % (exp_type, frq/1e6, point)
 
 
 def return_r1_data(spins=None, spin_ids=None, fields=None, field_count=None, sim_index=None):
@@ -2138,7 +2143,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 exp_types.append(exp_type)
 
             # The key.
-            key = return_param_key_from_data(frq=frq, point=point)
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
             # The Larmor frequency for this spin and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
             if frq != None:

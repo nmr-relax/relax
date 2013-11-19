@@ -39,6 +39,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type, check_spectra_id_setup
 from specific_analyses.relax_disp.disp_data import loop_frq, loop_point, return_param_key_from_data
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 
 def catia_execute(file='Fit.catia', dir=None, binary=None):
@@ -361,7 +362,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
             # Loop over the dispersion points.
             for point, point_index in loop_point(exp_type_index=0, frq_index=frq_index, return_indices=True):
                 # The key.
-                key = return_param_key_from_data(frq=frq, point=point)
+                key = return_param_key_from_data(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, point=point)
 
                 # No data.
                 if key not in spin.r2eff:

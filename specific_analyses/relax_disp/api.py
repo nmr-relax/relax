@@ -159,7 +159,7 @@ class Relax_disp(API_base, API_common):
         results = {}
         for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
             # The parameter key.
-            param_key = return_param_key_from_data(frq=frq, point=point)
+            param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
             # Skip missing data.
             if missing[exp_type_index][0][frq_index][point_index]:
@@ -197,7 +197,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
-        param_key = return_param_key_from_data(frq=frq, point=point)
+        param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
         # Create the initial parameter vector.
         param_vector = assemble_param_vector(spins=[spin], key=param_key)
@@ -264,9 +264,10 @@ class Relax_disp(API_base, API_common):
                 # The three keys.
                 ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
-                param_key = return_param_key_from_data(frq=frq, point=point)
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                 # Average the reference intensity data and errors.
+                print spin
                 ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
                 ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
 
@@ -390,7 +391,7 @@ class Relax_disp(API_base, API_common):
             # Loop over each spectrometer frequency and dispersion point.
             for exp_type, frq, point in loop_exp_frq_point():
                 # The parameter key.
-                param_key = return_param_key_from_data(frq=frq, point=point)
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                 # The initial parameter vector.
                 param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)

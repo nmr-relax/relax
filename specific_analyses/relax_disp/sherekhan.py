@@ -109,7 +109,7 @@ def sherekhan_input(spin_id=None, force=False):
                 # Loop over the dispersion points.
                 for point in loop_point(exp_type=exp_type, skip_ref=True):
                     # The parameter key.
-                    param_key = return_param_key_from_data(frq=frq, point=point)
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # No data.
                     if param_key not in spins[i].r2eff:

@@ -497,7 +497,7 @@ class Disp_result_command(Result_command):
                         continue
 
                     # The R2eff key.
-                    key = return_param_key_from_data(frq=frq, point=point)
+                    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # Store the back-calculated data.
                     if memo.spins[0].model in [MODEL_MMQ_2SITE]:

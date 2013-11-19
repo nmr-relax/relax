@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21156
+                                  relax repository checkout r21506
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -117,7 +117,7 @@ for line in ncycfile:
     current_id = "Z_A%s"%(i)
 
     # Set the current experiment type.
-    relax_disp.exp_type(spectrum_id=current_id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=current_id, exp_type='SQ CPMG')
 
     # Set the peak intensity errors, as defined as the baseplane RMSD.
     spectrum.baseplane_rmsd(error=rmsd_err, spectrum_id=current_id)
@@ -140,8 +140,8 @@ for line in ncycfile:
 spectrum.delete('Z_A15')
 ----------------------------------------------------------------------------------------------------
 
-relax> relax_disp.exp_type(spectrum_id='Z_A0', exp_type='CPMG')
-Setting the 'Z_A0' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A0', exp_type='SQ CPMG')
+The spectrum ID 'Z_A0' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2470.0, spectrum_id='Z_A0', spin_id=None)
 
@@ -151,10 +151,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A0', time=0.06)
 Setting the 'Z_A0' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A0', cpmg_frq=466.667)
-Setting the 'Z_A0' spectrum CPMG frequency 466.667 Hz.
+The spectrum ID 'Z_A0' CPMG frequency is set to 466.667 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A1', exp_type='CPMG')
-Setting the 'Z_A1' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A1', exp_type='SQ CPMG')
+The spectrum ID 'Z_A1' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2340.0, spectrum_id='Z_A1', spin_id=None)
 
@@ -164,10 +164,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A1', time=0.06)
 Setting the 'Z_A1' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A1', cpmg_frq=None)
-Setting the 'Z_A1' spectrum CPMG frequency None Hz.
+The spectrum ID 'Z_A1' CPMG frequency is set to None Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A2', exp_type='CPMG')
-Setting the 'Z_A2' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A2', exp_type='SQ CPMG')
+The spectrum ID 'Z_A2' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2410.0, spectrum_id='Z_A2', spin_id=None)
 
@@ -177,10 +177,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A2', time=0.06)
 Setting the 'Z_A2' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A2', cpmg_frq=66.667)
-Setting the 'Z_A2' spectrum CPMG frequency 66.667 Hz.
+The spectrum ID 'Z_A2' CPMG frequency is set to 66.667 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A3', exp_type='CPMG')
-Setting the 'Z_A3' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A3', exp_type='SQ CPMG')
+The spectrum ID 'Z_A3' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A3', spin_id=None)
 
@@ -190,10 +190,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A3', time=0.06)
 Setting the 'Z_A3' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A3', cpmg_frq=533.333)
-Setting the 'Z_A3' spectrum CPMG frequency 533.333 Hz.
+The spectrum ID 'Z_A3' CPMG frequency is set to 533.333 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A4', exp_type='CPMG')
-Setting the 'Z_A4' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A4', exp_type='SQ CPMG')
+The spectrum ID 'Z_A4' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A4', spin_id=None)
 
@@ -203,10 +203,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A4', time=0.06)
 Setting the 'Z_A4' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A4', cpmg_frq=1000.0)
-Setting the 'Z_A4' spectrum CPMG frequency 1000.0 Hz.
+The spectrum ID 'Z_A4' CPMG frequency is set to 1000.0 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A5', exp_type='CPMG')
-Setting the 'Z_A5' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A5', exp_type='SQ CPMG')
+The spectrum ID 'Z_A5' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A5', spin_id=None)
 
@@ -216,10 +216,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A5', time=0.06)
 Setting the 'Z_A5' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A5', cpmg_frq=33.333)
-Setting the 'Z_A5' spectrum CPMG frequency 33.333 Hz.
+The spectrum ID 'Z_A5' CPMG frequency is set to 33.333 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A6', exp_type='CPMG')
-Setting the 'Z_A6' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A6', exp_type='SQ CPMG')
+The spectrum ID 'Z_A6' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A6', spin_id=None)
 
@@ -229,10 +229,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A6', time=0.06)
 Setting the 'Z_A6' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A6', cpmg_frq=166.667)
-Setting the 'Z_A6' spectrum CPMG frequency 166.667 Hz.
+The spectrum ID 'Z_A6' CPMG frequency is set to 166.667 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A7', exp_type='CPMG')
-Setting the 'Z_A7' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A7', exp_type='SQ CPMG')
+The spectrum ID 'Z_A7' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2440.0, spectrum_id='Z_A7', spin_id=None)
 
@@ -242,10 +242,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A7', time=0.06)
 Setting the 'Z_A7' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A7', cpmg_frq=266.667)
-Setting the 'Z_A7' spectrum CPMG frequency 266.667 Hz.
+The spectrum ID 'Z_A7' CPMG frequency is set to 266.667 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A8', exp_type='CPMG')
-Setting the 'Z_A8' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A8', exp_type='SQ CPMG')
+The spectrum ID 'Z_A8' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2390.0, spectrum_id='Z_A8', spin_id=None)
 
@@ -255,10 +255,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A8', time=0.06)
 Setting the 'Z_A8' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A8', cpmg_frq=133.333)
-Setting the 'Z_A8' spectrum CPMG frequency 133.333 Hz.
+The spectrum ID 'Z_A8' CPMG frequency is set to 133.333 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A9', exp_type='CPMG')
-Setting the 'Z_A9' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A9', exp_type='SQ CPMG')
+The spectrum ID 'Z_A9' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2400.0, spectrum_id='Z_A9', spin_id=None)
 
@@ -268,10 +268,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A9', time=0.06)
 Setting the 'Z_A9' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A9', cpmg_frq=333.333)
-Setting the 'Z_A9' spectrum CPMG frequency 333.333 Hz.
+The spectrum ID 'Z_A9' CPMG frequency is set to 333.333 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A10', exp_type='CPMG')
-Setting the 'Z_A10' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A10', exp_type='SQ CPMG')
+The spectrum ID 'Z_A10' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2420.0, spectrum_id='Z_A10', spin_id=None)
 
@@ -281,10 +281,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A10', time=0.06)
 Setting the 'Z_A10' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A10', cpmg_frq=833.333)
-Setting the 'Z_A10' spectrum CPMG frequency 833.333 Hz.
+The spectrum ID 'Z_A10' CPMG frequency is set to 833.333 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A11', exp_type='CPMG')
-Setting the 'Z_A11' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A11', exp_type='SQ CPMG')
+The spectrum ID 'Z_A11' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2460.0, spectrum_id='Z_A11', spin_id=None)
 
@@ -294,10 +294,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A11', time=0.06)
 Setting the 'Z_A11' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A11', cpmg_frq=300.0)
-Setting the 'Z_A11' spectrum CPMG frequency 300.0 Hz.
+The spectrum ID 'Z_A11' CPMG frequency is set to 300.0 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A12', exp_type='CPMG')
-Setting the 'Z_A12' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A12', exp_type='SQ CPMG')
+The spectrum ID 'Z_A12' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2410.0, spectrum_id='Z_A12', spin_id=None)
 
@@ -307,10 +307,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A12', time=0.06)
 Setting the 'Z_A12' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A12', cpmg_frq=666.667)
-Setting the 'Z_A12' spectrum CPMG frequency 666.667 Hz.
+The spectrum ID 'Z_A12' CPMG frequency is set to 666.667 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A13', exp_type='CPMG')
-Setting the 'Z_A13' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A13', exp_type='SQ CPMG')
+The spectrum ID 'Z_A13' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A13', spin_id=None)
 
@@ -320,10 +320,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A13', time=0.06)
 Setting the 'Z_A13' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A13', cpmg_frq=100.0)
-Setting the 'Z_A13' spectrum CPMG frequency 100.0 Hz.
+The spectrum ID 'Z_A13' CPMG frequency is set to 100.0 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A14', exp_type='CPMG')
-Setting the 'Z_A14' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A14', exp_type='SQ CPMG')
+The spectrum ID 'Z_A14' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A14', spin_id=None)
 
@@ -333,10 +333,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A14', time=0.06)
 Setting the 'Z_A14' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A14', cpmg_frq=200.0)
-Setting the 'Z_A14' spectrum CPMG frequency 200.0 Hz.
+The spectrum ID 'Z_A14' CPMG frequency is set to 200.0 Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A15', exp_type='CPMG')
-Setting the 'Z_A15' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A15', exp_type='SQ CPMG')
+The spectrum ID 'Z_A15' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2390.0, spectrum_id='Z_A15', spin_id=None)
 
@@ -346,10 +346,10 @@ relax> relax_disp.relax_time(spectrum_id='Z_A15', time=0.06)
 Setting the 'Z_A15' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A15', cpmg_frq=None)
-Setting the 'Z_A15' spectrum CPMG frequency None Hz.
+The spectrum ID 'Z_A15' CPMG frequency is set to None Hz.
 
-relax> relax_disp.exp_type(spectrum_id='Z_A16', exp_type='CPMG')
-Setting the 'Z_A16' spectrum tothe CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='Z_A16', exp_type='SQ CPMG')
+The spectrum ID 'Z_A16' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> spectrum.baseplane_rmsd(error=2450.0, spectrum_id='Z_A16', spin_id=None)
 
@@ -359,7 +359,7 @@ relax> relax_disp.relax_time(spectrum_id='Z_A16', time=0.06)
 Setting the 'Z_A16' spectrum relaxation time period to 0.06 s.
 
 relax> relax_disp.cpmg_frq(spectrum_id='Z_A16', cpmg_frq=400.0)
-Setting the 'Z_A16' spectrum CPMG frequency 400.0 Hz.
+The spectrum ID 'Z_A16' CPMG frequency is set to 400.0 Hz.
 
 relax> spectrum.delete(spectrum_id='Z_A15')
 

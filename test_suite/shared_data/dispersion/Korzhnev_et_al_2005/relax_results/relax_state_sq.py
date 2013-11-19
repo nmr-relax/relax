@@ -7,6 +7,7 @@ $ rm -f relax_state_sq.log; ../../../../../relax --tee relax_state_sq.log relax_
 
 # relax module imports.
 from specific_analyses.relax_disp.disp_data import return_param_key_from_data
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 
 # Create a data pipe.
@@ -97,7 +98,7 @@ for spin_label in ['hs', 'ns']:
                     cdp.dispersion_points += 1
 
             # The dispersion point key.
-            key = return_param_key_from_data(frq=frq*1e6, point=cpmg_frq)
+            key = return_param_key_from_data(exp_type=EXP_TYPE_CPMG_SQ, frq=frq*1e6, point=cpmg_frq)
 
             # Store the spin data.
             spin_cont.r2eff[key] = r2eff
