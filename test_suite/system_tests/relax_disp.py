@@ -1356,7 +1356,6 @@ class Relax_disp(SystemTestCase):
         # Printout.
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s" % ("Parameter", "Value (:61)"))
-        print res61L.r2
         print("%-20s %20.15g" % ("R2 (600 MHz)", res61L.r2[r20_key1]))
         print("%-20s %20.15g" % ("pA", res61L.pA))
         print("%-20s %20.15g" % ("dw", res61L.dw))
@@ -1525,7 +1524,6 @@ class Relax_disp(SystemTestCase):
         # Printout.
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s" % ("Parameter", "Value (:61)"))
-        print res61L.r2a
         print("%-20s %20.15g" % ("R2A (600 MHz)", res61L.r2a[r20_key1]))
         print("%-20s %20.15g" % ("dw", res61L.dw))
         print("%-20s %20.15g" % ("k_AB", res61L.k_AB))
@@ -1832,7 +1830,6 @@ class Relax_disp(SystemTestCase):
             self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
 
         # Check the global data.
-        print cdp
         data = [
             ['cpmg_frqs', {'1H_CPMG_667.0': 667.0, '1H_CPMG_1067.0': 1067.0, '15N_CPMG_350.0': 350.0, '1H_CPMG_933.0': 933.0, '15N_CPMG_50.0': 50.0, '15N_CPMG_100.0': 100.0, '1H_CPMG_400.0': 400.0, '1H_CPMG_533.0': 533.0, '1H_CPMG_800.0': 800.0, '15N_CPMG_900.0': 900.0, '15N_CPMG_150.0': 150.0, '15N_CPMG_800.0': 800.0, '1H_CPMG_267.0': 267.0, '1H_CPMG_2667.0': 2667.0, '15N_CPMG_300.0': 300.0, '1H_CPMG_133.0': 133.0, '15N_CPMG_700.0': 700.0, '1H_CPMG_67.0': 67.0, '15N_CPMG_400.0': 400.0, '15N_CPMG_250.0': 250.0, '1H_CPMG_2133.0': 2133.0, '1H_CPMG_1600.0': 1600.0, '15N_CPMG_200.0': 200.0, '15N_CPMG_1000.0': 1000.0, '15N_CPMG_500.0': 500.0, '15N_CPMG_600.0': 600.0}],
             ['cpmg_frqs_list', [50.0, 67.0, 100.0, 133.0, 150.0, 200.0, 250.0, 267.0, 300.0, 350.0, 400.0, 500.0, 533.0, 600.0, 667.0, 700.0, 800.0, 900.0, 933.0, 1000.0, 1067.0, 1600.0, 2133.0, 2667.0]],
