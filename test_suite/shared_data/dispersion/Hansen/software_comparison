@@ -110,13 +110,13 @@ Residue :4
 ----------
 
 Param       relax       NESSY       CPMGFit     ShereKhan
-R2 (500)        1.583         N/A       1.583         N/A
-R2 (800)        1.588         N/A       1.583         N/A
-pA              0.500         N/A       0.999         N/A
-dw              0.126         N/A       1.161         N/A
-kex         10169.423         N/A    2482.622         N/A
-tex         9.833e-05         N/A   4.028e-04         N/A
-chi2           24.780         N/A      24.710         N/A
+R2 (500)        1.578         N/A       1.583         N/A
+R2 (800)        1.591         N/A       1.583         N/A
+pA              1.000         N/A       0.999         N/A
+dw              2.258         N/A       1.161         N/A
+kex           912.450         N/A    2482.622         N/A
+tex         1.096e-03         N/A   4.028e-04         N/A
+chi2           24.628         N/A      24.710         N/A
 
 Residue :70
 -----------
@@ -124,10 +124,10 @@ Residue :70
 Param       relax       NESSY       CPMGFit     ShereKhan
 R2 (500)        7.245         N/A       7.011         N/A
 R2 (800)       10.057         N/A       7.011         N/A
-pA              0.997         N/A       0.761         N/A
-dw             16.318         N/A       1.220         N/A
-kex          4921.080         N/A    4042.037         N/A
-tex         2.032e-04         N/A   2.474e-04         N/A
+pA              0.981         N/A       0.761         N/A
+dw              2.619         N/A       1.220         N/A
+kex           783.214         N/A    4042.037         N/A
+tex         1.277e-03         N/A   2.474e-04         N/A
 chi2           93.514         N/A     340.230         N/A
 
 Residue :71
@@ -135,11 +135,12 @@ Residue :71
 
 Param       relax       NESSY       CPMGFit     ShereKhan
 R2 (500)        5.059         N/A       4.073         N/A
+R2 (800)        6.967         N/A       4.073         N/A
 pA              0.500         N/A       0.873         N/A
-dw              0.772         N/A       1.055         N/A
-kex          8436.911         N/A     571.363         N/A
-tex         1.185e-04         N/A   1.750e-03         N/A
-chi2           23.769         N/A     405.312         N/A
+dw              0.308         N/A       1.055         N/A
+kex          1341.639         N/A     571.363         N/A
+tex         7.454e-04         N/A   1.750e-03         N/A
+chi2           23.857         N/A     405.312         N/A
 
 
 The numeric CPMG models
