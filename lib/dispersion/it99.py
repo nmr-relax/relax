@@ -41,11 +41,11 @@ The equation used is::
 
 where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.  The effective rotating frame field for a CPMG-type experiment is given by::
 
-    omega_1eff = 2*sqrt(3) * nu_cpmg
+    omega_1eff = 4*sqrt(3) * nu_cpmg
 
 and therefore::
 
-    omega_1eff^4 = 144 * nu_cpmg^4
+    omega_1eff^4 = 2304 * nu_cpmg^4
 """
 
 # Python module imports.
@@ -93,7 +93,7 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
             continue
 
         # The effective rotating frame field.
-        omega_1eff4 = 144 * cpmg_frqs[i]**4
+        omega_1eff4 = 2304.0 * cpmg_frqs[i]**4
 
         # Denominator.
         omega_a2 = sqrt(omega_1eff4 + pa2dw4)
