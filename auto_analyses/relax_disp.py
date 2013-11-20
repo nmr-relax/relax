@@ -429,6 +429,7 @@ class Relax_disp:
 
         # Dispersion curves.
         self.interpreter.relax_disp.plot_disp_curves(dir=path, force=True)
+        self.interpreter.relax_disp.write_disp_curves(dir=path, force=True)
 
         # The selected models for the final run.
         if model == None:
