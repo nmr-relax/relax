@@ -2526,7 +2526,7 @@ def write_disp_curves(dir=None, force=None):
                 r2eff_err = "%.15f" % current_spin.r2eff_err[key]
 
             # Write out the data.
-            frq_text = "%.3f" % frq
+            frq_text = "%.3f" % frq/1e6
             point_text = "%.6f" % point
             file.write(format % (repr(exp_type), frq_text, point_text, r2eff, r2eff_bc, r2eff_err))
 
