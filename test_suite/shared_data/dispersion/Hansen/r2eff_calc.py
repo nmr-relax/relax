@@ -130,7 +130,7 @@ for i in range(1, 100):
     residue.delete(":%s" % i)
 
 # Write out the results.
-results.write('r2eff_values', dir=None, force=True)
+results.write('r2eff_pipe', dir=None, force=True)
 
 # Switch to the base data pipe.
 pipe.switch('base pipe')
@@ -143,3 +143,9 @@ for i in range(1, 100):
 
 # Write out the results.
 results.write('base_pipe', dir=None, force=True)
+
+# Switch back.
+pipe.switch('R2eff')
+
+# Save the program state.
+state.save('r2eff_values', dir=None, force=True)
