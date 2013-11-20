@@ -1498,6 +1498,7 @@ class Relax_disp(API_base, API_common):
                 aux_params.append('tex')
             if 'tex' in spin.params:
                 aux_params.append('kex')
+            break
 
         # No more auxiliary parameters.
         total_aux_num = total_param_num + len(aux_params)
