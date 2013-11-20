@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21156
+                                  relax repository checkout r21506
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -15,8 +15,6 @@ and comes with absolutely no warranty.  For details type 'GPL' within the relax 
 
 Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
 the prompt.
-
-ImportError: relaxation curve fitting is unavailable, the corresponding C modules have not been compiled.
 
 Processor fabric:  Uni-processor.
 
@@ -169,10 +167,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='ref_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='ref_500MHz', exp_type='R1rho')
-Setting the 'ref_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'ref_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='ref_500MHz', field=None)
-Setting the 'ref_500MHz' spectrum as the reference.
+The spectrum ID 'ref_500MHz' is set to the reference.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='ref_500MHz', offset=110.0)
 Setting the 'ref_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -199,10 +197,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_1000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_1000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_1000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000.0_500MHz', field=1000.0)
-Setting the 'nu_1000.0_500MHz' spectrum spin-lock field strength to 1.0 kHz.
+The spectrum ID 'nu_1000.0_500MHz' spin-lock field strength is set to 1.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_1000.0_500MHz', offset=110.0)
 Setting the 'nu_1000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -229,10 +227,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_1500.0_500MHz', exp_type='R1rho')
-Setting the 'nu_1500.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_1500.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500.0_500MHz', field=1500.0)
-Setting the 'nu_1500.0_500MHz' spectrum spin-lock field strength to 1.5 kHz.
+The spectrum ID 'nu_1500.0_500MHz' spin-lock field strength is set to 1.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_1500.0_500MHz', offset=110.0)
 Setting the 'nu_1500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -259,10 +257,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_2000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_2000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_2000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000.0_500MHz', field=2000.0)
-Setting the 'nu_2000.0_500MHz' spectrum spin-lock field strength to 2.0 kHz.
+The spectrum ID 'nu_2000.0_500MHz' spin-lock field strength is set to 2.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_2000.0_500MHz', offset=110.0)
 Setting the 'nu_2000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -289,10 +287,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_2500.0_500MHz', exp_type='R1rho')
-Setting the 'nu_2500.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_2500.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500.0_500MHz', field=2500.0)
-Setting the 'nu_2500.0_500MHz' spectrum spin-lock field strength to 2.5 kHz.
+The spectrum ID 'nu_2500.0_500MHz' spin-lock field strength is set to 2.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_2500.0_500MHz', offset=110.0)
 Setting the 'nu_2500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -319,10 +317,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_3000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_3000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_3000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000.0_500MHz', field=3000.0)
-Setting the 'nu_3000.0_500MHz' spectrum spin-lock field strength to 3.0 kHz.
+The spectrum ID 'nu_3000.0_500MHz' spin-lock field strength is set to 3.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_3000.0_500MHz', offset=110.0)
 Setting the 'nu_3000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -349,10 +347,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_3500.0_500MHz', exp_type='R1rho')
-Setting the 'nu_3500.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_3500.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500.0_500MHz', field=3500.0)
-Setting the 'nu_3500.0_500MHz' spectrum spin-lock field strength to 3.5 kHz.
+The spectrum ID 'nu_3500.0_500MHz' spin-lock field strength is set to 3.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_3500.0_500MHz', offset=110.0)
 Setting the 'nu_3500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -379,10 +377,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_4000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_4000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_4000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000.0_500MHz', field=4000.0)
-Setting the 'nu_4000.0_500MHz' spectrum spin-lock field strength to 4.0 kHz.
+The spectrum ID 'nu_4000.0_500MHz' spin-lock field strength is set to 4.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_4000.0_500MHz', offset=110.0)
 Setting the 'nu_4000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -409,10 +407,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_4500.0_500MHz', exp_type='R1rho')
-Setting the 'nu_4500.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_4500.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500.0_500MHz', field=4500.0)
-Setting the 'nu_4500.0_500MHz' spectrum spin-lock field strength to 4.5 kHz.
+The spectrum ID 'nu_4500.0_500MHz' spin-lock field strength is set to 4.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_4500.0_500MHz', offset=110.0)
 Setting the 'nu_4500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -439,10 +437,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_5000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_5000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_5000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000.0_500MHz', field=5000.0)
-Setting the 'nu_5000.0_500MHz' spectrum spin-lock field strength to 5.0 kHz.
+The spectrum ID 'nu_5000.0_500MHz' spin-lock field strength is set to 5.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_5000.0_500MHz', offset=110.0)
 Setting the 'nu_5000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -469,10 +467,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_5500.0_500MHz', exp_type='R1rho')
-Setting the 'nu_5500.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_5500.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500.0_500MHz', field=5500.0)
-Setting the 'nu_5500.0_500MHz' spectrum spin-lock field strength to 5.5 kHz.
+The spectrum ID 'nu_5500.0_500MHz' spin-lock field strength is set to 5.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_5500.0_500MHz', offset=110.0)
 Setting the 'nu_5500.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -499,10 +497,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000.0_500MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_6000.0_500MHz', exp_type='R1rho')
-Setting the 'nu_6000.0_500MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_6000.0_500MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000.0_500MHz', field=6000.0)
-Setting the 'nu_6000.0_500MHz' spectrum spin-lock field strength to 6.0 kHz.
+The spectrum ID 'nu_6000.0_500MHz' spin-lock field strength is set to 6.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_6000.0_500MHz', offset=110.0)
 Setting the 'nu_6000.0_500MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -540,10 +538,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='ref_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='ref_800MHz', exp_type='R1rho')
-Setting the 'ref_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'ref_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='ref_800MHz', field=None)
-Setting the 'ref_800MHz' spectrum as the reference.
+The spectrum ID 'ref_800MHz' is set to the reference.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='ref_800MHz', offset=110.0)
 Setting the 'ref_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -570,10 +568,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_1000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_1000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_1000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1000.0_800MHz', field=1000.0)
-Setting the 'nu_1000.0_800MHz' spectrum spin-lock field strength to 1.0 kHz.
+The spectrum ID 'nu_1000.0_800MHz' spin-lock field strength is set to 1.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_1000.0_800MHz', offset=110.0)
 Setting the 'nu_1000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -600,10 +598,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_1500.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_1500.0_800MHz', exp_type='R1rho')
-Setting the 'nu_1500.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_1500.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_1500.0_800MHz', field=1500.0)
-Setting the 'nu_1500.0_800MHz' spectrum spin-lock field strength to 1.5 kHz.
+The spectrum ID 'nu_1500.0_800MHz' spin-lock field strength is set to 1.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_1500.0_800MHz', offset=110.0)
 Setting the 'nu_1500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -630,10 +628,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_2000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_2000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_2000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2000.0_800MHz', field=2000.0)
-Setting the 'nu_2000.0_800MHz' spectrum spin-lock field strength to 2.0 kHz.
+The spectrum ID 'nu_2000.0_800MHz' spin-lock field strength is set to 2.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_2000.0_800MHz', offset=110.0)
 Setting the 'nu_2000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -660,10 +658,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_2500.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_2500.0_800MHz', exp_type='R1rho')
-Setting the 'nu_2500.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_2500.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_2500.0_800MHz', field=2500.0)
-Setting the 'nu_2500.0_800MHz' spectrum spin-lock field strength to 2.5 kHz.
+The spectrum ID 'nu_2500.0_800MHz' spin-lock field strength is set to 2.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_2500.0_800MHz', offset=110.0)
 Setting the 'nu_2500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -690,10 +688,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_3000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_3000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_3000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3000.0_800MHz', field=3000.0)
-Setting the 'nu_3000.0_800MHz' spectrum spin-lock field strength to 3.0 kHz.
+The spectrum ID 'nu_3000.0_800MHz' spin-lock field strength is set to 3.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_3000.0_800MHz', offset=110.0)
 Setting the 'nu_3000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -720,10 +718,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_3500.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_3500.0_800MHz', exp_type='R1rho')
-Setting the 'nu_3500.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_3500.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_3500.0_800MHz', field=3500.0)
-Setting the 'nu_3500.0_800MHz' spectrum spin-lock field strength to 3.5 kHz.
+The spectrum ID 'nu_3500.0_800MHz' spin-lock field strength is set to 3.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_3500.0_800MHz', offset=110.0)
 Setting the 'nu_3500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -750,10 +748,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_4000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_4000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_4000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4000.0_800MHz', field=4000.0)
-Setting the 'nu_4000.0_800MHz' spectrum spin-lock field strength to 4.0 kHz.
+The spectrum ID 'nu_4000.0_800MHz' spin-lock field strength is set to 4.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_4000.0_800MHz', offset=110.0)
 Setting the 'nu_4000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -780,10 +778,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_4500.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_4500.0_800MHz', exp_type='R1rho')
-Setting the 'nu_4500.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_4500.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_4500.0_800MHz', field=4500.0)
-Setting the 'nu_4500.0_800MHz' spectrum spin-lock field strength to 4.5 kHz.
+The spectrum ID 'nu_4500.0_800MHz' spin-lock field strength is set to 4.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_4500.0_800MHz', offset=110.0)
 Setting the 'nu_4500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -810,10 +808,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_5000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_5000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_5000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5000.0_800MHz', field=5000.0)
-Setting the 'nu_5000.0_800MHz' spectrum spin-lock field strength to 5.0 kHz.
+The spectrum ID 'nu_5000.0_800MHz' spin-lock field strength is set to 5.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_5000.0_800MHz', offset=110.0)
 Setting the 'nu_5000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -840,10 +838,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_5500.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_5500.0_800MHz', exp_type='R1rho')
-Setting the 'nu_5500.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_5500.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_5500.0_800MHz', field=5500.0)
-Setting the 'nu_5500.0_800MHz' spectrum spin-lock field strength to 5.5 kHz.
+The spectrum ID 'nu_5500.0_800MHz' spin-lock field strength is set to 5.5 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_5500.0_800MHz', offset=110.0)
 Setting the 'nu_5500.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
@@ -870,10 +868,10 @@ The following intensities have been loaded into the relax data store:
 relax> spectrum.baseplane_rmsd(error=200000.0, spectrum_id='nu_6000.0_800MHz', spin_id=None)
 
 relax> relax_disp.exp_type(spectrum_id='nu_6000.0_800MHz', exp_type='R1rho')
-Setting the 'nu_6000.0_800MHz' spectrum tothe R1rho-type experiment.
+The spectrum ID 'nu_6000.0_800MHz' is now set to the R1rho-type experiment.
 
 relax> relax_disp.spin_lock_field(spectrum_id='nu_6000.0_800MHz', field=6000.0)
-Setting the 'nu_6000.0_800MHz' spectrum spin-lock field strength to 6.0 kHz.
+The spectrum ID 'nu_6000.0_800MHz' spin-lock field strength is set to 6.0 kHz.
 
 relax> relax_disp.spin_lock_offset(spectrum_id='nu_6000.0_800MHz', offset=110.0)
 Setting the 'nu_6000.0_800MHz' spectrum spin-lock offset to 110.0 ppm.
