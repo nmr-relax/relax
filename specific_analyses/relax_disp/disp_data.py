@@ -2452,3 +2452,86 @@ def spin_lock_offset(spectrum_id=None, offset=None):
 
     # Printout.
     print("Setting the '%s' spectrum spin-lock offset to %s ppm." % (spectrum_id, cdp.spin_lock_offset[spectrum_id]))
+
+
+def write_disp_curves(dir=None, force=None):
+    """Write out the dispersion curves to text files.
+
+    One file will be created per spin system.
+
+
+    @keyword dir:           The optional directory to place the file into.
+    @type dir:              str
+    @param force:           If True, the files will be overwritten if they already exists.
+    @type force:            bool
+    """
+
+    # Checks.
+    pipes.test()
+    check_mol_res_spin_data()
+
+    # The formatting strings.
+    format_head = "# %-18s %-20s %-20s %-20s %-20s %-20s\n"
+    format = "%-20s %20s %20s %20s %20s %20s\n"
+
+    # Loop over each spin.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Skip protons for MMQ data.
+        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            continue
+
+        # MMQ flags.
+        proton_sq_flag = has_proton_sq_cpmg()
+        proton_mq_flag = has_proton_mq_cpmg()
+        proton_mmq_flag = proton_sq_flag or proton_mq_flag
+
+        # Get the attached proton.
+        proton = None
+        if proton_mmq_flag:
+            proton = return_attached_protons(spin_id)[0]
+
+        # The unique file name.
+        file_name = "disp%s.out" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+
+        # Open the file for writing.
+        file_path = get_file_path(file_name, dir)
+        file = open_write_file(file_name, dir, force)
+
+        # Write a header.
+        file.write(format_head % ("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors"))
+
+        # Loop over the dispersion points.
+        for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+            # Alias the correct spin.
+            current_spin = spin
+            if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                current_spin = proton
+
+            # The data key.
+            key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+
+            # Format the R2eff data.
+            r2eff = "-"
+            if key in current_spin.r2eff:
+                r2eff = "%.15f" % current_spin.r2eff[key]
+
+            # Format the R2eff back calc data.
+            r2eff_bc = "-"
+            if hasattr(current_spin, 'r2eff_bc') and key in current_spin.r2eff_bc:
+                r2eff_bc = "%.15f" % current_spin.r2eff_bc[key]
+
+            # Format the R2eff errors.
+            r2eff_err = "-"
+            if key in current_spin.r2eff_err:
+                r2eff_err = "%.15f" % current_spin.r2eff_err[key]
+
+            # Write out the data.
+            frq_text = "%.3f" % frq
+            point_text = "%.6f" % point
+            file.write(format % (repr(exp_type), frq_text, point_text, r2eff, r2eff_bc, r2eff_err))
+
+        # Close the file.
+        file.close()
+
+        # Add the file to the results file list.
+        add_result_file(type='text', label='Text', file=file_path)

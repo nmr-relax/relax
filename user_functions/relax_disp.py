@@ -38,7 +38,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, spin_lock_field, spin_lock_offset
+from specific_analyses.relax_disp.disp_data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, spin_lock_field, spin_lock_offset, write_disp_curves
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -961,4 +961,33 @@ uf.desc[-1].add_prompt("relax> relax_disp.spin_lock_offset(spectrum_id='nu1_2.1k
 uf.backend = spin_lock_offset
 uf.menu_text = "spin_lock_&offset"
 uf.wizard_size = (800, 500)
+uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
+
+
+# The relax_disp.write_disp_curves user function.
+uf = uf_info.add_uf('relax_disp.write_disp_curves')
+uf.title = "Create text files of the dispersion curves for each spin system."
+uf.title_short = "Dispersion curve writing."
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory name to place all of the spin system files into.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "force",
+    default = False,
+    py_type = "bool",
+    desc_short = "force flag",
+    desc = "A flag which, if set to True, will cause the files to be overwritten."
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This is used to created text files of the dispersion curves of R2eff/R1rho values, both measured and back calculated from the optimised dispersion model.  The columns of the text file will be the experiment name, the magnetic field strength (as the proton frequency in MHz), dispersion point (nu_CPMG or the spin-lock field strength), the experimental R2eff value, the back-calculated R2eff value, and the experimental R2eff error.  One file will be created per spin system with the name 'disp_x.out', where x is the spin ID string.")
+uf.backend = write_disp_curves
+uf.menu_text = "&write_disp_curves"
+uf.gui_icon = "oxygen.actions.document-save"
+uf.wizard_size = (700, 500)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
