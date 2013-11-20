@@ -35,9 +35,10 @@ from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
-from specific_analyses.relax_disp.disp_data import has_disp_data, loop_exp_frq, loop_exp_frq_point, loop_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
+from pipe_control.sequence import return_attached_protons
+from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mq_cpmg, has_proton_sq_cpmg, loop_exp_frq, loop_exp_frq_point, loop_point, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_CPMG_NUM, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_CPMG_NUM, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
 
 
@@ -482,13 +483,15 @@ class Disp_result_command(Result_command):
                 # Alias the spin.
                 spin = memo.spins[spin_index]
 
-                # No data.
-                if not hasattr(spin, 'r2eff'):
-                    continue
+                # MMQ flags.
+                proton_sq_flag = has_proton_sq_cpmg()
+                proton_mq_flag = has_proton_mq_cpmg()
+                proton_mmq_flag = proton_sq_flag or proton_mq_flag
 
-                # Initialise.
-                if not hasattr(spin, 'r2eff_bc'):
-                    spin.r2eff_bc = {}
+                # Get the attached proton.
+                proton = None
+                if proton_mmq_flag:
+                    proton = return_attached_protons(memo.spin_ids[spin_index])[0]
 
                 # Loop over the R2eff data.
                 for exp_type, frq,  point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
@@ -496,11 +499,20 @@ class Disp_result_command(Result_command):
                     if self.missing[exp_type_index][spin_index][frq_index][point_index]:
                         continue
 
+                    # Alias the correct spin.
+                    current_spin = spin
+                    if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                        current_spin = proton
+
+                    # Initialise.
+                    if not hasattr(current_spin, 'r2eff_bc'):
+                        current_spin.r2eff_bc = {}
+
                     # The R2eff key.
                     key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                     # Store the back-calculated data.
                     if memo.spins[0].model in [MODEL_MMQ_2SITE]:
-                        spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][point_index]
+                        current_spin.r2eff_bc[key] = self.back_calc[exp_type_index][spin_index][frq_index][point_index]
                     else:
-                        spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][point_index]
+                        current_spin.r2eff_bc[key] = self.back_calc[spin_index][frq_index][point_index]
