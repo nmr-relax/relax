@@ -385,6 +385,7 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         # Load the R2eff results file.
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_pipe'
         self.interpreter.results.read(file_name)
+        self.interpreter.deselect.spin(':4')
 
         # The spin isotopes.
         self.interpreter.spin.isotope("15N")
@@ -1296,6 +1297,7 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         # Load the R2eff results file.
         file_name = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'+sep+'r2eff_pipe'
         self.interpreter.results.read(file_name)
+        self.interpreter.deselect.spin(':4')
 
         # Set up the model.
         self.interpreter.relax_disp.select_model('LM63')

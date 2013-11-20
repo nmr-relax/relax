@@ -123,9 +123,9 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 sequence.display()
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
-# Delete all residues but :70 and :71.
+# Delete all residues but :4, :70 and :71.
 for i in range(1, 100):
-    if i in [70, 71]:
+    if i in [4, 70, 71]:
         continue
     residue.delete(":%s" % i)
 
@@ -135,9 +135,9 @@ results.write('r2eff_pipe', dir=None, force=True)
 # Switch to the base data pipe.
 pipe.switch('base pipe')
 
-# Delete all residues but :70 and :71.
+# Delete all residues but :4, :70 and :71.
 for i in range(1, 100):
-    if i in [70, 71]:
+    if i in [4, 70, 71]:
         continue
     residue.delete(":%s" % i)
 

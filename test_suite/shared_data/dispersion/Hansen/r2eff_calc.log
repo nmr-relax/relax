@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21506
+                                  relax repository checkout r21533
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -145,9 +145,9 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 sequence.display()
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
-# Delete all residues but :70 and :71.
+# Delete all residues but :4, :70 and :71.
 for i in range(1, 100):
-    if i in [70, 71]:
+    if i in [4, 70, 71]:
         continue
     residue.delete(":%s" % i)
 
@@ -157,9 +157,9 @@ results.write('r2eff_pipe', dir=None, force=True)
 # Switch to the base data pipe.
 pipe.switch('base pipe')
 
-# Delete all residues but :70 and :71.
+# Delete all residues but :4, :70 and :71.
 for i in range(1, 100):
-    if i in [70, 71]:
+    if i in [4, 70, 71]:
         continue
     residue.delete(":%s" % i)
 
@@ -3769,160 +3769,14 @@ Standard deviation for all spins:  171.9706260076397
 - The 'R2eff' model -
 ---------------------
 
+Detected the presence of results files for the 'R2eff' model - loading these instead of performing optimisation for a second time.
 
-relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+relax> pipe.create(pipe_name='R2eff', pipe_type='relax_disp', bundle='relax_disp')
 
 relax> pipe.switch(pipe_name='R2eff')
 
-relax> relax_disp.select_model(model='R2eff')
-R2eff/R1rho value and error determination.
-
-relax> calc(verbosity=1)
-Calculating the R2eff/R1rho values for fixed relaxation time period data.
-Spin ':1@N'.
-Spin ':2@N'.
-Spin ':3@N'.
-Spin ':4@N'.
-Spin ':5@N'.
-Spin ':6@N'.
-Spin ':7@N'.
-Spin ':8@N'.
-Spin ':10@N'.
-Spin ':11@N'.
-Spin ':12@N'.
-Spin ':13@N'.
-Spin ':14@N'.
-Spin ':15@N'.
-Spin ':16@N'.
-Spin ':17@N'.
-Spin ':18@N'.
-Spin ':19@N'.
-Spin ':20@N'.
-Spin ':21@N'.
-Spin ':22@N'.
-Spin ':23@N'.
-Spin ':24@N'.
-Spin ':25@N'.
-Spin ':26@N'.
-Spin ':29@N'.
-Spin ':31@N'.
-Spin ':32@N'.
-Spin ':33@N'.
-Spin ':34@N'.
-Spin ':35@N'.
-Spin ':36@N'.
-Spin ':37@N'.
-Spin ':38@N'.
-Spin ':39@N'.
-Spin ':40@N'.
-Spin ':41@N'.
-Spin ':42@N'.
-Spin ':43@N'.
-Spin ':44@N'.
-Spin ':45@N'.
-Spin ':46@N'.
-Spin ':47@N'.
-Spin ':48@N'.
-Spin ':49@N'.
-Spin ':50@N'.
-Spin ':51@N'.
-Spin ':52@N'.
-Spin ':53@N'.
-Spin ':55@N'.
-Spin ':56@N'.
-Spin ':57@N'.
-Spin ':58@N'.
-Spin ':59@N'.
-Spin ':60@N'.
-Spin ':61@N'.
-Spin ':62@N'.
-Spin ':63@N'.
-Spin ':64@N'.
-Spin ':65@N'.
-Spin ':66@N'.
-Spin ':67@N'.
-Spin ':70@N'.
-Spin ':71@N'.
-Spin ':72@N'.
-Spin ':73@N'.
-
-relax> relax_disp.plot_disp_curves(dir='temp/R2eff', force=True)
-Opening the file 'temp/R2eff/disp_1_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_2_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_3_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_4_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_5_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_6_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_7_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_8_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_10_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_11_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_12_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_13_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_14_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_15_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_16_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_17_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_18_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_19_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_20_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_21_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_22_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_23_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_24_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_25_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_26_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_29_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_31_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_32_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_33_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_34_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_35_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_36_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_37_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_38_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_39_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_40_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_41_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_42_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_43_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_44_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_45_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_46_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_47_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_48_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_49_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_50_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_51_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_52_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_53_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_55_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_56_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_57_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_58_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_59_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_60_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_61_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_62_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_63_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_64_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_65_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_66_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_67_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_70_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_71_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_72_N.agr' for writing.
-Opening the file 'temp/R2eff/disp_73_N.agr' for writing.
-Opening the file 'temp/R2eff/grace2images.py' for writing.
-
-relax> value.write(param='r2eff', file='r2eff.out', dir='temp/R2eff', scaling=1.0, comment=None, bc=False, force=True)
-Opening the file 'temp/R2eff/r2eff.out' for writing.
-
-relax> grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir='temp/R2eff', force=True, norm=False)
-Opening the file 'temp/R2eff/r2eff.agr' for writing.
-
-relax> results.write(file='results', dir='temp/R2eff', compress_type=1, force=True)
-Opening the file 'temp/R2eff/results.bz2' for writing.
+relax> results.read(file='results', dir='temp/R2eff')
+Opening the file 'temp/R2eff/results.bz2' for reading.
 RelaxWarning: Model selection in the dispersion auto-analysis has been skipped as only 0 models have been optimised.
 
 relax> state.save(state='final_state', dir='temp', compress_type=1, force=True)
@@ -3933,8 +3787,6 @@ relax> residue.delete(res_id=':1')
 relax> residue.delete(res_id=':2')
 
 relax> residue.delete(res_id=':3')
-
-relax> residue.delete(res_id=':4')
 
 relax> residue.delete(res_id=':5')
 
@@ -4132,8 +3984,6 @@ relax> residue.delete(res_id=':1')
 relax> residue.delete(res_id=':2')
 
 relax> residue.delete(res_id=':3')
-
-relax> residue.delete(res_id=':4')
 
 relax> residue.delete(res_id=':5')
 
