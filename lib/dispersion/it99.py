@@ -93,7 +93,7 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
             continue
 
         # The effective rotating frame field.
-        omega_1eff4 = 144 * (2.0*pi*cpmg_frqs[i])**4
+        omega_1eff4 = 144 * cpmg_frqs[i]**4
 
         # Denominator.
         omega_a2 = sqrt(omega_1eff4 + pa2dw4)
