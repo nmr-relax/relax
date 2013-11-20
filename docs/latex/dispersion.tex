@@ -79,8 +79,8 @@ For the CPMG-type experiments, the analytic models currently supported are:
 \begin{description}
 \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
 \item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.  The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.  See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
-\item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
-\item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
+\item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
+\item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
 \item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
 \item[`TSMFK01':]\index{relaxation dispersion!TSMFK01 model}  The \citet{Tollinger01}  2-site very-slow exchange model for time scales within range of microsecond to second time scale.
 Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.  $2*\taucpmg$ is the time between successive 180 degree pulses. Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.  See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
@@ -119,7 +119,7 @@ For the $\Ronerho$-type experiments, the numeric models currently supported are:
 For the MQ CPMG-type experiments, the analytic models currently supported are:
 
 \begin{description}
-\item[`MQ CR72':]\index{relaxation dispersion!MQ CR72 model}  The Carver and Richards (1972) 2-site model for all time scales expanded for MQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ CR72 model} on page~\pageref{sect: dispersion: MQ CR72 model}.
+\item[`MQ CR72':]\index{relaxation dispersion!MQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ CR72 model} on page~\pageref{sect: dispersion: MQ CR72 model}.
 \end{description}
 
 
@@ -320,7 +320,7 @@ The parameter deconvolutions for this model can be performed after a relax analy
 \label{sect: dispersion: CR72 full model}
 \index{relaxation dispersion!CR72 full model|textbf}
 
-This is the model for 2-site exchange on all times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
+This is the model for 2-site exchange on most times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
 It is selected by setting the model to `CR72 full'.
 The equation is
 \begin{equation}
@@ -334,6 +334,9 @@ where
     \Psi     &= \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
     \zeta    &= 2\dw \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right).
 \end{align}
+
+This model is not accurate when the motional process is very slow.
+In that case, the `TSMFK01' model in Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model} should be used instead.
 
 The reference for this equation is:
 \begin{itemize}
@@ -349,7 +352,7 @@ The reference for this equation is:
 \label{sect: dispersion: CR72 model}
 \index{relaxation dispersion!CR72 model|textbf}
 
-This is the model for 2-site exchange on all times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
+This is the model for 2-site exchange on most times scales (with the constraint that $\pA > \pB$), named after \citet{CarverRichards72}.
 It is selected by setting the model to `CR72'.
 It is the same as the full CR72 model described above, but with the simplification that $\RtwozeroA = \RtwozeroB$.
 This simplifies the equations to
@@ -363,6 +366,8 @@ where $D_\pm$ and $\eta_\pm$ are unchanged and
     \zeta &= -2\dw (\pA\kex - \pB\kex) .
 \end{align}
 
+As mentioned in the `CR72 full' model section, this model is not accurate when the motional process is very slow.
+In that case please use the `TSMFK01' model in Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model} instead.
 
 
 % IT99 model.
@@ -397,7 +402,7 @@ The reference for this equation is:
 
 
 % TSMFK01 model.
-%~~~~~~~~~~~~
+%~~~~~~~~~~~~~~~
 
 \subsection{The TSMFK01 2-site CPMG model}
 \label{sect: dispersion: TSMFK01 model}
@@ -771,7 +776,7 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \label{sect: dispersion: MQ CR72 model}
 \index{relaxation dispersion!MQ CR72 model|textbf}
 
-This is the analytic CR72 model for 2-site exchange on all times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple quantum data by \citet{Korzhnev04a}.
+This is the analytic CR72 model for 2-site exchange on most times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple quantum data by \citet{Korzhnev04a}.
 It is selected by setting the model to `MQ CR72'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 The equation for the exchange process is 
