@@ -1,4 +1,9 @@
 #!/usr/bin/env python
+#
+# This script is used to batch convert the Grace *.agr files into graphics bitmap files using the
+# Grace program itself.  Therefore you will need to install on your system xmgrace,
+# (http://plasma-gate.weizmann.ac.il/Grace/), qtgrace (http://sourceforge.net/projects/qtgrace/)
+# or gracegtk (http://sourceforge.net/projects/gracegtk/).
 
 import glob, os, sys
 import shlex, subprocess

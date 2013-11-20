@@ -3,17 +3,17 @@
 
 To convert the 'CPMG' model parameter Rex to phi_ex, use:
 
-    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * (2*1000)
+    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * 1000
 
-where frq is the magnetic field strength in Hz (for the proton Larmor frequency).  The factor of 2*1000 is probably from the CPMGFit definition of Tau=2/kex and the 1000 is because of the ms units.
+where frq is the magnetic field strength in Hz (for the proton Larmor frequency).  The factor of 1000 is because of the ms units.
 
 The kex parameter is given by:
 
-    kex = 2.0/Tau * 1000
+    kex = 1.0/Tau * 1000
 
 And tex as:
 
-    tex = "%.3e" % (Tau / (2.0 * 1000))
+    tex = "%.3e" % (Tau / 1000)
 
 
 
@@ -39,7 +39,7 @@ And kex:
 
 To convert to the pA parameter:
 
-    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * (2*1000)
+    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * 1000
     pA = 1.0 - phi_ex / PaDw
 
 To obtain dw:
@@ -48,8 +48,8 @@ To obtain dw:
 
 The kex parameter is given by:
 
-    kex = 2.0/Tau * 1000
+    kex = 1.0/Tau * 1000
 
 And tex as:
 
-    tex = "%.3e" % (Tau / (2.0 * 1000))
+    tex = "%.3e" % (Tau / 1000)
