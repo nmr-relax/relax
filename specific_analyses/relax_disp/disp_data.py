@@ -596,16 +596,18 @@ def is_r1rho_exp_type(id=None):
     return False
 
 
-def loop_cluster():
+def loop_cluster(skip_desel=True):
     """Loop over the spin groupings for one model applied to multiple spins.
 
-    @return:    The list of spin IDs per block will be yielded.
-    @rtype:     list of str
+    @keyword skip_desel:    A flag which if True will cause deselected spins or spin clusters to be skipped.
+    @type skip_desel:       bool
+    @return:                The list of spin IDs per block will be yielded.
+    @rtype:                 list of str
     """
 
     # No clustering, so loop over the sequence.
     if not hasattr(cdp, 'clustering'):
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        for spin, spin_id in spin_loop(return_id=True, skip_desel=skip_desel):
             # Skip protons for MMQ data.
             if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
@@ -626,7 +628,7 @@ def loop_cluster():
             for spin_id in cdp.clustering[key]:
                 # Skip deselected spins.
                 spin = return_spin(spin_id)
-                if not spin.select:
+                if skip_desel and not spin.select:
                     continue
 
                 # Skip protons for MMQ data.
@@ -643,7 +645,7 @@ def loop_cluster():
         for spin_id in cdp.clustering['free spins']:
             # Skip deselected spins.
             spin = return_spin(spin_id)
-            if not spin.select:
+            if skip_desel and not spin.select:
                 continue
 
             # Skip protons for MMQ data.

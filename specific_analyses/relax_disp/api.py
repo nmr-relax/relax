@@ -1037,7 +1037,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # The cluster loop.
-        for spin_ids in loop_cluster():
+        for spin_ids in loop_cluster(skip_desel=False):
             yield spin_ids
 
 
