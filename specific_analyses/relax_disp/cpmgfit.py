@@ -270,8 +270,11 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
         # Tesla units.
         B0 = frq * 2.0 * pi / g1H
 
+        # The X value of 1/tcp (or 1/tau_CPMG) in ms.  This assumes Art's usage of the definition that nu_CPMG = 1 / (2 * tau_CPMG).
+        x = 2.0 * point / 1000.0
+
         # Write out the data and error.
-        file.write("%-20f %-20f %-20f %-20f\n" % (point/1000.0, spin.r2eff[param_key], spin.r2eff_err[param_key], B0))
+        file.write("%-20f %-20f %-20f %-20f\n" % (x, spin.r2eff[param_key], spin.r2eff_err[param_key], B0))
 
     # Close the file and return its name.
     file.close()
