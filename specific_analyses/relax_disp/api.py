@@ -1487,14 +1487,17 @@ class Relax_disp(API_base, API_common):
 
         # The auxiliary cluster parameters.
         aux_params = []
-        if 'pA' in spins[0].params:
-            aux_params.append('pB')
-        if 'pB' in spins[0].params:
-            aux_params.append('pA')
-        if 'kex' in spins[0].params:
-            aux_params.append('tex')
-        if 'tex' in spins[0].params:
-            aux_params.append('kex')
+        for spin in spins:
+            if not spin.select:
+                continue
+            if 'pA' in spin.params:
+                aux_params.append('pB')
+            if 'pB' in spin.params:
+                aux_params.append('pA')
+            if 'kex' in spin.params:
+                aux_params.append('tex')
+            if 'tex' in spin.params:
+                aux_params.append('kex')
 
         # No more auxiliary parameters.
         total_aux_num = total_param_num + len(aux_params)
