@@ -2512,7 +2512,7 @@ def write_disp_curves(dir=None, force=None):
 
             # Format the R2eff data.
             r2eff = "-"
-            if key in current_spin.r2eff:
+            if hasattr(current_spin, 'r2eff') and  key in current_spin.r2eff:
                 r2eff = "%.15f" % current_spin.r2eff[key]
 
             # Format the R2eff back calc data.
@@ -2522,7 +2522,7 @@ def write_disp_curves(dir=None, force=None):
 
             # Format the R2eff errors.
             r2eff_err = "-"
-            if key in current_spin.r2eff_err:
+            if hasattr(current_spin, 'r2eff_err') and  key in current_spin.r2eff_err:
                 r2eff_err = "%.15f" % current_spin.r2eff_err[key]
 
             # Write out the data.
