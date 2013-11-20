@@ -233,20 +233,25 @@ It is selected by setting the model to `No Rex'.
 
 This is the original model for 2-site fast exchange for CPMG-type experiments.
 It is selected by setting the model to `LM63', here named after \citet{LuzMeiboom63}.
-The original $n$-site Equation~(7) from their paper can be written as:
+The original $n$-site Equation~(7) from their paper can be written as
 \begin{equation}
-    \Rex = \left[ 1 - 2\tex\taucpmg \cdot \tanh \left( 2\tex\taucpmg \right)^{-1} \right] \cdot \tex \cdot \sum_{i=2}^n p_\textrm{i}\dw_{i} ,
+    \Rex = \left[ 1 - 2\tex g \cdot \tanh \left( 2\tex g \right)^{-1} \right] \cdot \tex \cdot \sum_{i=2}^n p_\textrm{i}\dw_{i},
 \end{equation}
 
-or rearranged as:
+where $g$ is the pulse repetition rate defined as
+\begin{equation}
+    g = 2\nucpmg.
+\end{equation}
+
+It can be rearranged as
 \begin{equation} \label{eq: Luz-Meiboom}
-    \Rex = \sum_{i=2}^n \frac{\Phiexi}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right) ,
+    \Rex = \sum_{i=2}^n \frac{\Phiexi}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right).
 \end{equation}
 
 
-The equation for the 2-site exchange process can be expressed as:
+The equation for the 2-site exchange process can be expressed as
 \begin{equation}
-    \Rtwoeff = \Rtwozero + \frac{\Phiex}{\kex} \cdot \left( 1 - \frac{4\nucpmg}{\kex} \cdot \tanh \left( \frac{\kex}{4\nucpmg} \right) \right) .
+    \Rtwoeff = \Rtwozero + \frac{\Phiex}{\kex} \cdot \left( 1 - \frac{4\nucpmg}{\kex} \cdot \tanh \left( \frac{\kex}{4\nucpmg} \right) \right).
 \end{equation}
 
 The reference for this equation is:
