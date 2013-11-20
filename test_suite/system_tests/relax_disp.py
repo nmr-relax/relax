@@ -1459,11 +1459,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 9.536959, r20_key2: 11.770254, r20_key3: 13.677903}
-        spin.pA = 0.965477
-        spin.kex = 568.691
-        spin.dw = 5.357119
-        spin.dwH = -0.134035
+        spin.r2 = {r20_key1: 9.48536931937482, r20_key2: 11.7316245262476, r20_key3: 13.6678889917841}
+        spin.pA = 0.963846627076083
+        spin.kex = 538.31971271586
+        spin.dw = 6.82617656048492
+        spin.dwH = -0.112665530854285
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1494,14 +1494,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 9.536959, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 11.770254, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 13.677903, 4)
-        self.assertAlmostEqual(spin.pA, 0.965477, 4)
-        self.assertAlmostEqual(spin.dw, 5.357119, 4)
-        self.assertAlmostEqual(spin.dwH, -0.134035, 4)
-        self.assertAlmostEqual(spin.kex/1000, 568.691/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 9.23777, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 9.48536931937482, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 11.7316245262476, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 13.6678889917841, 4)
+        self.assertAlmostEqual(spin.pA, 0.963846627076083, 4)
+        self.assertAlmostEqual(spin.dw, 6.82617656048492, 4)
+        self.assertAlmostEqual(spin.dwH, -0.112665530854285, 4)
+        self.assertAlmostEqual(spin.kex/1000, 538.31971271586/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 9.79996901510001, 4)
 
 
     def test_korzhnev_2005_15n_mq_data(self):
