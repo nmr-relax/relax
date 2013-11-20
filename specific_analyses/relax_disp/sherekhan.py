@@ -74,8 +74,7 @@ def sherekhan_input(spin_id=None, force=False):
         spins = spin_ids_to_containers(spin_ids)
 
         # Loop over the magnetic fields.
-        frq_index = 0
-        for exp_type, frq in loop_exp_frq():
+        for exp_type, frq, exp_type_index, frq_index in loop_exp_frq(return_indices=True):
             # The ShereKhan input file for the spin cluster.
             file_name = 'sherekhan_frq%s.in' % (frq_index+1)
             dir_name = 'cluster%s' % (cluster_index+1)
@@ -107,7 +106,7 @@ def sherekhan_input(spin_id=None, force=False):
                 lines.append("# %s%s\n" % (res_name, res.num))
 
                 # Loop over the dispersion points.
-                for point in loop_point(exp_type=exp_type, skip_ref=True):
+                for point in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, skip_ref=True):
                     # The parameter key.
                     param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
@@ -128,9 +127,6 @@ def sherekhan_input(spin_id=None, force=False):
 
             # Close the file.
             file.close()
-
-            # Increment the field index.
-            frq_index += 1
 
         # Increment the cluster index.
         cluster_index += 1
