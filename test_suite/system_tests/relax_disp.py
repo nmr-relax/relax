@@ -178,9 +178,9 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
             ['ZQ',    '15N_ZQ_CPMG_500_MHz', 'zq_500.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 500e6, 0.03],
             ['ZQ',    '15N_ZQ_CPMG_600_MHz', 'zq_600.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 600e6, 0.03],
             ['ZQ',    '15N_ZQ_CPMG_800_MHz', 'zq_800.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 800e6, 0.03],
-            ['1H MQ', '1H_MQ_CPMG_500_MHz',  'hm_500.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@N', 500e6, 0.02],
-            ['1H MQ', '1H_MQ_CPMG_600_MHz',  'hm_600.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@N', 600e6, 0.02],
-            ['1H MQ', '1H_MQ_CPMG_800_MHz',  'hm_800.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@N', 800e6, 0.02],
+            ['1H MQ', '1H_MQ_CPMG_500_MHz',  'hm_500.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 500e6, 0.02],
+            ['1H MQ', '1H_MQ_CPMG_600_MHz',  'hm_600.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 600e6, 0.02],
+            ['1H MQ', '1H_MQ_CPMG_800_MHz',  'hm_800.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 800e6, 0.02],
             ['MQ',    '15N_MQ_CPMG_500_MHz', 'nm_500.res', EXP_TYPE_CPMG_MQ,        ':9@N', 500e6, 0.02],
             ['MQ',    '15N_MQ_CPMG_600_MHz', 'nm_600.res', EXP_TYPE_CPMG_MQ,        ':9@N', 600e6, 0.02],
             ['MQ',    '15N_MQ_CPMG_800_MHz', 'nm_800.res', EXP_TYPE_CPMG_MQ,        ':9@N', 800e6, 0.02]
