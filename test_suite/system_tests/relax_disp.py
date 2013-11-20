@@ -922,19 +922,20 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 7.24471210050861, 4)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 10.057104937161, 4)
-        self.assertAlmostEqual(spin70.dw, 16.3183632118076, 4)
-        self.assertAlmostEqual(spin70.pA, 0.996897633223495, 4)
-        self.assertAlmostEqual(spin70.tex*1000, 0.000203207457799447*1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 93.5135798618572, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 7.24471197811838, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 10.0571040704729, 4)
+        self.assertAlmostEqual(spin70.dw, 5.2116923222744, 4)
+        self.assertAlmostEqual(spin70.pA, 0.990253627907212, 4)
+        self.assertAlmostEqual(spin70.tex*1000, 0.000638394793480444*1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 93.5135798618747, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[r20_key1], 2.34239439621247, 4)
-        self.assertAlmostEqual(spin71.dw, 2.1943783862637, 4)
-        self.assertAlmostEqual(spin71.pA, 0.500000000002985, 3)
-        self.assertAlmostEqual(spin71.tex*1000, 3.36270199763213e-05*1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 589.220558758852, 4)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.05971235970214, 4)
+        self.assertAlmostEqual(spin71.r2[r20_key2], 6.96641194493447, 4)
+        self.assertAlmostEqual(spin71.dw, 0.435389946897141, 4)
+        self.assertAlmostEqual(spin71.pA, 0.500000000213519, 3)
+        self.assertAlmostEqual(spin71.tex*1000, 0.000372436400585538*1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 23.7895798801404, 4)
 
 
     def test_hansen_cpmg_data_to_lm63(self):
