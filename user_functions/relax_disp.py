@@ -457,7 +457,7 @@ uf.add_keyarg(
     name = "dir",
     default = "grace",
     py_type = "str",
-    arg_type = "dir",
+    arg_type = "dir sel",
     desc_short = "directory name",
     desc = "The directory name to place all of the spin system files into.",
     can_be_none = True
