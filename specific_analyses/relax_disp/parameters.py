@@ -778,12 +778,20 @@ def param_num(spins=None):
 
     # Check the spin cluster.
     for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         if len(spin.params) != len(spins[0].params):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of R20 parameters.
     r20_params = ['r2', 'r2a', 'r2b']
     for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         for i in range(len(spin.params)):
             if spin.params[i] in r20_params:
                 for exp_type, frq in loop_exp_frq():
@@ -792,15 +800,25 @@ def param_num(spins=None):
     # Count the number of spin specific parameters for all spins.
     spin_params = ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']
     for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         for i in range(len(spin.params)):
             if spin.params[i] in spin_params:
                 num += 1
 
     # Count all other parameters, but only for a single spin.
     all_params = r20_params + spin_params
-    for i in range(len(spins[0].params)):
-        if not spins[0].params[i] in all_params:
-            num += 1
+    for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
+        for i in range(len(spin.params)):
+            if not spin.params[i] in all_params:
+                num += 1
+        break
 
     # Return the number.
     return num

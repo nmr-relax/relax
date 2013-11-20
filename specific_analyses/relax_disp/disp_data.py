@@ -609,7 +609,7 @@ def loop_cluster(skip_desel=True):
     if not hasattr(cdp, 'clustering'):
         for spin, spin_id in spin_loop(return_id=True, skip_desel=skip_desel):
             # Skip protons for MMQ data.
-            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            if hasattr(spin, 'model') and spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
 
             # Return the spin ID as a list.
@@ -632,7 +632,7 @@ def loop_cluster(skip_desel=True):
                     continue
 
                 # Skip protons for MMQ data.
-                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                if hasattr(spin, 'model') and spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                     continue
 
                 # Add the spin ID.
@@ -649,7 +649,7 @@ def loop_cluster(skip_desel=True):
                 continue
 
             # Skip protons for MMQ data.
-            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            if hasattr(spin, 'model') and spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
 
             # Yield each spin individually.

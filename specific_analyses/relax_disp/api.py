@@ -1069,11 +1069,19 @@ class Relax_disp(API_base, API_common):
         # The number of points from all spins.
         n = 0
         for spin in spins:
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             n += len(spin.r2eff)
 
         # Take the chi-squared from the first spin of the cluster (which has a value).
         chi2 = None
         for spin in spins:
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             if hasattr(spin, 'chi2'):
                 chi2 = spin.chi2
                 break
