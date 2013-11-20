@@ -1071,8 +1071,12 @@ class Relax_disp(API_base, API_common):
         for spin in spins:
             n += len(spin.r2eff)
 
-        # Take the chi-squared from the first spin of the cluster.
-        chi2 = spins[0].chi2
+        # Take the chi-squared from the first spin of the cluster (which has a value).
+        chi2 = None
+        for spin in spins:
+            if hasattr(spin, 'chi2'):
+                chi2 = spin.chi2
+                break
 
         # Return the values.
         return k, n, chi2
