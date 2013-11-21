@@ -739,6 +739,10 @@ class Relax_disp(API_base, API_common):
 
             # Loop over all spins.
             for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Skip protons for MMQ data.
+                if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+                    continue
+
                 # Get the attached proton.
                 proton = None
                 if proton_mmq_flag:
