@@ -1106,57 +1106,66 @@ def plot_disp_curves(dir=None, force=None):
     @type force:            bool
     """
 
-    # Test if the current pipe exists.
+    # Checks.
     pipes.test()
-
-    # Test if the sequence data is loaded.
-    if not exists_mol_res_spin_data():
-        raise RelaxNoSequenceError
-
-    # Initalise.
+    check_mol_res_spin_data()
 
     # 1H MMQ flag.
     proton_mmq_flag = has_proton_mmq_cpmg()
 
-    # Loop over each experiment type.
-    for exp_type, exp_type_index in loop_exp(return_indices=True):
-        # Loop over each spin.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Skip protons for MMQ data.
-            if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-                continue
+    # Default hardcoded colours (one colour for each magnetic field strength).
+    color_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14]
 
-            # Get the attached proton.
-            proton = None
-            if proton_mmq_flag:
-                proton = return_attached_protons(spin_id)[0]
+    # Loop over each spin.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Skip protons for MMQ data.
+        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
+            continue
+
+        # Initialise some data structures.
+        data = []
+        set_labels = []
+        x_err_flag = False
+        y_err_flag = False
+        set_colours = []
+        symbols = []
+        linetype = []
+        linestyle = []
+
+        # The unique file name.
+        file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+
+        # Open the file for writing.
+        file_path = get_file_path(file_name, dir)
+        file = open_write_file(file_name, dir, force)
+
+        # Get the attached proton.
+        proton = None
+        if proton_mmq_flag:
+            proton = return_attached_protons(spin_id)[0]
+
+        # Loop over each experiment type.
+        graph_index = 0
+        for exp_type, exp_type_index in loop_exp(return_indices=True):
+            # Update the structures.
+            data.append([])
+            set_labels.append([])
+            set_colours.append([])
+            symbols.append([])
+            linetype.append([])
+            linestyle.append([])
 
             # Alias the correct spin.
             current_spin = spin
             if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
                 current_spin = proton
 
-            # The unique file name.
-            file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
-            if num_exp_types() > 1:
-                file_name = "%s_%s" % (exp_type.replace(' ', '_'), file_name)
-
-            # Open the file for writing.
-            file_path = get_file_path(file_name, dir)
-            file = open_write_file(file_name, dir, force)
-
-            # Initialise some data structures.
-            data = []
-            set_labels = []
-            x_err_flag = False
-            y_err_flag = False
-
             # Loop over the spectrometer frequencies.
-            graph_index = 0
+            set_index = 0
             err = False
             for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
-                data.append([])
+                data[graph_index].append([])
 
                 # Add a new label.
                 if exp_type in EXP_TYPE_LIST_CPMG:
@@ -1166,6 +1175,12 @@ def plot_disp_curves(dir=None, force=None):
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
                 set_labels.append(label)
+
+                # The other settings.
+                set_colours[graph_index].append(color_order[frq_index])
+                symbols[graph_index].append(1)
+                linetype[graph_index].append(0)
+                linestyle[graph_index].append(0)
 
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
@@ -1177,17 +1192,20 @@ def plot_disp_curves(dir=None, force=None):
                         continue
 
                     # Add the data.
-                    data[-1].append([point, current_spin.r2eff[key]])
+                    data[graph_index][set_index].append([point, current_spin.r2eff[key]])
 
                     # Add the error.
                     if hasattr(current_spin, 'r2eff_err') and key in current_spin.r2eff_err:
                         err = True
-                        data[-1][-1].append(current_spin.r2eff_err[key])
+                        data[graph_index][set_index][-1].append(current_spin.r2eff_err[key])
+
+                # Increment the graph set index.
+                set_index += 1
 
             # Add the back-calculated data.
             for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
-                data.append([])
+                data[graph_index].append([])
 
                 # Add a new label.
                 if exp_type in EXP_TYPE_LIST_CPMG:
@@ -1197,6 +1215,12 @@ def plot_disp_curves(dir=None, force=None):
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
                 set_labels.append(label)
+
+                # The other settings.
+                set_colours[graph_index].append(color_order[frq_index])
+                symbols[graph_index].append(0)
+                linetype[graph_index].append(1)
+                linestyle[graph_index].append(1)
 
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
@@ -1208,22 +1232,31 @@ def plot_disp_curves(dir=None, force=None):
                         continue
 
                     # Add the data.
-                    data[-1].append([point, current_spin.r2eff_bc[key]])
+                    data[graph_index][set_index].append([point, current_spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
-                        data[-1][-1].append(None)
+                        data[graph_index][set_index][-1].append(None)
+
+                # Increment the graph set index.
+                set_index += 1
 
             # Add the residuals for statistical comparison.
             for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
-                data.append([])
+                data[graph_index].append([])
 
                 # Add a new label.
                 label = "Residuals"
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
                 set_labels.append(label)
+
+                # The other settings.
+                set_colours[graph_index].append(color_order[frq_index])
+                symbols[graph_index].append(9)
+                linetype[graph_index].append(1)
+                linestyle[graph_index].append(2)
 
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
@@ -1235,34 +1268,47 @@ def plot_disp_curves(dir=None, force=None):
                         continue
 
                     # Add the data.
-                    data[-1].append([point, current_spin.r2eff[key] - current_spin.r2eff_bc[key]])
+                    data[graph_index][set_index].append([point, current_spin.r2eff[key] - current_spin.r2eff_bc[key]])
 
                     # Handle the errors.
                     if err:
                         err = True
-                        data[-1][-1].append(current_spin.r2eff_err[key])
+                        data[graph_index][set_index][-1].append(current_spin.r2eff_err[key])
 
-            # The axis labels.
-            if exp_type in EXP_TYPE_LIST_CPMG:
-                axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
-            else:
-                axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
+                # Increment the graph set index.
+                set_index += 1
 
-            # Write the header.
-            title = "Relaxation dispersion plot"
-            write_xy_header(file=file, title=title, sets=len(data), set_names=set_labels, axis_labels=axis_labels, legend_box_fill_pattern=0, legend_char_size=0.8)
+            # Increment the graph index.
+            graph_index += 1
 
-            # Write the data.
-            graph_type = 'xy'
-            if err:
-                graph_type = 'xydy'
-            write_xy_data([data], file=file, graph_type=graph_type)
+        # The axis labels.
+        if exp_type in EXP_TYPE_LIST_CPMG:
+            axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
+        else:
+            axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
 
-            # Close the file.
-            file.close()
+        # Write the header.
+        title = "Relaxation dispersion plot"
+        graph_num = len(data)
+        sets = []
+        legend = []
+        for gi in range(len(data)):
+            sets.append(len(data[gi]))
+            legend.append(False)
+        legend[0] = True
+        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=[set_labels]*graph_num, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=[axis_labels]*graph_num, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
-            # Add the file to the results file list.
-            add_result_file(type='grace', label='Grace', file=file_path)
+        # Write the data.
+        graph_type = 'xy'
+        if err:
+            graph_type = 'xydy'
+        write_xy_data(data, file=file, graph_type=graph_type)
+
+        # Close the file.
+        file.close()
+
+        # Add the file to the results file list.
+        add_result_file(type='grace', label='Grace', file=file_path)
 
     # Write a python "grace to PNG/EPS/SVG..." conversion script.
     # Open the file for writing.
@@ -1372,13 +1418,16 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     axis_labels = ['Relaxation time period (s)', 'Peak intensities']
 
     # Write the header.
-    write_xy_header(sets=len(data[0]), file=file, set_names=set_labels, axis_labels=axis_labels, norm=norm)
+    sets = []
+    for gi in range(len(data)):
+        sets.append(len(data[gi]))
+    write_xy_header(sets=sets, file=file, set_names=[set_labels], axis_labels=[axis_labels], norm=[norm])
 
     # Write the data.
     graph_type = 'xy'
     if err:
         graph_type = 'xydy'
-    write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
+    write_xy_data(data, file=file, graph_type=graph_type, norm=[norm])
 
     # Close the file.
     file.close()
