@@ -34,7 +34,7 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from specific_analyses.relax_disp.disp_data import generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq, return_value_from_frq_index
-from specific_analyses.relax_disp.variables import MODEL_M61B, MODEL_MMQ_2SITE
+from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -554,7 +554,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
         # Chemical exchange difference (dw >= 0).
         elif param_name in ['dw', 'dwH']:
-            if not spins[0].model in [MODEL_MMQ_2SITE]:
+            if not spins[0].model in MODEL_LIST_MMQ:
                 A.append(zero_array * 0.0)
                 A[j][param_index] = 1.0
                 b.append(0.0)

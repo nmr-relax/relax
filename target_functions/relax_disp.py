@@ -1009,29 +1009,48 @@ class Dispersion:
         k_AB = pB * kex
 
         # Initialise.
+        aliased_dwH = 0.0
         chi2_sum = 0.0
 
-        # Loop over the spins.
-        for spin_index in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for frq_index in range(self.num_frq):
-                # The R20 index.
-                r20_index = frq_index + spin_index*self.num_frq
+        # Loop over the experiment types.
+        for exp_index in range(self.num_exp):
+            # Loop over the spins.
+            for spin_index in range(self.num_spins):
+                # Loop over the spectrometer frequencies.
+                for frq_index in range(self.num_frq):
+                    # The R20 index.
+                    r20_index = frq_index + spin_index*self.num_frq
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
-                dwH_frq = dwH[spin_index] * self.frqs_H[0][spin_index][frq_index]
+                    # Convert dw from ppm to rad/s.
+                    dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
+                    dwH_frq = dwH[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
 
-                # Back calculate the R2eff values.
-                r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])
+                    # Alias the dw frequency combinations.
+                    if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
+                        aliased_dw = dw_frq
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
+                        aliased_dw = dwH_frq
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_DQ:
+                        aliased_dw = dwH_frq + dw_frq
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_ZQ:
+                        aliased_dw = dwH_frq - dw_frq
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_MQ:
+                        aliased_dw = dw_frq
+                        aliased_dwH = dwH_frq
+                    elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_MQ:
+                        aliased_dw = dwH_frq
+                        aliased_dwH = dw_frq
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for point_index in range(self.num_disp_points[0][frq_index]):
-                    if self.missing[spin_index][frq_index][point_index]:
-                        self.back_calc[spin_index][frq_index][point_index] = self.values[spin_index][frq_index][point_index]
+                    # Back calculate the R2eff values.
+                    r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[exp_index][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
 
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[spin_index][frq_index], self.back_calc[spin_index][frq_index], self.errors[spin_index][frq_index])
+                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                    for point_index in range(self.num_disp_points[exp_index][frq_index]):
+                        if self.missing[exp_index][spin_index][frq_index][point_index]:
+                            self.back_calc[exp_index][spin_index][frq_index][point_index] = self.values[spin_index][frq_index][point_index]
+
+                    # Calculate and return the chi-squared value.
+                    chi2_sum += chi2(self.values[exp_index][spin_index][frq_index], self.back_calc[exp_index][spin_index][frq_index], self.errors[exp_index][spin_index][frq_index])
 
         # Return the total chi-squared value.
         return chi2_sum
