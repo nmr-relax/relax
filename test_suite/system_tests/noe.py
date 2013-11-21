@@ -120,6 +120,7 @@ class Noe(SystemTestCase):
             '@type xydy\n',
             '40                             -0.670738797320466             0.014260663438353             \n',
             '&\n',
+            '@with g0\n',
             '@autoscale\n'
         ]
 
@@ -127,5 +128,7 @@ class Noe(SystemTestCase):
         file = open(ds.tmpfile)
         lines = file.readlines()
         file.close()
+        for i in range(len(lines)):
+            print("            '%s\\n'," % lines[i][:-1].replace('"', "\\\""))
         for i in range(len(lines)):
             self.assertEqual(data[i], lines[i])
