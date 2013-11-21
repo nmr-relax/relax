@@ -258,6 +258,10 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None, raise_er
     # Loop over all spectrum IDs, returning the matching ID.
     ids = []
     for id in cdp.exp_type.keys():
+        # Skip non-matching experiments.
+        if cdp.exp_type[id] != exp_type:
+            continue
+
         # The spectrometer frequency.
         frq2 = None
         if hasattr(cdp, 'spectrometer_frq'):
