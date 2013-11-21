@@ -222,7 +222,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=None):
         file.write("@arrange(%i, %i, .1, .1, .1, OFF, OFF, OFF)\n" % (row_num, col_num))
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend=True, legend_pos=None, legend_box_fill_pattern=None, legend_char_size=None, norm=False):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend=None, legend_pos=None, legend_box_fill_pattern=None, legend_char_size=None, norm=None):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -277,15 +277,15 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     """
 
     # Defaults.
-    if not sets:
+    if sets == None:
         sets = []
         for gi in range(graph_num):
             sets.append(1)
-    if not linewidth:
+    if linewidth == None:
         linewidth = []
         for gi in range(graph_num):
             linewidth.append(0.5)
-    if not norm:
+    if norm == None:
         norm = []
         for gi in range(graph_num):
             norm.append(False)
@@ -390,19 +390,19 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             # Write out the data.
             if axis_labels[gi][i]:
                 file.write("@    %saxis  label \"%s\"\n" % (axes[i], axis_labels[gi][i]))
-            file.write("@    %saxis  label char size 1.48\n" % axes[i])
-            file.write("@    %saxis  tick major size 0.75\n" % axes[i])
+            file.write("@    %saxis  label char size 1.00\n" % axes[i])
+            file.write("@    %saxis  tick major size 0.50\n" % axes[i])
             file.write("@    %saxis  tick major linewidth %s\n" % (axes[i], linewidth[gi]))
             file.write("@    %saxis  tick minor linewidth %s\n" % (axes[i], linewidth[gi]))
-            file.write("@    %saxis  tick minor size 0.45\n" % axes[i])
-            file.write("@    %saxis  ticklabel char size 1.00\n" % axes[i])
+            file.write("@    %saxis  tick minor size 0.25\n" % axes[i])
+            file.write("@    %saxis  ticklabel char size 0.70\n" % axes[i])
 
         # Legend box.
-        if legend:
+        if legend != None and legend[gi]:
             file.write("@    legend on\n")
         else:
             file.write("@    legend off\n")
-        if legend_pos:
+        if legend_pos != None:
             file.write("@    legend %s, %s\n" % (legend_pos[gi][0], legend_pos[gi][1]))
         file.write("@    legend box fill pattern %s\n" % legend_box_fill_pattern[gi])
         file.write("@    legend char size %s\n" % legend_char_size[gi])
@@ -438,6 +438,7 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             # Symbol colour (default to nothing).
             if set_colours:
                 file.write("@    s%i symbol color %s\n" % (i, set_colours[gi][i]))
+                file.write("@    s%i symbol fill color %s\n" % (i, set_colours[gi][i]))
 
             # Error bars.
             file.write("@    s%i errorbar size 0.5\n" % i)
@@ -452,9 +453,12 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             if linetype:
                 file.write("@    s%i line type %s\n" % (i, linetype[gi][i]))
 
-            # Line colours (default to nothing).
+            # Line and all other colours (default to nothing).
             if set_colours:
                 file.write("@    s%i line color %s\n" % (i, set_colours[gi][i]))
+                file.write("@    s%i fill color %s\n" % (i, set_colours[gi][i]))
+                file.write("@    s%i avalue color %s\n" % (i, set_colours[gi][i]))
+                file.write("@    s%i errorbar color %s\n" % (i, set_colours[gi][i]))
 
             # Legend.
             if set_names and len(set_names) and len(set_names[gi]) and set_names[gi][i]:
