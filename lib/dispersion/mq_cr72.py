@@ -31,7 +31,7 @@ The Carver and Richards (1972) 2-site model for all times scales was extended fo
 from numpy import arccosh, cos, cosh, log, sin, sqrt
 
 
-def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The CR72 model extended to MQ CPMG data.
 
     This function calculates and stores the R2eff values.
@@ -55,6 +55,8 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
     @type k_BA:             float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
+    @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
+    @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
@@ -129,4 +131,4 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
         lambda1 = r20_kex - cpmg_frqs[i] * arccosh(part)
 
         # The full formula.
-        back_calc[i] = lambda1.real - cpmg_frqs[i] * log(Q) / power[i]
+        back_calc[i] = lambda1.real - inv_tcpmg * log(Q) / power[i]
