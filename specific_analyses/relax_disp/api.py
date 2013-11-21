@@ -45,7 +45,7 @@ from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mq_cpmg, has_proton_sq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -155,26 +155,13 @@ class Relax_disp(API_base, API_common):
         # Store the chi2 value.
         spin.chi2 = chi2
 
-        # Convert to a dictionary matching the R2eff data structure.
-        results = {}
-        for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
-            # The parameter key.
-            param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+        # Reconstruct the back_calc data structure.
+        back_calc = model.back_calc
+        if spin.model not in MODEL_LIST_MMQ:
+            back_calc = [back_calc]
 
-            # Skip missing data.
-            if missing[exp_type_index][0][frq_index][point_index]:
-                continue
-
-            # Store the result for the MMQ experiment types.
-            if spin.model in MODEL_LIST_MMQ:
-                results[param_key] = model.back_calc[exp_type_index][0][frq_index][point_index]
-
-            # Store the result for the single experiment types.
-            else:
-                results[param_key] = model.back_calc[0][frq_index][point_index]
-
-        # Return the back calculated R2eff values.
-        return results
+        # Return the structure.
+        return back_calc
 
 
     def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, point=None):
@@ -700,9 +687,7 @@ class Relax_disp(API_base, API_common):
         # All other models (the base data is the R2eff/R1rho values).
         else:
             # MMQ flags.
-            proton_sq_flag = has_proton_sq_cpmg()
-            proton_mq_flag = has_proton_mq_cpmg()
-            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+            proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Loop over the sequence.
             for spin, spin_id in spin_loop(return_id=True):
@@ -749,8 +734,21 @@ class Relax_disp(API_base, API_common):
 
         # Calculate the chi-squared value.
         else:
+            # MMQ flags.
+            proton_mmq_flag = has_proton_mmq_cpmg()
+
+            # Loop over all spins.
             for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-                self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+                # Get the attached proton.
+                proton = None
+                if proton_mmq_flag:
+                    proton = return_attached_protons(spin_id)[0]
+
+                # The back calculated values.
+                back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+
+                # Pack the data.
+                pack_back_calc_r2eff(spin=spin, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
@@ -787,7 +785,20 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
-            values = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+            back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+
+            # Convert to a dictionary matching the R2eff data structure.
+            values = {}
+            for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+                # The parameter key.
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+
+                # Skip missing data.
+                if param_key not in spin.r2eff.keys():
+                    continue
+
+                # Store the result.
+                values[param_key] = back_calc[exp_type_index][0][frq_index][point_index]
 
         # Return the MC data.
         return values
@@ -1103,9 +1114,7 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
 
         # MMQ flags.
-        proton_sq_flag = has_proton_sq_cpmg()
-        proton_mq_flag = has_proton_mq_cpmg()
-        proton_mmq_flag = proton_sq_flag or proton_mq_flag
+        proton_mmq_flag = has_proton_mmq_cpmg()
 
         # Loop over spin data.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
@@ -1204,9 +1213,7 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # MMQ flags.
-            proton_sq_flag = has_proton_sq_cpmg()
-            proton_mq_flag = has_proton_mq_cpmg()
-            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+            proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Get the attached proton.
             proton = None
@@ -1447,9 +1454,7 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # MMQ flags.
-            proton_sq_flag = has_proton_sq_cpmg()
-            proton_mq_flag = has_proton_mq_cpmg()
-            proton_mmq_flag = proton_sq_flag or proton_mq_flag
+            proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Get the attached proton.
             proton = None

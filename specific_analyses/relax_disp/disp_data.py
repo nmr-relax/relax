@@ -450,21 +450,23 @@ def has_fixed_time_exp_type():
     return False
 
 
-def has_proton_sq_cpmg():
-    """Determine if the current data pipe contains proton SQ CPMG data.
+def has_proton_mmq_cpmg():
+    """Determine if the current data pipe contains either proton SQ or MQ (MMQ) CPMG data.
 
     This is only for the MMQ models.
 
 
-    @return:    True if proton SQ CPMG data exists, False otherwise.
+    @return:    True if either proton SQ or MQ CPMG data exists, False otherwise.
     @rtype:     bool
     """
 
-    # Proton SQ CPMG data is present.
-    if EXP_TYPE_CPMG_PROTON_SQ in cdp.exp_type_list:
+    # 1H MMQ data exists.
+    if has_proton_sq_cpmg():
+        return True
+    if has_proton_mq_cpmg():
         return True
 
-    # No 1H SQ CPMG data.
+    # No 1H MMQ CPMG data.
     return False
 
 
@@ -483,6 +485,24 @@ def has_proton_mq_cpmg():
         return True
 
     # No 1H MQ CPMG data.
+    return False
+
+
+def has_proton_sq_cpmg():
+    """Determine if the current data pipe contains proton SQ CPMG data.
+
+    This is only for the MMQ models.
+
+
+    @return:    True if proton SQ CPMG data exists, False otherwise.
+    @rtype:     bool
+    """
+
+    # Proton SQ CPMG data is present.
+    if EXP_TYPE_CPMG_PROTON_SQ in cdp.exp_type_list:
+        return True
+
+    # No 1H SQ CPMG data.
     return False
 
 
@@ -1029,6 +1049,46 @@ def num_exp_types():
 
     # Return the count.
     return count
+
+
+def pack_back_calc_r2eff(spin=None, spin_index=None, back_calc=None, proton_mmq_flag=False):
+    """Store the back calculated R2eff data for the given spin.
+
+    @keyword spin:              The spin data container to store the data in.
+    @type spin:                 SpinContainer instance
+    @keyword spin_index:        The index of the given spin in the cluster.
+    @type spin_index:           int
+    @keyword back_calc:         The back calculated data.  The first index corresponds to the experiment type, the second is the spin of the cluster, the third is the magnetic field strength, and the fourth is the dispersion point.
+    @type back_calc:            list of lists of lists of lists of float
+    @keyword proton_mmq_flag:   The flag specifying if proton SQ or MQ CPMG data exists for the spin.
+    @type proton_mmq_flag:      bool
+    """
+
+    # Get the attached proton.
+    proton = None
+    if proton_mmq_flag:
+        proton = return_attached_protons(memo.spin_ids[spin_index])[0]
+
+    # Loop over the R2eff data.
+    for exp_type, frq,  point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+        # The R2eff key.
+        key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+
+        # Alias the correct spin.
+        current_spin = spin
+        if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+            current_spin = proton
+
+        # Missing data.
+        if not hasattr(current_spin, 'r2eff') or key not in current_spin.r2eff.keys():
+            continue
+
+        # Initialise.
+        if not hasattr(current_spin, 'r2eff_bc'):
+            current_spin.r2eff_bc = {}
+
+        # Store the back-calculated data.
+        current_spin.r2eff_bc[key] = back_calc[exp_type_index][spin_index][frq_index][point_index]
 
 
 def plot_disp_curves(dir=None, force=None):
