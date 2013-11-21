@@ -275,10 +275,10 @@ def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='valu
     seq_type, axis_labels = axis_setup(data_type=data_type, norm=norm)
 
     # Write the header.
-    write_xy_header(sets=len(data[0]), file=file, data_type=data_type, seq_type=seq_type, set_names=set_names, axis_labels=axis_labels, norm=norm)
+    write_xy_header(file=file, data_type=data_type, seq_type=seq_type, sets=[len(data[0])], set_names=[set_names], axis_labels=[axis_labels], norm=[norm])
 
     # Write the data.
-    write_xy_data(data, file=file, graph_type=graph_type, norm=norm)
+    write_xy_data(data, file=file, graph_type=graph_type, norm=[norm])
 
     # Close the file.
     file.close()

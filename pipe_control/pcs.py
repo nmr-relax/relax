@@ -442,7 +442,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                 set_names.append("%s (%s)" % (cdp.pcs_ids[i], types[j]))
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS correlation plot", sets=size, set_names=set_names, linestyle=[2]+[0]*size, data_type=['pcs_bc', 'pcs'], legend_pos=[1, 0.5])
+        grace.write_xy_header(file=file, title="PCS correlation plot", data_type=['pcs_bc', 'pcs'], sets=[size], set_names=[set_names], linestyle=[[2]+[0]*size], legend_pos=[[1, 0.5]])
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type)
@@ -1076,7 +1076,7 @@ def structural_noise(align_id=None, rmsd=0.2, sim_num=1000, file=None, dir=None,
         file = open_write_file(file, dir, force)
 
         # The header.
-        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, sets=len(align_ids), set_names=align_ids, symbol_sizes=[0.5]*len(align_ids), linetype=[0]*len(align_ids), data_type=['pcs_bc', 'pcs'], axis_labels=["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"])
+        grace.write_xy_header(file=file, title="PCS structural noise", subtitle="%s Angstrom structural noise"%rmsd, data_type=['pcs_bc', 'pcs'], sets=[len(align_ids)], set_names=[align_ids], symbol_sizes=[[0.5]*len(align_ids)], linetype=[[0]*len(align_ids)], axis_labels=[["Ln\\S3+\\N to spin distance (Angstrom)", "PCS standard deviation (ppm)"]])
 
         # The main data.
         grace.write_xy_data(data=[grace_data], file=file, graph_type='xy')
