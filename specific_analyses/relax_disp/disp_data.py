@@ -1418,16 +1418,17 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     axis_labels = ['Relaxation time period (s)', 'Peak intensities']
 
     # Write the header.
+    graph_num = len(data)
     sets = []
-    for gi in range(len(data)):
+    for gi in range(graph_num):
         sets.append(len(data[gi]))
-    write_xy_header(sets=sets, file=file, set_names=[set_labels], axis_labels=[axis_labels], norm=[norm])
+    write_xy_header(file=file, graph_num=graph_num, sets=sets, set_names=[set_labels]*graph_num, axis_labels=[axis_labels]*graph_num, norm=[norm]*graph_num)
 
     # Write the data.
     graph_type = 'xy'
     if err:
         graph_type = 'xydy'
-    write_xy_data(data, file=file, graph_type=graph_type, norm=[norm])
+    write_xy_data(data, file=file, graph_type=graph_type, norm=[norm]*graph_num)
 
     # Close the file.
     file.close()
