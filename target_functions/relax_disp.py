@@ -264,7 +264,7 @@ class Dispersion:
                     self.spin_lock_omega1_squared[exp_type_index][frq_index] = self.spin_lock_omega1[exp_type_index][frq_index] ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE]:
             self.inv_relax_times = 1.0 / relax_times
 
         # Special storage matrices for the multi-quantum CPMG 2-site numerical model.
@@ -1009,7 +1009,6 @@ class Dispersion:
         k_AB = pB * kex
 
         # Initialise.
-        aliased_dwH = 0.0
         chi2_sum = 0.0
 
         # Loop over the experiment types.
@@ -1026,6 +1025,7 @@ class Dispersion:
                     dwH_frq = dwH[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
 
                     # Alias the dw frequency combinations.
+                    aliased_dwH = 0.0
                     if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
                         aliased_dw = dw_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
