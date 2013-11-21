@@ -686,7 +686,7 @@ class Relax_disp(API_base, API_common):
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
-            # MMQ flags.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Loop over the sequence.
@@ -734,7 +734,7 @@ class Relax_disp(API_base, API_common):
 
         # Calculate the chi-squared value.
         else:
-            # MMQ flags.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Loop over all spins.
@@ -785,7 +785,7 @@ class Relax_disp(API_base, API_common):
 
         # All other models (with R2eff/R1rho base data).
         else:
-            # MMQ flags.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Unpack the data.
@@ -1132,7 +1132,7 @@ class Relax_disp(API_base, API_common):
         # Test the sequence data exists.
         check_mol_res_spin_data()
 
-        # MMQ flags.
+        # 1H MMQ flag.
         proton_mmq_flag = has_proton_mmq_cpmg()
 
         # Loop over spin data.
@@ -1231,7 +1231,7 @@ class Relax_disp(API_base, API_common):
             # Unpack the data.
             spin, spin_id = data_id
 
-            # MMQ flags.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Get the attached proton.
@@ -1472,7 +1472,7 @@ class Relax_disp(API_base, API_common):
             # Unpack the data.
             spin, spin_id = data_id
 
-            # MMQ flags.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Get the attached proton.

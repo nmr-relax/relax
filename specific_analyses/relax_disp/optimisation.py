@@ -478,7 +478,7 @@ class Disp_result_command(Result_command):
 
         # Store the back-calculated values.
         if memo.sim_index == None:
-            # MMQ flag.
+            # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Reconstruct the back_calc data structure.

@@ -1113,6 +1113,11 @@ def plot_disp_curves(dir=None, force=None):
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
+    # Initalise.
+
+    # 1H MMQ flag.
+    proton_mmq_flag = has_proton_mmq_cpmg()
+
     # Loop over each experiment type.
     for exp_type, exp_type_index in loop_exp(return_indices=True):
         # Loop over each spin.
@@ -1120,11 +1125,6 @@ def plot_disp_curves(dir=None, force=None):
             # Skip protons for MMQ data.
             if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
                 continue
-
-            # MMQ flags.
-            proton_sq_flag = has_proton_sq_cpmg()
-            proton_mq_flag = has_proton_mq_cpmg()
-            proton_mmq_flag = proton_sq_flag or proton_mq_flag
 
             # Get the attached proton.
             proton = None
@@ -1310,6 +1310,9 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     x_err_flag = False
     y_err_flag = False
 
+    # 1H MMQ flag.
+    proton_mmq_flag = has_proton_mmq_cpmg()
+
     # Loop over the spectrometer frequencies.
     graph_index = 0
     err = False
@@ -1328,11 +1331,6 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # No data present.
                 if not hasattr(spin, 'intensities'):
                     continue
-
-                # MMQ flags.
-                proton_sq_flag = has_proton_sq_cpmg()
-                proton_mq_flag = has_proton_mq_cpmg()
-                proton_mmq_flag = proton_sq_flag or proton_mq_flag
 
                 # Get the attached proton.
                 proton = None
@@ -2135,10 +2133,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     exp_num = num_exp_types()
     spin_num = len(spins)
 
-    # MMQ flags.
-    proton_sq_flag = has_proton_sq_cpmg()
-    proton_mq_flag = has_proton_mq_cpmg()
-    proton_mmq_flag = proton_sq_flag or proton_mq_flag
+    # 1H MMQ flag.
+    proton_mmq_flag = has_proton_mmq_cpmg()
 
     # Initialise the data structures for the target function.
     exp_types = []
@@ -2547,16 +2543,14 @@ def write_disp_curves(dir=None, force=None):
     format_head = "# %-18s %-20s %-20s %-20s %-20s %-20s\n"
     format = "%-20s %20s %20s %20s %20s %20s\n"
 
+    # 1H MMQ flag.
+    proton_mmq_flag = has_proton_mmq_cpmg()
+
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
         # Skip protons for MMQ data.
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
-
-        # MMQ flags.
-        proton_sq_flag = has_proton_sq_cpmg()
-        proton_mq_flag = has_proton_mq_cpmg()
-        proton_mmq_flag = proton_sq_flag or proton_mq_flag
 
         # Get the attached proton.
         proton = None
