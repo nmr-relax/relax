@@ -528,7 +528,7 @@ def insignificance(level=0.0):
 
         # Get all the data.
         try:
-            values, errors, missing, frqs, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+            values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
         # No R2eff data, so skip the rest.
         except RelaxError:
@@ -2084,23 +2084,27 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
     errors = []
     missing = []
     frqs = []
+    frqs_H = []
     relax_times = []
     for exp_i in range(exp_num):
         values.append([])
         errors.append([])
         missing.append([])
         frqs.append([])
+        frqs_H.append([])
         relax_times.append([])
         for spin_i in range(spin_num):
             values[-1].append([])
             errors[-1].append([])
             missing[-1].append([])
             frqs[-1].append([])
+            frqs_H[-1].append([])
             for field_i in range(field_count):
                 values[-1][-1].append([])
                 errors[-1][-1].append([])
                 missing[-1][-1].append([])
                 frqs[-1][-1].append(None)
+                frqs_H[-1][-1].append(None)
         for field_i in range(field_count):
             relax_times[-1].append(None)
 
@@ -2151,9 +2155,10 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
             # The key.
             key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
-            # The Larmor frequency for this spin and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
+            # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
             if frq != None:
-                frqs[exp_type_index][spin_index][frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(current_spin.isotope) * 1e-6
+                frqs[exp_type_index][spin_index][frq_index] = 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+                frqs_H[exp_type_index][spin_index][frq_index] = 2.0 * pi * frq * 1e-6
 
             # Missing data.
             if key not in current_spin.r2eff.keys():
@@ -2214,7 +2219,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 missing[exp_type_index][spin_index][frq_index] = array(missing[exp_type_index][spin_index][frq_index], int32)
 
     # Return the structures.
-    return values, errors, missing, frqs, exp_types, relax_times
+    return values, errors, missing, frqs, frqs_H, exp_types, relax_times
 
 
 def return_spin_lock_nu1(ref_flag=True):

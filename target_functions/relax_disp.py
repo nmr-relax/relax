@@ -53,7 +53,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -103,6 +103,8 @@ class Dispersion:
         @type missing:              list of lists of lists of numpy rank-1 int arrays
         @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first three of the value, error and missing structures.
         @type frqs:                 list of lists of numpy rank-1 float arrays
+        @keyword frqs_H:            The proton spin Larmor frequencies for the MMQ-type models (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first three of the value, error and missing structures.
+        @type frqs_H:               list of lists of numpy rank-1 float arrays
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            list of lists of lists of floats
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
@@ -146,6 +148,7 @@ class Dispersion:
         self.errors = errors
         self.missing = missing
         self.frqs = frqs
+        self.frqs_H = frqs_H
         self.cpmg_frqs = cpmg_frqs
         self.spin_lock_nu1 = spin_lock_nu1
         self.chemical_shifts = chemical_shifts
@@ -947,7 +950,7 @@ class Dispersion:
 
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
-                    dwH_frq = dwH[spin_index] * self.frqs[exp_index][spin_index][frq_index]
+                    dwH_frq = dwH[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
 
                     # Alias the dw frequency combinations.
                     if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
@@ -1017,7 +1020,7 @@ class Dispersion:
 
                 # Convert dw from ppm to rad/s.
                 dw_frq = dw[spin_index] * self.frqs[0][spin_index][frq_index]
-                dwH_frq = dwH[spin_index] * self.frqs[0][spin_index][frq_index]
+                dwH_frq = dwH[spin_index] * self.frqs_H[0][spin_index][frq_index]
 
                 # Back calculate the R2eff values.
                 r2eff_mq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[0][frq_index], tcp=self.tau_cpmg[0][frq_index], back_calc=self.back_calc[spin_index][frq_index], num_points=self.num_disp_points[0][frq_index], power=self.power[0][frq_index])

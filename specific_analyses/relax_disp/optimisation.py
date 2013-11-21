@@ -297,7 +297,7 @@ class Disp_minimise_command(Slave_command):
             raise RelaxError("The spectrometer frequency information has not been specified.")
 
         # The R2eff/R1rho data.
-        self.values, self.errors, self.missing, self.frqs, self.exp_types, self.relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
+        self.values, self.errors, self.missing, self.frqs, self.frqs_H, self.exp_types, self.relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
 
         # The offset and R1 data for R1rho off-resonance models.
         self.chemical_shifts, self.offsets, self.tilt_angles, self.r1 = None, None, None, None
@@ -330,7 +330,7 @@ class Disp_minimise_command(Slave_command):
                 print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % self.grid_size)
 
         # Initialise the function to minimise.
-        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, spin_lock_offsets=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
+        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, frqs_H=self.frqs_H, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, spin_lock_offsets=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', self.min_algor):
