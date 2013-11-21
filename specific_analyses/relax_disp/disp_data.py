@@ -1288,6 +1288,14 @@ def plot_disp_curves(dir=None, force=None):
             else:
                 axis_labels.append(['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
 
+        # Remove all NaN values.
+        for i in range(len(data)):
+            for j in range(len(data[i])):
+                for k in range(len(data[i][j])):
+                    for l in range(len(data[i][j][k])):
+                        if isNaN(data[i][j][k][l]):
+                            data[i][j][k][l] = 0.0
+
         # Write the header.
         title = "Relaxation dispersion plot"
         graph_num = len(data)
