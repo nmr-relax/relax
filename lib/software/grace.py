@@ -22,6 +22,9 @@
 # Module docstring.
 """Module for interfacing with Grace (also known as Xmgrace, Xmgr, and ace)."""
 
+# Python module imports.
+from math import ceil, sqrt
+
 # relax module imports.
 import pipe_control
 from pipe_control import pipes
@@ -51,8 +54,11 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
     elif graph_type == 'xydxdy':
         comment_col = 4
 
+    # Graph number.
+    g_num = len(data)
+
     # Loop over the graphs.
-    for gi in range(len(data)):
+    for gi in range(g_num):
         # Loop over the data sets of the graph.
         for si in range(len(data[gi])):
             # The target and type.
@@ -106,7 +112,15 @@ def write_xy_data(data, file=None, graph_type=None, norm=False):
             file.write("&\n")
 
     # Autoscaling of all graphs to avoid user confusion.
-    file.write("@autoscale\n")
+    for i in range(g_num):
+        file.write("@with g%i\n" % i)
+        file.write("@autoscale\n")
+
+    # Auto-arrange the graphs if multiple are present.
+    if len(data) > 1:
+        row_num = int(round(sqrt(len(data))))
+        col_num = int(ceil(sqrt(len(data))))
+        file.write("@arrange(%i, %i, .05, .05, .05, ON, ON, ON)\n" % (row_num, col_num))
 
 
 def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, sets=1, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=0.5, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=False, norm=False):
