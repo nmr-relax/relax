@@ -936,7 +936,6 @@ class Dispersion:
         self.M0[1] = pB
 
         # Initialise.
-        aliased_dwH = 0.0
         chi2_sum = 0.0
 
         # Loop over the experiment types.
@@ -953,6 +952,7 @@ class Dispersion:
                     dwH_frq = dwH[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
 
                     # Alias the dw frequency combinations.
+                    aliased_dwH = 0.0
                     if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
                         aliased_dw = dw_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
