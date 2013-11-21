@@ -48,7 +48,7 @@ from specific_analyses.relax_disp.checks import check_c_modules, check_disp_poin
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -748,7 +748,7 @@ class Relax_disp(API_base, API_common):
                 back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
 
                 # Pack the data.
-                pack_back_calc_r2eff(spin=spin, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                pack_back_calc_r2eff(spin=spin, spin_id=spin_id, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
@@ -781,20 +781,35 @@ class Relax_disp(API_base, API_common):
 
         # All other models (with R2eff/R1rho base data).
         else:
+            # MMQ flags.
+            proton_mmq_flag = has_proton_mmq_cpmg()
+
             # Unpack the data.
             spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
             back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
 
+            # Get the attached proton data.
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
+                proton_back_calc = self._back_calc_r2eff(spin=proton, spin_id=spin_id)
+
             # Convert to a dictionary matching the R2eff data structure.
             values = {}
             for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+                # Alias the correct data.
+                current_bc = back_calc
+                current_spin = spin
+                if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                    current_spin = proton
+                    current_bc = proton_back_calc
+
                 # The parameter key.
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
                 # Skip missing data.
-                if param_key not in spin.r2eff.keys():
+                if not hasattr(current_spin, 'r2eff') or param_key not in current_spin.r2eff.keys():
                     continue
 
                 # Store the result.

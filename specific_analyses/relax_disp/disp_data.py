@@ -1051,11 +1051,13 @@ def num_exp_types():
     return count
 
 
-def pack_back_calc_r2eff(spin=None, spin_index=None, back_calc=None, proton_mmq_flag=False):
+def pack_back_calc_r2eff(spin=None, spin_id=None, spin_index=None, back_calc=None, proton_mmq_flag=False):
     """Store the back calculated R2eff data for the given spin.
 
     @keyword spin:              The spin data container to store the data in.
     @type spin:                 SpinContainer instance
+    @keyword spin_id:           The spin ID string.
+    @type spin_id:              str
     @keyword spin_index:        The index of the given spin in the cluster.
     @type spin_index:           int
     @keyword back_calc:         The back calculated data.  The first index corresponds to the experiment type, the second is the spin of the cluster, the third is the magnetic field strength, and the fourth is the dispersion point.
@@ -1067,7 +1069,7 @@ def pack_back_calc_r2eff(spin=None, spin_index=None, back_calc=None, proton_mmq_
     # Get the attached proton.
     proton = None
     if proton_mmq_flag:
-        proton = return_attached_protons(memo.spin_ids[spin_index])[0]
+        proton = return_attached_protons(spin_id)[0]
 
     # Loop over the R2eff data.
     for exp_type, frq,  point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):

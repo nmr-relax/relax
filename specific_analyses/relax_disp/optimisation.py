@@ -488,4 +488,4 @@ class Disp_result_command(Result_command):
 
             # Loop over each spin, packing the data.
             for spin_index in range(len(memo.spins)):
-                pack_back_calc_r2eff(spin=memo.spins[spin_index], spin_index=spin_index, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                pack_back_calc_r2eff(spin=memo.spins[spin_index], spin_id=memo.spin_ids[spin_index], spin_index=spin_index, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
