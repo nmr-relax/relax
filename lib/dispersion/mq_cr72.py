@@ -123,8 +123,7 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
         # Part of the equation (catch values < 1 to prevent math domain errors).
         part = Dpos * cosh(etapos) - Dneg * cos(etaneg)
         if part.real < 1.0:
-            back_calc[i] = 1e100
-            continue
+            part = -part
 
         # The first eigenvalue.
         lambda1 = r20_kex - cpmg_frqs[i] * arccosh(part)
