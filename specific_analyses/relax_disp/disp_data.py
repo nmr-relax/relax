@@ -1127,6 +1127,7 @@ def plot_disp_curves(dir=None, force=None):
         set_labels = []
         x_err_flag = False
         y_err_flag = False
+        axis_labels = []
         set_colours = []
         symbols = []
         linetype = []
@@ -1281,11 +1282,11 @@ def plot_disp_curves(dir=None, force=None):
             # Increment the graph index.
             graph_index += 1
 
-        # The axis labels.
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            axis_labels = ['\\qCPMG pulse train frequency (Hz)\\Q', '\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)']
-        else:
-            axis_labels = ['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)']
+            # The axis labels.
+            if exp_type in EXP_TYPE_LIST_CPMG:
+                axis_labels.append(['\\qCPMG pulse train frequency (Hz)\\Q', '%s - \\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)'%exp_type])
+            else:
+                axis_labels.append(['\\qSpin-lock field strength (Hz)\\Q', '\\qR\\s1\\xr\\B\\N\\Q (rad.s\\S-1\\N)'])
 
         # Write the header.
         title = "Relaxation dispersion plot"
@@ -1296,7 +1297,7 @@ def plot_disp_curves(dir=None, force=None):
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=[set_labels]*graph_num, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=[axis_labels]*graph_num, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=[set_labels]*graph_num, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
