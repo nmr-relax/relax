@@ -1073,7 +1073,7 @@ def plot_disp_curves(dir=None, force=None):
             # The unique file name.
             file_name = "disp%s.agr" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
             if num_exp_types() > 1:
-                file_name = exp_type.replace(' ', '_') + file_name
+                file_name = "%s_%s" % (exp_type.replace(' ', '_'), file_name)
 
             # Open the file for writing.
             file_path = get_file_path(file_name, dir)
