@@ -30,6 +30,7 @@ This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.  It uses the equa
 """
 
 # Python module imports.
+from math import floor
 from numpy import array, conj, dot, float64, log
 
 # relax module imports.
@@ -62,7 +63,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
+def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -110,13 +111,11 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
     @type num_points:       int
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int16, rank-1 array
-    @keyword n:             The n value whereby one CPMG block is defined at 2n.
-    @type n:                numpy int16, rank-1 array
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dw+dwH, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dw+dwH, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=-dw-dwH, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=dw-dwH, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -138,10 +137,24 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
         M1_M2_M2_M1_star = dot(M1_M2_star, M2_M1_star)
         M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
-        # Matrices for even n.
-        if n[i] % 2 == 0:
+        # Special case of 1 CPMG block - the power is zero.
+        if power[i] == 1:
+            # M2.M1
+            A = M2_M1
+
+            # M2*.M1*
+            B = M2_M1_star
+
+            # M1.M2
+            C = M1_M2
+
+            # M1*.M2*
+            D = M1_M2_star
+
+        # Matrices for even number of CPMG blocks.
+        elif power[i] % 2 == 0:
             # The power factor (only calculate once).
-            fact = int(n[i] / 2)
+            fact = int(floor(power[i] / 2))
 
             # (M1.M2.M2.M1)^(n/2)
             A = square_matrix_power(M1_M2_M2_M1, fact)
@@ -155,31 +168,31 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
             # (M1*.M2*.M2*.M1*)^(n/2)
             D = square_matrix_power(M1_M2_M2_M1_star, fact)
 
-        # Matrices for odd n.
+        # Matrices for odd number of CPMG blocks.
         else:
             # The power factor (only calculate once).
-            fact = int((n[i] - 1) / 2)
+            fact = int(floor((power[i] - 1) / 2))
 
-            # (M1.M2.M2.M1)^((n-1)/2).M1.M2
+            # M2.M1.(M1.M2.M2.M1)^((n-1)/2)
             A = square_matrix_power(M1_M2_M2_M1, fact)
-            A = dot(A, M1_M2)
+            A = dot(M2_M1, A)
 
-            # (M1*.M2*.M2*.M1*)^((n-1)/2).M1*.M2*
+            # M2*.M1*.(M1*.M2*.M2*.M1*)^((n-1)/2)
             B = square_matrix_power(M1_M2_M2_M1_star, fact)
-            B = dot(B, M1_M2_star)
+            B = dot(M2_M1_star, B)
 
-            # (M2.M1.M1.M2)^((n-1)/2).M2.M1
+            # M1.M2.(M2.M1.M1.M2)^((n-1)/2)
             C = square_matrix_power(M2_M1_M1_M2, fact)
-            C = dot(C, M2_M1)
+            C = dot(M1_M2, C)
 
-            # (M2*.M1*.M1*.M2*)^((n-1)/2).M2*.M1*
+            # M1*.M2*.(M2*.M1*.M1*.M2*)^((n-1)/2)
             D = square_matrix_power(M2_M1_M1_M2_star, fact)
-            D = dot(D, M2_M1_star)
+            D = dot(M1_M2_star, D)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        A_B = dot(A, B)
-        C_D = dot(C, D)
-        Mx = dot(dot(F_vector, (A_B + C_D)), M0)
+        B_A = dot(B, A)
+        D_C = dot(D, C)
+        Mx = dot(dot(F_vector, (B_A + D_C)), M0)
         Mx = Mx.real / 2.0
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
@@ -187,7 +200,7 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
             back_calc[i]= -inv_tcpmg * log(Mx / pA)
 
 
-def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None, n=None):
+def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -231,8 +244,6 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     @type num_points:       int
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int16, rank-1 array
-    @keyword n:             The n value whereby one CPMG block is defined at 2n.
-    @type n:                numpy int16, rank-1 array
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).

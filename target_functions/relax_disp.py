@@ -231,14 +231,6 @@ class Dispersion:
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
                         self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
 
-        # The n value.
-        if model == MODEL_MMQ_2SITE:
-            self.n = []
-            for exp_type_index in range(len(values)):
-                self.n.append([])
-                for frq_index in range(len(values[exp_type_index][0])):
-                    self.n[exp_type_index].append(2 * self.power[exp_type_index][frq_index])
-
         # The tau_cpmg times - recalculated to avoid any user induced truncation in the input files.
         if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
             self.tau_cpmg = []
@@ -968,7 +960,7 @@ class Dispersion:
                         aliased_dwH = dw_frq
 
                     # Back calculate the R2eff values for each experiment type.
-                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20[r20_index], R20B=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[exp_index][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index], n=self.n[exp_index][frq_index])
+                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20[r20_index], R20B=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[exp_index][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for point_index in range(self.num_disp_points[exp_index][frq_index]):
