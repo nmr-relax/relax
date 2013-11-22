@@ -123,10 +123,21 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     lower.append(0.0)
                     upper.append(10.0)
 
-                # Chemical shift difference between states A and B.
-                elif param_name in ['dw', 'dwH']:
-                    lower.append(0.0)
-                    upper.append(10.0)
+                # Chemical shift difference between states A and B (heteronucleus).
+                elif param_name == 'dw':
+                    if spins[spin_index].model in MODEL_LIST_MMQ:
+                        lower.append(-5.0)
+                    else:
+                        lower.append(0.0)
+                    upper.append(5.0)
+
+                # Chemical shift difference between states A and B (proton).
+                elif param_name == 'dwH':
+                    if spins[spin_index].model in MODEL_LIST_MMQ:
+                        lower.append(-1.0)
+                    else:
+                        lower.append(0.0)
+                    upper.append(1.0)
 
                 # The population of state A.
                 elif param_name == 'pA':
