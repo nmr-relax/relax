@@ -126,11 +126,5 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[i] = 1e100
             continue
 
-        # Part of the equation (catch values < 1 to prevent math domain errors).
-        part = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-        if part < 1.0:
-            back_calc[i] = 1e100
-            continue
-
         # The full formula.
-        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(part)
+        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
