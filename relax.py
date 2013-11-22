@@ -40,6 +40,7 @@ import compat
 import dep_check
 
 # Python modules.
+import numpy
 from optparse import Option, OptionParser
 from os import F_OK, access, getpid, putenv
 if dep_check.cprofile_module:
@@ -289,13 +290,16 @@ class Relax:
         parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
         parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
         parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
+        parser.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
 
         # Parse the options.
         (options, args) = parser.parse_args()
 
-        # Debugging flag.
+        # Debugging flag (and numpy warning to error conversion).
         if options.debug:
             status.debug = True
+        if options.numpy_raise:
+            numpy.seterr(all='raise')
 
         # Pedantic flag.
         if options.pedantic:
