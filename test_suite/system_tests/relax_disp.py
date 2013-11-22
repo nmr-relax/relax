@@ -2616,33 +2616,33 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         spin137S = cdp.mol[0].res[1].spin[0]
         spin137F = cdp.mol[0].res[1].spin[1]
 
-        # Set the cluster specific parameters (only for the first spin).
-        spin135S.pA = 0.864737982511210
-        spin135S.kex = 286.743720388766860
-
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=600e6)
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
 
+        # Set the cluster specific parameters (only for the first spin).
+        spin135S.pA = 0.836591763632
+        spin135S.kex = 241.806525261
+
         # Set the initial parameter values.
-        spin135S.r2 = {r20_key1: 31.529250951747834, r20_key2: 38.638249554769878}
-        spin135S.dw = 0.586224611058921
-        spin135S.dwH = 0.000000337605456
+        spin135S.r2 = {r20_key1: 28.2493431552, r20_key2: 31.7517334715}
+        spin135S.dw = 0.583003118785
+        spin135S.dwH = 0.0361441944301
 
-        spin135F.r2 = {r20_key1: 42.635298355865039, r20_key2: 58.200580875711417}
-        spin135F.dw = 0.857710423308549
-        spin135F.dwH = 0.022554924428825
+        spin135F.r2 = {r20_key1: 42.7201839991, r20_key2: 57.3178617389}
+        spin135F.dw = 0.805849745104
+        spin135F.dwH = 0.0215791945715
 
-        spin137S.r2 = {r20_key1: 26.852049534997846, r20_key2: 32.856936362980065}
-        spin137S.dw = 0.712087594614247
-        spin137S.dwH = 0.122253576682791
+        spin137S.r2 = {r20_key1: 26.0134115256, r20_key2: 30.575806934}
+        spin137S.dw = 0.688107568372
+        spin137S.dwH = 0.0344463604043
 
-        spin137F.r2 = {r20_key1: 46.014039109842983, r20_key2: 57.798402024518595}
-        spin137F.dw = 0.980787017888634
-        spin137F.dwH = 0.000011599527196
+        spin137F.r2 = {r20_key1: 46.6969397337, r20_key2: 58.602384101}
+        spin137F.dw = 0.94978299907
+        spin137F.dwH = 1.4818877939e-07
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=100, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-10, max_iter=1000)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
@@ -2672,40 +2672,40 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("        spin137F.dwH = %s" % spin137F.dwH)
 
         # Checks for residue :135S.
-        self.assertAlmostEqual(spin135S.r2[r20_key1], 31.5292509517478, 4)
-        self.assertAlmostEqual(spin135S.r2[r20_key2], 38.6382495547699, 4)
-        self.assertAlmostEqual(spin135S.pA, 0.86473798251121, 4)
-        self.assertAlmostEqual(spin135S.dw, 0.586224611058921, 4)
-        self.assertAlmostEqual(spin135S.dwH, 3.544857288e-07, 4)
-        self.assertAlmostEqual(spin135S.kex, 286.743720388767, 4)
-        self.assertAlmostEqual(spin135S.chi2, 15.2088757872867, 4)
+        self.assertAlmostEqual(spin135S.r2[r20_key1], 28.2499549832749, 4)
+        self.assertAlmostEqual(spin135S.r2[r20_key2], 31.7529931145939, 4)
+        self.assertAlmostEqual(spin135S.pA, 0.836602053942836, 4)
+        self.assertAlmostEqual(spin135S.dw, 0.582996164517237, 4)
+        self.assertAlmostEqual(spin135S.dwH, 0.0361431023785737, 4)
+        self.assertAlmostEqual(spin135S.kex, 241.827943268269, 4)
+        self.assertAlmostEqual(spin135S.chi2, 12.4224061774664, 4)
 
         # Checks for residue :135F.
-        self.assertAlmostEqual(spin135F.r2[r20_key1], 42.635298355865, 4)
-        self.assertAlmostEqual(spin135F.r2[r20_key2], 58.2005808757114, 4)
-        self.assertAlmostEqual(spin135F.pA, 0.86473798251121, 4)
-        self.assertAlmostEqual(spin135F.dw, 0.857710423308549, 4)
-        self.assertAlmostEqual(spin135F.dwH, 0.022554924428825, 4)
-        self.assertAlmostEqual(spin135F.kex, 286.743720388767, 4)
-        self.assertAlmostEqual(spin135F.chi2, 15.2088757872867, 4)
+        self.assertAlmostEqual(spin135F.r2[r20_key1], 42.7201353164699, 4)
+        self.assertAlmostEqual(spin135F.r2[r20_key2], 57.3182694767754, 4)
+        self.assertAlmostEqual(spin135F.pA, 0.836602053942836, 4)
+        self.assertAlmostEqual(spin135F.dw, 0.805844579818815, 4)
+        self.assertAlmostEqual(spin135F.dwH, 0.0215772589360951, 4)
+        self.assertAlmostEqual(spin135F.kex, 241.827943268269, 4)
+        self.assertAlmostEqual(spin135F.chi2, 12.4224061774664, 4)
 
         # Checks for residue :137S.
-        self.assertAlmostEqual(spin137S.r2[r20_key1], 26.8520495349978, 4)
-        self.assertAlmostEqual(spin137S.r2[r20_key2], 32.8569363629801, 4)
-        self.assertAlmostEqual(spin137S.pA, 0.86473798251121, 4)
-        self.assertAlmostEqual(spin137S.dw, 0.712087594614247, 4)
-        self.assertAlmostEqual(spin137S.dwH, 0.122253576682791, 4)
-        self.assertAlmostEqual(spin137S.kex, 286.743720388767, 4)
-        self.assertAlmostEqual(spin137S.chi2, 15.2088757872867, 4)
+        self.assertAlmostEqual(spin137S.r2[r20_key1], 26.0130900829802, 4)
+        self.assertAlmostEqual(spin137S.r2[r20_key2], 30.5756150883564, 4)
+        self.assertAlmostEqual(spin137S.pA, 0.836602053942836, 4)
+        self.assertAlmostEqual(spin137S.dw, 0.688110098029141, 4)
+        self.assertAlmostEqual(spin137S.dwH, 0.0344479518787365, 4)
+        self.assertAlmostEqual(spin137S.kex, 241.827943268269, 4)
+        self.assertAlmostEqual(spin137S.chi2, 12.4224061774664, 4)
 
         # Checks for residue :137F.
-        self.assertAlmostEqual(spin137F.r2[r20_key1], 46.014039109843, 4)
-        self.assertAlmostEqual(spin137F.r2[r20_key2], 57.7984020245186, 4)
-        self.assertAlmostEqual(spin137F.pA, 0.86473798251121, 4)
-        self.assertAlmostEqual(spin137F.dw, 0.980787017888634, 4)
-        self.assertAlmostEqual(spin137F.dwH, 1.1599527196e-05, 4)
-        self.assertAlmostEqual(spin137F.kex, 286.743720388767, 4)
-        self.assertAlmostEqual(spin137F.chi2, 15.2088757872867, 4)
+        self.assertAlmostEqual(spin137F.r2[r20_key1], 46.6966999976701, 4)
+        self.assertAlmostEqual(spin137F.r2[r20_key2], 58.6021572404496, 4)
+        self.assertAlmostEqual(spin137F.pA, 0.836602053942836, 4)
+        self.assertAlmostEqual(spin137F.dw, 0.949766944294449, 4)
+        self.assertAlmostEqual(spin137F.dwH, 1.60128740101484e-07, 4)
+        self.assertAlmostEqual(spin137F.kex, 241.827943268269, 4)
+        self.assertAlmostEqual(spin137F.chi2, 12.4224061774664, 4)
 
 
     def test_sprangers_data_to_mmq_2site(self, model=None):
