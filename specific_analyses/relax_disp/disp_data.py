@@ -1175,7 +1175,7 @@ def plot_disp_curves(dir=None, force=None):
                     label = "R\\s1\\xr\\B\\N"
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
-                set_labels.append(label)
+                set_labels[exp_type_index].append(label)
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
@@ -1215,7 +1215,7 @@ def plot_disp_curves(dir=None, force=None):
                     label = "Back-calculated R\\s1\\xr\\B\\N"
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
-                set_labels.append(label)
+                set_labels[exp_type_index].append(label)
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
@@ -1251,7 +1251,7 @@ def plot_disp_curves(dir=None, force=None):
                 label = "Residuals"
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
-                set_labels.append(label)
+                set_labels[exp_type_index].append(label)
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
@@ -1305,7 +1305,7 @@ def plot_disp_curves(dir=None, force=None):
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=[set_labels]*graph_num, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
