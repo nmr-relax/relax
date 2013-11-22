@@ -220,18 +220,7 @@ class Dispersion:
         if model in [MODEL_NS_R1RHO_2SITE]:
             self.M0 = zeros(6, float64)
 
-        # Some other data structures for the analytical and numerical solutions.
-        if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
-            # The tau_cpmg times.
-            self.tau_cpmg = []
-            for exp_type_index in range(len(values)):
-                self.tau_cpmg.append([])
-                for frq_index in range(len(values[exp_type_index][0])):
-                    self.tau_cpmg[exp_type_index].append(zeros(self.num_disp_points[exp_type_index][frq_index], float64))
-                    for i in range(self.num_disp_points[exp_type_index][frq_index]):
-                        self.tau_cpmg[exp_type_index][frq_index][i] = 0.25 / self.cpmg_frqs[exp_type_index][frq_index][i]
-
-        # Some other data structures for the numerical solutions.
+        # The number of CPMG blocks.
         if model in MODEL_LIST_CPMG_NUM:
             # The matrix exponential power array.
             self.power = []
@@ -242,13 +231,23 @@ class Dispersion:
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
                         self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
 
-        # The strange n definition of Korzhnev.
+        # The n value.
         if model == MODEL_MMQ_2SITE:
             self.n = []
             for exp_type_index in range(len(values)):
                 self.n.append([])
                 for frq_index in range(len(values[exp_type_index][0])):
                     self.n[exp_type_index].append(2 * self.power[exp_type_index][frq_index])
+
+        # The tau_cpmg times - recalculated to avoid any user induced truncation in the input files.
+        if model in [MODEL_MQ_CR72, MODEL_MMQ_2SITE, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_TSMFK01]:
+            self.tau_cpmg = []
+            for exp_type_index in range(len(values)):
+                self.tau_cpmg.append([])
+                for frq_index in range(len(values[exp_type_index][0])):
+                    self.tau_cpmg[exp_type_index].append(zeros(self.num_disp_points[exp_type_index][frq_index], float64))
+                    for i in range(self.num_disp_points[exp_type_index][frq_index]):
+                        self.tau_cpmg[exp_type_index][frq_index][i] = 0.25 * self.relax_times[exp_type_index][frq_index] / self.power[exp_type_index][frq_index][i]
 
         # Convert the spin-lock data to rad.s^-1.
         if spin_lock_nu1 != None:
