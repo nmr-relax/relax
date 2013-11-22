@@ -564,11 +564,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         self.assertAlmostEqual(spin70.dw, 5.60903520132766, 4)
         self.assertAlmostEqual(spin70.kex/10000, 1752.96048901822/10000, 4)
         self.assertAlmostEqual(spin70.chi2, 53.8382161775238, 4)
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.83137944442748, 2)
-        self.assertAlmostEqual(spin71.pA, 0.525362677141359, 2)
-        self.assertAlmostEqual(spin71.dw, 5.62607344890692e-05, 2)
-        self.assertAlmostEqual(spin71.kex, 5.04771424685256e-06, 2)
-        self.assertAlmostEqual(spin71.chi2, 3907.96355683848, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.90115065692451, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key2], 8.8711228286642, 2)
+        self.assertAlmostEqual(spin71.pA, 0.52128026997105, 2)
+        self.assertAlmostEqual(spin71.dw, 0.000250634783026154, 2)
+        self.assertAlmostEqual(spin71.kex, 1.41670416420046e-05, 2)
+        self.assertAlmostEqual(spin71.chi2, 3914.07175884826, 2)
 
 
     def test_hansen_cpmg_data_auto_analysis_numeric(self):
@@ -625,11 +626,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         self.assertAlmostEqual(spin70.dw, 5.60903520132766, 4)
         self.assertAlmostEqual(spin70.kex/10000, 1752.96048901822/10000, 4)
         self.assertAlmostEqual(spin70.chi2, 53.8382161775238, 4)
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.83137944442748, 2)
-        self.assertAlmostEqual(spin71.pA, 0.525362677141359, 2)
-        self.assertAlmostEqual(spin71.dw, 5.62607344890692e-05, 2)
-        self.assertAlmostEqual(spin71.kex, 5.04771424685256e-06, 2)
-        self.assertAlmostEqual(spin71.chi2, 3907.96355683848, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.90115065692451, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key2], 8.8711228286642, 2)
+        self.assertAlmostEqual(spin71.pA, 0.52128026997105, 2)
+        self.assertAlmostEqual(spin71.dw, 0.000250634783026154, 2)
+        self.assertAlmostEqual(spin71.kex, 1.41670416420046e-05, 2)
+        self.assertAlmostEqual(spin71.chi2, 3914.07175884826, 2)
 
         # The 'NS CPMG 2-site expanded' model checks.  These models have not reached the minima due to the low quality optimisation!
         self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded')
@@ -739,11 +741,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         self.assertAlmostEqual(spin70.dw, 5.60903520132766, 4)
         self.assertAlmostEqual(spin70.kex/10000, 1752.96048901822/10000, 4)
         self.assertAlmostEqual(spin70.chi2, 53.8382161775238, 4)
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.83137944442748, 2)
-        self.assertAlmostEqual(spin71.pA, 0.525362677141359, 2)
-        self.assertAlmostEqual(spin71.dw, 5.62607344890692e-05, 2)
-        self.assertAlmostEqual(spin71.kex, 5.04771424685256e-06, 2)
-        self.assertAlmostEqual(spin71.chi2, 3907.96355683848, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.90115065692451, 2)
+        self.assertAlmostEqual(spin71.r2[r20_key2], 8.8711228286642, 2)
+        self.assertAlmostEqual(spin71.pA, 0.52128026997105, 2)
+        self.assertAlmostEqual(spin71.dw, 0.000250634783026154, 2)
+        self.assertAlmostEqual(spin71.kex, 1.41670416420046e-05, 2)
+        self.assertAlmostEqual(spin71.chi2, 3914.07175884826, 2)
 
 
     def test_hansen_cpmg_data_to_cr72(self):
