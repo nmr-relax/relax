@@ -151,7 +151,7 @@ calc()
 relax_disp.plot_disp_curves(dir='.', force=True)
 
 # Save the results.
-state.save('cpmg_fit_solution', dir='.', compress_type=1, force=True)
+state.save('cpmg_fit_solution_cr72', dir='.', compress_type=1, force=True)
 
 # Cleanup.
 print("\n\nMoving 'disp_9_N.agr' to 'cpmg_fit_solution_cr72.agr'.")

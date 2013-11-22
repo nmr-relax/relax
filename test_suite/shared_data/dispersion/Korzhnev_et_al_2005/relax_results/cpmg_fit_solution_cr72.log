@@ -173,7 +173,7 @@ calc()
 relax_disp.plot_disp_curves(dir='.', force=True)
 
 # Save the results.
-state.save('cpmg_fit_solution', dir='.', compress_type=1, force=True)
+state.save('cpmg_fit_solution_cr72', dir='.', compress_type=1, force=True)
 
 # Cleanup.
 print("\n\nMoving 'disp_9_N.agr' to 'cpmg_fit_solution_cr72.agr'.")
@@ -3027,8 +3027,8 @@ relax> relax_disp.plot_disp_curves(dir='.', force=True)
 Opening the file './disp_9_N.agr' for writing.
 Opening the file './grace2images.py' for writing.
 
-relax> state.save(state='cpmg_fit_solution', dir='.', compress_type=1, force=True)
-Opening the file './cpmg_fit_solution.bz2' for writing.
+relax> state.save(state='cpmg_fit_solution_cr72', dir='.', compress_type=1, force=True)
+Opening the file './cpmg_fit_solution_cr72.bz2' for writing.
 
 
 Moving 'disp_9_N.agr' to 'cpmg_fit_solution_cr72.agr'.

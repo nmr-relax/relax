@@ -9,18 +9,22 @@ This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http
 
 Here all data will be used.  The values found by cpmg_fit using just this data are:
 
-    - r2 = {'H-S 500': 6.778902, 'H-S 600':  7.097458, 'H-S 800':  5.635893,
-            'N-S 500': 8.481132, 'N-S 600':  8.977845, 'N-S 800': 10.490257,
-            'NHD 500': 8.693570, 'NHD 600': 10.744672, 'NHD 800': 12.647869,
-            'NHZ 500': 6.043942, 'NHZ 600':  6.827802, 'NHZ 800':  6.946693,
-            'NHM 500': 9.245925, 'NHM 600':  9.949255, 'NHM 800': 12.053031,
-            'HNM 500': 7.887264, 'HNM 600':  8.506481, 'HNM 800': 11.276893},
-    - pA = 0.944322,
-    - kex = 368.075,
-    - dw = 4.413451,
-    - dwH = -0.271799,
-    - chi2 = 162.37981.
+    - r2 = {'H-S 500': 6.778901685616349, 'H-S 600':  7.097457574164754, 'H-S 800':  5.635892738874367,
+            'N-S 500': 8.481132052795216, 'N-S 600':  8.977844777932544, 'N-S 800': 10.490256957494095,
+            'NHZ 500': 6.043941666541193, 'NHZ 600':  6.827801822697070, 'NHZ 800':  6.946693082577048,
+            'NHD 500': 8.693570244455426, 'NHD 600': 10.744671857325738, 'NHD 800': 12.647868752250540,
+            'HNM 500': 7.887263548378362, 'HNM 600':  8.506480948916035, 'HNM 800': 11.276893369084453,
+            'NHM 500': 9.245925304879110, 'NHM 600':  9.949254911695823, 'NHM 800': 12.053030643443734},
+    - pA = 0.944322334629977,
+    - kex = 368.075224340237810,
+    - dw = 4.413451295385187,
+    - dwH = -0.271799433880579,
+    - chi2 = 162.379807990821462.
 """
+
+# Python module imports.
+from os import remove
+from shutil import move
 
 # relax module imports.
 from specific_analyses.relax_disp.disp_data import generate_r20_key
@@ -49,12 +53,12 @@ data = [
     ['SQ',    '15N_SQ_CPMG_500_MHz', 'ns_500.res', EXP_TYPE_CPMG_SQ,        ':9@N', 500e6, 0.04],
     ['SQ',    '15N_SQ_CPMG_600_MHz', 'ns_600.res', EXP_TYPE_CPMG_SQ,        ':9@N', 600e6, 0.04],
     ['SQ',    '15N_SQ_CPMG_800_MHz', 'ns_800.res', EXP_TYPE_CPMG_SQ,        ':9@N', 800e6, 0.04],
-    ['DQ',    '15N_DQ_CPMG_500_MHz', 'dq_500.res', EXP_TYPE_CPMG_DQ,        ':9@N', 500e6, 0.03],
-    ['DQ',    '15N_DQ_CPMG_600_MHz', 'dq_600.res', EXP_TYPE_CPMG_DQ,        ':9@N', 600e6, 0.03],
-    ['DQ',    '15N_DQ_CPMG_800_MHz', 'dq_800.res', EXP_TYPE_CPMG_DQ,        ':9@N', 800e6, 0.03],
     ['ZQ',    '15N_ZQ_CPMG_500_MHz', 'zq_500.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 500e6, 0.03],
     ['ZQ',    '15N_ZQ_CPMG_600_MHz', 'zq_600.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 600e6, 0.03],
     ['ZQ',    '15N_ZQ_CPMG_800_MHz', 'zq_800.res', EXP_TYPE_CPMG_ZQ,        ':9@N', 800e6, 0.03],
+    ['DQ',    '15N_DQ_CPMG_500_MHz', 'dq_500.res', EXP_TYPE_CPMG_DQ,        ':9@N', 500e6, 0.03],
+    ['DQ',    '15N_DQ_CPMG_600_MHz', 'dq_600.res', EXP_TYPE_CPMG_DQ,        ':9@N', 600e6, 0.03],
+    ['DQ',    '15N_DQ_CPMG_800_MHz', 'dq_800.res', EXP_TYPE_CPMG_DQ,        ':9@N', 800e6, 0.03],
     ['1H MQ', '1H_MQ_CPMG_500_MHz',  'hm_500.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 500e6, 0.02],
     ['1H MQ', '1H_MQ_CPMG_600_MHz',  'hm_600.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 600e6, 0.02],
     ['1H MQ', '1H_MQ_CPMG_800_MHz',  'hm_800.res', EXP_TYPE_CPMG_PROTON_MQ, ':9@H', 800e6, 0.02],
@@ -112,12 +116,12 @@ r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
 r20_key4 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
 r20_key5 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
 r20_key6 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
-r20_key7 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
-r20_key8 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
-r20_key9 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
-r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
-r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
-r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+r20_key7 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
+r20_key8 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
+r20_key9 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
+r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
+r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
 r20_key13 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
 r20_key14 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
 r20_key15 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
@@ -128,17 +132,17 @@ r20_key18 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
 # Manually set the parameter values.
 spin_N = cdp.mol[0].res[0].spin[1]
 spin_N.r2 = {
-    r20_key1:  6.778902, r20_key2:   7.097458, r20_key3:   5.635893,
-    r20_key4:  8.481132, r20_key5:   8.977845, r20_key6:  10.490257,
-    r20_key7:  8.693570, r20_key8:  10.744672, r20_key9:  12.647869,
-    r20_key10: 6.043942, r20_key11:  6.827802, r20_key12:  6.946693,
-    r20_key13: 9.245925, r20_key14:  9.949255, r20_key15: 12.053031,
-    r20_key16: 7.887264, r20_key17:  8.506481, r20_key18: 11.276893
+    r20_key1:  6.778901685616349, r20_key2:   7.097457574164754, r20_key3:   5.635892738874367,
+    r20_key4:  8.481132052795216, r20_key5:   8.977844777932544, r20_key6:  10.490256957494095,
+    r20_key7:  6.043941666541193, r20_key8:   6.827801822697070, r20_key9:   6.946693082577048,
+    r20_key10: 8.693570244455426, r20_key11: 10.744671857325738, r20_key12: 12.647868752250540,
+    r20_key13: 7.887263548378362, r20_key14:  8.506480948916035, r20_key15: 11.276893369084453,
+    r20_key16: 9.245925304879110, r20_key17:  9.949254911695823, r20_key18: 12.053030643443734,
 }
-spin_N.pA = 0.944322
-spin_N.kex = 368.075
-spin_N.dw = 4.413451
-spin_N.dwH = -0.271799
+spin_N.pA = 0.944322334629977
+spin_N.kex = 368.075224340237810
+spin_N.dw = 4.413451295385187
+spin_N.dwH = -0.271799433880579
 
 # Calculate.
 calc()
@@ -148,3 +152,9 @@ relax_disp.plot_disp_curves(dir='.', force=True)
 
 # Save the results.
 state.save('cpmg_fit_solution', dir='.', compress_type=1, force=True)
+
+# Cleanup.
+print("\n\nMoving 'disp_9_N.agr' to 'cpmg_fit_solution.agr'.")
+move('disp_9_N.agr', 'cpmg_fit_solution.agr')
+print("Deleting 'grace2images.py'.")
+remove('grace2images.py')
