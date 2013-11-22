@@ -957,9 +957,9 @@ class Dispersion:
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
                         aliased_dw = dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_DQ:
-                        aliased_dw = dwH_frq + dw_frq
+                        aliased_dw = dw_frq + dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_ZQ:
-                        aliased_dw = dwH_frq - dw_frq
+                        aliased_dw = dw_frq - dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_MQ:
                         aliased_dw = dw_frq
                         aliased_dwH = dwH_frq
@@ -1030,9 +1030,9 @@ class Dispersion:
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
                         aliased_dw = dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_DQ:
-                        aliased_dw = dwH_frq + dw_frq
+                        aliased_dw = dw_frq + dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_ZQ:
-                        aliased_dw = dwH_frq - dw_frq
+                        aliased_dw = dw_frq - dwH_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_MQ:
                         aliased_dw = dw_frq
                         aliased_dwH = dwH_frq
