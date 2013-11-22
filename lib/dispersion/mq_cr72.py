@@ -126,4 +126,4 @@ def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=
         lambda1 = r20_kex - cpmg_frqs[i] * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
 
         # The full formula.
-        back_calc[i] = lambda1.real - inv_tcpmg * log(Q) / power[i]
+        back_calc[i] = lambda1.real - inv_tcpmg * log(Q)
