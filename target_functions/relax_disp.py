@@ -1018,7 +1018,7 @@ class Dispersion:
                 # Loop over the spectrometer frequencies.
                 for frq_index in range(self.num_frq):
                     # The R20 index.
-                    r20_index = frq_index + spin_index*self.num_frq
+                    r20_index = frq_index + exp_index*self.num_frq + spin_index*self.num_frq*self.num_exp
 
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[spin_index] * self.frqs[exp_index][spin_index][frq_index]
