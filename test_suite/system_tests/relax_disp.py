@@ -1446,12 +1446,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 15N DQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 9.536959, '600': 11.770254, '800': 13.677903},
-            - pA = 0.965477,
-            - kex = 568.691,
-            - dw = 5.357119,
-            - dwH = -0.134035,
-            - chi2 = 9.23777.
+            - r2 = {'500': 9.487269007171426, '600': 11.718267257562591, '800': 13.624551743116887},
+            - pA = 0.965402506690231,
+            - dw = 0.805197170133360,
+            - dwH = -0.595536627771890,
+            - kex = 569.003663067619868,
+            - chi2 = 9.297671357952812.
         """
 
         # Base data setup.
@@ -1466,11 +1466,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 9.48536931937482, r20_key2: 11.7316245262476, r20_key3: 13.6678889917841}
-        spin.pA = 0.963846627076083
-        spin.kex = 538.31971271586
-        spin.dw = 6.82617656048492
-        spin.dwH = -0.112665530854285
+        spin.r2 = {r20_key1: 9.48527908326952, r20_key2: 11.7135951595536, r20_key3: 13.6153887849344}
+        spin.pA = 0.965638501551899
+        spin.dw = 2.8537583461577
+        spin.dwH = -0.387633062766635
+        spin.kex = 573.704033851592
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1501,14 +1501,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 9.48536931937482, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 11.7316245262476, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 13.6678889917841, 4)
-        self.assertAlmostEqual(spin.pA, 0.963846627076083, 4)
-        self.assertAlmostEqual(spin.dw, 6.82617656048492, 4)
-        self.assertAlmostEqual(spin.dwH, -0.112665530854285, 4)
-        self.assertAlmostEqual(spin.kex/1000, 538.31971271586/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 9.79996901510001, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 9.48527908326952, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 11.7135951595536, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 13.6153887849344, 4)
+        self.assertAlmostEqual(spin.pA, 0.965638501551899, 4)
+        self.assertAlmostEqual(spin.dw, 2.8537583461577, 4)
+        self.assertAlmostEqual(spin.dwH, -0.387633062766635, 4)
+        self.assertAlmostEqual(spin.kex/1000, 573.704033851592/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 9.29563496654824, 4)
 
 
     def test_korzhnev_2005_15n_mq_data(self):
@@ -1518,12 +1518,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 15N MQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 7.754916, '600': 8.530620, '800': 10.644601},
-            - pA = 0.936638,
-            - kex = 347.090,
-            - dw = 4.262730,
-            - dwH = 0.274666,
-            - chi2 = 10.42430.
+            - r2 = {'500': 5.993083514798655, '600': 6.622184438384841, '800': 8.640765919352019},
+            - pA = 0.930027999814003,
+            - dw = 4.338620619954370,
+            - dwH = -0.274250775560818,
+            - kex = 344.613362916544475,
+            - chi2 = 10.367733168217050.
         """
 
         # Base data setup.
@@ -1538,11 +1538,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_MQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 7.754916, r20_key2: 8.530620, r20_key3: 10.644601}
-        spin.pA = 0.936638
-        spin.kex = 347.090
-        spin.dw = 4.262730
-        spin.dwH = 0.274666
+        spin.r2 = {r20_key1: 6.02016436619016, r20_key2: 6.65421500772308, r20_key3: 8.6729591487622}
+        spin.pA = 0.930083249288083
+        spin.dw = 4.33890689462363
+        spin.dwH = -0.274316585638047
+        spin.kex = 344.329651956132
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1573,14 +1573,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 7.754916, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 8.530620, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 10.644601, 4)
-        self.assertAlmostEqual(spin.pA, 0.936638, 4)
-        self.assertAlmostEqual(spin.dw, 4.262730, 4)
-        self.assertAlmostEqual(spin.dwH, 0.274666, 4)
-        self.assertAlmostEqual(spin.kex/1000, 347.090/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 10.42430, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 6.02016436619016, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 6.65421500772308, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 8.6729591487622, 4)
+        self.assertAlmostEqual(spin.pA, 0.930083249288083, 4)
+        self.assertAlmostEqual(spin.dw, 4.33890689462363, 4)
+        self.assertAlmostEqual(spin.dwH, -0.274316585638047, 4)
+        self.assertAlmostEqual(spin.kex/1000, 344.329651956132/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 10.3654315659173, 4)
 
 
     def test_korzhnev_2005_15n_sq_data(self):
@@ -1590,11 +1590,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 15N SQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 8.400699, '600': 8.847946, '800': 10.289079},
-            - pA = 0.950701,
-            - kex = 435.592,
-            - dw = 4.356895,
-            - chi2 = 17.49720.
+            - r2 = {'500': 8.335037972570017, '600': 8.761366016417508, '800': 10.225001019091822},
+            - pA = 0.950003458294991,
+            - dw = 4.358402855315123,
+            - kex = 429.906473361926999,
+            - chi2 = 17.393331915567252.
         """
 
         # Base data setup.
@@ -1611,8 +1611,8 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         # Set the initial parameter values.
         spin.r2 = {r20_key1: 8.334232330326190, r20_key2: 8.756773997879968, r20_key3: 10.219320492033058}
         spin.pA = 0.950310172115387
-        spin.kex = 433.176323890829849
         spin.dw = 4.356737157889636
+        spin.kex = 433.176323890829849
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1658,12 +1658,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 15N ZQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 6.016000, '601': 6.769957, '800': 6.890714},
-            - pA = 0.943672,
-            - kex = 382.636,
-            - dw = 0.845133,
-            - dwH = 0.088235,
-            - chi2 = 23.71851.
+            - r2 = {'500': 5.909812628572937, '600': 6.663690132557320, '800': 6.787171647689906},
+            - pA = 0.942452612380140,
+            - dw = 0.858972784230892,
+            - dwH = 0.087155962730608,
+            - kex = 373.219151384798920,
+            - chi2 = 23.863208106025152.
         """
 
         # Base data setup.
@@ -1678,11 +1678,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 5.91297173859543, r20_key2: 6.66919500895295, r20_key3: 6.79000166117068}
-        spin.pA = 0.942921993217604
-        spin.kex = 371.076657461446
-        spin.dw = 2.30604327221814
-        spin.dwH = 0.576576043850393
+        spin.r2 = {r20_key1: 5.91033272691614, r20_key2: 6.66368695342258, r20_key3: 6.78922219135537}
+        spin.pA = 0.942457332074014
+        spin.dw = 0.850592422908884
+        spin.dwH = 0.0881272284455416
+        spin.kex = 372.745483351305
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1713,14 +1713,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 5.91297173859543, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 6.66919500895295, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 6.79000166117068, 4)
-        self.assertAlmostEqual(spin.pA, 0.942921993217604, 4)
-        self.assertAlmostEqual(spin.dw, 2.30604327221814, 4)
-        self.assertAlmostEqual(spin.dwH, 0.576576043850393, 4)
-        self.assertAlmostEqual(spin.kex/1000, 371.076657461446/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 24.7968738407662, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 5.91033272691614, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 6.66368695342258, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 6.78922219135537, 4)
+        self.assertAlmostEqual(spin.pA, 0.942457332074014, 4)
+        self.assertAlmostEqual(spin.dw, 0.850592422908884, 4)
+        self.assertAlmostEqual(spin.dwH, 0.0881272284455416, 4)
+        self.assertAlmostEqual(spin.kex/1000, 372.745483351305/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 23.8464637019392, 4)
 
 
     def test_korzhnev_2005_1h_mq_data(self):
@@ -1730,12 +1730,12 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 1H MQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 2.456778, '600': 2.655671, '800': 4.902523},
-            - pA = 0.940837,
-            - kex = 469.262,
-            - dw = 4.274697,
-            - dwH = 0.225064,
-            - chi2 = 14.42514.
+            - r2 = {'500': -0.000016676911302, '600': 0.036594127620440, '800': 2.131014839635728},
+            - pA = 0.936911090448340,
+            - dw = 4.325314846914845,
+            - dwH = -0.213870168665628,
+            - kex = 487.361914835074117,
+            - chi2 = 14.870371897291138.
         """
 
         # Base data setup.
@@ -1750,14 +1750,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 2.456778, r20_key2: 2.655671, r20_key3: 4.902523}
-        spin.pA = 0.940837
-        spin.kex = 469.262
-        spin.dw = 4.274697
-        spin.dwH = 0.225064
+        spin.r2 = {r20_key1: 0.000022585022901, r20_key2: 0.039223196112941, r20_key3: 2.136576686700357}
+        spin.pA = 0.936884348941701
+        spin.dw = 4.326454531583964
+        spin.dwH = -0.214026093221782
+        spin.kex = 487.043592705469223
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=100)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
@@ -1785,14 +1785,14 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 2.456778, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 2.655671, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 4.902523, 4)
-        self.assertAlmostEqual(spin.pA, 0.940837, 4)
-        self.assertAlmostEqual(spin.dw, 4.274697, 4)
-        self.assertAlmostEqual(spin.dwH, 0.225064, 4)
-        self.assertAlmostEqual(spin.kex/1000, 469.262/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 14.42514, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 0.000023714274046, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 0.039223196112941, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 2.13657668670036, 4)
+        self.assertAlmostEqual(spin.pA, 0.936884348941701, 4)
+        self.assertAlmostEqual(spin.dw, 4.32645453158396, 4)
+        self.assertAlmostEqual(spin.dwH, -0.214026093221782, 4)
+        self.assertAlmostEqual(spin.kex/1000, 487.043592705469/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 14.8642315375301, 4)
 
 
     def test_korzhnev_2005_1h_sq_data(self):
@@ -1802,11 +1802,11 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here only the 1H SQ data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'500': 6.782756, '600': 7.089857, '800': 5.609053},
-            - pA = 0.948038,
-            - kex = 415.972,
-            - dw = 0.264628,
-            - chi2 = 50.32297.
+            - r2 = {'500': 6.691697587650816, '600': 6.998915158708793, '800': 5.519267837559072},
+            - pA = 0.946949480545876,
+            - dwH = -0.265279672133308,
+            - kex = 406.548178869750700,
+            - chi2 = 50.400680290545026.
         """
 
         # Base data setup.
@@ -1821,10 +1821,10 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
 
         # Set the initial parameter values.
-        spin.r2 = {r20_key1: 6.782756, r20_key2: 7.089857, r20_key3: 5.609053}
-        spin.pA = 0.948038
-        spin.kex = 415.972
-        spin.dw = 0.264628
+        spin.r2 = {r20_key1: 6.69107911078939, r20_key2: 6.99888898689085, r20_key3: 5.52012880268077}
+        spin.pA = 0.946990967372467
+        spin.dwH = -0.265308128403529
+        spin.kex = 406.843250675648
 
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
@@ -1849,18 +1849,18 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g" % ("R2 (600 MHz)", spin.r2[r20_key2]))
         print("%-20s %20.15g" % ("R2 (800 MHz)", spin.r2[r20_key3]))
         print("%-20s %20.15g" % ("pA", spin.pA))
-        print("%-20s %20.15g" % ("dw", spin.dw))
+        print("%-20s %20.15g" % ("dwH", spin.dwH))
         print("%-20s %20.15g" % ("kex", spin.kex))
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 6.782756, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 7.089857, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 5.609053, 4)
-        self.assertAlmostEqual(spin.pA, 0.948038, 4)
-        self.assertAlmostEqual(spin.dw, 0.264628, 4)
-        self.assertAlmostEqual(spin.kex/1000, 415.972/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 50.32297, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 6.69107911078939, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2], 6.99888898689085, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3], 5.52012880268077, 4)
+        self.assertAlmostEqual(spin.pA, 0.946990967372467, 4)
+        self.assertAlmostEqual(spin.dwH, -0.265308128403529, 4)
+        self.assertAlmostEqual(spin.kex/1000, 406.843250675648/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 50.3431330819767, 4)
 
 
     def test_korzhnev_2005_all_data(self):
@@ -1870,17 +1870,17 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         Here all data will be optimised.  The values found by cpmg_fit using just this data are:
 
-            - r2 = {'H-S 500': 6.778902, 'H-S 600':  7.097458, 'H-S 800':  5.635893,
-                    'N-S 500': 8.481132, 'N-S 600':  8.977845, 'N-S 800': 10.490257,
-                    'NHD 500': 8.693570, 'NHD 600': 10.744672, 'NHD 800': 12.647869,
-                    'NHZ 500': 6.043942, 'NHZ 600':  6.827802, 'NHZ 800':  6.946693,
-                    'NHM 500': 9.245925, 'NHM 600':  9.949255, 'NHM 800': 12.053031,
-                    'HNM 500': 7.887264, 'HNM 600':  8.506481, 'HNM 800': 11.276893},
-            - pA = 0.944322,
-            - kex = 368.075,
-            - dw = 4.413451,
-            - dwH = -0.271799,
-            - chi2 = 162.37981.
+            - r2 = {'H-S 500':  6.671649051677150, 'H-S 600':  6.988634195648529, 'H-S 800':  5.527971316790596,
+                    'N-S 500':  8.394988400015988, 'N-S 600':  8.891359568401835, 'N-S 800': 10.405356669006709,
+                    'NHZ 500':  5.936446687394352, 'NHZ 600':  6.717058062814535, 'NHZ 800':  6.838733853403030,
+                    'NHD 500':  8.593136215779710, 'NHD 600': 10.651511259239674, 'NHD 800': 12.567902357560627,
+                    'HNM 500':  7.851325614877817, 'HNM 600':  8.408803624020202, 'HNM 800': 11.227489645758979,
+                    'NHM 500':  9.189159145380575, 'NHM 600':  9.856814478405868, 'NHM 800': 11.967910041807118},
+            - pA = 0.943125351763911,
+            - dw = 4.421827493809807,
+            - dwH = -0.272637034755752,
+            - kex = 360.609744568697238,
+            - chi2 = 162.589570340050813.
         """
 
         # Base data setup.
@@ -1890,18 +1890,18 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         spin = return_spin(":9@N")
 
         # The R20 keys.
-        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
-        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=600e6)
-        r20_key3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
-        r20_key4 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
-        r20_key5 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
-        r20_key6 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
-        r20_key7 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
-        r20_key8 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
-        r20_key9 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
-        r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
-        r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
-        r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+        r20_key1  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)
+        r20_key2  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=600e6)
+        r20_key3  = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=800e6)
+        r20_key4  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key5  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=600e6)
+        r20_key6  = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+        r20_key7  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=500e6)
+        r20_key8  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=600e6)
+        r20_key9  = generate_r20_key(exp_type=EXP_TYPE_CPMG_ZQ, frq=800e6)
+        r20_key10 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=500e6)
+        r20_key11 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=600e6)
+        r20_key12 = generate_r20_key(exp_type=EXP_TYPE_CPMG_DQ, frq=800e6)
         r20_key13 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6)
         r20_key14 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
         r20_key15 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
@@ -1911,20 +1911,20 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         # Set the initial parameter values.
         spin.r2 = {
-            r20_key1:  6.778902, r20_key2:   7.097458, r20_key3:   5.635893,
-            r20_key4:  8.481132, r20_key5:   8.977845, r20_key6:  10.490257,
-            r20_key7:  8.693570, r20_key8:  10.744672, r20_key9:  12.647869,
-            r20_key10: 6.043942, r20_key11:  6.827802, r20_key12:  6.946693,
-            r20_key13: 9.245925, r20_key14:  9.949255, r20_key15: 12.053031,
-            r20_key16: 7.887264, r20_key17:  8.506481, r20_key18: 11.276893
+            r20_key1:   6.67288025927458, r20_key2:   6.98951408255098, r20_key3:   5.52959273852704,
+            r20_key4:   8.39471048876782, r20_key5:   8.89290699178799, r20_key6:  10.40770687236930,
+            r20_key7:   5.93611174376373, r20_key8:   6.71735669582514, r20_key9:   6.83835225518265,
+            r20_key10:  8.59615074668922, r20_key11: 10.65121378892910, r20_key12: 12.57108229191090,
+            r20_key13:  7.85956711501608, r20_key14:  8.41891642907918, r20_key15: 11.23620892230380,
+            r20_key16:  9.19654863789350, r20_key17:  9.86031627358462, r20_key18: 11.97523755925750
         }
-        spin.pA = 0.944322
-        spin.kex = 368.075
-        spin.dw = 4.413451
-        spin.dwH = -0.271799
+        spin.pA = 0.943129019477673
+        spin.dw = 4.42209952545181
+        spin.dwH = -0.27258970590969
+        spin.kex = 360.516132791038
 
         # Low precision optimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=1000)
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-05, max_iter=10)
 
         # Monte Carlo simulations.
         self.interpreter.monte_carlo.setup(number=2)
@@ -1942,24 +1942,24 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         # Printout.
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s" % ("Parameter", "Value (:9)"))
-        print("%-20s %20.15g" % ("R2 (SQ - 500 MHz)", spin.r2[r20_key1]))
-        print("%-20s %20.15g" % ("R2 (SQ - 600 MHz)", spin.r2[r20_key2]))
-        print("%-20s %20.15g" % ("R2 (SQ - 800 MHz)", spin.r2[r20_key3]))
-        print("%-20s %20.15g" % ("R2 (1H SQ - 500 MHz)", spin.r2[r20_key4]))
-        print("%-20s %20.15g" % ("R2 (1H SQ - 600 MHz)", spin.r2[r20_key5]))
-        print("%-20s %20.15g" % ("R2 (1H SQ - 800 MHz)", spin.r2[r20_key6]))
-        print("%-20s %20.15g" % ("R2 (DQ - 500 MHz)", spin.r2[r20_key7]))
-        print("%-20s %20.15g" % ("R2 (DQ - 600 MHz)", spin.r2[r20_key8]))
-        print("%-20s %20.15g" % ("R2 (DQ - 800 MHz)", spin.r2[r20_key9]))
-        print("%-20s %20.15g" % ("R2 (ZQ - 500 MHz)", spin.r2[r20_key10]))
-        print("%-20s %20.15g" % ("R2 (ZQ - 600 MHz)", spin.r2[r20_key11]))
-        print("%-20s %20.15g" % ("R2 (ZQ - 800 MHz)", spin.r2[r20_key12]))
-        print("%-20s %20.15g" % ("R2 (MQ - 500 MHz)", spin.r2[r20_key13]))
-        print("%-20s %20.15g" % ("R2 (MQ - 600 MHz)", spin.r2[r20_key14]))
-        print("%-20s %20.15g" % ("R2 (MQ - 800 MHz)", spin.r2[r20_key15]))
-        print("%-20s %20.15g" % ("R2 (1H MQ - 500 MHz)", spin.r2[r20_key16]))
-        print("%-20s %20.15g" % ("R2 (1H MQ - 600 MHz)", spin.r2[r20_key17]))
-        print("%-20s %20.15g" % ("R2 (1H MQ - 800 MHz)", spin.r2[r20_key18]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 500 MHz)", spin.r2[r20_key1]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 600 MHz)", spin.r2[r20_key2]))
+        print("%-20s %20.15g" % ("R2 (1H SQ - 800 MHz)", spin.r2[r20_key3]))
+        print("%-20s %20.15g" % ("R2 (SQ - 500 MHz)", spin.r2[r20_key4]))
+        print("%-20s %20.15g" % ("R2 (SQ - 600 MHz)", spin.r2[r20_key5]))
+        print("%-20s %20.15g" % ("R2 (SQ - 800 MHz)", spin.r2[r20_key6]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 500 MHz)", spin.r2[r20_key7]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 600 MHz)", spin.r2[r20_key8]))
+        print("%-20s %20.15g" % ("R2 (ZQ - 800 MHz)", spin.r2[r20_key9]))
+        print("%-20s %20.15g" % ("R2 (DQ - 500 MHz)", spin.r2[r20_key10]))
+        print("%-20s %20.15g" % ("R2 (DQ - 600 MHz)", spin.r2[r20_key11]))
+        print("%-20s %20.15g" % ("R2 (DQ - 800 MHz)", spin.r2[r20_key12]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 500 MHz)", spin.r2[r20_key13]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 600 MHz)", spin.r2[r20_key14]))
+        print("%-20s %20.15g" % ("R2 (1H MQ - 800 MHz)", spin.r2[r20_key15]))
+        print("%-20s %20.15g" % ("R2 (MQ - 500 MHz)", spin.r2[r20_key16]))
+        print("%-20s %20.15g" % ("R2 (MQ - 600 MHz)", spin.r2[r20_key17]))
+        print("%-20s %20.15g" % ("R2 (MQ - 800 MHz)", spin.r2[r20_key18]))
         print("%-20s %20.15g" % ("pA", spin.pA))
         print("%-20s %20.15g" % ("dw", spin.dw))
         print("%-20s %20.15g" % ("dwH", spin.dwH))
@@ -1967,29 +1967,29 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 8.481132, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 8.977845, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 10.490257, 4)
-        self.assertAlmostEqual(spin.r2[r20_key4], 6.778902, 4)
-        self.assertAlmostEqual(spin.r2[r20_key5], 7.097458, 4)
-        self.assertAlmostEqual(spin.r2[r20_key6], 5.635893, 4)
-        self.assertAlmostEqual(spin.r2[r20_key7], 8.693570, 4)
-        self.assertAlmostEqual(spin.r2[r20_key8], 10.744672, 4)
-        self.assertAlmostEqual(spin.r2[r20_key9], 12.647869, 4)
-        self.assertAlmostEqual(spin.r2[r20_key10], 6.043942, 4)
-        self.assertAlmostEqual(spin.r2[r20_key11], 6.827802, 4)
-        self.assertAlmostEqual(spin.r2[r20_key12], 6.946693, 4)
-        self.assertAlmostEqual(spin.r2[r20_key13], 9.245925, 4)
-        self.assertAlmostEqual(spin.r2[r20_key14], 9.949255, 4)
-        self.assertAlmostEqual(spin.r2[r20_key15], 12.053031, 4)
-        self.assertAlmostEqual(spin.r2[r20_key16], 7.887264, 4)
-        self.assertAlmostEqual(spin.r2[r20_key17], 8.506481, 4)
-        self.assertAlmostEqual(spin.r2[r20_key18], 11.276893, 4)
-        self.assertAlmostEqual(spin.pA, 0.944322, 4)
-        self.assertAlmostEqual(spin.dw, 4.413451, 4)
-        self.assertAlmostEqual(spin.dwH, -0.271799, 4)
-        self.assertAlmostEqual(spin.kex/1000, 368.075/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 162.37981, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1],  6.67288025927458, 4)
+        self.assertAlmostEqual(spin.r2[r20_key2],  6.98951408255098, 4)
+        self.assertAlmostEqual(spin.r2[r20_key3],  5.52959273852704, 4)
+        self.assertAlmostEqual(spin.r2[r20_key4],  8.39471048876782, 4)
+        self.assertAlmostEqual(spin.r2[r20_key5],  8.89290699178799, 4)
+        self.assertAlmostEqual(spin.r2[r20_key6],  10.4077068723693, 4)
+        self.assertAlmostEqual(spin.r2[r20_key7],  5.93611174376373, 4)
+        self.assertAlmostEqual(spin.r2[r20_key8],  6.71735669582514, 4)
+        self.assertAlmostEqual(spin.r2[r20_key9],  6.83835225518265, 4)
+        self.assertAlmostEqual(spin.r2[r20_key10], 8.59615074668922, 4)
+        self.assertAlmostEqual(spin.r2[r20_key11], 10.6512137889291, 4)
+        self.assertAlmostEqual(spin.r2[r20_key12], 12.5710822919109, 4)
+        self.assertAlmostEqual(spin.r2[r20_key13], 7.85956711501608, 4)
+        self.assertAlmostEqual(spin.r2[r20_key14], 8.41891642907918, 4)
+        self.assertAlmostEqual(spin.r2[r20_key15], 11.2362089223038, 4)
+        self.assertAlmostEqual(spin.r2[r20_key16], 9.1965486378935, 4)
+        self.assertAlmostEqual(spin.r2[r20_key17], 9.86031627358462, 4)
+        self.assertAlmostEqual(spin.r2[r20_key18], 11.9752375592575, 4)
+        self.assertAlmostEqual(spin.pA, 0.943129019477673, 4)
+        self.assertAlmostEqual(spin.dw, 4.42209952545181, 4)
+        self.assertAlmostEqual(spin.dwH, -0.27258970590969, 4)
+        self.assertAlmostEqual(spin.kex/1000, 360.516132791038/1000, 4)
+        self.assertAlmostEqual(spin.chi2, 162.511988511609, 4)
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
