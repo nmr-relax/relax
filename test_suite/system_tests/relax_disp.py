@@ -1934,10 +1934,10 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         self.interpreter.monte_carlo.error_analysis()
 
         # Plot the dispersion curves.
-        self.interpreter.relax_disp.plot_disp_curves(dir='.', force=True)
+        self.interpreter.relax_disp.plot_disp_curves(dir=ds.tmpdir, force=True)
 
         # Save the results.
-        self.interpreter.state.save('state', dir='.', compress_type=1, force=True)
+        self.interpreter.state.save('state', dir=ds.tmpdir, compress_type=1, force=True)
 
         # Printout.
         print("\n\nOptimised parameters:\n")
