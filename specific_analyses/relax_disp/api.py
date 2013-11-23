@@ -46,7 +46,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
-from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, grid_search_setup
+from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
@@ -103,65 +103,6 @@ class Relax_disp(API_base, API_common):
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
-
-
-    def _back_calc_r2eff(self, spin=None, spin_id=None):
-        """Back-calculation of R2eff/R1rho values for the given spin.
-
-        @keyword spin:      The specific spin data container.
-        @type spin:         SpinContainer instance
-        @keyword spin_id:   The spin ID string for the spin container.
-        @type spin_id:      str
-        @return:            The back-calculated R2eff/R1rho value for the given spin.
-        @rtype:             numpy rank-1 float array
-        """
-
-        # Skip protons for MMQ data.
-        if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
-            return
-
-        # Create the initial parameter vector.
-        param_vector = assemble_param_vector(spins=[spin])
-
-        # Create a scaling matrix.
-        scaling_matrix = assemble_scaling_matrix(spins=[spin], scaling=False)
-
-        # Number of spectrometer fields.
-        fields = [None]
-        field_count = 1
-        if hasattr(cdp, 'spectrometer_frq_count'):
-            fields = cdp.spectrometer_frq_list
-            field_count = cdp.spectrometer_frq_count
-
-        # Initialise the data structures for the target function.
-        values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
-
-        # The offset and R1 data for R1rho off-resonance models.
-        chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-        if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
-            chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
-            r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
-
-        # The dispersion data.
-        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
-
-        # Initialise the relaxation dispersion fit functions.
-        model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix)
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
-        chi2 = model.func(param_vector)
-
-        # Store the chi2 value.
-        spin.chi2 = chi2
-
-        # Reconstruct the back_calc data structure.
-        back_calc = model.back_calc
-        if spin.model not in MODEL_LIST_MMQ:
-            back_calc = [back_calc]
-
-        # Return the structure.
-        return back_calc
 
 
     def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, point=None):
@@ -749,7 +690,7 @@ class Relax_disp(API_base, API_common):
                     proton = return_attached_protons(spin_id)[0]
 
                 # The back calculated values.
-                back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+                back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id)
 
                 # Pack the data.
                 pack_back_calc_r2eff(spin=spin, spin_id=spin_id, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
@@ -792,12 +733,12 @@ class Relax_disp(API_base, API_common):
             spin, spin_id = data_id
 
             # Back calculate the R2eff/R1rho data.
-            back_calc = self._back_calc_r2eff(spin=spin, spin_id=spin_id)
+            back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id)
 
             # Get the attached proton data.
             if proton_mmq_flag:
                 proton = return_attached_protons(spin_id)[0]
-                proton_back_calc = self._back_calc_r2eff(spin=proton, spin_id=spin_id)
+                proton_back_calc = back_calc_r2eff(spin=proton, spin_id=spin_id)
 
             # Convert to a dictionary matching the R2eff data structure.
             values = {}
