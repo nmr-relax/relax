@@ -24,6 +24,7 @@
 
 # Python module imports.
 import wx
+from wx.lib import scrolledpanel
 import wx.lib.mixins.listctrl
 
 # relax module imports.
@@ -60,6 +61,9 @@ class Model_list:
     red_flag = False
     """A flag which if True will cause the flag icon to turn red if the model list has been modified."""
 
+    size = wx.Size(1024, 750)
+    """The initial size of the window."""
+
     tooltip = None
     """The tooltip string to add to the text and field wx GUI elements."""
 
@@ -88,7 +92,7 @@ class Model_list:
                 self.models_stripped.append(model)
 
         # Initialise the model selection window.
-        self.model_win = Model_sel_window(self.models, self.params, self.model_desc, border=self.border)
+        self.model_win = Model_sel_window(self.models, self.params, self.model_desc, size=self.size, border=self.border)
 
         # Horizontal packing for this element.
         sizer = wx.BoxSizer(wx.HORIZONTAL)
@@ -225,7 +229,7 @@ class Model_list:
 class Model_sel_window(wx.Dialog):
     """The model selector window object."""
 
-    def __init__(self, models, params, desc, border=None):
+    def __init__(self, models, params, desc, size=None, border=None):
         """Set up the model selector window.
 
         @param models:      The list of models.
@@ -234,12 +238,14 @@ class Model_sel_window(wx.Dialog):
         @type params:       list of str
         @param desc:        The description for each model.
         @type desc:         list of str
+        @keyword size:      The initial size of the window.
+        @type size:         wx.Size instance
         @keyword border:    The border width, in pixels.
         @type border:       int
         """
 
         # Set up the dialog.
-        wx.Dialog.__init__(self, None, id=-1, title="Model list selector")
+        wx.Dialog.__init__(self, None, id=-1, title="Model list selector", size=size, style=wx.DEFAULT_DIALOG_STYLE|wx.RESIZE_BORDER)
 
         # Initialise some values
         desc_flag = False
@@ -258,6 +264,16 @@ class Model_sel_window(wx.Dialog):
         # Build the central sizer, with borders.
         sizer = add_border(main_sizer, border=border, packing=wx.VERTICAL)
 
+        # A scrolled panel for the text.
+        panel = scrolledpanel.ScrolledPanel(self, -1)
+        panel.SetAutoLayout(1)
+        panel.SetupScrolling()
+        sizer.Add(panel, 1, wx.ALL|wx.EXPAND, 0)
+
+        # A sizer for the panel.
+        panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        panel.SetSizer(panel_sizer)
+
         # Add a list control.
         cols = 2
         if desc_flag:
@@ -269,11 +285,11 @@ class Model_sel_window(wx.Dialog):
         if desc_flag:
             titles.append("Description")
         for title in titles:
-            text = wx.StaticText(self, -1, str_to_gui(title))
+            text = wx.StaticText(panel, -1, str_to_gui(title))
             text.SetFont(font.subtitle)
             self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
         for i in range(len(titles)):
-            self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+            self.grid_sizer.Add(wx.StaticText(panel, -1, ""))
 
         # Add the models and parameters.
         self.model_selection = []
@@ -281,11 +297,11 @@ class Model_sel_window(wx.Dialog):
             # No model - i.e. a separator.
             if models[i] == None:
                 for i in range(len(titles)):
-                    self.grid_sizer.Add(wx.StaticText(self, -1, ""))
+                    self.grid_sizer.Add(wx.StaticText(panel, -1, ""))
                 continue
 
             # Create a checkbox for the model.
-            check_box = wx.CheckBox(self, -1, str_to_gui(models[i]))
+            check_box = wx.CheckBox(panel, -1, str_to_gui(models[i]))
             self.model_selection.append(check_box)
             self.grid_sizer.Add(check_box, 0, wx.ALIGN_CENTER_VERTICAL)
 
@@ -293,21 +309,21 @@ class Model_sel_window(wx.Dialog):
             self.model_selection[-1].SetValue(True)
 
             # Add the parameter text.
-            text = wx.StaticText(self, -1, str_to_gui(params[i]))
+            text = wx.StaticText(panel, -1, str_to_gui(params[i]))
             text.SetFont(font.normal)
             self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
 
             # Add the description.
             if desc_flag:
-                text = wx.StaticText(self, -1, str_to_gui(desc[i]))
+                text = wx.StaticText(panel, -1, str_to_gui(desc[i]))
                 text.SetFont(font.normal)
                 self.grid_sizer.Add(text, 0, wx.ALIGN_CENTER_VERTICAL)
 
         # Add the table to the sizer.
-        sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)
+        panel_sizer.Add(self.grid_sizer, 1, wx.ALL|wx.EXPAND, 0)
 
-        # Auto-size the window.
-        self.SetInitialSize()
+        # Set up the window.
+        self.SetMinSize(wx.Size(600, 300))
         self.Centre()
 
 
