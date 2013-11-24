@@ -33,8 +33,7 @@ The dispersion data model is based on the following concepts, in order of import
 """
 
 # Python module imports.
-from copy import deepcopy
-from math import atan, pi, sqrt
+from math import atan, floor, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from random import gauss
 import sys
@@ -132,6 +131,17 @@ def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None,
 
     # Return the value.
     return intensity
+
+
+def count_exp():
+    """Count the number of experiments present.
+
+    @return:    The experiment count
+    @rtype:     int
+    """
+
+    # The normal count variable.
+    return len(cdp.exp_type_list)
 
 
 def count_frq():
@@ -1137,6 +1147,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
         set_colours = []
         x_axis_type_zero = []
         symbols = []
+        symbol_sizes = []
         linetype = []
         linestyle = []
 
@@ -1154,35 +1165,66 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
         # Set up the interpolated curve data structures.
         interpolated_flag = False
-        if not spin.model in [MODEL_R2EFF] + MODEL_LIST_NUMERIC_CPMG:
+        if not spin.model in [MODEL_R2EFF]:
             # Set the flag.
             interpolated_flag = True
 
-            # Interpolate the CPMG frequencies.
-            cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-            cpmg_frqs_new = deepcopy(cpmg_frqs)
-            if cpmg_frqs != None and len(cpmg_frqs[0][0]):
-                cpmg_frqs_new = []
-                for exp_type_index in range(len(cpmg_frqs)):
-                    # Add a new dimension.
-                    cpmg_frqs_new.append([])
+            # Initialise some structures.
+            cpmg_frqs_new = None
+            spin_lock_nu1_new = None
 
-                    # Then loop over the spectrometer frequencies.
-                    for frq_index in range(len(cpmg_frqs[exp_type_index])):
+            # Interpolate the CPMG frequencies (numeric models).
+            if spin.model in MODEL_LIST_NUMERIC_CPMG:
+                cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+                relax_times = return_relax_times()
+                if cpmg_frqs != None and len(cpmg_frqs[0][0]):
+                    cpmg_frqs_new = []
+                    for exp_type_index in range(len(cpmg_frqs)):
                         # Add a new dimension.
-                        cpmg_frqs_new[exp_type_index].append([])
+                        cpmg_frqs_new.append([])
 
-                        # Interpolate (adding the extended amount to the end).
-                        for point_index in range(num_points):
-                            point = (point_index + 1) * (max(cpmg_frqs[exp_type_index][frq_index])+extend) / num_points
-                            cpmg_frqs_new[exp_type_index][frq_index].append(point)
+                        # Then loop over the spectrometer frequencies.
+                        for frq_index in range(len(cpmg_frqs[exp_type_index])):
+                            # Add a new dimension.
+                            cpmg_frqs_new[exp_type_index].append([])
 
-                        # Convert to a numpy array.
-                        cpmg_frqs_new[exp_type_index][frq_index] = array(cpmg_frqs_new[exp_type_index][frq_index], float64)
+                            # The minimum frequency unit.
+                            min_frq = 1.0 / relax_times[exp_type_index][frq_index]
+                            max_frq = max(cpmg_frqs[exp_type_index][frq_index]) + floor(extend / min_frq) * min_frq
+                            num_points = int(max_frq / min_frq)
+
+                            # Interpolate (adding the extended amount to the end).
+                            for point_index in range(num_points):
+                                point = (point_index + 1) * max_frq / num_points
+                                cpmg_frqs_new[exp_type_index][frq_index].append(point)
+
+                            # Convert to a numpy array.
+                            cpmg_frqs_new[exp_type_index][frq_index] = array(cpmg_frqs_new[exp_type_index][frq_index], float64)
+
+            # Interpolate the CPMG frequencies (analytic models).
+            else:
+                cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+                if cpmg_frqs != None and len(cpmg_frqs[0][0]):
+                    cpmg_frqs_new = []
+                    for exp_type_index in range(len(cpmg_frqs)):
+                        # Add a new dimension.
+                        cpmg_frqs_new.append([])
+
+                        # Then loop over the spectrometer frequencies.
+                        for frq_index in range(len(cpmg_frqs[exp_type_index])):
+                            # Add a new dimension.
+                            cpmg_frqs_new[exp_type_index].append([])
+
+                            # Interpolate (adding the extended amount to the end).
+                            for point_index in range(num_points):
+                                point = (point_index + 1) * (max(cpmg_frqs[exp_type_index][frq_index])+extend) / num_points
+                                cpmg_frqs_new[exp_type_index][frq_index].append(point)
+
+                            # Convert to a numpy array.
+                            cpmg_frqs_new[exp_type_index][frq_index] = array(cpmg_frqs_new[exp_type_index][frq_index], float64)
 
             # Interpolate the spin-lock field strengths.
             spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
-            spin_lock_nu1_new = deepcopy(spin_lock_nu1)
             if spin_lock_nu1 != None and len(spin_lock_nu1[0][0]):
                 spin_lock_nu1_new = []
                 for exp_type_index in range(len(spin_lock_nu1)):
@@ -1214,6 +1256,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
             set_colours.append([])
             x_axis_type_zero.append([])
             symbols.append([])
+            symbol_sizes.append([])
             linetype.append([])
             linestyle.append([])
 
@@ -1242,6 +1285,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
                 set_colours[graph_index].append(color_order[frq_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(1)
+                symbol_sizes[graph_index].append(0.45)
                 linetype[graph_index].append(0)
                 linestyle[graph_index].append(0)
 
@@ -1283,6 +1327,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
                 set_colours[graph_index].append(color_order[frq_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(4)
+                symbol_sizes[graph_index].append(0.45)
                 linetype[graph_index].append(1)
                 if interpolated_flag:
                     linestyle[graph_index].append(2)
@@ -1326,7 +1371,11 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
                     # The other settings.
                     set_colours[graph_index].append(color_order[frq_index])
                     x_axis_type_zero[graph_index].append(True)
-                    symbols[graph_index].append(0)
+                    if spin.model in MODEL_LIST_NUMERIC_CPMG:
+                        symbols[graph_index].append(8)
+                    else:
+                        symbols[graph_index].append(0)
+                    symbol_sizes[graph_index].append(0.20)
                     linetype[graph_index].append(1)
                     linestyle[graph_index].append(1)
 
@@ -1363,6 +1412,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
                 set_colours[graph_index].append(color_order[frq_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(9)
+                symbol_sizes[graph_index].append(0.45)
                 linetype[graph_index].append(1)
                 linestyle[graph_index].append(3)
 
@@ -1412,7 +1462,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, symbol_sizes=symbol_sizes, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
@@ -2467,6 +2517,36 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
     # Return the structures.
     return values, errors, missing, frqs, frqs_H, exp_types, relax_times
+
+
+def return_relax_times():
+    """Return the list of relaxation times.
+
+    @return:            The list of relaxation times in s.
+    @rtype:             list of lists of numpy rank-1 float64 array
+    """
+
+    # No data.
+    if not hasattr(cdp, 'relax_times'):
+        return None
+
+    # Initialise.
+    relax_times = zeros((count_exp(), count_frq()), float64)
+
+    # Loop over the experiment types.
+    for exp_type, frq, point, time, exp_type_index, frq_index, point_index, time_index in loop_exp_frq_point_time(return_indices=True):
+        # Fetch all of the matching intensity keys.
+        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time, raise_error=False)
+
+        # No data.
+        if not len(keys):
+            continue
+
+        # Add the data.
+        relax_times[exp_type_index][frq_index] = cdp.relax_times[keys[0]]
+
+    # Return the data.
+    return relax_times
 
 
 def return_spin_lock_nu1(ref_flag=True):
