@@ -570,7 +570,7 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
         self.assertAlmostEqual(spin71.r2[r20_key2], 6.90210797727492, 3)
         self.assertAlmostEqual(spin71.pA, 0.985922406455826, 3)
         self.assertAlmostEqual(spin71.dw, 2.00500965892672, 3)
-        self.assertAlmostEqual(spin71.kex, 2481.10839579617, 3)
+        self.assertAlmostEqual(spin71.kex/10000, 2481.10839579617/10000, 3)
         self.assertAlmostEqual(spin71.chi2, 15.6595374286822, 3)
 
 
