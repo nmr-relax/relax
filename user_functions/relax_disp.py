@@ -468,16 +468,16 @@ uf.add_keyarg(
     min = 1,
     max = 10000000,
     py_type = "int",
-    desc_short = "number of points for the fitted curve",
-    desc = "The number of points to generate the interpolated dispersion curves with.",
+    desc_short = "total number of interpolation points",
+    desc = "The total number of points to generate the interpolated dispersion curves with.  This value has no effect for the numeric CPMG-based models.",
     can_be_none = False
 )
 uf.add_keyarg(
     name = "extend",
     py_type = "num",
     default = 500.0,
-    desc_short = "extension of the interpolated curve (Hz)",
-    desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point (in Hz).",
+    desc_short = "interpolated dispersion curve extension (in Hz)",
+    desc = "How far to extend the interpolated dispersion curves beyond the last dispersion point, i.e. the nu_CPMG frequency or spin-lock field strength value, in Hertz.",
     can_be_none = False
 )
 uf.add_keyarg(
@@ -489,11 +489,12 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the dispersion curves of the spin-lock field strength or nu_CPMG frequencies verses R2eff/R1rho.  One file will be created per spin system with the name 'disp_x.agr', where x is the spin ID string.  The curves for each experiment type will be placed into a different Grace graph.  Three or four sets of curves will be produced per magnetic field strength.  These include the measured R2eff/R1rho values, the fitted values, and the residuals.  A fourth set of interpolated dispersion curves for the fitted solution will be created for models which support interpolation (the numeric CPMG-based models are hence excluded).")
+uf.desc[-1].add_paragraph("This is used to create 2D Grace plots of the dispersion curves of the nu_CPMG frequencies or spin-lock field strength verses the R2eff/R1rho values.  One file will be created per spin system with the name 'disp_x.agr', where x is related to the spin ID string.  For each file, one Grace graph will be produced for each experiment.")
+uf.desc[-1].add_paragraph("Four sets of curves of R2eff/R1rho values will be produced per experiment and per magnetic field strength.  These are the experimental values, the fitted values, the interpolated dispersion curves for the fitted solution, and the residuals.  Different dispersion models result in different interpolated dispersion curves.  For the numeric models which use CPMG-type data, the maximum interpolation resolution is constrained by the frequency of a single CPMG block for the entire relaxation period.  For all other models, the interpolation resolution is not constrained and can be as fine as desired by setting the total number of interpolation points.  Interpolated curves are not produced for the 'R2eff' model as they are not necessary.")
 uf.backend = plot_disp_curves
 uf.menu_text = "&plot_disp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
-uf.wizard_size = (900, 600)
+uf.wizard_size = (950, 700)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'grace.png'
 
 
@@ -535,7 +536,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is used to created 2D Grace plots of the individual exponential curves used to find the R2eff or R1rho values.  This supplements the grace.write user function which is not capable of generating these curves in a reasonable format.")
+uf.desc[-1].add_paragraph("This is used to create 2D Grace plots of the individual exponential curves used to find the R2eff or R1rho values.  This supplements the grace.write user function which is not capable of generating these curves in a reasonable format.")
 uf.backend = plot_exp_curves
 uf.menu_text = "&plot_exp_curves"
 uf.gui_icon = "oxygen.actions.document-save"
