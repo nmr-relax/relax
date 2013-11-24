@@ -85,12 +85,12 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     for i in range(num_points):
         # We assume that A resonates at 0 [s^-1], without loss of generality.
         W = pA*Wa + pB*Wb                           # Pop-averaged Larmor frequency [s^-1].
-        da = Wa - offset[i]                         # Offset of spin-lock from A.
-        db = Wb - offset[i]                         # Offset of spin-lock from B.
-        d = W - offset[i]                           # Offset of spin-lock from pop-average.
-        waeff2 = spin_lock_fields2[i] + da**2     # Effective field at A.
-        wbeff2 = spin_lock_fields2[i] + db**2     # Effective field at B.
-        weff2 = spin_lock_fields2[i] + d**2       # Effective field at pop-average.
+        da = Wa - offset                            # Offset of spin-lock from A.
+        db = Wb - offset                            # Offset of spin-lock from B.
+        d = W - offset                              # Offset of spin-lock from pop-average.
+        waeff2 = spin_lock_fields2[i] + da**2       # Effective field at A.
+        wbeff2 = spin_lock_fields2[i] + db**2       # Effective field at B.
+        weff2 = spin_lock_fields2[i] + d**2         # Effective field at pop-average.
 
         # The rotating frame flip angle.
         theta = atan(spin_lock_fields[i] / d)

@@ -85,9 +85,9 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # The factors.
-        da = Wa - offset[i]                         # Offset of spin-lock from A.
-        db = Wb - offset[i]                         # Offset of spin-lock from B.
-        d = W - offset[i]                           # Offset of spin-lock from pop-average.
+        da = Wa - offset    # Offset of spin-lock from A.
+        db = Wb - offset    # Offset of spin-lock from B.
+        d = W - offset      # Offset of spin-lock from pop-average.
 
         # The gamma factor.
         sigma = pB*da + pA*db
