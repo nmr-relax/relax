@@ -791,5 +791,6 @@ class Disp_model_list(Model_list):
         "The CR72 2-site model extended to MQ CPMG data by Korzhnev et al., 2004.",
         "The 2-site numerical solution of Korzhnev et al. (2004) from multi-quantum CPMG data."
     ]
+    size = wx.Size(1024, 750)
     tooltip = "The list of all relaxation dispersion models to be optimised as part of the protocol."
     tooltip_button = "Open the model list selector window."
