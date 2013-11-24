@@ -26,7 +26,7 @@ if not hasattr(ds, 'numeric_only'):
     ds.numeric_only = False
 
 # The grid search size (the number of increments per dimension).
-GRID_INC = 5
+GRID_INC = 6
 
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
