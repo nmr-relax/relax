@@ -1105,7 +1105,7 @@ def pack_back_calc_r2eff(spin=None, spin_id=None, spin_index=None, back_calc=Non
         current_spin.r2eff_bc[key] = back_calc[exp_type_index][spin_index][frq_index][point_index]
 
 
-def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
+def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     """Custom 2D Grace plotting function for the dispersion curves.
 
     One file will be created per spin system.
@@ -1190,12 +1190,12 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
                             # The minimum frequency unit.
                             min_frq = 1.0 / relax_times[exp_type_index][frq_index]
-                            max_frq = max(cpmg_frqs[exp_type_index][frq_index]) + floor(extend / min_frq) * min_frq
-                            num_points = int(max_frq / min_frq)
+                            max_frq = max(cpmg_frqs[exp_type_index][frq_index]) + round(extend / min_frq) * min_frq
+                            num_points = int(round(max_frq / min_frq))
 
                             # Interpolate (adding the extended amount to the end).
                             for point_index in range(num_points):
-                                point = (point_index + 1) * max_frq / num_points
+                                point = (point_index + 1) * min_frq
                                 cpmg_frqs_new[exp_type_index][frq_index].append(point)
 
                             # Convert to a numpy array.
