@@ -1135,6 +1135,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
         y_err_flag = False
         axis_labels = []
         set_colours = []
+        x_axis_type_zero = []
         symbols = []
         linetype = []
         linestyle = []
@@ -1211,6 +1212,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
             data.append([])
             set_labels.append([])
             set_colours.append([])
+            x_axis_type_zero.append([])
             symbols.append([])
             linetype.append([])
             linestyle.append([])
@@ -1238,6 +1240,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
+                x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(1)
                 linetype[graph_index].append(0)
                 linestyle[graph_index].append(0)
@@ -1278,6 +1281,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
+                x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(4)
                 linetype[graph_index].append(1)
                 if interpolated_flag:
@@ -1321,6 +1325,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
                     # The other settings.
                     set_colours[graph_index].append(color_order[frq_index])
+                    x_axis_type_zero[graph_index].append(True)
                     symbols[graph_index].append(0)
                     linetype[graph_index].append(1)
                     linestyle[graph_index].append(1)
@@ -1356,6 +1361,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
+                x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(9)
                 linetype[graph_index].append(1)
                 linestyle[graph_index].append(3)
@@ -1406,7 +1412,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
             sets.append(len(data[gi]))
             legend.append(False)
         legend[0] = True
-        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
+        write_xy_header(file=file, title=title, graph_num=graph_num, sets=sets, set_names=set_labels, set_colours=set_colours, x_axis_type_zero=x_axis_type_zero, symbols=symbols, linetype=linetype, linestyle=linestyle, axis_labels=axis_labels, legend=legend, legend_box_fill_pattern=[0]*graph_num, legend_char_size=[0.8]*graph_num)
 
         # Write the data.
         graph_type = 'xy'
