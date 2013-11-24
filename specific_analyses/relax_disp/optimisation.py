@@ -25,7 +25,7 @@
 # Python module imports.
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import dot
+from numpy import dot, float64, int32, zeros
 from numpy.linalg import inv
 from re import search
 import sys
@@ -35,21 +35,27 @@ from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
-from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mmq_cpmg, loop_exp_frq, loop_exp_frq_point, loop_point, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mmq_cpmg, loop_exp, loop_exp_frq, loop_exp_frq_point, loop_frq, loop_point, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
 
 
-def back_calc_r2eff(spin=None, spin_id=None):
+def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None, store_chi2=False):
     """Back-calculation of R2eff/R1rho values for the given spin.
 
-    @keyword spin:      The specific spin data container.
-    @type spin:         SpinContainer instance
-    @keyword spin_id:   The spin ID string for the spin container.
-    @type spin_id:      str
-    @return:            The back-calculated R2eff/R1rho value for the given spin.
-    @rtype:             numpy rank-1 float array
+    @keyword spin:          The specific spin data container.
+    @type spin:             SpinContainer instance
+    @keyword spin_id:       The spin ID string for the spin container.
+    @type spin_id:          str
+    @keyword cpmg_frqs:     The CPMG frequencies to use instead of the user loaded values - to enable interpolation.
+    @type cpmg_frqs:        list of lists of numpy rank-1 float arrays
+    @keyword spin_lock_nu1: The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.
+    @type spin_lock_nu1:    list of lists of numpy rank-1 float arrays
+    @keyword store_chi2:    A flag which if True will cause the spin specific chi-squared value to be stored in the spin container.
+    @type store_chi2:       bool
+    @return:                The back-calculated R2eff/R1rho value for the given spin.
+    @rtype:                 numpy rank-1 float array
     """
 
     # Skip protons for MMQ data.
@@ -75,21 +81,47 @@ def back_calc_r2eff(spin=None, spin_id=None):
     # The offset and R1 data for R1rho off-resonance models.
     chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
     if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
-        chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+        chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count, spin_lock_nu1=spin_lock_nu1)
         r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
     # The dispersion data.
-    cpmg_frqs = return_cpmg_frqs(ref_flag=False)
-    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+    recalc_tau = True
+    if cpmg_frqs == None and spin_lock_nu1 == None:
+        cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
+    # Reconstruct the structures for interpolation.
+    else:
+        recalc_tau = False
+        values = []
+        errors = []
+        missing = []
+        for exp_type, exp_type_index in loop_exp(return_indices=True):
+            values.append([])
+            errors.append([])
+            missing.append([])
+            for spin_i in range(1):
+                values[exp_type_index].append([])
+                errors[exp_type_index].append([])
+                missing[exp_type_index].append([])
+                for frq, frq_index in loop_frq(return_indices=True):
+                    if exp_type in EXP_TYPE_LIST_CPMG:
+                        num = len(cpmg_frqs[exp_type_index][frq_index])
+                    else:
+                        num = len(spin_lock_nu1[exp_type_index][frq_index])
+                    values[exp_type_index][0].append(zeros(num, float64))
+                    errors[exp_type_index][0].append(zeros(num, float64))
+                    missing[exp_type_index][0].append(zeros(num, int32))
 
     # Initialise the relaxation dispersion fit functions.
-    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix)
+    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, recalc_tau=recalc_tau)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
 
-    # Store the chi2 value.
-    spin.chi2 = chi2
+    # Store the chi-squared value.
+    if store_chi2:
+        spin.chi2 = chi2
 
     # Reconstruct the back_calc data structure.
     back_calc = model.back_calc

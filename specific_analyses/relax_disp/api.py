@@ -690,7 +690,7 @@ class Relax_disp(API_base, API_common):
                     proton = return_attached_protons(spin_id)[0]
 
                 # The back calculated values.
-                back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id)
+                back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id, store_chi2=True)
 
                 # Pack the data.
                 pack_back_calc_r2eff(spin=spin, spin_id=spin_id, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)

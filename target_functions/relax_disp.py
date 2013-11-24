@@ -53,7 +53,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 
 
 class Dispersion:
-    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None):
+    def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, spin_lock_offsets=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True):
         """Relaxation dispersion target functions for optimisation.
 
         Models
@@ -121,6 +121,8 @@ class Dispersion:
         @type relax_times:          numpy rank-2 float array
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
         @type scaling_matrix:       numpy rank-2 float array
+        @keyword recalc_tau:        A flag which if True will cause tau_CPMG to be recalculated to remove user input truncation.
+        @type recalc_tau:           bool
         """
 
         # Check the args.
@@ -231,14 +233,18 @@ class Dispersion:
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
                         self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
 
-            # The tau_cpmg times - recalculated to avoid any user induced truncation in the input files.
+            # The tau_cpmg times.
             self.tau_cpmg = []
             for exp_type_index in range(len(values)):
                 self.tau_cpmg.append([])
                 for frq_index in range(len(values[exp_type_index][0])):
                     self.tau_cpmg[exp_type_index].append(zeros(self.num_disp_points[exp_type_index][frq_index], float64))
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
-                        self.tau_cpmg[exp_type_index][frq_index][i] = 0.25 * self.relax_times[exp_type_index][frq_index] / self.power[exp_type_index][frq_index][i]
+                        # Recalculate the tau_cpmg times to avoid any user induced truncation in the input files.
+                        if recalc_tau:
+                            self.tau_cpmg[exp_type_index][frq_index][i] = 0.25 * self.relax_times[exp_type_index][frq_index] / self.power[exp_type_index][frq_index][i]
+                        else:
+                            self.tau_cpmg[exp_type_index][frq_index][i] = 0.25 / self.cpmg_frqs[exp_type_index][frq_index][i]
 
         # Convert the spin-lock data to rad.s^-1.
         if spin_lock_nu1 != None:

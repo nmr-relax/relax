@@ -33,6 +33,7 @@ The dispersion data model is based on the following concepts, in order of import
 """
 
 # Python module imports.
+from copy import deepcopy
 from math import atan, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from random import gauss
@@ -53,8 +54,9 @@ from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
 from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
+import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_LIST_MMQ
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_R2EFF
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -1093,7 +1095,7 @@ def pack_back_calc_r2eff(spin=None, spin_id=None, spin_index=None, back_calc=Non
         current_spin.r2eff_bc[key] = back_calc[exp_type_index][spin_index][frq_index][point_index]
 
 
-def plot_disp_curves(dir=None, force=None):
+def plot_disp_curves(dir=None, num_points=1000, extend=500, force=False):
     """Custom 2D Grace plotting function for the dispersion curves.
 
     One file will be created per spin system.
@@ -1102,6 +1104,10 @@ def plot_disp_curves(dir=None, force=None):
 
     @keyword dir:           The optional directory to place the file into.
     @type dir:              str
+    @keyword num_points:    The number of points to generate the interpolated fitted curves with.
+    @type num_points:       int
+    @keyword extend:        How far to extend the interpolated fitted curves to (in Hz).
+    @type extend:           float
     @param force:           Boolean argument which if True causes the files to be overwritten if it already exists.
     @type force:            bool
     """
@@ -1144,6 +1150,59 @@ def plot_disp_curves(dir=None, force=None):
         proton = None
         if proton_mmq_flag:
             proton = return_attached_protons(spin_id)[0]
+
+        # Set up the interpolated curve data structures.
+        interpolated_flag = False
+        if not spin.model in [MODEL_R2EFF] + MODEL_LIST_NUMERIC_CPMG:
+            # Set the flag.
+            interpolated_flag = True
+
+            # Interpolate the CPMG frequencies.
+            cpmg_frqs = return_cpmg_frqs(ref_flag=False)
+            cpmg_frqs_new = deepcopy(cpmg_frqs)
+            if cpmg_frqs != None and len(cpmg_frqs[0][0]):
+                cpmg_frqs_new = []
+                for exp_type_index in range(len(cpmg_frqs)):
+                    # Add a new dimension.
+                    cpmg_frqs_new.append([])
+
+                    # Then loop over the spectrometer frequencies.
+                    for frq_index in range(len(cpmg_frqs[exp_type_index])):
+                        # Add a new dimension.
+                        cpmg_frqs_new[exp_type_index].append([])
+
+                        # Interpolate (adding the extended amount to the end).
+                        for point_index in range(num_points):
+                            point = (point_index + 1) * (max(cpmg_frqs[exp_type_index][frq_index])+extend) / num_points
+                            cpmg_frqs_new[exp_type_index][frq_index].append(point)
+
+                        # Convert to a numpy array.
+                        cpmg_frqs_new[exp_type_index][frq_index] = array(cpmg_frqs_new[exp_type_index][frq_index], float64)
+
+            # Interpolate the spin-lock field strengths.
+            spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+            spin_lock_nu1_new = deepcopy(spin_lock_nu1)
+            if spin_lock_nu1 != None and len(spin_lock_nu1[0][0]):
+                spin_lock_nu1_new = []
+                for exp_type_index in range(len(spin_lock_nu1)):
+                    # Add a new dimension.
+                    spin_lock_nu1_new.append([])
+
+                    # Then loop over the spectrometer frequencies.
+                    for frq_index in range(len(spin_lock_nu1[exp_type_index])):
+                        # Add a new dimension.
+                        spin_lock_nu1_new[exp_type_index].append([])
+
+                        # Interpolate (adding the extended amount to the end).
+                        for point_index in range(num_points):
+                            point = (point_index + 1) * (max(spin_lock_nu1[exp_type_index][frq_index])+extend) / num_points
+                            spin_lock_nu1_new[exp_type_index][frq_index].append(point)
+
+                        # Convert to a numpy array.
+                        spin_lock_nu1_new[exp_type_index][frq_index] = array(spin_lock_nu1_new[exp_type_index][frq_index], float64)
+
+            # Back calculate R2eff data for the second sets of plots.
+            back_calc = specific_analyses.relax_disp.optimisation.back_calc_r2eff(spin=spin, spin_id=spin_id, cpmg_frqs=cpmg_frqs_new, spin_lock_nu1=spin_lock_nu1_new)
 
         # Loop over each experiment type.
         graph_index = 0
@@ -1203,25 +1262,28 @@ def plot_disp_curves(dir=None, force=None):
                 # Increment the graph set index.
                 set_index += 1
 
-            # Add the back-calculated data.
+            # Add the back calculated data.
             for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
                 data[graph_index].append([])
 
                 # Add a new label.
                 if exp_type in EXP_TYPE_LIST_CPMG:
-                    label = "Back-calculated R\\s2eff\\N"
+                    label = "Back calculated R\\s2eff\\N"
                 else:
-                    label = "Back-calculated R\\s1\\xr\\B\\N"
+                    label = "Back calculated R\\s1\\xr\\B\\N"
                 if frq != None:
                     label += " (%.1f MHz)" % (frq / 1e6)
                 set_labels[exp_type_index].append(label)
 
                 # The other settings.
                 set_colours[graph_index].append(color_order[frq_index])
-                symbols[graph_index].append(0)
+                symbols[graph_index].append(4)
                 linetype[graph_index].append(1)
-                linestyle[graph_index].append(1)
+                if interpolated_flag:
+                    linestyle[graph_index].append(2)
+                else:
+                    linestyle[graph_index].append(1)
 
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
@@ -1242,6 +1304,45 @@ def plot_disp_curves(dir=None, force=None):
                 # Increment the graph set index.
                 set_index += 1
 
+            # Add the interpolated back calculated data.
+            if interpolated_flag:
+                for frq, frq_index in loop_frq(return_indices=True):
+                    # Add a new set for the data at each frequency.
+                    data[graph_index].append([])
+
+                    # Add a new label.
+                    if exp_type in EXP_TYPE_LIST_CPMG:
+                        label = "R\\s2eff\\N interpolated curve"
+                    else:
+                        label = "R\\s1\\xr\\B\\N interpolated curve"
+                    if frq != None:
+                        label += " (%.1f MHz)" % (frq / 1e6)
+                    set_labels[exp_type_index].append(label)
+
+                    # The other settings.
+                    set_colours[graph_index].append(color_order[frq_index])
+                    symbols[graph_index].append(0)
+                    linetype[graph_index].append(1)
+                    linestyle[graph_index].append(1)
+
+                    # Loop over the dispersion points.
+                    for point_index in range(len(back_calc[exp_type_index][0][frq_index])):
+                        # The X point.
+                        if exp_type in EXP_TYPE_LIST_CPMG:
+                            point = cpmg_frqs_new[exp_type_index][frq_index][point_index]
+                        else:
+                            point = spin_lock_nu1_new[exp_type_index][frq_index][point_index]
+
+                        # Add the data.
+                        data[graph_index][set_index].append([point, back_calc[exp_type_index][0][frq_index][point_index]])
+
+                        # Handle the errors.
+                        if err:
+                            data[graph_index][set_index][-1].append(None)
+
+                    # Increment the graph set index.
+                    set_index += 1
+
             # Add the residuals for statistical comparison.
             for frq, frq_index in loop_frq(return_indices=True):
                 # Add a new set for the data at each frequency.
@@ -1257,7 +1358,7 @@ def plot_disp_curves(dir=None, force=None):
                 set_colours[graph_index].append(color_order[frq_index])
                 symbols[graph_index].append(9)
                 linetype[graph_index].append(1)
-                linestyle[graph_index].append(2)
+                linestyle[graph_index].append(3)
 
                 # Loop over the dispersion points.
                 for point, point_index in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, return_indices=True):
@@ -2007,7 +2108,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
     @keyword spin_lock_nu1: The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.
     @type spin_lock_nu1:    list of lists of numpy rank-1 float arrays
     @return:                The numpy array structures of the chemical shifts in rad/s, spin-lock offsets in rad/s, and rotating frame tilt angles.  For each structure, the first dimension corresponds to the spins of a spin block, the second to the spectrometer field strength, and the third is the dispersion points.  For the chemical shift structure, the third dimension is omitted.
-    @rtype:                 list of numpy float arrays, list of numpy float arrays, list of lists of numpy float arrays
+    @rtype:                 list of lists of floats, list of lists of floats, list of lists of numpy float arrays
     """
 
     # Make sure offset data exists.
@@ -2056,6 +2157,17 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
             # Convert the shift from ppm to rad/s and store it.
             shifts[exp_index][spin_index][frq_index] = spin.chemical_shift * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
+            # Fetch all of the matching intensity keys.
+            keys = find_intensity_keys(exp_type=exp_type, frq=frq, raise_error=False)
+
+            # No data.
+            if not len(keys):
+                continue
+
+            # Store the offset in rad/s.  Only once and using the first key.
+            if offsets[exp_index][spin_index][frq_index] == None:
+                offsets[exp_index][spin_index][frq_index] = cdp.spin_lock_offset[keys[0]] * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+
             # Loop over the dispersion points.
             for point_index in range(len(spin_lock_nu1[exp_index][frq_index])):
                 # Alias the point.
@@ -2064,17 +2176,6 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
                 # Skip reference spectra.
                 if point == None:
                     continue
-
-                # Fetch all of the matching intensity keys.
-                keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, raise_error=False)
-
-                # No data.
-                if not len(keys):
-                    continue
-
-                # Store the offset in rad/s.  Only once and using the first key.
-                if offsets[exp_index][spin_index][frq_index] == None:
-                    offsets[exp_index][spin_index][frq_index] = cdp.spin_lock_offset[keys[0]] * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
 
                 # Calculate the tilt angle.
                 omega1 = point * 2.0 * pi
@@ -2087,6 +2188,12 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
     # No shift data for the spin cluster.
     if not data_flag:
         return None, None, None
+
+    # Convert to numpy arrays.
+    for exp_type_index in range(exp_num):
+        for spin_index in range(spin_num):
+            for frq_index in range(field_count):
+                theta[exp_type_index][spin_index][frq_index] = array(theta[exp_type_index][spin_index][frq_index], float64)
 
     # Return the structures.
     return shifts, offsets, theta
