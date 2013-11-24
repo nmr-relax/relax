@@ -129,7 +129,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=None):
         file.write("@arrange(%i, %i, .1, .1, .1, OFF, OFF, OFF)\n" % (row_num, col_num))
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=None, norm=None):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, x_axis_type_zero=None, y_axis_type_zero=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=None, norm=None):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -153,6 +153,10 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
     @type set_names:                None or list of list of str
     @keyword set_colours:           The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
     @type set_colours:              None or list of list of int
+    @keyword x_axis_type_zero:      The flags specifying if the X-axis should be placed at zero.
+    @type x_axis_type_zero:         None or list of lists of bool
+    @keyword y_axis_type_zero:      The flags specifying if the Y-axis should be placed at zero.
+    @type y_axis_type_zero:         None or list of lists of bool
     @keyword symbols:               The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
     @type symbols:                  None or list of list of int
     @keyword symbol_sizes:          The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
@@ -184,6 +188,14 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         sets = []
         for gi in range(graph_num):
             sets.append(1)
+    if x_axis_type_zero == None:
+        x_axis_type_zero = []
+        for gi in range(graph_num):
+            x_axis_type_zero.append(False)
+    if y_axis_type_zero == None:
+        y_axis_type_zero = []
+        for gi in range(graph_num):
+            y_axis_type_zero.append(False)
     if linewidth == None:
         linewidth = []
         for gi in range(graph_num):
@@ -225,6 +237,12 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    title \"%s\"\n" % title)
         if subtitle:
             file.write("@    subtitle \"%s\"\n" % subtitle)
+
+        # Axis at zero.
+        if x_axis_type_zero[gi]:
+            file.write("@    xaxis  type zero true\n")
+        if y_axis_type_zero[gi]:
+            file.write("@    yaxis  type zero true\n")
 
         # Axis specific settings.
         axes = ['x', 'y']
