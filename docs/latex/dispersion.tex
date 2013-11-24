@@ -63,7 +63,7 @@ The modelling of relaxation dispersion data can hence be catergorised into these
 \label{sect: dispersion: implemented models}
 
 A number of analytic and numeric models are supported within relax.
-These cover CPMG-type, $\Ronerho$-type, and multi-quantum (MQ) CPMG-type experiments. 
+These cover single quantum (SQ) CPMG-type, single quantum (SQ) $\Ronerho$-type, and combined proton-heteronuclear single quantum (SQ), zero quantum (ZQ), double quantum (DQ) and multi quantum (MQ) CPMG-type experiments. 
 If the model you are interested in is not available, please see Section~\ref{sect: dispersion: model tutorial} on page~\pageref{sect: dispersion: model tutorial} for how you can add new models to relax.
 
 Models which are independent of the experiment type include:
@@ -74,7 +74,7 @@ Models which are independent of the experiment type include:
 \end{description}
 
 
-For the CPMG-type experiments, the analytic models currently supported are:
+For the SQ CPMG-type experiments, the analytic models currently supported are:
 
 \begin{description}
 \item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
@@ -86,7 +86,7 @@ For the CPMG-type experiments, the analytic models currently supported are:
 Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.  $2*\taucpmg$ is the time between successive 180 degree pulses. Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.  See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
 \end{description}
 
-For the CPMG-type experiments, the numeric models currently supported are:
+For the SQ CPMG-type experiments, the numeric models currently supported are:
 
 \begin{description}
 \item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!NS CPMG 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov \citep{Tollinger01}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}.
@@ -116,7 +116,7 @@ For the $\Ronerho$-type experiments, the numeric models currently supported are:
 \end{description}
 
 
-For the MQ CPMG-type experiments, the analytic models currently supported are:
+For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the analytic models currently supported are:
 
 \begin{description}
 \item[`MQ CR72':]\index{relaxation dispersion!MQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ CR72 model} on page~\pageref{sect: dispersion: MQ CR72 model}.
@@ -222,6 +222,8 @@ It is selected by setting the model to `No Rex'.
 \section{The analytic CPMG models}
 \label{sect: dispersion: analytic CPMG models}
 \index{relaxation dispersion!Analytic CPMG model|textbf}
+
+These are the analytic models designed for a single data type -- the single quantum CPMG-type experiment.
 
 
 % LM63 model.
@@ -431,6 +433,8 @@ The reference for this equation is:
 \label{sect: dispersion: numeric CPMG models}
 \index{relaxation dispersion!Numeric CPMG model|textbf}
 
+These are the numeric models designed for a single data type -- the single quantum CPMG-type experiment.
+
 
 % NS CPMG 2-site expanded model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -580,6 +584,8 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 \section{The analytic $\Ronerho$ models}
 \label{sect: dispersion: analytic R1rho models}
 \index{relaxation dispersion!Analytic R1rho model|textbf}
+
+These are the analytic models designed for $\Ronerho$-type experiments.
 
 
 % M61 model.
@@ -748,6 +754,9 @@ The reference for this equation is:
 \label{sect: dispersion: numeric R1rho models}
 \index{relaxation dispersion!Numeric R1rho model|textbf}
 
+These are the numeric models designed for $\Ronerho$-type experiments.
+
+
 % NS R1rho 2-site model.
 %~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -761,12 +770,15 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 
 
 
-% The analytic MQ CPMG models.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The analytic MMQ CPMG models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{The analytic MQ CPMG models}
-\label{sect: dispersion: analytic MQ CPMG models}
-\index{relaxation dispersion!Analytic MQ CPMG model|textbf}
+\section{The analytic MMQ CPMG models}
+\label{sect: dispersion: analytic MMQ CPMG models}
+\index{relaxation dispersion!Analytic MMQ CPMG model|textbf}
+
+These are the analytic models designed for handling combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG-type experiments.
+This data combination is labelled as multiple multiple quantum data or MMQ.
 
 
 % MQ CR72 model.
@@ -823,12 +835,15 @@ The references for this model are:
 
 
 
-% The numeric MQ CPMG models.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The numeric MMQ CPMG models.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{The numeric MQ CPMG models}
-\label{sect: dispersion: numeric MQ CPMG models}
-\index{relaxation dispersion!Numeric MQ CPMG model|textbf}
+\section{The numeric MMQ CPMG models}
+\label{sect: dispersion: numeric MMQ CPMG models}
+\index{relaxation dispersion!Numeric MMQ CPMG model|textbf}
+
+These are the numeric models designed for handling combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG-type experiments.
+This data combination is labelled as multiple multiple quantum data or MMQ.
 
 
 % MMQ 2-site model.
