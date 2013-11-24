@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21583
+                                  relax repository checkout r21622
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -170,7 +170,7 @@ spin_N.dwH = -0.271799433880579
 calc()
 
 # Plot the dispersion curves.
-relax_disp.plot_disp_curves(dir='.', force=True)
+relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)
 
 # Save the results.
 state.save('cpmg_fit_solution', dir='.', compress_type=1, force=True)
@@ -3023,8 +3023,9 @@ The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ C
 
 relax> calc(verbosity=1)
 
-relax> relax_disp.plot_disp_curves(dir='.', force=True)
+relax> relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)
 Opening the file './disp_9_N.agr' for writing.
+RelaxWarning: divide by zero encountered in divide
 Opening the file './grace2images.py' for writing.
 
 relax> state.save(state='cpmg_fit_solution', dir='.', compress_type=1, force=True)

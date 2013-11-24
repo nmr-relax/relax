@@ -1,7 +1,7 @@
 
 
 
-                                  relax repository checkout r21506
+                                  relax repository checkout r21622
                      svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
 
                               Molecular dynamics by NMR data analysis
@@ -672,7 +672,6 @@ relax> relax_disp.select_model(model='MMQ 2-site')
 The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.
 
 relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
-No R2eff data could be found, deselecting the ':9@H' spin.
 
 
 Fitting to the spin block [':9@N']
@@ -874,8 +873,9 @@ Simulation 3, cluster [':9@N']
 
 relax> monte_carlo.error_analysis()
 
-relax> relax_disp.plot_disp_curves(dir='.', force=True)
+relax> relax_disp.plot_disp_curves(dir='.', num_points=1000, extend=500.0, force=True)
 Opening the file './disp_9_N.agr' for writing.
+RelaxWarning: divide by zero encountered in divide
 Opening the file './grace2images.py' for writing.
 
 relax> state.save(state='state', dir=None, compress_type=1, force=True)

@@ -148,7 +148,7 @@ spin_N.dwH = -0.271799433880579
 calc()
 
 # Plot the dispersion curves.
-relax_disp.plot_disp_curves(dir='.', force=True)
+relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)
 
 # Save the results.
 state.save('cpmg_fit_solution_cr72', dir='.', compress_type=1, force=True)

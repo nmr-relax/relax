@@ -74,17 +74,32 @@ r20_key_1h_mq_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=500e6
 r20_key_1h_mq_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=600e6)
 r20_key_1h_mq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6)
 
-# Manually set the parameter values to the relax results (the cpmg_fit results are strange!).
+# Manually set the parameter values to the cpmg_fit results for all data.
 spin = cdp.mol[0].res[0].spin[1]
 spin.r2 = {
-    r20_key_zq_500: 5.91297173859543,
-    r20_key_zq_600: 6.66919500895295,
-    r20_key_zq_800: 6.79000166117068
+    r20_key_sq_500: 8.481132,
+    r20_key_sq_600: 8.977845,
+    r20_key_sq_800: 10.490257,
+    r20_key_1h_sq_500: 6.778902,
+    r20_key_1h_sq_600: 7.097458,
+    r20_key_1h_sq_800: 5.635893,
+    r20_key_zq_500: 6.043942,
+    r20_key_zq_600: 6.827802,
+    r20_key_zq_800: 6.946693,
+    r20_key_dq_500: 8.693570,
+    r20_key_dq_600: 10.744672,
+    r20_key_dq_800: 12.647869,
+    r20_key_mq_500: 9.245925,
+    r20_key_mq_600: 9.949255,
+    r20_key_mq_800: 12.053031,
+    r20_key_1h_mq_500: 7.887264,
+    r20_key_1h_mq_600: 8.506481,
+    r20_key_1h_mq_800: 11.276893
 }
-spin.pA = 0.942921993217604
-spin.kex = 371.076657461446
-spin.dw = 2.30604327221814
-spin.dwH = 0.576576043850393
+spin.pA = 0.944322
+spin.kex = 368.075
+spin.dw = 4.413451
+spin.dwH = -0.271799
 
 # Optimisation.
 minimise(min_algor='simplex')

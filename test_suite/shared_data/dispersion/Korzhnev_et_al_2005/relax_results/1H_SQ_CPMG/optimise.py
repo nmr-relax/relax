@@ -102,7 +102,7 @@ spin.dw = 4.413451
 spin.dwH = -0.271799
 
 # Optimisation.
-minimise(min_algor='simplex', max_iter=100)
+minimise(min_algor='simplex')
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=3)

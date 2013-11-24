@@ -77,29 +77,29 @@ r20_key_1h_mq_800 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_MQ, frq=800e6
 # Manually set the parameter values to the cpmg_fit results for all data.
 spin = cdp.mol[0].res[0].spin[1]
 spin.r2 = {
-    r20_key_sq_500: 9.065070,
-    r20_key_sq_600: 10.160889,
-    r20_key_sq_800: 11.790803,
-    r20_key_1h_sq_500: 7.096502,
-    r20_key_1h_sq_600: 7.558959,
-    r20_key_1h_sq_800: 6.060312,
-    r20_key_zq_500: 0.284809,
-    r20_key_zq_600: 0.000170,
-    r20_key_zq_800: -0.000104,
-    r20_key_dq_500: 14.809871,
-    r20_key_dq_600: 18.534790,
-    r20_key_dq_800: 21.503204,
-    r20_key_mq_500: 12.841165,
-    r20_key_mq_600: 14.078760,
-    r20_key_mq_800: 16.837882,
-    r20_key_1h_mq_500: 12.527122,
-    r20_key_1h_mq_600: 13.516082,
-    r20_key_1h_mq_800: 16.722821
+    r20_key_sq_500: 8.481132,
+    r20_key_sq_600: 8.977845,
+    r20_key_sq_800: 10.490257,
+    r20_key_1h_sq_500: 6.778902,
+    r20_key_1h_sq_600: 7.097458,
+    r20_key_1h_sq_800: 5.635893,
+    r20_key_zq_500: 6.043942,
+    r20_key_zq_600: 6.827802,
+    r20_key_zq_800: 6.946693,
+    r20_key_dq_500: 8.693570,
+    r20_key_dq_600: 10.744672,
+    r20_key_dq_800: 12.647869,
+    r20_key_mq_500: 9.245925,
+    r20_key_mq_600: 9.949255,
+    r20_key_mq_800: 12.053031,
+    r20_key_1h_mq_500: 7.887264,
+    r20_key_1h_mq_600: 8.506481,
+    r20_key_1h_mq_800: 11.276893
 }
-spin.pA = 0.933134
-spin.kex = 211.105
-spin.dw = 5.098428
-spin.dwH = 0.298763
+spin.pA = 0.944322
+spin.kex = 368.075
+spin.dw = 4.413451
+spin.dwH = -0.271799
 
 # Optimisation.
 minimise(min_algor='simplex')
