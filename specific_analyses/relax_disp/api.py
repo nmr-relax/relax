@@ -928,14 +928,14 @@ class Relax_disp(API_base, API_common):
                     print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
                 else:
                     print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
-            return True
+                return True
 
             if value > c2:
                 if sim == None:
                     print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
                 else:
                     print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
-            return True
+                return True
 
         # Accept model.
         return False
