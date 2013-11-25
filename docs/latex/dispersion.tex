@@ -936,6 +936,7 @@ It can be summarised as:
 \begin{description}
 \item[Peak intensity error analysis:]  An error analysis is performed to determine the peak intensity errors, if not already calculated (see Section~\ref{uf: spectrum.error_analysis} on page~\pageref{uf: spectrum.error_analysis}).
 \item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise} user function) or simply calculated (using the \uf{calc} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
+\item[Dispersion curve insignificance:]  Spins with insignificant dispersion profiles will be deselected with the \uf{relax\_disp.insignificance} user function, as described below, excluding the `No Rex' model.
 \item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.  This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.  Each model will be stored in a different data pipe.  See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
 \item[Grid search avoidance:]  A number of tricks are used to speed up optimisation by skipping or decreasing the size of the initial grid search:
 \begin{description}
@@ -957,6 +958,17 @@ You should check very carefully for any relax warnings as these can be an indica
 If you are a power user, you are free to use all of the relax user functions, the relax library, and the relax data store to implement your own protocol.
 If you wish, the protocol can be converted into a new auto-analysis and distributed as part of relax.
 The relax test suite will ensure the protocol remains functional for the lifetime of relax.
+
+
+% Dispersion curve insignificance.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion curve insignificance}
+
+To avoid severe model failure due to the fitting of statistically insignificant dispersion curves, the \uf{relax\_disp.insignificance} user function can be used.
+This is activated by default in the auto-analysis.
+The user function takes a single insignificance value and if the difference between the smallest and largest $\Rtwoeff$ or $\Ronerho$ value for an individual spin for all dispersion curves is less than this, then that spin will be deselected.
+See Section~\ref{uf: relax_disp.insignificance} on page~\pageref{uf: relax_disp.insignificance} for more details.
 
 
 % The relaxation dispersion space.
