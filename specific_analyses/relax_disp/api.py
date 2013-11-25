@@ -913,6 +913,10 @@ class Relax_disp(API_base, API_common):
         @rtype:             bool
         """
 
+        # Skip the R2eff model parameters.
+        if name in ['r2eff', 'i0']:
+            return False
+
         # Default limits.
         c1 = 0.501
         c2 = 0.999
@@ -921,20 +925,20 @@ class Relax_disp(API_base, API_common):
         if args != None:
             c1, c2 = args
 
+        # Elimination text.
+        elim_text = "Data pipe '%s':  The %s parameter of %.5f is %s, eliminating " % (pipes.cdp_name(), name, value, "%s")
+        if sim == None:
+            elim_text += "the spin cluster %s." % model_info
+        else:
+            elim_text += "simulation %i of the spin cluster %s." % (sim, model_info)
+
         # The pA parameter.
         if name == 'pA':
             if value < c1:
-                if sim == None:
-                    print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
-                else:
-                    print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
+                print(elim_text % ("less than  %.5f" % c1))
                 return True
-
             if value > c2:
-                if sim == None:
-                    print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
-                else:
-                    print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
+                print(elim_text % ("greater than  %.5f" % c2))
                 return True
 
         # Accept model.
