@@ -47,7 +47,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
 from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
-from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, linear_constraints, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, get_value, linear_constraints, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from target_functions.relax_disp import Dispersion
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -787,6 +787,29 @@ class Relax_disp(API_base, API_common):
     default_value_doc.add_table(_table.label)
 
 
+    def deselect(self, model_info, sim_index=None):
+        """Deselect models or simulations.
+
+        @param model_info:      The spin ID list from the model_loop() API method.
+        @type model_info:       int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
+        """
+
+        # Loop over all the spins and deselect them.
+        for spin_id in model_info:
+            # Get the spin.
+            spin = return_spin(spin_id)
+
+            # Spin deselection.
+            if sim_index == None:
+                spin.select = False
+
+            # Simulation deselection.
+            else:
+                spin.select_sim[sim_index] = False
+
+
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
         """Duplicate the data specific to a single model.
 
@@ -871,6 +894,118 @@ class Relax_disp(API_base, API_common):
                 # Duplicate the object.
                 new_obj = deepcopy(getattr(spin, name))
                 setattr(dp_to.mol[spin._mol_index].res[spin._res_index].spin[spin._spin_index], name, new_obj)
+
+
+    def eliminate(self, name, value, model_info, args, sim=None):
+        """Relaxation dispersion model elimination, parameter by parameter.
+
+        @param name:        The parameter name.
+        @type name:         str
+        @param value:       The parameter value.
+        @type value:        float
+        @param model_info:  The list of spin IDs from the model_loop() API method.
+        @type model_info:   int
+        @param args:        The c1 and c2 elimination constant overrides.
+        @type args:         None or tuple of float
+        @keyword sim:       The Monte Carlo simulation index.
+        @type sim:          int
+        @return:            True if the model is to be eliminated, False otherwise.
+        @rtype:             bool
+        """
+
+        # Default limits.
+        c1 = 0.501
+        c2 = 0.999
+
+        # Depack the arguments.
+        if args != None:
+            c1, c2 = args
+
+        # The pA parameter.
+        if name == 'pA':
+            if value < c1:
+                if sim == None:
+                    print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
+                else:
+                    print("Data pipe '%s':  The pA parameter of %.5f is less than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
+            return True
+
+            if value > c2:
+                if sim == None:
+                    print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating the spin cluster %s." % (pipes.cdp_name(), value, c1, model_info))
+                else:
+                    print("Data pipe '%s':  The pA parameter of %.5f is greater than %.5f, eliminating simulation %i of the spin cluster %s." % (pipes.cdp_name(), value, c1, sim, model_info))
+            return True
+
+        # Accept model.
+        return False
+
+
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The list spin ID strings from the model_loop() API method.
+        @type model_info:       list of str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Get the spin containers.
+        spins = []
+        for spin_id in model_info:
+            # Get the spin.
+            spin = return_spin(spin_id)
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Add the spin.
+            spins.append(spin)
+
+        # No spins.
+        if not len(spins):
+            return None
+
+        # Call the get_param_names() function.
+        return get_param_names(spins)
+
+
+    def get_param_values(self, model_info=None, sim_index=None):
+        """Return a vector of parameter values.
+
+        @keyword model_info:    The model index from model_info().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
+        @type model_info:       int
+        @keyword sim_index:     The Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
+
+        # Get the spin containers.
+        spins = []
+        for spin_id in model_info:
+            # Get the spin.
+            spin = return_spin(spin_id)
+
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Add the spin.
+            spins.append(spin)
+
+        # No spins.
+        if not len(spins):
+            return None
+
+        # Loop over the parameters of the cluster, fetching their values.
+        values = []
+        for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
+            values.append(get_value(spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key))
+
+        # Return all values.
+        return values
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
