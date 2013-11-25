@@ -920,10 +920,11 @@ class Relax_disp(API_base, API_common):
         # Default limits.
         c1 = 0.501
         c2 = 0.999
+        c3 = 1.0
 
         # Depack the arguments.
         if args != None:
-            c1, c2 = args
+            c1, c2, c3 = args
 
         # Elimination text.
         elim_text = "Data pipe '%s':  The %s parameter of %.5f is %s, eliminating " % (pipes.cdp_name(), name, value, "%s")
@@ -939,6 +940,12 @@ class Relax_disp(API_base, API_common):
                 return True
             if value > c2:
                 print(elim_text % ("greater than  %.5f" % c2))
+                return True
+
+        # The tex parameter.
+        if name == 'tex':
+            if value > c3:
+                print(elim_text % ("greater than  %.5f" % c3))
                 return True
 
         # Accept model.
