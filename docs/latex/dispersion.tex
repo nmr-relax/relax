@@ -1250,6 +1250,20 @@ If a parameter falls outside of these limits, the entire spin cluster will be de
 When not using the auto-analysis, custom model elimination rules can be defined and used with the \uf{eliminate} user function.
 
 
+% MC elimination.
+%~~~~~~~~~~~~~~~~
+
+\subsection{Monte Carlo simulation elimination}
+
+Just as models can fail, often Monte Carlo simulations will also experience optimisation failures (see Figure~4 of \citet{dAuvergneGooley06} for such a failure in the model-free optimisation space).
+The minimum can be warped so much by the data randomisation that a new minimum appears at an unreasonable position in the optimisation space.
+Even when the original model optimisation is successful, this can affect a small portion of the simulations.
+These must be removed prior to calculating the parameter errors otherwise the errors will be significantly over estimated.
+The simulation model failures are outliers which skew the error estimate, introducing a bias.
+This can result in parameter error estimates which are too large.
+The solution is the use of the \uf{eliminate} user function when Monte Carlo simulations are turned on -- this will automatically deselect simulations rather than spins using the rules from the previous section.
+Note that relax is the only software which provides this feature.
+
 
 % MPI.
 %~~~~~
