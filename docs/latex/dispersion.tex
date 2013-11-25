@@ -912,10 +912,72 @@ The references for this model are:
 
 
 
-% Clustering.
-%%%%%%%%%%%%%
+% Relaxation dispersion optimisation theory.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{The clustered relaxation dispersion analysis}
+\section{Relaxation dispersion optimisation theory}
+
+The implementation of optimisation in relax is discussed in detail in Chapter~\ref{ch: optimisation}.
+To understand the concepts in this subsection, it is best to look at that chapter first.
+
+
+% The relaxation dispersion auto-analysis.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The relaxation dispersion auto-analysis}
+
+In relax, optimisation can either be performed manually or one of the auto-analyses can be employed.
+Note that if you are using the relax GUI, you will be using the dispersion auto-analysis.
+The auto-analysis is a fully self-contained protocol designed to make the analysis as simple as possible.
+All details can be seen in the \file{auto\_analyses/relax\_disp.py} file which, in reality, is simply a large relax script.
+
+The relaxation dispersion auto-analysis implements many of the concepts described in detail in the next sections.
+It can be summarised as:
+\begin{description}
+\item[Peak intensity error analysis:]  An error analysis is performed to determine the peak intensity errors, if not already calculated (see Section~\ref{uf: spectrum.error_analysis} on page~\pageref{uf: spectrum.error_analysis}).
+\item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise} user function) or simply calculated (using the \uf{calc} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
+\item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.  This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.  Each model will be stored in a different data pipe.  See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
+\item[Grid search avoidance:]  A number of tricks are used to speed up optimisation by skipping or decreasing the size of the initial grid search:
+\begin{description}
+\item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is used in a clustered analysis whereby the pre-run directory contains results from a non-clustered analysis.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
+\item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.  The currently supported nested model pairs are `CR72' and `CR72 full', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.  In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
+\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MQ CR72' model is used for the `MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
+\end{description}
+\item[Interruption:]  The optimisation procedure of the auto-analysis can read saved results files if a previous calculation was interrupted.
+\item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.  The relax implementation is described in \citet{dAuvergneGooley06}.  This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.
+\item[Per-model error analysis:]  If desired, Monte Carlo simulations for error propagation can be performed for each model.  This does however require far greater computation time.
+\item[Model selection:]  If more than one model is analysed, AIC model selection will be performed to judge statistical significance of the models \citep{Akaike73}.  This is used to determine if statistically significant $\Rex$ contributions can be extracted form the data, as well as determine if one model is better than the other.  Different statistical techniques such as AICc and BIC can be used when using the script UI \citep{HurvichTsai89,Schwarz78}.  The AIC, AICc and BIC equations for NMR relaxation data were derived in \citet{dAuvergneGooley03}.  In most cases, the list models to choose from should be severely limited.  The results will be stored in a new `final' data pipe and output files placed in the \directory{final} directory.
+\item[Error analysis:]  Monte Carlo simulations for error propagation is performed on the final data pipe (see Section~\ref{uf: monte_carlo.setup} on page~\pageref{uf: monte_carlo.setup} as well as the descriptions for all of the other \uf{monte\_carlo} user functions).  Model elimination is performed again to remove the Monte Carlo simulations which have failed.
+\item[Output file creation:]  For each of the models and the final model selection results, the \uf{relax\_disp.plot\_exp\_curves} (Section~\ref{uf: relax_disp.plot_exp_curves} on page~\pageref{uf: relax_disp.plot_exp_curves}), \uf{grace.write} (Section~\ref{uf: grace.write} on page~\pageref{uf: grace.write}) and \uf{value.write} (Section~\ref{uf: value.write} on page~\pageref{uf: value.write}) user functions will be called to generate all the output files you would need.  Additional output files can be created after the analysis using the user functions manually.
+\end{description}
+
+All these steps will be shown in full detail in the relax logs.
+You should check very carefully for any relax warnings as these can be an indication that something has not been set up correctly.
+
+If you are a power user, you are free to use all of the relax user functions, the relax library, and the relax data store to implement your own protocol.
+If you wish, the protocol can be converted into a new auto-analysis and distributed as part of relax.
+The relax test suite will ensure the protocol remains functional for the lifetime of relax.
+
+
+% The relaxation dispersion space.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The relaxation dispersion space}
+
+In a dispersion analysis the target function $f(\theta)$ is the chi-squared\index{chi-squared|textbf} equation
+\begin{equation} \label{eq: chi2 dispersion}
+ \chi^2(\theta) = \sum_{i=1}^n \frac{(\Rtwoeff - \Rtwoeff(\theta))^2}{\sigma_i^2},
+\end{equation}
+
+\noindent where $i$ is the summation index, $\Rtwoeff$ is the experimental relaxation data which belongs to the data set R and includes the $\Rtwoeff$ and $\Ronerho$ values for all experiments at all magnetic field strengths, $\Rtwoeff(\theta)$ is the back calculated relaxation data belonging to the set R$(\theta)$, and $\sigma_i$ is the experimental $\Rtwoeff/\Ronerho$ error.
+For standard optimisation, the summation index ranges over the relaxation data of an individual spin.
+However this can be changed with clustering whereby the relaxation data from a group of spin systems are optimised using a shared set of parameters.
+
+
+% Clustering.
+%~~~~~~~~~~~~
+
+\subsection{The clustered relaxation dispersion analysis}
 
 \begin{figure*}[h]
 \includegraphics[width=3cm, bb=14 14 399 399]{graphics/misc/cluster_600x600}
@@ -923,10 +985,258 @@ The references for this model are:
 
 Often in a relaxation dispersion analysis you will wish to fit a number of spin systems together using global parameters such as $\kex$, $\pA$, etc.
 This can be achieved through the concept of clustering.
-A cluster is defined by an ID string can can contain any number of spins.
+A cluster is defined by an ID string and can contain any number of spins.
 Multiple clusters in one analysis can be defined.
 Any spins not included in a cluster will be treated as a free spin whereby all parameters of the dispersion model are local to that spin.
-Spin clusters can be defined using the \uf{relax\_disp.cluster} user function or via the spin cluster GUI element.
+Spin clusters can be defined using the \uf{relax\_disp.cluster} user function (see Section~\ref{uf: relax_disp.cluster} on page~\pageref{uf: relax_disp.cluster}) or via the spin cluster GUI element.
+
+
+% Grid search.
+%~~~~~~~~~~~~~
+
+\subsection{Dispersion parameter grid search}
+
+One of the most statistically unbiased methods for determining an initial parameter estimate prior to optimisation is to perform a grid search.
+This is performed via the \uf{grid\_search} user function (see Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search}).
+
+
+For some dispersion models the grid search can be too computationally expensive.
+In this case, some tricks can be used to bypass the parts of the grid search or the whole grid search:
+\begin{description}
+\item[Model nesting:]  Using the optimised parameters of a simpler nested model as the starting point for optimisation.
+\item[Model equivalence:]  Using the optimised solution of an equivalent analytic model as the starting point for a numeric model.
+\end{description}
+These tricks are implemented in the relaxation dispersion auto-analysis protocol as described above.
+If you do not use the auto-analysis or the GUI, then you are free to implement your own solutions.
+
+The grid search lower and upper bounds default to:
+\begin{subequations}
+\begin{gather} 
+    1 \leqslant \Rtwozero \leqslant 40, \\
+    1 \leqslant \RtwozeroA \leqslant 40, \\
+    1 \leqslant \RtwozeroB \leqslant 40, \\
+    0 \leqslant \Phiex \leqslant 10, \\
+    0 \leqslant \PhiexB \leqslant 10, \\
+    0 \leqslant \PhiexC \leqslant 10, \\
+    0 \leqslant \pA\dw^2 \leqslant 10, \\
+    0 \leqslant \dw \leqslant 10, \\
+    0 \leqslant \dwH \leqslant 3, \\
+    0.5 \leqslant \pA \leqslant 1, \\
+    0 \leqslant \kex \leqslant 1e^6, \\
+    0 \leqslant \kA \leqslant 1e^6, \\
+    0 \leqslant \kB \leqslant 1e^6, \\
+    0 \leqslant \kAB \leqslant 1e^6, \\
+    0 \leqslant \tex \leqslant 1e^{-6}.
+\end{gather} 
+\end{subequations}
+
+For the MMQ models, the grid bounds are slightly different with
+\begin{subequations}
+\begin{gather} 
+    -10 \leqslant \dw \leqslant 10, \\
+    -3 \leqslant \dwH \leqslant 3.
+\end{gather} 
+\end{subequations}
+
+These values can be changed when not using the auto-analysis.
+Linear constraints can decrease the number of grid points searched through.
+
+
+
+% Optimisation.
+%~~~~~~~~~~~~~~
+
+\subsection{Dispersion parameter optimisation}
+
+For a description of gradients and Hessians, see Section~\ref{sect: gradient} on page~\pageref{sect: gradient} and Section~\ref{sect: Hessian} on page~\pageref{sect: Hessian} respectively.
+The relaxation dispersion model gradients or Hessians have have either not been calculated for the analytic models or cannot be calculated as the solution is not analytic.
+Numeric gradients and Hessians could be calculated but this is too computationally expensive, especially for the numeric models where this adds a second layer of numeric approximation.
+
+Optimisation in relax is via the minfx package \url{https://gna.org/projects/minfx/}.
+This allows the Nelder-Mead simplex optimisation technique (see Section~\ref{sect: Nelder-Mead simplex} on page~\pageref{sect: Nelder-Mead simplex}) and the log-barrier constraint algorithm (see Section~\ref{sect: Log-barrier constraint algorithm} on page~\pageref{sect: Log-barrier constraint algorithm}) to be used.
+The advantage of these two techniques is that it enables extremely reliable and high precision optimisation without the use of gradients or Hessians, hence can significantly increase optimisation speeds.
+They however do not avoid the multiple local minimum problem present in the MMQ models -- for that a highly accurate grid search is a reasonable solution.
+
+
+% Constraints.
+%~~~~~~~~~~~~~
+
+\subsection{Relaxation dispersion parameter constraints}
+
+To understand this section, please see Section~\ref{sect: constraint algorithms} on page~\pageref{sect: constraint algorithms}.
+For a dispersion analysis, linear constraints are the most useful type of constraint.
+
+For most models, the linear constraints in the notation of \eqref{eq: linear constraint} are
+\begin{small}
+\begin{equation}
+    \begin{pmatrix}
+        1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+       -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \Rtwozero \\
+        \RtwozeroA \\
+        \RtwozeroB \\
+        \Phiex \\
+        \PhiexB \\
+        \PhiexC \\
+        \pA\dw^2 \\
+        \dw \\
+        \dwH \\
+        \pA \\
+        \kex \\
+        \kB \\
+        \kC \\
+        \kAB \\
+        \tex \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
+        0 \\
+        -200 \\
+        0 \\
+        -200 \\
+        0 \\
+        -200 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+        -1 \\
+        0.5 \\
+        0.85 \\
+        0 \\
+        -2e^6 \\
+        0 \\
+        -2e^6 \\
+        0 \\
+        -2e^6 \\
+        0 \\
+        -2e^6 \\
+        0 \\
+    \end{pmatrix}.
+\end{equation}
+\end{small}
+
+\noindent  Through the isolation of each individual element, the constraints can be seen to be equivalent to
+\begin{subequations}
+\begin{gather} 
+    0 \leqslant \Rtwozero \leqslant 200, \\
+    0 \leqslant \RtwozeroA \leqslant 200, \\
+    0 \leqslant \RtwozeroB \leqslant 200, \\
+    \Phiex \geqslant 0, \\
+    \PhiexB \geqslant 0, \\
+    \PhiexC \geqslant 0, \\
+    \dw \geqslant 0, \\
+    \dwH \geqslant 0, \\
+    \pA\dw^2 \geqslant 0, \\
+    \pB \leqslant \pA \leqslant 1, \\
+    \pA \geqslant 0.85 \quad (\textrm{the skewed condition, } \pA \gg \pB), \\
+    0 \leqslant \kex \leqslant 2e^6, \\
+    0 \leqslant \kA \leqslant 2e^6, \\
+    0 \leqslant \kB \leqslant 2e^6, \\
+    0 \leqslant \kAB \leqslant 2e^6, \\
+    \tex \geqslant 0.
+\end{gather} 
+\end{subequations}
+
+Note that the $\dw$ and $\dwH$ constraints are not used for any of the MMQ-type models as sign differentiation is possible.
+And that the $\pA \geqslant 0.85$ constraint is used instead of the $\pA \geqslant 0.5$ constraint for all models which require $\pA \gg \pB$.
+When not using the auto-analysis, constraints can be modified or turned off.
+
+
+% Diagonal scaling.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Relaxation dispersion diagonal scaling}
+
+The concept of diagonal scaling is explained in Section~\ref{sect: diagonal scaling} on page~\pageref{sect: diagonal scaling}.
+
+For the dispersion analysis the scaling factor of 10 is used for the relaxation rates, 1e$^5$ for the exchange rates, 1e$^{-4}$ for exchange times, and 1 for all other parameters.
+The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$, $\Phiex$, $\PhiexB$, $\PhiexC$, $\pA\dw^2$, $\dw$, $\dwH$, $\pA$, $\kex$, $\kB$, $\kC$, $\kAB$, $\tex$\} is
+\begin{equation}
+    \begin{pmatrix}
+        10 & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 10 & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1e^5 & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 1e^5 & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 1e^5 & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 1e^5 & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 1e^{-4} \\
+    \end{pmatrix}.
+\end{equation}
+
+
+% Model elimination.
+%~~~~~~~~~~~~~~~~~~~
+
+\subsection{Relaxation dispersion model elimination}
+
+Relaxation dispersion models will often fail.
+This may be due to data quality and quantity issues, inherent instability in certain models, or the use of analytic models outside of the range of their defined viability.
+Model elimination is therefore required to remove these failed models prior to model selection, as failed models will often fit the experimental data statistically better than non-failed models.
+The user function \uf{eliminate} (see Section~\ref{uf: eliminate} on page~\pageref{uf: eliminate}) is used to remove the failed models.
+Model elimination was implement in relax as described in:
+
+\begin{itemize}
+\item \bibentry{dAuvergneGooley06}
+\end{itemize}
+
+The following hard coded rules are used to eliminate models:
+\begin{subequations}
+\begin{gather} 
+    \pA \leqslant 0.501, \\
+    \pA \geqslant 0.999.
+\end{gather} 
+\end{subequations}
+
+If a parameter falls outside of these limits, the entire spin cluster will be deselected.
+When not using the auto-analysis, custom model elimination rules can be defined and used with the \uf{eliminate} user function.
+
+
+
+% MPI.
+%~~~~~
+
+\subsection{Relaxation dispersion on a computer cluster using OpenMPI}
+
+If the optimisation is too slow on a single computer, the dispersion analysis has been parallelised on the level of both the spin cluster and the Monte Carlo simulation.
+The scaling efficiency is very close to perfect so if you have access to a computer cluster and the OpenMPI protocol, then the calculations can be run much faster.
+The implementation uses Gary Thompson's multi-processor package.
+See Section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor} for details on how to use this.
 
 
 

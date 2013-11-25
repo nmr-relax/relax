@@ -145,6 +145,7 @@ For certain algorithms, such a simplex minimisation\index{optimisation!algorithm
 %~~~~~~~~~~~~~~
 
 \subsection{The gradient}
+\label{sect: gradient}
 \index{gradient|textbf}
 
 Most techniques also utilise the gradient at the current position.  Although symbolically complex in the case of model-free analysis, for example, the gradient can simply be calculated as the vector of first partial derivatives of the chi-squared\index{chi-squared} equation with respect to each parameter.  It is defined as
@@ -174,6 +175,7 @@ An example of a powerful algorithm which requires both the value and gradient at
 %~~~~~~~~~~~~~
 
 \subsection{The Hessian}
+\label{sect: Hessian}
 \index{Hessian|textbf}
 
 The best and most comprehensive description of the space is given by the quadratic approximation of the topology which is generated from the combination of the function value, the gradient, and the Hessian.  From the second-order Taylor series expansion the quadratic model of the space is
@@ -349,6 +351,7 @@ The second method is the Gill, Murray, and Wright (GMW) algorithm \citep{GMW81} 
 
 % Nelder-Mead simplex.
 \subsubsection{Nelder-Mead simplex}
+\label{sect: Nelder-Mead simplex}
 \index{optimisation!algorithm!Nelder-Mead simplex|textbf}
 
 Some optimisation algorithms cannot be classified within line search, trust region, or conjugate gradient categories.  For example the well known Nelder-Mead simplex optimisation algorithm.  The technique is often used as the only the function value is employed and hence the derivation of the gradient and Hessian can be avoided.  The simplex is created as an $n$-dimensional geometric object with $n+1$ vertices.  The first vertex is the starting position.  Each of the other $n$ vertices are created by shifting the starting position by a small amount parallel to one of unit vectors defining the coordinate system of the space.  Four simple rules are used to move the simplex through the space: reflection, extension, contraction, and a shrinkage of the entire simplex.  The result of these movements is that the simplex moves in an ameoboid-like fashion downhill, shrinking to pass through tight gaps and expanding to quickly move through non-convoluted space, eventually finding the minimum.
@@ -469,6 +472,7 @@ In rearranging \eqref{eq: linear constraint} the linear constraint function $c(\
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 \subsection{Logarithmic barrier constraint algorithm}
+\label{sect: Log-barrier constraint algorithm}
 \index{optimisation!constraint algorithm!Logarithmic barrier|textbf}
 
 Another constraint method is that of the logarithmic barrier algorithm.
