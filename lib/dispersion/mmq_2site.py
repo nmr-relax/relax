@@ -139,33 +139,33 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
 
         # Special case of 1 CPMG block - the power is zero.
         if power[i] == 1:
-            # M2.M1
-            A = M2_M1
+            # M1.M2.
+            A = M1_M2
 
-            # M2*.M1*
-            B = M2_M1_star
+            # M1*.M2*.
+            B = M1_M2_star
 
-            # M1.M2
-            C = M1_M2
+            # M2.M1.
+            C = M2_M1
 
-            # M1*.M2*
-            D = M1_M2_star
+            # M2*.M1*.
+            D = M2_M1_star
 
         # Matrices for even number of CPMG blocks.
         elif power[i] % 2 == 0:
             # The power factor (only calculate once).
             fact = int(floor(power[i] / 2))
 
-            # (M1.M2.M2.M1)^(n/2)
+            # (M1.M2.M2.M1)^(n/2).
             A = square_matrix_power(M1_M2_M2_M1, fact)
 
-            # (M2*.M1*.M1*.M2*)^(n/2)
+            # (M2*.M1*.M1*.M2*)^(n/2).
             B = square_matrix_power(M2_M1_M1_M2_star, fact)
 
-            # (M2.M1.M1.M2)^(n/2)
+            # (M2.M1.M1.M2)^(n/2).
             C = square_matrix_power(M2_M1_M1_M2, fact)
 
-            # (M1*.M2*.M2*.M1*)^(n/2)
+            # (M1*.M2*.M2*.M1*)^(n/2).
             D = square_matrix_power(M1_M2_M2_M1_star, fact)
 
         # Matrices for odd number of CPMG blocks.
@@ -173,26 +173,26 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
             # The power factor (only calculate once).
             fact = int(floor((power[i] - 1) / 2))
 
-            # M2.M1.(M1.M2.M2.M1)^((n-1)/2)
+            # (M1.M2.M2.M1)^((n-1)/2).M1.M2.
             A = square_matrix_power(M1_M2_M2_M1, fact)
-            A = dot(M2_M1, A)
+            A = dot(A, M1_M2)
 
-            # M2*.M1*.(M1*.M2*.M2*.M1*)^((n-1)/2)
+            # (M1*.M2*.M2*.M1*)^((n-1)/2).M1*.M2*.
             B = square_matrix_power(M1_M2_M2_M1_star, fact)
-            B = dot(M2_M1_star, B)
+            B = dot(B, M1_M2_star)
 
-            # M1.M2.(M2.M1.M1.M2)^((n-1)/2)
+            # (M2.M1.M1.M2)^((n-1)/2).M2.M1.
             C = square_matrix_power(M2_M1_M1_M2, fact)
-            C = dot(M1_M2, C)
+            C = dot(C, M2_M1)
 
-            # M1*.M2*.(M2*.M1*.M1*.M2*)^((n-1)/2)
+            # (M2*.M1*.M1*.M2*)^((n-1)/2).M2*.M1*.
             D = square_matrix_power(M2_M1_M1_M2_star, fact)
-            D = dot(M1_M2_star, D)
+            D = dot(D, M2_M1_star)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        B_A = dot(B, A)
-        D_C = dot(D, C)
-        Mx = dot(dot(F_vector, (B_A + D_C)), M0)
+        A_B = dot(A, B)
+        C_D = dot(C, D)
+        Mx = dot(dot(F_vector, (A_B + C_D)), M0)
         Mx = Mx.real / 2.0
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
