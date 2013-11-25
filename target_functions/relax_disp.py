@@ -172,7 +172,7 @@ class Dispersion:
             self.num_disp_points.append([])
             for frq_index in range(len(values[exp_type_index][0])):
                 self.num_disp_points[-1].append([])
-                if len(cpmg_frqs[exp_type_index][frq_index]):
+                if cpmg_frqs != None and len(cpmg_frqs[exp_type_index][frq_index]):
                     self.num_disp_points[-1][-1] = len(self.cpmg_frqs[exp_type_index][frq_index])
                 else:
                     self.num_disp_points[-1][-1] = len(self.spin_lock_nu1[exp_type_index][frq_index])
