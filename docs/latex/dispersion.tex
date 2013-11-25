@@ -871,17 +871,27 @@ When $n$ is even, they are defined as
     \mathbf{A} &= \left( \mathbf{M_1} \mathbf{M_2} \mathbf{M_2} \mathbf{M_1} \right)^{\frac{n}{2}}, \\
     \mathbf{B} &= \left( \mathbf{M_2}^* \mathbf{M_1}^* \mathbf{M_1}^* \mathbf{M_2}^* \right)^{\frac{n}{2}}, \\
     \mathbf{C} &= \left( \mathbf{M_2} \mathbf{M_1} \mathbf{M_1} \mathbf{M_2} \right)^{\frac{n}{2}}, \\
-    \mathbf{D} &= \left( \mathbf{M_1}^* \mathbf{M_2}^* \mathbf{M_2}^* \mathbf{M_1}^* \right)^{\frac{n}{2}},
+    \mathbf{D} &= \left( \mathbf{M_1}^* \mathbf{M_2}^* \mathbf{M_2}^* \mathbf{M_1}^* \right)^{\frac{n}{2}}.
 \end{align}
 \end{subequations}
 
-and when $n$ is odd, they are defined as
+When $n$ is odd, they are defined as
 \begin{subequations}
 \begin{align}
     \mathbf{A} &= \left( \mathbf{M_1} \mathbf{M_2} \mathbf{M_2} \mathbf{M_1} \right)^{\frac{n-1}{2}} \mathbf{M_1} \mathbf{M_2}, \\
     \mathbf{B} &= \left( \mathbf{M_1}^* \mathbf{M_2}^* \mathbf{M_2}^* \mathbf{M_1}^* \right)^{\frac{n-1}{2}} \mathbf{M_1}^* \mathbf{M_2}^*, \\
     \mathbf{C} &= \left( \mathbf{M_2} \mathbf{M_1} \mathbf{M_1} \mathbf{M_2} \right)^{\frac{n-1}{2}} \mathbf{M_2} \mathbf{M_1}, \\
     \mathbf{D} &= \left( \mathbf{M_2}^* \mathbf{M_1}^* \mathbf{M_1}^* \mathbf{M_2}^* \right)^{\frac{n-1}{2}} \mathbf{M_2}^* \mathbf{M_1}^*.
+\end{align}
+\end{subequations}
+
+When $n$ is zero, to avoid matrix powers of zero they are defined as
+\begin{subequations}
+\begin{align}
+    \mathbf{A} &= \mathbf{M_1} \mathbf{M_2}, \\
+    \mathbf{B} &= \mathbf{M_1}^* \mathbf{M_2}^*, \\
+    \mathbf{C} &= \mathbf{M_2} \mathbf{M_1}, \\
+    \mathbf{D} &= \mathbf{M_2}^* \mathbf{M_1}^*.
 \end{align}
 \end{subequations}
 
