@@ -1,3 +1,78 @@
+Version 3.0.2
+(26 November 2013, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.0.2
+
+    Features:
+        * Much better pseudo-atom support, including not requiring tetrahedral geometry.
+        * The value.write user function can now create files with non-numeric data, such as the models for each spin.
+        * Improvements to the 2D Grace plotting from the grace.write user function including full support for multiple graphs and the setting of the axes to the zero point.
+
+
+    Changes:
+        * Updated the Release Checklist document rsync instructions to allow resumed uploads.  This is needed if the internet connection has been cut, as uploading can take a long time.
+        * The test_suite.clean_up.deletion() function can now handle the case of missing files and directories.  This problem was occurring in the relax_disp branch for some of the system tests.
+        * Created the is_int() and is_num() functions for the lib.check_types module.
+        * The value.write user function can now properly handle non-numeric data types.  This allows the spin specific model name to be written to file, or any other string defined in the specific analysis PARAMS data object.
+        * The multi-processor section of the manual is now labelled in the correct position.
+        * Created a special GUI analysis element for floating point numbers.  This allows for user input of floating point numbers into one of the GUI analysis tabs.  If the input is not a number, the original value will be restored.
+        * Created the new pipe_control.spectrum.add_spectrum_id() function.  This is used to handle the creation of spectrum ID strings in the data store.  This way new spectrum IDs can be created from different parts of relax in a controlled way.
+        * Created the pipe_control.spectrometer.check_frequency() function to standardise this check.
+        * Created the pipe_control.spectrometer.get_frequency() function for returning the frequency for a given ID.
+        * The pipe_control.spectrum.add_spectrum_id() function now returns silently if the ID already exists.
+        * Improvements to the pymol.view and molmol.view user functions for finding the PDB files.  Now the possibility that this is being run from a results subdirectory is taken into consideration.  If the file cannot be found, the os.pardir parent directory is added to the start of the relative path and the file checked for.
+        * The rdc.read user function will now skip all lines of the RDC file starting with '#'.  To include molecule identifiers at the start of the line will now require quotation marks.
+        * Shifted the RDC and PCS assembly methods from the main class to the data module for the N-state analysis.
+        * Created the pipe_control.mol_res_spin.is_pseudoatom() function to simplify pseudo-atom handling.
+        * Created the pipe_control.mol_res_spin.pseudoatom_loop() function.  This is used to loop over the spin containers corresponding to a given pseudo-atom.
+        * Added a PDB file and RDC values (and absolute J+D and J) for propylene carbonate.  This will be used for testing of pseudo-atoms in the N-state model analysis.
+        * Renamed the propylene carbonate files to the correct name of pyrotartaric anhydride.
+        * Created two new system tests based on the new pyrotarctic anhydride long range (1J, 2J & 3J) RDC data.  The first (N_state_model.test_pyrotartaric_anhydride_rdcs) optimises an alignment tensor using long range signed RDC data.  The second (N_state_model.test_pyrotartaric_anhydride_absT) optimises an alignment tensor using long range absolute T (J+D) data.  Both test long range data together with methyl group pseudo-atom data.
+        * Added all of the pyrotartaric anhydride RDC generation scripts and files.  This is simply for reference and reproducibility.
+        * Modifications for the pyrotartaric anhydride system test script.  The grid search now is much quicker, and the RDC correlation plots are now sent to DEVNULL.
+        * Added the return_id argument to the pipe_control.mol_res_spin.pseudoatom_loop() function.  This will then yield both the spin container and spin ID string.  This mimics the spin_loop()function.
+        * Added proper pseudo-atom support for the RDCs in the N-state model analysis.  This involves a number of changes.  The pseudo-atom specific functions ave_rdc_tensor_pseudoatom() and ave_rdc_tensor_pseudoatom_dDij_dAmn() have been added to the lib.alignment.rdc module.  These simply average the values from the equivalent non-pseudo-atom functions.  The return_rdc_data()function in the specific_analyses.n_state_model.data module has been modified to assemble the RDC constants and unit vectors for all members of the pseudo-atom and add these to the returned structures, as well as a new list of flags specifying if the interatom pair contains pseudo-atoms.  The N-state model target function and gradient have been updated to send the pseudo-atom data to the new lib.alignment.rdc module functions.
+        * J couplings for the N-state analysis are now properly handled for pseudo-atoms.  The measured J couplings for the members of the pseudo-atom should not be used, but rather that of the pseudo-atom spin itself (as the former does not exist).
+        * Eliminated the old pseudo-atom handling in the N-state model specific return_rdc_data() function.  This was multiplying the RDCs by -3 to handle the tetrahedral geometry of the 1J methyl RDCs.  However this approach is not valid for non-methyl pseudo-atoms or for 2J, 3J, etc. data.
+        * A RelaxError is now raised for the N-state model optimisation with gradients when T = J+D data is used.  The gradients for this data type are not implemented yet, so it is better to prevent the user from using this.
+        * The N_state_model.test_pyrotartaric_anhydride_absT system test now uses simplex optimisation to pass.  The Newton algorithm cannot be used as the gradients for T = J+D type data have not been implemented.
+        * An RDC error of 0.0 will now deselect the corresponding interatomic data container.  This can be used for simpler pseudo-atom handling.
+        * Updated the menthol long range RDC data file to include pseudo-atom member distances.
+        * Renamed the interatomic_loop() function 'selected' argument to 'skip_desel'.  This is to match the spin_loop() function arguments.
+        * The interatom.unit_vectors user function now calculates the unit vectors for deselected containers.  This is useful for pseudo-atom handling where the interatomic containers to the pseudo-atom members have already been deselected.
+        * Updated the value checking for the N_state_model.test_absolute_rdc_menthol system test.  The pseudo-atoms are now properly handled so the result is now much better.
+        * The stereochemistry auto-analysis can now accept a file of interatomic distances.  This is for better pseudo-atom support.
+        * The N-state model specific check_rdcs() function now properly handles pseudo-atoms.
+        * The pipe_control.rdc.q_factors() function now properly handles pseudo-atoms.  If pseudo-atoms are present, then 2Da^2(4 + 3R)/5 normalised Q factor is skipped.
+        * Created the N_state_model.test_pyrotartaric_anhydride_mix system test.  This is used to demonstrate a bug in the N-state analysis using mixed RDC and long range absolute J+D data.
+        * Movement of N-state model specific code to the analysis neutral pipe_control package.  Many of the functions of the specific_analyses.n_state_model.data module relating to alignment tensors, RDC data and PCS data have been shifted in to the pipe_control package modules align_tensor, rdc, and pcs respectively.  This allows these functions to be made more general and allow the code to be shared with the frame order analysis or any future analysis using such data, and hence remove some code duplication.
+        * Create two new warnings RelaxNucleusWarning and RelaxSpinTypeWarning to match the equivalent errors.
+        * Added some RDC data checks to the N_state_model.test_pyrotartaric_anhydride_rdcs system test.  This is to demonstrate a problem with the data assembly function pipe_control.rdc.return_rdc_data().
+        * Clean ups and improvements for the pipe_control.rdc.check_rdcs() function.  Pseudo-atoms are now handled much better and correctly in all cases.  And many RelaxErrors have been converted to RelaxWarnings followed by a 'return False' statement.
+        * Created the pipe_control.rdc.setup_pseudoatom_rdcs() function.  This is used to make sure that the pseudo-atom interatomic systems (the containers from heternucleus to pseudo-atom and heteronucleus to pseudo-atom members) are properly set up.  It will deselect the interatomic containers if incorrectly set up or if they are not part of the main pair.
+        * Added quotation marks around a number of spin IDs with molecule names in some RDC data files.  This is for the N-state model population model data used in the test suite.
+        * The rdc.read and j_coupling.read user functions now ignore all lines starting with the # character.  This is to remove all comment lines silently.  Therefore if spin IDs are used which contain the molecule name, then they should be wrapped in quotation marks.
+        * Updated a number of RDC test suite data files to have quotation marks around the spin IDs.  This is to allow the molecule identifier to be present while not being mistaken for a comment line.
+        * Updated some of the RDC data files used in the frame order system tests.  The spin IDs are now in quotation marks as the molecule name is included.  This is to prevent the line being removed as a comment.
+        * Changes to the setup_pseudoatom_rdcs() function and renamed it to setup_pseudoatom_rdc().  The interatomic loop is now within the function to make sure that all is completed before the containers are accessed.
+        * Started to add better pseudo-atom support for the PCS.  The new pipe_control.pcs.setup_pseudoatom_pcs() function has been added to deselect the spins which are members of a pseudo-atom.  The return_pcs_data() function in the same module now calls this function and builds a list of pseudo-atom flags for use in the target function (though it is still unused).
+        * Finally eliminated the gui.paths module, replacing it with graphics.fetch_icon() calls.  The GUI was using a mix of the old gui.paths module and the fetch_icon() function.
+        * Created the pipe_control.sequence.return_attached_protons() function.  This is used to return a list of proton spin containers attached to the given spin.
+        * Improved Grace graph scaling and arrangement when multiple graphs are present.  The lib.software.grace.write_xy_data() function now executes the 'autoscale' command for each graph and executes the 'arrange' to layout the graphs automatically.
+        * The Grace plotting (via lib.software.grace) now fully supports the plotting of multiple graphs.
+        * Improvements to the lib.software.grace module.  The set colours are now applied to all set objects.  And the axis label and tick sizes are now much smaller.
+        * Created the --numpy-raise command line option.  When this is set, all numpy warnings will be converted to errors.  This is to aid in debugging to locate where the warning messages are coming from.  These appear as RelaxWarnings, but there is no indication as to where the problem is.
+        * The lib.software.grace module now supports setting the X and Y axes at zero.
+        * Modified the model list GUI window.  This can now be resized and it uses a scrolled panel to allow the contents of the window to be bigger than the window size.
+
+
+    Bugfixes:
+        * Fix for bug #21233 (https://gna.org/bugs/?21233) - the missing mpi4py multi-processor messages.  When multiple commands were being sent to one slave, the captured IO was being overwritten by each executed command.  Therefore the slave would only return the printouts from the last command.
+        * Fix for a fatal bug in the rarely used structure.add_atom user function.  The position argument in the user function definitions was incorrectly defined causing the user function to be non-functional.  The 'float_object' argument type is now supported in the GUI.
+        * Fix for the N-state model _target_fn_setup() method for when no PCS data is present.
+        * Bug fix for the lib.structure.mass.centre_of_mass() function warning when the element is not known.  This warning was buggy and resulted tracebacks.
+
+
+
 Version 3.0.1
 (17 October 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.0.1
