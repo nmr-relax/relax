@@ -65,13 +65,25 @@ class SystemTestCase(TestCase):
     def tearDown(self):
         """Default tearDown operation - delete temp directories and files and reset relax."""
 
-        # Remove the temporary directory and variable.
-        deletion(obj=ds, name='tmpdir', dir=True)
-        deletion(obj=self, name='tmpdir', dir=True)
+        # Remove the temporary directory and variable (if there is a deletion failure, continue to allow the test suite to survive).
+        try:
+            deletion(obj=ds, name='tmpdir', dir=True)
+        except:
+            pass
+        try:
+            deletion(obj=self, name='tmpdir', dir=True)
+        except:
+            pass
 
-        # Remove temporary file and variable.
-        deletion(obj=ds, name='tmpfile', dir=False)
-        deletion(obj=self, name='tmpfile', dir=False)
+        # Remove temporary file and variable (if there is a deletion failure, continue to allow the test suite to survive).
+        try:
+            deletion(obj=ds, name='tmpfile', dir=False)
+        except:
+            pass
+        try:
+            deletion(obj=self, name='tmpfile', dir=False)
+        except:
+            pass
 
         # Reset relax.
         reset()
