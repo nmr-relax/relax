@@ -94,7 +94,6 @@ class Noe(SystemTestCase):
             '@    yaxis  tick minor size 0.25\n',
             '@    yaxis  ticklabel char size 0.70\n',
             '@    legend off\n',
-            '@    legend on\n',
             '@    legend box fill pattern 1\n',
             '@    legend char size 1.0\n',
             '@    frame linewidth 0.5\n',
