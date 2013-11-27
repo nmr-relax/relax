@@ -504,7 +504,7 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_data.py')
-        self.interpreter.state.save('analysis_heights', dir=status.install_path, force=True)
+        self.interpreter.state.save('analysis_heights', dir=ds.tmpdir, force=True)
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
@@ -685,7 +685,7 @@ NMR relaxation dispersion experiments: An application to the folding of a Fyn SH
 
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'hansen_r2eff_data.py')
-        self.interpreter.state.save('analysis_r2eff', dir=status.install_path, force=True)
+        self.interpreter.state.save('analysis_r2eff', dir=ds.tmpdir, force=True)
 
         # The R20 keys.
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
