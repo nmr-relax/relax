@@ -222,7 +222,7 @@ def write_xy_data(data, file=None, graph_type=None, norm=None):
         file.write("@arrange(%i, %i, .1, .1, .1, OFF, OFF, OFF)\n" % (row_num, col_num))
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, x_axis_type_zero=None, y_axis_type_zero=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend=None, legend_pos=None, legend_box_fill_pattern=1, legend_char_size=1.0, norm=None):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, x_axis_type_zero=None, y_axis_type_zero=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend=None, legend_pos=None, legend_box_fill_pattern=None, legend_char_size=None, norm=None):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
@@ -301,6 +301,14 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         norm = []
         for gi in range(graph_num):
             norm.append(False)
+    if not legend_box_fill_pattern:
+        legend_box_fill_pattern = []
+        for gi in range(graph_num):
+            legend_box_fill_pattern.append(1)
+    if not legend_char_size:
+        legend_char_size = []
+        for gi in range(graph_num):
+            legend_char_size.append(1.0)
 
     # Set the None args to lists as needed.
     if not data_type:
@@ -414,6 +422,8 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             file.write("@    legend off\n")
         if legend_pos != None:
             file.write("@    legend %s, %s\n" % (legend_pos[gi][0], legend_pos[gi][1]))
+        file.write("@    legend box fill pattern %s\n" % legend_box_fill_pattern[gi])
+        file.write("@    legend char size %s\n" % legend_char_size[gi])
 
         # Frame.
         file.write("@    frame linewidth %s\n" % linewidth[gi])
