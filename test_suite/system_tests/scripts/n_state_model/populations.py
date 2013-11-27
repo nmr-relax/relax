@@ -112,7 +112,7 @@ if abs(cdp.chi2) > 1e-15:
 self._execute_uf(uf_name='value.set', val=0.6005, param='p1')
 
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='bfgs', max_iter=2000)
+self._execute_uf(uf_name='minimise', min_algor='bfgs', max_iter=500)
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)
