@@ -51,10 +51,6 @@ def deletion(obj=None, name=None, dir=False):
     # The variable.
     var = getattr(obj, name)
 
-    # Non-windows systems.
-    if not hasattr(builtins, 'WindowsError'):
-        builtins.WindowsError = None
-
     # Attempt to remove the file or directory as well as the variable.
     try:
         if dir:
@@ -63,8 +59,11 @@ def deletion(obj=None, name=None, dir=False):
             delete(var, fail=False)
         del var
 
+    # Already deleted.
+    except OSError:
+
     # Handle MS Windows strangeness.
-    except WindowsError:
+    except:
         sleep(3)
         try:
             if dir:
@@ -73,12 +72,9 @@ def deletion(obj=None, name=None, dir=False):
                 delete(var, fail=False)
 
         # The files no longer exist?  Oh well.
-        except WindowsError:
+        except:
             pass
 
         finally:
             del var
-
-    # Already deleted.
-    except OSError:
         pass
