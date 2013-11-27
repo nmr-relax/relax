@@ -1054,7 +1054,7 @@ class N_state_model(SystemTestCase):
         # Test the optimised values.
         self.assertAlmostEqual(cdp.chi2, 0.0, 5)
         self.assertAlmostEqual(cdp.q_rdc, 0.0, 5)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0, 5)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 4)
 
 
     def test_vector_loading1(self):
