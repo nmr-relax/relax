@@ -965,4 +965,4 @@ class Wiz_window(wx.Dialog):
                 value = float_to_gui(value)
 
             # Set the argument.
-            page.uf_args[arg].SetValue(value)
+            page.SetValue(arg, value)
