@@ -34,7 +34,8 @@ from gui.string_conv import float_to_gui, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import switch
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
+from specific_analyses.relax_disp.disp_data import generate_r20_key
+from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_CR72, MODEL_IT99, MODEL_LM63, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF, MODEL_TP02
 from status import Status; status = Status()
 from test_suite.gui_tests.base_classes import GuiTestCase
 
@@ -514,6 +515,10 @@ class Relax_disp(GuiTestCase):
         kex = 1234.56789
         delta_omega = [7.0, 9.0]
 
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
         # Switch to the 'TP02' model data pipe, then check for each spin.
         switch('TP02')
         spin_index = 0
@@ -522,8 +527,8 @@ class Relax_disp(GuiTestCase):
             print("\nSpin %s." % spin_id)
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(spin.r2[0]/10, r1rho_prime[spin_index][0]/10, 4)
-            self.assertAlmostEqual(spin.r2[1]/10, r1rho_prime[spin_index][1]/10, 4)
+            self.assertAlmostEqual(spin.r2[r20_key1]/10, r1rho_prime[spin_index][0]/10, 4)
+            self.assertAlmostEqual(spin.r2[r20_key2]/10, r1rho_prime[spin_index][1]/10, 4)
             self.assertAlmostEqual(spin.dw, delta_omega[spin_index], 3)
             self.assertAlmostEqual(spin.kex/1000.0, kex/1000.0, 3)
 
