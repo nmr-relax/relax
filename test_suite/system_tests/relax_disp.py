@@ -348,7 +348,6 @@ class Relax_disp(SystemTestCase):
             print("\nResidue number %s." % (i+1))
 
             # Check the fitted parameters.
-            print cdp.mol[0].res[i].spin[0].r2eff
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_1000.000'], res_data[i][0], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_2000.000'], res_data[i][1], places=2)
             self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_1000.000']/10000, res_data[i][2]/10000, places=3)
