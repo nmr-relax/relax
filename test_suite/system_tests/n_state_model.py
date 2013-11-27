@@ -1039,22 +1039,22 @@ class N_state_model(SystemTestCase):
 
         # Check the tensors.
         for i in range(len(A_5D)):
-            self.assertAlmostEqual(cdp.align_tensors[i].Axx, A_5D[i][0])
-            self.assertAlmostEqual(cdp.align_tensors[i].Ayy, A_5D[i][1])
-            self.assertAlmostEqual(cdp.align_tensors[i].Axy, A_5D[i][2])
-            self.assertAlmostEqual(cdp.align_tensors[i].Axz, A_5D[i][3])
-            self.assertAlmostEqual(cdp.align_tensors[i].Ayz, A_5D[i][4])
+            self.assertAlmostEqual(cdp.align_tensors[i].Axx, A_5D[i][0], 5)
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayy, A_5D[i][1], 5)
+            self.assertAlmostEqual(cdp.align_tensors[i].Axy, A_5D[i][2], 5)
+            self.assertAlmostEqual(cdp.align_tensors[i].Axz, A_5D[i][3], 5)
+            self.assertAlmostEqual(cdp.align_tensors[i].Ayz, A_5D[i][4], 5)
 
         # Check the populations.
         self.assertEqual(len(cdp.probs), 3)
-        self.assertAlmostEqual(cdp.probs[0], 0.3, 5)
-        self.assertAlmostEqual(cdp.probs[1], 0.6, 5)
-        self.assertAlmostEqual(cdp.probs[2], 0.1, 5)
+        self.assertAlmostEqual(cdp.probs[0], 0.3, 4)
+        self.assertAlmostEqual(cdp.probs[1], 0.6, 3)
+        self.assertAlmostEqual(cdp.probs[2], 0.1, 3)
 
         # Test the optimised values.
-        self.assertAlmostEqual(cdp.chi2, 0.0, 5)
-        self.assertAlmostEqual(cdp.q_rdc, 0.0, 5)
-        self.assertAlmostEqual(cdp.q_pcs, 0.0, 4)
+        self.assertAlmostEqual(cdp.chi2, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_rdc, 0.0, 2)
+        self.assertAlmostEqual(cdp.q_pcs, 0.0, 1)
 
 
     def test_vector_loading1(self):
