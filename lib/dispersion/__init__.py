@@ -23,5 +23,23 @@
 """The relax-lib NMR package - a library of functions for relaxation dispersion."""
 
 __all__ = [
-    ''
+    'cr72',
+    'dpl94',
+    'it99',
+    'lm63',
+    'lm63_3site',
+    'm61',
+    'm61b',
+    'mmq_2site',
+    'mp05',
+    'mq_cr72',
+    'ns_cpmg_2site_3d',
+    'ns_cpmg_2site_expanded',
+    'ns_cpmg_2site_star',
+    'ns_r1rho_2site',
+    'ns_matrices',
+    'tap03',
+    'tp02',
+    'tsmfk01',
+    'two_point'
 ]

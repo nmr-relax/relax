@@ -1,0 +1,2903 @@
+@version 50121
+@page size 842, 595
+@with g0
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "1H SQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend on
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@with g1
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "SQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@with g2
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "ZQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@with g3
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "DQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@with g4
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "1H MQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@with g5
+@    view 0.15, 0.15, 1.28, 0.85
+@    title "Relaxation dispersion plot"
+@    xaxis  type zero true
+@    xaxis  label "\qCPMG pulse train frequency (Hz)\Q"
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
+@    xaxis  tick major linewidth 0.5
+@    xaxis  tick minor linewidth 0.5
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
+@    yaxis  label "MQ CPMG - \qR\s2,eff\N\Q (rad.s\S-1\N)"
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
+@    yaxis  tick major linewidth 0.5
+@    yaxis  tick minor linewidth 0.5
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
+@    legend box fill pattern 0
+@    legend char size 0.8
+@    frame linewidth 0.5
+@    s0 symbol 1
+@    s0 symbol size 0.45
+@    s0 symbol linewidth 0.5
+@    s0 symbol color 4
+@    s0 symbol fill color 4
+@    s0 errorbar size 0.5
+@    s0 errorbar linewidth 0.5
+@    s0 errorbar riser linewidth 0.5
+@    s0 line linestyle 0
+@    s0 line type 0
+@    s0 line color 4
+@    s0 fill color 4
+@    s0 avalue color 4
+@    s0 errorbar color 4
+@    s0 legend "R\s2eff\N (500.0 MHz)"
+@    s1 symbol 1
+@    s1 symbol size 0.45
+@    s1 symbol linewidth 0.5
+@    s1 symbol color 15
+@    s1 symbol fill color 15
+@    s1 errorbar size 0.5
+@    s1 errorbar linewidth 0.5
+@    s1 errorbar riser linewidth 0.5
+@    s1 line linestyle 0
+@    s1 line type 0
+@    s1 line color 15
+@    s1 fill color 15
+@    s1 avalue color 15
+@    s1 errorbar color 15
+@    s1 legend "R\s2eff\N (600.0 MHz)"
+@    s2 symbol 1
+@    s2 symbol size 0.45
+@    s2 symbol linewidth 0.5
+@    s2 symbol color 2
+@    s2 symbol fill color 2
+@    s2 errorbar size 0.5
+@    s2 errorbar linewidth 0.5
+@    s2 errorbar riser linewidth 0.5
+@    s2 line linestyle 0
+@    s2 line type 0
+@    s2 line color 2
+@    s2 fill color 2
+@    s2 avalue color 2
+@    s2 errorbar color 2
+@    s2 legend "R\s2eff\N (800.0 MHz)"
+@    s3 symbol 4
+@    s3 symbol size 0.45
+@    s3 symbol linewidth 0.5
+@    s3 symbol color 4
+@    s3 symbol fill color 4
+@    s3 errorbar size 0.5
+@    s3 errorbar linewidth 0.5
+@    s3 errorbar riser linewidth 0.5
+@    s3 line linestyle 2
+@    s3 line type 1
+@    s3 line color 4
+@    s3 fill color 4
+@    s3 avalue color 4
+@    s3 errorbar color 4
+@    s3 legend "Back calculated R\s2eff\N (500.0 MHz)"
+@    s4 symbol 4
+@    s4 symbol size 0.45
+@    s4 symbol linewidth 0.5
+@    s4 symbol color 15
+@    s4 symbol fill color 15
+@    s4 errorbar size 0.5
+@    s4 errorbar linewidth 0.5
+@    s4 errorbar riser linewidth 0.5
+@    s4 line linestyle 2
+@    s4 line type 1
+@    s4 line color 15
+@    s4 fill color 15
+@    s4 avalue color 15
+@    s4 errorbar color 15
+@    s4 legend "Back calculated R\s2eff\N (600.0 MHz)"
+@    s5 symbol 4
+@    s5 symbol size 0.45
+@    s5 symbol linewidth 0.5
+@    s5 symbol color 2
+@    s5 symbol fill color 2
+@    s5 errorbar size 0.5
+@    s5 errorbar linewidth 0.5
+@    s5 errorbar riser linewidth 0.5
+@    s5 line linestyle 2
+@    s5 line type 1
+@    s5 line color 2
+@    s5 fill color 2
+@    s5 avalue color 2
+@    s5 errorbar color 2
+@    s5 legend "Back calculated R\s2eff\N (800.0 MHz)"
+@    s6 symbol 8
+@    s6 symbol size 0.2
+@    s6 symbol linewidth 0.5
+@    s6 symbol color 4
+@    s6 symbol fill color 4
+@    s6 errorbar size 0.5
+@    s6 errorbar linewidth 0.5
+@    s6 errorbar riser linewidth 0.5
+@    s6 line linestyle 1
+@    s6 line type 1
+@    s6 line color 4
+@    s6 fill color 4
+@    s6 avalue color 4
+@    s6 errorbar color 4
+@    s6 legend "R\s2eff\N interpolated curve (500.0 MHz)"
+@    s7 symbol 8
+@    s7 symbol size 0.2
+@    s7 symbol linewidth 0.5
+@    s7 symbol color 15
+@    s7 symbol fill color 15
+@    s7 errorbar size 0.5
+@    s7 errorbar linewidth 0.5
+@    s7 errorbar riser linewidth 0.5
+@    s7 line linestyle 1
+@    s7 line type 1
+@    s7 line color 15
+@    s7 fill color 15
+@    s7 avalue color 15
+@    s7 errorbar color 15
+@    s7 legend "R\s2eff\N interpolated curve (600.0 MHz)"
+@    s8 symbol 8
+@    s8 symbol size 0.2
+@    s8 symbol linewidth 0.5
+@    s8 symbol color 2
+@    s8 symbol fill color 2
+@    s8 errorbar size 0.5
+@    s8 errorbar linewidth 0.5
+@    s8 errorbar riser linewidth 0.5
+@    s8 line linestyle 1
+@    s8 line type 1
+@    s8 line color 2
+@    s8 fill color 2
+@    s8 avalue color 2
+@    s8 errorbar color 2
+@    s8 legend "R\s2eff\N interpolated curve (800.0 MHz)"
+@    s9 symbol 9
+@    s9 symbol size 0.45
+@    s9 symbol linewidth 0.5
+@    s9 symbol color 4
+@    s9 symbol fill color 4
+@    s9 errorbar size 0.5
+@    s9 errorbar linewidth 0.5
+@    s9 errorbar riser linewidth 0.5
+@    s9 line linestyle 3
+@    s9 line type 1
+@    s9 line color 4
+@    s9 fill color 4
+@    s9 avalue color 4
+@    s9 errorbar color 4
+@    s9 legend "Residuals (500.0 MHz)"
+@    s10 symbol 9
+@    s10 symbol size 0.45
+@    s10 symbol linewidth 0.5
+@    s10 symbol color 15
+@    s10 symbol fill color 15
+@    s10 errorbar size 0.5
+@    s10 errorbar linewidth 0.5
+@    s10 errorbar riser linewidth 0.5
+@    s10 line linestyle 3
+@    s10 line type 1
+@    s10 line color 15
+@    s10 fill color 15
+@    s10 avalue color 15
+@    s10 errorbar color 15
+@    s10 legend "Residuals (600.0 MHz)"
+@    s11 symbol 9
+@    s11 symbol size 0.45
+@    s11 symbol linewidth 0.5
+@    s11 symbol color 2
+@    s11 symbol fill color 2
+@    s11 errorbar size 0.5
+@    s11 errorbar linewidth 0.5
+@    s11 errorbar riser linewidth 0.5
+@    s11 line linestyle 3
+@    s11 line type 1
+@    s11 line color 2
+@    s11 fill color 2
+@    s11 avalue color 2
+@    s11 errorbar color 2
+@    s11 legend "Residuals (800.0 MHz)"
+@target G0.S0
+@type xydy
+67.0                           21.479240000000001             0.429580000000000             
+133.0                          16.738980000000002             0.334780000000000             
+267.0                          9.973570000000000              0.199470000000000             
+400.0                          8.238770000000001              0.247370000000000             
+533.0                          7.592900000000000              0.242630000000000             
+667.0                          7.458430000000000              0.241650000000000             
+800.0                          7.112220000000000              0.239150000000000             
+933.0                          7.408800000000000              0.241290000000000             
+1067.0                         6.551910000000000              0.166290000000000             
+1600.0                         6.721770000000000              0.236370000000000             
+2133.0                         7.096290000000000              0.239040000000000             
+2667.0                         7.146750000000000              0.239400000000000             
+&
+@target G0.S1
+@type xydy
+67.0                           23.445460000000001             0.468910000000000             
+133.0                          19.768950000000000             0.426460000000000             
+267.0                          11.707560000000001             0.236780000000000             
+400.0                          8.868470000000000              0.307510000000000             
+533.0                          8.369920000000000              0.302950000000000             
+667.0                          7.718830000000000              0.297090000000000             
+800.0                          7.232220000000000              0.292780000000000             
+933.0                          6.950050000000000              0.290310000000000             
+1067.0                         7.439580000000000              0.208320000000000             
+1600.0                         7.645880000000000              0.296440000000000             
+2133.0                         7.788530000000000              0.297710000000000             
+2667.0                         7.587850000000000              0.295920000000000             
+&
+@target G0.S2
+@type xydy
+67.0                           24.387730000000001             0.487750000000000             
+133.0                          22.619000000000000             0.452380000000000             
+267.0                          14.016249999999999             0.280320000000000             
+400.0                          9.268480000000000              0.194240000000000             
+533.0                          8.144980000000000              0.187800000000000             
+667.0                          7.413840000000000              0.183730000000000             
+800.0                          6.698590000000000              0.179820000000000             
+933.0                          6.219090000000000              0.177260000000000             
+1067.0                         6.132810000000000              0.125020000000000             
+1600.0                         5.828130000000000              0.175190000000000             
+2133.0                         5.369680000000000              0.172800000000000             
+2667.0                         5.569820000000000              0.173840000000000             
+&
+@target G0.S3
+@type xydy
+67.0                           21.913104027480419             0.000000000000000             
+133.0                          16.667777016459674             0.000000000000000             
+267.0                          10.264901375197153             0.000000000000000             
+400.0                          8.439859613785337              0.000000000000000             
+533.0                          7.736646205022530              0.000000000000000             
+667.0                          7.398825091891476              0.000000000000000             
+800.0                          7.212144937216161              0.000000000000000             
+933.0                          7.098225057675069              0.000000000000000             
+1067.0                         7.024398641505836              0.000000000000000             
+1600.0                         6.888495289244566              0.000000000000000             
+2133.0                         6.840990608036844              0.000000000000000             
+2667.0                         6.817320388533365              0.000000000000000             
+&
+@target G0.S4
+@type xydy
+67.0                           23.744041810800869             0.000000000000000             
+133.0                          19.769147922972611             0.000000000000000             
+267.0                          11.962299234942872             0.000000000000000             
+400.0                          9.455828679898692              0.000000000000000             
+533.0                          8.465787834412064              0.000000000000000             
+667.0                          7.986070663073903              0.000000000000000             
+800.0                          7.719456257737844              0.000000000000000             
+933.0                          7.556316471368348              0.000000000000000             
+1067.0                         7.449866219223331              0.000000000000000             
+1600.0                         7.255239853395090              0.000000000000000             
+2133.0                         7.185741137154215              0.000000000000000             
+2667.0                         7.154491829404386              0.000000000000000             
+&
+@target G0.S5
+@type xydy
+67.0                           23.999876347159837             0.000000000000000             
+133.0                          22.486533868581734             0.000000000000000             
+267.0                          13.617387576585912             0.000000000000000             
+400.0                          9.680075078066229              0.000000000000000             
+533.0                          8.019433741053401              0.000000000000000             
+667.0                          7.195135033045627              0.000000000000000             
+800.0                          6.731501755539854              0.000000000000000             
+933.0                          6.446631300890402              0.000000000000000             
+1067.0                         6.259528821936954              0.000000000000000             
+1600.0                         5.914791572688834              0.000000000000000             
+2133.0                         5.793449536452504              0.000000000000000             
+2667.0                         5.737669183999573              0.000000000000000             
+&
+@target G0.S6
+@type xydy
+33.3333333333                  23.029210163764890             0.000000000000000             
+66.6666666667                  21.913104027480419             0.000000000000000             
+100.0                          19.702666008901538             0.000000000000000             
+133.333333333                  16.667777016459674             0.000000000000000             
+166.666666667                  14.195941595274832             0.000000000000000             
+200.0                          12.419994894570692             0.000000000000000             
+233.333333333                  11.164671954839035             0.000000000000000             
+266.666666667                  10.264901375197153             0.000000000000000             
+300.0                          9.606079079693078              0.000000000000000             
+333.333333333                  9.112211096960785              0.000000000000000             
+366.666666667                  8.734531625049485              0.000000000000000             
+400.0                          8.439859613785337              0.000000000000000             
+433.333333333                  8.206295541093596              0.000000000000000             
+466.666666667                  8.017720507966812              0.000000000000000             
+500.0                          7.863909444049727              0.000000000000000             
+533.333333333                  7.736646205022530              0.000000000000000             
+566.666666667                  7.630326375560966              0.000000000000000             
+600.0                          7.541077333508643              0.000000000000000             
+633.333333333                  7.464389707042736              0.000000000000000             
+666.666666667                  7.398825091891476              0.000000000000000             
+700.0                          7.342635475375229              0.000000000000000             
+733.333333333                  7.293302734153611              0.000000000000000             
+766.666666667                  7.250223893196059              0.000000000000000             
+800.0                          7.212144937216161              0.000000000000000             
+833.333333333                  7.178622501029161              0.000000000000000             
+866.666666667                  7.149155412773968              0.000000000000000             
+900.0                          7.122569824028800              0.000000000000000             
+933.333333333                  7.098225057675069              0.000000000000000             
+966.666666667                  7.077507159769890              0.000000000000000             
+1000.0                         7.057429832776285              0.000000000000000             
+1033.33333333                  7.039734425814873              0.000000000000000             
+1066.66666667                  7.024398641505836              0.000000000000000             
+1100.0                         7.009327239369453              0.000000000000000             
+1133.33333333                  6.996504197246985              0.000000000000000             
+1166.66666667                  6.984268349880850              0.000000000000000             
+1200.0                         6.973325325843453              0.000000000000000             
+1233.33333333                  6.962359924465472              0.000000000000000             
+1266.66666667                  6.952809916810508              0.000000000000000             
+1300.0                         6.944821198498956              0.000000000000000             
+1333.33333333                  6.936312887250644              0.000000000000000             
+1366.66666667                  6.928466539728504              0.000000000000000             
+1400.0                         6.921912072592158              0.000000000000000             
+1433.33333333                  6.915047991459804              0.000000000000000             
+1466.66666667                  6.908155587332460              0.000000000000000             
+1500.0                         6.902959935079259              0.000000000000000             
+1533.33333333                  6.897865325466339              0.000000000000000             
+1566.66666667                  6.892380580530002              0.000000000000000             
+1600.0                         6.888495289244566              0.000000000000000             
+1633.33333333                  6.883895293396627              0.000000000000000             
+1666.66666667                  6.880015805445312              0.000000000000000             
+1700.0                         6.876435327906868              0.000000000000000             
+1733.33333333                  6.872862289336998              0.000000000000000             
+1766.66666667                  6.869097192893676              0.000000000000000             
+1800.0                         6.865288447258886              0.000000000000000             
+1833.33333333                  6.862338473956784              0.000000000000000             
+1866.66666667                  6.859081783391881              0.000000000000000             
+1900.0                         6.855914725777368              0.000000000000000             
+1933.33333333                  6.854521059313234              0.000000000000000             
+1966.66666667                  6.851068928041173              0.000000000000000             
+2000.0                         6.848596293358603              0.000000000000000             
+2033.33333333                  6.846733298365957              0.000000000000000             
+2066.66666667                  6.843653167792550              0.000000000000000             
+2100.0                         6.842050537007020              0.000000000000000             
+2133.33333333                  6.840990608036844              0.000000000000000             
+2166.66666667                  6.837836704054377              0.000000000000000             
+2200.0                         6.836233081309555              0.000000000000000             
+2233.33333333                  6.835792372323558              0.000000000000000             
+2266.66666667                  6.832748470809122              0.000000000000000             
+2300.0                         6.831714271381470              0.000000000000000             
+2333.33333333                  6.830025032841289              0.000000000000000             
+2366.66666667                  6.828655963466059              0.000000000000000             
+2400.0                         6.828448806254620              0.000000000000000             
+2433.33333333                  6.825827332637445              0.000000000000000             
+2466.66666667                  6.824190358835626              0.000000000000000             
+2500.0                         6.823237221818839              0.000000000000000             
+2533.33333333                  6.822287550691412              0.000000000000000             
+2566.66666667                  6.821603401437511              0.000000000000000             
+2600.0                         6.819650826016025              0.000000000000000             
+2633.33333333                  6.818590848792063              0.000000000000000             
+2666.66666667                  6.817320388533365              0.000000000000000             
+&
+@target G0.S7
+@type xydy
+33.3333333333                  24.361848346998876             0.000000000000000             
+66.6666666667                  23.744041810800869             0.000000000000000             
+100.0                          22.541971299006910             0.000000000000000             
+133.333333333                  19.769147922972611             0.000000000000000             
+166.666666667                  16.981301011100012             0.000000000000000             
+200.0                          14.787391364413265             0.000000000000000             
+233.333333333                  13.161116205176603             0.000000000000000             
+266.666666667                  11.962299234942872             0.000000000000000             
+300.0                          11.068362069853096             0.000000000000000             
+333.333333333                  10.390318270856325             0.000000000000000             
+366.666666667                  9.866675535393934              0.000000000000000             
+400.0                          9.455828679898692              0.000000000000000             
+433.333333333                  9.128001463014700              0.000000000000000             
+466.666666667                  8.863148404337332              0.000000000000000             
+500.0                          8.645744653231215              0.000000000000000             
+533.333333333                  8.465787834412064              0.000000000000000             
+566.666666667                  8.315036302119388              0.000000000000000             
+600.0                          8.187712101155526              0.000000000000000             
+633.333333333                  8.078899104977967              0.000000000000000             
+666.666666667                  7.986070663073903              0.000000000000000             
+700.0                          7.905379504923340              0.000000000000000             
+733.333333333                  7.835102543449845              0.000000000000000             
+766.666666667                  7.773674581644048              0.000000000000000             
+800.0                          7.719456257737844              0.000000000000000             
+833.333333333                  7.671440665102007              0.000000000000000             
+866.666666667                  7.628437239642707              0.000000000000000             
+900.0                          7.590467557054791              0.000000000000000             
+933.333333333                  7.556316471368348              0.000000000000000             
+966.666666667                  7.525943681325477              0.000000000000000             
+1000.0                         7.498044618487925              0.000000000000000             
+1033.33333333                  7.472828053266298              0.000000000000000             
+1066.66666667                  7.449866219223331              0.000000000000000             
+1100.0                         7.428894593710825              0.000000000000000             
+1133.33333333                  7.410119768693612              0.000000000000000             
+1166.66666667                  7.392554865920702              0.000000000000000             
+1200.0                         7.376805096339162              0.000000000000000             
+1233.33333333                  7.361736663985692              0.000000000000000             
+1266.66666667                  7.348465515207709              0.000000000000000             
+1300.0                         7.335711588649337              0.000000000000000             
+1333.33333333                  7.324021633269281              0.000000000000000             
+1366.66666667                  7.312859293350047              0.000000000000000             
+1400.0                         7.302658542367946              0.000000000000000             
+1433.33333333                  7.293324645029536              0.000000000000000             
+1466.66666667                  7.284716102813297              0.000000000000000             
+1500.0                         7.276645777802590              0.000000000000000             
+1533.33333333                  7.268509589027412              0.000000000000000             
+1566.66666667                  7.261683145468096              0.000000000000000             
+1600.0                         7.255239853395090              0.000000000000000             
+1633.33333333                  7.248487401121289              0.000000000000000             
+1666.66666667                  7.242855518945451              0.000000000000000             
+1700.0                         7.236167659309158              0.000000000000000             
+1733.33333333                  7.232230566200279              0.000000000000000             
+1766.66666667                  7.226559725844488              0.000000000000000             
+1800.0                         7.221843271543310              0.000000000000000             
+1833.33333333                  7.217206344269883              0.000000000000000             
+1866.66666667                  7.212615499312820              0.000000000000000             
+1900.0                         7.208925112078619              0.000000000000000             
+1933.33333333                  7.205550713605521              0.000000000000000             
+1966.66666667                  7.201328727385551              0.000000000000000             
+2000.0                         7.198307629374185              0.000000000000000             
+2033.33333333                  7.194427008885213              0.000000000000000             
+2066.66666667                  7.191682430961651              0.000000000000000             
+2100.0                         7.188839913934954              0.000000000000000             
+2133.33333333                  7.185741137154215              0.000000000000000             
+2166.66666667                  7.183387924831029              0.000000000000000             
+2200.0                         7.180972256127233              0.000000000000000             
+2233.33333333                  7.178255687851596              0.000000000000000             
+2266.66666667                  7.176039160603225              0.000000000000000             
+2300.0                         7.173916432506562              0.000000000000000             
+2333.33333333                  7.171732687084929              0.000000000000000             
+2366.66666667                  7.168323841221771              0.000000000000000             
+2400.0                         7.167570293774909              0.000000000000000             
+2433.33333333                  7.165863043576771              0.000000000000000             
+2466.66666667                  7.163281812157572              0.000000000000000             
+2500.0                         7.162658079413366              0.000000000000000             
+2533.33333333                  7.160209680164634              0.000000000000000             
+2566.66666667                  7.158526458405478              0.000000000000000             
+2600.0                         7.156175292589707              0.000000000000000             
+2633.33333333                  7.154994554525526              0.000000000000000             
+2666.66666667                  7.154491829404386              0.000000000000000             
+&
+@target G0.S8
+@type xydy
+33.3333333333                  24.276994907455496             0.000000000000000             
+66.6666666667                  23.999876347159837             0.000000000000000             
+100.0                          23.615945858692498             0.000000000000000             
+133.333333333                  22.486533868581734             0.000000000000000             
+166.666666667                  20.061463753142100             0.000000000000000             
+200.0                          17.518220176324068             0.000000000000000             
+233.333333333                  15.349072456631918             0.000000000000000             
+266.666666667                  13.617387576585912             0.000000000000000             
+300.0                          12.259586782160131             0.000000000000000             
+333.333333333                  11.194678124041729             0.000000000000000             
+366.666666667                  10.352687157026216             0.000000000000000             
+400.0                          9.680075078066229              0.000000000000000             
+433.333333333                  9.136474337784021              0.000000000000000             
+466.666666667                  8.692387811243778              0.000000000000000             
+500.0                          8.325464548428387              0.000000000000000             
+533.333333333                  8.019433741053401              0.000000000000000             
+566.666666667                  7.762095795576573              0.000000000000000             
+600.0                          7.543461620250148              0.000000000000000             
+633.333333333                  7.356194550680836              0.000000000000000             
+666.666666667                  7.195135033045627              0.000000000000000             
+700.0                          7.055081725569639              0.000000000000000             
+733.333333333                  6.933178561628437              0.000000000000000             
+766.666666667                  6.825922266236665              0.000000000000000             
+800.0                          6.731501755539854              0.000000000000000             
+833.333333333                  6.647833286303354              0.000000000000000             
+866.666666667                  6.573099947231338              0.000000000000000             
+900.0                          6.506753584035908              0.000000000000000             
+933.333333333                  6.446631300890402              0.000000000000000             
+966.666666667                  6.392421226243393              0.000000000000000             
+1000.0                         6.344114293660836              0.000000000000000             
+1033.33333333                  6.299651713779450              0.000000000000000             
+1066.66666667                  6.259528821936954              0.000000000000000             
+1100.0                         6.223262262104859              0.000000000000000             
+1133.33333333                  6.189493868504003              0.000000000000000             
+1166.66666667                  6.158254723642473              0.000000000000000             
+1200.0                         6.130318121313111              0.000000000000000             
+1233.33333333                  6.104077675964325              0.000000000000000             
+1266.66666667                  6.080143082551867              0.000000000000000             
+1300.0                         6.057771166006864              0.000000000000000             
+1333.33333333                  6.037290103393180              0.000000000000000             
+1366.66666667                  6.018339923657420              0.000000000000000             
+1400.0                         6.000304359922609              0.000000000000000             
+1433.33333333                  5.983347537548759              0.000000000000000             
+1466.66666667                  5.968018339679446              0.000000000000000             
+1500.0                         5.953917215177224              0.000000000000000             
+1533.33333333                  5.939986852191259              0.000000000000000             
+1566.66666667                  5.927329258947736              0.000000000000000             
+1600.0                         5.914791572688834              0.000000000000000             
+1633.33333333                  5.903934586595305              0.000000000000000             
+1666.66666667                  5.893539564273318              0.000000000000000             
+1700.0                         5.883763949941715              0.000000000000000             
+1733.33333333                  5.874411855075212              0.000000000000000             
+1766.66666667                  5.865439308461845              0.000000000000000             
+1800.0                         5.857172741882334              0.000000000000000             
+1833.33333333                  5.849201933920862              0.000000000000000             
+1866.66666667                  5.841585293539703              0.000000000000000             
+1900.0                         5.834695210090793              0.000000000000000             
+1933.33333333                  5.826905857907224              0.000000000000000             
+1966.66666667                  5.820909107311045              0.000000000000000             
+2000.0                         5.814165203249743              0.000000000000000             
+2033.33333333                  5.809875530695387              0.000000000000000             
+2066.66666667                  5.803815864203976              0.000000000000000             
+2100.0                         5.798363481887353              0.000000000000000             
+2133.33333333                  5.793449536452504              0.000000000000000             
+2166.66666667                  5.788974912727795              0.000000000000000             
+2200.0                         5.784602138861614              0.000000000000000             
+2233.33333333                  5.779570182341089              0.000000000000000             
+2266.66666667                  5.774927927707298              0.000000000000000             
+2300.0                         5.772016617200297              0.000000000000000             
+2333.33333333                  5.767708540190123              0.000000000000000             
+2366.66666667                  5.763809953051212              0.000000000000000             
+2400.0                         5.759864478383344              0.000000000000000             
+2433.33333333                  5.756622270816422              0.000000000000000             
+2466.66666667                  5.753227440773199              0.000000000000000             
+2500.0                         5.750178134594095              0.000000000000000             
+2533.33333333                  5.747926713783050              0.000000000000000             
+2566.66666667                  5.745263549649415              0.000000000000000             
+2600.0                         5.741438794029043              0.000000000000000             
+2633.33333333                  5.738438501501787              0.000000000000000             
+2666.66666667                  5.737669183999573              0.000000000000000             
+&
+@target G0.S9
+@type xydy
+67.0                           -0.433864027480418             0.429580000000000             
+133.0                          0.071202983540328              0.334780000000000             
+267.0                          -0.291331375197153             0.199470000000000             
+400.0                          -0.201089613785337             0.247370000000000             
+533.0                          -0.143746205022530             0.242630000000000             
+667.0                          0.059604908108524              0.241650000000000             
+800.0                          -0.099924937216161             0.239150000000000             
+933.0                          0.310574942324931              0.241290000000000             
+1067.0                         -0.472488641505835             0.166290000000000             
+1600.0                         -0.166725289244566             0.236370000000000             
+2133.0                         0.255299391963156              0.239040000000000             
+2667.0                         0.329429611466635              0.239400000000000             
+&
+@target G0.S10
+@type xydy
+67.0                           -0.298581810800869             0.468910000000000             
+133.0                          -0.000197922972610             0.426460000000000             
+267.0                          -0.254739234942871             0.236780000000000             
+400.0                          -0.587358679898692             0.307510000000000             
+533.0                          -0.095867834412063             0.302950000000000             
+667.0                          -0.267240663073903             0.297090000000000             
+800.0                          -0.487236257737845             0.292780000000000             
+933.0                          -0.606266471368348             0.290310000000000             
+1067.0                         -0.010286219223331             0.208320000000000             
+1600.0                         0.390640146604910              0.296440000000000             
+2133.0                         0.602788862845784              0.297710000000000             
+2667.0                         0.433358170595614              0.295920000000000             
+&
+@target G0.S11
+@type xydy
+67.0                           0.387853652840164              0.487750000000000             
+133.0                          0.132466131418266              0.452380000000000             
+267.0                          0.398862423414087              0.280320000000000             
+400.0                          -0.411595078066229             0.194240000000000             
+533.0                          0.125546258946599              0.187800000000000             
+667.0                          0.218704966954373              0.183730000000000             
+800.0                          -0.032911755539854             0.179820000000000             
+933.0                          -0.227541300890403             0.177260000000000             
+1067.0                         -0.126718821936953             0.125020000000000             
+1600.0                         -0.086661572688834             0.175190000000000             
+2133.0                         -0.423769536452505             0.172800000000000             
+2667.0                         -0.167849183999573             0.173840000000000             
+&
+@target G1.S0
+@type xydy
+50.0                           27.157670000000000             0.543150000000000             
+100.0                          26.557810000000000             0.531160000000000             
+150.0                          24.734620000000000             0.494690000000000             
+200.0                          20.986170000000001             0.419720000000000             
+250.0                          17.824420000000000             0.356490000000000             
+300.0                          15.553520000000001             0.311070000000000             
+350.0                          13.789580000000001             0.275790000000000             
+400.0                          12.483340000000000             0.249670000000000             
+500.0                          11.557240000000000             0.231140000000000             
+600.0                          10.538740000000001             0.210770000000000             
+700.0                          10.073950000000000             0.201480000000000             
+800.0                          9.629519999999999              0.192590000000000             
+900.0                          9.499940000000000              0.190000000000000             
+1000.0                         8.713500000000000              0.174270000000000             
+&
+@target G1.S1
+@type xydy
+50.0                           28.712740000000000             0.574250000000000             
+100.0                          28.156870000000001             0.648350000000000             
+150.0                          27.460400000000000             0.630540000000000             
+200.0                          24.311219999999999             0.555910000000000             
+250.0                          21.550129999999999             0.497780000000000             
+300.0                          18.737749999999998             0.444820000000000             
+350.0                          16.154080000000000             0.401140000000000             
+400.0                          14.696420000000000             0.378420000000000             
+500.0                          13.146250000000000             0.262930000000000             
+600.0                          11.594429999999999             0.334260000000000             
+800.0                          10.244870000000001             0.316700000000000             
+1000.0                         9.741450000000000              0.310380000000000             
+&
+@target G1.S2
+@type xydy
+50.0                           30.671690000000002             0.613430000000000             
+100.0                          30.627970000000001             0.612560000000000             
+150.0                          29.828849999999999             0.596580000000000             
+200.0                          29.389659999999999             0.587790000000000             
+250.0                          27.570190000000000             0.551400000000000             
+300.0                          24.543270000000000             0.490870000000000             
+350.0                          22.107839999999999             0.442160000000000             
+400.0                          20.068380000000001             0.401370000000000             
+450.0                          18.443570000000001             0.368870000000000             
+500.0                          17.131820000000001             0.342640000000000             
+600.0                          15.412590000000000             0.308250000000000             
+700.0                          13.930770000000001             0.278620000000000             
+800.0                          13.458140000000000             0.269160000000000             
+900.0                          12.694400000000000             0.253890000000000             
+1000.0                         12.142960000000000             0.242860000000000             
+&
+@target G1.S3
+@type xydy
+50.0                           27.008009214004851             0.000000000000000             
+100.0                          26.655859384399765             0.000000000000000             
+150.0                          24.784386540352859             0.000000000000000             
+200.0                          20.980782725144923             0.000000000000000             
+250.0                          17.794413999565389             0.000000000000000             
+300.0                          15.519504759143633             0.000000000000000             
+350.0                          13.926059426887200             0.000000000000000             
+400.0                          12.793211223313735             0.000000000000000             
+500.0                          11.353307166290987             0.000000000000000             
+600.0                          10.519678463130511             0.000000000000000             
+700.0                          9.998801936216918              0.000000000000000             
+800.0                          9.652830982209700              0.000000000000000             
+900.0                          9.412713916484403              0.000000000000000             
+1000.0                         9.238863233002764              0.000000000000000             
+&
+@target G1.S4
+@type xydy
+50.0                           27.968656359452265             0.000000000000000             
+100.0                          27.626199809942932             0.000000000000000             
+150.0                          27.352983852289540             0.000000000000000             
+200.0                          24.463037064849502             0.000000000000000             
+250.0                          21.132757736192421             0.000000000000000             
+300.0                          18.439713022632642             0.000000000000000             
+350.0                          16.431587310297495             0.000000000000000             
+400.0                          14.950646411043012             0.000000000000000             
+500.0                          13.012184367812424             0.000000000000000             
+600.0                          11.862998121842638             0.000000000000000             
+800.0                          10.648982663838881             0.000000000000000             
+1000.0                         10.061964789367243             0.000000000000000             
+&
+@target G1.S5
+@type xydy
+50.0                           30.269985653470606             0.000000000000000             
+100.0                          30.118747187933359             0.000000000000000             
+150.0                          29.850078039481332             0.000000000000000             
+200.0                          29.554120179630821             0.000000000000000             
+250.0                          27.341840375604658             0.000000000000000             
+300.0                          24.603884843728917             0.000000000000000             
+350.0                          22.130876561945769             0.000000000000000             
+400.0                          20.104420179321380             0.000000000000000             
+450.0                          18.494117285718307             0.000000000000000             
+500.0                          17.220782119225127             0.000000000000000             
+600.0                          15.398423323010554             0.000000000000000             
+700.0                          14.204391170087394             0.000000000000000             
+800.0                          13.389160822660450             0.000000000000000             
+900.0                          12.810467193651059             0.000000000000000             
+1000.0                         12.387740029691219             0.000000000000000             
+&
+@target G1.S6
+@type xydy
+25.0                           27.340176940145707             0.000000000000000             
+50.0                           27.008009214004851             0.000000000000000             
+75.0                           26.738519523538468             0.000000000000000             
+100.0                          26.655859384399765             0.000000000000000             
+125.0                          26.221311582181077             0.000000000000000             
+150.0                          24.784386540352859             0.000000000000000             
+175.0                          22.886061596907187             0.000000000000000             
+200.0                          20.980782725144923             0.000000000000000             
+225.0                          19.266322687144974             0.000000000000000             
+250.0                          17.794413999565389             0.000000000000000             
+275.0                          16.555500633960669             0.000000000000000             
+300.0                          15.519504759143633             0.000000000000000             
+325.0                          14.653048751419565             0.000000000000000             
+350.0                          13.926059426887200             0.000000000000000             
+375.0                          13.313121826436500             0.000000000000000             
+400.0                          12.793211223313735             0.000000000000000             
+425.0                          12.349257630075664             0.000000000000000             
+450.0                          11.968231748574585             0.000000000000000             
+475.0                          11.639121048141808             0.000000000000000             
+500.0                          11.353307166290987             0.000000000000000             
+525.0                          11.103757738168117             0.000000000000000             
+550.0                          10.884399800638189             0.000000000000000             
+575.0                          10.691303848095664             0.000000000000000             
+600.0                          10.519678463130511             0.000000000000000             
+625.0                          10.367130389890372             0.000000000000000             
+650.0                          10.231109072250549             0.000000000000000             
+675.0                          10.109012402681540             0.000000000000000             
+700.0                          9.998801936216918              0.000000000000000             
+725.0                          9.899496483167797              0.000000000000000             
+750.0                          9.809510350316279              0.000000000000000             
+775.0                          9.727580997602859              0.000000000000000             
+800.0                          9.652830982209700              0.000000000000000             
+825.0                          9.585163595640243              0.000000000000000             
+850.0                          9.522791200343962              0.000000000000000             
+875.0                          9.465459203222323              0.000000000000000             
+900.0                          9.412713916484403              0.000000000000000             
+925.0                          9.364056641912878              0.000000000000000             
+950.0                          9.319154601890364              0.000000000000000             
+975.0                          9.277466792656860              0.000000000000000             
+1000.0                         9.238863233002764              0.000000000000000             
+&
+@target G1.S7
+@type xydy
+25.0                           28.343658224626754             0.000000000000000             
+50.0                           27.968656359452265             0.000000000000000             
+75.0                           28.060533136589179             0.000000000000000             
+100.0                          27.626199809942932             0.000000000000000             
+125.0                          27.785143131659417             0.000000000000000             
+150.0                          27.352983852289540             0.000000000000000             
+175.0                          26.111721045635605             0.000000000000000             
+200.0                          24.463037064849502             0.000000000000000             
+225.0                          22.745036420624370             0.000000000000000             
+250.0                          21.132757736192421             0.000000000000000             
+275.0                          19.693675974333928             0.000000000000000             
+300.0                          18.439713022632642             0.000000000000000             
+325.0                          17.359048806553904             0.000000000000000             
+350.0                          16.431587310297495             0.000000000000000             
+375.0                          15.635267801751384             0.000000000000000             
+400.0                          14.950646411043012             0.000000000000000             
+425.0                          14.359653694039764             0.000000000000000             
+450.0                          13.847564688800244             0.000000000000000             
+475.0                          13.401848402453769             0.000000000000000             
+500.0                          13.012184367812424             0.000000000000000             
+525.0                          12.670220257231342             0.000000000000000             
+550.0                          12.368173544830261             0.000000000000000             
+575.0                          12.100748465125474             0.000000000000000             
+600.0                          11.862998121842638             0.000000000000000             
+625.0                          11.650919980328650             0.000000000000000             
+650.0                          11.460955986131275             0.000000000000000             
+675.0                          11.289718927688419             0.000000000000000             
+700.0                          11.135878355414640             0.000000000000000             
+725.0                          10.996125121838217             0.000000000000000             
+750.0                          10.869285144701701             0.000000000000000             
+775.0                          10.754184915057948             0.000000000000000             
+800.0                          10.648982663838881             0.000000000000000             
+825.0                          10.552843046678088             0.000000000000000             
+850.0                          10.464781806607361             0.000000000000000             
+875.0                          10.383408378404967             0.000000000000000             
+900.0                          10.308946417332486             0.000000000000000             
+925.0                          10.239650559198122             0.000000000000000             
+950.0                          10.176321140108643             0.000000000000000             
+975.0                          10.116823334632128             0.000000000000000             
+1000.0                         10.061964789367243             0.000000000000000             
+&
+@target G1.S8
+@type xydy
+25.0                           30.332362718219034             0.000000000000000             
+50.0                           30.269985653470606             0.000000000000000             
+75.0                           29.862783892450608             0.000000000000000             
+100.0                          30.118747187933359             0.000000000000000             
+125.0                          29.679292789913841             0.000000000000000             
+150.0                          29.850078039481332             0.000000000000000             
+175.0                          29.984168265700628             0.000000000000000             
+200.0                          29.554120179630821             0.000000000000000             
+225.0                          28.600839760480262             0.000000000000000             
+250.0                          27.341840375604658             0.000000000000000             
+275.0                          25.968561434704114             0.000000000000000             
+300.0                          24.603884843728917             0.000000000000000             
+325.0                          23.314658896022760             0.000000000000000             
+350.0                          22.130876561945769             0.000000000000000             
+375.0                          21.061628345555423             0.000000000000000             
+400.0                          20.104420179321380             0.000000000000000             
+425.0                          19.252102179948547             0.000000000000000             
+450.0                          18.494117285718307             0.000000000000000             
+475.0                          17.820267242826887             0.000000000000000             
+500.0                          17.220782119225127             0.000000000000000             
+525.0                          16.686363298575362             0.000000000000000             
+550.0                          16.209311819397787             0.000000000000000             
+575.0                          15.781906701176601             0.000000000000000             
+600.0                          15.398423323010554             0.000000000000000             
+625.0                          15.053313848225871             0.000000000000000             
+650.0                          14.741756556533513             0.000000000000000             
+675.0                          14.459748644987677             0.000000000000000             
+700.0                          14.204391170087394             0.000000000000000             
+725.0                          13.971853175483947             0.000000000000000             
+750.0                          13.759771990079688             0.000000000000000             
+775.0                          13.565996649138572             0.000000000000000             
+800.0                          13.389160822660450             0.000000000000000             
+825.0                          13.225974676144226             0.000000000000000             
+850.0                          13.076224890098921             0.000000000000000             
+875.0                          12.938233766103757             0.000000000000000             
+900.0                          12.810467193651059             0.000000000000000             
+925.0                          12.692679748091173             0.000000000000000             
+950.0                          12.583621702261871             0.000000000000000             
+975.0                          12.482070559602484             0.000000000000000             
+1000.0                         12.387740029691219             0.000000000000000             
+&
+@target G1.S9
+@type xydy
+50.0                           0.149660785995149              0.543150000000000             
+100.0                          -0.098049384399765             0.531160000000000             
+150.0                          -0.049766540352859             0.494690000000000             
+200.0                          0.005387274855078              0.419720000000000             
+250.0                          0.030006000434611              0.356490000000000             
+300.0                          0.034015240856368              0.311070000000000             
+350.0                          -0.136479426887199             0.275790000000000             
+400.0                          -0.309871223313735             0.249670000000000             
+500.0                          0.203932833709013              0.231140000000000             
+600.0                          0.019061536869490              0.210770000000000             
+700.0                          0.075148063783082              0.201480000000000             
+800.0                          -0.023310982209701             0.192590000000000             
+900.0                          0.087226083515597              0.190000000000000             
+1000.0                         -0.525363233002764             0.174270000000000             
+&
+@target G1.S10
+@type xydy
+50.0                           0.744083640547736              0.574250000000000             
+100.0                          0.530670190057069              0.648350000000000             
+150.0                          0.107416147710460              0.630540000000000             
+200.0                          -0.151817064849503             0.555910000000000             
+250.0                          0.417372263807579              0.497780000000000             
+300.0                          0.298036977367357              0.444820000000000             
+350.0                          -0.277507310297494             0.401140000000000             
+400.0                          -0.254226411043012             0.378420000000000             
+500.0                          0.134065632187577              0.262930000000000             
+600.0                          -0.268568121842639             0.334260000000000             
+800.0                          -0.404112663838880             0.316700000000000             
+1000.0                         -0.320514789367243             0.310380000000000             
+&
+@target G1.S11
+@type xydy
+50.0                           0.401704346529396              0.613430000000000             
+100.0                          0.509222812066643              0.612560000000000             
+150.0                          -0.021228039481333             0.596580000000000             
+200.0                          -0.164460179630822             0.587790000000000             
+250.0                          0.228349624395342              0.551400000000000             
+300.0                          -0.060614843728917             0.490870000000000             
+350.0                          -0.023036561945769             0.442160000000000             
+400.0                          -0.036040179321379             0.401370000000000             
+450.0                          -0.050547285718306             0.368870000000000             
+500.0                          -0.088962119225126             0.342640000000000             
+600.0                          0.014166676989445              0.308250000000000             
+700.0                          -0.273621170087393             0.278620000000000             
+800.0                          0.068979177339550              0.269160000000000             
+900.0                          -0.116067193651059             0.253890000000000             
+1000.0                         -0.244780029691219             0.242860000000000             
+&
+@target G2.S0
+@type xydy
+33.0                           18.544770000000000             0.741790000000000             
+67.0                           16.514669999999999             0.660590000000000             
+133.0                          10.803490000000000             0.432140000000000             
+200.0                          8.325419999999999              0.333020000000000             
+267.0                          7.235040000000000              0.289400000000000             
+333.0                          6.889130000000000              0.275570000000000             
+400.0                          6.515130000000000              0.260610000000000             
+467.0                          6.251600000000000              0.250060000000000             
+533.0                          6.374040000000000              0.254960000000000             
+667.0                          6.232320000000000              0.249290000000000             
+800.0                          6.170270000000000              0.246810000000000             
+933.0                          6.451310000000000              0.258050000000000             
+&
+@target G2.S1
+@type xydy
+33.0                           20.994479999999999             0.839780000000000             
+67.0                           19.016130000000000             0.760650000000000             
+133.0                          12.426330000000000             0.497230000000000             
+200.0                          10.197270000000000             0.407890000000000             
+267.0                          9.721399999999999              0.458480000000000             
+333.0                          8.034940000000001              0.435860000000000             
+400.0                          7.712380000000000              0.431660000000000             
+467.0                          7.703030000000000              0.431540000000000             
+533.0                          7.314080000000000              0.426530000000000             
+667.0                          7.299390000000000              0.426350000000000             
+800.0                          6.647380000000000              0.418090000000000             
+933.0                          6.999720000000000              0.422530000000000             
+&
+@target G2.S2
+@type xydy
+33.0                           24.098389999999998             0.963940000000000             
+67.0                           22.581070000000000             0.903240000000000             
+133.0                          17.796029999999998             0.711840000000000             
+200.0                          13.554140000000000             0.542170000000000             
+267.0                          10.998480000000001             0.439940000000000             
+333.0                          9.698230000000001              0.387930000000000             
+400.0                          8.615190000000000              0.344610000000000             
+467.0                          8.060570000000000              0.322420000000000             
+533.0                          7.483890000000000              0.299360000000000             
+667.0                          7.946680000000000              0.317870000000000             
+800.0                          7.211550000000000              0.288460000000000             
+933.0                          6.728530000000000              0.269140000000000             
+1067.0                         7.019760000000000              0.280790000000000             
+&
+@target G2.S3
+@type xydy
+33.0                           18.125046396351753             0.000000000000000             
+67.0                           15.822338251414759             0.000000000000000             
+133.0                          10.863857539552139             0.000000000000000             
+200.0                          8.577659731188355              0.000000000000000             
+267.0                          7.562421913766253              0.000000000000000             
+333.0                          7.045511290006794              0.000000000000000             
+400.0                          6.751198020511432              0.000000000000000             
+467.0                          6.568947003896366              0.000000000000000             
+533.0                          6.448536033721155              0.000000000000000             
+667.0                          6.304954604087548              0.000000000000000             
+800.0                          6.225773475340389              0.000000000000000             
+933.0                          6.178274302754882              0.000000000000000             
+&
+@target G2.S4
+@type xydy
+33.0                           20.921842281182613             0.000000000000000             
+67.0                           19.004241314513429             0.000000000000000             
+133.0                          13.440733173132131             0.000000000000000             
+200.0                          10.394469060713336             0.000000000000000             
+267.0                          8.986028299505772              0.000000000000000             
+333.0                          8.257980430699433              0.000000000000000             
+400.0                          7.840440320858402              0.000000000000000             
+467.0                          7.580463447370830              0.000000000000000             
+533.0                          7.408421354845210              0.000000000000000             
+667.0                          7.202896823767896              0.000000000000000             
+800.0                          7.089775831857254              0.000000000000000             
+933.0                          7.020770142296612              0.000000000000000             
+&
+@target G2.S5
+@type xydy
+33.0                           23.411314259005682             0.000000000000000             
+67.0                           22.401984664124996             0.000000000000000             
+133.0                          17.332391940245024             0.000000000000000             
+200.0                          12.929988535325101             0.000000000000000             
+267.0                          10.657974152631772             0.000000000000000             
+333.0                          9.435350612200033              0.000000000000000             
+400.0                          8.719870578423908              0.000000000000000             
+467.0                          8.270012353467393              0.000000000000000             
+533.0                          7.970268018432129              0.000000000000000             
+667.0                          7.609782706015483              0.000000000000000             
+800.0                          7.410405287060919              0.000000000000000             
+933.0                          7.288792540190070              0.000000000000000             
+1067.0                         7.209170944190773              0.000000000000000             
+&
+@target G2.S6
+@type xydy
+33.3333333333                  18.125046396351753             0.000000000000000             
+66.6666666667                  15.822338251414759             0.000000000000000             
+100.0                          13.002548812174430             0.000000000000000             
+133.333333333                  10.863857539552139             0.000000000000000             
+166.666666667                  9.475944152019787              0.000000000000000             
+200.0                          8.577659731188355              0.000000000000000             
+233.333333333                  7.977656746836582              0.000000000000000             
+266.666666667                  7.562421913766253              0.000000000000000             
+300.0                          7.264877927105474              0.000000000000000             
+333.333333333                  7.045511290006794              0.000000000000000             
+366.666666667                  6.879607720054899              0.000000000000000             
+400.0                          6.751198020511432              0.000000000000000             
+433.333333333                  6.649999423551143              0.000000000000000             
+466.666666667                  6.568947003896366              0.000000000000000             
+500.0                          6.503120330723507              0.000000000000000             
+533.333333333                  6.448536033721155              0.000000000000000             
+566.666666667                  6.403466469465961              0.000000000000000             
+600.0                          6.365035947231848              0.000000000000000             
+633.333333333                  6.332516272184481              0.000000000000000             
+666.666666667                  6.304954604087548              0.000000000000000             
+700.0                          6.280807522708913              0.000000000000000             
+733.333333333                  6.260246243787163              0.000000000000000             
+766.666666667                  6.241702398778760              0.000000000000000             
+800.0                          6.225773475340389              0.000000000000000             
+833.333333333                  6.212053051185391              0.000000000000000             
+866.666666667                  6.199754782049307              0.000000000000000             
+900.0                          6.188281366900813              0.000000000000000             
+933.333333333                  6.178274302754882              0.000000000000000             
+&
+@target G2.S7
+@type xydy
+33.3333333333                  20.921842281182613             0.000000000000000             
+66.6666666667                  19.004241314513429             0.000000000000000             
+100.0                          16.076328097245895             0.000000000000000             
+133.333333333                  13.440733173132131             0.000000000000000             
+166.666666667                  11.614118070519586             0.000000000000000             
+200.0                          10.394469060713336             0.000000000000000             
+233.333333333                  9.565906197465980              0.000000000000000             
+266.666666667                  8.986028299505772              0.000000000000000             
+300.0                          8.567971161769060              0.000000000000000             
+333.333333333                  8.257980430699433              0.000000000000000             
+366.666666667                  8.022736010207128              0.000000000000000             
+400.0                          7.840440320858402              0.000000000000000             
+433.333333333                  7.696264008453618              0.000000000000000             
+466.666666667                  7.580463447370830              0.000000000000000             
+500.0                          7.486165249192880              0.000000000000000             
+533.333333333                  7.408421354845210              0.000000000000000             
+566.666666667                  7.343584392728074              0.000000000000000             
+600.0                          7.289002659664773              0.000000000000000             
+633.333333333                  7.242493448452411              0.000000000000000             
+666.666666667                  7.202896823767896              0.000000000000000             
+700.0                          7.168249641974752              0.000000000000000             
+733.333333333                  7.138419996942448              0.000000000000000             
+766.666666667                  7.112669745903892              0.000000000000000             
+800.0                          7.089775831857254              0.000000000000000             
+833.333333333                  7.069296675604472              0.000000000000000             
+866.666666667                  7.051386646917999              0.000000000000000             
+900.0                          7.035350711563910              0.000000000000000             
+933.333333333                  7.020770142296612              0.000000000000000             
+&
+@target G2.S8
+@type xydy
+33.3333333333                  23.411314259005682             0.000000000000000             
+66.6666666667                  22.401984664124996             0.000000000000000             
+100.0                          20.363982783987318             0.000000000000000             
+133.333333333                  17.332391940245024             0.000000000000000             
+166.666666667                  14.785308092694153             0.000000000000000             
+200.0                          12.929988535325101             0.000000000000000             
+233.333333333                  11.608945625993938             0.000000000000000             
+266.666666667                  10.657974152631772             0.000000000000000             
+300.0                          9.959557336616625              0.000000000000000             
+333.333333333                  9.435350612200033              0.000000000000000             
+366.666666667                  9.033630463883391              0.000000000000000             
+400.0                          8.719870578423908              0.000000000000000             
+433.333333333                  8.470835049566796              0.000000000000000             
+466.666666667                  8.270012353467393              0.000000000000000             
+500.0                          8.106065343199329              0.000000000000000             
+533.333333333                  7.970268018432129              0.000000000000000             
+566.666666667                  7.856852468966951              0.000000000000000             
+600.0                          7.761309488434150              0.000000000000000             
+633.333333333                  7.679667290193663              0.000000000000000             
+666.666666667                  7.609782706015483              0.000000000000000             
+700.0                          7.549563973589827              0.000000000000000             
+733.333333333                  7.496753077649461              0.000000000000000             
+766.666666667                  7.450916009688743              0.000000000000000             
+800.0                          7.410405287060919              0.000000000000000             
+833.333333333                  7.374362689277898              0.000000000000000             
+866.666666667                  7.342572070757219              0.000000000000000             
+900.0                          7.314212781179513              0.000000000000000             
+933.333333333                  7.288792540190070              0.000000000000000             
+966.666666667                  7.265591357595571              0.000000000000000             
+1000.0                         7.245111394999454              0.000000000000000             
+1033.33333333                  7.226327125309105              0.000000000000000             
+1066.66666667                  7.209170944190773              0.000000000000000             
+&
+@target G2.S9
+@type xydy
+33.0                           0.419723603648247              0.741790000000000             
+67.0                           0.692331748585239              0.660590000000000             
+133.0                          -0.060367539552139             0.432140000000000             
+200.0                          -0.252239731188356             0.333020000000000             
+267.0                          -0.327381913766254             0.289400000000000             
+333.0                          -0.156381290006794             0.275570000000000             
+400.0                          -0.236068020511432             0.260610000000000             
+467.0                          -0.317347003896366             0.250060000000000             
+533.0                          -0.074496033721156             0.254960000000000             
+667.0                          -0.072634604087549             0.249290000000000             
+800.0                          -0.055503475340389             0.246810000000000             
+933.0                          0.273035697245119              0.258050000000000             
+&
+@target G2.S10
+@type xydy
+33.0                           0.072637718817386              0.839780000000000             
+67.0                           0.011888685486571              0.760650000000000             
+133.0                          -1.014403173132131             0.497230000000000             
+200.0                          -0.197199060713336             0.407890000000000             
+267.0                          0.735371700494227              0.458480000000000             
+333.0                          -0.223040430699433             0.435860000000000             
+400.0                          -0.128060320858403             0.431660000000000             
+467.0                          0.122566552629170              0.431540000000000             
+533.0                          -0.094341354845210             0.426530000000000             
+667.0                          0.096493176232104              0.426350000000000             
+800.0                          -0.442395831857254             0.418090000000000             
+933.0                          -0.021050142296612             0.422530000000000             
+&
+@target G2.S11
+@type xydy
+33.0                           0.687075740994317              0.963940000000000             
+67.0                           0.179085335875005              0.903240000000000             
+133.0                          0.463638059754974              0.711840000000000             
+200.0                          0.624151464674899              0.542170000000000             
+267.0                          0.340505847368229              0.439940000000000             
+333.0                          0.262879387799968              0.387930000000000             
+400.0                          -0.104680578423908             0.344610000000000             
+467.0                          -0.209442353467393             0.322420000000000             
+533.0                          -0.486378018432129             0.299360000000000             
+667.0                          0.336897293984517              0.317870000000000             
+800.0                          -0.198855287060919             0.288460000000000             
+933.0                          -0.560262540190070             0.269140000000000             
+1067.0                         -0.189410944190773             0.280790000000000             
+&
+@target G3.S0
+@type xydy
+33.0                           27.104299999999999             1.084170000000000             
+67.0                           27.587949999999999             1.103520000000000             
+133.0                          27.317550000000001             1.092700000000000             
+200.0                          26.410509999999999             1.056420000000000             
+267.0                          23.510310000000000             0.940410000000000             
+333.0                          20.872920000000001             0.834920000000000             
+400.0                          18.185780000000001             0.727430000000000             
+467.0                          15.611430000000000             0.624460000000000             
+533.0                          14.421640000000000             0.576870000000000             
+667.0                          13.128579999999999             0.525140000000000             
+800.0                          11.954210000000000             0.478170000000000             
+933.0                          11.335550000000000             0.453420000000000             
+&
+@target G3.S1
+@type xydy
+33.0                           30.518010000000000             1.220720000000000             
+67.0                           29.973810000000000             1.198950000000000             
+133.0                          27.994190000000000             1.119770000000000             
+200.0                          29.146000000000001             1.165840000000000             
+267.0                          27.296410000000002             1.091860000000000             
+333.0                          24.902320000000000             0.996090000000000             
+400.0                          23.268409999999999             0.930740000000000             
+467.0                          20.400410000000001             0.816020000000000             
+533.0                          19.286020000000001             0.771440000000000             
+667.0                          16.912520000000001             0.676500000000000             
+800.0                          15.093780000000001             0.603750000000000             
+933.0                          15.011820000000000             0.600470000000000             
+&
+@target G3.S2
+@type xydy
+33.0                           32.726450000000000             1.309060000000000             
+67.0                           32.877549999999999             1.315100000000000             
+133.0                          32.375219999999999             1.295010000000000             
+200.0                          32.328850000000003             1.293150000000000             
+267.0                          32.690080000000002             1.307600000000000             
+333.0                          32.120139999999999             1.284810000000000             
+400.0                          29.519850000000002             1.180790000000000             
+467.0                          26.846039999999999             1.073840000000000             
+533.0                          23.902750000000001             0.956110000000000             
+667.0                          21.671440000000000             0.866860000000000             
+800.0                          19.742180000000001             0.789690000000000             
+933.0                          18.136279999999999             0.725450000000000             
+1067.0                         17.008749999999999             0.680350000000000             
+&
+@target G3.S3
+@type xydy
+33.0                           28.511510555235837             0.000000000000000             
+67.0                           28.097914994704510             0.000000000000000             
+133.0                          27.971006910411820             0.000000000000000             
+200.0                          27.695198036823644             0.000000000000000             
+267.0                          24.562824227687166             0.000000000000000             
+333.0                          21.060175620029636             0.000000000000000             
+400.0                          18.272967728523017             0.000000000000000             
+467.0                          16.214807509683638             0.000000000000000             
+533.0                          14.706670049254209             0.000000000000000             
+667.0                          12.743353534472437             0.000000000000000             
+800.0                          11.585311847849752             0.000000000000000             
+933.0                          10.854018924659933             0.000000000000000             
+&
+@target G3.S4
+@type xydy
+33.0                           30.697508746017675             0.000000000000000             
+67.0                           30.691648904074601             0.000000000000000             
+133.0                          30.452541252555651             0.000000000000000             
+200.0                          30.542575618651302             0.000000000000000             
+267.0                          29.174848998073362             0.000000000000000             
+333.0                          26.178873578677639             0.000000000000000             
+400.0                          23.221890295425833             0.000000000000000             
+467.0                          20.803513458036083             0.000000000000000             
+533.0                          18.926800432001635             0.000000000000000             
+667.0                          16.369004670577119             0.000000000000000             
+800.0                          14.804930797387854             0.000000000000000             
+933.0                          13.798297841300958             0.000000000000000             
+&
+@target G3.S5
+@type xydy
+33.0                           32.825933195087387             0.000000000000000             
+67.0                           32.691700786694277             0.000000000000000             
+133.0                          32.586127271977048             0.000000000000000             
+200.0                          32.382284521441839             0.000000000000000             
+267.0                          32.762206379727886             0.000000000000000             
+333.0                          31.961412201275788             0.000000000000000             
+400.0                          29.873026813581010             0.000000000000000             
+467.0                          27.464840726628942             0.000000000000000             
+533.0                          25.237207032270238             0.000000000000000             
+667.0                          21.763383338255636             0.000000000000000             
+800.0                          19.418041571388024             0.000000000000000             
+933.0                          17.827411055482120             0.000000000000000             
+1067.0                         16.719143171644173             0.000000000000000             
+&
+@target G3.S6
+@type xydy
+33.3333333333                  28.511510555235837             0.000000000000000             
+66.6666666667                  28.097914994704510             0.000000000000000             
+100.0                          28.375113154865772             0.000000000000000             
+133.333333333                  27.971006910411820             0.000000000000000             
+166.666666667                  28.186634738756457             0.000000000000000             
+200.0                          27.695198036823644             0.000000000000000             
+233.333333333                  26.332293632240102             0.000000000000000             
+266.666666667                  24.562824227687166             0.000000000000000             
+300.0                          22.746595017258919             0.000000000000000             
+333.333333333                  21.060175620029636             0.000000000000000             
+366.666666667                  19.566584659768598             0.000000000000000             
+400.0                          18.272967728523017             0.000000000000000             
+433.333333333                  17.163727470223563             0.000000000000000             
+466.666666667                  16.214807509683638             0.000000000000000             
+500.0                          15.403022848765305             0.000000000000000             
+533.333333333                  14.706670049254209             0.000000000000000             
+566.666666667                  14.106804369842651             0.000000000000000             
+600.0                          13.588108191369798             0.000000000000000             
+633.333333333                  13.136821259928782             0.000000000000000             
+666.666666667                  12.743353534472437             0.000000000000000             
+700.0                          12.397939897393497             0.000000000000000             
+733.333333333                  12.093620752803492             0.000000000000000             
+766.666666667                  11.824545425847122             0.000000000000000             
+800.0                          11.585311847849752             0.000000000000000             
+833.333333333                  11.371542416215606             0.000000000000000             
+866.666666667                  11.180527693777124             0.000000000000000             
+900.0                          11.008699316270906             0.000000000000000             
+933.333333333                  10.854018924659933             0.000000000000000             
+&
+@target G3.S7
+@type xydy
+33.3333333333                  30.697508746017675             0.000000000000000             
+66.6666666667                  30.691648904074601             0.000000000000000             
+100.0                          30.457608074765780             0.000000000000000             
+133.333333333                  30.452541252555651             0.000000000000000             
+166.666666667                  30.297080084958640             0.000000000000000             
+200.0                          30.542575618651302             0.000000000000000             
+233.333333333                  30.204181064951587             0.000000000000000             
+266.666666667                  29.174848998073362             0.000000000000000             
+300.0                          27.743378650162594             0.000000000000000             
+333.333333333                  26.178873578677639             0.000000000000000             
+366.666666667                  24.644732135477643             0.000000000000000             
+400.0                          23.221890295425833             0.000000000000000             
+433.333333333                  21.940067658370587             0.000000000000000             
+466.666666667                  20.803513458036083             0.000000000000000             
+500.0                          19.803695264662473             0.000000000000000             
+533.333333333                  18.926800432001635             0.000000000000000             
+566.666666667                  18.158632213571792             0.000000000000000             
+600.0                          17.484441458549124             0.000000000000000             
+633.333333333                  16.891573508853298             0.000000000000000             
+666.666666667                  16.369004670577119             0.000000000000000             
+700.0                          15.906570842442065             0.000000000000000             
+733.333333333                  15.496718003027025             0.000000000000000             
+766.666666667                  15.131464438697876             0.000000000000000             
+800.0                          14.804930797387854             0.000000000000000             
+833.333333333                  14.512730766301425             0.000000000000000             
+866.666666667                  14.249899313260903             0.000000000000000             
+900.0                          14.012692877051011             0.000000000000000             
+933.333333333                  13.798297841300958             0.000000000000000             
+&
+@target G3.S8
+@type xydy
+33.3333333333                  32.825933195087387             0.000000000000000             
+66.6666666667                  32.691700786694277             0.000000000000000             
+100.0                          32.651961258470827             0.000000000000000             
+133.333333333                  32.586127271977048             0.000000000000000             
+166.666666667                  32.735251824334505             0.000000000000000             
+200.0                          32.382284521441839             0.000000000000000             
+233.333333333                  32.550140988450686             0.000000000000000             
+266.666666667                  32.762206379727886             0.000000000000000             
+300.0                          32.585131592760220             0.000000000000000             
+333.333333333                  31.961412201275788             0.000000000000000             
+366.666666667                  31.009428429669640             0.000000000000000             
+400.0                          29.873026813581010             0.000000000000000             
+433.333333333                  28.666341804595049             0.000000000000000             
+466.666666667                  27.464840726628942             0.000000000000000             
+500.0                          26.314219252541044             0.000000000000000             
+533.333333333                  25.237207032270238             0.000000000000000             
+566.666666667                  24.243799141673687             0.000000000000000             
+600.0                          23.336198493539264             0.000000000000000             
+633.333333333                  22.511089548670682             0.000000000000000             
+666.666666667                  21.763383338255636             0.000000000000000             
+700.0                          21.086659769438072             0.000000000000000             
+733.333333333                  20.474476207688358             0.000000000000000             
+766.666666667                  19.920276401775180             0.000000000000000             
+800.0                          19.418041571388024             0.000000000000000             
+833.333333333                  18.962369532178396             0.000000000000000             
+866.666666667                  18.548449728796413             0.000000000000000             
+900.0                          18.171359346965946             0.000000000000000             
+933.333333333                  17.827411055482120             0.000000000000000             
+966.666666667                  17.513169033288669             0.000000000000000             
+1000.0                         17.225552783410595             0.000000000000000             
+1033.33333333                  16.961690605311830             0.000000000000000             
+1066.66666667                  16.719143171644173             0.000000000000000             
+&
+@target G3.S9
+@type xydy
+33.0                           -1.407210555235839             1.084170000000000             
+67.0                           -0.509964994704511             1.103520000000000             
+133.0                          -0.653456910411819             1.092700000000000             
+200.0                          -1.284688036823646             1.056420000000000             
+267.0                          -1.052514227687166             0.940410000000000             
+333.0                          -0.187255620029635             0.834920000000000             
+400.0                          -0.087187728523016             0.727430000000000             
+467.0                          -0.603377509683638             0.624460000000000             
+533.0                          -0.285030049254209             0.576870000000000             
+667.0                          0.385226465527563              0.525140000000000             
+800.0                          0.368898152150248              0.478170000000000             
+933.0                          0.481531075340067              0.453420000000000             
+&
+@target G3.S10
+@type xydy
+33.0                           -0.179498746017675             1.220720000000000             
+67.0                           -0.717838904074600             1.198950000000000             
+133.0                          -2.458351252555651             1.119770000000000             
+200.0                          -1.396575618651301             1.165840000000000             
+267.0                          -1.878438998073360             1.091860000000000             
+333.0                          -1.276553578677639             0.996090000000000             
+400.0                          0.046519704574166              0.930740000000000             
+467.0                          -0.403103458036082             0.816020000000000             
+533.0                          0.359219567998366              0.771440000000000             
+667.0                          0.543515329422881              0.676500000000000             
+800.0                          0.288849202612147              0.603750000000000             
+933.0                          1.213522158699043              0.600470000000000             
+&
+@target G3.S11
+@type xydy
+33.0                           -0.099483195087387             1.309060000000000             
+67.0                           0.185849213305723              1.315100000000000             
+133.0                          -0.210907271977050             1.295010000000000             
+200.0                          -0.053434521441837             1.293150000000000             
+267.0                          -0.072126379727884             1.307600000000000             
+333.0                          0.158727798724211              1.284810000000000             
+400.0                          -0.353176813581008             1.180790000000000             
+467.0                          -0.618800726628944             1.073840000000000             
+533.0                          -1.334457032270237             0.956110000000000             
+667.0                          -0.091943338255636             0.866860000000000             
+800.0                          0.324138428611978              0.789690000000000             
+933.0                          0.308868944517879              0.725450000000000             
+1067.0                         0.289606828355826              0.680350000000000             
+&
+@target G4.S0
+@type xydy
+50.0                           23.789110000000001             0.497970000000000             
+100.0                          23.712730000000001             0.474250000000000             
+150.0                          24.828510000000001             0.508430000000000             
+200.0                          25.550120000000000             0.515820000000000             
+250.0                          25.707630000000002             0.517440000000000             
+300.0                          26.856790000000000             0.537140000000000             
+400.0                          27.464430000000000             0.549290000000000             
+500.0                          26.959470000000000             0.539190000000000             
+600.0                          26.575060000000001             0.531500000000000             
+700.0                          26.431650000000001             0.528630000000000             
+800.0                          26.007870000000000             0.520560000000000             
+1000.0                         26.892810000000001             0.537860000000000             
+1500.0                         26.589759999999998             0.531800000000000             
+2000.0                         26.542090000000002             0.530840000000000             
+2500.0                         26.700939999999999             0.534020000000000             
+&
+@target G4.S1
+@type xydy
+50.0                           25.197099999999999             0.503940000000000             
+100.0                          25.035219999999999             0.500700000000000             
+150.0                          26.422080000000001             0.528440000000000             
+200.0                          26.312400000000000             0.526250000000000             
+250.0                          25.991270000000000             0.519830000000000             
+300.0                          27.013449999999999             0.540270000000000             
+400.0                          28.196110000000001             0.563920000000000             
+500.0                          27.954879999999999             0.559100000000000             
+600.0                          27.718480000000000             0.554370000000000             
+700.0                          28.194620000000000             0.563890000000000             
+800.0                          27.638929999999998             0.552780000000000             
+1000.0                         28.139469999999999             0.562790000000000             
+1500.0                         27.250270000000000             0.545010000000000             
+2000.0                         28.322379999999999             0.566450000000000             
+2500.0                         27.652239999999999             0.553040000000000             
+&
+@target G4.S2
+@type xydy
+50.0                           29.406079999999999             0.588120000000000             
+100.0                          29.331720000000001             0.586630000000000             
+150.0                          29.400469999999999             0.588010000000000             
+200.0                          30.373410000000000             0.607470000000000             
+250.0                          30.330600000000000             0.606610000000000             
+300.0                          29.470160000000000             0.589400000000000             
+400.0                          30.092800000000000             0.601860000000000             
+500.0                          30.727670000000000             0.614550000000000             
+600.0                          30.939150000000001             0.618780000000000             
+700.0                          30.820720000000001             0.616410000000000             
+800.0                          31.025720000000000             0.620510000000000             
+1000.0                         30.959330000000001             0.619190000000000             
+1500.0                         31.317010000000000             0.626340000000000             
+2000.0                         31.136920000000000             0.622740000000000             
+2500.0                         31.058509999999998             0.621170000000000             
+&
+@target G4.S3
+@type xydy
+50.0                           23.791278028056627             0.000000000000000             
+100.0                          23.630637488267947             0.000000000000000             
+150.0                          25.633446576038416             0.000000000000000             
+200.0                          25.360359505753589             0.000000000000000             
+250.0                          25.711529148151115             0.000000000000000             
+300.0                          26.309724271146003             0.000000000000000             
+400.0                          26.630339988869160             0.000000000000000             
+500.0                          26.641909434844152             0.000000000000000             
+600.0                          26.628347588392636             0.000000000000000             
+700.0                          26.615753735039586             0.000000000000000             
+800.0                          26.606443194069513             0.000000000000000             
+1000.0                         26.593535381616668             0.000000000000000             
+1500.0                         26.580080615072895             0.000000000000000             
+2000.0                         26.575407552907549             0.000000000000000             
+2500.0                         26.573639818881180             0.000000000000000             
+&
+@target G4.S4
+@type xydy
+50.0                           25.335183465137927             0.000000000000000             
+100.0                          25.371301534437045             0.000000000000000             
+150.0                          26.272861146203940             0.000000000000000             
+200.0                          26.763545876178345             0.000000000000000             
+250.0                          26.442055640974342             0.000000000000000             
+300.0                          26.865449362172537             0.000000000000000             
+400.0                          27.720373909152400             0.000000000000000             
+500.0                          27.820205480776721             0.000000000000000             
+600.0                          27.823700081703826             0.000000000000000             
+700.0                          27.816093312363417             0.000000000000000             
+800.0                          27.808750678083300             0.000000000000000             
+1000.0                         27.797209884042275             0.000000000000000             
+1500.0                         27.784292999506143             0.000000000000000             
+2000.0                         27.779665484790456             0.000000000000000             
+2500.0                         27.776954325425120             0.000000000000000             
+&
+@target G4.S5
+@type xydy
+50.0                           29.375276553665415             0.000000000000000             
+100.0                          29.570647860005845             0.000000000000000             
+150.0                          28.704026659378044             0.000000000000000             
+200.0                          29.787882440941978             0.000000000000000             
+250.0                          30.406919654852615             0.000000000000000             
+300.0                          29.890366290018083             0.000000000000000             
+400.0                          30.140137233292645             0.000000000000000             
+500.0                          30.952951143053731             0.000000000000000             
+600.0                          31.068277578384773             0.000000000000000             
+700.0                          31.085008384047384             0.000000000000000             
+800.0                          31.085168997147662             0.000000000000000             
+1000.0                         31.078347957883029             0.000000000000000             
+1500.0                         31.066671820195939             0.000000000000000             
+2000.0                         31.062367657667600             0.000000000000000             
+2500.0                         31.059907884056958             0.000000000000000             
+&
+@target G4.S6
+@type xydy
+50.0                           23.791278028056627             0.000000000000000             
+100.0                          23.630637488267947             0.000000000000000             
+150.0                          25.633446576038416             0.000000000000000             
+200.0                          25.360359505753589             0.000000000000000             
+250.0                          25.711529148151115             0.000000000000000             
+300.0                          26.309724271146003             0.000000000000000             
+350.0                          26.565840090053495             0.000000000000000             
+400.0                          26.630339988869160             0.000000000000000             
+450.0                          26.644288323341058             0.000000000000000             
+500.0                          26.641909434844152             0.000000000000000             
+550.0                          26.635511604529839             0.000000000000000             
+600.0                          26.628347588392636             0.000000000000000             
+650.0                          26.621726504606375             0.000000000000000             
+700.0                          26.615753735039586             0.000000000000000             
+750.0                          26.610591674825727             0.000000000000000             
+800.0                          26.606443194069513             0.000000000000000             
+850.0                          26.602506733381446             0.000000000000000             
+900.0                          26.599102791719304             0.000000000000000             
+950.0                          26.596331861830791             0.000000000000000             
+1000.0                         26.593535381616668             0.000000000000000             
+1050.0                         26.591626908581990             0.000000000000000             
+1100.0                         26.589550235211235             0.000000000000000             
+1150.0                         26.587977503987336             0.000000000000000             
+1200.0                         26.586505624299072             0.000000000000000             
+1250.0                         26.584962805963958             0.000000000000000             
+1300.0                         26.583797083058119             0.000000000000000             
+1350.0                         26.583229749694215             0.000000000000000             
+1400.0                         26.582033337038922             0.000000000000000             
+1450.0                         26.581392516948920             0.000000000000000             
+1500.0                         26.580080615072895             0.000000000000000             
+1550.0                         26.579358666088588             0.000000000000000             
+1600.0                         26.578808748698478             0.000000000000000             
+1650.0                         26.578802025123295             0.000000000000000             
+1700.0                         26.577867112692381             0.000000000000000             
+1750.0                         26.577784764357137             0.000000000000000             
+1800.0                         26.577481437815152             0.000000000000000             
+1850.0                         26.576172002893834             0.000000000000000             
+1900.0                         26.575618953714645             0.000000000000000             
+1950.0                         26.575789784305343             0.000000000000000             
+2000.0                         26.575407552907549             0.000000000000000             
+2050.0                         26.575026744575204             0.000000000000000             
+2100.0                         26.575319752250042             0.000000000000000             
+2150.0                         26.574626181208146             0.000000000000000             
+2200.0                         26.574767903482321             0.000000000000000             
+2250.0                         26.573852630360378             0.000000000000000             
+2300.0                         26.574577646939723             0.000000000000000             
+2350.0                         26.573887393555669             0.000000000000000             
+2400.0                         26.573905447846830             0.000000000000000             
+2450.0                         26.573395703238774             0.000000000000000             
+2500.0                         26.573639818881180             0.000000000000000             
+&
+@target G4.S7
+@type xydy
+50.0                           25.335183465137927             0.000000000000000             
+100.0                          25.371301534437045             0.000000000000000             
+150.0                          26.272861146203940             0.000000000000000             
+200.0                          26.763545876178345             0.000000000000000             
+250.0                          26.442055640974342             0.000000000000000             
+300.0                          26.865449362172537             0.000000000000000             
+350.0                          27.453761529499555             0.000000000000000             
+400.0                          27.720373909152400             0.000000000000000             
+450.0                          27.795963786206872             0.000000000000000             
+500.0                          27.820205480776721             0.000000000000000             
+550.0                          27.825003083023720             0.000000000000000             
+600.0                          27.823700081703826             0.000000000000000             
+650.0                          27.820104716878706             0.000000000000000             
+700.0                          27.816093312363417             0.000000000000000             
+750.0                          27.811862465450037             0.000000000000000             
+800.0                          27.808750678083300             0.000000000000000             
+850.0                          27.805012299514097             0.000000000000000             
+900.0                          27.801972990648117             0.000000000000000             
+950.0                          27.799387517750667             0.000000000000000             
+1000.0                         27.797209884042275             0.000000000000000             
+1050.0                         27.795082482300877             0.000000000000000             
+1100.0                         27.793007814359328             0.000000000000000             
+1150.0                         27.791783817264239             0.000000000000000             
+1200.0                         27.789822848489909             0.000000000000000             
+1250.0                         27.788693887540024             0.000000000000000             
+1300.0                         27.787201898221763             0.000000000000000             
+1350.0                         27.786603338858001             0.000000000000000             
+1400.0                         27.785884013927042             0.000000000000000             
+1450.0                         27.784834515072799             0.000000000000000             
+1500.0                         27.784292999506143             0.000000000000000             
+1550.0                         27.783253543387332             0.000000000000000             
+1600.0                         27.782409482558485             0.000000000000000             
+1650.0                         27.782322118865423             0.000000000000000             
+1700.0                         27.781642965635577             0.000000000000000             
+1750.0                         27.781470045764728             0.000000000000000             
+1800.0                         27.780741666887319             0.000000000000000             
+1850.0                         27.780878565854906             0.000000000000000             
+1900.0                         27.779918199003660             0.000000000000000             
+1950.0                         27.779791942231924             0.000000000000000             
+2000.0                         27.779665484790456             0.000000000000000             
+2050.0                         27.778843975475699             0.000000000000000             
+2100.0                         27.778375698023726             0.000000000000000             
+2150.0                         27.778434409866755             0.000000000000000             
+2200.0                         27.777702840631818             0.000000000000000             
+2250.0                         27.777548912386578             0.000000000000000             
+2300.0                         27.776823181923938             0.000000000000000             
+2350.0                         27.777565774809577             0.000000000000000             
+2400.0                         27.777350932623325             0.000000000000000             
+2450.0                         27.777615401039711             0.000000000000000             
+2500.0                         27.776954325425120             0.000000000000000             
+&
+@target G4.S8
+@type xydy
+50.0                           29.375276553665415             0.000000000000000             
+100.0                          29.570647860005845             0.000000000000000             
+150.0                          28.704026659378044             0.000000000000000             
+200.0                          29.787882440941978             0.000000000000000             
+250.0                          30.406919654852615             0.000000000000000             
+300.0                          29.890366290018083             0.000000000000000             
+350.0                          29.644962851475665             0.000000000000000             
+400.0                          30.140137233292645             0.000000000000000             
+450.0                          30.709096341558162             0.000000000000000             
+500.0                          30.952951143053731             0.000000000000000             
+550.0                          31.035394062100423             0.000000000000000             
+600.0                          31.068277578384773             0.000000000000000             
+650.0                          31.080555030769563             0.000000000000000             
+700.0                          31.085008384047384             0.000000000000000             
+750.0                          31.086011461080389             0.000000000000000             
+800.0                          31.085168997147662             0.000000000000000             
+850.0                          31.083620665533157             0.000000000000000             
+900.0                          31.081682275516954             0.000000000000000             
+950.0                          31.079934322785025             0.000000000000000             
+1000.0                         31.078347957883029             0.000000000000000             
+1050.0                         31.076563288995089             0.000000000000000             
+1100.0                         31.075237753646977             0.000000000000000             
+1150.0                         31.073668655834702             0.000000000000000             
+1200.0                         31.072192682146810             0.000000000000000             
+1250.0                         31.071360828962042             0.000000000000000             
+1300.0                         31.070152536733996             0.000000000000000             
+1350.0                         31.068925900779217             0.000000000000000             
+1400.0                         31.068210144403896             0.000000000000000             
+1450.0                         31.067341899249286             0.000000000000000             
+1500.0                         31.066671820195939             0.000000000000000             
+1550.0                         31.066326129701483             0.000000000000000             
+1600.0                         31.065572775500904             0.000000000000000             
+1650.0                         31.065426582745729             0.000000000000000             
+1700.0                         31.064738390632506             0.000000000000000             
+1750.0                         31.064768206111331             0.000000000000000             
+1800.0                         31.063605674474015             0.000000000000000             
+1850.0                         31.063433195901162             0.000000000000000             
+1900.0                         31.063067644663732             0.000000000000000             
+1950.0                         31.062736323432453             0.000000000000000             
+2000.0                         31.062367657667600             0.000000000000000             
+2050.0                         31.062649586920365             0.000000000000000             
+2100.0                         31.061904891135249             0.000000000000000             
+2150.0                         31.060955311857345             0.000000000000000             
+2200.0                         31.060706580230928             0.000000000000000             
+2250.0                         31.060357911530339             0.000000000000000             
+2300.0                         31.060343529677869             0.000000000000000             
+2350.0                         31.061157206032274             0.000000000000000             
+2400.0                         31.059921921000139             0.000000000000000             
+2450.0                         31.060220428192224             0.000000000000000             
+2500.0                         31.059907884056958             0.000000000000000             
+&
+@target G4.S9
+@type xydy
+50.0                           -0.002168028056627             0.497970000000000             
+100.0                          0.082092511732053              0.474250000000000             
+150.0                          -0.804936576038415             0.508430000000000             
+200.0                          0.189760494246411              0.515820000000000             
+250.0                          -0.003899148151113             0.517440000000000             
+300.0                          0.547065728853998              0.537140000000000             
+400.0                          0.834090011130840              0.549290000000000             
+500.0                          0.317560565155848              0.539190000000000             
+600.0                          -0.053287588392635             0.531500000000000             
+700.0                          -0.184103735039585             0.528630000000000             
+800.0                          -0.598573194069512             0.520560000000000             
+1000.0                         0.299274618383333              0.537860000000000             
+1500.0                         0.009679384927104              0.531800000000000             
+2000.0                         -0.033317552907548             0.530840000000000             
+2500.0                         0.127300181118819              0.534020000000000             
+&
+@target G4.S10
+@type xydy
+50.0                           -0.138083465137928             0.503940000000000             
+100.0                          -0.336081534437046             0.500700000000000             
+150.0                          0.149218853796061              0.528440000000000             
+200.0                          -0.451145876178344             0.526250000000000             
+250.0                          -0.450785640974342             0.519830000000000             
+300.0                          0.148000637827462              0.540270000000000             
+400.0                          0.475736090847601              0.563920000000000             
+500.0                          0.134674519223278              0.559100000000000             
+600.0                          -0.105220081703827             0.554370000000000             
+700.0                          0.378526687636583              0.563890000000000             
+800.0                          -0.169820678083301             0.552780000000000             
+1000.0                         0.342260115957725              0.562790000000000             
+1500.0                         -0.534022999506142             0.545010000000000             
+2000.0                         0.542714515209543              0.566450000000000             
+2500.0                         -0.124714325425121             0.553040000000000             
+&
+@target G4.S11
+@type xydy
+50.0                           0.030803446334584              0.588120000000000             
+100.0                          -0.238927860005845             0.586630000000000             
+150.0                          0.696443340621954              0.588010000000000             
+200.0                          0.585527559058022              0.607470000000000             
+250.0                          -0.076319654852615             0.606610000000000             
+300.0                          -0.420206290018083             0.589400000000000             
+400.0                          -0.047337233292644             0.601860000000000             
+500.0                          -0.225281143053731             0.614550000000000             
+600.0                          -0.129127578384772             0.618780000000000             
+700.0                          -0.264288384047383             0.616410000000000             
+800.0                          -0.059448997147662             0.620510000000000             
+1000.0                         -0.119017957883027             0.619190000000000             
+1500.0                         0.250338179804061              0.626340000000000             
+2000.0                         0.074552342332399              0.622740000000000             
+2500.0                         -0.001397884056960             0.621170000000000             
+&
+@target G5.S0
+@type xydy
+50.0                           24.474489999999999             0.489490000000000             
+100.0                          24.650729999999999             0.493010000000000             
+150.0                          24.577890000000000             0.491560000000000             
+200.0                          25.757269999999998             0.515150000000000             
+250.0                          27.370590000000000             0.547410000000000             
+300.0                          26.797409999999999             0.535950000000000             
+350.0                          26.030830000000002             0.520620000000000             
+400.0                          25.875470000000000             0.517510000000000             
+500.0                          26.546930000000000             0.530940000000000             
+600.0                          26.418040000000001             0.528360000000000             
+700.0                          25.747380000000000             0.514950000000000             
+800.0                          25.624600000000001             0.512490000000000             
+900.0                          26.005949999999999             0.520120000000000             
+1000.0                         25.528030000000001             0.510560000000000             
+&
+@target G5.S1
+@type xydy
+50.0                           25.394420000000000             0.507890000000000             
+100.0                          24.588310000000000             0.491770000000000             
+150.0                          25.657830000000001             0.513160000000000             
+200.0                          26.179710000000000             0.523590000000000             
+250.0                          27.787469999999999             0.555750000000000             
+300.0                          28.545069999999999             0.570900000000000             
+350.0                          28.329730000000001             0.566590000000000             
+400.0                          28.354820000000000             0.567100000000000             
+500.0                          28.362089999999998             0.567240000000000             
+600.0                          27.993089999999999             0.559860000000000             
+700.0                          27.606150000000000             0.552120000000000             
+800.0                          27.909379999999999             0.558190000000000             
+900.0                          27.743770000000001             0.554880000000000             
+1000.0                         27.652970000000000             0.553060000000000             
+&
+@target G5.S2
+@type xydy
+50.0                           29.957480000000000             0.599150000000000             
+100.0                          29.591799999999999             0.591840000000000             
+150.0                          29.099399999999999             0.581990000000000             
+200.0                          28.687690000000000             0.573750000000000             
+250.0                          28.848030000000001             0.576960000000000             
+300.0                          30.061170000000001             0.601220000000000             
+350.0                          30.651360000000000             0.613030000000000             
+400.0                          31.309760000000001             0.626200000000000             
+500.0                          31.353290000000001             0.627070000000000             
+600.0                          30.993739999999999             0.619870000000000             
+700.0                          31.109230000000000             0.622180000000000             
+800.0                          30.881589999999999             0.617630000000000             
+900.0                          31.037009999999999             0.620740000000000             
+1000.0                         30.837470000000000             0.616750000000000             
+&
+@target G5.S3
+@type xydy
+50.0                           25.010283366332036             0.000000000000000             
+100.0                          24.907885782633148             0.000000000000000             
+150.0                          24.901509482947244             0.000000000000000             
+200.0                          25.746969727879765             0.000000000000000             
+250.0                          26.470889811298736             0.000000000000000             
+300.0                          26.496624240212824             0.000000000000000             
+350.0                          26.354205793287772             0.000000000000000             
+400.0                          26.195844669847041             0.000000000000000             
+500.0                          25.947366494225342             0.000000000000000             
+600.0                          25.784929343063627             0.000000000000000             
+700.0                          25.677671503303834             0.000000000000000             
+800.0                          25.604834156733087             0.000000000000000             
+900.0                          25.553050678143496             0.000000000000000             
+1000.0                         25.515308381066465             0.000000000000000             
+&
+@target G5.S4
+@type xydy
+50.0                           26.172010798450568             0.000000000000000             
+100.0                          25.070228139235233             0.000000000000000             
+150.0                          26.389302813642786             0.000000000000000             
+200.0                          26.273526225038001             0.000000000000000             
+250.0                          27.537700255402235             0.000000000000000             
+300.0                          28.091731970170098             0.000000000000000             
+350.0                          28.137564533454736             0.000000000000000             
+400.0                          28.066753769263304             0.000000000000000             
+500.0                          27.875924655844898             0.000000000000000             
+600.0                          27.728498220293602             0.000000000000000             
+700.0                          27.625510557659851             0.000000000000000             
+800.0                          27.553499273597893             0.000000000000000             
+900.0                          27.501568723870612             0.000000000000000             
+1000.0                         27.463279248184318             0.000000000000000             
+&
+@target G5.S5
+@type xydy
+50.0                           30.160184392100764             0.000000000000000             
+100.0                          29.424398591528412             0.000000000000000             
+150.0                          29.361027923199384             0.000000000000000             
+200.0                          29.062661683890646             0.000000000000000             
+250.0                          28.702432559228523             0.000000000000000             
+300.0                          30.051201651006409             0.000000000000000             
+350.0                          30.869391922224732             0.000000000000000             
+400.0                          31.105242864744742             0.000000000000000             
+500.0                          31.135094535291820             0.000000000000000             
+600.0                          31.051605124976554             0.000000000000000             
+700.0                          30.972330982033757             0.000000000000000             
+800.0                          30.910252006312639             0.000000000000000             
+900.0                          30.862921325215520             0.000000000000000             
+1000.0                         30.826780704162193             0.000000000000000             
+&
+@target G5.S6
+@type xydy
+50.0                           25.010283366332036             0.000000000000000             
+100.0                          24.907885782633148             0.000000000000000             
+150.0                          24.901509482947244             0.000000000000000             
+200.0                          25.746969727879765             0.000000000000000             
+250.0                          26.470889811298736             0.000000000000000             
+300.0                          26.496624240212824             0.000000000000000             
+350.0                          26.354205793287772             0.000000000000000             
+400.0                          26.195844669847041             0.000000000000000             
+450.0                          26.059261473000706             0.000000000000000             
+500.0                          25.947366494225342             0.000000000000000             
+550.0                          25.857307228527237             0.000000000000000             
+600.0                          25.784929343063627             0.000000000000000             
+650.0                          25.725879410370002             0.000000000000000             
+700.0                          25.677671503303834             0.000000000000000             
+750.0                          25.637892488418196             0.000000000000000             
+800.0                          25.604834156733087             0.000000000000000             
+850.0                          25.576835977271234             0.000000000000000             
+900.0                          25.553050678143496             0.000000000000000             
+950.0                          25.533198327884332             0.000000000000000             
+1000.0                         25.515308381066465             0.000000000000000             
+&
+@target G5.S7
+@type xydy
+50.0                           26.172010798450568             0.000000000000000             
+100.0                          25.070228139235233             0.000000000000000             
+150.0                          26.389302813642786             0.000000000000000             
+200.0                          26.273526225038001             0.000000000000000             
+250.0                          27.537700255402235             0.000000000000000             
+300.0                          28.091731970170098             0.000000000000000             
+350.0                          28.137564533454736             0.000000000000000             
+400.0                          28.066753769263304             0.000000000000000             
+450.0                          27.967672881352083             0.000000000000000             
+500.0                          27.875924655844898             0.000000000000000             
+550.0                          27.795535114875854             0.000000000000000             
+600.0                          27.728498220293602             0.000000000000000             
+650.0                          27.672399858007850             0.000000000000000             
+700.0                          27.625510557659851             0.000000000000000             
+750.0                          27.586391943204408             0.000000000000000             
+800.0                          27.553499273597893             0.000000000000000             
+850.0                          27.525649793350293             0.000000000000000             
+900.0                          27.501568723870612             0.000000000000000             
+950.0                          27.481178119506360             0.000000000000000             
+1000.0                         27.463279248184318             0.000000000000000             
+&
+@target G5.S8
+@type xydy
+50.0                           30.160184392100764             0.000000000000000             
+100.0                          29.424398591528412             0.000000000000000             
+150.0                          29.361027923199384             0.000000000000000             
+200.0                          29.062661683890646             0.000000000000000             
+250.0                          28.702432559228523             0.000000000000000             
+300.0                          30.051201651006409             0.000000000000000             
+350.0                          30.869391922224732             0.000000000000000             
+400.0                          31.105242864744742             0.000000000000000             
+450.0                          31.155179310726368             0.000000000000000             
+500.0                          31.135094535291820             0.000000000000000             
+550.0                          31.095933889223176             0.000000000000000             
+600.0                          31.051605124976554             0.000000000000000             
+650.0                          31.010270206874175             0.000000000000000             
+700.0                          30.972330982033757             0.000000000000000             
+750.0                          30.939248588156332             0.000000000000000             
+800.0                          30.910252006312639             0.000000000000000             
+850.0                          30.884956055669967             0.000000000000000             
+900.0                          30.862921325215520             0.000000000000000             
+950.0                          30.843572561950829             0.000000000000000             
+1000.0                         30.826780704162193             0.000000000000000             
+&
+@target G5.S9
+@type xydy
+50.0                           -0.535793366332037             0.489490000000000             
+100.0                          -0.257155782633149             0.493010000000000             
+150.0                          -0.323619482947244             0.491560000000000             
+200.0                          0.010300272120233              0.515150000000000             
+250.0                          0.899700188701264              0.547410000000000             
+300.0                          0.300785759787175              0.535950000000000             
+350.0                          -0.323375793287770             0.520620000000000             
+400.0                          -0.320374669847041             0.517510000000000             
+500.0                          0.599563505774658              0.530940000000000             
+600.0                          0.633110656936374              0.528360000000000             
+700.0                          0.069708496696165              0.514950000000000             
+800.0                          0.019765843266914              0.512490000000000             
+900.0                          0.452899321856503              0.520120000000000             
+1000.0                         0.012721618933536              0.510560000000000             
+&
+@target G5.S10
+@type xydy
+50.0                           -0.777590798450568             0.507890000000000             
+100.0                          -0.481918139235233             0.491770000000000             
+150.0                          -0.731472813642785             0.513160000000000             
+200.0                          -0.093816225038001             0.523590000000000             
+250.0                          0.249769744597764              0.555750000000000             
+300.0                          0.453338029829901              0.570900000000000             
+350.0                          0.192165466545266              0.566590000000000             
+400.0                          0.288066230736696              0.567100000000000             
+500.0                          0.486165344155101              0.567240000000000             
+600.0                          0.264591779706397              0.559860000000000             
+700.0                          -0.019360557659851             0.552120000000000             
+800.0                          0.355880726402106              0.558190000000000             
+900.0                          0.242201276129389              0.554880000000000             
+1000.0                         0.189690751815682              0.553060000000000             
+&
+@target G5.S11
+@type xydy
+50.0                           -0.202704392100763             0.599150000000000             
+100.0                          0.167401408471587              0.591840000000000             
+150.0                          -0.261627923199384             0.581990000000000             
+200.0                          -0.374971683890646             0.573750000000000             
+250.0                          0.145597440771478              0.576960000000000             
+300.0                          0.009968348993592              0.601220000000000             
+350.0                          -0.218031922224732             0.613030000000000             
+400.0                          0.204517135255259              0.626200000000000             
+500.0                          0.218195464708181              0.627070000000000             
+600.0                          -0.057865124976555             0.619870000000000             
+700.0                          0.136899017966243              0.622180000000000             
+800.0                          -0.028662006312640             0.617630000000000             
+900.0                          0.174088674784478              0.620740000000000             
+1000.0                         0.010689295837807              0.616750000000000             
+&
+@with g0
+@autoscale
+@with g1
+@autoscale
+@with g2
+@autoscale
+@with g3
+@autoscale
+@with g4
+@autoscale
+@with g5
+@autoscale
+@arrange(2, 3, .1, .1, .1, OFF, OFF, OFF)

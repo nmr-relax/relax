@@ -1,0 +1,71 @@
+ShereKhan ver. 1.0
+
+Adam Mazur, Bjoern Hammesfahr, Christian Griesinger, Donghan Lee and Martin Kollmar
+
+Department of NMR-based Structural Biology
+Max-Planck-Institute for Biophysical Chemistry
+Am Fassberg 11
+37077 Goettingen, Germany
+
+Please cite:
+A. Mazur, B. Hammesfahr, C. Griesinger, D. Lee, M. Kollmar; Bioinformatics, 2013, 29(14):1819-1820
+---
+Mon Oct 28 14:26:35 2013
+
+Input data:
+
+Exchange regime: fast
+Model: LM
+
+Grid search for initial parameters:
+
+kex:    min:    100.0  max:  10000.0 nsteps:   6
+phi:    min:    0.010  max:    5.000 nsteps:   6
+
+Initial values:
+kex: 2080.000 phi:    0.010
+
+Residues:
+
+GLY71 
+
+Dataset 1:
+Field, tcp [MHz, s]:
+50.70
+0.030
+#v_cpmg(Hz)   R2(1/s)      Esd(R2)      R2_calc
+# GLY71
+  66.667        7.044        0.225        7.040
+ 133.333        6.781        0.224        6.796
+ 200.000        6.468        0.223        6.553
+ 266.667        6.333        0.223        6.322
+ 333.333        6.323        0.223        6.112
+ 400.000        6.005        0.221        5.931
+ 466.667        5.767        0.220        5.778
+ 533.333        5.477        0.219        5.651
+ 600.000        5.470        0.219        5.547
+ 666.667        5.295        0.219        5.461
+ 733.333        5.436        0.219        5.390
+ 800.000        5.410        0.219        5.332
+ 866.667        5.438        0.219        5.283
+ 933.333        5.177        0.218        5.242
+1000.000        5.227        0.218        5.208
+
+---
+Exchange regime: fast
+Model: LM
+---
+npar=3 nvar=15 ndof=12 chi2=   3.264 chi2/dof=   0.272
+---
+kex: 2565.489  +-   689.287
+---
+resId:         phi [ppm^2]        R2_0 ( 50.7 MHz) 
+---
+GLY71:    0.060 +-    0.018       4.930 +-    0.233
+---
+Solution found:
+Both actual and predicted relative reductions in the sum of squares
+  are at most 0.000000
+Number of function evaluations: 35
+Calculations finished successfully.
+

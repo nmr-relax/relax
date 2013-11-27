@@ -29,6 +29,7 @@ __all__ = [
     'auto_relaxation',
     'check_types',
     'chemical_shift',
+    'curve_fit',
     'diffusion',
     'dispersion',
     'errors',

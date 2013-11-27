@@ -1,0 +1,7 @@
+# Parameter description:  The exchange rate from state A to state B.
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error    
+None          135        None        None        S                 21.805087089537    None     
+None          135        None        None        F                87.9488175759296    None     
+None          137        None        None        S                91.2792627582563    None     
+None          137        None        None        F                54.9569454193024    None     

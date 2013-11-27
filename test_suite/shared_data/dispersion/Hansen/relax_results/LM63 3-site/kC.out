@@ -1,0 +1,6 @@
+# Parameter description:  Approximate chemical exchange rate constant between sites A and C (rad.s^-1).
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                   error    
+None          4          GLY         None        N                1982576.97972435    None     
+None          70         GLY         None        N                126720.074059656    None     
+None          71         GLY         None        N              0.0235576681934995    None     

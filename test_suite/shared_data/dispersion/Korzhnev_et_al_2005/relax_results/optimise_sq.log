@@ -1,0 +1,86 @@
+
+
+
+                                  relax repository checkout r21218
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'optimise_sq.py'
+----------------------------------------------------------------------------------------------------
+"""Optimise the SQ data in relax.
+
+To run this, type:
+
+$ rm -f optimise_sq.log; ../../../../../relax --tee optimise_sq.log optimise_sq.py
+"""
+
+# Load the program state.
+state.load('sq_state')
+
+# Copy the data to a new pipe.
+pipe_name = 'MMQ 1H+15N SQ'
+pipe.copy('R2eff', pipe_name)
+pipe.switch(pipe_name)
+
+# Change the model.
+relax_disp.select_model('MQ NS CPMG 2-site')
+
+# Manually set the parameter values.
+spin_H = cdp.mol[0].res[0].spin[0]
+spin_H.r2 = [6.779626, 7.089813, 5.610770]
+spin_H.pA = 0.947960
+spin_H.kex = 408.394
+spin_H.dw = 4.369907
+spin_H.dwH = -0.267240
+spin_N = cdp.mol[0].res[0].spin[1]
+spin_N.r2 = [8.412998, 8.847946, 10.329567]
+spin_N.pA = 0.947960
+spin_N.kex = 408.394
+spin_N.dw = 4.369907
+spin_N.dwH = -0.267240
+
+# Optimisation.
+minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+# Monte Carlo simulations.
+monte_carlo.setup(number=3)
+monte_carlo.create_data(method='back_calc')
+monte_carlo.initial_values()
+minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+monte_carlo.error_analysis()
+
+# Save the results.
+state.save('state', dir='sq', compress_type=1, force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> state.load(state='sq_state', dir=None, force=False)
+Opening the file 'sq_state.bz2' for reading.
+
+relax> pipe.copy(pipe_from='R2eff', pipe_to='MMQ 1H+15N SQ', bundle_to=None)
+
+relax> pipe.switch(pipe_name='MMQ 1H+15N SQ')
+
+relax> relax_disp.select_model(model='MQ NS CPMG 2-site')
+The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+
+Fitting to the spin block [':9@H']
+----------------------------------
+
+RelaxError: The 'MQ NS CPMG 2-site' CPMG model is not compatible with the 'CPMG' experiment type.
+

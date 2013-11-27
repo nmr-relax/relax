@@ -42,6 +42,7 @@ from test_suite.gui_tests.model_free import Mf
 from test_suite.gui_tests.n_state_model import N_state_model
 from test_suite.gui_tests.noe import Noe
 from test_suite.gui_tests.pipes import Pipes
+from test_suite.gui_tests.relax_disp import Relax_disp
 from test_suite.gui_tests.rx import Rx
 from test_suite.gui_tests.state import State
 from test_suite.gui_tests.test_user_functions import User_functions
@@ -123,6 +124,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(N_state_model))
             suite_array.append(TestLoader().loadTestsFromTestCase(Noe))
             suite_array.append(TestLoader().loadTestsFromTestCase(Pipes))
+            suite_array.append(TestLoader().loadTestsFromTestCase(Relax_disp))
             suite_array.append(TestLoader().loadTestsFromTestCase(Rx))
             suite_array.append(TestLoader().loadTestsFromTestCase(State))
             suite_array.append(TestLoader().loadTestsFromTestCase(User_functions))

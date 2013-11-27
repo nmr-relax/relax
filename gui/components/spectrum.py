@@ -28,19 +28,21 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
+from compat import u
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.spectrum import replicated_flags, replicated_ids
 from status import Status; status = Status()
+from specific_analyses.relax_disp.disp_data import is_cpmg_exp_type, is_r1rho_exp_type
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 
 class Spectra_list(Base_list):
     """The GUI element for listing loaded spectral data."""
 
-    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', relax_times=False):
+    def __init__(self, gui=None, parent=None, box=None, id=None, fn_add=None, proportion=0, button_placement='default', noe_flag=False, relax_fit_flag=False, relax_disp_flag=False):
         """Build the spectral list GUI element.
 
         @keyword gui:               The main GUI object.
@@ -59,27 +61,152 @@ class Spectra_list(Base_list):
         @type proportion:           bool
         @keyword button_placement:  Override the button visibility and placement.  The value of 'default' will leave the buttons at the default setting.  The value of 'top' will place the buttons at the top, 'bottom' will place them at the bottom, and None will turn off the buttons.
         @type button_placement:     str or None
-        @keyword relax_times:       A flag which if True will activate the relaxation time parts of the GUI element.
-        @type relax_times:          bool
+        @keyword noe_flag:          A flag which when True will enable the steady-state NOE portions of the wizard.
+        @type noe_flag:             bool
+        @keyword relax_fit_flag:    A flag which when True will enable the relaxation curve-fitting portions of the wizard.
+        @type relax_fit_flag:       bool
+        @keyword relax_disp_flag:   A flag which when True will enable the relaxation dispersion portions of the wizard.
+        @type relax_disp_flag:      bool
         """
 
         # Store the arguments.
         self.fn_add = fn_add
-        self.relax_times_flag = relax_times
+        self.noe_flag = noe_flag
+        self.relax_fit_flag = relax_fit_flag
+        self.relax_disp_flag = relax_disp_flag
 
         # Initialise the base class.
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
 
 
-    def action_relax_fit_relax_time(self, event):
-        """Launch the relax_fit.relax_time user function.
+    def action_relax_disp_cpmg_frq(self, event=None, item=None):
+        """Launch the relax_disp.cpmg_frq user function.
 
-        @param event:   The wx event.
+        @keyword event: The wx event.
         @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
         """
 
         # The current selection.
-        item = self.element.GetFirstSelected()
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        frq_flag = False
+        if hasattr(cdp, 'cpmg_frqs') and id in cdp.cpmg_frqs.keys():
+            frq = cdp.cpmg_frqs[id]
+            frq_flag = True
+
+        # Launch the dialog.
+        if frq_flag:
+            uf_store['relax_disp.cpmg_frq'](cpmg_frq=frq, spectrum_id=id)
+        else:
+            uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
+
+
+    def action_relax_disp_exp_type(self, event=None, item=None):
+        """Launch the relax_disp.exp_type user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current type.
+        exp_type = None
+        if hasattr(cdp, 'exp_type') and id in cdp.exp_type.keys():
+            exp_type = cdp.exp_type[id]
+
+        # Launch the dialog.
+        if exp_type == None:
+            uf_store['relax_disp.exp_type'](spectrum_id=id)
+        else:
+            uf_store['relax_disp.exp_type'](spectrum_id=id, exp_type=exp_type)
+
+
+    def action_relax_disp_relax_time(self, event=None, item=None):
+        """Launch the relax_disp.relax_time user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current time.
+        time = None
+        if hasattr(cdp, 'relax_times') and id in cdp.relax_times.keys():
+            time = cdp.relax_times[id]
+
+        # Launch the dialog.
+        if time == None:
+            uf_store['relax_disp.relax_time'](spectrum_id=id)
+        else:
+            uf_store['relax_disp.relax_time'](time=time, spectrum_id=id)
+
+
+    def action_relax_disp_spin_lock_field(self, event=None, item=None):
+        """Launch the relax_disp.spin_lock_field user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The spin-lock.
+        nu1 = None
+        nu1_flag = False
+        if hasattr(cdp, 'spin_lock_nu1') and id in cdp.spin_lock_nu1.keys():
+            nu1 = cdp.spin_lock_nu1[id]
+            nu1_flag = True
+
+        # Launch the dialog.
+        if nu1_flag:
+            uf_store['relax_disp.spin_lock_field'](field=nu1, spectrum_id=id)
+        else:
+            uf_store['relax_disp.spin_lock_field'](spectrum_id=id)
+
+
+    def action_relax_fit_relax_time(self, event=None, item=None):
+        """Launch the relax_fit.relax_time user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
 
         # The spectrum ID.
         id = gui_to_str(self.element.GetItemText(item))
@@ -94,6 +221,34 @@ class Spectra_list(Base_list):
             uf_store['relax_fit.relax_time'](spectrum_id=id)
         else:
             uf_store['relax_fit.relax_time'](time=time, spectrum_id=id)
+
+
+    def action_spectrometer_frq(self, event=None, item=None):
+        """Launch the spectrometer.frequency user function.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        @keyword item:  This is for debugging purposes only, to allow the GUI tests to select items without worrying about OS dependent wxPython bugs.
+        @type item:     None or int
+        """
+
+        # The current selection.
+        if item == None:
+            item = self.element.GetFirstSelected()
+
+        # The spectrum ID.
+        id = gui_to_str(self.element.GetItemText(item))
+
+        # The current frequency.
+        frq = None
+        if hasattr(cdp, 'spectrometer_frq') and id in cdp.spectrometer_frq:
+            frq = cdp.spectrometer_frq[id]
+
+        # Launch the dialog.
+        if frq == None:
+            uf_store['spectrometer.frequency'](id=id)
+        else:
+            uf_store['spectrometer.frequency'](frq=frq, id=id)
 
 
     def action_spectrum_baseplane_rmsd(self, event):
@@ -176,6 +331,177 @@ class Spectra_list(Base_list):
             uf_store['spectrum.replicated'](spectrum_ids=replicates)
 
 
+    def add_disp_point(self, index):
+        """Add the dispersion point info to the element.
+
+        This is either the CPMG pulse frequency or the spin-lock field strength.  Both share the same column.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # Append a column.
+        self.element.InsertColumn(index, u("\u03BDCPMG (Hz) or Spin-lock \u03BD1 (Hz)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # Set the CPMG frequency.
+            if hasattr(cdp, 'cpmg_frqs') and cdp.spectrum_ids[i] in cdp.cpmg_frqs.keys():
+                self.element.SetStringItem(i, index, float_to_gui(cdp.cpmg_frqs[cdp.spectrum_ids[i]]))
+
+            # Set the spin-lock field strength.
+            if hasattr(cdp, 'spin_lock_nu1') and cdp.spectrum_ids[i] in cdp.spin_lock_nu1.keys():
+                self.element.SetStringItem(i, index, float_to_gui(cdp.spin_lock_nu1[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
+    def add_exp_type(self, index):
+        """Add the experiment type info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # Append a column.
+        self.element.InsertColumn(index, u("Experiment type"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids') or not hasattr(cdp, 'exp_type'):
+            return True
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.exp_type.keys():
+                continue
+
+            # Set the value.
+            self.element.SetStringItem(i, index, float_to_gui(cdp.exp_type[cdp.spectrum_ids[i]]))
+
+        # Successful.
+        return True
+
+
+    def add_frqs(self, index):
+        """Add the spectrometer frequency info to the element.
+
+        @param index:   The column index for the data.
+        @type index:    int
+        @return:        True if the frequency data exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # Append a column.
+        self.element.InsertColumn(index, u("\u03C9H (MHz)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
+        if not hasattr(cdp, 'spectrometer_frq') or not len(cdp.spectrometer_frq):
+            return True
+
+        # Set the values.
+        for i in range(len(cdp.spectrum_ids)):
+            # No value.
+            if cdp.spectrum_ids[i] not in cdp.spectrometer_frq:
+                continue
+
+            # Set the value (in MHz).
+            self.element.SetStringItem(i, index, float_to_gui(cdp.spectrometer_frq[cdp.spectrum_ids[i]]/1e6))
+
+        # Successful.
+        return True
+
+
+    def generate_popup_menu(self, id=None):
+        """Create the popup menu.
+
+        @keyword id:    The spectrum ID string for the row that was clicked on.
+        @type id:       str
+        @return:        The popup menu.
+        @rtype:         list of dict of wxID, str, str, method
+        """
+
+        # The right click popup menu.
+        popup_menus = [
+            {
+                'id': wx.NewId(),
+                'text': "Set the &baseplane RMSD",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
+                'method': self.action_spectrum_baseplane_rmsd
+            }, {
+                'id': wx.NewId(),
+                'text': "&Delete the peak intensities",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
+                'method': self.action_spectrum_delete
+            }, {
+                'id': wx.NewId(),
+                'text': "Set the number of integration &points",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
+                'method': self.action_spectrum_integration_points
+            }, {
+                'id': wx.NewId(),
+                'text': "Specify which spectra are &replicated",
+                'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
+                'method': self.action_spectrum_replicated
+            }
+        ]
+        if self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the &experiment type",
+                'icon': None,
+                'method': self.action_relax_disp_exp_type
+            })
+        if self.relax_fit_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the relaxation &time",
+                'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
+                'method': self.action_relax_fit_relax_time
+            })
+        if self.relax_disp_flag:
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the relaxation &time",
+                'icon': fetch_icon(uf_info.get_uf('relax_disp.relax_time').gui_icon),
+                'method': self.action_relax_disp_relax_time
+            })
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': "Set the spectrometer &frequency",
+                'icon': fetch_icon("relax.spectrometer"),
+                'method': self.action_spectrometer_frq
+            })
+        if self.relax_disp_flag and is_r1rho_exp_type(id):
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': u("Set the spin-&lock field strength \u03BD1"),
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_spin_lock_field
+            })
+        if self.relax_disp_flag and is_cpmg_exp_type(id):
+            popup_menus.append({
+                'id': wx.NewId(),
+                'text': u("Set the &CPMG pulse frequency \u03BDCPMG"),
+                'icon': fetch_icon("relax.relax_disp"),
+                'method': self.action_relax_disp_cpmg_frq
+            })
+
+        # Return the menu.
+        return popup_menus
+
+
     def noe_spectrum_type(self, index):
         """Add the NOE spectral type info to the element.
 
@@ -197,6 +523,10 @@ class Spectra_list(Base_list):
             'sat': 'Saturated',
             'ref': 'Reference'
         }
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -226,6 +556,10 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, str_to_gui("Delay times (s)"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -258,6 +592,10 @@ class Spectra_list(Base_list):
 
         # Append a column.
         self.element.InsertColumn(index, str_to_gui("Replicate IDs"))
+
+        # No data.
+        if not hasattr(cdp, 'spectrum_ids'):
+            return True
 
         # Set the values.
         for i in range(len(cdp.spectrum_ids)):
@@ -313,38 +651,6 @@ class Spectra_list(Base_list):
             }
         ]
 
-        # The right click popup menu.
-        self.popup_menus = [
-            {
-                'id': wx.NewId(),
-                'text': "Set the &baseplane RMSD",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.baseplane_rmsd').gui_icon),
-                'method': self.action_spectrum_baseplane_rmsd
-            }, {
-                'id': wx.NewId(),
-                'text': "&Delete the peak intensities",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.delete').gui_icon),
-                'method': self.action_spectrum_delete
-            }, {
-                'id': wx.NewId(),
-                'text': "Set the number of integration &points",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.integration_points').gui_icon),
-                'method': self.action_spectrum_integration_points
-            }, {
-                'id': wx.NewId(),
-                'text': "Specify which spectra are &replicated",
-                'icon': fetch_icon(uf_info.get_uf('spectrum.replicated').gui_icon),
-                'method': self.action_spectrum_replicated
-            }
-        ]
-        if self.relax_times_flag:
-            self.popup_menus.append({
-                'id': wx.NewId(),
-                'text': "Set the relaxation &time",
-                'icon': fetch_icon(uf_info.get_uf('relax_fit.relax_time').gui_icon),
-                'method': self.action_relax_fit_relax_time
-            })
-
 
     def update_data(self):
         """Method called from self.build_element_safe() to update the list data."""
@@ -373,8 +679,20 @@ class Spectra_list(Base_list):
         if self.noe_spectrum_type(index):
             index += 1
 
+        # The experiment type.
+        if self.relax_disp_flag and self.add_exp_type(index):
+            index += 1
+
+        # The spectrometer frequency.
+        if self.relax_disp_flag and self.add_frqs(index):
+            index += 1
+
+        # The spin-lock field strength or CPMG pulse frequency.
+        if self.relax_disp_flag and self.add_disp_point(index):
+            index += 1
+
         # The relaxation times.
-        if self.relax_times_flag and self.relax_times(index):
+        if (self.relax_fit_flag or self.relax_disp_flag) and self.relax_times(index):
             index += 1
 
         # The replicated spectra.

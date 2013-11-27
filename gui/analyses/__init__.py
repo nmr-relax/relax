@@ -36,6 +36,7 @@ from gui.analyses.auto_model_free import Auto_model_free
 from gui.analyses.auto_noe import Auto_noe
 from gui.analyses.auto_r1 import Auto_r1
 from gui.analyses.auto_r2 import Auto_r2
+from gui.analyses.auto_relax_disp import Auto_relax_disp
 from gui.analyses.wizard import Analysis_wizard
 from gui.message import error_message, Question
 from lib.errors import RelaxError
@@ -49,6 +50,7 @@ __all__ = ['auto_model_free',
            'auto_noe',
            'auto_r1',
            'auto_r2',
+           'auto_relax_disp',
            'auto_rx_base',
            'base',
            'elements',
@@ -302,10 +304,13 @@ class Analysis_controller:
             return
 
         # A remapping table.
-        map = {'NOE': 'noe',
-               'R1': 'r1',
-               'R2': 'r2',
-               'model-free': 'mf'}
+        map = {
+            'NOE': 'noe',
+            'R1': 'r1',
+            'R2': 'r2',
+            'model-free': 'mf',
+            'Relax-disp': 'relax_disp'
+        }
 
         # Loop over each analysis.
         for i in range(len(ds.relax_gui.analyses)):
@@ -320,6 +325,8 @@ class Analysis_controller:
                 analysis_name = 'R2 relaxation'
             elif ds.relax_gui.analyses[i].analysis_type == 'model-free':
                 analysis_name = 'Model-free'
+            elif ds.relax_gui.analyses[i].analysis_type == 'Relax-disp':
+                analysis_name = 'Relaxation dispersion'
 
             # Compatibility with old save files.
             if not hasattr(ds.relax_gui.analyses[i], 'pipe_bundle'):
@@ -429,7 +436,7 @@ class Analysis_controller:
     def new_analysis(self, analysis_type=None, analysis_name=None, pipe_name=None, pipe_bundle=None, uf_exec=[], index=None):
         """Initialise a new analysis.
 
-        @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', or 'mf'.
+        @keyword analysis_type: The type of analysis to initialise.  This can be one of 'noe', 'r1', 'r2', 'mf' or 'relax_disp'.
         @type analysis_type:    str
         @keyword analysis_name: The name of the analysis to initialise.
         @type analysis_name:    str
@@ -447,6 +454,10 @@ class Analysis_controller:
         if analysis_type in ['r1', 'r2'] and not dep_check.C_module_exp_fn:
             error_message("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
             return
+
+        # Check the C modules.
+        if analysis_type == 'relax_disp' and not dep_check.C_module_exp_fn:
+            error_message("Relaxation curve fitting will not available for this dispersion analysis.  Try compiling the C modules on your platform if you have measured full exponential curves.")
 
         # Freeze the GUI.
         wx.Yield()
@@ -475,10 +486,13 @@ class Analysis_controller:
             sizer.Layout()
 
         # The analysis classes.
-        classes = {'noe': Auto_noe,
-                   'r1':  Auto_r1,
-                   'r2':  Auto_r2,
-                   'mf':  Auto_model_free}
+        classes = {
+            'noe': Auto_noe,
+            'r1':  Auto_r1,
+            'r2':  Auto_r2,
+            'mf':  Auto_model_free,
+            'relax_disp':  Auto_relax_disp
+        }
 
         # Bad analysis type.
         if analysis_type not in classes.keys():

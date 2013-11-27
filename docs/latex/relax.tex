@@ -13,6 +13,8 @@
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{tabularx}
+\usepackage{rotating}
+\usepackage{lscape}
 
 % Nth.
 \usepackage[super]{nth}
@@ -26,10 +28,6 @@
 % Better Table of contents (Toc), List of figures (Lof), and List of tables (Lot).
 \usepackage{tocloft}
 
-% Better maths.
-\usepackage{amsmath}
-\usepackage{amssymb}
-
 % Hyperlinks.
 \usepackage[pdftitle={The relax manual}]{hyperref}
 \hypersetup{colorlinks,
@@ -37,6 +35,11 @@
             filecolor=blue,%
             linkcolor=blue,%
             urlcolor=blue}
+\usepackage{breakurl}
+
+% Better maths.
+\usepackage{amsmath}
+\usepackage{amssymb}
 
 % Source code and scripts.
 \usepackage[procnames]{listings}
@@ -94,6 +97,8 @@
 \newcommand{\pycode}[1]{{\small \texttt{#1}}}
 \newcommand{\pystring}[1]{`{\small \texttt{#1}}'}
 \newcommand{\software}[1]{\texttt{#1}}
+\newcommand{\no}{-}
+\newcommand{\yes}{\checkmark}
 
 % New environment.
 \newenvironment{exampleenv}{\footnotesize \begin{ttfamily} \sloppy}{\fussy \end{ttfamily}}
@@ -106,11 +111,13 @@
 \setlength{\cfttabnumwidth}{12mm}
 
 % Maths commands.
+\setcounter{MaxMatrixCols}{20}
 \newcommand{\Par}{{\scriptscriptstyle \parallel}}
 \newcommand{\Per}{{\scriptscriptstyle \perp}}
 \newcommand{\Diff}{\mathfrak{D}}
 \newcommand{\Ri}{\mathrm{R}_i}
 \newcommand{\Rone}{\mathrm{R}_1}
+\newcommand{\Ronerho}{\mathrm{R}_{1\rho}}
 \newcommand{\Rtwo}{\mathrm{R}_2}
 \newcommand{\NOE}{\mathrm{NOE}}
 \newcommand{\crossrate}{\sigma_{\scriptscriptstyle \mathrm{NOE}}}
@@ -125,6 +132,64 @@
 \newcommand{\Mfset}{\mathfrak{F}}
 \newcommand{\Localset}{\mathfrak{T}}
 \newcommand{\KL}{\Delta_{\scriptscriptstyle \text{K-L}}}
+
+\newcommand{\aveoffset}{\bar\Omega}
+\newcommand{\aveomega}{\bar\omega}
+\newcommand{\dw}{\Delta\omega}
+\newcommand{\dwAB}{\Delta\omega_\textrm{AB}}
+\newcommand{\dwAC}{\Delta\omega_\textrm{AC}}
+\newcommand{\dwBC}{\Delta\omega_\textrm{BC}}
+\newcommand{\dwH}{\Delta\omega^{\scriptscriptstyle\mathrm{H}}}
+\newcommand{\dwHAB}{\Delta\omega^{\scriptscriptstyle\mathrm{H}}_\textrm{AB}}
+\newcommand{\dwHAC}{\Delta\omega^{\scriptscriptstyle\mathrm{H}}_\textrm{AC}}
+\newcommand{\dwHBC}{\Delta\omega^{\scriptscriptstyle\mathrm{H}}_\textrm{BC}}
+\newcommand{\konetwo}{\textrm{k}_\textrm{12}}
+\newcommand{\konethree}{\textrm{k}_\textrm{13}}
+\newcommand{\koneN}{\textrm{k}_\textrm{1N}}
+\newcommand{\kex}{\textrm{k}_\textrm{ex}}
+\newcommand{\kexAB}{\textrm{k}_\textrm{ex}^\textrm{AB}}
+\newcommand{\kexAC}{\textrm{k}_\textrm{ex}^\textrm{AC}}
+\newcommand{\kexBC}{\textrm{k}_\textrm{ex}^\textrm{BC}}
+\newcommand{\kA}{\textrm{k}_\textrm{A}}
+\newcommand{\kB}{\textrm{k}_\textrm{B}}
+\newcommand{\kC}{\textrm{k}_\textrm{C}}
+\newcommand{\kAB}{\textrm{k}_\textrm{AB}}
+\newcommand{\kBA}{\textrm{k}_\textrm{BA}}
+\newcommand{\kAC}{\textrm{k}_\textrm{AC}}
+\newcommand{\kCA}{\textrm{k}_\textrm{CA}}
+\newcommand{\kBC}{\textrm{k}_\textrm{BC}}
+\newcommand{\kCB}{\textrm{k}_\textrm{CB}}
+\newcommand{\nucpmg}{\nu_\textrm{CPMG}}
+\newcommand{\omegaA}{\omega_\textrm{A}}
+\newcommand{\omegaB}{\omega_\textrm{B}}
+\newcommand{\omegae}{\omega_\textrm{e}}
+\newcommand{\omegaone}{\omega_1}
+\newcommand{\omegarf}{\omega_\textrm{rf}}
+\newcommand{\pone}{p_\textrm{1}}
+\newcommand{\ptwo}{p_\textrm{2}}
+\newcommand{\pthree}{p_\textrm{3}}
+\newcommand{\pA}{p_\textrm{A}}
+\newcommand{\pB}{p_\textrm{B}}
+\newcommand{\pC}{p_\textrm{C}}
+\newcommand{\pN}{p_\textrm{N}}
+\newcommand{\Phiex}{\Phi_\textrm{ex}}
+\newcommand{\PhiexB}{\Phi_\textrm{ex,B}}
+\newcommand{\PhiexC}{\Phi_\textrm{ex,C}}
+\newcommand{\Phiexi}{\Phi_\textrm{ex,i}}
+\newcommand{\Rex}{\mathrm{R}_\textrm{ex}}
+\newcommand{\Ronerhoprime}{\mathrm{R}_{1\rho}'}
+\newcommand{\Rtwoeff}{\mathrm{R}_\textrm{2eff}}
+\newcommand{\Rtwozero}{\mathrm{R}_2^0}
+\newcommand{\RtwozeroA}{\mathrm{R}_\mathrm{2A}^0}
+\newcommand{\RtwozeroB}{\mathrm{R}_\mathrm{2B}^0}
+\newcommand{\RtwozeroC}{\mathrm{R}_\mathrm{2C}^0}
+\newcommand{\RtwozeroMQ}{\mathrm{R}_\mathrm{2,MQ}^0}
+\newcommand{\RtwoDQA}{\mathrm{R}_\mathrm{2,DQ}^\mathrm{A}}
+\newcommand{\RtwoDQB}{\mathrm{R}_\mathrm{2,DQ}^\mathrm{B}}
+\newcommand{\RtwoZQA}{\mathrm{R}_\mathrm{2,ZQ}^\mathrm{A}}
+\newcommand{\RtwoZQB}{\mathrm{R}_\mathrm{2,ZQ}^\mathrm{B}}
+\newcommand{\tex}{\tau_\textrm{ex}}
+\newcommand{\taucpmg}{\tau_\textrm{CPMG}}
 
 % Natbib Citation format.
 \bibpunct{(}{)}{;}{a}{,}{,}
@@ -226,11 +291,14 @@
 \item[AICc:]  small sample size corrected AIC (model selection method)
 \item[API:]  application programming interface
 \item[ANOVA:]  analysis of variance (field of statistics)
+\item[BC:]  back calculation
 \item[BIC:]  Bayesian Information Criteria (model selection method)
 \item[BFGS:]  Broyden-Fletcher-Goldfarb-Shanno (optimisation method)
 \item[$C(\tau)$:]  correlation function
 \item[$\chi^2$:]  chi-squared function
 \item[CG:]  conjugate gradient (optimisation)
+\item[CPMG:]  the Carr-Purcell-Meiboom-Gill pulse sequence
+\item[CR72:]  the \citet{CarverRichards72} relaxation dispersion model
 \item[CSA:]  chemical shift anisotropy
 \item[CV:]  cross validation
 \item[CVS:]  Concurrent Versions System (open source version control system)
@@ -244,6 +312,8 @@
 \item[$\Diff_x$:]  the eigenvalue of the Brownian rotational diffusion tensor in which the corresponding eigenvector defines the x-axis of the tensor
 \item[$\Diff_y$:]  the eigenvalue of the Brownian rotational diffusion tensor in which the corresponding eigenvector defines the y-axis of the tensor
 \item[$\Diff_z$:]  the eigenvalue of the Brownian rotational diffusion tensor in which the corresponding eigenvector defines the z-axis of the tensor
+\item[DPL94:]  the \citet{Davis94} relaxation dispersion model
+\item[DQ:]  double quantum
 \item[$\epsilon_i$:]  elimination value
 \item[FSF:]  Free Software Foundation
 \item[GNU:]  GNU's Not Unix!
@@ -251,13 +321,20 @@
 \item[GPL:]  GNU general public licence
 \item[GUI:]  graphical user interface
 \item[ID string:]  identification string
+\item[IT99:]  the \citet{IshimaTorchia99} relaxation dispersion model
 \item[$J(\omega)$:]  spectral density function
+\item[LM63:]  the \citet{LuzMeiboom63} relaxation dispersion model
+\item[M61:]  the \citet{Meiboom61} relaxation dispersion model
 \item[MC:]  Monte Carlo (simulations)
 \item[MD:]  molecular dynamics (simulations)
+\item[MMQ:]  proton-heteronuclear SQ, ZQ, DQ, and MQ data (multi-multiple quantum)
+\item[MP05:]  the \citet{MiloushevPalmer05} relaxation dispersion model
 \item[MPI:]  message passing interface
+\item[MQ:]  multiple quantum
 \item[NMR:]  if you do not know this one, do not read further
 \item[NNTP:]  network news transfer protocol
 \item[NOE:]  nuclear Overhauser effect
+\item[NS:]  numeric solution
 \item[ORD:]  optical rotatory dispersion
 \item[OS:]  operating system
 \item[PCS:]  pseudocontact shift
@@ -277,8 +354,12 @@
 \item[SVN:]  Apache Subversion (open source version control system)
 \item[$\tau_e$, $\tau_f$, and $\tau_s$:]  model-free effective internal correlation times
 \item[$\tau_m$:]  global rotational correlation time
+\item[TP02:]  the \citet{TrottPalmer02} relaxation dispersion model
+\item[TAP03:]  the \citet{Trott03} relaxation dispersion model
+\item[TSMFK01:]  the \citet{Tollinger01} relaxation dispersion model
 \item[UI:]  user interface
 \item[XML:]  extensible markup language
+\item[ZQ:]  zero quantum
 
 \end{description}
 
@@ -321,6 +402,7 @@
 
 \part{Advanced topics}
 \include{optimisation}
+\include{dispersion}
 \include{maths}
 
 \part{Reference}

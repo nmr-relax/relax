@@ -1,0 +1,55 @@
+'CPMG' or 'LM63' model parameter conversions.
+=============================================
+
+To convert the 'CPMG' model parameter Rex to phi_ex, use:
+
+    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * 1000
+
+where frq is the magnetic field strength in Hz (for the proton Larmor frequency).  The factor of 1000 is because of the ms units.
+
+The kex parameter is given by:
+
+    kex = 1.0/Tau * 1000
+
+And tex as:
+
+    tex = "%.3e" % (Tau / 1000)
+
+
+
+'Full_CPMG' or 'CR72' model parameter conversions.
+==================================================
+
+To convert from the papb parameter:
+
+    pA = 1.0 - papb
+
+To obtain dw:
+
+    dw = 2.0 * pi * dw
+
+And kex:
+
+    kex = kex * 1000
+
+
+
+'Ishima' or 'IT99' model parameter conversions.
+===============================================
+
+To convert to the pA parameter:
+
+    phi_ex = (Rex / Tau) / (2.0 * pi * frq / g1H * g15N * 1e-6)**2 * 1000
+    pA = 1.0 - phi_ex / PaDw
+
+To obtain dw:
+
+    dw = sqrt(PaDw / pA)
+
+The kex parameter is given by:
+
+    kex = 1.0/Tau * 1000
+
+And tex as:
+
+    tex = "%.3e" % (Tau / 1000)

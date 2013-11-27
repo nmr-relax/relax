@@ -1,0 +1,14 @@
+REMARK SeriesTab Input: peaks_list.tab Output: peaks_list_max_standard.ser
+REMARK Mode: Maximum Dimensions: 2
+REMARK Input Region:    X +/- 0 X-ZF: 1
+REMARK Analysis Region: X +/- 0
+REMARK Input Region:    Y +/- 0 Y-ZF: 1
+REMARK Analysis Region: Y +/- 0
+
+VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS Z_A0 Z_A1 Z_A2 Z_A3 Z_A4 Z_A5 Z_A6 Z_A7 Z_A8 Z_A9 Z_A10 Z_A11 Z_A12 Z_A13 Z_A14 Z_A15 Z_A16
+FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f %7.4f
+
+NULLVALUE -666
+NULLSTRING *
+
+    1  2350.578  4805.560    7.473  115.300 +4.051259e+05 L61N-HN  1.0000  1.8649  0.9500  1.0395  1.0703  0.9099  0.9110  0.9266  0.9043  0.9698  1.0787  0.9450  1.0539  0.9021  0.9411  1.8692  0.9946

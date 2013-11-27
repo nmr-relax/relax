@@ -35,7 +35,7 @@ from status import Status; status = Status()
 
 
 # List of valid data pipe types and descriptions.
-VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_fit']
+VALID_TYPES = ['ct', 'frame order', 'jw', 'hybrid', 'mf', 'N-state', 'noe', 'relax_disp', 'relax_fit']
 PIPE_DESC = {
     'ct':  'Consistency testing',
     'frame order':  'Frame Order theories',
@@ -44,6 +44,7 @@ PIPE_DESC = {
     'mf':  'Model-free analysis',
     'N-state':  'N-state model or ensemble analysis',
     'noe':  'Steady state NOE calculation',
+    'relax_disp':  'Relaxation dispersion',
     'relax_fit':  'Relaxation curve fitting'
 }
 PIPE_DESC_LIST = []

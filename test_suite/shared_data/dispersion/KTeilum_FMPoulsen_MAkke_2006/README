@@ -1,0 +1,80 @@
+The dataset contained in this folder was published in:
+
+    Kaare Teilum, Flemming M Poulsen, Mikael Akke. 
+    The inverted chevron plot measured by NMR relaxation reveals a native-like unfolding intermediate in acyl-CoA binding protein. 
+    Proceedings of the National Academy of Sciences of the United States of America (2006). 
+    http://www.ncbi.nlm.nih.gov/pmc/articles/PMC1458987
+
+The data was provided by Dr. Kaare Teilum:  kte AT bio DOT ku DOT dk
+
+###### Processing of data
+Data was recorded as FID interleaved.
+
+The data has been re-processed by PhD student Troels Linnet. telinnet AT bio DOT ku DOT dk
+
+This NMRPipe script was used for spectral processing for experiment in 0.48 M GuHCl (guanidine hydrochloride).
+-----
+nmrproc.com
+-----
+#!/bin/csh
+
+nmrPipe -in test.fid \
+| nmrPipe  -fn SOL                                    \
+| nmrPipe  -fn GM  -g1 5 -g2 10 -c 1.0                \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -auto                               \
+| nmrPipe  -fn PS -p0 214.00 -p1 -21.00 -di -verb     \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5    \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -neg                                \
+| nmrPipe  -fn PS -p0 0.00 -p1 0.00 -di -verb         \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn POLY -auto                             \
+| nmrPipe  -fn EXT -left -sw                          \
+   -ov -out test.ft2
+------------------
+
+This NMRPipe script was used for spectral processing for experiment in 1.01 M GuHCl (guanidine hydrochloride).
+-----
+nmrproc.com
+-----
+#!/bin/csh
+
+nmrPipe -in test.fid \
+| nmrPipe  -fn SOL                                    \
+| nmrPipe  -fn GM  -g1 5 -g2 10 -c 1.0                \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -auto                               \
+| nmrPipe  -fn PS -p0 -138.40 -p1 -43.00 -di -verb     \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn SP -off 0.5 -end 0.98 -pow 2 -c 0.5    \
+| nmrPipe  -fn ZF -auto -size 8000                    \
+| nmrPipe  -fn FT -neg                                \
+| nmrPipe  -fn PS -p0 0.00 -p1 0.00 -di -verb         \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn POLY -auto                             \
+| nmrPipe  -fn EXT -left -sw                          \
+   -ov -out test.ft2
+------------------
+
+The heights was measured with NMRPipe seriesTab.
+
+> seriesTab -in peaks_list.tab -out peaks_list_max_standard.ser -list ft2_files.ls -max
+
+The RMSD for the background noise was determined in SPARKY.
+
+An experimental "ncyc.txt" list, describing the experimental details for the each spectrum was created with:
+-----------------
+set NCYCLIST=`awk '/^ncyc /{f=1;next}f{print $0;exit}' procpar`; echo $NCYCLIST
+set TIMET2=`awk '/^time_T2 /{f=1;next}f{print $2;exit}' procpar`; echo $TIMET2
+set SFRQ=`awk '/^sfrq /{f=1;next}f{print $2;exit}' procpar`; echo $SFRQ
+ 
+foreach I (`seq 2 ${#NCYCLIST}`)
+set NCYC=${NCYCLIST[$I]}; set FRQ=`echo ${NCYC}/${TIMET2} | bc -l`; echo $NCYC $TIMET2 $FRQ $SFRQ >> ncyc.txt
+end
+cat ncyc.txt
+--------------
+
+In the last column "ncyc.txt" is the measured spectrum RMSD in SPARKY, with:
+"st" and recompute for "10000" points.

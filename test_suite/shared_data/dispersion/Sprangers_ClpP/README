@@ -1,0 +1,31 @@
+The .out file have the intensities from the spectra. The columns are as follows:
+
+peak_number chemical_shift_proton chemical_shift_carbon int_reference int_ncyc=12,1,10,2,8,3,6,4,5,1,2,3
+
+The BigT (relaxation time) was 15 ms
+
+The filename indicate the residue number (135 or 137; there were 2 exchanging peaks) and the state (state a or b; both states were visible in the spectra) and the field (600 or 800).
+
+To get the R2 value you need to do:
+
+y = - (1/BigT)* log (int_ncyc/int_reference) 
+
+there are some duplicates that you can use to get an error estimate
+
+You cannot use any approximation in the fitting (like Carver Richards ) but have to do all fully numerically.
+
+The following Dw were fixed in the fitting (extracted from the spectra directly):
+
+DwC_135=0.625;
+DwH_135=0.033;
+DwC_137=0.981;
+DwH_137=0.010;
+
+Those are values in ppm.
+
+
+The paper reference is:
+
+    Remco Sprangers, Anna Gribun, Peter M. Hwang, Walid A. Houry, and Lewis E. Kay (2005)  Quantitative NMR spectroscopy of supramolecular complexes: Dynamic side pores in ClpP are important for product release, PNAS, 102 (46), 16678-16683.  (doi:  http://dx.doi.org/10.1073/pnas.0507370102)
+
+

@@ -415,8 +415,8 @@ class Wiz_window(wx.Dialog):
         self._seq_prev = []
         self._skip_flag = []
 
-        # A max of 10 pages should be plenty enough (any more and the developer should be shot!).
-        for i in range(10):
+        # A max of 15 pages should be enough.
+        for i in range(15):
             # Append some Nones.
             self._pages.append(None)
 

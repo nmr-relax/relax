@@ -1,0 +1,154 @@
+\begin{center}
+\begin{small}
+
+% The longtable environment.
+\setlength\LTcapwidth{\textwidth}
+\setlength\LTleft{0pt}
+\setlength\LTright{0pt}
+\begin{longtable}{l@{\extracolsep{\fill}}ccccccccc}
+
+% Caption.
+\caption[Dispersion software comparison.]{Comparison of the features for the different dispersion software.}
+
+
+% Header.
+\\
+\toprule
+\vspace{25pt} \\
+   & \begin{rotate}{45}CPMGFit\end{rotate} & \begin{rotate}{45}cpmg\_fit\end{rotate} & \begin{rotate}{45}CATIA\end{rotate} & \begin{rotate}{45}NESSY\end{rotate} & \begin{rotate}{45}GUARDD\end{rotate} & \begin{rotate}{45}ShereKhan\end{rotate} & \begin{rotate}{45}GLOVE\end{rotate} & \begin{rotate}{45}chemex\end{rotate} & \begin{rotate}{45}relax\end{rotate} \hspace{5pt} \\
+%        & CPMGFit & CATIA & NESSY & GUARDD & ShereKhan & GLOVE & relax \\
+\midrule
+\endhead
+
+% Footer.
+\bottomrule
+\endfoot
+
+% Label.
+\label{table: dispersion software}
+
+%est row                    & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes & \yes \\
+
+% The models.
+\vspace{-5pt} \\
+\textbf{Dispersion models} \\
+\cmidrule(lr){1-1}
+\vspace{-5pt} \\
+Base models \\
+\cmidrule(lr){1-1}
+$\Rtwoeff/\Ronerhoprime$    & \no  & \no  & \no  & \yes & \yes & \yes & \yes & \no  & \yes \\
+No Rex                      & \no  & \yes & \no  & \yes & \yes & \no  & \yes & \no  & \yes \\
+
+\vspace{-5pt} \\
+Single quantum (SQ) CPMG-type \\
+\cmidrule(lr){1-1}
+LM63                        & \yes & \no  & \no  & \yes & \no  & \yes & \yes & \no  & \yes \\
+LM63 3-site                 & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \yes \\
+CR72                        & \yes & \yes & \no  & \yes & \yes & \yes & \yes & \no  & \yes \\
+IT99                        & \yes & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \yes \\
+TSMFK01                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+NS 2-site                   & \no  & \yes & \yes & \no  & \no  & \yes & ?    & \no  & \yes \\
+
+\vspace{-5pt} \\
+MMQ (SQ, ZQ, DQ, \& MQ) CPMG-type \\
+\cmidrule(lr){1-1}
+MQ CR72                     & \no  & \yes & \no  & \no  & \yes & \no  & ?    & \no  & \yes \\
+NS 2-site                   & \no  & \yes & \no  & \no  & \no  & \no  & ?    & \no  & \yes \\
+NS 3-site (linear)          & \no  & \yes & \no  & \no  & \no  & \no  & ?    & \no  & \no  \\
+NS 3-site (branched)        & \no  & \yes & \no  & \no  & \no  & \no  & ?    & \no  & \no  \\
+
+\vspace{-5pt} \\
+$\Ronerho$-type \\
+\cmidrule(lr){1-1}
+M61                         & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+DPL94                       & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+TP02                        & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+TAP03                       & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+TP04                        & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+MP05                        & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+NS 2-site                   & \no  & \yes & \no  & \no  & \no  & \no  & ?    & \no  & \yes \\
+NS 3-site (linear)          & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+NS 3-site (branched)        & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+
+\midrule
+\vspace{-5pt} \\
+\textbf{General features} \\
+\cmidrule(lr){1-1}
+Parallelisation via MPI for running on clusters & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+Off-resonance effects (CPMG-type data)          & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  \\
+Off-resonance effects ($\Ronerho$-type data)    & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+Support for CEST-type data                      & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  \\
+Van't Hoff analysis                             & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  \\
+Arrhenius analysis                              & \no  & \yes & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+ZZ exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+HD exchange                                     & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+Dispersion data back calculation (BC)           & \no  & \yes & \no  & \yes & \yes & \no  & \no  & \no  & \yes \\
+
+\pagebreak
+
+\vspace{-5pt} \\
+\textbf{User interface} \\
+\cmidrule(lr){1-1}
+Graphical user interface (GUI)                  & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \yes \\
+Web user interface (Web UI)                     & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
+Scripting user interface (Script UI)            & \no  & \yes & \yes & \no  & \no  & \yes & \yes & \no  & \yes \\
+Shell interface                                 & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  \\
+Temperature and field-dependent simulator     \\
+UI for experimental planning (data BC)          & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+
+\vspace{-5pt} \\
+\textbf{Optimisation} \\
+\cmidrule(lr){1-1}
+Grid search algorithm                           & \yes & \no  & \no  & \yes & \yes & \yes & \yes & \no  & \yes \\
+Grid search (via scripting)                     & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \no  & \no  \\
+Nelder-Mead simplex algorithm                   & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+Levenberg-Maquardt algorithm                    & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
+Numeric gradient approximation                  & \yes & \yes & \yes & \yes & \no  & \yes & \yes & \yes & \no  \\
+Logarithmic-barrier constraint algorithm        & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \yes \\
+MATLAB interior-point black magic               & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+Visualisation of the chi-squared space          & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \yes \\
+
+\vspace{-5pt} \\
+\textbf{Error propagation} \\
+\cmidrule(lr){1-1}
+Covariance matrix (lowest quality)              & \yes & \yes & \yes & \no  & \yes & \no  & \yes & \no  & \no  \\
+Jackknife simulations (for missing errors)      & \yes & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  \\
+Bootstrapping simulations (false errors)        & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+Currently unknown (please update)               & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
+Monte Carlo simulations (gold standard)         & \yes & \no  & \no  & \yes & \yes & \no  & \yes & \yes & \yes \\
+
+\vspace{-5pt} \\
+\textbf{Inbuilt statistical comparisons} \\
+\cmidrule(lr){1-1}
+Akaike's Information Criterion (AIC)            & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \yes \\
+Small sample size AIC (AICc)                    & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  & \yes \\
+Bayesian Information Criterion (BIC)            & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \yes \\
+F-testing (ANOVA statistics)                    & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \no  & \no  \\
+
+\vspace{-5pt} \\
+\textbf{Data and model testing} \\
+\cmidrule(lr){1-1}
+Insignificant dispersion curve tests            & \no  & \no  & \no  & \yes  & \no  & \no  & \no  & \no  & \yes \\
+Model elimination tests                         & \no  & \no  & \no  & \no   & \no  & \no  & \no  & \no  & \yes \\
+
+\vspace{-5pt} \\
+\textbf{Programming languages} \\
+\cmidrule(lr){1-1}
+Python                      & \no  & \no  & \no  & \yes & \no  & \yes & \no  & \yes & \yes \\
+C                           & \no  & \yes & \yes & \no  & \no  & \no  & \yes & \no  & \yes \\
+Perl                        & \no  & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  \\
+MATLAB                      & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  & \no  \\
+FORTRAN                     & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+Ruby on Rails               & \no  & \no  & \no  & \no  & \no  & \yes & \no  & \no  & \no  \\
+
+\vspace{-5pt} \\
+\textbf{Open source licencing} \\
+\cmidrule(lr){1-1}
+GNU General Public Licence (version 2+)     & \yes & \no  & \no  & \no  & \no  & \no  & \no  & \no  & \no  \\
+GNU General Public Licence (version 3+)     & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \yes & \yes \\
+Open source infrastructure                  & \no  & \no  & \no  & \yes & \yes & \no  & \no  & \yes & \yes \\
+Proprietary                                 & \no  & \yes & \yes & \no  & \no  & \yes & \yes & \no  & \no  \\
+
+\end{longtable}
+\end{small}
+\end{center}

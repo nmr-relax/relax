@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +30,98 @@ from math import ceil, sqrt
 import pipe_control
 from pipe_control import pipes
 import specific_analyses
+
+# This script is used to batch convert the Grace *.agr files into graphics files using the Grace
+# program itself.
+
+def script_grace2images(file=None):
+    """Write a python "grace to PNG/EPS/SVG..." conversion script..
+
+    The makes a conversion script to image types as PNG/EPS/SVG. The conversion is looping over a directory list of *.agr files, and making function calls to xmgrace. Successful conversion of images depends on the compilation of xmgrace. The input is a list of image types which is wanted, f.ex: PNG EPS SVG. PNG is default.
+
+    @keyword file:          The file object to write the data to.
+    @type file:             file object
+    """
+
+    # Write to file
+    file.write("#!/usr/bin/env python\n")
+    file.write("#\n")
+    file.write("# This script is used to batch convert the Grace *.agr files into graphics bitmap files using the\n")
+    file.write("# Grace program itself.  Therefore you will need to install on your system xmgrace,\n")
+    file.write("# (http://plasma-gate.weizmann.ac.il/Grace/), qtgrace (http://sourceforge.net/projects/qtgrace/)\n")
+    file.write("# or gracegtk (http://sourceforge.net/projects/gracegtk/).\n")
+    file.write("\n")
+    file.write("import glob, os, sys\n")
+    file.write("import shlex, subprocess\n")
+    file.write("import optparse\n")
+    file.write("\n")
+    file.write("# Define a callback function, for a multiple input of PNG, EPS, SVG\n")
+    file.write("def foo_callback(option, opt, value, parser):\n")
+    file.write("    setattr(parser.values, option.dest, value.split(','))\n")
+    file.write("\n")
+    file.write("# Add functioning for argument parsing\n")
+    file.write("parser = optparse.OptionParser(description='Process grace files to images')\n")
+    file.write("# Add argument type. Destination instance is set to types.\n")
+    file.write("parser.add_option('-g', action='store_true', dest='relax_gui', default=False, help='Make it possible to run script through relax GUI. Run by using User-functions -> script')\n")
+    file.write("parser.add_option('-l', action='callback', callback=foo_callback, dest='l', type=\"string\", default=False, help='Make in possible to run scriptif relax has logfile turned on. Run by using User-functions -> script')\n")
+    file.write("parser.add_option('-t', action='callback', callback=foo_callback, dest='types', type=\"string\", default=[], help='List image types for conversion. Execute script with: python %s -t PNG,EPS ...'%(sys.argv[0]))\n")
+    file.write("\n")
+    file.write("# Parse the arguments to a Class instance object\n")
+    file.write("args = parser.parse_args()\n")
+    file.write("\n")
+    file.write("# Lets print help if no arguments are passed\n")
+    file.write("if len(sys.argv) == 1 or len(args[0].types) == 0:\n")
+    file.write("    print('system argument is:', sys.argv)\n")
+    file.write("    parser.print_help()\n")
+    file.write("    print('Performing a default PNG conversion')\n")
+    file.write("    # If no input arguments, we make a default PNG option\n")
+    file.write("    args[0].types = ['PNG']\n")
+    file.write("\n")
+    file.write("# If we run through the GUI we cannot pass input arguments so we make a default PNG option\n")
+    file.write("if args[0].relax_gui:\n")
+    file.write("    args[0].types = ['PNG']\n")
+    file.write("\n")
+    file.write("types = list(args[0].types)\n")
+    file.write("\n")
+    file.write("# A easy search for files with *.agr, is to use glob, which is pathnames matching a specified pattern according to the rules used by the Unix shell, not opening a shell\n")
+    file.write("gracefiles = glob.glob(\"*.agr\")\n")
+    file.write("\n")
+    file.write("# For png conversion, several parameters can be passed to xmgrace. These can be altered later afterwards and the script rerun. \n")
+    file.write("# The option for transparent is good for poster or insertion in color backgrounds. The ability for this still depends on xmgrace compilation\n")
+    file.write("if \"PNG\" in types:\n")
+    file.write("    pngpar = \"png.par\"\n")
+    file.write("    if not os.path.isfile(pngpar):\n")
+    file.write("        wpngpar = open(pngpar, \"w\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" FONT ANTIALIASING on\\n\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"transparent:on\\\"\\n\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"compression:9\\\"\\n\")\n")
+    file.write("        wpngpar.close()\n")
+    file.write("\n")
+    file.write("# Now loop over the grace files\n")
+    file.write("for grace in gracefiles:\n")
+    file.write("    # Get the filename without extension\n")
+    file.write("    fname = grace.split(\".agr\")[0]\n")
+    file.write("    if (\"PNG\" in types or \".PNG\" in types or \"png\" in types or \".png\" in types):\n")
+    file.write("        # Produce the argument string\n")
+    file.write("        im_args = r\"xmgrace -hdevice PNG -hardcopy -param %s -printfile %s.png %s\" % (pngpar, fname, grace)\n")
+    file.write("        # Split the arguments the right way to call xmgrace\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if (\"EPS\" in types or \".EPS\" in types or \"eps\" in types or \".eps\" in types):\n")
+    file.write("        im_args = r\"xmgrace -hdevice EPS -hardcopy -printfile %s.eps %s\" % (fname, grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if (\"JPG\" in types or \".JPG\" in types or \"jpg\" in types or \".jpg\" in types):\n")
+    file.write("        im_args = r\"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s\" % (fname, grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("    if (\"JPEG\" in types or \".JPEG\" in types or \"jpeg\" in types or \".jpeg\" in types):\n")
+    file.write("        im_args = r\"xmgrace -hdevice JPEG -hardcopy -printfile %s.jpg %s\" % (fname, grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
+    file.write("    if (\"SVG\" in types or \".SVG\" in types or \"svg\" in types or \".svg\" in types):\n")
+    file.write("        im_args = r\"xmgrace -hdevice SVG -hardcopy -printfile %s.svg %s\" % (fname, grace)\n")
+    file.write("        im_args = shlex.split(im_args)\n")
+    file.write("        return_code = subprocess.call(im_args)\n")
 
 
 def write_xy_data(data, file=None, graph_type=None, norm=None):
@@ -129,58 +222,62 @@ def write_xy_data(data, file=None, graph_type=None, norm=None):
         file.write("@arrange(%i, %i, .1, .1, .1, OFF, OFF, OFF)\n" % (row_num, col_num))
 
 
-def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, x_axis_type_zero=None, y_axis_type_zero=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend_pos=None, legend=None, norm=None):
+def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=None, graph_num=1, sets=None, set_names=None, set_colours=None, x_axis_type_zero=None, y_axis_type_zero=None, symbols=None, symbol_sizes=None, symbol_fill=None, linestyle=None, linetype=None, linewidth=None, data_type=None, seq_type=None, axis_labels=None, legend=None, legend_pos=None, legend_box_fill_pattern=1, legend_char_size=1.0, norm=None):
     """Write the grace header for xy-scatter plots.
 
     Many of these keyword arguments should be supplied in a [X, Y] list format, where the first element corresponds to the X data, and the second the Y data.  Defaults will be used for any non-supplied args (or lists with elements set to None).
 
 
-    @keyword file:                  The file object to write the data to.
-    @type file:                     file object
-    @keyword paper_size:            The paper size, i.e. 'A4'.  If set to None, this will default to letter size.
-    @type paper_size:               str
-    @keyword title:                 The title of the graph.
-    @type title:                    None or str
-    @keyword subtitle:              The sub-title of the graph.
-    @type subtitle:                 None or str
-    @keyword view:                  List of 4 coordinates defining the graph view port.
-    @type view:                     None or list of float
-    @keyword graph_num:             The total number of graphs.
-    @type graph_num:                int
-    @keyword sets:                  The number of data sets in each graph.
-    @type sets:                     list of int
-    @keyword set_names:             The names associated with each graph data set Gx.Sy.  For example this can be a list of spin identification strings.  The first dimension is the graph, the second is the set.
-    @type set_names:                None or list of list of str
-    @keyword set_colours:           The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type set_colours:              None or list of list of int
-    @keyword x_axis_type_zero:      The flags specifying if the X-axis should be placed at zero.
-    @type x_axis_type_zero:         None or list of lists of bool
-    @keyword y_axis_type_zero:      The flags specifying if the Y-axis should be placed at zero.
-    @type y_axis_type_zero:         None or list of lists of bool
-    @keyword symbols:               The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type symbols:                  None or list of list of int
-    @keyword symbol_sizes:          The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type symbol_sizes:             None or list of list of int
-    @keyword symbol_fill:           The symbol file style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type symbol_fill:              None or list of list of int
-    @keyword linestyle:             The line style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type linestyle:                None or list of list of int
-    @keyword linetype:              The line type for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type linetype:                 None or list of list of int
-    @keyword linewidth:             The line width for all elements of each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
-    @type linewidth:                None or list of float
-    @keyword data_type:             The axis data category (in the [X, Y] list format).
-    @type data_type:                None or list of list of str
-    @keyword seq_type:              The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
-    @type seq_type:                 None or list of list of str
-    @keyword axis_labels:           The labels for the axes (in the [X, Y] list format).  The first dimension is the graph.
-    @type axis_labels:              None or list of list of str
-    @keyword legend_pos:            The position of the legend, e.g. [0.3, 0.8].  The first dimension is the graph.
-    @type legend_pos:               None or list of list of float
-    @keyword legend:                If True, the legend will be visible.  The first dimension is the graph.
-    @type legend:                   list of bool
-    @keyword norm:                  The normalisation flag which if set to True will cause all graphs to be normalised to 1.  The first dimension is the graph.
-    @type norm:                     list of bool
+    @keyword file:                      The file object to write the data to.
+    @type file:                         file object
+    @keyword paper_size:                The paper size, i.e. 'A4'.  If set to None, this will default to letter size.
+    @type paper_size:                   str
+    @keyword title:                     The title of the graph.
+    @type title:                        None or str
+    @keyword subtitle:                  The sub-title of the graph.
+    @type subtitle:                     None or str
+    @keyword view:                      List of 4 coordinates defining the graph view port.
+    @type view:                         None or list of float
+    @keyword graph_num:                 The total number of graphs.
+    @type graph_num:                    int
+    @keyword sets:                      The number of data sets in each graph.
+    @type sets:                         list of int
+    @keyword set_names:                 The names associated with each graph data set Gx.Sy.  For example this can be a list of spin identification strings.  The first dimension is the graph, the second is the set.
+    @type set_names:                    None or list of list of str
+    @keyword set_colours:               The colours for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type set_colours:                  None or list of list of int
+    @keyword x_axis_type_zero:          The flags specifying if the X-axis should be placed at zero.
+    @type x_axis_type_zero:             None or list of lists of bool
+    @keyword y_axis_type_zero:          The flags specifying if the Y-axis should be placed at zero.
+    @type y_axis_type_zero:             None or list of lists of bool
+    @keyword symbols:                   The symbol style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbols:                      None or list of list of int
+    @keyword symbol_sizes:              The symbol size for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbol_sizes:                 None or list of list of int
+    @keyword symbol_fill:               The symbol file style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type symbol_fill:                  None or list of list of int
+    @keyword linestyle:                 The line style for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linestyle:                    None or list of list of int
+    @keyword linetype:                  The line type for each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linetype:                     None or list of list of int
+    @keyword linewidth:                 The line width for all elements of each graph data set Gx.Sy.  The first dimension is the graph, the second is the set.
+    @type linewidth:                    None or list of float
+    @keyword data_type:                 The axis data category (in the [X, Y] list format).
+    @type data_type:                    None or list of list of str
+    @keyword seq_type:                  The sequence data type (in the [X, Y] list format).  This is for molecular sequence specific data and can be one of 'res', 'spin', or 'mixed'.
+    @type seq_type:                     None or list of list of str
+    @keyword axis_labels:               The labels for the axes (in the [X, Y] list format).  The first dimension is the graph.
+    @type axis_labels:                  None or list of list of str
+    @keyword legend:                    If True, the legend will be visible.  The first dimension is the graph.
+    @type legend:                       list of bool
+    @keyword legend_pos:                The position of the legend, e.g. [0.3, 0.8].  The first dimension is the graph.
+    @type legend_pos:                   None or list of list of float
+    @keyword legend_box_fill_pattern:   The legend box fill.  If set to 0, it will become transparent.
+    @type legend_box_fill_pattern:      int
+    @keyword legend_char_size:          The size of the legend box text.
+    @type legend_char_size:             float
+    @keyword norm:                      The normalisation flag which if set to True will cause all graphs to be normalised to 1.  The first dimension is the graph.
+    @type norm:                         list of bool
     """
 
     # Defaults.

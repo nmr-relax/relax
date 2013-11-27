@@ -1,0 +1,137 @@
+
+
+
+                                  relax repository checkout r21506
+                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2013 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'r2eff_calc_trunc.py'
+----------------------------------------------------------------------------------------------------
+"""Taken from the relax disp manual, section 10.6.1 Dispersion script mode - the sample script.
+
+To run the script, simply type:
+
+$ ../../../../../relax r2eff_calc_trunc.py --tee r2eff_calc_trunc.log
+"""
+
+import os
+import shutil
+from auto_analyses.relax_disp import Relax_disp
+
+# Load the initial state setup
+state.load(state='ini_setup_trunc.bz2')
+
+# Set settings for run.
+results_directory = 'temp'
+pipe_name = 'base pipe'; pipe_bundle = 'relax_disp'
+MODELS = ['R2eff']
+GRID_INC = 5; MC_NUM = 3; MODSEL = 'AIC'
+
+# Execute
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=results_directory, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+# Delete the "base pipe"
+pipe.delete(pipe_name='base pipe')
+
+# Save the program state.
+state.save('r2eff_pipe_trunc', force=True)
+
+# Delete data result directory
+shutil.rmtree(results_directory)
+----------------------------------------------------------------------------------------------------
+debug> Execution lock:  Acquisition by 'script UI' ('script' mode).
+
+relax> state.load(state='ini_setup_trunc.bz2', dir=None, force=False)
+Opening the file 'ini_setup_trunc.bz2' for reading.
+
+
+
+
+=======================================
+= Relaxation dispersion auto-analysis =
+=======================================
+
+debug> Execution lock:  Acquisition by 'relax_disp' ('auto-analysis' mode).
+
+relax> spectrum.error_analysis(subset=['Z_A0', 'Z_A1', 'Z_A2', 'Z_A3', 'Z_A4', 'Z_A5', 'Z_A6', 'Z_A7', 'Z_A8', 'Z_A9', 'Z_A10', 'Z_A11', 'Z_A12', 'Z_A13', 'Z_A14', 'Z_A16'])
+Intensity measure:  Peak heights.
+Replicated spectra:  No.
+Spectra ID subset ignored.
+
+
+
+---------------------
+- The 'R2eff' model -
+---------------------
+
+
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+debug> Lock 'pipe_lock':  Acquisition by 'copy'.
+debug> Lock 'pipe_lock':  Release by 'copy'.
+
+relax> pipe.switch(pipe_name='R2eff')
+debug> Lock 'pipe_lock':  Acquisition by 'switch'.
+debug> Lock 'pipe_lock':  Release by 'switch'.
+
+relax> relax_disp.select_model(model='R2eff')
+R2eff/R1rho value and error determination.
+
+relax> calc(verbosity=1)
+Calculating the R2eff/R1rho values for fixed relaxation time period data.
+Spin ':61@N'.
+Class containing all the spin system specific data.
+
+
+Objects:
+  baseplane_rmsd: {'Z_A2': 2410.0, 'Z_A3': 2420.0, 'Z_A0': 2470.0, 'Z_A1': 2340.0, 'Z_A6': 2420.0, 'Z_A7': 2440.0, 'Z_A4': 2450.0, 'Z_A5': 2420.0, 'Z_A16': 2450.0, 'Z_A8': 2390.0, 'Z_A9': 2400.0, 'Z_A12': 2410.0, 'Z_A11': 2460.0, 'Z_A13': 2450.0, 'Z_A10': 2420.0, 'Z_A14': 2450.0, 'Z_A15': 2390.0}
+  intensities: {'Z_A2': 384869.605, 'Z_A3': 421128.37305000005, 'Z_A0': 405125.9, 'Z_A1': 755519.2909100001, 'Z_A6': 369069.69490000006, 'Z_A7': 375389.65894, 'Z_A4': 433606.25077000004, 'Z_A5': 368624.05641, 'Z_A16': 402938.22014000005, 'Z_A8': 366355.35137, 'Z_A9': 392891.09782, 'Z_A12': 426962.18601000006, 'Z_A11': 382843.9755, 'Z_A13': 365464.07439, 'Z_A10': 437009.30833, 'Z_A14': 381263.98449000006}
+  intensity_err: {'Z_A2': 2410.0, 'Z_A3': 2420.0, 'Z_A0': 2470.0, 'Z_A1': 2340.0, 'Z_A6': 2420.0, 'Z_A7': 2440.0, 'Z_A4': 2450.0, 'Z_A5': 2420.0, 'Z_A16': 2450.0, 'Z_A8': 2390.0, 'Z_A9': 2400.0, 'Z_A12': 2410.0, 'Z_A11': 2460.0, 'Z_A13': 2450.0, 'Z_A10': 2420.0, 'Z_A14': 2450.0, 'Z_A15': 2390.0}
+  isotope: '15N'
+  model: 'R2eff'
+  name: 'N'
+  num: 57
+  params: ['r2eff']
+  r2eff: {}
+  r2eff_err: {}
+  select: True
+
+debug> Execution lock:  Release by 'relax_disp' ('auto-analysis' mode).
+Traceback (most recent call last):
+  File "/data/relax/branches/relax_disp/prompt/interpreter.py", line 341, in exec_script
+    runpy.run_module(module, globals)
+  File "/usr/lib64/python2.7/runpy.py", line 180, in run_module
+    fname, loader, pkg_name)
+  File "/usr/lib64/python2.7/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/KTeilum_FMPoulsen_MAkke_2006/acbp_cpmg_disp_048MGuHCl_40C_041223/r2eff_calc_trunc.py", line 22, in <module>
+    Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=results_directory, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+  File "/data/relax/branches/relax_disp/auto_analyses/relax_disp.py", line 113, in __init__
+    self.run()
+  File "/data/relax/branches/relax_disp/auto_analyses/relax_disp.py", line 385, in run
+    self.interpreter.calc()
+  File "/data/relax/branches/relax_disp/prompt/uf_objects.py", line 221, in __call__
+    self._backend(*new_args, **uf_kargs)
+  File "/data/relax/branches/relax_disp/pipe_control/minimise.py", line 86, in calc
+    calculate(verbosity=verbosity)
+  File "/data/relax/branches/relax_disp/specific_analyses/relax_disp/api.py", line 749, in calculate
+    self._calculate_r2eff()
+  File "/data/relax/branches/relax_disp/specific_analyses/relax_disp/api.py", line 271, in _calculate_r2eff
+    ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
+  File "/data/relax/branches/relax_disp/specific_analyses/relax_disp/disp_data.py", line 120, in average_intensity
+    raise RelaxError("The peak intensity data is missing the key '%s'." % int_keys[i])
+RelaxError: RelaxError: The peak intensity data is missing the key 'Z_A15'.
+
+

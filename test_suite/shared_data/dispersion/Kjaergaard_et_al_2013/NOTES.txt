@@ -1,0 +1,177 @@
+Reference:
+A Folded Excited State of Ligand-Free Nuclear Coactivator Binding Domain (NCBD) Underlies Plasticity in Ligand Recognition.
+Kjaergaard, M., Andersen, L., Nielsen, L.D. & Teilum, K. (2013). 
+Biochemistry 52, 1686–1693
+
+## Data: 
+# Off-resonance R1ρ relaxation dispersion experiments on 15N were recorded at 18.8 T and 31 C.
+# using the pulse sequence of Mulder et al. with spin-lock field strengths from 431 to 1649 Hz and offsets ranging from 0 to 10000 Hz.
+
+# This follows the wiki at: http://wiki.nmr-relax.com/Tutorial_for_Relaxation_dispersion_analysis_r1rho_fixed_time_recorded_on_varian_as_sequential_spectra
+
+cd spectrometer_data/
+
+# Copy over data
+cp -r ../NCBD_31C_WT_0Murea_t1rho/ldn_20120917_15N_NCBD_20mMPi_pH6c5_31C_t1rho* .
+
+# Make file list
+ls -v -d -1 */fid > fid_files.ls
+
+# Do something, remove old files.
+set FIDS=`cat fid_files.ls`
+
+foreach I (`seq 1 ${#FIDS}`)
+set FID=${FIDS[$I]}; set DIRN=`dirname $FID`
+cd $DIRN
+ls
+cd ..
+end
+
+#rm -f fid.com
+#rm -f nmrproc.com
+#rm -f peaks.ser
+#rm -f test.fid
+#rm -f test.ft2
+
+# Extract the spectra settings from Varian procpar file
+# Now we want to make a settings file we can read in relax.
+set FIDS=`cat fid_files.ls`
+set OUT=$PWD/exp_parameters.txt
+ 
+echo "# DIRN I deltadof2 dpwr2slock ncyc trim ss sfrq" > $OUT
+foreach I (`seq 1 ${#FIDS}`)
+set FID=${FIDS[$I]}; set DIRN=`dirname $FID`
+cd $DIRN
+set deltadof2=`awk '/^deltadof2 /{f=1;next}f{print $2;exit}' procpar`
+set dpwr2slock=`awk '/^dpwr2slock /{f=1;next}f{print $2;exit}' procpar`
+set ncyc=`awk '/^ncyc /{f=1;next}f{print $2;exit}' procpar`
+set trim=`awk '/^trim /{f=1;next}f{print $2;exit}' procpar`
+set ss=`awk '/^ss /{f=1;next}f{print $2;exit}' procpar`
+set sfrq=`awk '/^sfrq /{f=1;next}f{print $2;exit}' procpar`
+echo "$DIRN $I $deltadof2 $dpwr2slock $ncyc $trim $ss $sfrq" >> $OUT
+cd ..
+end
+ 
+cat $OUT
+
+#You can check, if you have repetitions of experiments, by sorting the parameters, and see if they are dublicated.
+# We do this, by numerical sort columns 3,4 and 5 with the values for "deltadof2, dpwr2slock, ncyc".
+sort -b -k 3,3n -k 4,4n -k 5,5n exp_parameters.txt > exp_parameters_sort.txt
+cat exp_parameters_sort.txt
+
+# Now process the first
+set CWD=$PWD
+set DIRS=`cat fid_files.ls | sed 's/\/fid//g'`
+cd ${DIRS[1]}
+
+cat > fid.com <<EOF
+#!/bin/csh
+
+var2pipe -in ./fid \
+ -noaswap  \
+  -xN              1700  -yN               256  \
+  -xT               850  -yT               128  \
+  -xMODE        Complex  -yMODE      Rance-Kay  \
+  -xSW        10000.000  -ySW         1621.000  \
+  -xOBS         799.777  -yOBS          81.050  \
+  -xCAR           4.716  -yCAR         118.078  \
+  -xLAB              H1  -yLAB             N15  \
+  -ndim               2  -aq2D          States  \
+  -out ./test.fid -verb -ov
+EOF
+chmod +x fid.com
+./fid.com
+
+cat > nmrproc.com <<EOF
+#!/bin/csh
+
+nmrPipe -in test.fid \
+| nmrPipe  -fn SP -off 0.5 -end 1.00 -pow 1 -c 0.5    \
+| nmrPipe  -fn ZF -auto                               \
+| nmrPipe  -fn FT -auto                               \
+| nmrPipe  -fn PS -p0 -110.20 -p1 0.00 -di -verb         \
+| nmrPipe  -fn TP                                     \
+| nmrPipe  -fn SP -off 0.5 -end 1.00 -pow 1 -c 0.5    \
+| nmrPipe  -fn ZF -auto                               \
+| nmrPipe  -fn FT -auto                               \
+| nmrPipe  -fn PS -p0 0.00 -p1 0.00 -di -verb         \
+| nmrPipe  -fn TP                                     \
+   -ov -out test.ft2
+EOF
+chmod +x nmrproc.com
+./nmrproc.com
+
+
+## Convert and spectral processing all
+cd $CWD
+ 
+set FIDS=`cat fid_files.ls`
+set DIRN1=`dirname $PWD/${FIDS[1]}`
+ 
+foreach I (`seq 2 ${#FIDS}`)
+set FID=${FIDS[$I]}; set DIRN=`dirname $FID`
+cd $DIRN
+echo $DIRN
+cp -f $DIRN1/fid.com .
+cp -f $DIRN1/nmrproc.com .
+./fid.com
+./nmrproc.com
+cd ..
+end
+
+##Convert NMRPipe to Sparky
+
+# Next we also want to convert them to SPARKY format.
+set FTS=`ls -v -d -1 */*.ft2`
+ 
+foreach FT ($FTS)
+    set DNAME=`dirname $FT`
+    set BNAME=`basename $FT`
+    set FNAME=`echo $BNAME | cut -d'.' -f1`
+    echo $FT $DNAME $BNAME $FNAME
+    pipe2ucsf $FT ${DNAME}/${FNAME}.ucsf
+end
+
+# Peak list
+# The peak list is in wrong order.
+../scripts/sparky_shift1_col.sh ../peak_lists/peaks.sparky
+sparky $DIRN1/test.ucsf
+# Open peak list with 'rp', and open ../peak_lists/peaks.sparky.shift
+# Save peak list with 'lt', Options, adding 'Data height, Signal / Noise', as test.list in $HOME/Sparky/Lists/test.list
+cp $HOME/Sparky/Lists/test.list ../peak_lists/peaks_corr_final.list
+
+#Generate spectral point file
+#Create a file with spectral point information with script stPeakList.pl .
+../scripts/stPeakList.pl ${DIRS[1]}/test.ft2 ../peak_lists/peaks_corr_final.list > peaks_list.tab
+cp peaks_list.tab ../peak_lists/
+cat peaks_list.tab
+
+# Make a file name of .ft2 fil
+echo "test.ft2" > ft2_file.ls
+
+# Measure the height or sum in a spectral point box
+mkdir peak_lists
+ 
+foreach line ("`tail -n+2 exp_parameters.txt`")
+  set argv=( $line )
+  set DIRN=$1
+  set I=$2
+  set deltadof2=$3
+  set dpwr2slock=$4
+  set ncyc=$5
+  set trim=$6
+  set ss=$7
+  set sfrq=$8
+  echo $I
+  set FNAME=${I}_${deltadof2}_${dpwr2slock}_${ncyc}
+  cd $DIRN
+  seriesTab -in ../peaks_list.tab -out ${FNAME}_max_standard.ser -list ../ft2_file.ls -max
+  seriesTab -in ../peaks_list.tab -out ${FNAME}_max_dx1_dy1.ser -list ../ft2_file.ls -max -dx 1 -dy 1
+  seriesTab -in ../peaks_list.tab -out ${FNAME}_sum_dx1_dy1.ser -list ../ft2_file.ls -sum -dx 1 -dy 1
+  cp ${FNAME}_max_standard.ser ../peak_lists
+  cd ..
+end
+
+# The calibration values is found from: Original_data/NCBD_31C_WT_0Murea_t1rho/decayFiles/expList.txt
+spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
+

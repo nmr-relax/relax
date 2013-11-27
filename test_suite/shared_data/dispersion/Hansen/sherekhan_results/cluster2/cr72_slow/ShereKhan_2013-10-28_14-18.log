@@ -1,0 +1,100 @@
+ShereKhan ver. 1.0
+
+Adam Mazur, Bjoern Hammesfahr, Christian Griesinger, Donghan Lee and Martin Kollmar
+
+Department of NMR-based Structural Biology
+Max-Planck-Institute for Biophysical Chemistry
+Am Fassberg 11
+37077 Goettingen, Germany
+
+Please cite:
+A. Mazur, B. Hammesfahr, C. Griesinger, D. Lee, M. Kollmar; Bioinformatics, 2013, 29(14):1819-1820
+---
+Mon Oct 28 14:20:04 2013
+
+Input data:
+
+Exchange regime: slow
+Model: CR
+
+Grid search for initial parameters:
+
+kex:    min:    100.0  max:  10000.0 nsteps:   6
+csd:    min:    0.100  max:   10.000 nsteps:   6
+pB:     min:    0.010  max:    0.490 nsteps:   4
+
+Initial values:
+kAB:   20.800
+kBA: 2059.200
+csd:    4.060
+
+Residues:
+
+GLY70 
+
+Dataset 1:
+Field, tcp [MHz, s]:
+50.70
+0.030
+#v_cpmg(Hz)   R2(1/s)      Esd(R2)      R2_calc
+# GLY70
+  66.667       16.046        0.412       15.408
+ 133.333       14.878        0.402       14.725
+ 200.000       14.358        0.398       14.017
+ 266.667       12.664        0.384       13.125
+ 333.333       12.363        0.382       12.163
+ 400.000       11.093        0.372       11.284
+ 466.667       10.566        0.368       10.548
+ 533.333        9.806        0.363        9.952
+ 600.000        9.564        0.361        9.475
+ 666.667        9.016        0.357        9.094
+ 733.333        8.608        0.355        8.787
+ 800.000        8.280        0.352        8.539
+ 866.667        8.475        0.354        8.336
+ 933.333        8.159        0.352        8.169
+1000.000        7.989        0.350        8.029
+
+Dataset 2:
+Field, tcp [MHz, s]:
+81.12
+0.030
+#v_cpmg(Hz)   R2(1/s)      Esd(R2)      R2_calc
+# GLY70
+  66.667       22.225        0.229       21.854
+ 133.333       21.231        0.224       21.313
+ 200.000       20.604        0.221       20.804
+ 266.667       20.328        0.219       20.328
+ 333.333       18.855        0.212       19.485
+ 400.000       18.538        0.210       18.364
+ 466.667       17.508        0.206       17.199
+ 533.333       16.036        0.199       16.127
+ 600.000       15.168        0.195       15.195
+ 666.667       14.432        0.192       14.406
+ 733.333       14.034        0.191       13.746
+ 800.000       12.920        0.186       13.195
+ 866.667       12.654        0.185       12.734
+ 933.333       12.611        0.185       12.347
+1000.000       11.969        0.183       12.021
+
+---
+Exchange regime: slow
+Model: CR
+---
+npar=5 nvar=30 ndof=25 chi2=  28.814 chi2/dof=   1.153
+---
+kAB:   17.692  +-     1.213
+kBA: 1723.975  +-   139.743
+---
+kex: 1741.668  +-   139.748
+ pB:    0.010  +-     0.001
+---
+resId:         csd [ppm]          R2_0 ( 50.7 MHz)        R2_0 ( 81.1 MHz) 
+---
+GLY70:    5.611 +-    0.144       6.973 +-    0.154       9.421 +-    0.267
+---
+Solution found:
+Both actual and predicted relative reductions in the sum of squares
+  are at most 0.000000
+Number of function evaluations: 51
+Calculations finished successfully.
+

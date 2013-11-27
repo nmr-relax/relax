@@ -1,0 +1,39 @@
+# Reading and processing the data for 1H/15N DQ coherences.
+
+read ../dq_500.res d 1 D H1/N15 25 500 0.03 @ c    # 15N/1H DQ data at 500 MHz
+read ../dq_600.res d 1 D H1/N15 25 600 0.03 @ c    # 15N/1H DQ data at 600 MHz
+read ../dq_800.res d 1 D H1/N15 25 800 0.03 @ c    # 15N/1H DQ data at 800 MHz
+
+# seting initial approximations for exchange parameters
+# performing two seperate optimizations (1) with delta_cs(N)>0, delta_cs(H)<0 and 
+# (2) with delta_cs(N)<0, delta_cs(H)>0
+
+set m 3 0            # set 2-site exchange model; no simultaneous 15N/1H 180 pulse is applied in MQ sequences
+set k @ 0 360.609744568697238 u      # set kex(AB) equal to 500 1/s; adjustable (u)
+set p @ 0 0.999999 f # set populations 95%/5%
+set p @ 1 0.056874648236089 u     
+set c @ N15 0 0 @ f
+set c @ N15 1 0 4.421827493809807 u  # set 15N chemical shift in state B equals to 2.0, adjustable
+set c @ H1 0 0 @ f
+set c @ H1 1 0 -0.272637034755752 u # set 1H chemical shift in state B equals to -0.2, adjustable 
+set r @ S H1  25 500 @  6.671649051677150 u g
+set r @ S H1  25 600 @  6.988634195648529 u g
+set r @ S H1  25 800 @  5.527971316790596 u g
+set r @ S N15 25 500 @  8.394988400015988 u g
+set r @ S N15 25 600 @  8.891359568401835 u g
+set r @ S N15 25 800 @ 10.405356669006709 u g
+set r @ Z N15 25 500 @  5.936446687394352 u g
+set r @ Z N15 25 600 @  6.717058062814535 u g
+set r @ Z N15 25 800 @  6.838733853403030 u g
+set r @ D N15 25 500 @  8.593136215779710 u g
+set r @ D N15 25 600 @ 10.651511259239674 u g
+set r @ D N15 25 800 @ 12.567902357560627 u g
+set r @ M H1  25 500 @  7.851325614877817 u g
+set r @ M H1  25 600 @  8.408803624020202 u g
+set r @ M H1  25 800 @ 11.227489645758979 u g
+set r @ M N15 25 500 @  9.189159145380575 u g
+set r @ M N15 25 600 @  9.856814478405868 u g
+set r @ M N15 25 800 @ 11.967910041807118 u g
+min                   # perform minimization
+write > d
+write > p

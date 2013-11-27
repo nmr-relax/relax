@@ -31,5 +31,6 @@ __all__ = [
     'jw_mapping',
     'mf',
     'n_state_model',
-    'potential'
+    'potential',
+    'relax_disp'
 ]

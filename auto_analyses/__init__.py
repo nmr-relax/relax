@@ -26,6 +26,7 @@ __all__ = [
     'dauvergne_protocol',
     'frame_order',
     'noe',
+    'relax_disp',
     'relax_fit',
     'stereochem_analysis'
 ]
