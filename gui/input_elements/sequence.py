@@ -175,7 +175,7 @@ class Sequence:
             sub_sizer.AddSpacer(5)
 
             # The edit button.
-            button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.edit_rename', "16x16"), wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.edit-rename', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Edit the values.")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -565,7 +565,7 @@ class Sequence_window(wx.Dialog):
 
             # The delete all button.
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete all")
-            button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit_delete', "22x22"), wx.BITMAP_TYPE_ANY))
+            button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
             button.SetToolTipString("Delete all items.")
             button.SetMinSize(self.SIZE_BUTTON)

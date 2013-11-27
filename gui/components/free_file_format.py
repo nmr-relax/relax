@@ -610,7 +610,7 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
 
         # The reset button.
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Reset")
-        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit_delete', "22x22"), wx.BITMAP_TYPE_ANY))
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.edit-delete', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
         button.SetToolTipString("Reset the free file format settings to the original values.")
         button.SetMinSize(self.SIZE_BUTTON)

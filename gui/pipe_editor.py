@@ -216,7 +216,7 @@ class Pipe_editor(wx.Frame):
 
         # The delete button.
         self.button_delete = wx.lib.buttons.ThemedGenBitmapTextButton(self.main_panel, -1, None, " Delete")
-        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list_remove', "22x22"), wx.BITMAP_TYPE_ANY))
+        self.button_delete.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
         self.button_delete.SetFont(font.normal)
         self.button_delete.SetToolTipString("Delete a data pipe.")
         button_sizer.Add(self.button_delete, 1, wx.ALL|wx.EXPAND, 0)
