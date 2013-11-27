@@ -25,7 +25,7 @@
 # Python module imports.
 from minfx.generic import generic_minimise
 from minfx.grid import grid
-from numpy import dot, float64, int32, zeros
+from numpy import dot, float64, int32, ones, zeros
 from numpy.linalg import inv
 from re import search
 import sys
@@ -110,7 +110,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
                     else:
                         num = len(spin_lock_nu1[exp_type_index][frq_index])
                     values[exp_type_index][0].append(zeros(num, float64))
-                    errors[exp_type_index][0].append(zeros(num, float64))
+                    errors[exp_type_index][0].append(ones(num, float64))
                     missing[exp_type_index][0].append(zeros(num, int32))
 
     # Initialise the relaxation dispersion fit functions.
