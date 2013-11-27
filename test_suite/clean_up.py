@@ -61,6 +61,7 @@ def deletion(obj=None, name=None, dir=False):
 
     # Already deleted.
     except OSError:
+        pass
 
     # Handle MS Windows strangeness.
     except:
