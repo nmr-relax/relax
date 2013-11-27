@@ -164,7 +164,7 @@ class Relax_disp(GuiTestCase):
         analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
 
         # Load the sequence.
-        file = data_path + 'fake_sequence.in_trunc'
+        file = data_path + 'fake_sequence.in'
         self._execute_uf(uf_name='sequence.read', file=file, mol_name_col=None, res_num_col=1, res_name_col=2, spin_name_col=None, spin_num_col=None)
 
         # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
@@ -178,44 +178,44 @@ class Relax_disp(GuiTestCase):
 
         # The spectral data - spectrum ID, peak list file name, CPMG frequency (Hz), spectrometer frequency in Hertz.
         data = [
-            ['500_reference.in',    '500_MHz'+sep+'reference.in_trunc',           None,  500e6],
-            ['500_66.667.in',       '500_MHz'+sep+'66.667.in_trunc',           66.6666,  500e6],
-            ['500_133.33.in',       '500_MHz'+sep+'133.33.in_trunc',          133.3333,  500e6],
-            ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  500e6],
-            ['500_200.in',          '500_MHz'+sep+'200.in_trunc',             200.0000,  500e6],
-            ['500_266.67.in',       '500_MHz'+sep+'266.67.in_trunc',          266.6666,  500e6],
-            ['500_333.33.in',       '500_MHz'+sep+'333.33.in_trunc',          333.3333,  500e6],
-            ['500_400.in',          '500_MHz'+sep+'400.in_trunc',             400.0000,  500e6],
-            ['500_466.67.in',       '500_MHz'+sep+'466.67.in_trunc',          466.6666,  500e6],
-            ['500_533.33.in',       '500_MHz'+sep+'533.33.in_trunc',          533.3333,  500e6],
-            ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  500e6],
-            ['500_600.in',          '500_MHz'+sep+'600.in_trunc',             600.0000,  500e6],
-            ['500_666.67.in',       '500_MHz'+sep+'666.67.in_trunc',          666.6666,  500e6],
-            ['500_733.33.in',       '500_MHz'+sep+'733.33.in_trunc',          733.3333,  500e6],
-            ['500_800.in',          '500_MHz'+sep+'800.in_trunc',             800.0000,  500e6],
-            ['500_866.67.in',       '500_MHz'+sep+'866.67.in_trunc',          866.6666,  500e6],
-            ['500_933.33.in',       '500_MHz'+sep+'933.33.in_trunc',          933.3333,  500e6],
-            ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  500e6],
-            ['500_1000.in',         '500_MHz'+sep+'1000.in_trunc',           1000.0000,  500e6],
-            ['800_reference.in',    '800_MHz'+sep+'reference.in_trunc',           None,  800e6],
-            ['800_66.667.in',       '800_MHz'+sep+'66.667.in_trunc',           66.6666,  800e6],
-            ['800_133.33.in',       '800_MHz'+sep+'133.33.in_trunc',          133.3333,  800e6],
-            ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis_trunc',      133.3333,  800e6],
-            ['800_200.in',          '800_MHz'+sep+'200.in_trunc',             200.0000,  800e6],
-            ['800_266.67.in',       '800_MHz'+sep+'266.67.in_trunc',          266.6666,  800e6],
-            ['800_333.33.in',       '800_MHz'+sep+'333.33.in_trunc',          333.3333,  800e6],
-            ['800_400.in',          '800_MHz'+sep+'400.in_trunc',             400.0000,  800e6],
-            ['800_466.67.in',       '800_MHz'+sep+'466.67.in_trunc',          466.6666,  800e6],
-            ['800_533.33.in',       '800_MHz'+sep+'533.33.in_trunc',          533.3333,  800e6],
-            ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis_trunc',      533.3333,  800e6],
-            ['800_600.in',          '800_MHz'+sep+'600.in_trunc',             600.0000,  800e6],
-            ['800_666.67.in',       '800_MHz'+sep+'666.67.in_trunc',          666.6666,  800e6],
-            ['800_733.33.in',       '800_MHz'+sep+'733.33.in_trunc',          733.3333,  800e6],
-            ['800_800.in',          '800_MHz'+sep+'800.in_trunc',             800.0000,  800e6],
-            ['800_866.67.in',       '800_MHz'+sep+'866.67.in_trunc',          866.6666,  800e6],
-            ['800_933.33.in',       '800_MHz'+sep+'933.33.in_trunc',          933.3333,  800e6],
-            ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis_trunc',      933.3333,  800e6],
-            ['800_1000.in',         '800_MHz'+sep+'1000.in_trunc',           1000.0000,  800e6]
+            ['500_reference.in',    '500_MHz'+sep+'reference.in',           None,  500e6],
+            ['500_66.667.in',       '500_MHz'+sep+'66.667.in',           66.6666,  500e6],
+            ['500_133.33.in',       '500_MHz'+sep+'133.33.in',          133.3333,  500e6],
+            ['500_133.33.in.bis',   '500_MHz'+sep+'133.33.in.bis',      133.3333,  500e6],
+            ['500_200.in',          '500_MHz'+sep+'200.in',             200.0000,  500e6],
+            ['500_266.67.in',       '500_MHz'+sep+'266.67.in',          266.6666,  500e6],
+            ['500_333.33.in',       '500_MHz'+sep+'333.33.in',          333.3333,  500e6],
+            ['500_400.in',          '500_MHz'+sep+'400.in',             400.0000,  500e6],
+            ['500_466.67.in',       '500_MHz'+sep+'466.67.in',          466.6666,  500e6],
+            ['500_533.33.in',       '500_MHz'+sep+'533.33.in',          533.3333,  500e6],
+            ['500_533.33.in.bis',   '500_MHz'+sep+'533.33.in.bis',      533.3333,  500e6],
+            ['500_600.in',          '500_MHz'+sep+'600.in',             600.0000,  500e6],
+            ['500_666.67.in',       '500_MHz'+sep+'666.67.in',          666.6666,  500e6],
+            ['500_733.33.in',       '500_MHz'+sep+'733.33.in',          733.3333,  500e6],
+            ['500_800.in',          '500_MHz'+sep+'800.in',             800.0000,  500e6],
+            ['500_866.67.in',       '500_MHz'+sep+'866.67.in',          866.6666,  500e6],
+            ['500_933.33.in',       '500_MHz'+sep+'933.33.in',          933.3333,  500e6],
+            ['500_933.33.in.bis',   '500_MHz'+sep+'933.33.in.bis',      933.3333,  500e6],
+            ['500_1000.in',         '500_MHz'+sep+'1000.in',           1000.0000,  500e6],
+            ['800_reference.in',    '800_MHz'+sep+'reference.in',           None,  800e6],
+            ['800_66.667.in',       '800_MHz'+sep+'66.667.in',           66.6666,  800e6],
+            ['800_133.33.in',       '800_MHz'+sep+'133.33.in',          133.3333,  800e6],
+            ['800_133.33.in.bis',   '800_MHz'+sep+'133.33.in.bis',      133.3333,  800e6],
+            ['800_200.in',          '800_MHz'+sep+'200.in',             200.0000,  800e6],
+            ['800_266.67.in',       '800_MHz'+sep+'266.67.in',          266.6666,  800e6],
+            ['800_333.33.in',       '800_MHz'+sep+'333.33.in',          333.3333,  800e6],
+            ['800_400.in',          '800_MHz'+sep+'400.in',             400.0000,  800e6],
+            ['800_466.67.in',       '800_MHz'+sep+'466.67.in',          466.6666,  800e6],
+            ['800_533.33.in',       '800_MHz'+sep+'533.33.in',          533.3333,  800e6],
+            ['800_533.33.in.bis',   '800_MHz'+sep+'533.33.in.bis',      533.3333,  800e6],
+            ['800_600.in',          '800_MHz'+sep+'600.in',             600.0000,  800e6],
+            ['800_666.67.in',       '800_MHz'+sep+'666.67.in',          666.6666,  800e6],
+            ['800_733.33.in',       '800_MHz'+sep+'733.33.in',          733.3333,  800e6],
+            ['800_800.in',          '800_MHz'+sep+'800.in',             800.0000,  800e6],
+            ['800_866.67.in',       '800_MHz'+sep+'866.67.in',          866.6666,  800e6],
+            ['800_933.33.in',       '800_MHz'+sep+'933.33.in',          933.3333,  800e6],
+            ['800_933.33.in.bis',   '800_MHz'+sep+'933.33.in.bis',      933.3333,  800e6],
+            ['800_1000.in',         '800_MHz'+sep+'1000.in',           1000.0000,  800e6]
         ]
 
         # Replicated spectra.
@@ -238,7 +238,7 @@ class Relax_disp(GuiTestCase):
 
         # The spectrum.
         for id, file, cpmg_frq, H_frq in data:
-            wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height', dim=1)
+            wizard.setup_page(page='read', file=data_path+file, spectrum_id=id, int_method='height', int_col=2, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None)
             wizard._apply(None)
         wizard._skip(None)
 
@@ -313,6 +313,16 @@ class Relax_disp(GuiTestCase):
         # Optimisation speedups.
         analysis.opt_func_tol = 1e-5
         analysis.opt_max_iterations = 1000
+
+        # Perform the error analysis.
+        self._execute_uf(uf_name='spectrum.error_analysis', subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
+        self._execute_uf(uf_name='spectrum.error_analysis', subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+
+        # Delete all residues but :4, :70 and :71.
+        for i in range(1, 100):
+            if i in [4, 70, 71]:
+                continue
+            self._execute_uf(uf_name='residue.delete', res_id=":%s" % i)
 
         # Execute relax.
         analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
