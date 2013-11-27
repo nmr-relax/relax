@@ -139,8 +139,7 @@ class Relax_disp(SystemTestCase):
 
         This loads the proton-heteronuclear SQ, ZQ, DQ, and MQ (MMQ) data from:
 
-            - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005)  Multiple-site exchange in proteins studied with a suite of six
-NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  127, 15602-15611 (U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}).
+            - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005)  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  127, 15602-15611 (U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}).
 
         It consists of the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
