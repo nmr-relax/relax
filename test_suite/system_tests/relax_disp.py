@@ -1513,7 +1513,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.dw, 2.8537583461577, 4)
         self.assertAlmostEqual(spin.dwH, -0.387633062766635, 4)
         self.assertAlmostEqual(spin.kex/1000, 573.704033851592/1000, 4)
-        self.assertAlmostEqual(spin.chi2, 9.29563496654824, 3)
+        self.assertAlmostEqual(spin.chi2, 9.29563496654824, 2)
 
 
     def test_korzhnev_2005_15n_mq_data(self):
@@ -1722,7 +1722,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.r2[r20_key2], 6.66368695342258, 2)
         self.assertAlmostEqual(spin.r2[r20_key3], 6.78922219135537, 2)
         self.assertAlmostEqual(spin.pA, 0.942457332074014, 4)
-        self.assertAlmostEqual(spin.dw, 0.850592422908884, 3)
+        self.assertAlmostEqual(spin.dw, 0.850592422908884, 1)
         self.assertAlmostEqual(spin.dwH, 0.0881272284455416, 3)
         self.assertAlmostEqual(spin.kex/1000, 372.745483351305/1000, 3)
         self.assertAlmostEqual(spin.chi2, 23.8464637019392, 2)
@@ -1859,12 +1859,12 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 6.69107911078939, 3)
-        self.assertAlmostEqual(spin.r2[r20_key2], 6.99888898689085, 3)
-        self.assertAlmostEqual(spin.r2[r20_key3], 5.52012880268077, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 6.69107911078939, 2)
+        self.assertAlmostEqual(spin.r2[r20_key2], 6.99888898689085, 2)
+        self.assertAlmostEqual(spin.r2[r20_key3], 5.52012880268077, 2)
         self.assertAlmostEqual(spin.pA, 0.946990967372467, 4)
         self.assertAlmostEqual(spin.dwH, -0.265308128403529, 4)
-        self.assertAlmostEqual(spin.kex/1000, 406.843250675648/1000, 4)
+        self.assertAlmostEqual(spin.kex/1000, 406.843250675648/1000, 2)
         self.assertAlmostEqual(spin.chi2, 50.3431330819767, 1)
 
 
