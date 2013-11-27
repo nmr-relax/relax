@@ -967,6 +967,9 @@ def delete_molecule(mol_id=None):
         if len(cdp.mol) == 0:
             cdp.mol.add_item()
 
+        # Update all metadata.
+        metadata_update()
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -1018,6 +1021,9 @@ def delete_residue(res_id=None):
             if len(mol.res) == 0:
                 mol.res.add_item()
 
+        # Update all metadata.
+        metadata_update()
+
     # Release the lock.
     finally:
         status.spin_lock.release(sys._getframe().f_code.co_name)
@@ -1065,6 +1071,9 @@ def delete_spin(spin_id=None):
             # Create an empty spin container if no spins remain.
             if len(res.spin) == 0:
                 res.spin.add_item()
+
+        # Update all metadata.
+        metadata_update()
 
     # Release the lock.
     finally:
