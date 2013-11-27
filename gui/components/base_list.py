@@ -333,8 +333,10 @@ class Base_list(object):
         # Find the item clicked on.
         item, flags = self.element.HitTest(pos)
 
-        # Get the ID string.
-        id = self.element.GetItemText(item)
+        # Get the ID string (handling wxPython 2.9 ListCtrl.HitTest() bugs).
+        id = None
+        if item != -1:
+            id = self.element.GetItemText(item)
 
         # Get the menu.
         popup_menus = self.generate_popup_menu(id=id)
