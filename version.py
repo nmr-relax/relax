@@ -35,7 +35,7 @@ if dep_check.subprocess_module:
 from status import Status; status = Status()
 
 
-version = "repository checkout"
+version = "3.1.0"
 
 
 def revision():
