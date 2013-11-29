@@ -1,4 +1,30 @@
-# Script for CPMG relaxation dispersion curve fitting using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+###############################################################################
+#                                                                             #
+# Copyright (C) 2013 Edward d'Auvergne                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+"""Script for performing a full relaxation dispersion analysis using CPMG-type data.
+
+This uses Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+
+This is here to test the ./sample_scripts/relax_disp/cpmg_analysis.py sample script.  The differences between the two files should be minimal.
+"""
 
 # Python module imports.
 from os import sep
@@ -21,8 +47,20 @@ GRID_INC = 11
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
 
+# A flag which if True will activate Monte Carlo simulations for all models.  Note this will hugely increase the computation time.
+MC_SIM_ALL_MODELS = False
+
 # The results directory.
 RESULTS_DIR = 'temp'
+
+# The directory of results of an earlier analysis without clustering.
+PRE_RUN_DIR = None
+
+# The model selection technique to use.
+MODSEL = 'AIC'
+
+# The flag for only using numeric models in the final model selection.
+NUMERIC_ONLY = False
 
 # The R2eff/R1rho value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
 INSIGNIFICANCE = 1.0
@@ -32,16 +70,16 @@ INSIGNIFICANCE = 1.0
 # Set up the data pipe.
 #######################
 
+# The path to the data files.
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+
 # Create the data pipe.
 pipe_name = 'base pipe'
 pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
-# The path to the data files.
-data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
-
 # Load the sequence.
-sequence.read('fake_sequence.in', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen', res_num_col=1, res_name_col=2)
+sequence.read('fake_sequence.in', dir=DATA_PATH, res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
 spin.name(name='N')
@@ -92,7 +130,7 @@ data = [
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
-    spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
+    spectrum.read_intensities(file=file, dir=DATA_PATH, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
     relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
@@ -119,8 +157,8 @@ spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33
 spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=data_path+sep+'500_MHz', res_num_col=1)
-deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+sep+'500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+sep+'800_MHz', res_num_col=1)
 
 
 
@@ -128,4 +166,4 @@ deselect.read(file='unresolved', dir=data_path+sep+'800_MHz', res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, insignificance=INSIGNIFICANCE)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=PRE_RUN_DIR, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY, mc_sim_all_models=MC_SIM_ALL_MODELS)
