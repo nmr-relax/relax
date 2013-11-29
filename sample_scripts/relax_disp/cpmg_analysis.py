@@ -64,13 +64,16 @@ INSIGNIFICANCE = 1.0
 # Set up the data pipe.
 #######################
 
+# The path to the data files.
+DATA_PATH = '../../test_suite/shared_data/dispersion/Hansen/'
+
 # Create the data pipe.
 pipe_name = 'base pipe'
 pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 # Load the sequence.
-sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
+sequence.read('fake_sequence.in', dir=DATA_PATH, res_num_col=1, res_name_col=2)
 
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
 spin.name(name='N')
@@ -121,7 +124,7 @@ data = [
 # Loop over the spectra.
 for id, file, cpmg_frq, H_frq in data:
     # Load the peak intensities.
-    spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
+    spectrum.read_intensities(file=file, dir=DATA_PATH, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
     relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
@@ -148,8 +151,8 @@ spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33
 spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir='500_MHz', res_num_col=1)
-deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+'500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+'800_MHz', res_num_col=1)
 
 
 
