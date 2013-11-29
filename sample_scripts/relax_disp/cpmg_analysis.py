@@ -65,7 +65,7 @@ INSIGNIFICANCE = 1.0
 #######################
 
 # The path to the data files.
-DATA_PATH = '../../test_suite/shared_data/dispersion/Hansen/'
+DATA_PATH = '../../test_suite/shared_data/dispersion/Hansen'
 
 # Create the data pipe.
 pipe_name = 'base pipe'
@@ -151,8 +151,8 @@ spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33
 spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
 
 # Deselect unresolved spins.
-deselect.read(file='unresolved', dir=DATA_PATH+'500_MHz', res_num_col=1)
-deselect.read(file='unresolved', dir=DATA_PATH+'800_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+sep+'500_MHz', res_num_col=1)
+deselect.read(file='unresolved', dir=DATA_PATH+sep+'800_MHz', res_num_col=1)
 
 
 
