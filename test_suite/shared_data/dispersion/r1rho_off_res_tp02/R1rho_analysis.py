@@ -21,7 +21,7 @@
 
 """Script for performing a full relaxation dispersion analysis using off-resonance R1rho-type data.
 
-This is here to test the ./sample_scripts/relax_disp/R1rho_analysis.py sample script.  This difference between that file and this one should be absolutely minimal.
+This is here to test the ./sample_scripts/relax_disp/R1rho_analysis.py sample script.  The differences between the two files should be minimal.
 """
 
 
