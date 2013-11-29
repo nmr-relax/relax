@@ -77,7 +77,7 @@ spin.isotope(isotope='15N')
 
 # The spectral data - spectrum ID, peak list file name, spin-lock field strength (Hz), the spin-lock offset (ppm), the relaxation time (s), spectrometer frequency (Hz), and experimental error (RMSD of the base plane noise for each spectrum).
 data = [
-    ['ref_500MHz',       'ref_500MHz.list',     ,   None, 110.0, 0.1, 500e6, 200000.0]
+    ['ref_500MHz',       'ref_500MHz.list',         None, 110.0, 0.1, 500e6, 200000.0]
     ['nu_1000.0_500MHz', 'nu_1000.0_500MHz.list', 1000.0, 110.0, 0.1, 500e6, 200000.0]
     ['nu_1500.0_500MHz', 'nu_1500.0_500MHz.list', 1500.0, 110.0, 0.1, 500e6, 200000.0]
     ['nu_2000.0_500MHz', 'nu_2000.0_500MHz.list', 2000.0, 110.0, 0.1, 500e6, 200000.0]
