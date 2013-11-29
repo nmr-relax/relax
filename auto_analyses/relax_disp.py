@@ -30,7 +30,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.list import unique_elements
-from lib.text.sectioning import title, subtitle
+from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
@@ -142,6 +142,9 @@ class Relax_disp:
     def check_vars(self):
         """Check that the user has set the variables correctly."""
 
+        # Printout.
+        section(file=sys.stdout, text="Variable checking", prespace=2)
+
         # The pipe name.
         if not has_pipe(self.pipe_name):
             raise RelaxNoPipeError(self.pipe_name)
@@ -163,9 +166,15 @@ class Relax_disp:
                 if model in MODEL_LIST_ANALYTIC:
                     warn(RelaxWarning("The analytic model '%s' will be optimised but will not be used in any way in this numeric model only auto-analysis." % model))
 
+        # Printout.
+        print("The dispersion auto-analysis variables are OK.")
+
 
     def error_analysis(self):
         """Perform an error analysis of the peak intensities for each field strength separately."""
+
+        # Printout.
+        section(file=sys.stdout, text="Error analysis", prespace=2)
 
         # Check if intensity errors have already been calculated by the user.
         precalc = True
@@ -216,6 +225,9 @@ class Relax_disp:
         @rtype:         bool
         """
 
+        # Printout. 
+        subsection(file=sys.stdout, text="Nesting and model equivalence checks", prespace=1)
+
         # The simpler model.
         nested_pipe = None
         if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
@@ -239,6 +251,7 @@ class Relax_disp:
 
         # No nesting.
         if not nested_pipe:
+            print("No model nesting or model equivalence detected.")
             return False
 
         # Printout.
@@ -279,6 +292,9 @@ class Relax_disp:
         @type model:    str
         """
 
+        # Printout. 
+        section(file=sys.stdout, text="Optimisation", prespace=2)
+
         # Deselect insignificant spins.
         if model not in ['R2eff', 'No Rex']:
             self.interpreter.relax_disp.insignificance(level=self.insignificance)
@@ -318,6 +334,9 @@ class Relax_disp:
         @keyword model: The model to be optimised.
         @type model:    str
         """
+
+        # Printout.
+        subsection(file=sys.stdout, text="Pre-run parameters", prespace=1)
 
         # Create a temporary data pipe for the previous run.
         self.interpreter.pipe.create(pipe_name='pre', pipe_type='relax_disp')
@@ -397,6 +416,9 @@ class Relax_disp:
 
         # The final model selection data pipe.
         if len(self.models) >= 2:
+            # Printout.
+            section(file=sys.stdout, text="Final results", prespace=2)
+
             # Perform model selection.
             self.interpreter.model_selection(method=self.modsel, modsel_pipe='final', bundle=self.pipe_bundle, pipes=self.model_pipes)
 
@@ -426,6 +448,9 @@ class Relax_disp:
         @keyword path:  The directory to place the files into.
         @type path:     str
         """
+
+        # Printout.
+        section(file=sys.stdout, text="Results writing", prespace=2)
 
         # Exponential curves.
         if model == 'R2eff' and has_exponential_exp_type():
