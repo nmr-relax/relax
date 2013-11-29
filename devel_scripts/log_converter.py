@@ -30,7 +30,7 @@ file.close()
 msg = ''
 for line in lines:
     # The separator, so reinitialise everything.
-    if search('-----', line):
+    if search('^-----', line):
         # First, print the old message.
         print("        * " + msg)
 
