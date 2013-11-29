@@ -131,7 +131,7 @@ for id, file, field, offset, relax_time, H_frq, rmsd in data:
 relax_data.read(ri_id='500MHz', ri_type='R1', frq=500e6, file='R1_500MHz.out', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 relax_data.read(ri_id='800MHz', ri_type='R1', frq=800e6, file='R1_800MHz.out', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
-# Clustering.
+# Clustering (only to be activated after an initial analysis without clustering).
 #relax_disp.cluster(cluster_id='cluster', spin_id=':1-50')
 
 # Read the chemical shift data.
