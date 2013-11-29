@@ -41,8 +41,14 @@ GRID_INC = 11
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 500
 
+# A flag which if True will activate Monte Carlo simulations for all models.  Note this will hugely increase the computation time.
+MC_SIM_ALL_MODELS = False
+
 # The results directory.
 RESULTS_DIR = '.'
+
+# The directory of results of an earlier analysis without clustering.
+PRE_RUN_DIR = None
 
 # The model selection technique to use.
 MODSEL = 'AIC'
@@ -143,4 +149,4 @@ deselect.read(file='unresolved', dir=DATA_PATH, res_num_col=1)
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, pre_run_dir=PRE_RUN_DIR, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY, mc_sim_all_models=MC_SIM_ALL_MODELS)
