@@ -126,5 +126,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[i] = 1e100
             continue
 
+        # The arccosh argument - catch invalid values.
+        fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
+        if fact < 1.0:
+            back_calc[i] = r20_kex
+            continue
+
         # The full formula.
-        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
+        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(fact)
