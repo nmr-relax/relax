@@ -194,6 +194,17 @@ class Relax_disp(API_base, API_common):
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
+                # Check for missing data.
+                missing = False
+                for i in range(len(ref_keys)):
+                    if ref_keys[i] not in spin.intensities:
+                        missing = True
+                for i in range(len(int_keys)):
+                    if int_keys[i] not in spin.intensities:
+                        missing = True
+                if missing:
+                    continue
+
                 # Average the reference intensity data and errors.
                 ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
                 ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
