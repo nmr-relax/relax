@@ -48,6 +48,7 @@ from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
 from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
+from lib.float import isNaN
 from target_functions.chi2 import chi2
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_2SITE, MODEL_MP05, MODEL_MQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
@@ -231,7 +232,13 @@ class Dispersion:
                 for frq_index in range(self.num_frq):
                     self.power[exp_type_index].append(zeros(self.num_disp_points[exp_type_index][frq_index], int16))
                     for i in range(self.num_disp_points[exp_type_index][frq_index]):
-                        self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
+                        # Missing data for an entire field strength.
+                        if isNaN(self.relax_times[exp_type_index][frq_index]):
+                            self.power[exp_type_index][frq_index][i] = 0.0
+
+                        # Normal value.
+                        else:
+                            self.power[exp_type_index][frq_index][i] = int(round(self.cpmg_frqs[exp_type_index][frq_index][i] * self.relax_times[exp_type_index][frq_index]))
 
             # The tau_cpmg times.
             self.tau_cpmg = []
