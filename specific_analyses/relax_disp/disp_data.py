@@ -36,6 +36,7 @@ The dispersion data model is based on the following concepts, in order of import
 from math import atan, floor, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from random import gauss
+from re import search
 import sys
 from warnings import warn
 
@@ -1808,8 +1809,28 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
         if error == 0.0:
             raise RelaxError("An invalid error value of zero has been encountered.")
 
-        # Generate a new spectrum ID.
-        new_id = "%s_%s" % (id, disp_point)
+        # Find the matching spectrum ID.
+        new_id = None
+        for spectrum_id in cdp.spectrum_ids:
+            # Skip IDs which don't start with the base ID.
+            if not search("^%s"%id, spectrum_id):
+                continue
+
+            # Find a close enough dispersion point (to one decimal place to allow for user truncation).
+            if hasattr(cdp, 'cpmg_frqs') and spectrum_id in cdp.cpmg_frqs:
+                if abs(disp_point - cdp.cpmg_frqs[spectrum_id]) < 0.1:
+                    new_id = spectrum_id
+                    break
+            if hasattr(cdp, 'spin_lock_nu1') and spectrum_id in cdp.spin_lock_nu1:
+                if abs(disp_point - cdp.spin_lock_nu1[spectrum_id]) < 0.1:
+                    new_id = spectrum_id
+                    break
+
+        # No match.
+        if new_id == None:
+            raise RelaxError("The experiment ID corresponding to the base ID '%s' and the dispersion point '%s' could not be found." % (id, disp_point))
+
+        # Add the ID to the list.
         new_ids.append(new_id)
 
         # Data checks.
@@ -1844,12 +1865,6 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
             # Store.
             spin.r2eff_err[point_key] = error
 
-        # Set the dispersion point frequency.
-        if exp_type in EXP_TYPE_LIST_CPMG:
-            cpmg_frq(spectrum_id=new_id, cpmg_frq=disp_point)
-        else:
-            spin_lock_field(spectrum_id=new_id, field=disp_point)
-
         # Append the data for printout.
         data.append(["%20.15f" % disp_point, "%20.15f" % value, "%20.15f" % error])
 
@@ -1861,7 +1876,6 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
         raise RelaxError("No R2eff/R1rho data could be extracted.")
 
     # Print out.
-    print("Using the experiment IDs %s." % new_ids)
     print("The following R2eff/R1rho data has been loaded into the relax data store:\n")
     write_data(out=sys.stdout, headings=["Disp_point", "R2eff", "R2eff_error"], data=data)
 
