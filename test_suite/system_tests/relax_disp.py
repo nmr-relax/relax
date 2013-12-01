@@ -2417,6 +2417,16 @@ class Relax_disp(SystemTestCase):
             spin_index += 1
 
 
+    def test_ns_mmq_3site_branched(self):
+        """Compare the 'NS MMQ 3-site (branched)' dispersion model to synthetic data from cpmg_fit."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'ns_mmq_3site_branched.py')
+
+        # Check the chi-squared value.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.0, 5)
+
+
     def test_r2eff_read(self):
         """Test the operation of the relax_disp.r2eff_read user function."""
 
