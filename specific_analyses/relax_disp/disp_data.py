@@ -45,7 +45,7 @@ from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, write_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
-from lib.warnings import RelaxNoSpinWarning
+from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
