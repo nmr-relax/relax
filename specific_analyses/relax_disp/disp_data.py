@@ -42,7 +42,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
-from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, write_data, write_spin_data
+from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, strip, write_data, write_spin_data
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
@@ -1755,6 +1755,7 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
 
     # Extract the data from the file, removing comments and blank lines.
     file_data = extract_data(file, dir, sep=sep)
+    file_data = strip(file_data)
 
     # Loop over the data.
     data = []
