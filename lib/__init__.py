@@ -42,6 +42,7 @@ __all__ = [
     'mathematics',
     'model_selection',
     'order',
+    'periodic_table',
     'physical_constants',
     'regex',
     'selection',
