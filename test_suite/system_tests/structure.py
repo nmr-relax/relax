@@ -342,6 +342,31 @@ class Structure(SystemTestCase):
         self.assertEqual(cdp.structure.sheets[1], sheets[1])
 
 
+    def test_read_gaussian_strychnine(self):
+        """Load the structure from the 'strychnine_opt_cdcl3_b3lyp_gaussian.log.bz2' compressed Gaussian log file."""
+
+        # Path of the files.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read the XYZ file.
+        self.interpreter.structure.read_gaussian(file='strychnine_opt_cdcl3_b3lyp_gaussian.log.bz2', dir=path, set_mol_name='strychnine')
+
+        # Test the molecule data.
+        self.assertEqual(len(cdp.structure.structural_data), 1)
+        self.assertEqual(len(cdp.structure.structural_data[0].mol), 1)
+
+        # Load the carbon atoms and test it.
+        self.interpreter.structure.load_spins('@C')
+        self.assertEqual(count_spins(), 21)
+
+        # Load the protons.
+        self.interpreter.structure.load_spins('@H')
+        self.assertEqual(count_spins(), 43)
+
+        # And now all the rest of the atoms.
+        self.interpreter.structure.load_spins()
+
+
     def test_read_merge(self):
         """Test the merging of two molecules into one."""
 
