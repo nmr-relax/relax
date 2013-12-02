@@ -49,7 +49,7 @@ class Table:
         """
 
         # Check that Z is correctly ordered.
-        if Z != len(self.symbol):
+        if Z != len(self.symbol)+1:
             raise RelaxError("Incorrect setup.")
 
         # Append the values.
