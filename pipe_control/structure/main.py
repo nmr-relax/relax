@@ -619,6 +619,52 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names)
 
 
+def read_gaussian(file=None, dir=None, set_mol_name=None, set_model_num=None, verbosity=1, fail=True):
+    """Read structures from a Gaussian log file.
+
+
+    @keyword file:          The name of the Gaussian log file to read.
+    @type file:             str
+    @keyword dir:           The directory where the Gaussian log file is located.  If set to None, then the file will be searched for in the current directory.
+    @type dir:              str or None
+    @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
+    @type set_mol_name:     None, str, or list of str
+    @keyword set_model_num: Set the model number of the loaded molecule.
+    @type set_model_num:    None, int, or list of int
+    @keyword fail:          A flag which, if True, will cause a RelaxError to be raised if the Gaussian log  file does not exist.  If False, then a RelaxWarning will be trown instead.
+    @type fail:             bool
+    @keyword verbosity:     The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+    @type verbosity:        int
+    @raise RelaxFileError:  If the fail flag is set, then a RelaxError is raised if the Gaussian log file does not exist.
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # The file path.
+    file_path = get_file_path(file, dir)
+
+    # Try adding '.log' to the end of the file path, if the file can't be found.
+    if not access(file_path, F_OK):
+        file_path_orig = file_path
+        file_path = file_path + '.log'
+
+    # Test if the file exists.
+    if not access(file_path, F_OK):
+        if fail:
+            raise RelaxFileError('Gaussian log', file_path_orig)
+        else:
+            warn(RelaxNoPDBFileWarning(file_path))
+            return
+
+    # Place the  structural object into the relax data store.
+    if not hasattr(cdp, 'structure'):
+        cdp.structure = Internal()
+
+    # Load the structures.
+    cdp.structure.load_gaussian(file_path, set_mol_name=set_mol_name, set_model_num=set_model_num, verbosity=verbosity)
+
+
 def read_pdb(file=None, dir=None, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False, fail=True):
     """The PDB loading function.
 

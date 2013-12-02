@@ -609,6 +609,58 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'load_spins.png'
 
 
+# The structure.read_gaussian user function.
+uf = uf_info.add_uf('structure.read_gaussian')
+uf.title = "Reading structures from Gaussian log files."
+uf.title_short = "Gaussian log structure reading."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the Gaussian log file.",
+    wiz_filesel_wildcard = "Gaussian log files (*.log)|*.log;*.log.gz;*.log.bz2",
+    wiz_filesel_style = FD_OPEN
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "set_mol_name",
+    py_type = "str_or_str_list",
+    desc_short = "setting of molecule names",
+    desc = "Set the names of the read molecules.  If unset, then the molecules will be automatically labelled based on the file name or other information.  This can either be a single name or a list of names.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "set_model_num",
+    py_type = "int_or_int_list",
+    desc_short = "setting of model numbers",
+    desc = "Set the model numbers of the loaded molecules.  This can be a single number or list of numbers.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The atomic positions from a Gaussian log file can be read into relax.  If optimisation has been preformed, the last set of atomic coordinates from the log will be read to obtain the final structure.  The log file can be Gzip or Bzip2 compressed.")
+uf.desc[-1].add_paragraph("The setting of molecule names is used to name the molecules within the Gaussian file.  If not set, then the molecules will be named after the file name, with the molecule number appended if more than one exists.  By setting the molecule name or setting the model number, the loaded structure can be stored as a specific model or as a different molecule.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To load all structures from the Gaussian file 'taxol.log' in the directory '~/logs', including all models and all molecules, type one of:")
+uf.desc[-1].add_prompt("relax> structure.read_gaussian('taxol.log', '~/logs')")
+uf.desc[-1].add_prompt("relax> structure.read_gaussian(file='taxol.log', dir=logs')")
+uf.backend = pipe_control.structure.main.read_gaussian
+uf.menu_text = "read_&gaussian"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 400
+uf.wizard_size = (900, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + 'read_xyz.png'
+
+
 # The structure.read_pdb user function.
 uf = uf_info.add_uf('structure.read_pdb')
 uf.title = "Reading structures from PDB files."

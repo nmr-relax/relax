@@ -23,12 +23,14 @@
 """The objects representing molecules in the internal structural object."""
 
 # Python module imports.
+from re import search
 from string import digits
 from warnings import warn
 
 # relax module import.
 from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
+from lib.periodic_table import periodic_table
 from lib.structure import pdb_read
 from lib.warnings import RelaxWarning
 
@@ -156,6 +158,54 @@ class MolContainer:
         warn(RelaxWarning("Cannot determine the element associated with atom '%s'." % atom_name))
 
 
+    def _parse_gaussian_record(self, record):
+        """Parse the Gaussian log record string and return an array of the corresponding atomic information.
+
+        The format of the Gaussian log records is::
+         __________________________________________________________________________________________
+         |         |              |                                                               |
+         | Columns | Data type    | Description                                                   |
+         |_________|______________|_______________________________________________________________|
+         |         |              |                                                               |
+         |  1      | int          | "Center Number" - the sequential atom number.                 |
+         |  2      | int          | "Atomic Number" - the atomic number.                          |
+         |  3      | int          | "Atomic Type" - the atomic type?                              |
+         |  4      | float        | X coordinate in Angstrom                                      |
+         |  5      | float        | Y coordinate in Angstrom                                      |
+         |  6      | float        | Z coordinate in Angstrom                                      |
+         |_________|______________|_______________________________________________________________|
+
+
+        @param record:  The single line Gaussian record.
+        @type record:   str
+        @return:        The list of atomic information
+        @rtype:         list of str
+        """
+
+        # Skip the header.
+        if search("---------", record):
+            return None
+        if search("Center", record):
+            return None
+        if search("Number", record):
+            return None
+
+        # Initialise.
+        word = record.split()
+
+        # Proper records.
+        if len(word) == 6:
+            # Convert strings to numbers.
+            atom_number = int(word[0])
+            atomic_num = int(word[1])
+            x = float(word[3])
+            y = float(word[4])
+            z = float(word[5])
+
+            # Return the atomic info.
+            return atom_number, atomic_num, x, y, z
+
+
     def _parse_xyz_record(self, record):
         """Parse the XYZ record string and return an array of the corresponding atomic information.
 
@@ -274,6 +324,32 @@ class MolContainer:
             self.bonded[index1].append(index2)
         if index1 not in self.bonded[index2]:
             self.bonded[index2].append(index1)
+
+
+    def fill_object_from_gaussian(self, records):
+        """Method for generating a complete Structure_container object from the given Gaussian log records.
+
+        @param records:         A list of structural Gaussian log records.
+        @type records:          list of str
+        """
+
+        # Loop over the records.
+        for record in records:
+            # Parse the record.
+            data = self._parse_gaussian_record(record)
+
+            # Nothing to do.
+            if data == None:
+                continue
+
+            # Unpack.
+            atom_number, atomic_num, x, y, z = data
+
+            # Translate the atomic number to the atom name.
+            atom_name = periodic_table.lookup_z_to_symbol(atomic_num)
+
+            # Add.
+            self.atom_add(atom_name=atom_name, atom_num=atom_number, pos=[x, y, z], element=atom_name)
 
 
     def fill_object_from_pdb(self, records, alt_loc_select=None):

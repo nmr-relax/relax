@@ -28,6 +28,7 @@ from numpy import array, dot, float64, linalg, zeros
 import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
+from re import search
 from string import ascii_uppercase
 from warnings import warn
 
@@ -235,6 +236,59 @@ class Internal:
         # Average vector.
         if hetID == 'AVE':
             return 'Average vector'
+
+
+    def _parse_models_gaussian(self, file_path):
+        """Generator function for looping over the models in the Gaussian log file.
+
+        @param file_path:   The full path of the Gaussian log file.
+        @type file_path:    str
+        @return:            The model number and all the records for that model.
+        @rtype:             tuple of int and array of str
+        """
+
+        # Open the file.
+        file = open_read_file(file_path)
+        lines = file.readlines()
+        file.close()
+
+        # Check for empty files.
+        if lines == []:
+            raise RelaxError("The Gaussian log file is empty.")
+
+        # Init.
+        found = False
+        str_index = 0
+        total_atom = 0
+        model = 0
+        records = []
+
+        # Loop over the data.
+        for i in range(len(lines)):
+            # Found a structure.
+            if search("Standard orientation", lines[i]):
+                found = True
+                str_index = 0
+                continue
+
+            # End of the model.
+            if found and str_index > 4 and search("---------", lines[i]):
+                # Yield the info
+                yield records
+
+                # Reset.
+                records = []
+                found = False
+
+            # Not a structure line.
+            if not found:
+                continue
+
+            # Append the line as a record of the model.
+            records.append(lines[i])
+
+            # Increment the structure line index.
+            str_index += 1
 
 
     def _parse_pdb_connectivity_annotation(self, lines):
@@ -1620,6 +1674,67 @@ class Internal:
                 # Return the matching molecule.
                 if mol.mol_name == molecule:
                     return mol
+
+
+    def load_gaussian(self, file_path, set_mol_name=None, set_model_num=None, verbosity=False):
+        """Method for loading structures from a Gaussian log file.
+
+        @param file_path:       The full path of the Gaussian log file.
+        @type file_path:        str
+        @keyword set_mol_name:  Set the names of the molecules which are loaded.  If set to None, then the molecules will be automatically labelled based on the file name or other information.
+        @type set_mol_name:     None, str, or list of str
+        @keyword set_model_num: Set the model number of the loaded molecule.  If set to None, then the Gaussian log model numbers will be preserved, if they exist.
+        @type set_model_num:    None, int, or list of int
+        @keyword verbosity:     A flag which if True will cause messages to be printed.
+        @type verbosity:        bool
+        @return:                The status of the loading of the Gaussian log file.
+        @rtype:                 bool
+        """
+
+        # Initial printout.
+        if verbosity:
+            print("\nInternal relax Gaussian log parser.")
+
+        # Test if the file exists.
+        if not access(file_path, F_OK):
+            # Exit indicating failure.
+            return False
+
+        # Separate the file name and path.
+        path, file_name = os.path.split(file_path)
+
+        # The absolute path.
+        path_abs = abspath(curdir) + sep + path
+
+        # Set up the molecule name data structure.
+        if set_mol_name:
+            if not isinstance(set_mol_name, list):
+                set_mol_name = [set_mol_name]
+        else:
+            set_mol_name = [file_root(file_name) + '_mol1']
+
+        # Set up the model number data structure.
+        if set_model_num:
+            if not isinstance(set_model_num, list):
+                set_model_num = [set_model_num]
+        else:
+            set_model_num = [1]
+
+        # Loop over all models in the Gaussian log file, doing nothing so the last model records are stored.
+        for model_records in self._parse_models_gaussian(file_path):
+            pass
+
+        # Generate the molecule container.
+        mol = MolContainer()
+
+        # Fill the molecular data object.
+        mol.fill_object_from_gaussian(model_records)
+
+        # Create the structural data data structures.
+        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs)
+
+        # Loading worked.
+        return True
 
 
     def load_pdb(self, file_path, read_mol=None, set_mol_name=None, read_model=None, set_model_num=None, alt_loc=None, verbosity=False, merge=False):
