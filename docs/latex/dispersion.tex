@@ -859,7 +859,43 @@ This data combination is labelled as multiple multiple quantum data or MMQ.
 This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
 It is selected by setting the model to `MMQ 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
-The equation for the exchange process is 
+Different sets of equations are used for the different data types.
+
+
+% The SQ, ZD and DQ equations.
+\subsubsection{The SQ, ZD and DQ equations}
+
+The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
+\begin{equation}
+    \Rtwoeff = - \frac{1}{T_\textrm{relax}} \log \frac{\mathbf{M}_A(T_\textrm{relax})}{\mathbf{M}_A(0)},
+\end{equation}
+
+where $\mathbf{M}_A(0)$ is proportional to the vector $[\pA, \pB]^T$ and
+\begin{equation}
+    \mathbf{M}_A(T_\textrm{relax}) = \left( \mathbf{A_\pm}\mathbf{A_\mp}\mathbf{A_\mp}\mathbf{A_\pm} \right)^n \mathbf{M}_A(0)
+\end{equation}
+
+The evolution matrix $\mathbf{A}$ is defined as
+\begin{equation}
+    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+\end{equation}
+
+where
+\begin{equation}
+    \mathbf{a_\pm} = \begin{pmatrix}
+                       -\kAB -\RtwozeroA & \kBA \\
+                       \kAB  & -\kBA \pm\imath\dw - \RtwozeroB
+                     \end{pmatrix}.
+\end{equation}
+
+For different data types $\dw$ is defined as:  $\dw$ ($^{15}$N SQ-type data);  $\dwH$ ($^1$H SQ-type data); $\dwH - \dw$ (ZQ-type data); and $\dwH + \dw$ (DQ-type data).
+
+
+
+% The MQ equations.
+\subsubsection{The MQ equations}
+
+The equation for the exchange process for multiple quantum CPMG-type data is 
 \begin{equation}
     \Rtwoeff = - \frac{1}{T}
                  \log \left\{ Re \left[ \frac{0.5}{\pA}
@@ -942,7 +978,7 @@ To simplify the optimisation space for the model, the assumption $\RtwozeroA$~= 
 % The SQ, ZD and DQ equations.
 \subsubsection{The SQ, ZD and DQ equations}
 
-The basic evolution matrices for this model are
+The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
 \begin{equation}
     \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
 \end{equation}
@@ -1018,7 +1054,7 @@ To simplify the optimisation space for the model as in the `NS MMQ 3-site linear
 % The SQ, ZD and DQ equations.
 \subsubsection{The SQ, ZD and DQ equations}
 
-The basic evolution matrices for this model are
+The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
 \begin{equation}
     \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
 \end{equation}
