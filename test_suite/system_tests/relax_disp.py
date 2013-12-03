@@ -225,6 +225,9 @@ class Relax_disp(SystemTestCase):
                 # Relaxation dispersion CPMG constant time delay T (in s).
                 self.interpreter.relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
 
+                # Set the CPMG frequency.
+                self.interpreter.relax_disp.cpmg_frq(spectrum_id=new_id, cpmg_frq=cpmg_frq)
+
             # Read the R2eff data.
             self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
 
