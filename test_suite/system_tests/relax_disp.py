@@ -1800,7 +1800,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.dw, 0.850592422908884, 1)
         self.assertAlmostEqual(spin.dwH, 0.0881272284455416, 3)
         self.assertAlmostEqual(spin.kex/1000, 372.745483351305/1000, 3)
-        self.assertAlmostEqual(spin.chi2, 23.8464637019392, 2)
+        self.assertAlmostEqual(spin.chi2, 23.8464637019392, 1)
 
 
     def test_korzhnev_2005_1h_mq_data(self):
