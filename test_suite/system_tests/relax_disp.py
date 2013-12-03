@@ -2576,6 +2576,10 @@ class Relax_disp(SystemTestCase):
         for id in ids:
             self.interpreter.spectrometer.frequency(id=id, frq=500e6)
             self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
+        for value in H_disp_points:
+            self.interpreter.relax_disp.cpmg_frq(spectrum_id='1H_CPMG_%s' % value, cpmg_frq=value)
+        for value in N_disp_points:
+            self.interpreter.relax_disp.cpmg_frq(spectrum_id='15N_CPMG_%s' % value, cpmg_frq=value)
 
         # Loop over the experiments.
         for id, file, spin_id in [['1H_CPMG', 'hs_500.res', ':9@H'], ['15N_CPMG', 'ns_500.res', ':9@N']]:
