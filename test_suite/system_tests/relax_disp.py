@@ -2069,7 +2069,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin.dw, 4.42209952545181, 4)
         self.assertAlmostEqual(spin.dwH, -0.27258970590969, 4)
         self.assertAlmostEqual(spin.kex/1000, 360.516132791038/1000, 4)
-        self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 4)
+        self.assertAlmostEqual(spin.chi2/1000, 162.511988511609/1000, 3)
 
 
     def test_kteilum_fmpoulsen_makke_cpmg_data_048m_guhcl_to_cr72(self):
