@@ -65,9 +65,18 @@ if mac:
 
 # Relaxation dispersion GUI text elements.
 dw = u("d\u03C9")
+dw_AB = u("d\u03C9(AB)")
+dw_AC = u("d\u03C9(AC)")
+dw_BC = u("d\u03C9(BC)")
 dwH = u("d\u03C9H")
+dwH_AB = u("d\u03C9H(AB)")
+dwH_AC = u("d\u03C9H(AC)")
+dwH_BC = u("d\u03C9H(BC)")
 i0 = u("I\u2080")
 kex = u("k\u2091\u2093")
+kAB = u("k\u2091\u2093(AB)")
+kAC = u("k\u2091\u2093(AC)")
+kBC = u("k\u2091\u2093(BC)")
 padw2 = u("pA.d\u03C9\u00B2")
 phi_ex = u("\u03D5\u2091\u2093")
 phi_exB = u("\u03D5\u2091\u2093B")
@@ -80,6 +89,9 @@ r2eff = u("R\u2082eff")
 if win:
     i0 = "I0"
     kex = "kex"
+    kAB = "kex(AB)"
+    kAC = "kex(AC)"
+    kBC = "kex(BC)"
     phi_ex = u("phi_ex")
     phi_exB = u("phi_exB")
     phi_exC = u("phi_exC")
