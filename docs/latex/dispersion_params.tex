@@ -34,30 +34,42 @@ $\Ronerhoprime$    & -                              & $\Ronerho$ relaxation rate
 $\aveoffset$       & $\aveomega - \omegarf$         & The average resonance offset in the rotating frame                            & rad.s$^{-1}$ \\
 $\omegaA$          & -                              & The Larmor frequency of the spin in state A                                   & rad.s$^{-1}$ \\
 $\omegaB$          & -                              & The Larmor frequency of the spin in state B                                   & rad.s$^{-1}$ \\
+$\omegaC$          & -                              & The Larmor frequency of the spin in state C                                   & rad.s$^{-1}$ \\
+$\omegaHA$         & -                              & The proton Larmor frequency of the spin in state A (for MMQ data)             & rad.s$^{-1}$ \\
+$\omegaHB$         & -                              & The proton Larmor frequency of the spin in state B (for MMQ data)             & rad.s$^{-1}$ \\
+$\omegaHC$         & -                              & The proton Larmor frequency of the spin in state C (for MMQ data)             & rad.s$^{-1}$ \\
 $\aveomega$        & $\pA\omegaA + \pB\omegaB$      & The population averaged Larmor frequency of the spin                          & rad.s$^{-1}$ \\
 $\omegaone$        & -                              & Spin-lock field strength, i.e. the amplitude of the rf field                  & rad.s$^{-1}$ \\
 $\omegae$          & $\sqrt{\aveoffset^2 + \omegaone^2}$  & Effective field in the rotating frame                                   & rad.s$^{-1}$ \\
 $\omegarf$         & -                              & Spin-lock offset, i.e. the frequency of the rf field                          & rad.s$^{-1}$ \\
 $\theta$           & $\arctan \left( \frac{\omegaone}{\aveoffset} \right)$  & Rotating frame tilt angle                             & rad \\
-$\kAB$             & $\pB\kex$                      & The forward exchange rate from state A to state B                             & rad.s$^{-1}$ \\
-$\kBA$             & $\pA\kex$                      & The reverse exchange rate from state B to state A                             & rad.s$^{-1}$ \\
+$\kAB$             & $\pB\kex$                      & The forward exchange rate from state A to state B (2-site)                    & rad.s$^{-1}$ \\
+$\kBA$             & $\pA\kex$                      & The reverse exchange rate from state B to state A (2-site)                    & rad.s$^{-1}$ \\
+$\kAB$             & $\pB\kexAB$                    & The forward exchange rate from state A to state B (3-site)                    & rad.s$^{-1}$ \\
+$\kBA$             & $\pA\kexAB$                    & The reverse exchange rate from state B to state A (3-site)                    & rad.s$^{-1}$ \\
+$\kBC$             & $\pC\kexBC$                    & The forward exchange rate from state B to state C (3-site)                    & rad.s$^{-1}$ \\
+$\kCB$             & $\pB\kexBC$                    & The reverse exchange rate from state C to state B (3-site)                    & rad.s$^{-1}$ \\
+$\kAC$             & $\pC\kexAC$                    & The forward exchange rate from state A to state C (3-site)                    & rad.s$^{-1}$ \\
+$\kCA$             & $\pA\kexAC$                    & The reverse exchange rate from state C to state A (3-site)                    & rad.s$^{-1}$ \\
 $\kex$             & $1 / \tex$                     & Chemical exchange rate constant                                               & rad.s$^{-1}$ \\
 $\kexAB$           & $\kAB + \kBA$                  & Chemical exchange rate constant between sites A and B                         & rad.s$^{-1}$ \\
-$\kexAC$           & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
 $\kexBC$           & $\kBC + \kCB$                  & Chemical exchange rate constant between sites B and C                         & rad.s$^{-1}$ \\
+$\kexAC$           & $\kAC + \kCA$                  & Chemical exchange rate constant between sites A and C                         & rad.s$^{-1}$ \\
 $\kB$              & $\approx \kexAB$               & Approximate chemical exchange rate constant between sites A and B             & rad.s$^{-1}$ \\
 $\kC$              & $\approx \kexAC$               & Approximate chemical exchange rate constant between sites A and C             & rad.s$^{-1}$ \\
 $\tex$             & $1 / \kex$                     & Time of exchange                                                              & s.rad$^{-1}$ \\
 $\pA$              & -                              & Population of state A                                                         & - \\
-$\pB$              & -                              & Population of state B                                                         & - \\
-$\dw$              & -                              & Chemical shift difference between the two states (A and B)                    & rad.s$^{-1}$ (stored as ppm) \\
-$\dwAB$            & -                              & Chemical shift difference between sites A and B                               & rad.s$^{-1}$ (stored as ppm) \\
-$\dwAC$            & -                              & Chemical shift difference between sites A and C                               & rad.s$^{-1}$ (stored as ppm) \\
-$\dwBC$            & -                              & Chemical shift difference between sites B and C                               & rad.s$^{-1}$ (stored as ppm) \\
-$\dwH$             & -                              & Proton chemical shift difference between the two states (for MQ data)         & rad.s$^{-1}$ (stored as ppm) \\
-$\dwHAB$           & -                              & Proton chemical shift difference between sites A and B (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
-$\dwHAC$           & -                              & Proton chemical shift difference between sites A and C (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
-$\dwHBC$           & -                              & Proton chemical shift difference between sites B and C (for MQ data)          & rad.s$^{-1}$ (stored as ppm) \\
+$\pB$              & $1-\pA$                        & Population of state B (2-site)                                                & - \\
+$\pB$              & $1-\pA-\pC$                    & Population of state B (3-site)                                                & - \\
+$\pC$              & $1-\pA-\pB$                    & Population of state C (3-site)                                                & - \\
+$\dw$              & $\omegaB-\omegaA$              & Chemical shift difference between sites A and B (2-site)                      & rad.s$^{-1}$ (stored as ppm) \\
+$\dwAB$            & $\omegaB-\omegaA$              & Chemical shift difference between sites A and B (3-site)                      & rad.s$^{-1}$ (stored as ppm) \\
+$\dwBC$            & $\omegaC-\omegaB$              & Chemical shift difference between sites B and C (3-site)                      & rad.s$^{-1}$ (stored as ppm) \\
+$\dwAC$            & $\dwAB+\dwBC$                  & Chemical shift difference between sites A and C (3-site)                      & rad.s$^{-1}$ (stored as ppm) \\
+$\dwH$             & $\omegaHB-\omegaHA$            & Proton chemical shift difference between sites A and B (2-site)               & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHAB$           & $\omegaHB-\omegaHA$            & Proton chemical shift difference between sites A and B (3-site)               & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHBC$           & $\omegaHC-\omegaHB$            & Proton chemical shift difference between sites B and C (3-site)               & rad.s$^{-1}$ (stored as ppm) \\
+$\dwHAC$           & $\dwHAB+\dwHBC$                & Proton chemical shift difference between sites A and C (3-site)               & rad.s$^{-1}$ (stored as ppm) \\
 $\Phiex$           & $\pA\pB\dw^2$                  & Fast exchange factor                                                          & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
 $\PhiexB$          & See \ref{eq: disp phiexB} on page \pageref{eq: disp phiexB} & Fast exchange factor between sites A and B       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\
 $\PhiexC$          & See \ref{eq: disp phiexC} on page \pageref{eq: disp phiexC} & Fast exchange factor between sites A and C       & rad$^2$.s$^{-2}$ (stored as ppm$^2$) \\

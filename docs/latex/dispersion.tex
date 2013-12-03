@@ -127,6 +127,8 @@ For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (M
 
 \begin{description}
 \item[`MMQ 2-site':]\index{relaxation dispersion!MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MMQ 2-site model} on page~\pageref{sect: dispersion: MMQ 2-site model}.
+\item[`NS MMQ 3-site linear':]\index{relaxation dispersion!NS MMQ 3-site model linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site linear model} on page~\pageref{sect: dispersion: NS MMQ 3-site linear model}.
+\item[`NS MMQ 3-site':]\index{relaxation dispersion!NS MMQ 3-site model}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site model} on page~\pageref{sect: dispersion: NS MMQ 3-site model}.
 \end{description}
 
 
@@ -831,6 +833,7 @@ The references for this model are:
 \begin{itemize}
 \item \bibentry{Korzhnev04a}
 \item \bibentry{Korzhnev04b}
+\item \bibentry{Korzhnev05}
 \end{itemize}
 
 
@@ -901,6 +904,7 @@ The $\mathbf{M}$ matrices are defined as:
 \end{equation}
 
 where $2\delta$ is the spacing between successive 180$^\circ$ pulses and where
+The references for this model are:
 \begin{subequations}
 \begin{align}
     \mathbf{m_1} &= \begin{pmatrix}
@@ -919,7 +923,149 @@ The references for this model are:
 \begin{itemize}
 \item \bibentry{Korzhnev04a}
 \item \bibentry{Korzhnev04b}
+\item \bibentry{Korzhnev05}
 \end{itemize}
+
+
+% NS MMQ 3-site linear model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS MMQ 3-site linear model}
+\label{sect: dispersion: NS MMQ 3-site linear model}
+\index{relaxation dispersion!NS MMQ 3-site linear model|textbf}
+
+This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+As this model is linear, the assumption that $\kAC$~= $\kCA$~= 0 has been made.
+To simplify the optimisation space for the model, the assumption $\RtwozeroA$~= $\RtwozeroB$~= $\RtwozeroC$~= $\Rtwozero$ has also been made.
+
+
+% The SQ, ZD and DQ equations.
+\subsubsection{The SQ, ZD and DQ equations}
+
+The basic evolution matrices for this model are
+\begin{equation}
+    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+\end{equation}
+
+where
+\begin{align}
+    \mathbf{a_\pm} &= \begin{pmatrix}
+                        -\kAB & \kBA                          & 0    \\
+                        \kAB  & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
+                        0     & \kBC                          & -\kCB \pm\imath\dwAC
+                      \end{pmatrix}  \nonumber \\
+                   &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                             \end{pmatrix}.
+\end{align}
+
+
+% The MQ equations.
+\subsubsection{The MQ equations}
+
+The formulae for multiple quantum CPMG-type data are the same as for the `MMQ 2-site' model except for the $\Rtwoeff$ calculation and the $\mathbf{m_j}$ matrices.
+The rate is calculated as
+\begin{equation}
+    \Rtwoeff = - \frac{1}{T}
+                 \log \left\{ Re \left[ \frac{0.5}{\pA}
+                     \begin{pmatrix}1&0&0\end{pmatrix} \cdot \left( \mathbf{AB} + \mathbf{CD} \right) \cdot \begin{pmatrix}\pA\\\pB\\\pC\end{pmatrix}
+                 \right] \right\}.
+\end{equation}
+
+The $\mathbf{m_j}$ matrices are
+\begin{subequations}
+\begin{align}
+    \mathbf{m_1} &= \begin{pmatrix}
+                        -\kAB   & \kBA                                  & 0    \\
+                        \kAB    & -\kBA -\kBC -\imath(\dwHAB + \dwAB)   & \kCB \\
+                        0       & \kBC                                  & - \kCB  -\imath(\dwHAC + \dwAC)
+                    \end{pmatrix}  \nonumber \\
+                 &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                           \end{pmatrix}, \\
+    \mathbf{m_2} &= \begin{pmatrix}
+                        -\kAB   & \kBA                                  & 0    \\
+                        \kAB    & -\kBA -\kBC -\imath(\dwHAB - \dwAB)   & \kCB \\
+                        0       & \kBC                                  & -\kCB -\imath(\dwHAC - \dwAC)
+                    \end{pmatrix}  \nonumber \\
+                 &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                           \end{pmatrix}.
+\end{align}
+\end{subequations}
+
+For the model, the assumption $\RtwozeroA = \RtwozeroB = \RtwozeroC = \Rtwozero$ is made.
+
+
+% NS MMQ 3-site model.
+%~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS MMQ 3-site model}
+\label{sect: dispersion: NS MMQ 3-site model}
+\index{relaxation dispersion!NS MMQ 3-site model|textbf}
+
+This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+However it has been extended to allow the $A \leftrightarrow C$ transition.
+To simplify the optimisation space for the model as in the `NS MMQ 3-site linear' model, the assumption $\RtwozeroA$~= $\RtwozeroB$~= $\RtwozeroC$~= $\Rtwozero$ has been made.
+
+
+% The SQ, ZD and DQ equations.
+\subsubsection{The SQ, ZD and DQ equations}
+
+The basic evolution matrices for this model are
+\begin{equation}
+    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+\end{equation}
+
+where
+\begin{align}
+    \mathbf{a_\pm} &= \begin{pmatrix}
+                        -\kAB -\kAC & \kBA                          & \kCA \\
+                        \kAB        & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
+                        \kAC        & \kBC                          & -\kCB -\kCA \pm\imath\dwAC
+                      \end{pmatrix}  \nonumber \\
+                   &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                             \end{pmatrix}.
+\end{align}
+
+
+% The MQ equations.
+\subsubsection{The MQ equations}
+
+The $\mathbf{m_j}$ matrices for this model are
+\begin{subequations}
+\begin{align}
+    \mathbf{m_1} &= \begin{pmatrix}
+                        -\kAB -\kAC & \kBA                                  & \kCA \\
+                        \kAB        & -\kBA -\kBC -\imath(\dwHAB + \dwAB)   & \kCB \\
+                        \kAC        & \kBC                                  & -\kCB -\kCA -\imath(\dwHAC + \dwAC)
+                    \end{pmatrix}  \nonumber \\
+                 &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                           \end{pmatrix}, \\
+    \mathbf{m_2} &= \begin{pmatrix}
+                        -\kAB -\kAC & \kBA                                  & \kCA \\
+                        \kAB        & -\kBA -\kBC -\imath(\dwHAB - \dwAB)   & \kCB \\
+                        \kAC        & \kBC                                  & -\kCB -\kCA -\imath(\dwHAC - \dwAC)
+                    \end{pmatrix}  \nonumber \\
+                 &\qquad - \begin{pmatrix}
+                               \RtwozeroA & 0          & 0    \\
+                               0          & \RtwozeroB & 0    \\
+                               0          & 0          & \RtwozeroC
+                           \end{pmatrix}.
+\end{align}
+\end{subequations}
 
 
 
