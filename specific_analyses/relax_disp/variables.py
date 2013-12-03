@@ -127,7 +127,7 @@ MODEL_MMQ_2SITE = 'MMQ 2-site'
 MODEL_NS_MMQ_3SITE = 'NS MMQ 3-site'
 """The numerical solution for the 3-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data."""
 
-MODEL_NS_MMQ_3SITE_LINEAR = 'NS MMQ 3-site (linear)'
+MODEL_NS_MMQ_3SITE_LINEAR = 'NS MMQ 3-site linear'
 """The numerical solution for the 3-site Bloch-McConnell equations with kAC = kCA = 0 for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data."""
 
 
