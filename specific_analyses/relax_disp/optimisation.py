@@ -215,7 +215,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     upper.append(10.0)
 
                 # Chemical shift difference between states A and B (heteronucleus).
-                elif param_name == 'dw':
+                elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC']:
                     if spins[spin_index].model in MODEL_LIST_MMQ:
                         lower.append(-10.0)
                     else:
@@ -223,7 +223,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     upper.append(10.0)
 
                 # Chemical shift difference between states A and B (proton).
-                elif param_name == 'dwH':
+                elif param_name in ['dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
                     if spins[spin_index].model in MODEL_LIST_MMQ:
                         lower.append(-3.0)
                     else:
@@ -238,8 +238,13 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                         lower.append(0.5)
                     upper.append(1.0)
 
+                # The population of state B (for 3-site exchange).
+                elif param_name == 'pB':
+                    lower.append(0.0)
+                    upper.append(0.5)
+
                 # Exchange rates.
-                elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
+                elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
                     lower.append(1.0)
                     upper.append(100000.0)
 

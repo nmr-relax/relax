@@ -34,7 +34,7 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from specific_analyses.relax_disp.disp_data import generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq, return_value_from_frq_index
-from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B
+from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -103,15 +103,15 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
             scaling_matrix[param_index, param_index] = 1
 
         # Chemical shift difference between states A and B scaling.
-        elif param_name in ['dw', 'dwH']:
+        elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC', 'dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
             scaling_matrix[param_index, param_index] = 1
 
-        # The population of state A.
-        elif param_name == 'pA':
+        # The population of state X.
+        elif param_name in ['pA', 'pB', 'pC']:
             scaling_matrix[param_index, param_index] = 1
 
         # Exchange rate scaling.
-        elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
+        elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
             scaling_matrix[param_index, param_index] = 10000
 
         # Time of exchange scaling.
@@ -162,7 +162,12 @@ def copy(pipe_from=None, pipe_to=None):
         # Initialise some variables.
         model = None
         pA = 0.0
+        pB = 0.0
+        pC = 0.0
         kex = 0.0
+        kex_AB = 0.0
+        kex_AC = 0.0
+        kex_BC = 0.0
         k_AB = 0.0
         kB = 0.0
         kC = 0.0
@@ -204,8 +209,18 @@ def copy(pipe_from=None, pipe_to=None):
             # Sum the source parameters.
             if 'pA' in spin_from.params:
                 pA += spin_from.pA
+            if 'pB' in spin_from.params:
+                pB += spin_from.pB
+            if 'pC' in spin_from.params:
+                pC += spin_from.pC
             if 'kex' in spin_from.params:
                 kex += spin_from.kex
+            if 'kex_AB' in spin_from.params:
+                kex_AB += spin_from.kex_AB
+            if 'kex_AC' in spin_from.params:
+                kex_AC += spin_from.kex_AC
+            if 'kex_BC' in spin_from.params:
+                kex_BC += spin_from.kex_BC
             if 'k_AB' in spin_from.params:
                 k_AB += spin_from.k_AB
             if 'kB' in spin_from.params:
@@ -226,9 +241,24 @@ def copy(pipe_from=None, pipe_to=None):
         if pA != 0.0:
             pA = pA / count
             print("Averaged pA value:  %.15f" % pA)
+        if pB != 0.0:
+            pB = pB / count
+            print("Averaged pA value:  %.15f" % pA)
+        if pC != 0.0:
+            pC = pC / count
+            print("Averaged pC value:  %.15f" % pC)
         if kex != 0.0:
             kex = kex / count
             print("Averaged kex value: %.15f" % kex)
+        if kex_AB != 0.0:
+            kex_AB = kex_AB / count
+            print("Averaged k_AB value: %.15f" % kex_AB)
+        if kex_AC != 0.0:
+            kex_AC = kex_AC / count
+            print("Averaged k_AC value: %.15f" % kex_AC)
+        if kex_BC != 0.0:
+            kex_BC = kex_BC / count
+            print("Averaged k_BC value: %.15f" % kex_BC)
         if k_AB != 0.0:
             k_AB = k_AB / count
             print("Averaged k_AB value: %.15f" % k_AB)
@@ -261,11 +291,21 @@ def copy(pipe_from=None, pipe_to=None):
                 spin_to.r2b = deepcopy(spin_from.r2b)
 
             # The averaged parameters.
-            if 'pA' in spin_from.params:
+            if 'pB' in spin_from.params and 'pC' not in spin_from.params:
+                spin_to.pA = pA
+                spin_to.pB = pB
+                spin_to.pC = 1.0 - pA - pB
+            elif 'pA' in spin_from.params:
                 spin_to.pA = pA
                 spin_to.pB = 1.0 - pA
             if 'kex' in spin_from.params:
                 spin_to.kex = kex
+            if 'kex_AB' in spin_from.params:
+                spin_to.kex_AB = kex_AB
+            if 'kex_AC' in spin_from.params:
+                spin_to.kex_AC = kex_AC
+            if 'kex_BC' in spin_from.params:
+                spin_to.kex_BC = kex_BC
             if 'k_AB' in spin_from.params:
                 spin_to.k_AB = k_AB
             if 'kB' in spin_from.params:
@@ -277,7 +317,7 @@ def copy(pipe_from=None, pipe_to=None):
 
             # All other spin specific parameters.
             for param in spin_from.params:
-                if param in ['r2', 'pA', 'kex', 'k_AB', 'kB', 'kC', 'tex']:
+                if param in ['r2', 'pA', 'pB', 'pC', 'kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC', 'tex']:
                     continue
 
                 # Copy the value.
@@ -440,6 +480,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
         0 <= R2B <= 200
         pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
+        pB > 0
         phi_ex >= 0
         phi_ex_B >= 0
         phi_ex_C >= 0
@@ -475,6 +516,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
         |-1  0  0 |     |    pA    |      |   -1    |
         |         |     |          |      |         |
         | 1  0  0 |     |    pA    |      |   0.85  |
+        |         |     |          |      |         |
+        | 1  0  0 |     |    pB    |      |    0    |
         |         |     |          |      |         |
         | 1  0  0 |     |  phi_ex  |      |    0    |
         |         |     |          |      |         |
@@ -553,7 +596,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             j += 1
 
         # Chemical exchange difference (dw >= 0).
-        elif param_name in ['dw', 'dwH']:
+        elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC', 'dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
             if not spins[0].model in MODEL_LIST_MMQ:
                 A.append(zero_array * 0.0)
                 A[j][param_index] = 1.0
@@ -582,8 +625,15 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.5 / scaling_matrix[param_index, param_index])
                 j += 1
 
+        # The population of state X (pB >= 0).
+        elif param_name in ['pB', 'pC']:
+            A.append(zero_array * 0.0)
+            A[j][param_index] = 1.0
+            b.append(0.0)
+            j += 1
+
         # Exchange rates and times (0 <= k <= 2e6).
-        elif param_name in ['kex', 'k_AB', 'kB', 'kC']:
+        elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
             A.append(zero_array * 0.0)
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
@@ -702,15 +752,21 @@ def param_conversion(key=None, spins=None, sim_index=None):
         # Get the value.
         value = get_value(key=key, spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key)
 
-        # The pA to pB conversion.
+        # The pA to pB to pC conversion.
         if param_name == 'pA':
-            pB = 1.0 - value
-            set_value(value=pB, key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index)
+            # 3-site exchange.
+            if spins[0].model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+                # Get the pB value.
+                pB = get_value(key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index, r20_key=r20_key)
 
-        # The pB to pA conversion.
-        if param_name == 'pB':
-            pA = 1.0 - value
-            set_value(value=pA, key=key, spins=spins, sim_index=sim_index, param_name='pA', spin_index=spin_index)
+                # Set the pC value.
+                pC = 1.0 - value - pB
+                set_value(value=pC, key=key, spins=spins, sim_index=sim_index, param_name='pC', spin_index=spin_index)
+
+            # 2-site exchange.
+            else:
+                pB = 1.0 - value
+                set_value(value=pB, key=key, spins=spins, sim_index=sim_index, param_name='pB', spin_index=spin_index)
 
         # The kex to tex conversion.
         if param_name == 'kex':
