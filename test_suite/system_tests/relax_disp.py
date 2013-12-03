@@ -1326,8 +1326,8 @@ class Relax_disp(SystemTestCase):
         # Checks for residue :71.
         self.assertAlmostEqual(spin71.r2[r20_key1], 4.992594256544, 1)
         self.assertAlmostEqual(spin71.pA, 0.992258541625787, 2)
-        self.assertAlmostEqual(spin71.dw, 2.75140650899058, 0)
-        self.assertAlmostEqual(spin71.kex/1000, 2106.60885247431/1000, 0)
+        self.assertAlmostEqual(spin71.dw/100, 2.75140650899058/100, 2)
+        self.assertAlmostEqual(spin71.kex/100000, 2106.60885247431/100000, 2)
         self.assertAlmostEqual(spin71.chi2/100, 17.3293856656588/100, 1)
 
         # Test the conversion to k_AB from kex and pA.
