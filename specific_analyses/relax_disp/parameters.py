@@ -704,7 +704,7 @@ def loop_parameters(spins=None):
                     param_index += 1
                     yield 'r2b', param_index, spin_index, generate_r20_key(exp_type=exp_type, frq=frq)
 
-        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2' and 'dw' (one per spin).
+        # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB' (one per spin).
         for spin_index in range(len(spins)):
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
@@ -722,16 +722,34 @@ def loop_parameters(spins=None):
             if 'dw' in spins[spin_index].params:
                 param_index += 1
                 yield 'dw', param_index, spin_index, None
+            if 'dw_AB' in spins[spin_index].params:
+                param_index += 1
+                yield 'dw_AB', param_index, spin_index, None
+            if 'dw_BC' in spins[spin_index].params:
+                param_index += 1
+                yield 'dw_BC', param_index, spin_index, None
+            if 'dw_AC' in spins[spin_index].params:
+                param_index += 1
+                yield 'dw_AC', param_index, spin_index, None
 
         # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
         for spin_index in range(len(spins)):
             if 'dwH' in spins[spin_index].params:
                 param_index += 1
                 yield 'dwH', param_index, spin_index, None
+            if 'dwH_AB' in spins[spin_index].params:
+                param_index += 1
+                yield 'dwH_AB', param_index, spin_index, None
+            if 'dwH_BC' in spins[spin_index].params:
+                param_index += 1
+                yield 'dwH_BC', param_index, spin_index, None
+            if 'dwH_AC' in spins[spin_index].params:
+                param_index += 1
+                yield 'dwH_AC', param_index, spin_index, None
 
         # All other parameters (one per spin cluster).
         for param in spins[0].params:
-            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dwH']:
+            if not param in ['r2', 'r2a', 'r2b', 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB', 'dwH', 'dwH_AB', 'dwH_BC', 'dwH_AB']:
                 param_index += 1
                 yield param, param_index, None, None
 
