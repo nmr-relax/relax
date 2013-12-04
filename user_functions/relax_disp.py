@@ -655,7 +655,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will read R2eff/R1rho data directly from a file.  The data will be associated with an experiment ID string.  A partial ID is to be supplied and then the full ID string will be constructed as this ID followed by an underscore and then the dispersion point value from the file (as '%s_%s' % (id, disp_point)).  The full IDs must already exist and have been used to set the type of dispersion experiment the data is from, spectrometer proton frequency of the data, and if needed the time of the relaxation period.")
-uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a unique spin system and that there is one file per dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1).  The file must be in columnar format and information to identify the spin must be in columns of the file.")
+uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a unique spin system and that there is one file per dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength nu1).  The file must be in columnar format and information to identify the spin must be in columns of the file.")
 uf.backend = r2eff_read
 uf.menu_text = "&r2eff_read"
 uf.gui_icon = "oxygen.actions.document-open"
@@ -736,7 +736,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will read R2eff/R1rho data for a single spin directly from a file.  The data will be associated with an experiment ID string.  This ID can be used for setting the type of dispersion experiment the data is from, spectrometer proton frequency of the data, and the time of the relaxation period.")
-uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a  dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength n1) and that there is one file per unique spin system.  The file must be in columnar format.")
+uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a  dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength nu1) and that there is one file per unique spin system.  The file must be in columnar format.")
 uf.backend = r2eff_read_spin
 uf.menu_text = "&r2eff_read_spin"
 uf.gui_icon = "oxygen.actions.document-open"
