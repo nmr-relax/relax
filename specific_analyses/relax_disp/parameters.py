@@ -585,8 +585,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
-            b.append(123.0)
-            b.append(-123.0 / scaling_matrix[param_index, param_index])
+            b.append(0.0)
+            b.append(-200.0 / scaling_matrix[param_index, param_index])
             j += 2
 
         # The pA.pB.dw**2, phi_ex_B, phi_ex_C and pA.dw**2 parameters (phi_ex* >= 0 and padw2 >= 0).
