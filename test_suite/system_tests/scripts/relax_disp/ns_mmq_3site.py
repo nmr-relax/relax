@@ -183,8 +183,8 @@ spin_N.dwH_BC = -2.0
 # Calculate.
 calc()
 
-# Plot the dispersion curves.
-relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)
+# Plot the dispersion curves (too slow).
+#relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)
 
 # Save the results.
 state.save('state', dir=ds.tmpdir, compress_type=1, force=True)
