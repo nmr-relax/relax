@@ -1,0 +1,96 @@
+# Read in the blank data to know which CPMG frequencies to use.
+read NS_400.res  d 1 S N15    25  400 0.04 @ c
+read NS_600.res  d 1 S N15    25  600 0.04 @ c
+read NS_800.res  d 1 S N15    25  800 0.04 @ c
+read NS_1000.res d 1 S N15    25 1000 0.04 @ c
+read HS_400.res  d 1 S H1     25  400 0.03 @ c
+read HS_600.res  d 1 S H1     25  600 0.03 @ c
+read HS_800.res  d 1 S H1     25  800 0.03 @ c
+read HS_1000.res d 1 S H1     25 1000 0.03 @ c
+read DQ_400.res  d 1 D H1/N15 25  400 0.03 @ c
+read DQ_600.res  d 1 D H1/N15 25  600 0.03 @ c
+read DQ_800.res  d 1 D H1/N15 25  800 0.03 @ c
+read DQ_1000.res d 1 D H1/N15 25 1000 0.03 @ c
+read ZQ_400.res  d 1 Z H1/N15 25  400 0.03 @ c
+read ZQ_600.res  d 1 Z H1/N15 25  600 0.03 @ c
+read ZQ_800.res  d 1 Z H1/N15 25  800 0.03 @ c
+read ZQ_1000.res d 1 Z H1/N15 25 1000 0.03 @ c
+read NM_400.res  d 1 M N15/H1 25  400 0.02 @ c
+read NM_600.res  d 1 M N15/H1 25  600 0.02 @ c
+read NM_800.res  d 1 M N15/H1 25  800 0.02 @ c
+read NM_1000.res d 1 M N15/H1 25 1000 0.02 @ c
+read HM_400.res  d 1 M H1/N15 25  400 0.02 @ c
+read HM_600.res  d 1 M H1/N15 25  600 0.02 @ c
+read HM_800.res  d 1 M H1/N15 25  800 0.02 @ c
+read HM_1000.res d 1 M H1/N15 25 1000 0.02 @ c
+
+# Set the fixed parameter values.
+set m 3 0                   # 3-site exchange.
+set k @ 0  500.0 u          # KAB.  
+set k @ 1    0.0 u          # KAC.
+set k @ 2 2000.0 u          # KBC.
+set p @ 0 0.85 u            # pA.
+set p @ 1 0.05 u            # pB.
+set p @ 2 0.10 u            # pC.
+set c @ N15 0 0    @ f      # 15N chemical shift (CS0_A).
+set c @ N15 1 0 -3.0 u      # 15N chemical shift (CS0_B).
+set c @ N15 2 0  8.0 u      # 15N chemical shift (CS0_B).
+set c @ H1  0 0    @ f      # 1H chemical shift (CS0_A).
+set c @ H1  1 0  0.5 u      # 1H chemical shift (CS0_B).
+set c @ H1  2 0 -1.5 u      # 1H chemical shift (CS0_C).
+set r @ S H1  25  400 @  6.5 u g
+set r @ S H1  25  600 @  7.0 u g
+set r @ S H1  25  800 @  5.5 u g
+set r @ S H1  25 1000 @  5.0 u g
+set r @ S N15 25  400 @  8.0 u g
+set r @ S N15 25  600 @  9.0 u g
+set r @ S N15 25  800 @ 10.5 u g
+set r @ S N15 25 1000 @ 11.5 u g
+set r @ Z N15 25  400 @  6.0 u g
+set r @ Z N15 25  600 @  7.5 u g
+set r @ Z N15 25  800 @  7.0 u g
+set r @ Z N15 25 1000 @  6.5 u g
+set r @ D N15 25  400 @  8.5 u g
+set r @ D N15 25  600 @ 10.5 u g
+set r @ D N15 25  800 @ 12.5 u g
+set r @ D N15 25 1000 @ 14.5 u g
+set r @ M H1  25  400 @  7.5 u g
+set r @ M H1  25  600 @  8.5 u g
+set r @ M H1  25  800 @ 11.5 u g
+set r @ M H1  25 1000 @ 13.5 u g
+set r @ M N15 25  400 @  9.0 u g
+set r @ M N15 25  600 @ 10.0 u g
+set r @ M N15 25  800 @ 12.0 u g
+set r @ M N15 25 1000 @ 13.0 u g
+
+min
+
+# Write out the data.
+write all.res d
+write > p
+
+# These do not work due to a gcc issue :S
+#write NS_400.res  d 1 S N15    25  400 0.04 @ c
+#write NS_600.res  d 1 S N15    25  600 0.04 @ c
+#write NS_800.res  d 1 S N15    25  800 0.04 @ c
+#write NS_1000.res d 1 S N15    25 1000 0.04 @ c
+#write HS_400.res  d 1 S H1     25  400 0.03 @ c
+#write HS_600.res  d 1 S H1     25  600 0.03 @ c
+#write HS_800.res  d 1 S H1     25  800 0.03 @ c
+#write HS_1000.res d 1 S H1     25 1000 0.03 @ c
+#write DQ_400.res  d 1 D H1/N15 25  400 0.03 @ c
+#write DQ_600.res  d 1 D H1/N15 25  600 0.03 @ c
+#write DQ_800.res  d 1 D H1/N15 25  800 0.03 @ c
+#write DQ_1000.res d 1 D H1/N15 25 1000 0.03 @ c
+#write ZQ_400.res  d 1 Z H1/N15 25  400 0.03 @ c
+#write ZQ_600.res  d 1 Z H1/N15 25  600 0.03 @ c
+#write ZQ_800.res  d 1 Z H1/N15 25  800 0.03 @ c
+#write ZQ_1000.res d 1 Z H1/N15 25 1000 0.03 @ c
+#write NM_400.res  d 1 M N15/H1 25  400 0.02 @ c
+#write NM_600.res  d 1 M N15/H1 25  600 0.02 @ c
+#write NM_800.res  d 1 M N15/H1 25  800 0.02 @ c
+#write NM_1000.res d 1 M N15/H1 25 1000 0.02 @ c
+#write HM_400.res  d 1 M H1/N15 25  400 0.02 @ c
+#write HM_600.res  d 1 M H1/N15 25  600 0.02 @ c
+#write HM_800.res  d 1 M H1/N15 25  800 0.02 @ c
+#write HM_1000.res d 1 M H1/N15 25 1000 0.02 @ c
