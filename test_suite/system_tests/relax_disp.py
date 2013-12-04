@@ -2687,10 +2687,10 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
-    def test_sprangers_data_to_mq_cr72(self, model=None):
-        """Test the 'MQ CR72' model fitting against Remco Sprangers' ClpP data.
+    def test_sprangers_data_to_mmq_cr72(self, model=None):
+        """Test the 'MMQ CR72' model fitting against Remco Sprangers' ClpP data.
 
-        This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
+        This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MMQ CPMG data with a fixed relaxation time period.
         """
 
         # Reset.
@@ -2701,7 +2701,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.load(data_path+sep+'r2eff_values')
 
         # The model data pipe.
-        model = 'MQ CR72'
+        model = 'MMQ CR72'
         self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
         self.interpreter.pipe.switch(pipe_name=model)
 

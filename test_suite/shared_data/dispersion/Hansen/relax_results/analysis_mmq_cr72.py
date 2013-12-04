@@ -1,6 +1,6 @@
-"""Script for CPMG relaxation dispersion curve fitting to the 'MQ CR72' model using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
+"""Script for CPMG relaxation dispersion curve fitting to the 'MMQ CR72' model using Dr. Flemming Hansen's data from http://dx.doi.org/10.1021/jp074793o.
 
-This is to test the nesting of the 'CR72' and 'MQ CR72' models.  The 'MQ CR72' results should be identical to the 'CR72' results but with dwH = 0.
+This is to test the nesting of the 'CR72' and 'MMQ CR72' models.  The 'MMQ CR72' results should be identical to the 'CR72' results but with dwH = 0.
 
 To run:
 
@@ -22,7 +22,7 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'MQ CR72']
+MODELS = ['R2eff', 'MMQ CR72']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 6
@@ -150,8 +150,8 @@ relax_disp.select_model(model='R2eff')
 calc(verbosity=1)
 
 
-# The 'MQ CR72' model.
-#~~~~~~~~~~~~~~~~~~~~~
+# The 'MMQ CR72' model.
+#~~~~~~~~~~~~~~~~~~~~~~
 
 # Pipe setup.
 model = MODELS[1]

@@ -119,7 +119,7 @@ For the $\Ronerho$-type experiments, the numeric models currently supported are:
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the analytic models currently supported are:
 
 \begin{description}
-\item[`MQ CR72':]\index{relaxation dispersion!MQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MQ CR72 model} on page~\pageref{sect: dispersion: MQ CR72 model}.
+\item[`MMQ CR72':]\index{relaxation dispersion!MMQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MMQ CR72 model} on page~\pageref{sect: dispersion: MMQ CR72 model}.
 \end{description}
 
 
@@ -783,15 +783,15 @@ These are the analytic models designed for handling combined proton-heteronuclea
 This data combination is labelled as multiple multiple quantum data or MMQ.
 
 
-% MQ CR72 model.
-%~~~~~~~~~~~~~~~
+% MMQ CR72 model.
+%~~~~~~~~~~~~~~~~
 
-\subsection{The MQ CR72 model}
-\label{sect: dispersion: MQ CR72 model}
-\index{relaxation dispersion!MQ CR72 model|textbf}
+\subsection{The MMQ CR72 model}
+\label{sect: dispersion: MMQ CR72 model}
+\index{relaxation dispersion!MMQ CR72 model|textbf}
 
-This is the analytic CR72 model for 2-site exchange on most times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple quantum data by \citet{Korzhnev04a}.
-It is selected by setting the model to `MQ CR72'.
+This is the analytic CR72 model for 2-site exchange on most times scales (Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}) extended for multiple types of multiple quantum data (MMQ) by \citet{Korzhnev04a}.
+It is selected by setting the model to `MMQ CR72'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 The equation for the exchange process is 
 \begin{equation}
@@ -1135,7 +1135,7 @@ It can be summarised as:
 \begin{description}
 \item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is used in a clustered analysis whereby the pre-run directory contains results from a non-clustered analysis.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
 \item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.  The currently supported nested model pairs are `CR72' and `CR72 full', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.  In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
-\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MQ CR72' model is used for the `NS MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
+\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MMQ CR72' model is used for the `NS MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
 \end{description}
 \item[Interruption:]  The optimisation procedure of the auto-analysis can read saved results files if a previous calculation was interrupted.
 \item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.  The relax implementation is described in \citet{dAuvergneGooley06}.  This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.

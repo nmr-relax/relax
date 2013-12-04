@@ -1,4 +1,4 @@
-"""Script for optimising the 'MQ NS 2-site' model.
+"""Script for optimising the 'MMQ CR72' model.
 
 This performs the analysis of:
 
@@ -18,7 +18,7 @@ from status import Status; status = Status()
 #####################
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'MQ CR72']
+MODELS = ['R2eff', 'No Rex', 'MMQ CR72']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11

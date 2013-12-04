@@ -20,9 +20,9 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of CR72 model extended for MQ CPMG data.
+"""This function performs a numerical fit of CR72 model extended for MMQ CPMG data.
 
-The Carver and Richards (1972) 2-site model for all times scales was extended for multiple quantum (MQ) CPMG data by:
+The Carver and Richards (1972) 2-site model for all times scales was extended for multiple-MQ (MMQ) CPMG data by:
 
     - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  J. Am. Chem. Soc., 126, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
 """
@@ -31,8 +31,8 @@ The Carver and Richards (1972) 2-site model for all times scales was extended fo
 from numpy import arccosh, cos, cosh, log, sin, sqrt
 
 
-def r2eff_mq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
-    """The CR72 model extended to MQ CPMG data.
+def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+    """The CR72 model extended to MMQ CPMG data.
 
     This function calculates and stores the R2eff values.
 
