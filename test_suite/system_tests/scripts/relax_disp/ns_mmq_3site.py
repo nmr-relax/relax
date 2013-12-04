@@ -11,7 +11,7 @@ from status import Status; status = Status()
 
 
 # The path to the data files.
-DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'ns_mmq_3site_branched'
+DATA_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'ns_mmq_3site'
 
 
 # Create a data pipe.
