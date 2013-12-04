@@ -44,6 +44,7 @@ from warnings import warn
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, strip, write_data, write_spin_data
+from lib.nmr import frequency_to_rad_per_s
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
@@ -2308,7 +2309,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
         # Loop over the experiments and spectrometer frequencies.
         for exp_type, frq, exp_index, frq_index in loop_exp_frq(return_indices=True):
             # Convert the shift from ppm to rad/s and store it.
-            shifts[exp_index][spin_index][frq_index] = spin.chemical_shift * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+            shifts[exp_index][spin_index][frq_index] = frequency_to_rad_per_s(frq=spin.chemical_shift, B0=frq, isotope=spin.isotope)
 
             # Fetch all of the matching intensity keys.
             keys = find_intensity_keys(exp_type=exp_type, frq=frq, raise_error=False)
@@ -2319,7 +2320,7 @@ def return_offset_data(spins=None, spin_ids=None, fields=None, field_count=None,
 
             # Store the offset in rad/s.  Only once and using the first key.
             if offsets[exp_index][spin_index][frq_index] == None:
-                offsets[exp_index][spin_index][frq_index] = cdp.spin_lock_offset[keys[0]] * 2.0 * pi * frq / g1H * return_gyromagnetic_ratio(spin.isotope) * 1e-6
+                offsets[exp_index][spin_index][frq_index] = frequency_to_rad_per_s(frq=cdp.spin_lock_offset[keys[0]], B0=frq, isotope=spin.isotope)
 
             # Loop over the dispersion points.
             for point_index in range(len(spin_lock_nu1[exp_index][frq_index])):
