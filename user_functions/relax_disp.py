@@ -702,11 +702,21 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "disp_point_col",
-    default = 1,
+    default = None,
     min = 1,
     py_type = "int",
     desc_short = "dispersion point column",
-    desc = "The column containing the CPMG frequency or spin-lock field strength (Hz)."
+    desc = "The column containing the CPMG frequency or spin-lock field strength (Hz).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "offset_col",
+    default = None,
+    min = 1,
+    py_type = "int",
+    desc_short = "offset column",
+    desc = "The column containing the offset information for R1rho-type data.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "data_col",
@@ -736,7 +746,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will read R2eff/R1rho data for a single spin directly from a file.  The data will be associated with an experiment ID string.  This ID can be used for setting the type of dispersion experiment the data is from, spectrometer proton frequency of the data, and the time of the relaxation period.")
-uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a  dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength nu1) and that there is one file per unique spin system.  The file must be in columnar format.")
+uf.desc[-1].add_paragraph("The format of this text file must be that each row corresponds to a dispersion point (i.e. per CPMG frequency nu_CPMG or per spin-lock field strength nu1) and that there is one file per unique spin system.  The file must be in columnar format.  For R1rho data, the dispersion point column can be substituted for the offset values in Hertz.")
 uf.backend = r2eff_read_spin
 uf.menu_text = "&r2eff_read_spin"
 uf.gui_icon = "oxygen.actions.document-open"

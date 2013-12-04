@@ -44,7 +44,7 @@ from warnings import warn
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
 from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, strip, write_data, write_spin_data
-from lib.nmr import frequency_to_rad_per_s
+from lib.nmr import frequency_to_ppm, frequency_to_rad_per_s
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
@@ -1734,7 +1734,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, spin_id_col=None, mo
             spin_lock_field(spectrum_id=id, field=disp_frq)
 
 
-def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=None, data_col=None, error_col=None, sep=None):
+def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=None, offset_col=None, data_col=None, error_col=None, sep=None):
     """Read R2eff/R1rho values from file whereby each row is a different dispersion point.
 
     @keyword id:                The experiment ID string to associate the data with.  This will be modified to include the dispersion point data as "%s_%s" % (id, disp_point).
@@ -1747,6 +1747,8 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
     @type dir:                  str or None
     @keyword disp_point_col:    The column containing the dispersion point information.  For CPMG-type data, this is the frequency of the CPMG pulse train.  For R1rho-type data, this is the spin-lock field strength (nu1).  The units must be Hertz.
     @type disp_point_col:       int
+    @keyword offset_col:        This is for R1rho data - the dispersion point column can be substituted for the offset values in Hertz.
+    @type offset_col:           None or int
     @keyword data_col:          The column containing the R2eff/R1rho data in Hz.
     @type data_col:             int
     @keyword error_col:         The column containing the R2eff/R1rho errors.
@@ -1784,15 +1786,21 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
             continue
 
         # Unpack.
-        disp_point = line[disp_point_col-1]
+        if disp_point_col != None:
+            ref_data = line[disp_point_col-1]
+        if offset_col != None:
+            ref_data = line[offset_col-1]
         value = line[data_col-1]
         error = line[error_col-1]
 
-        # Convert and check the dispersion point.
+        # Convert and check the dispersion point or offset.
         try:
-            disp_point = float(disp_point)
+            ref_data = float(ref_data)
         except ValueError:
-            warn(RelaxWarning("The dispersion point data of the line %s is invalid." % line))
+            if disp_point_col != None:
+                warn(RelaxWarning("The dispersion point data of the line %s is invalid." % line))
+            if offset_col != None:
+                warn(RelaxWarning("The offset data of the line %s is invalid." % line))
             continue
 
         # Convert and check the value.
@@ -1828,17 +1836,29 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
 
             # Find a close enough dispersion point (to one decimal place to allow for user truncation).
             if hasattr(cdp, 'cpmg_frqs') and spectrum_id in cdp.cpmg_frqs:
-                if abs(disp_point - cdp.cpmg_frqs[spectrum_id]) < 0.1:
+                if abs(ref_data - cdp.cpmg_frqs[spectrum_id]) < 0.1:
                     new_id = spectrum_id
                     break
-            if hasattr(cdp, 'spin_lock_nu1') and spectrum_id in cdp.spin_lock_nu1:
-                if abs(disp_point - cdp.spin_lock_nu1[spectrum_id]) < 0.1:
+            if disp_point_col != None and hasattr(cdp, 'spin_lock_nu1') and spectrum_id in cdp.spin_lock_nu1:
+                if abs(ref_data - cdp.spin_lock_nu1[spectrum_id]) < 0.1:
+                    new_id = spectrum_id
+                    break
+            if offset_col != None and hasattr(cdp, 'spin_lock_offset') and spectrum_id in cdp.spin_lock_offset:
+                # Convert the data.
+                if offset_col != None:
+                    data_new = frequency_to_ppm(frq=ref_data, B0=cdp.spectrometer_frq[spectrum_id], isotope=spin.isotope)
+
+                # Store the ID.
+                if abs(data_new - cdp.spin_lock_offset[spectrum_id]) < 0.1:
                     new_id = spectrum_id
                     break
 
         # No match.
         if new_id == None:
-            raise RelaxError("The experiment ID corresponding to the base ID '%s' and the dispersion point '%s' could not be found." % (id, disp_point))
+            if disp_point_col != None:
+                raise RelaxError("The experiment ID corresponding to the base ID '%s' and the dispersion point '%s' could not be found." % (id, ref_data))
+            if offset_col != None:
+                raise RelaxError("The experiment ID corresponding to the base ID '%s' and the offset '%s' could not be found." % (id, ref_data))
 
         # Add the ID to the list.
         new_ids.append(new_id)
@@ -1855,6 +1875,10 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
         exp_type = get_exp_type(id=new_id)
 
         # The dispersion point key.
+        if disp_point_col != None:
+            disp_point = ref_data
+        if offset_col != None:
+            disp_point = cdp.spin_lock_nu1[new_id]
         point_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=disp_point)
 
         # Store the R2eff data.
