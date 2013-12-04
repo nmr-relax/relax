@@ -1224,9 +1224,16 @@ The grid search lower and upper bounds default to:
     0 \leqslant \PhiexC \leqslant 10, \\
     0 \leqslant \pA\dw^2 \leqslant 10, \\
     0 \leqslant \dw \leqslant 10, \\
+    0 \leqslant \dwAB \leqslant 10, \\
+    0 \leqslant \dwBC \leqslant 10, \\
     0 \leqslant \dwH \leqslant 3, \\
+    0 \leqslant \dwHAB \leqslant 3, \\
+    0 \leqslant \dwHBC \leqslant 3, \\
     0.5 \leqslant \pA \leqslant 1, \\
+    0.0 \leqslant \pB \leqslant 0.5, \\
     0 \leqslant \kex \leqslant 1e^6, \\
+    0 \leqslant \kexAB \leqslant 1e^6, \\
+    0 \leqslant \kexBC \leqslant 1e^6, \\
     0 \leqslant \kA \leqslant 1e^6, \\
     0 \leqslant \kB \leqslant 1e^6, \\
     0 \leqslant \kAB \leqslant 1e^6, \\
@@ -1238,7 +1245,11 @@ For the MMQ models, the grid bounds are slightly different with
 \begin{subequations}
 \begin{gather} 
     -10 \leqslant \dw \leqslant 10, \\
-    -3 \leqslant \dwH \leqslant 3.
+    -10 \leqslant \dwAB \leqslant 10, \\
+    -10 \leqslant \dwBC \leqslant 10, \\
+    -3 \leqslant \dwH \leqslant 3, \\
+    -3 \leqslant \dwHAB \leqslant 3, \\
+    -3 \leqslant \dwHBC \leqslant 3.
 \end{gather} 
 \end{subequations}
 
@@ -1270,52 +1281,21 @@ They however do not avoid the multiple local minimum problem present in the MMQ 
 To understand this section, please see Section~\ref{sect: constraint algorithms} on page~\pageref{sect: constraint algorithms}.
 For a dispersion analysis, linear constraints are the most useful type of constraint.
 
-For most models, the linear constraints in the notation of \eqref{eq: linear constraint} are
-\begin{small}
+For most models, the linear constraints in the notation of \eqref{eq: linear constraint} for the relaxation rates are
 \begin{equation}
     \begin{pmatrix}
-        1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-       -1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 &-1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 &-1 & 0 \\
-        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+        1 & 0 & 0 \\
+       -1 & 0 & 0 \\
+        0 & 1 & 0 \\
+        0 &-1 & 0 \\
+        0 & 0 & 1 \\
+        0 & 0 &-1 \\
     \end{pmatrix}
     \cdot
     \begin{pmatrix}
         \Rtwozero \\
         \RtwozeroA \\
         \RtwozeroB \\
-        \Phiex \\
-        \PhiexB \\
-        \PhiexC \\
-        \pA\dw^2 \\
-        \dw \\
-        \dwH \\
-        \pA \\
-        \kex \\
-        \kB \\
-        \kC \\
-        \kAB \\
-        \tex \\
     \end{pmatrix}
     \geqslant
     \begin{pmatrix}
@@ -1325,15 +1305,108 @@ For most models, the linear constraints in the notation of \eqref{eq: linear con
         -200 \\
         0 \\
         -200 \\
+    \end{pmatrix},
+\end{equation}
+
+for the $\Phiex$ and $\dw$ parameters as
+\begin{equation}
+    \begin{pmatrix}
+        1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+        0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \Phiex \\
+        \PhiexB \\
+        \PhiexC \\
+        \pA\dw^2 \\
+        \dw \\
+        \dwAB \\
+        \dwBC \\
+        \dwH \\
+        \dwHAB \\
+        \dwHBC \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
         0 \\
         0 \\
         0 \\
         0 \\
         0 \\
         0 \\
+        0 \\
+        0 \\
+        0 \\
+        0 \\
+    \end{pmatrix},
+\end{equation}
+
+for the population parameters as
+\begin{equation}
+    \begin{pmatrix}
+        -1 & 0 \\
+         1 & 0 \\
+         1 & 0 \\
+        -1 &-1 \\
+         1 & 2 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \pA \\
+        \pB \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
         -1 \\
         0.5 \\
         0.85 \\
+        -1 \\
+        1 \\
+    \end{pmatrix},
+\end{equation}
+
+and for the exchange rate and time parameters as
+\begin{equation}
+    \begin{pmatrix}
+         1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+        -1 & 0 & 0 & 0 & 0 & 0 & 0 \\
+         0 & 1 & 0 & 0 & 0 & 0 & 0 \\
+         0 &-1 & 0 & 0 & 0 & 0 & 0 \\
+         0 & 0 & 1 & 0 & 0 & 0 & 0 \\
+         0 & 0 &-1 & 0 & 0 & 0 & 0 \\
+         0 & 0 & 0 & 1 & 0 & 0 & 0 \\
+         0 & 0 & 0 &-1 & 0 & 0 & 0 \\
+         0 & 0 & 0 & 0 & 1 & 0 & 0 \\
+         0 & 0 & 0 & 0 &-1 & 0 & 0 \\
+         0 & 0 & 0 & 0 & 0 & 1 & 0 \\
+         0 & 0 & 0 & 0 & 0 &-1 & 0 \\
+         0 & 0 & 0 & 0 & 0 & 0 & 1 \\
+    \end{pmatrix}
+    \cdot
+    \begin{pmatrix}
+        \kex \\
+        \kexAB \\
+        \kexBC \\
+        \kB \\
+        \kC \\
+        \kAB \\
+        \tex \\
+    \end{pmatrix}
+    \geqslant
+    \begin{pmatrix}
+        0 \\
+        -2e^6 \\
+        0 \\
+        -2e^6 \\
         0 \\
         -2e^6 \\
         0 \\
@@ -1345,7 +1418,6 @@ For most models, the linear constraints in the notation of \eqref{eq: linear con
         0 \\
     \end{pmatrix}.
 \end{equation}
-\end{small}
 
 \noindent  Through the isolation of each individual element, the constraints can be seen to be equivalent to
 \begin{subequations}
@@ -1357,11 +1429,20 @@ For most models, the linear constraints in the notation of \eqref{eq: linear con
     \PhiexB \geqslant 0, \\
     \PhiexC \geqslant 0, \\
     \dw \geqslant 0, \\
+    \dwAB \geqslant 0, \\
+    \dwBC \geqslant 0, \\
     \dwH \geqslant 0, \\
+    \dwHAB \geqslant 0, \\
+    \dwHBC \geqslant 0, \\
     \pA\dw^2 \geqslant 0, \\
-    \pB \leqslant \pA \leqslant 1, \\
+    \pA \geqslant 0, \\
+    \pB \geqslant 0, \\
+    \pC \geqslant 0, \\
+    \pC \leqslant \pB \leqslant \pA \leqslant 1, \\
     \pA \geqslant 0.85 \quad (\textrm{the skewed condition, } \pA \gg \pB), \\
     0 \leqslant \kex \leqslant 2e^6, \\
+    0 \leqslant \kexAB \leqslant 2e^6, \\
+    0 \leqslant \kexBC \leqslant 2e^6, \\
     0 \leqslant \kA \leqslant 2e^6, \\
     0 \leqslant \kB \leqslant 2e^6, \\
     0 \leqslant \kAB \leqslant 2e^6, \\
@@ -1382,24 +1463,25 @@ When not using the auto-analysis, constraints can be modified or turned off.
 The concept of diagonal scaling is explained in Section~\ref{sect: diagonal scaling} on page~\pageref{sect: diagonal scaling}.
 
 For the dispersion analysis the scaling factor of 10 is used for the relaxation rates, 1e$^5$ for the exchange rates, 1e$^{-4}$ for exchange times, and 1 for all other parameters.
-The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$, $\Phiex$, $\PhiexB$, $\PhiexC$, $\pA\dw^2$, $\dw$, $\dwH$, $\pA$, $\kex$, $\kB$, $\kC$, $\kAB$, $\tex$\} is
+The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$, $\Phiex$, $\PhiexB$, $\PhiexC$, $\pA\dw^2$, $\dw$, $\dwH$, $\pA$, $\pB$, $\kex$, $\kB$, $\kC$, $\kAB$, $\tex$\} is
 \begin{equation}
     \begin{pmatrix}
-        10 & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 10 & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0    & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1e^5 & 0    & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 1e^5 & 0    & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 1e^5 & 0    & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 1e^5 & 0       \\
-        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 1e^{-4} \\
+        10 & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 10 & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 10 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0    & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1e^5 & 0    & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 1e^5 & 0    & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 1e^5 & 0    & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 1e^5 & 0       \\
+        0  & 0  & 0  & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0    & 0    & 0    & 0    & 1e^{-4} \\
     \end{pmatrix}.
 \end{equation}
 
