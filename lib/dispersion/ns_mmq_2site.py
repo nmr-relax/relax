@@ -63,7 +63,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
 
 
-def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -200,7 +200,7 @@ def r2eff_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=Non
             back_calc[i]= -inv_tcpmg * log(Mx / pA)
 
 
-def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -228,7 +228,7 @@ def r2eff_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, 
     @type pB:               float
     @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw:               float
-    @keyword dwH:           Unused - this is simply to match the r2eff_mmq_2site_mq() function arguments.
+    @keyword dwH:           Unused - this is simply to match the r2eff_ns_mmq_2site_mq() function arguments.
     @type dwH:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float

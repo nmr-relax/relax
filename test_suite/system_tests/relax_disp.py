@@ -2812,7 +2812,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin137F.chi2, 12.4224061774664, 4)
 
 
-    def test_sprangers_data_to_mmq_2site(self, model=None):
+    def test_sprangers_data_to_ns_mmq_2site(self, model=None):
         """Test the 'NS MMQ 2-site' model fitting against Remco Sprangers' ClpP data.
 
         This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
