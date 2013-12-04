@@ -1,0 +1,15 @@
+The data in this directory has been generated using Dmitry Korzhnev's cpmg_fit program.
+
+First, generate the blank cpmg_fit input data with:
+
+$ python generate_blanks.py
+
+Then run cpmg_fit with:
+
+$ cpmg_fit < back_calculate.cpmg_fit
+
+Finally split up the 'all.res' output file with:
+
+$ python split_all.py
+
+Note that a high precision version of cpmg_fit has been used to output the values with more decimal places.
