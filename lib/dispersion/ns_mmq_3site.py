@@ -152,7 +152,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
     populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_AC=-dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_AC=dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB-dwH_AB, dw_AC=dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
