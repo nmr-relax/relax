@@ -908,14 +908,11 @@ def loop_point(exp_type_index=None, frq_index=None, skip_ref=True, return_indice
     # Assemble the dispersion data.
     ref_flag = not skip_ref
     if cdp.exp_type_list[exp_type_index] in EXP_TYPE_LIST_CPMG:
-        fields = return_cpmg_frqs(ref_flag=ref_flag)
+        fields = return_cpmg_frqs_single(exp_type=cdp.exp_type_list[exp_type_index], frq=return_value_from_frq_index(frq_index=frq_index), ref_flag=ref_flag)
     elif cdp.exp_type_list[exp_type_index] in EXP_TYPE_LIST_R1RHO:
-        fields = return_spin_lock_nu1(ref_flag=ref_flag)
+        fields = return_spin_lock_nu1_single(exp_type=cdp.exp_type_list[exp_type_index], frq=return_value_from_frq_index(frq_index=frq_index), ref_flag=ref_flag)
     else:
         raise RelaxError("The experiment type '%s' is unknown." % cdp.exp_type_list[exp_type_index])
-
-    # Alias the correct structure.
-    fields = fields[exp_type_index][frq_index]
 
     # Initialise the index.
     point_index = -1
@@ -1967,14 +1964,31 @@ def return_cpmg_frqs(ref_flag=True):
 
             # Loop over the frequencies.
             for point in cdp.cpmg_frqs_list:
+                # Skip reference points.
                 if (not ref_flag) and point == None:
                     continue
 
-                # Fetch all of the matching intensity keys.
-                keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, raise_error=False)
+                # Find a matching experiment ID.
+                found = False
+                for id in cdp.exp_type.keys():
+                    # Skip non-matching experiments.
+                    if cdp.exp_type[id] != exp_type:
+                        continue
+
+                    # Skip non-matching spectrometer frequencies.
+                    if hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+                        continue
+
+                    # Skip non-matching points.
+                    if cdp.cpmg_frqs[id] != point:
+                        continue
+
+                    # Found.
+                    found = True
+                    break
 
                 # No data.
-                if not len(keys):
+                if not found:
                     continue
 
                 # Add the data.
@@ -1985,6 +1999,62 @@ def return_cpmg_frqs(ref_flag=True):
 
     # Return the data.
     return cpmg_frqs
+
+
+def return_cpmg_frqs_single(exp_type=None, frq=None, ref_flag=True):
+    """Return the list of nu_CPMG frequencies.
+
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency in Hz.
+    @type frq:          float
+    @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
+    @type ref_flag:     bool
+    @return:            The list of nu_CPMG frequencies in Hz.
+    @rtype:             numpy rank-1 float64 array
+    """
+
+    # No data.
+    if not hasattr(cdp, 'cpmg_frqs_list'):
+        return None
+
+    # Initialise.
+    cpmg_frqs = []
+
+    # Loop over the points.
+    for point in cdp.cpmg_frqs_list:
+        # Skip reference points.
+        if (not ref_flag) and point == None:
+            continue
+
+        # Find a matching experiment ID.
+        found = False
+        for id in cdp.exp_type.keys():
+            # Skip non-matching experiments.
+            if cdp.exp_type[id] != exp_type:
+                continue
+
+            # Skip non-matching spectrometer frequencies.
+            if hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+                continue
+
+            # Skip non-matching points.
+            if cdp.cpmg_frqs[id] != point:
+                continue
+
+            # Found.
+            found = True
+            break
+
+        # No data.
+        if not found:
+            continue
+
+        # Add the data.
+        cpmg_frqs.append(point)
+
+    # Return the data as a numpy array.
+    return array(cpmg_frqs, float64)
 
 
 def return_index_from_disp_point(value, exp_type=None):
@@ -2596,11 +2666,27 @@ def return_spin_lock_nu1(ref_flag=True):
                 if (not ref_flag) and point == None:
                     continue
 
-                # Fetch all of the matching intensity keys.
-                keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, raise_error=False)
+                # Find a matching experiment ID.
+                found = False
+                for id in cdp.exp_type.keys():
+                    # Skip non-matching experiments.
+                    if cdp.exp_type[id] != exp_type:
+                        continue
+
+                    # Skip non-matching spectrometer frequencies.
+                    if hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+                        continue
+
+                    # Skip non-matching points.
+                    if cdp.spin_lock_nu1[id] != point:
+                        continue
+
+                    # Found.
+                    found = True
+                    break
 
                 # No data.
-                if not len(keys):
+                if not found:
                     continue
 
                 # Add the data.
@@ -2611,6 +2697,62 @@ def return_spin_lock_nu1(ref_flag=True):
 
     # Return the data.
     return nu1
+
+
+def return_spin_lock_nu1_single(exp_type=None, frq=None, ref_flag=True):
+    """Return the list of spin-lock field strengths.
+
+    @keyword exp_type:  The experiment type.
+    @type exp_type:     str
+    @keyword frq:       The spectrometer frequency in Hz.
+    @type frq:          float
+    @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
+    @type ref_flag:     bool
+    @return:            The list of spin-lock field strengths in Hz.
+    @rtype:             numpy rank-1 float64 array
+    """
+
+    # No data.
+    if not hasattr(cdp, 'spin_lock_nu1_list'):
+        return None
+
+    # Initialise.
+    nu1 = []
+
+    # Loop over the points.
+    for point in cdp.spin_lock_nu1_list:
+        # Skip reference points.
+        if (not ref_flag) and point == None:
+            continue
+
+        # Find a matching experiment ID.
+        found = False
+        for id in cdp.exp_type.keys():
+            # Skip non-matching experiments.
+            if cdp.exp_type[id] != exp_type:
+                continue
+
+            # Skip non-matching spectrometer frequencies.
+            if hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+                continue
+
+            # Skip non-matching points.
+            if cdp.spin_lock_nu1[id] != point:
+                continue
+
+            # Found.
+            found = True
+            break
+
+        # No data.
+        if not found:
+            continue
+
+        # Add the data.
+        nu1.append(point)
+
+    # Return the data as a numpy array.
+    return array(nu1, float64)
 
 
 def return_value_from_frq_index(frq_index=None):
