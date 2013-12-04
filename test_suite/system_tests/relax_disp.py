@@ -2427,7 +2427,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'ns_mmq_3site.py')
 
         # Check the chi-squared value.
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[1].chi2, 0.0, 5)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[1].chi2, 0.0, 3)
 
 
     def test_r2eff_read(self):
