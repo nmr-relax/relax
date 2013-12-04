@@ -656,7 +656,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
             b.append(-2e6 / scaling_matrix[param_index, param_index])
             j += 2
 
-        # Exchange times (k >= 0 and t >= 0).
+        # Exchange times (tex >= 0).
         elif param_name in ['tex']:
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
