@@ -1186,6 +1186,10 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                             # Add a new dimension.
                             cpmg_frqs_new[exp_type_index].append([])
 
+                            # No data.
+                            if not len(cpmg_frqs[exp_type_index][frq_index]):
+                                continue
+
                             # The minimum frequency unit.
                             min_frq = 1.0 / relax_times[exp_type_index][frq_index]
                             max_frq = max(cpmg_frqs[exp_type_index][frq_index]) + round(extend / min_frq) * min_frq
@@ -1213,6 +1217,10 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                             # Add a new dimension.
                             cpmg_frqs_new[exp_type_index].append([])
 
+                            # No data.
+                            if not len(cpmg_frqs[exp_type_index][frq_index]):
+                                continue
+
                             # Interpolate (adding the extended amount to the end).
                             for point_index in range(num_points):
                                 point = (point_index + 1) * (max(cpmg_frqs[exp_type_index][frq_index])+extend) / num_points
@@ -1233,6 +1241,10 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                     for frq_index in range(len(spin_lock_nu1[exp_type_index])):
                         # Add a new dimension.
                         spin_lock_nu1_new[exp_type_index].append([])
+
+                        # No data.
+                        if not len(spin_lock_nu1[exp_type_index][frq_index]):
+                            continue
 
                         # Interpolate (adding the extended amount to the end).
                         for point_index in range(num_points):
@@ -2485,8 +2497,8 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
                 values[-1][-1].append([])
                 errors[-1][-1].append([])
                 missing[-1][-1].append([])
-                frqs[-1][-1].append(None)
-                frqs_H[-1][-1].append(None)
+                frqs[-1][-1].append(0.0)
+                frqs_H[-1][-1].append(0.0)
         for field_i in range(field_count):
             relax_times[-1].append(None)
 

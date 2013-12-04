@@ -106,9 +106,9 @@ class Dispersion:
         @keyword missing:           The data structure indicating missing R2eff/R1rho data.  The dimensions must correspond to those of the values argument.
         @type missing:              list of lists of lists of numpy rank-1 int arrays
         @keyword frqs:              The spin Larmor frequencies (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first three of the value, error and missing structures.
-        @type frqs:                 list of lists of numpy rank-1 float arrays
+        @type frqs:                 list of lists of floats
         @keyword frqs_H:            The proton spin Larmor frequencies for the MMQ-type models (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions correspond to the first three of the value, error and missing structures.
-        @type frqs_H:               list of lists of numpy rank-1 float arrays
+        @type frqs_H:               list of lists of floats
         @keyword cpmg_frqs:         The CPMG frequencies in Hertz for each separate dispersion point.  This will be ignored for R1rho experiments.
         @type cpmg_frqs:            list of lists of lists of floats
         @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz for each separate dispersion point.  This will be ignored for CPMG experiments.
@@ -178,8 +178,10 @@ class Dispersion:
                 self.num_disp_points[-1].append([])
                 if cpmg_frqs != None and len(cpmg_frqs[exp_type_index][frq_index]):
                     self.num_disp_points[-1][-1] = len(self.cpmg_frqs[exp_type_index][frq_index])
-                else:
+                elif spin_lock_nu1 != None and len(spin_lock_nu1[exp_type_index][frq_index]):
                     self.num_disp_points[-1][-1] = len(self.spin_lock_nu1[exp_type_index][frq_index])
+                else:
+                    self.num_disp_points[-1][-1] = 0
 
         # Scaling initialisation.
         self.scaling_flag = False
