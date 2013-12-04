@@ -495,7 +495,7 @@ class Dispersion:
         return chi2_sum
 
 
-    def calc_ns_mmq_3site_chi2(self, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_BC=None, dw_AC=None, dwH_AB=None, dwH_BC=None, dwH_AC=None, pA=None, pB=None, kex_AB=None, kex_BC=None, kex_AC=None):
+    def calc_ns_mmq_3site_chi2(self, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_BC=None, dwH_AB=None, dwH_BC=None, pA=None, pB=None, kex_AB=None, kex_BC=None, kex_AC=None):
         """Calculate the chi-squared value for the 'NS MMQ 3-site' models.
 
         @keyword R20A:      The R2 value for state A in the absence of exchange.
@@ -526,12 +526,15 @@ class Dispersion:
 
         # Once off parameter conversions.
         pC = 1.0 - pA - pB
-        k_BA = pA * kex_AB
-        k_AB = pB * kex_AB
-        k_CA = pA * kex_AC
-        k_AC = pC * kex_AC
-        k_CB = pB * kex_BC
-        k_BC = pC * kex_BC
+        pA_pB = pA + pB
+        pA_pC = pA + pC
+        pB_pC = pB + pC
+        k_BA = pA * kex_AB / pA_pB
+        k_AB = pB * kex_AB / pA_pB
+        k_CB = pB * kex_BC / pB_pC
+        k_BC = pC * kex_BC / pB_pC
+        k_CA = pA * kex_AC / pA_pC
+        k_AC = pC * kex_AC / pA_pC
         dw_AC = dw_AB + dw_BC
         dwH_AC = dwH_AB + dwH_BC
 
@@ -554,49 +557,38 @@ class Dispersion:
 
                     # Convert dw from ppm to rad/s.
                     dw_AB_frq = dw_AB[spin_index] * self.frqs[exp_index][spin_index][frq_index]
-                    dw_BC_frq = dw_BC[spin_index] * self.frqs[exp_index][spin_index][frq_index]
                     dw_AC_frq = dw_AC[spin_index] * self.frqs[exp_index][spin_index][frq_index]
                     dwH_AB_frq = dwH_AB[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
-                    dwH_BC_frq = dwH_BC[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
                     dwH_AC_frq = dwH_AC[spin_index] * self.frqs_H[exp_index][spin_index][frq_index]
 
                     # Alias the dw frequency combinations.
                     aliased_dwH_AB = 0.0
-                    aliased_dwH_BC = 0.0
                     aliased_dwH_AC = 0.0
                     if self.exp_types[exp_index] == EXP_TYPE_CPMG_SQ:
                         aliased_dw_AB = dw_AB_frq
-                        aliased_dw_BC = dw_BC_frq
                         aliased_dw_AC = dw_AC_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_SQ:
                         aliased_dw_AB = dwH_AB_frq
-                        aliased_dw_BC = dwH_BC_frq
                         aliased_dw_AC = dwH_AC_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_DQ:
                         aliased_dw_AB = dw_AB_frq + dwH_AB_frq
-                        aliased_dw_BC = dw_BC_frq + dwH_BC_frq
                         aliased_dw_AC = dw_AC_frq + dwH_AC_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_ZQ:
                         aliased_dw_AB = dw_AB_frq - dwH_AB_frq
-                        aliased_dw_BC = dw_BC_frq - dwH_BC_frq
                         aliased_dw_AC = dw_AC_frq - dwH_AC_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_MQ:
                         aliased_dw_AB = dw_AB_frq
-                        aliased_dw_BC = dw_BC_frq
                         aliased_dw_AC = dw_AC_frq
                         aliased_dwH_AB = dwH_AB_frq
-                        aliased_dwH_BC = dwH_BC_frq
                         aliased_dwH_AC = dwH_AC_frq
                     elif self.exp_types[exp_index] == EXP_TYPE_CPMG_PROTON_MQ:
                         aliased_dw_AB = dwH_AB_frq
-                        aliased_dw_BC = dwH_BC_frq
                         aliased_dw_AC = dwH_AC_frq
                         aliased_dwH_AB = dw_AB_frq
-                        aliased_dwH_BC = dw_BC_frq
                         aliased_dwH_AC = dw_AC_frq
 
                     # Back calculate the R2eff values for each experiment type.
-                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20A[r20_index], R20B=R20B[r20_index], R20C=R20C[r20_index], pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_BC=aliased_dw_BC, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_BC=aliased_dwH_BC, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[exp_index][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
+                    self.r2eff_mmq[exp_index](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20A[r20_index], R20B=R20B[r20_index], R20C=R20C[r20_index], pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[exp_index][frq_index], tcp=self.tau_cpmg[exp_index][frq_index], back_calc=self.back_calc[exp_index][spin_index][frq_index], num_points=self.num_disp_points[exp_index][frq_index], power=self.power[exp_index][frq_index])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for point_index in range(self.num_disp_points[exp_index][frq_index]):

@@ -39,7 +39,7 @@ from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_BC=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
+def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
     """The Bloch-McConnell matrix for 3-site exchange.
 
     @keyword matrix:        The matrix to populate.
@@ -52,8 +52,6 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw
     @type R20C:             float
     @keyword dw_AB:         The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
     @type dw_AB:            float
-    @keyword dw_BC:         The combined chemical exchange difference parameters between states B and C in rad/s.  This can be any combination of dw and dwH.
-    @type dw_BC:            float
     @keyword dw_AC:         The combined chemical exchange difference parameters between states A and C in rad/s.  This can be any combination of dw and dwH.
     @type dw_AC:            float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -71,7 +69,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw
     """
 
     # The first row.
-    matrix[0, 0] = -k_AB - k_AC + 1.j*dw_BC - R20A
+    matrix[0, 0] = -k_AB - k_AC - R20A
     matrix[0, 1] = k_BA
     matrix[0, 2] = k_CA
 
@@ -86,7 +84,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw
     matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
 
 
-def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_BC=None, dw_AC=None, dwH_AB=None, dwH_BC=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -122,14 +120,10 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     @type pC:               float
     @keyword dw_AB:         The chemical exchange difference between states A and B in rad/s.
     @type dw_AB:            float
-    @keyword dw_BC:         The chemical exchange difference between states B and C in rad/s.
-    @type dw_BC:            float
     @keyword dw_AC:         The chemical exchange difference between states A and C in rad/s.
     @type dw_AC:            float
     @keyword dwH_AB:        The proton chemical exchange difference between states A and B in rad/s.
     @type dwH_AB:           float
-    @keyword dwH_BC:        The proton chemical exchange difference between states B and C in rad/s.
-    @type dwH_BC:           float
     @keyword dwH_AC:        The proton chemical exchange difference between states A and C in rad/s.
     @type dwH_AC:           float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -157,8 +151,8 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_BC=-dw_BC-dwH_BC, dw_AC=-dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_BC=dw_BC-dwH_BC, dw_AC=dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_AC=-dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB-dwH_AB, dw_AC=dw_AC-dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -241,9 +235,10 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
             back_calc[i] = 1e99
         else:
             back_calc[i]= -inv_tcpmg * log(Mx / pA)
+    print back_calc
 
 
-def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_BC=None, dw_AC=None, dwH_AB=None, dwH_BC=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -275,14 +270,10 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @type pC:               float
     @keyword dw_AB:         The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw_AB:            float
-    @keyword dw_BC:         The combined chemical exchange difference between states B and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
-    @type dw_BC:            float
     @keyword dw_AC:         The combined chemical exchange difference between states A and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw_AB:            float
     @keyword dwH_AB:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
     @type dwH_AC:           float
-    @keyword dwH_BC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
-    @type dwH_BC:           float
     @keyword dwH_AC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
     @type dwH_AB:           float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -302,8 +293,8 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     """
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB, dw_BC=dw_BC, dw_AC=dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB, dw_BC=-dw_BC, dw_AC=-dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB, dw_AC=dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB, dw_AC=-dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
