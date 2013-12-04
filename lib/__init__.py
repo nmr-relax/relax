@@ -41,6 +41,7 @@ __all__ = [
     'list',
     'mathematics',
     'model_selection',
+    'nmr',
     'order',
     'periodic_table',
     'physical_constants',
