@@ -478,9 +478,10 @@ def linear_constraints(spins=None, scaling_matrix=None):
         0 <= R2 <= 200
         0 <= R2A <= 200
         0 <= R2B <= 200
-        pB <= pA <= 1
+        pC <= pB <= pA <= 1
         pA >= 0.85 (the skewed condition, pA >> pB)
-        pB > 0
+        pB >= 0
+        pC >= 0
         phi_ex >= 0
         phi_ex_B >= 0
         phi_ex_C >= 0
@@ -584,8 +585,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
             A.append(zero_array * 0.0)
             A[j][param_index] = 1.0
             A[j+1][param_index] = -1.0
-            b.append(0.0)
-            b.append(-200.0 / scaling_matrix[param_index, param_index])
+            b.append(123.0)
+            b.append(-123.0 / scaling_matrix[param_index, param_index])
             j += 2
 
         # The pA.pB.dw**2, phi_ex_B, phi_ex_C and pA.dw**2 parameters (phi_ex* >= 0 and padw2 >= 0).
@@ -603,9 +604,9 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.0)
                 j += 1
 
-        # The population of state A.
+        # The population of state A and B.
         elif param_name == 'pA':
-            # First the pA <= 1 constraint
+            # First the pA <= 1 constraint (which also rearranged is pB >= 0).
             A.append(zero_array * 0.0)
             A[j][param_index] = -1.0
             b.append(-1.0 / scaling_matrix[param_index, param_index])
@@ -625,12 +626,25 @@ def linear_constraints(spins=None, scaling_matrix=None):
                 b.append(0.5 / scaling_matrix[param_index, param_index])
                 j += 1
 
-        # The population of state X (pB >= 0).
-        elif param_name in ['pB', 'pC']:
-            A.append(zero_array * 0.0)
-            A[j][param_index] = 1.0
-            b.append(0.0)
-            j += 1
+        # The population of state C (the pB parameter is only present when pC exists).
+        elif param_name == 'pB':
+            # Find pA.
+            for param_name2, param_index2, spin_index2, r20_key2 in loop_parameters(spins=spins):
+                if param_name2 == 'pA':
+                    # First pC >= 0 (which rearranged is -pA - pB >= -1).
+                    A.append(zero_array * 0.0)
+                    A[j][param_index2] = -1.0
+                    A[j][param_index] = -1.0
+                    b.append(-1.0 / scaling_matrix[param_index, param_index])
+                    j += 1
+
+                    # Then the pB >= pC constraint (rearranged as pA + 2pB >= 1).
+                    A.append(zero_array * 0.0)
+                    A[j][param_index2] = 1.0
+                    A[j][param_index] = 2.0
+                    b.append(1.0 / scaling_matrix[param_index, param_index])
+                    j += 1
+                    break
 
         # Exchange rates and times (0 <= k <= 2e6).
         elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
