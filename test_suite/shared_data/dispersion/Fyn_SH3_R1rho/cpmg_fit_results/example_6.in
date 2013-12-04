@@ -1,0 +1,40 @@
+# The following input file performs minimization of 15N off-resonance R1r data for 
+# residue 14 of deuterated 2H/15N G48V Fyn SH3 recorded at B1 fields of 
+# 50, 75, 100, 150, 200 Hz (600 MHz spectrometer) and 100, 200, 400 Hz (800 MHz spectrometer) 
+# using the model of two-site exchange.
+
+# Read first 'example_rw.in'
+
+# Reading off-resonance R1r data for different B0 and B1 fields 
+# (first column of input files - offset)
+
+read ../T14_600_50.dsp d 55 R N15 25 600 @ 50 0.04   # B1 field of 50 Hz, 600 MHz spectrometer
+read ../T14_600_75.dsp d 55 R N15 25 600 @ 75 0.04   # B1 field of 75 Hz, 600 MHz spectrometer
+read ../T14_600_100.dsp d 55 R N15 25 600 @ 100 0.04   # B1 field of 100 Hz, 600 MHz spectrometer
+read ../T14_600_150.dsp d 55 R N15 25 600 @ 150 0.04   # B1 field of 150 Hz, 600 MHz spectrometer
+read ../T14_600_200.dsp d 55 R N15 25 600 @ 200 0.04   # B1 field of 200 Hz, 600 MHz spectrometer
+
+read ../T14_800_100.dsp d 55 R N15 25 800 @ 100 0.04   # B1 field of 100 Hz, 800 MHz spectrometer
+read ../T14_800_200.dsp d 55 R N15 25 800 @ 200 0.04   # B1 field of 200 Hz, 800 MHz spectrometer
+read ../T14_800_400.dsp d 55 R N15 25 800 @ 400 0.04   # B1 field of 400 Hz, 800 MHz spectrometer
+
+set m 3 0             # set 3-site exchange model;
+set p @ 0 0.9999999 u # set populations 95%/5%
+set p @ 1 0.05 u
+set p @ 2 @ f
+
+set k @ 0 400 u  # set kex(AB) equals to 500 1/s; adjustable (u)
+set k @ 1 0 f # set kex(BC) equals to 0 1/s; fixed (f)
+set k @ 2 0 f # set kex(AC) equals to 0 1/s; fixed (f)
+
+set c @ @ 0 0 0 f  # set initial approximations for delta chemical shifts.
+set c @ @ 1 0 4 u
+set c @ @ 2 0 0 f
+
+min     # perform minimization
+write > p    # look at optimized model parameters
+#backup backups/fit_r1r_2st.bk    # backup program state
+#write  backups/fit_r1r_2st.par p # write parameters to file
+
+
+
