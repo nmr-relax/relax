@@ -135,7 +135,7 @@ class Relax_disp(SystemTestCase):
 
 
     def setup_korzhnev_2005_data(self, data_list=[]):
-        """Set up the data for the test_korzhnev_2005_data_*() system tests using the 'MMQ 2-site' model.
+        """Set up the data for the test_korzhnev_2005_data_*() system tests using the 'NS MMQ 2-site' model.
 
         This loads the proton-heteronuclear SQ, ZQ, DQ, and MQ (MMQ) data from:
 
@@ -232,7 +232,7 @@ class Relax_disp(SystemTestCase):
             self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
 
         # Change the model.
-        self.interpreter.relax_disp.select_model('MMQ 2-site')
+        self.interpreter.relax_disp.select_model('NS MMQ 2-site')
 
 
     def test_bug_21081_disp_cluster_fail(self):
@@ -1520,7 +1520,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_15n_dq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 15N DQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 15N DQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1592,7 +1592,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_15n_mq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 15N MQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 15N MQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1664,7 +1664,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_15n_sq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 15N SQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 15N SQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1732,7 +1732,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_15n_zq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 15N ZQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 15N ZQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1804,7 +1804,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_1h_mq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 1H MQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 1H MQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1876,7 +1876,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_1h_sq_data(self):
-        """Optimisation of the Korzhnev et al., 2005 1H SQ CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of the Korzhnev et al., 2005 1H SQ CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -1944,7 +1944,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_korzhnev_2005_all_data(self):
-        """Optimisation of all the Korzhnev et al., 2005 CPMG data using the 'MMQ 2-site' model.
+        """Optimisation of all the Korzhnev et al., 2005 CPMG data using the 'NS MMQ 2-site' model.
 
         This uses the data from Dmitry Korzhnev's paper at U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}.  This is the 1H SQ, 15N SQ, ZQ, DQ, 1H MQ and 15N MQ data for residue Asp 9 of the Fyn SH3 domain mutant.
 
@@ -2813,7 +2813,7 @@ class Relax_disp(SystemTestCase):
 
 
     def test_sprangers_data_to_mmq_2site(self, model=None):
-        """Test the 'MMQ 2-site' model fitting against Remco Sprangers' ClpP data.
+        """Test the 'NS MMQ 2-site' model fitting against Remco Sprangers' ClpP data.
 
         This uses the data from Remco Sprangers' paper at http://dx.doi.org/10.1073/pnas.0507370102.  This is MQ CPMG data with a fixed relaxation time period.
         """
@@ -2826,7 +2826,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.state.load(data_path+sep+'r2eff_values')
 
         # The model data pipe.
-        model = 'MMQ 2-site'
+        model = 'NS MMQ 2-site'
         self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
         self.interpreter.pipe.switch(pipe_name=model)
 

@@ -121,7 +121,7 @@ MODEL_NS_R1RHO_2SITE = 'NS R1rho 2-site'
 MODEL_MQ_CR72 = 'MQ CR72'
 """The Carver and Richards (1972) 2-site model for all time scales extended for MQ CPMG data."""
 
-MODEL_MMQ_2SITE = 'MMQ 2-site'
+MODEL_MMQ_2SITE = 'NS MMQ 2-site'
 """The numerical solution for the 2-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data."""
 
 MODEL_NS_MMQ_3SITE = 'NS MMQ 3-site'

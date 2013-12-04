@@ -107,7 +107,7 @@ for data_type, id, file, exp_type, spin_id, H_frq, relax_time in data:
     relax_disp.r2eff_read_spin(id=id, file=file, dir='..', spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
 
 # Change the model.
-relax_disp.select_model('MMQ 2-site')
+relax_disp.select_model('NS MMQ 2-site')
 
 # The R20 keys.
 r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_PROTON_SQ, frq=500e6)

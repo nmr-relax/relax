@@ -126,7 +126,7 @@ For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (M
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the numeric models currently supported are:
 
 \begin{description}
-\item[`MMQ 2-site':]\index{relaxation dispersion!MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MMQ 2-site model} on page~\pageref{sect: dispersion: MMQ 2-site model}.
+\item[`NS MMQ 2-site':]\index{relaxation dispersion!NS MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: NS MMQ 2-site model} on page~\pageref{sect: dispersion: NS MMQ 2-site model}.
 \item[`NS MMQ 3-site linear':]\index{relaxation dispersion!NS MMQ 3-site model linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site linear model} on page~\pageref{sect: dispersion: NS MMQ 3-site linear model}.
 \item[`NS MMQ 3-site':]\index{relaxation dispersion!NS MMQ 3-site model}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site model} on page~\pageref{sect: dispersion: NS MMQ 3-site model}.
 \end{description}
@@ -849,15 +849,15 @@ These are the numeric models designed for handling combined proton-heteronuclear
 This data combination is labelled as multiple multiple quantum data or MMQ.
 
 
-% MMQ 2-site model.
-%~~~~~~~~~~~~~~~~~~
+% NS MMQ 2-site model.
+%~~~~~~~~~~~~~~~~~~~~~
 
-\subsection{The MMQ 2-site model}
-\label{sect: dispersion: MMQ 2-site model}
-\index{relaxation dispersion!MMQ 2-site model|textbf}
+\subsection{The NS MMQ 2-site model}
+\label{sect: dispersion: NS MMQ 2-site model}
+\index{relaxation dispersion!NS MMQ 2-site model|textbf}
 
 This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
-It is selected by setting the model to `MMQ 2-site'.
+It is selected by setting the model to `NS MMQ 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 Different sets of equations are used for the different data types.
 
@@ -1001,7 +1001,7 @@ where
 % The MQ equations.
 \subsubsection{The MQ equations}
 
-The formulae for multiple quantum CPMG-type data are the same as for the `MMQ 2-site' model except for the $\Rtwoeff$ calculation and the $\mathbf{m_j}$ matrices.
+The formulae for multiple quantum CPMG-type data are the same as for the `NS MMQ 2-site' model except for the $\Rtwoeff$ calculation and the $\mathbf{m_j}$ matrices.
 The rate is calculated as
 \begin{equation}
     \Rtwoeff = - \frac{1}{T}
@@ -1135,7 +1135,7 @@ It can be summarised as:
 \begin{description}
 \item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is used in a clustered analysis whereby the pre-run directory contains results from a non-clustered analysis.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
 \item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.  The currently supported nested model pairs are `CR72' and `CR72 full', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.  In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
-\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MQ CR72' model is used for the `MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
+\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MQ CR72' model is used for the `NS MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
 \end{description}
 \item[Interruption:]  The optimisation procedure of the auto-analysis can read saved results files if a previous calculation was interrupted.
 \item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.  The relax implementation is described in \citet{dAuvergneGooley06}.  This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.
