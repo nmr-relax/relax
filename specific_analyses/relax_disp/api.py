@@ -45,7 +45,7 @@ from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_point, loop_exp_frq_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, get_value, linear_constraints, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -115,7 +115,7 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
 
 
-    def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, point=None):
+    def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, offset=None, point=None):
         """Back-calculation of peak intensity for the given relaxation time.
 
         @keyword spin:      The specific spin data container.
@@ -124,6 +124,8 @@ class Relax_disp(API_base, API_common):
         @type exp_type:     str
         @keyword frq:       The spectrometer frequency.
         @type frq:          float
+        @keyword offset:    For R1rho-type data, the spin-lock offset value in ppm.
+        @type offset:       None or float
         @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
         @type point:        float
         @return:            The back-calculated peak intensities for the given exponential curve.
@@ -135,7 +137,7 @@ class Relax_disp(API_base, API_common):
             raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
 
         # The key.
-        param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+        param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
         # Create the initial parameter vector.
         param_vector = assemble_param_vector(spins=[spin], key=param_key)
@@ -198,11 +200,11 @@ class Relax_disp(API_base, API_common):
                 spin.r2eff_err = {}
 
             # Loop over all the data.
-            for exp_type, frq, point, time in loop_exp_frq_point_time():
+            for exp_type, frq, offset, point, time in loop_exp_frq_offset_point_time():
                 # The three keys.
                 ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # Check for missing data.
                 missing = False
@@ -337,9 +339,9 @@ class Relax_disp(API_base, API_common):
                 continue
 
             # Loop over each spectrometer frequency and dispersion point.
-            for exp_type, frq, point in loop_exp_frq_point():
+            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
                 # The parameter key.
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # The initial parameter vector.
                 param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)
@@ -653,8 +655,8 @@ class Relax_disp(API_base, API_common):
                     continue
 
                 # Loop over each spectrometer frequency and dispersion point.
-                for exp_type, frq, point in loop_exp_frq_point():
-                    yield spin, exp_type, frq, point
+                for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+                    yield spin, exp_type, frq, offset, point
 
         # All other models (the base data is the R2eff/R1rho values).
         else:
@@ -724,7 +726,7 @@ class Relax_disp(API_base, API_common):
                 back_calc = back_calc_r2eff(spin=spin, spin_id=spin_id, store_chi2=True)
 
                 # Pack the data.
-                pack_back_calc_r2eff(spin=spin, spin_id=spin_id, spin_index=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+                pack_back_calc_r2eff(spin=spin, spin_id=spin_id, si=0, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
 
 
     def constraint_algorithm(self):
@@ -750,10 +752,10 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, exp_type, frq, point = data_id
+            spin, exp_type, frq, offset, point = data_id
 
             # Back calculate the peak intensities.
-            values = self._back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, point=point)
+            values = self._back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point)
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -773,7 +775,7 @@ class Relax_disp(API_base, API_common):
 
             # Convert to a dictionary matching the R2eff data structure.
             values = {}
-            for exp_type, frq, point, exp_type_index, frq_index, point_index in loop_exp_frq_point(return_indices=True):
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
                 # Alias the correct data.
                 current_bc = back_calc
                 current_spin = spin
@@ -782,14 +784,14 @@ class Relax_disp(API_base, API_common):
                     current_bc = proton_back_calc
 
                 # The parameter key.
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # Skip missing data.
                 if not hasattr(current_spin, 'r2eff') or param_key not in current_spin.r2eff.keys():
                     continue
 
                 # Store the result.
-                values[param_key] = back_calc[exp_type_index][0][frq_index][point_index]
+                values[param_key] = back_calc[ei][0][mi][oi][di]
 
         # Return the MC data.
         return values
@@ -1053,8 +1055,8 @@ class Relax_disp(API_base, API_common):
 
         # Loop over the parameters of the cluster, fetching their values.
         values = []
-        for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
-            values.append(get_value(spins=spins, sim_index=sim_index, param_name=param_name, spin_index=spin_index, r20_key=r20_key))
+        for param_name, param_index, si, r20_key in loop_parameters(spins=spins):
+            values.append(get_value(spins=spins, sim_index=sim_index, param_name=param_name, spin_index=si, r20_key=r20_key))
 
         # Return all values.
         return values
@@ -1304,7 +1306,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, exp_type, frq, point = data_id
+            spin, exp_type, frq, offset, point = data_id
 
             # Return the data.
             return spin.intensities
@@ -1357,7 +1359,7 @@ class Relax_disp(API_base, API_common):
         # The R2eff model.
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, exp_type, frq, point = data_id
+            spin, exp_type, frq, offset, point = data_id
 
             # Generate the data structure to return.
             errors = []
@@ -1429,11 +1431,11 @@ class Relax_disp(API_base, API_common):
 
         # Convert the parameter index.
         if model_param:
-            param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+            param_name, si, mi = param_index_to_param_info(index=index, spins=spins)
         else:
             param_name = aux_params[index - total_param_num]
-            spin_index = 0
-            frq_index = 0
+            si = 0
+            mi = 0
 
         # The parameter error name.
         err_name = param_name + "_err"
@@ -1441,11 +1443,11 @@ class Relax_disp(API_base, API_common):
         # The exponential curve parameters.
         if param_name in ['r2eff', 'i0']:
             # Initialise if needed.
-            if not hasattr(spins[spin_index], err_name):
-                setattr(spins[spin_index], err_name, {})
+            if not hasattr(spins[si], err_name):
+                setattr(spins[si], err_name, {})
 
             # Set the value.
-            setattr(spins[spin_index], err_name, error)
+            setattr(spins[si], err_name, error)
 
         # Model and auxiliary parameters.
         else:
@@ -1577,14 +1579,14 @@ class Relax_disp(API_base, API_common):
         # The R2eff model (with peak intensity base data).
         if cdp.model_type == 'R2eff':
             # Unpack the data.
-            spin, exp_type, frq, point = data_id
+            spin, exp_type, frq, offset, point = data_id
 
             # Initialise the data structure if needed.
             if not hasattr(spin, 'intensity_sim'):
                 spin.intensity_sim = {}
 
             # Loop over each time point.
-            time_index = 0
+            ti = 0
             for time in loop_time():
                 # Get the intensity keys.
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
@@ -1600,10 +1602,10 @@ class Relax_disp(API_base, API_common):
 
                     # Loop over the simulations, appending the corresponding data.
                     for i in range(cdp.sim_number):
-                        spin.intensity_sim[int_key].append(sim_data[i][time_index])
+                        spin.intensity_sim[int_key].append(sim_data[i][ti])
 
                 # Increment the time index.
-                time_index += 1
+                ti += 1
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -1669,26 +1671,26 @@ class Relax_disp(API_base, API_common):
 
         # Convert the parameter index.
         if model_param:
-            param_name, spin_index, frq_index = param_index_to_param_info(index=index, spins=spins)
+            param_name, si, mi = param_index_to_param_info(index=index, spins=spins)
             if not param_name in ['r2eff', 'i0']:
-                spin_index = 0
+                si = 0
         else:
             param_name = aux_params[index - total_param_num]
-            spin_index = 0
-            frq_index = 0
+            si = 0
+            mi = 0
 
         # The exponential curve parameters.
         sim_data = []
         if param_name == 'r2eff':
             for i in range(cdp.sim_number):
-                sim_data.append(spins[spin_index].r2eff_sim[i])
+                sim_data.append(spins[si].r2eff_sim[i])
         elif param_name == 'i0':
             for i in range(cdp.sim_number):
-                sim_data.append(spins[spin_index].i0_sim[i])
+                sim_data.append(spins[si].i0_sim[i])
 
         # Model and auxiliary parameters.
         else:
-            sim_data = getattr(spins[spin_index], param_name + "_sim")
+            sim_data = getattr(spins[si], param_name + "_sim")
 
         # Set the sim data to None if empty.
         if sim_data == []:

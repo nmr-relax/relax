@@ -77,55 +77,55 @@ def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
     write_program_setup(file=save_file, dir=dir, data=data)
 
     # Loop over the experiments.
-    for exp_index in range(data.num_exp):
-        write_sequence(file=save_file, data=data, exp_index=exp_index)
-        write_cpmg_datasets(file=save_file, data=data, exp_index=exp_index)
-        write_spinlock_datasets(file=save_file, data=data, exp_index=exp_index)
-        write_experiment_setup(file=save_file, data=data, exp_index=exp_index)
+    for ei in range(data.num_exp):
+        write_sequence(file=save_file, data=data, ei=ei)
+        write_cpmg_datasets(file=save_file, data=data, ei=ei)
+        write_spinlock_datasets(file=save_file, data=data, ei=ei)
+        write_experiment_setup(file=save_file, data=data, ei=ei)
 
 
-def write_cpmg_datasets(file=None, data=None, exp_index=0):
+def write_cpmg_datasets(file=None, data=None, ei=0):
     """Create the NESSY CPMG datasets.
 
-    @keyword file:      The file object to write to.
-    @type file:         file object
-    @keyword data:      The NESSY data object.
-    @type data:         Nessy_data instance
-    @keyword exp_index: The index of the experiment to output.
-    @type exp_index:    int
+    @keyword file:  The file object to write to.
+    @type file:     file object
+    @keyword data:  The NESSY data object.
+    @type data:     Nessy_data instance
+    @keyword ei:    The index of the experiment to output.
+    @type ei:       int
     """
 
     # Loop over the 30 elements.
     for i in range(30):
         # Empty data.
-        file.write("Datasets:<>%s<>%i<>%s\n" % (exp_index, i+1, data.cpmg_data[exp_index][i]))
+        file.write("Datasets:<>%s<>%i<>%s\n" % (ei, i+1, data.cpmg_data[ei][i]))
 
 
-def write_experiment_setup(file=None, data=None, exp_index=0):
+def write_experiment_setup(file=None, data=None, ei=0):
     """Create the NESSY experimental setup entries.
 
-    @keyword file:      The file object to write to.
-    @type file:         file object
-    @keyword data:      The NESSY data object.
-    @type data:         Nessy_data instance
-    @keyword exp_index: The index of the experiment to output.
-    @type exp_index:    int
+    @keyword file:  The file object to write to.
+    @type file:     file object
+    @keyword data:  The NESSY data object.
+    @type data:     Nessy_data instance
+    @keyword ei:    The index of the experiment to output.
+    @type ei:       int
     """
 
     # The CPMG relaxation delay.
-    file.write("CPMG relaxation delay:<>%s<>%s\n" % (exp_index, data.cpmg_delay[exp_index]))
+    file.write("CPMG relaxation delay:<>%s<>%s\n" % (ei, data.cpmg_delay[ei]))
 
     # The HD exchange entry
-    file.write("HD Exchange:<>%s<>%s\n" % (exp_index, data.hd_exchange[exp_index]))
+    file.write("HD Exchange:<>%s<>%s\n" % (ei, data.hd_exchange[ei]))
 
     # The experiment type.
-    file.write("Experiment:<>%s<>%s\n" % (exp_index, data.experiment[exp_index]))
+    file.write("Experiment:<>%s<>%s\n" % (ei, data.experiment[ei]))
 
     # The nu_CPMG frequencies.
-    file.write("CPMG frequencies:<>%s<>%s\n" % (exp_index, data.cpmg_frqs[exp_index]))
+    file.write("CPMG frequencies:<>%s<>%s\n" % (ei, data.cpmg_frqs[ei]))
 
     # The spin-lock field strengths.
-    file.write("Spin Lock / Offset:<>%s<>%s\n" % (exp_index, data.spin_lock[exp_index]))
+    file.write("Spin Lock / Offset:<>%s<>%s\n" % (ei, data.spin_lock[ei]))
 
 
 def write_program_setup(file=None, dir=None, data=None):
@@ -178,30 +178,30 @@ def write_program_setup(file=None, dir=None, data=None):
     file.write("Final Results:<>[]\n")
 
 
-def write_sequence(file=None, data=None, exp_index=0):
+def write_sequence(file=None, data=None, ei=0):
     """Create the NESSY sequence entry.
 
-    @keyword file:      The file object to write to.
-    @type file:         file object
-    @keyword data:      The NESSY data object.
-    @type data:         Nessy_data instance
-    @keyword exp_index: The index of the experiment to output.
-    @type exp_index:    int
+    @keyword file:  The file object to write to.
+    @type file:     file object
+    @keyword data:  The NESSY data object.
+    @type data:     Nessy_data instance
+    @keyword ei:    The index of the experiment to output.
+    @type ei:       int
     """
 
     # Empty sequence.
-    file.write("Sequence:<>%s<>%s\n" % (exp_index, data.sequence))
+    file.write("Sequence:<>%s<>%s\n" % (ei, data.sequence))
 
 
-def write_spinlock_datasets(file=None, data=None, exp_index=0):
+def write_spinlock_datasets(file=None, data=None, ei=0):
     """Create the NESSY R1rho datasets.
 
-    @keyword file:      The file object to write to.
-    @type file:         file object
-    @keyword data:      The NESSY data object.
-    @type data:         Nessy_data instance
-    @keyword exp_index: The index of the experiment to output.
-    @type exp_index:    int
+    @keyword file:  The file object to write to.
+    @type file:     file object
+    @keyword data:  The NESSY data object.
+    @type data:     Nessy_data instance
+    @keyword ei:    The index of the experiment to output.
+    @type ei:       int
     """
 
     # Loop over the 30 elements.
@@ -209,7 +209,7 @@ def write_spinlock_datasets(file=None, data=None, exp_index=0):
         # Loop over the second set of 30 elements.
         for j in range(30):
             # Empty data.
-            file.write("Datasets Spinlock:<>%s<>%s<>%s<>%s\n" % (exp_index, i+1, j+1, data.r1rho_data[exp_index][i][j]))
+            file.write("Datasets Spinlock:<>%s<>%s<>%s<>%s\n" % (ei, i+1, j+1, data.r1rho_data[ei][i][j]))
 
 
 
@@ -244,7 +244,7 @@ class Nessy_data:
         self.experiment = []
         self.cpmg_frqs = []
         self.spin_lock = []
-        for exp_index in range(self.num_exp):
+        for ei in range(self.num_exp):
             self.cpmg_data.append([])
             self.r1rho_data.append([])
             self.hd_exchange.append([''] * 30)
@@ -252,10 +252,10 @@ class Nessy_data:
             self.cpmg_frqs.append([''] * 30)
             self.spin_lock.append([''] * 31)
             for i in range(30):
-                self.cpmg_data[exp_index].append([''] * 700)
-                self.r1rho_data[exp_index].append([])
+                self.cpmg_data[ei].append([''] * 700)
+                self.r1rho_data[ei].append([])
                 for j in range(30):
-                    self.r1rho_data[exp_index][-1].append([''] * 700)
+                    self.r1rho_data[ei][-1].append([''] * 700)
 
         # Assemble the data.
         self._assemble_experiment()
@@ -283,11 +283,11 @@ class Nessy_data:
             # Loop over all spectrometer frequencies.
             for exp_type, frq in loop_exp_frq():
                 # Loop over all dispersion points.
-                field_index = 0
+                mi = 0
                 for point in loop_point(exp_type=exp_type, skip_ref=False):
                     # Indices and keys.
-                    exp_index = return_index_from_frq(frq)
-                    point_index = return_index_from_disp_point(point, exp_type=exp_type)
+                    ei = return_index_from_frq(frq)
+                    di = return_index_from_disp_point(point, exp_type=exp_type)
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=cdp.relax_time_list[0])
 
                     # Convert the reference point for NESSY input.
@@ -297,18 +297,18 @@ class Nessy_data:
                     # Loop over the keys.
                     for key in keys:
                         # Another check.
-                        if self.cpmg_data[exp_index][field_index][res_index] != '':
+                        if self.cpmg_data[ei][mi][res_index] != '':
                             raise RelaxError("Only one spin system per residue is supported in NESSY.")
 
                         # Store the data (if it exists).
                         if key in spin.intensities:
-                            self.cpmg_data[exp_index][field_index][res_index] = str(spin.intensities[key])
+                            self.cpmg_data[ei][mi][res_index] = str(spin.intensities[key])
 
                         # The CPMG frequency.
-                        self.cpmg_frqs[exp_index][field_index] = str(point)
+                        self.cpmg_frqs[ei][mi] = str(point)
 
                         # Increment the field index.
-                        field_index += 1
+                        mi += 1
 
 
 
@@ -320,12 +320,9 @@ class Nessy_data:
         frq_T = get_frequencies(units='T')
 
         # Loop over all data points.
-        for exp_type, frq, point, time in loop_exp_frq_point_time():
-            # The frequency index.
-            frq_index = cdp.spectrometer_frq_list.index(frq)
-
+        for exp_type, frq, point, time, ei, mi, di, ti in loop_exp_frq_point_time(return_indices=True):
             # The frequency data.
-            self.cpmg_delay[frq_index] = str(time)
+            self.cpmg_delay[mi] = str(time)
 
         # Loop over the experiments.
         for i in range(cdp.spectrometer_frq_count):

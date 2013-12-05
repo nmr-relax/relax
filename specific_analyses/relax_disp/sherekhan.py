@@ -36,7 +36,7 @@ from lib.io import open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue
-from specific_analyses.relax_disp.disp_data import loop_cluster, loop_exp_frq, loop_point, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import loop_cluster, loop_exp_frq, loop_offset_point, return_param_key_from_data, spin_ids_to_containers
 
 
 def sherekhan_input(spin_id=None, force=False):
@@ -74,9 +74,9 @@ def sherekhan_input(spin_id=None, force=False):
         spins = spin_ids_to_containers(spin_ids)
 
         # Loop over the magnetic fields.
-        for exp_type, frq, exp_type_index, frq_index in loop_exp_frq(return_indices=True):
+        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
             # The ShereKhan input file for the spin cluster.
-            file_name = 'sherekhan_frq%s.in' % (frq_index+1)
+            file_name = 'sherekhan_frq%s.in' % (mi+1)
             dir_name = 'cluster%s' % (cluster_index+1)
             file = open_write_file(file_name=file_name, dir=dir_name, force=force)
 
@@ -106,9 +106,9 @@ def sherekhan_input(spin_id=None, force=False):
                 lines.append("# %s%s\n" % (res_name, res.num))
 
                 # Loop over the dispersion points.
-                for point in loop_point(exp_type_index=exp_type_index, frq_index=frq_index, skip_ref=True):
+                for offset, point in loop_offset_point(ei=ei, mi=mi, skip_ref=True):
                     # The parameter key.
-                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
+                    param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                     # No data.
                     if param_key not in spins[i].r2eff:

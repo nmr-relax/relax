@@ -1,8 +1,8 @@
 
 
 
-                                  relax repository checkout r21506
-                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+                                  relax repository checkout r21789
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
 
                               Molecular dynamics by NMR data analysis
 
@@ -140,9 +140,9 @@ relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=2, mol_
 
 relax> spin.isotope(isotope='15N', spin_id=None, force=False)
 
-relax> relax_data.read(ri_id='R1_500MHz', ri_type='R1', frq=500000000.0, file='R1_500MHz.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+relax> relax_data.read(ri_id='R1_500MHz', ri_type='R1', frq=500000000.0, file='R1_500MHz.out', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_500MHz.out' for reading.
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_500MHz.out' for reading.
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 The following 500.0 MHz R1 relaxation data with the ID 'R1_500MHz' has been loaded into the relax data store:
@@ -151,8 +151,8 @@ The following 500.0 MHz R1 relaxation data with the ID 'R1_500MHz' has been load
 :1@N         1.0      0.1      
 :2@N         1.1      0.1      
 
-relax> spectrum.read_intensities(file='ref_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='ref_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -181,8 +181,8 @@ Setting the 'ref_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='ref_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_1000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_1000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -211,8 +211,8 @@ Setting the 'nu_1000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_1000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_1500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_1500.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -241,8 +241,8 @@ Setting the 'nu_1500.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_1500.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_2000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_2000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -271,8 +271,8 @@ Setting the 'nu_2000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_2000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_2500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_2500.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -301,8 +301,8 @@ Setting the 'nu_2500.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_2500.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_3000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_3000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -331,8 +331,8 @@ Setting the 'nu_3000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_3000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_3500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_3500.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -361,8 +361,8 @@ Setting the 'nu_3500.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_3500.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_4000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_4000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -391,8 +391,8 @@ Setting the 'nu_4000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_4000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_4500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_4500.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -421,8 +421,8 @@ Setting the 'nu_4500.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_4500.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_5000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_5000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -451,8 +451,8 @@ Setting the 'nu_5000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_5000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_5500.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_5500.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -481,8 +481,8 @@ Setting the 'nu_5500.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_5500.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_6000.0_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_500MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_6000.0_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_500MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -511,9 +511,9 @@ Setting the 'nu_6000.0_500MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_6000.0_500MHz', frq=500, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> relax_data.read(ri_id='R1_800MHz', ri_type='R1', frq=800000000.0, file='R1_800MHz.out', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+relax> relax_data.read(ri_id='R1_800MHz', ri_type='R1', frq=800000000.0, file='R1_800MHz.out', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_800MHz.out' for reading.
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/R1_800MHz.out' for reading.
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 The following 800.0 MHz R1 relaxation data with the ID 'R1_800MHz' has been loaded into the relax data store:
@@ -522,8 +522,8 @@ The following 800.0 MHz R1 relaxation data with the ID 'R1_800MHz' has been load
 :1@N         1.2      0.1      
 :2@N         1.3      0.1      
 
-relax> spectrum.read_intensities(file='ref_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='ref_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='ref_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -552,8 +552,8 @@ Setting the 'ref_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='ref_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_1000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_1000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -582,8 +582,8 @@ Setting the 'nu_1000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_1000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_1500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_1500.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_1500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_1500.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -612,8 +612,8 @@ Setting the 'nu_1500.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_1500.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_2000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_2000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -642,8 +642,8 @@ Setting the 'nu_2000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_2000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_2500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_2500.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_2500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_2500.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -672,8 +672,8 @@ Setting the 'nu_2500.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_2500.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_3000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_3000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -702,8 +702,8 @@ Setting the 'nu_3000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_3000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_3500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_3500.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_3500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_3500.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -732,8 +732,8 @@ Setting the 'nu_3500.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_3500.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_4000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_4000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -762,8 +762,8 @@ Setting the 'nu_4000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_4000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_4500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_4500.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_4500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_4500.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -792,8 +792,8 @@ Setting the 'nu_4500.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_4500.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_5000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_5000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -822,8 +822,8 @@ Setting the 'nu_5000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_5000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_5500.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_5500.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_5500.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_5500.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -852,8 +852,8 @@ Setting the 'nu_5500.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_5500.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> spectrum.read_intensities(file='nu_6000.0_800MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_800MHz.list' for reading.
+relax> spectrum.read_intensities(file='nu_6000.0_800MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spectrum_id='nu_6000.0_800MHz', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/nu_6000.0_800MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -882,8 +882,8 @@ Setting the 'nu_6000.0_800MHz' spectrum relaxation time period to 0.1 s.
 relax> spectrometer.frequency(id='nu_6000.0_800MHz', frq=800, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
-relax> chemical_shift.read(file='ref_500MHz.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
+relax> chemical_shift.read(file='ref_500MHz.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02', spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/r1rho_off_res_tp02/ref_500MHz.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -903,6 +903,17 @@ The following chemical shifts have been loaded into the relax data store:
 =======================================
 = Relaxation dispersion auto-analysis =
 =======================================
+
+
+
+Variable checking
+=================
+
+The dispersion auto-analysis variables are OK.
+
+
+Error analysis
+==============
 
 
 relax> spectrum.error_analysis(subset=['ref_500MHz', 'nu_1000.0_500MHz', 'nu_1500.0_500MHz', 'nu_2000.0_500MHz', 'nu_2500.0_500MHz', 'nu_3000.0_500MHz', 'nu_3500.0_500MHz', 'nu_4000.0_500MHz', 'nu_4500.0_500MHz', 'nu_5000.0_500MHz', 'nu_5500.0_500MHz', 'nu_6000.0_500MHz'])
@@ -934,10 +945,19 @@ Calculating the R2eff/R1rho values for fixed relaxation time period data.
 Spin ':1@N'.
 Spin ':2@N'.
 
-relax> relax_disp.plot_disp_curves(dir='./R2eff', force=True)
+
+Results writing
+===============
+
+
+relax> relax_disp.plot_disp_curves(dir='./R2eff', num_points=1000, extend=500.0, force=True)
 Opening the file './R2eff/disp_1_N.agr' for writing.
 Opening the file './R2eff/disp_2_N.agr' for writing.
 Opening the file './R2eff/grace2images.py' for writing.
+
+relax> relax_disp.write_disp_curves(dir='./R2eff', force=True)
+Opening the file './R2eff/disp_1_N.out' for writing.
+Opening the file './R2eff/disp_2_N.out' for writing.
 
 relax> value.write(param='r2eff', file='r2eff.out', dir='./R2eff', scaling=1.0, comment=None, bc=False, force=True)
 Opening the file './R2eff/r2eff.out' for writing.

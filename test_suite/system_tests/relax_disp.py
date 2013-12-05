@@ -351,16 +351,16 @@ class Relax_disp(SystemTestCase):
             print("\nResidue number %s." % (i+1))
 
             # Check the fitted parameters.
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_1000.000'], res_data[i][0], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_2000.000'], res_data[i][1], places=2)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_1000.000']/10000, res_data[i][2]/10000, places=3)
-            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_2000.000']/10000, res_data[i][3]/10000, places=3)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_0.000_1000.000'], res_data[i][0], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].r2eff['r1rho_1200.00000000_0.000_2000.000'], res_data[i][1], places=2)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_0.000_1000.000']/10000, res_data[i][2]/10000, places=3)
+            self.assertAlmostEqual(cdp.mol[0].res[i].spin[0].i0['r1rho_1200.00000000_0.000_2000.000']/10000, res_data[i][3]/10000, places=3)
 
             # Check the simulation errors.
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_1000.000'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_2000.000'] < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_1000.000']/10000 < 5.0)
-            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_2000.000']/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_1000.000'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].r2eff_err['r1rho_1200.00000000_0.000_2000.000'] < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_1000.000']/10000 < 5.0)
+            self.assert_(cdp.mol[0].res[i].spin[0].i0_err['r1rho_1200.00000000_0.000_2000.000']/10000 < 5.0)
 
             # Check that certain parameters are not present.
             for param in blacklist:
@@ -2294,7 +2294,7 @@ class Relax_disp(SystemTestCase):
         pA = 0.7
         kex = 1000.0
         delta_omega = [1.0, 2.0]
-        keys = ['r1rho_800.00000000_1000.000', 'r1rho_800.00000000_1500.000', 'r1rho_800.00000000_2000.000', 'r1rho_800.00000000_2500.000', 'r1rho_800.00000000_3000.000', 'r1rho_800.00000000_3500.000', 'r1rho_800.00000000_4000.000', 'r1rho_800.00000000_4500.000', 'r1rho_800.00000000_5000.000', 'r1rho_800.00000000_5500.000', 'r1rho_800.00000000_6000.000']
+        keys = ['r1rho_800.00000000_0.000_1000.000', 'r1rho_800.00000000_0.000_1500.000', 'r1rho_800.00000000_0.000_2000.000', 'r1rho_800.00000000_0.000_2500.000', 'r1rho_800.00000000_0.000_3000.000', 'r1rho_800.00000000_0.000_3500.000', 'r1rho_800.00000000_0.000_4000.000', 'r1rho_800.00000000_0.000_4500.000', 'r1rho_800.00000000_0.000_5000.000', 'r1rho_800.00000000_0.000_5500.000', 'r1rho_800.00000000_0.000_6000.000']
         phi_ex = []
         for i in range(2):
             phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
@@ -2348,7 +2348,7 @@ class Relax_disp(SystemTestCase):
         pA = 0.7
         kex = 1000.0
         delta_omega = [1.0, 2.0]
-        keys = ['r1rho_800.00000000_1000.000', 'r1rho_800.00000000_1500.000', 'r1rho_800.00000000_2000.000', 'r1rho_800.00000000_2500.000', 'r1rho_800.00000000_3000.000', 'r1rho_800.00000000_3500.000', 'r1rho_800.00000000_4000.000', 'r1rho_800.00000000_4500.000', 'r1rho_800.00000000_5000.000', 'r1rho_800.00000000_5500.000', 'r1rho_800.00000000_6000.000']
+        keys = ['r1rho_800.00000000_0.000_1000.000', 'r1rho_800.00000000_0.000_1500.000', 'r1rho_800.00000000_0.000_2000.000', 'r1rho_800.00000000_0.000_2500.000', 'r1rho_800.00000000_0.000_3000.000', 'r1rho_800.00000000_0.000_3500.000', 'r1rho_800.00000000_0.000_4000.000', 'r1rho_800.00000000_0.000_4500.000', 'r1rho_800.00000000_0.000_5000.000', 'r1rho_800.00000000_0.000_5500.000', 'r1rho_800.00000000_0.000_6000.000']
         phi_ex = []
         for i in range(2):
             phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
@@ -2556,8 +2556,8 @@ class Relax_disp(SystemTestCase):
             spin = return_spin(spin_id=":%s"%res_num)
 
             # Check the values.
-            self.assertEqual(spin.r2eff['sq_cpmg_800.00000000_66.667'], value)
-            self.assertEqual(spin.r2eff_err['sq_cpmg_800.00000000_66.667'], error)
+            self.assertEqual(spin.r2eff['sq_cpmg_800.00000000_0.000_66.667'], value)
+            self.assertEqual(spin.r2eff_err['sq_cpmg_800.00000000_0.000_66.667'], error)
 
 
     def test_r2eff_read_spin(self):
@@ -2638,7 +2638,7 @@ class Relax_disp(SystemTestCase):
             [2667.0,   7.14675,   0.23940]
         ]
         for disp_point, value, error in h_data:
-            id = 'sq_cpmg_500.00000000_%.3f' % disp_point
+            id = 'sq_cpmg_500.00000000_0.000_%.3f' % disp_point
             self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff[id], value)
             self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff_err[id], error)
         n_data = [
@@ -2658,7 +2658,7 @@ class Relax_disp(SystemTestCase):
             [1000.0,   8.71350,   0.17427]
         ]
         for disp_point, value, error in n_data:
-            id = 'sq_cpmg_500.00000000_%.3f' % disp_point
+            id = 'sq_cpmg_500.00000000_0.000_%.3f' % disp_point
             self.assertEqual(cdp.mol[0].res[0].spin[1].r2eff[id], value)
             self.assertEqual(cdp.mol[0].res[0].spin[1].r2eff_err[id], error)
 

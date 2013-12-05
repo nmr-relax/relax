@@ -35,7 +35,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
-from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mmq_cpmg, loop_exp, loop_exp_frq, loop_exp_frq_point, loop_frq, loop_point, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mmq_cpmg, loop_exp, loop_exp_frq, loop_exp_frq_point, loop_frq, loop_offset, loop_point, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
@@ -78,11 +78,9 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
     # Initialise the data structures for the target function.
     values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
 
-    # The offset and R1 data for R1rho off-resonance models.
-    chemical_shifts, offsets, tilt_angles, r1 = None, None, None, None
-    if spin.model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
-        chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count, spin_lock_nu1=spin_lock_nu1)
-        r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+    # The offset and R1 data.
+    chemical_shifts, offsets, tilt_angles = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1)
+    r1 = return_r1_data(spins=[spin], spin_ids=[spin_id], field_count=field_count)
 
     # The dispersion data.
     recalc_tau = True
@@ -96,25 +94,29 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
         values = []
         errors = []
         missing = []
-        for exp_type, exp_type_index in loop_exp(return_indices=True):
+        for exp_type, ei in loop_exp(return_indices=True):
             values.append([])
             errors.append([])
             missing.append([])
-            for spin_i in range(1):
-                values[exp_type_index].append([])
-                errors[exp_type_index].append([])
-                missing[exp_type_index].append([])
-                for frq, frq_index in loop_frq(return_indices=True):
-                    if exp_type in EXP_TYPE_LIST_CPMG:
-                        num = len(cpmg_frqs[exp_type_index][frq_index])
-                    else:
-                        num = len(spin_lock_nu1[exp_type_index][frq_index])
-                    values[exp_type_index][0].append(zeros(num, float64))
-                    errors[exp_type_index][0].append(ones(num, float64))
-                    missing[exp_type_index][0].append(zeros(num, int32))
+            for si in range(1):
+                values[ei].append([])
+                errors[ei].append([])
+                missing[ei].append([])
+                for frq, mi in loop_frq(return_indices=True):
+                    values[ei][si].append([])
+                    errors[ei][si].append([])
+                    missing[ei][si].append([])
+                    for offset, oi in loop_offset(ei=ei, mi=mi, return_indices=True):
+                        if exp_type in EXP_TYPE_LIST_CPMG:
+                            num = len(cpmg_frqs[ei][mi])
+                        else:
+                            num = len(spin_lock_nu1[ei][mi])
+                        values[ei][si][mi].append(zeros(num, float64))
+                        errors[ei][si][mi].append(ones(num, float64))
+                        missing[ei][si][mi].append(zeros(num, int32))
 
     # Initialise the relaxation dispersion fit functions.
-    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, spin_lock_offsets=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, recalc_tau=recalc_tau)
+    model = Dispersion(model=spin.model, num_params=param_num(spins=[spin]), num_spins=1, num_frq=field_count, exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=spin_lock_nu1, chemical_shifts=chemical_shifts, offset=offsets, tilt_angles=tilt_angles, r1=r1, relax_times=relax_times, scaling_matrix=scaling_matrix, recalc_tau=recalc_tau)
 
     # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
     chi2 = model.func(param_vector)
@@ -123,13 +125,8 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
     if store_chi2:
         spin.chi2 = chi2
 
-    # Reconstruct the back_calc data structure.
-    back_calc = model.back_calc
-    if spin.model not in MODEL_LIST_MMQ:
-        back_calc = [back_calc]
-
     # Return the structure.
-    return back_calc
+    return model.back_calc
 
 
 def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
@@ -185,7 +182,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
             # Loop over each spectrometer frequency and dispersion point.
             for exp_type, frq, point in loop_exp_frq_point():
                 # Loop over the parameters.
-                for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
+                for param_name, param_index, si, r20_key in loop_parameters(spins=spins):
                     # R2eff relaxation rate (from 1 to 40 s^-1).
                     if param_name == 'r2eff':
                         lower.append(1.0)
@@ -194,15 +191,15 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     # Intensity.
                     elif param_name == 'i0':
                         lower.append(0.0001)
-                        upper.append(max(spins[spin_index].intensities.values()))
+                        upper.append(max(spins[si].intensities.values()))
 
         # All other models.
         else:
             # Loop over the parameters.
-            for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
+            for param_name, param_index, si, r20_key in loop_parameters(spins=spins):
                 # Cluster specific parameter.
-                if spin_index == None:
-                    spin_index = 0
+                if si == None:
+                    si = 0
 
                 # R2 relaxation rates (from 1 to 40 s^-1).
                 if param_name in ['r2', 'r2a', 'r2b']:
@@ -216,7 +213,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 
                 # Chemical shift difference between states A and B (heteronucleus).
                 elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC']:
-                    if spins[spin_index].model in MODEL_LIST_MMQ:
+                    if spins[si].model in MODEL_LIST_MMQ:
                         lower.append(-10.0)
                     else:
                         lower.append(0.0)
@@ -224,7 +221,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 
                 # Chemical shift difference between states A and B (proton).
                 elif param_name in ['dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
-                    if spins[spin_index].model in MODEL_LIST_MMQ:
+                    if spins[si].model in MODEL_LIST_MMQ:
                         lower.append(-3.0)
                     else:
                         lower.append(0.0)
@@ -232,7 +229,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
 
                 # The population of state A.
                 elif param_name == 'pA':
-                    if spins[spin_index].model == MODEL_M61B:
+                    if spins[si].model == MODEL_M61B:
                         lower.append(0.85)
                     else:
                         lower.append(0.5)
@@ -254,19 +251,19 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     upper.append(1.0)
 
     # Pre-set parameters.
-    for param_name, param_index, spin_index, r20_key in loop_parameters(spins=spins):
+    for param_name, param_index, si, r20_key in loop_parameters(spins=spins):
         # Cluster specific parameter.
-        if spin_index == None:
-            spin_index = 0
+        if si == None:
+            si = 0
 
         # Get the parameter.
-        if hasattr(spins[spin_index], param_name):
-            val = getattr(spins[spin_index], param_name)
+        if hasattr(spins[si], param_name):
+            val = getattr(spins[si], param_name)
 
             # Value already set.
             if is_float(val) and val != 0.0:
                 # Printout.
-                print("The spin '%s' parameter '%s' is pre-set to %s, skipping it in the grid search." % (spin_ids[spin_index], param_name, val))
+                print("The spin '%s' parameter '%s' is pre-set to %s, skipping it in the grid search." % (spin_ids[si], param_name, val))
 
                 # Turn of the grid search for this parameter.
                 inc[param_index] = 1
@@ -405,11 +402,9 @@ class Disp_minimise_command(Slave_command):
         # The R2eff/R1rho data.
         self.values, self.errors, self.missing, self.frqs, self.frqs_H, self.exp_types, self.relax_times = return_r2eff_arrays(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
 
-        # The offset and R1 data for R1rho off-resonance models.
-        self.chemical_shifts, self.offsets, self.tilt_angles, self.r1 = None, None, None, None
-        if spins[0].model in [MODEL_DPL94, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_R1RHO_2SITE]:
-            self.chemical_shifts, self.offsets, self.tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields))
-            self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, fields=fields, field_count=len(fields), sim_index=sim_index)
+        # The offset and R1 data.
+        self.chemical_shifts, self.offsets, self.tilt_angles = return_offset_data(spins=spins, spin_ids=spin_ids, field_count=len(fields))
+        self.r1 = return_r1_data(spins=spins, spin_ids=spin_ids, field_count=len(fields), sim_index=sim_index)
 
         # Parameter number.
         self.param_num = param_num(spins=spins)
@@ -436,7 +431,7 @@ class Disp_minimise_command(Slave_command):
                 print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % self.grid_size)
 
         # Initialise the function to minimise.
-        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, frqs_H=self.frqs_H, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, spin_lock_offsets=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
+        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, frqs_H=self.frqs_H, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, offset=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', self.min_algor):
@@ -588,11 +583,6 @@ class Disp_result_command(Result_command):
             # 1H MMQ flag.
             proton_mmq_flag = has_proton_mmq_cpmg()
 
-            # Reconstruct the back_calc data structure.
-            back_calc = self.back_calc
-            if memo.spins[0].model not in MODEL_LIST_MMQ:
-                back_calc = [back_calc]
-
             # Loop over each spin, packing the data.
-            for spin_index in range(len(memo.spins)):
-                pack_back_calc_r2eff(spin=memo.spins[spin_index], spin_id=memo.spin_ids[spin_index], spin_index=spin_index, back_calc=back_calc, proton_mmq_flag=proton_mmq_flag)
+            for si in range(len(memo.spins)):
+                pack_back_calc_r2eff(spin=memo.spins[si], spin_id=memo.spin_ids[si], si=si, back_calc=self.back_calc, proton_mmq_flag=proton_mmq_flag)

@@ -38,7 +38,7 @@ from lib.io import mkdir_nofail, open_write_file, test_binary
 from pipe_control import pipes
 from pipe_control.mol_res_spin import check_mol_res_spin_data, spin_loop
 from specific_analyses.relax_disp.checks import check_model_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import loop_frq, loop_point, return_param_key_from_data
+from specific_analyses.relax_disp.disp_data import loop_frq, loop_offset_point, return_param_key_from_data
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 
@@ -325,7 +325,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
         isotope = 'N15'
 
     # Loop over the frequencies.
-    for frq, frq_index in loop_frq(return_indices=True):
+    for frq, mi in loop_frq(return_indices=True):
         # The frequency string in MHz.
         frq_string = int(frq*1e-6)
 
@@ -360,9 +360,9 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
             spin_file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
 
             # Loop over the dispersion points.
-            for point, point_index in loop_point(exp_type_index=0, frq_index=frq_index, return_indices=True):
+            for offset, point, oi, di in loop_offset_point(ei=0, mi=mi, return_indices=True):
                 # The key.
-                key = return_param_key_from_data(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, point=point)
+                key = return_param_key_from_data(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, offset=offset, point=point)
 
                 # No data.
                 if key not in spin.r2eff:
