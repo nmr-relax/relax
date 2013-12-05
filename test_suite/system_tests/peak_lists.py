@@ -150,13 +150,13 @@ class Peak_lists(SystemTestCase):
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
         self.assertEqual(cdp.mol[0].name, None)
-        self.assertEqual(len(cdp.mol[0].res), 7)
+        self.assertEqual(len(cdp.mol[0].res), 6)
 
         # 1st residue.
         self.assertEqual(cdp.mol[0].res[0].num, 3)
         self.assertEqual(cdp.mol[0].res[0].name, 'LEU')
         self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
-        #self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
         #self.assertEqual(cdp.mol[0].res[0].spin[0].name, None)
 
 
