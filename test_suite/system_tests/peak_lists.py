@@ -141,6 +141,25 @@ class Peak_lists(SystemTestCase):
                 self.assertEqual(spin.intensities[names[i]], heights[index][i])
 
 
+    def test_read_spins_peak_list_sparky(self):
+        """Test the reading of spins from a Sparky peak list."""
+
+        # Read the spins from peak list.
+        self.interpreter.spectrum.read_spins(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 7)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 3)
+        self.assertEqual(cdp.mol[0].res[0].name, 'LEU')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        #self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        #self.assertEqual(cdp.mol[0].res[0].spin[0].name, None)
+
+
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
 
