@@ -2128,7 +2128,7 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
             offset = 0.0
         if offset_col != None:
             disp_point = cdp.spin_lock_nu1[new_id]
-            offset = ref_data
+            offset = data_new
         point_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=disp_point)
 
         # Store the R2eff data.
