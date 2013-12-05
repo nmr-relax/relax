@@ -32,6 +32,7 @@ set c @ @ 1 0 4 u
 set c @ @ 2 0 0 f
 
 min     # perform minimization
+write > d    # look at optimized model parameters
 write > p    # look at optimized model parameters
 #backup backups/fit_r1r_2st.bk    # backup program state
 #write  backups/fit_r1r_2st.par p # write parameters to file
