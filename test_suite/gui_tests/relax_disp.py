@@ -136,6 +136,60 @@ class Relax_disp(GuiTestCase):
             self.assertEqual(spin.baseplane_rmsd['0_2'], 3000.0)
 
 
+    def test_bug_21076_multi_col_peak_list(self):
+        """Test catching U{bug #21076<https://gna.org/bugs/?21076>}, loading a multi-spectra NMRPipe seriesTab file through the GUI, Error messages occur. Submitted by Troels E. Linnet."""
+
+        # The paths to the data files.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'dispersion' + sep + 'KTeilum_FMPoulsen_MAkke_2006' + sep + 'acbp_cpmg_disp_101MGuHCl_40C_041223' + sep
+
+        # Simulate the new analysis wizard, selecting the fixed time CPMG experiment.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Load the sequence.
+        file = data_path + 'relax_2_spins_trunc.py'
+        self._execute_uf(uf_name='script', file=file, dir=None)
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Set up the nuclear isotopes.
+        analysis.spin_isotope()
+        uf_store['spin.isotope'].page.SetValue('spin_id', '')
+        uf_store['spin.isotope'].wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Set up the peak intensity wizard.
+        analysis.peak_wizard_launch(None)
+        wizard = analysis.peak_wizard
+
+        # The spectrum.
+        page = wizard.get_page(wizard.page_indices['read'])
+        page.uf_args['file'].SetValue(str_to_gui("%sfolded_sparky_corr_final_max_standard_trunc.ser" % data_path))
+        page.uf_args['spectrum_id'].SetValue(['auto'])
+        wizard._go_next(None)
+
+        # The error type.
+        page = wizard.get_page(wizard.page_indices['err_type'])
+        page.selection = 'rmsd'
+        wizard._go_next(None)
+
+
     def test_hansen_trunc_data(self):
         """Test the GUI analysis with Flemming Hansen's CPMG data truncated to residues 70 and 71."""
 
