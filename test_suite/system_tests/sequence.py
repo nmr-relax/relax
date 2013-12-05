@@ -267,7 +267,18 @@ class Sequence(SystemTestCase):
 
         # Read the sequence.
         self.interpreter.sequence.read(file='test_seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data', res_num_col=1, res_name_col=2)
+        
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 5)
 
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, -2)
+        self.assertEqual(cdp.mol[0].res[0].name, 'Gly')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, None)
 
     def test_sequence_copy(self):
         """Test the sequence.copy user function."""
