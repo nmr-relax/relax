@@ -1359,7 +1359,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     proton_mmq_flag = has_proton_mmq_cpmg()
 
     # Default hardcoded colours (one colour for each magnetic field strength).
-    color_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14]
+    color_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14] * 10
 
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
