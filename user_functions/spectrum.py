@@ -363,6 +363,113 @@ uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
 
 
+# The spectrum.read_spins user function.
+uf = uf_info.add_uf('spectrum.read_spins')
+uf.title = "Read peak assignments from a file and create spins."
+uf.title_short = "Peak assignments reading."
+uf.add_keyarg(
+    name = "file",
+    py_type = "str",
+    arg_type = "file sel",
+    desc_short = "file name",
+    desc = "The name of the file containing the intensity data.",
+    wiz_filesel_style = FD_OPEN
+)
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir",
+    desc_short = "directory name",
+    desc = "The directory where the file is located.",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin ID string column",
+    desc = "The spin ID string column used by the generic intensity file format (an alternative to the mol, res, and spin name and number columns).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "mol_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "molecule name column",
+    desc = "The molecule name column used by the generic intensity file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "res_num_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "residue number column",
+    desc = "The residue number column used by the generic intensity file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "res_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "residue name column",
+    desc = "The residue name column used by the generic intensity file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_num_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin number column",
+    desc = "The spin number column used by the generic intensity file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_name_col",
+    py_type = "int",
+    arg_type = "free format",
+    desc_short = "spin name column",
+    desc = "The spin name column used by the generic intensity file format (alternative to the spin ID column).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "sep",
+    py_type = "str",
+    arg_type = "free format",
+    desc_short = "column separator",
+    desc = "The column separator used by the generic intensity format (the default is white space).",
+    can_be_none = True
+)
+uf.add_keyarg(
+    name = "spin_id",
+    py_type = "str",
+    desc_short = "spin ID string",
+    desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
+    can_be_none = True
+)
+# File formats.
+uf.desc.append(Desc_container("File formats"))
+uf.desc[-1].add_paragraph("The peak list or intensity file will be automatically determined.")
+uf.desc[-1].add_paragraph("Sparky peak list:  The file should be a Sparky peak list saved after typing the command 'lt'.  The default is to assume that columns 0, 1, 2, and 3 (1st, 2nd, 3rd, and 4th) contain the Sparky assignment, w1, w2, and peak intensity data respectively.  The frequency data w1 and w2 are ignored while the peak intensity data can either be the peak height or volume displayed by changing the window options.  If the peak intensity data is not within column 3, set the integration column to the appropriate number (column numbering starts from 0 rather than 1).")
+uf.desc[-1].add_paragraph("XEasy peak list:  The file should be the saved XEasy text window output of the list peak entries command, 'tw' followed by 'le'.  As the columns are fixed, the peak intensity column is hardwired to number 10 (the 11th column) which contains either the peak height or peak volume data.  Because the columns are fixed, the integration column number will be ignored.")
+uf.desc[-1].add_paragraph("NMRView:  The file should be a NMRView peak list. The default is to use column 16 (which contains peak heights) for peak intensities. To use use peak volumes (or evolumes), int_col must be set to 15.")
+uf.desc[-1].add_paragraph("NMRPipe seriesTab:  The file should be a NMRPipe-format Spectral Series list.  If the spectrum_id='auto', the IDs are auto generated in form of Z_A{i}.")
+uf.desc[-1].add_paragraph("Generic intensity file:  This is a generic format which can be created by scripting to support non-supported peak lists.  It should contain in the first few columns enough information to identify the spin.  This can include columns for the molecule name, residue number, residue name, spin number, and spin name.  Alternatively a spin ID string column can be used. The peak intensities can be placed in another column specified by the integration column number.  Intensities from multiple spectra can be placed into different columns, and these can then be specified simultaneously by setting the integration column value to a list of columns.  This list must be matched by setting the spectrum ID to a list of the same length.  If columns are delimited by a character other than whitespace, this can be specified with the column separator.  The spin ID can be used to restrict the loading to specific spin subsets.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To read the spin assignments from the Sparky formatted files 'ref.list' and 'sat.list', type:")
+uf.desc[-1].add_prompt("relax> spectrum.read_spins(file='ref.list')")
+uf.desc[-1].add_prompt("relax> spectrum.read_spins(file='sat.list')")
+uf.desc[-1].add_paragraph("To read the spin assignments from the XEasy formatted files 'ref.text' and 'sat.text', type:")
+uf.desc[-1].add_prompt("relax> spectrum.read_spins(file='ref.text')")
+uf.desc[-1].add_prompt("relax> spectrum.read_spins(file='sat.text')")
+uf.backend = spectrum.read_spins
+uf.menu_text = "&read_spins"
+uf.gui_icon = "oxygen.actions.document-open"
+uf.wizard_height_desc = 300
+uf.wizard_size = (1000, 750)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'spectrum' + sep + 'spectrum_200.png'
+
+
 # The spectrum.replicated user function.
 uf = uf_info.add_uf('spectrum.replicated')
 uf.title = "Specify which spectra are replicates of each other."
