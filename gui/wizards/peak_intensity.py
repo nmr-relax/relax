@@ -317,6 +317,11 @@ class Peak_intensity_wizard(Wiz_window):
             # Use only the first element.
             id = id[0]
 
+        # Handle keyword 'auto'.
+        if id == 'auto':
+            # Return the first ID.
+            id = 'Z_A0'
+
         # Set the ID in the page.
         page = self.get_page(self.page_indices[page_key])
         if index == None:
