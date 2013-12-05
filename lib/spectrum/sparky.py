@@ -130,6 +130,12 @@ def read_list(peak_list=None, file_data=None):
         except:
             raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
 
+        # The residue name.
+        try:
+            res_name = row1[-4]
+        except:
+            raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name." % line[0])
+
         # Chemical shifts.
         w1 = None
         w2 = None
@@ -165,13 +171,13 @@ def read_list(peak_list=None, file_data=None):
 
         # Add the assignment to the peak list object.
         if dim == 1:
-            peak_list.add(res_nums=[res_num], spin_names=[name1], shifts=[w1], intensity=intensity)
+            peak_list.add(res_nums=[res_num], res_names=[res_name], spin_names=[name1], shifts=[w1], intensity=intensity)
         elif dim == 2:
-            peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
+            peak_list.add(res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
         elif dim == 3:
-            peak_list.add(res_nums=[res_num, res_num, res_num], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
+            peak_list.add(res_nums=[res_num, res_num, res_num], res_names=[res_name, res_name, res_name], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
         elif dim == 4:
-            peak_list.add(res_nums=[res_num, res_num, res_num, res_num], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
+            peak_list.add(res_nums=[res_num, res_num, res_num, res_num], res_names=[res_name, res_name, res_name, res_name], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
 
 
 def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):
