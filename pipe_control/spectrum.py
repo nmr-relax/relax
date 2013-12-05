@@ -37,7 +37,7 @@ from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import check_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
 
 
 def __errors_height_no_repl():
@@ -609,6 +609,57 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
         write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
 
 
+def read_spins(file=None, dir=None, dim=1, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, verbose=True):
+    """Read the peak intensity data.
+
+    @keyword file:          The name of the file containing the peak intensities.
+    @type file:             str
+    @keyword dir:           The directory where the file is located.
+    @type dir:              str
+    @keyword dim:           The dimension of the peak list to associate the data with.
+    @type dim:              int
+    @keyword spin_id_col:   The column containing the spin ID strings (used by the generic intensity file format).  If supplied, the mol_name_col, res_name_col, res_num_col, spin_name_col, and spin_num_col arguments must be none.
+    @type spin_id_col:      int or None
+    @keyword mol_name_col:  The column containing the molecule name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
+    @type mol_name_col:     int or None
+    @keyword res_name_col:  The column containing the residue name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
+    @type res_name_col:     int or None
+    @keyword res_num_col:   The column containing the residue number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
+    @type res_num_col:      int or None
+    @keyword spin_name_col: The column containing the spin name information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_name_col:    int or None
+    @keyword spin_num_col:  The column containing the spin number information (used by the generic intensity file format).  If supplied, spin_id_col must be None.
+    @type spin_num_col:     int or None
+    @keyword sep:           The column separator which, if None, defaults to whitespace.
+    @type sep:              str or None
+    @keyword spin_id:       The spin ID string used to restrict data loading to a subset of all spins.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the ID's are auto generated in form of Z_Ai.
+    @type spin_id:          None or str
+    @keyword verbose:       A flag which if True will cause all relaxation data loaded to be printed out.
+    @type verbose:          bool
+    """
+
+    # Data checks.
+    pipes.test()
+
+    # Check the file name.
+    if file == None:
+        raise RelaxError("The file name must be supplied.")
+
+    # Read the peak list data.
+    peak_list = read_peak_list(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+
+    # Loop over the peak_list.
+    for assign in peak_list:
+        mol_name = assign.mol_names[dim-1]
+        res_num = assign.res_nums[dim-1]
+        res_name = assign.res_names[dim-1]
+        spin_num = assign.spin_nums[dim-1]
+        spin_name = assign.spin_names[dim-1]
+        # Create the spin
+        create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
+
+    # Test that data exists.
+    check_mol_res_spin_data()
 
 def replicated(spectrum_ids=None):
     """Set which spectra are replicates.
