@@ -1,0 +1,54 @@
+# Read the R2eff data.
+read ../r2eff_data/500_66.67.r2eff    d @ S N15 25 500  0.03   66.67 c
+read ../r2eff_data/500_133.33.r2eff   d @ S N15 25 500  0.03  133.33 c
+read ../r2eff_data/500_200.00.r2eff   d @ S N15 25 500  0.03  200.00 c
+read ../r2eff_data/500_266.67.r2eff   d @ S N15 25 500  0.03  266.67 c
+read ../r2eff_data/500_333.33.r2eff   d @ S N15 25 500  0.03  333.33 c
+read ../r2eff_data/500_400.00.r2eff   d @ S N15 25 500  0.03  400.00 c
+read ../r2eff_data/500_466.67.r2eff   d @ S N15 25 500  0.03  466.67 c
+read ../r2eff_data/500_533.33.r2eff   d @ S N15 25 500  0.03  533.33 c
+read ../r2eff_data/500_600.00.r2eff   d @ S N15 25 500  0.03  600.00 c
+read ../r2eff_data/500_666.67.r2eff   d @ S N15 25 500  0.03  666.67 c
+read ../r2eff_data/500_733.33.r2eff   d @ S N15 25 500  0.03  733.33 c
+read ../r2eff_data/500_800.00.r2eff   d @ S N15 25 500  0.03  800.00 c
+read ../r2eff_data/500_866.67.r2eff   d @ S N15 25 500  0.03  866.67 c
+read ../r2eff_data/500_933.33.r2eff   d @ S N15 25 500  0.03  933.33 c
+read ../r2eff_data/500_1000.00.r2eff  d @ S N15 25 500  0.03 1000.00 c
+read ../r2eff_data/800_66.67.r2eff    d @ S N15 25 800  0.03   66.67 c
+read ../r2eff_data/800_133.33.r2eff   d @ S N15 25 800  0.03  133.33 c
+read ../r2eff_data/800_200.00.r2eff   d @ S N15 25 800  0.03  200.00 c
+read ../r2eff_data/800_266.67.r2eff   d @ S N15 25 800  0.03  266.67 c
+read ../r2eff_data/800_333.33.r2eff   d @ S N15 25 800  0.03  333.33 c
+read ../r2eff_data/800_400.00.r2eff   d @ S N15 25 800  0.03  400.00 c
+read ../r2eff_data/800_466.67.r2eff   d @ S N15 25 800  0.03  466.67 c
+read ../r2eff_data/800_533.33.r2eff   d @ S N15 25 800  0.03  533.33 c
+read ../r2eff_data/800_600.00.r2eff   d @ S N15 25 800  0.03  600.00 c
+read ../r2eff_data/800_666.67.r2eff   d @ S N15 25 800  0.03  666.67 c
+read ../r2eff_data/800_733.33.r2eff   d @ S N15 25 800  0.03  733.33 c
+read ../r2eff_data/800_800.00.r2eff   d @ S N15 25 800  0.03  800.00 c
+read ../r2eff_data/800_866.67.r2eff   d @ S N15 25 800  0.03  866.67 c
+read ../r2eff_data/800_933.33.r2eff   d @ S N15 25 800  0.03  933.33 c
+read ../r2eff_data/800_1000.00.r2eff  d @ S N15 25 800  0.03 1000.00 c
+
+# Set up the model.
+set m 2
+
+# Delete residues.
+del 4 @ @ @ @ @
+del 70 @ @ @ @ @
+
+# Set the parameters.
+set p @ 0 0.9 u
+set p @ 1 0.1 u
+set k @ 0 500.0 u
+set c @ @ 0 0 0.0 f
+set c @ @ 1 0 1.0 u
+set r @ R N15 25  500 @ 5.0 u g
+set r @ R N15 25  800 @ 5.0 u g
+
+# Minimisation.
+min
+
+# Write out the data.
+write > d
+write > p
