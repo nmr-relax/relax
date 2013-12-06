@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
+# Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,9 +25,13 @@
 """Module containing functions for handling XEasy files."""
 
 
+# Python module imports.
+from warnings import warn
+
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import strip
+from lib.warnings import RelaxWarning
 
 
 def read_list(peak_list=None, file_data=None, int_col=None):
@@ -46,6 +51,8 @@ def read_list(peak_list=None, file_data=None, int_col=None):
     w2_col = 2
     ass_w1_col = 7
     ass_w2_col = 4
+    res_name1_col = 9
+    res_name2_col = 5
     if int_col == None:
         int_col = 10
 
@@ -75,15 +82,26 @@ def read_list(peak_list=None, file_data=None, int_col=None):
         if line[ass_w1_col] == 'inv.' or line[ass_w2_col] == 'inv.':
             continue
 
-        # The residue number.
+        # The residue number for dimension 1.
         try:
-            res_num = int(line[5])
+            res_num1 = int(line[8])
         except:
-            raise RelaxError("Improperly formatted XEasy file, cannot read the line %s." % line)
+            raise RelaxError("Improperly formatted XEasy file, cannot process the residue number for dimension 1 in assignment: %s." % line)
+
+        # The residue number for dimension 2.
+        try:
+            res_num2 = int(line[5])
+        except:
+            warn(RelaxWarning("Improperly formatted XEasy file, cannot process the residue number for dimension 2 in assignment: %s. Setting residue number to None." % line))
+            res_num2 = None
 
         # Nuclei names.
         name1 = line[ass_w1_col]
         name2 = line[ass_w2_col]
+
+        # Residue names.
+        res_name1 = line[res_name1_col]
+        res_name2 = line[res_name2_col]
 
         # Chemical shifts.
         try:
@@ -102,4 +120,4 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             raise RelaxError("The peak intensity value from the line %s is invalid." % line)
 
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
+        peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
