@@ -127,7 +127,7 @@ class Dispersion:
         @type spin_lock_nu1:        rank-2 list of floats
         @keyword chemical_shifts:   The chemical shifts in rad/s.  This is only used for off-resonance R1rho models.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.  The dimensions are {Ei, Si, Mi}.
         @type chemical_shifts:      rank-3 list of floats
-        @keyword offset:            The structure of spin-lock or hard pulse offsets.  This is only currently used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi, Oi}.
+        @keyword offset:            The structure of spin-lock or hard pulse offsets in rad/s.  This is only currently used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi, Oi}.
         @type offset:               rank-4 list of floats
         @keyword tilt_angles:       The spin-lock rotating frame tilt angle.  This is only used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi, Oi, Di}.
         @type tilt_angles:          rank-5 list of floats
