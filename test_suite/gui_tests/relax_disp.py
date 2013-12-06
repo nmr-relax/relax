@@ -137,7 +137,7 @@ class Relax_disp(GuiTestCase):
 
 
     def test_bug_21076_multi_col_peak_list(self):
-        """Test catching U{bug #21076<https://gna.org/bugs/?21076>}, loading a multi-spectra NMRPipe seriesTab file through the GUI, Error messages occur. Submitted by Troels E. Linnet."""
+        """Test catching U{bug #21076<https://gna.org/bugs/?21076>}, loading a multi-spectra NMRPipe seriesTab file through the GUI, Error messages occur."""
 
         # The paths to the data files.
         data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'dispersion' + sep + 'KTeilum_FMPoulsen_MAkke_2006' + sep + 'acbp_cpmg_disp_101MGuHCl_40C_041223' + sep
