@@ -37,7 +37,7 @@ from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import are_spins_named, check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
 
 
 def __errors_height_no_repl():
@@ -661,7 +661,7 @@ def read_spins(file=None, dir=None, dim=1, spin_id_col=None, mol_name_col=None, 
         spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name=spin_name)
 
         # Check if the spin already exist.
-        if not are_spins_named(spin_id=spin_id):
+        if return_spin(spin_id=spin_id) == None:
             # Create the spin if not exist.
             create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
 
