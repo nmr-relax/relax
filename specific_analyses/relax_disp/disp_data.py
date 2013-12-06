@@ -3008,9 +3008,9 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
     # Convert to numpy arrays.
     relax_times = array(relax_times, float64)
-    for ei in range(exp_num):
+    for exp_type, ei in loop_exp(return_indices=True):
         for si in range(spin_num):
-            for mi in range(field_count):
+            for frq, mi in loop_frq(return_indices=True):
                 for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
                     values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                     errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
