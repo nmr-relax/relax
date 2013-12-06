@@ -360,7 +360,7 @@ def write_r2eff_files(input_dir=None, base_dir=None, force=False):
             spin_file.write("# %18s %20s %20s\n" % ("nu_cpmg(Hz)", "R2(1/s)", "Esd(R2)"))
 
             # Loop over the dispersion points.
-            for offset, point, oi, di in loop_offset_point(ei=0, mi=mi, return_indices=True):
+            for offset, point, oi, di in loop_offset_point(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, return_indices=True):
                 # The key.
                 key = return_param_key_from_data(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, offset=offset, point=point)
 

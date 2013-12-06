@@ -106,7 +106,7 @@ def sherekhan_input(spin_id=None, force=False):
                 lines.append("# %s%s\n" % (res_name, res.num))
 
                 # Loop over the dispersion points.
-                for offset, point in loop_offset_point(ei=ei, mi=mi, skip_ref=True):
+                for offset, point in loop_offset_point(exp_type=exp_type, frq=frq, skip_ref=True):
                     # The parameter key.
                     param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 

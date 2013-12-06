@@ -204,10 +204,10 @@ class Dispersion:
                     # The dispersion points.
                     for oi in range(self.num_offsets[ei][si][mi]):
                         self.num_disp_points[ei][si][mi].append([])
-                        if cpmg_frqs != None and len(cpmg_frqs[ei][mi]):
-                            self.num_disp_points[ei][si][mi][oi] = len(self.cpmg_frqs[ei][mi])
-                        elif spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi]):
-                            self.num_disp_points[ei][si][mi][oi] = len(self.spin_lock_nu1[ei][mi])
+                        if cpmg_frqs != None and len(cpmg_frqs[ei][mi][oi]):
+                            self.num_disp_points[ei][si][mi][oi] = len(self.cpmg_frqs[ei][mi][oi])
+                        elif spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
+                            self.num_disp_points[ei][si][mi][oi] = len(self.spin_lock_nu1[ei][mi][oi])
                         else:
                             self.num_disp_points[ei][si][mi][oi] = 0
 
@@ -277,7 +277,7 @@ class Dispersion:
 
                         # Normal value.
                         else:
-                            self.power[ei][mi][di] = int(round(self.cpmg_frqs[ei][mi][di] * self.relax_times[ei][mi]))
+                            self.power[ei][mi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
 
             # The tau_cpmg times.
             self.tau_cpmg = []
@@ -290,7 +290,7 @@ class Dispersion:
                         if recalc_tau:
                             self.tau_cpmg[ei][mi][di] = 0.25 * self.relax_times[ei][mi] / self.power[ei][mi][di]
                         else:
-                            self.tau_cpmg[ei][mi][di] = 0.25 / self.cpmg_frqs[ei][mi][di]
+                            self.tau_cpmg[ei][mi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
 
         # Convert the spin-lock data to rad.s^-1.
         if spin_lock_nu1 != None:
@@ -302,8 +302,11 @@ class Dispersion:
                 for mi in range(len(values[ei][0])):
                     self.spin_lock_omega1[ei].append([])
                     self.spin_lock_omega1_squared[ei].append([])
-                    self.spin_lock_omega1[ei][mi] = 2.0 * pi * self.spin_lock_nu1[ei][mi]
-                    self.spin_lock_omega1_squared[ei][mi] = self.spin_lock_omega1[ei][mi] ** 2
+                    for oi in range(len(values[ei][0][mi])):
+                        self.spin_lock_omega1[ei][mi].append([])
+                        self.spin_lock_omega1_squared[ei][mi].append([])
+                        self.spin_lock_omega1[ei][mi][oi] = 2.0 * pi * self.spin_lock_nu1[ei][mi][oi]
+                        self.spin_lock_omega1_squared[ei][mi][oi] = self.spin_lock_omega1[ei][mi][oi] ** 2
 
         # The inverted relaxation delay.
         if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE]:
@@ -397,7 +400,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Back calculate the R2eff values.
-                r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -760,7 +763,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R2eff values.
-                    r1rho_DPL94(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, theta=self.tilt_angles[0][si][mi][oi], R1=self.r1[si, mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    r1rho_DPL94(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, theta=self.tilt_angles[0][si][mi][oi], R1=self.r1[si, mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):
@@ -810,7 +813,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Back calculate the R2eff values.
-                r2eff_IT99(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r2eff_IT99(r20=R20[r20_index], pA=pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -866,7 +869,7 @@ class Dispersion:
                 rex_C_scaled = rex_C[si] * frq2
 
                 # Back calculate the R2eff values.
-                r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -912,7 +915,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
 
                 # Back calculate the R2eff values.
-                r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -958,7 +961,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
 
                 # Back calculate the R2eff values.
-                r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -1005,7 +1008,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Back calculate the R1rho values.
-                r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r1rho_M61b(r1rho_prime=R20[r20_index], pA=pA, dw=dw_frq, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
@@ -1057,7 +1060,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R1rho values.
-                    r1rho_MP05(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    r1rho_MP05(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):
@@ -1130,7 +1133,7 @@ class Dispersion:
                         aliased_dwH = dw_frq
 
                     # Back calculate the R2eff values.
-                    r2eff_mmq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0], power=self.power[ei][mi])
+                    r2eff_mmq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei][mi][0], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0], power=self.power[ei][mi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):
@@ -1517,7 +1520,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R2eff values.
-                    ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], r1=self.r1[si, mi], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][mi], relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], r1=self.r1[si, mi], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][mi][oi], relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):
@@ -1569,7 +1572,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R1rho values.
-                    r1rho_TAP03(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    r1rho_TAP03(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):
@@ -1621,7 +1624,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R1rho values.
-                    r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    r1rho_TP02(r1rho_prime=R20[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], pA=pA, pB=pB, dw=dw_frq, kex=kex, R1=self.r1[si, mi], spin_lock_fields=self.spin_lock_omega1[0][mi][oi], spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][oi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):
