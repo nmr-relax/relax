@@ -2581,6 +2581,11 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
         spin = spins[si]
         spin_id = spin_ids[si]
 
+        # The sign to multiply shifts and offsets by.
+        sign = 1.0
+        if spin.isotope == '15N':
+            sign = -1.0
+
         # No data.
         shift = 0.0
         if hasattr(spin, 'chemical_shift'):
@@ -2613,7 +2618,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                     fields = return_spin_lock_nu1_single(exp_type=exp_type, frq=frq, ref_flag=False)
 
             # Convert the shift from ppm to rad/s and store it.
-            shifts[ei][si][mi] = frequency_to_rad_per_s(frq=shift, B0=frq, isotope=spin.isotope)
+            shifts[ei][si][mi] = sign * frequency_to_rad_per_s(frq=shift, B0=frq, isotope=spin.isotope)
 
             # Find a matching experiment ID.
             found = False
@@ -2641,7 +2646,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
             # Store the offset in rad/s.  Only once and using the first key.
             if offsets[ei][si][mi][oi] == None:
                 if r1rho_flag and hasattr(cdp, 'spin_lock_offset'):
-                    offsets[ei][si][mi][oi] = frequency_to_rad_per_s(frq=cdp.spin_lock_offset[id], B0=frq, isotope=spin.isotope)
+                    offsets[ei][si][mi][oi] = sign * frequency_to_rad_per_s(frq=cdp.spin_lock_offset[id], B0=frq, isotope=spin.isotope)
                 else:
                     offsets[ei][si][mi][oi] = 0.0
 
