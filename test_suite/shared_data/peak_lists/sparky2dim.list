@@ -1,16 +1,9 @@
-REMARK SeriesTab Input: ../peaks.dat Output: ../peaks_0.ser
-REMARK Mode: Summation Dimensions: 2
-REMARK Input Region:    X +/- 1 X-ZF: 3
-REMARK Analysis Region: X +/- 1
-REMARK Input Region:    Y +/- 1 Y-ZF: 3
-REMARK Analysis Region: Y +/- 1
+      Assignment         w1         w2   Data Height
 
-VARS   INDEX X_AXIS Y_AXIS X_PPM Y_PPM VOL ASS Z_A0
-FORMAT %5d %9.3f %9.3f %8.3f %8.3f %+e %s %7.4f
-
-NULLVALUE -666
-NULLSTRING *
-
-    1   246.658    18.268    9.932  128.374 +1.851056e+06 W62NE1-W62HE1  1.0000
-    2   321.698    30.994    9.419  127.066 +3.224387e+05 L10N-L10HN  1.0000
-    3   320.089    55.737    9.430  124.523 +1.479366e+06 V6N-V6HN  1.0000
+   W62NE1-W62HE1    128.374      9.932 +1.851056e+06
+      L10N-L10HN    127.066      9.419 +3.224387e+05
+        V6N-V6HN    124.523      9.430 +1.479366e+06
+        T2N-T2HN    115.994      8.521 +1.179448e+06
+        K3N-T2HN    125.899      8.695 +4.407306e+06
+        A4N-T2HN    123.001      9.123 +3.480382e+06
+        V5N-T2HN    120.839      9.444 +4.306408e+06
