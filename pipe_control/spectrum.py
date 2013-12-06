@@ -37,7 +37,7 @@ from lib.spectrum.peak_list import read_peak_list
 from lib.statistics import std
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import are_spins_named, check_mol_res_spin_data, create_spin, generate_spin_id_unique, return_spin, spin_loop
 
 
 def __errors_height_no_repl():
@@ -649,14 +649,21 @@ def read_spins(file=None, dir=None, dim=1, spin_id_col=None, mol_name_col=None, 
     peak_list = read_peak_list(file=file, dir=dir, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
     # Loop over the peak_list.
+    created_spins = []
     for assign in peak_list:
         mol_name = assign.mol_names[dim-1]
         res_num = assign.res_nums[dim-1]
         res_name = assign.res_names[dim-1]
         spin_num = assign.spin_nums[dim-1]
         spin_name = assign.spin_names[dim-1]
-        # Create the spin
-        create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
+
+        # Generate the spin_id.
+        spin_id = generate_spin_id_unique(mol_name=mol_name, res_num=res_num, res_name=res_name, spin_name=spin_name)
+
+        # Check if the spin already exist.
+        if not are_spins_named(spin_id=spin_id):
+            # Create the spin if not exist.
+            create_spin(spin_num=spin_num, spin_name=spin_name, res_num=res_num, res_name=res_name, mol_name=mol_name)
 
     # Test that data exists.
     check_mol_res_spin_data()
