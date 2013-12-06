@@ -80,6 +80,16 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
     # Find index of assignment ASS.
     ass_i = varsline.index('ASS')
 
+    # Chemical shifts preparation.
+    w1_col = None
+    w2_col = None
+
+    # Find index of chemical shift Y_PPM which in sparky is w1.
+    w1_col = varsline.index('Y_PPM')
+
+    # Find index of chemical shift X_PPM which in sparky is w2.
+    w2_col = varsline.index('X_PPM')
+
     # Make a regular search for Z_A entries.
     Z_A = re.compile("Z_A*")
     spectra = list(filter(Z_A.search, varsline))
@@ -160,5 +170,19 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         except ValueError:
             raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
 
+        # Chemical shifts.
+        w1 = None
+        w2 = None
+        if w1_col != None:
+            try:
+                w1 = float(line[w1_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+        if w2_col != None:
+            try:
+                w2 = float(line[w2_col])
+            except ValueError:
+                raise RelaxError("The chemical shift from the line %s is invalid." % line)
+
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], intensity=intensities, intensity_name=spectra)
+        peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensities, intensity_name=spectra)
