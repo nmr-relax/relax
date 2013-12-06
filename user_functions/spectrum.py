@@ -384,6 +384,14 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "dim",
+    default = 1,
+    py_type = "int",
+    min = 1,
+    desc_short = "spectral dimension to read",
+    desc = "Associate the data with the spins of any dimension in the peak list.  This defaults to w1, the heteronucleus in HSQC type experiments."
+)
+uf.add_keyarg(
     name = "spin_id_col",
     py_type = "int",
     arg_type = "free format",
@@ -446,6 +454,9 @@ uf.add_keyarg(
     desc = "The spin ID string used to restrict the loading of data to certain spin subsets.",
     can_be_none = True
 )
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("The spectral dimension is used to specify if the intensity data should be loaded into the spins identified by the first dimension w1, second dimension w2, etc.")
 # File formats.
 uf.desc.append(Desc_container("File formats"))
 uf.desc[-1].add_paragraph("The peak list or intensity file will be automatically determined.")
