@@ -110,9 +110,11 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         name2 = row2[-2] + row2[-1]
 
         # Get the residue number for dimension 1.
+        got_res_num1 = True
         try:
             res_num1 = int(row1[-3])
         except:
+            got_res_num1 = False
             raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the residue number for dimension 1 in assignment: %s." % line[0])
 
         # Get the residue number for dimension 2.
@@ -120,22 +122,31 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
             res_num2 = int(row2[-3])
         except:
             # We cannot always expect dimension 2 to have residue number.
-            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue number for dimension 2 in assignment: %s. Setting residue number to None." % line[0]))
-            res_num2 = None
+            if got_res_num1:
+                res_num2 = res_num1
+            else:
+                res_num2 = None
+                warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue number for dimension 2 in assignment: %s. Setting residue number to %s." % (line[0], res_num2)))
 
         # The residue name for dimension 1.
+        got_res_name1 = True
         try:
             res_name1 = row1[-4]
         except:
-            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 1 in assignment: %s. Setting residue name to None." % line[0]))
+            got_res_name1 = False
             res_name1 = None
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 1 in assignment: %s. Setting residue name to %s." % (line[0], res_name1)))
 
         # The residue name for dimension 2.
         try:
             res_name2 = row2[-4]
         except:
-            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 2 in assignment: %s. Setting residue name to None." % line[0]))
-            res_name2 = None
+            # We cannot always expect dimension 2 to have residue name.
+            if got_res_name1:
+                res_name2 = res_name1
+            else:
+                res_name2 = None
+                warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 2 in assignment: %s. Setting residue name to %s." % (line[0], res_name2)))
 
         # Get the intensities.
         try:
