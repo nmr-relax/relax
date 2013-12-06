@@ -265,21 +265,16 @@ class Peak_lists(SystemTestCase):
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
         self.assertEqual(cdp.mol[0].name, None)
-        self.assertEqual(len(cdp.mol[0].res), 2)
+        self.assertEqual(len(cdp.mol[0].res), 1)
 
         # 1st residue.
         self.assertEqual(cdp.mol[0].res[0].num, 61)
         self.assertEqual(cdp.mol[0].res[0].name, 'L')
-        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 2)
         self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
-
-        # 2nd residue, which is a None residue.
-        self.assertEqual(cdp.mol[0].res[1].num, None)
-        self.assertEqual(cdp.mol[0].res[1].name, None)
-        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
-        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'HN')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'HN')
 
 
     def test_read_spins_peak_list_sparky(self):
