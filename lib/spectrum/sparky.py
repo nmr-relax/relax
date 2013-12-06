@@ -71,8 +71,13 @@ def read_list(peak_list=None, file_data=None):
             w4_col = i
 
         # The peak height.
-        elif file_data[0][i] == 'Data' and file_data[0][i+1] == 'Height':
+        elif file_data[0][i] == 'Height':
+            # The peak height when exported from CcpNmr Analysis export without 'Data'.
             int_col = i
+
+            # The peak height when exported from Sparky.
+            if file_data[0][i-1] == 'Data' and file_data[0][i] == 'Height':
+                int_col = i-1
 
         # The peak volume.
         elif file_data[0][i] == 'Intensity':
