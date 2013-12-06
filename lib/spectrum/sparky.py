@@ -137,7 +137,7 @@ def read_list(peak_list=None, file_data=None):
         try:
             res_name = row1[-4]
         except:
-            raise warn(RelaxWarning("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name.\nSetting residue name to None." % line[0]))
+            warn(RelaxWarning("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name. Setting residue name to None." % line[0]))
             res_name = None
 
         # Chemical shifts.
