@@ -111,7 +111,13 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         try:
             res_num = int(row1[-3])
         except:
-            raise RelaxError("Improperly formatted NMRPipe SeriesTab file., cannot process the assignment '%s'." % line[0])
+            raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s'." % line[0])
+
+        # The residue name.
+        try:
+            res_name = row1[-4]
+        except:
+            raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name." % line[0])
 
         # Get the intensities.
         try:
@@ -126,4 +132,4 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
             raise RelaxError("The peak intensity value %s from the line %s is invalid." % (intensity, line))
 
         # Add the assignment to the peak list object.
-        peak_list.add(res_nums=[res_num, res_num], spin_names=[name1, name2], intensity=intensities, intensity_name=spectra)
+        peak_list.add(res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_names=[name1, name2], intensity=intensities, intensity_name=spectra)
