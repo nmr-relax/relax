@@ -80,7 +80,7 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             res_num = line[1].strip('{')
             res_num = res_num.strip('}')
             res_num = res_num.split('.')
-            res_num = res_num[0]
+            res_num = int(res_num[0])
         except ValueError:
             raise RelaxError("The peak list is invalid.")
 
