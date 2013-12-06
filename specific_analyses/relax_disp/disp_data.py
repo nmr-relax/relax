@@ -2189,9 +2189,9 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
 
         # Append the data for printout.
         if disp_point_col != None:
-            data.append(["%20.15f" % disp_point, "%20.15f" % value, "%20.15f" % error])
+            data.append(["%-40s" % point_key, "%20.15f" % disp_point, "%20.15f" % value, "%20.15f" % error])
         else:
-            data.append(["%20.15f" % offset, "%20.15f" % value, "%20.15f" % error, point_key])
+            data.append(["%-40s" % point_key, "%20.15f" % offset, "%20.15f" % value, "%20.15f" % error])
 
         # Data added.
         data_flag = True
@@ -2203,9 +2203,9 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
     # Print out.
     print("The following R2eff/R1rho data has been loaded into the relax data store:\n")
     if disp_point_col != None:
-        write_data(out=sys.stdout, headings=["Disp_point", "R2eff", "R2eff_error"], data=data)
+        write_data(out=sys.stdout, headings=["R2eff_key", "Disp_point", "R2eff", "R2eff_error"], data=data)
     else:
-        write_data(out=sys.stdout, headings=["Offset (ppm)", "R2eff", "R2eff_error", "key"], data=data)
+        write_data(out=sys.stdout, headings=["R2eff_key", "Offset (ppm)", "R2eff", "R2eff_error"], data=data)
 
 
 def randomise_R1(spin=None, ri_id=None, N=None):
