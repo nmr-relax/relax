@@ -127,18 +127,44 @@ def read_list(peak_list=None, file_data=None):
             row4 = split('([a-zA-Z]+)', assign4)
             name4 = row4[-2] + row4[-1]
 
-        # The residue number.
+        # Get the residue number for dimension 1.
+        got_res_num1 = True
         try:
-            res_num = int(row1[-3])
+            res_num1 = int(row1[-3])
         except:
-            raise RelaxError("Improperly formatted Sparky file, cannot process the assignment '%s'." % line[0])
+            got_res_num1 = False
+            raise RelaxError("Improperly formatted Sparky file, cannot process the residue number for dimension 1 in assignment: %s." % line[0])
 
-        # The residue name.
+        # Get the residue number for dimension 2.
         try:
-            res_name = row1[-4]
+            res_num2 = int(row2[-3])
         except:
-            warn(RelaxWarning("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name. Setting residue name to None." % line[0]))
-            res_name = None
+            # We cannot always expect dimension 2 to have residue number.
+            if got_res_num1:
+                res_num2 = res_num1
+            else:
+                res_num2 = None
+                warn(RelaxWarning("Improperly formatted Sparky file, cannot process the residue number for dimension 2 in assignment: %s. Setting residue number to %s." % (line[0], res_num2)))
+
+        # The residue name for dimension 1.
+        got_res_name1 = True
+        try:
+            res_name1 = row1[-4]
+        except:
+            got_res_name1 = False
+            res_name1 = None
+            warn(RelaxWarning("Improperly formatted Sparky file, cannot process the residue name for dimension 1 in assignment: %s. Setting residue name to %s." % (line[0], res_name1)))
+
+        # The residue name for dimension 2.
+        try:
+            res_name2 = row2[-4]
+        except:
+            # We cannot always expect dimension 2 to have residue name.
+            if got_res_name1:
+                res_name2 = res_name1
+            else:
+                res_name2 = None
+                warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 2 in assignment: %s. Setting residue name to %s." % (line[0], res_name2)))
 
         # Chemical shifts.
         w1 = None
@@ -175,13 +201,13 @@ def read_list(peak_list=None, file_data=None):
 
         # Add the assignment to the peak list object.
         if dim == 1:
-            peak_list.add(res_nums=[res_num], res_names=[res_name], spin_names=[name1], shifts=[w1], intensity=intensity)
+            peak_list.add(res_nums=[res_num1], res_names=[res_name1], spin_names=[name1], shifts=[w1], intensity=intensity)
         elif dim == 2:
-            peak_list.add(res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
+            peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
         elif dim == 3:
-            peak_list.add(res_nums=[res_num, res_num, res_num], res_names=[res_name, res_name, res_name], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
+            peak_list.add(res_nums=[res_num1, res_num2, res_num1], res_names=[res_name1, res_name2, res_name1], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
         elif dim == 4:
-            peak_list.add(res_nums=[res_num, res_num, res_num, res_num], res_names=[res_name, res_name, res_name, res_name], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
+            peak_list.add(res_nums=[res_num1, res_num2, res_num1, res_num1], res_names=[res_name1, res_name2, res_name1, res_name1], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
 
 
 def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):
