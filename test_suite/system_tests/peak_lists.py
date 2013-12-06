@@ -188,6 +188,32 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[4].spin[0].name, None)
 
 
+    def test_read_spins_peak_list_generic_with_spin_name(self):
+        """Test the reading of spins with spin name in columns from a generic peak intensity list."""
+
+        # Read the peak spins.
+        self.interpreter.spectrum.read_spins(file='test.seq', dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5)
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, 'protein')
+        self.assertEqual(len(cdp.mol[0].res), 10)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 10)
+        self.assertEqual(cdp.mol[0].res[0].name, 'L')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, 10)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 6)
+        self.assertEqual(cdp.mol[0].res[1].name, 'V')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, 6)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+
+
     def test_read_spins_peak_list_nmrview(self):
         """Test the reading of an NMRView peak list."""
 
