@@ -114,12 +114,19 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         except:
             raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s'." % line[0])
 
-        # The residue name.
+        # The residue name for dimension 1.
         try:
             res_name1 = row1[-4]
+        except:
+            raise RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 1.\nSetting residue name to None." % line[0])
+            res_name1 = None
+
+        # The residue name for dimension 2.
+        try:
             res_name2 = row2[-4]
         except:
-            raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name." % line[0])
+            raise RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 2.\nSetting residue name to None." % line[0])
+            res_name2 = None
 
         # Get the intensities.
         try:
