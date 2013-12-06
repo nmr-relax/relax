@@ -281,7 +281,8 @@ class Peak_lists(SystemTestCase):
         """Test the reading of spins from a Sparky peak list."""
 
         # Read the spins from peak list.
-        self.interpreter.spectrum.read_spins(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+        self.interpreter.spectrum.read_spins(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', dim=1)
+        self.interpreter.spectrum.read_spins(file="ref_ave.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', dim=2)
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
@@ -291,35 +292,37 @@ class Peak_lists(SystemTestCase):
         # 1st residue.
         self.assertEqual(cdp.mol[0].res[0].num, 3)
         self.assertEqual(cdp.mol[0].res[0].name, 'LEU')
-        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 2)
         self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'HN')
 
         # 2nd residue.
         self.assertEqual(cdp.mol[0].res[1].num, 4)
         self.assertEqual(cdp.mol[0].res[1].name, 'GLY')
-        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 2)
         self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
 
         # 3rd residue.
         self.assertEqual(cdp.mol[0].res[2].num, 5)
         self.assertEqual(cdp.mol[0].res[2].name, 'SER')
-        self.assertEqual(len(cdp.mol[0].res[2].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 2)
         self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
 
         # 4th residue.
         self.assertEqual(cdp.mol[0].res[3].num, 6)
         self.assertEqual(cdp.mol[0].res[3].name, 'MET')
-        self.assertEqual(len(cdp.mol[0].res[3].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[3].spin), 2)
         self.assertEqual(cdp.mol[0].res[3].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[3].spin[0].name, 'N')
 
         # 5th residue.
         self.assertEqual(cdp.mol[0].res[4].num, 40)
         self.assertEqual(cdp.mol[0].res[4].name, 'TRP')
-        self.assertEqual(len(cdp.mol[0].res[4].spin), 2)
+        self.assertEqual(len(cdp.mol[0].res[4].spin), 4)
         self.assertEqual(cdp.mol[0].res[4].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[4].spin[0].name, 'N')
         self.assertEqual(cdp.mol[0].res[4].spin[1].num, None)
@@ -328,7 +331,7 @@ class Peak_lists(SystemTestCase):
         # 6th residue.
         self.assertEqual(cdp.mol[0].res[5].num, 55)
         self.assertEqual(cdp.mol[0].res[5].name, 'ASN')
-        self.assertEqual(len(cdp.mol[0].res[5].spin), 1)
+        self.assertEqual(len(cdp.mol[0].res[5].spin), 2)
         self.assertEqual(cdp.mol[0].res[5].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[5].spin[0].name, 'N')
 
