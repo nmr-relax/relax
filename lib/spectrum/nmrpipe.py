@@ -109,25 +109,32 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         row2 = re.split('([a-zA-Z]+)', assign2)
         name2 = row2[-2] + row2[-1]
 
-        # Get the residue number.
+        # Get the residue number for dimension 1.
         try:
             res_num1 = int(row1[-3])
+        except:
+            raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the residue number for dimension 1 in assignment: %s." % line[0])
+
+        # Get the residue number for dimension 2.
+        try:
             res_num2 = int(row2[-3])
         except:
-            raise RelaxError("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s'." % line[0])
+            # We cannot always expect dimension 2 to have residue number.
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue number for dimension 2 in assignment: %s. Setting residue number to None." % line[0]))
+            res_num2 = None
 
         # The residue name for dimension 1.
         try:
             res_name1 = row1[-4]
         except:
-            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 1. Setting residue name to None." % line[0]))
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 1 in assignment: %s." % line[0]))
             res_name1 = None
 
         # The residue name for dimension 2.
         try:
             res_name2 = row2[-4]
         except:
-            raise warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 2.\nSetting residue name to None." % line[0]))
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 2 in assignment: %s. Setting residue name to None." % line[0]))
             res_name2 = None
 
         # Get the intensities.
