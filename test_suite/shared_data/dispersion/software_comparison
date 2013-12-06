@@ -1,7 +1,8 @@
-Parameter conversions
-=====================
+####################################
+# Hansen et al., 2008 SQ CPMG data #
+####################################
 
-For the strange CPMGFit parameter conversions to match the other software, see cpmgfit_results/README.
+All input and results can be found in the test_suite/shared_data/dispersion/Hansen/ directory.
 
 
 The no exchange model
