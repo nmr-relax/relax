@@ -96,12 +96,14 @@ def intensity_generic(peak_list=None, file_data=None, spin_id_col=None, mol_name
     @raises RelaxError:     When the expected peak intensity is not a float.
     """
 
-    # Check the intensity column argument.
-    if data_col == None:
-        raise RelaxError("The data column argument has not been supplied.")
-
     # Strip the data.
     file_data = strip(file_data)
+
+    # Check the intensity column argument.
+    data_present = True
+    if data_col == None:
+        warn(RelaxWarning("The data column argument has not been supplied, and function will only return spin data."))
+        data_present = False
 
     # Convert the the data_col argument to a list if needed.
     if not isinstance(data_col, list):
@@ -115,14 +117,21 @@ def intensity_generic(peak_list=None, file_data=None, spin_id_col=None, mol_name
             # Extract the data for the single line (loop of a single element).
             for values in read_spin_data(file_data=[line], spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, data_col=data_col[i], sep=sep, spin_id=spin_id):
                 # Check the values.
-                if len(values) != 6:
+                if len(values) != 6 and data_present:
                     raise RelaxError("The molecule name, residue number and name, spin number and name, and value columns could not be found in the data %s." % repr(values))
 
-                # Unpack.
-                mol_name, res_num, res_name, spin_num, spin_name, value = values
+                # Unpack when peak data is present
+                elif data_present:
+                    # Unpack.
+                    mol_name, res_num, res_name, spin_num, spin_name, value = values
 
-                # Store the intensity.
-                intensity.append(value)
+                    # Store the intensity.
+                    intensity.append(value)
+
+                # Unpack when peak data is not present.
+                elif not data_present:
+                    # Unpack.
+                    mol_name, res_num, res_name, spin_num, spin_name = values
 
         # Add the assignment to the peak list object.
         peak_list.add(mol_names=[mol_name, mol_name], res_nums=[res_num, res_num], res_names=[res_name, res_name], spin_nums=[spin_num, spin_num], spin_names=[spin_name, spin_name], intensity=intensity)
