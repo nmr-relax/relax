@@ -131,7 +131,7 @@ for exp_type, frq, point in loop_exp_frq_point():
     file = open('r2eff_data' + sep + file_name, 'w')
 
     # Generate the key.
-    key = return_param_key_from_data(frq, point)
+    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
     # A header.
     file.write("# This data corresponds to:\n")
