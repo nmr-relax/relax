@@ -336,6 +336,47 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[5].spin[0].name, 'N')
 
 
+    def test_read_spins_peak_list_sparky_export_ccpnmr_analysis(self):
+        """Test the reading of spins from a Sparky peak list exported from CcpNmr Analysis."""
+
+        # Read the spins from peak list.
+        self.interpreter.spectrum.read_spins(file="peak_list_ccpnmr_analysis.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 3)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 76)
+        self.assertEqual(cdp.mol[0].res[0].name, 'L')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 74)
+        self.assertEqual(cdp.mol[0].res[1].name, 'T')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[2].num, 31)
+        self.assertEqual(cdp.mol[0].res[2].name, 'T')
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 1)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+
+        # Read the peak list intensity.
+        self.interpreter.spectrum.read_intensities(file="peak_list_ccpnmr_analysis.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id='test', int_method='height')
+
+        # Test the data.
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 2.32E+05)
+        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities.values())[0], 2.01E+05)
+        self.assertEqual(list(cdp.mol[0].res[2].spin[0].intensities.values())[0], 2.08E+05)
+
+
     def test_read_spins_peak_list_sparky_with_2dim_ass(self):
         """Test the reading of spins from a Sparky peak list with two dimensional assignment"""
 
