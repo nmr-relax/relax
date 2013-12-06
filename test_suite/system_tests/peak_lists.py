@@ -255,6 +255,33 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[3].spin[0].name, 'N')
 
 
+    def test_read_spins_peak_list_NMRPipe_seriesTab_multi_no_2dim(self):
+        """Test the reading of an NMRPipe seriesTab peak list, with no assignment for second dimension."""
+
+        # Read the peak list.
+        self.interpreter.spectrum.read_spins(file="folded_sparky_corr_final_max_standard_trunc.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+'acbp_cpmg_disp_101MGuHCl_40C_041223', dim=1)
+        self.interpreter.spectrum.read_spins(file="folded_sparky_corr_final_max_standard_trunc.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'KTeilum_FMPoulsen_MAkke_2006'+sep+'acbp_cpmg_disp_101MGuHCl_40C_041223', dim=2)
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 2)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 61)
+        self.assertEqual(cdp.mol[0].res[0].name, 'L')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue, which is a None residue.
+        self.assertEqual(cdp.mol[0].res[1].num, None)
+        self.assertEqual(cdp.mol[0].res[1].name, None)
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'HN')
+
+
     def test_read_spins_peak_list_sparky(self):
         """Test the reading of spins from a Sparky peak list."""
 
