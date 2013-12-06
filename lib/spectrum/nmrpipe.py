@@ -25,10 +25,12 @@
 
 # Python module imports.
 import re
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import open_write_file, strip
+from lib.warnings import RelaxWarning
 
 
 def read_seriestab(peak_list=None, file_data=None, int_col=None):
@@ -118,14 +120,14 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         try:
             res_name1 = row1[-4]
         except:
-            raise RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 1.\nSetting residue name to None." % line[0])
+            raise warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 1.\nSetting residue name to None." % line[0]))
             res_name1 = None
 
         # The residue name for dimension 2.
         try:
             res_name2 = row2[-4]
         except:
-            raise RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 2.\nSetting residue name to None." % line[0])
+            raise warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the assignment '%s' for residue name dimension 2.\nSetting residue name to None." % line[0]))
             res_name2 = None
 
         # Get the intensities.
