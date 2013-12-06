@@ -178,7 +178,7 @@ class Relax_disp(GuiTestCase):
         analysis.peak_wizard_launch(None)
         wizard = analysis.peak_wizard
 
-        # The spectrum, use Keyword auto.
+        # The spectrum, where the use of Keyword auto will auto-assign spectra Z_A{i}.
         page = wizard.get_page(wizard.page_indices['read'])
         page.uf_args['file'].SetValue(str_to_gui("%sfolded_sparky_corr_final_max_standard_trunc.ser" % data_path))
         page.uf_args['spectrum_id'].SetValue(['auto'])
@@ -191,11 +191,16 @@ class Relax_disp(GuiTestCase):
 
         # Get ID from RMSD window.
         page = wizard.get_page(wizard.page_indices['rmsd'])
+
         # Flush all wx events (to allow the spectrum list GUI element to populate all its rows).
         wx.Yield()
-        # Get the ID
+
+        # Get the first ID from list.
         cur_id = page.uf_args['spectrum_id'].GetValue()
+
+        # Now check that the first is set to 'Z_A0', since the keyword 'auto' was used for spectrum_id.
         self.assertEqual(cur_id, 'Z_A0')
+
 
     def test_hansen_trunc_data(self):
         """Test the GUI analysis with Flemming Hansen's CPMG data truncated to residues 70 and 71."""
