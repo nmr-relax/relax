@@ -47,13 +47,33 @@ class Chemical_shift(SystemTestCase):
         """Test the reading of chemical shifts from an NMRPipe seriesTab peak list."""
 
         # Read the spins from peak list.
-        self.interpreter.spectrum.read_spins(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', dim=1)
+        self.interpreter.spectrum.read_spins(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
 
         # Read the chemical shift from the list.
         self.interpreter.chemical_shift.read(file="seriesTab.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
 
         # Test the data.
         cs = [128.374, 127.066, 124.523]
+        i = 0
+        for spin in spin_loop():
+            # Check the shift.
+            self.assertEqual(spin.chemical_shift, cs[i])
+
+            # Increment the index.
+            i += 1
+
+
+    def test_read_nmrpipe_seriestab_multi(self):
+        """Test the reading of chemical shifts from an NMRPipe seriesTab peak list with multi columns."""
+
+        # Read the spins from peak list.
+        self.interpreter.spectrum.read_spins(file="seriesTab_multi.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Read the chemical shift from the list.
+        self.interpreter.chemical_shift.read(file="seriesTab_multi.ser", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Test the data.
+        cs = [115.994, 125.899, 123.001, 120.839, 128.998]
         i = 0
         for spin in spin_loop():
             # Check the shift.
