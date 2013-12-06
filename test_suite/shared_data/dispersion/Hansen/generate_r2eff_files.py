@@ -142,7 +142,7 @@ for exp_type, frq, point in loop_exp_frq_point():
     # Loop over the spins.
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Skip most spins.
-        if res_num not in [70, 71]:
+        if res_num not in [4, 70, 71]:
             continue
 
         # Write out the data.

@@ -1,8 +1,8 @@
 
 
 
-                                  relax repository checkout r21316
-                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+                                  relax repository checkout r21842
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
 
                               Molecular dynamics by NMR data analysis
 
@@ -111,7 +111,7 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height', int_col=2, res_num_col=1)
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
     relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
@@ -153,7 +153,7 @@ for exp_type, frq, point in loop_exp_frq_point():
     file = open('r2eff_data' + sep + file_name, 'w')
 
     # Generate the key.
-    key = return_param_key_from_data(frq, point)
+    key = return_param_key_from_data(exp_type=exp_type, frq=frq, point=point)
 
     # A header.
     file.write("# This data corresponds to:\n")
@@ -164,7 +164,7 @@ for exp_type, frq, point in loop_exp_frq_point():
     # Loop over the spins.
     for spin, mol_name, res_num, res_name, id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         # Skip most spins.
-        if res_num not in [70, 71]:
+        if res_num not in [4, 70, 71]:
             continue
 
         # Write out the data.
@@ -177,8 +177,8 @@ for exp_type, frq, point in loop_exp_frq_point():
 
 relax> pipe.create(pipe_name='base pipe', pipe_type='relax_disp', bundle='relax_disp')
 
-relax> sequence.read(file='fake_sequence.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/fake_sequence.in' for reading.
+relax> sequence.read(file='fake_sequence.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=2, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/fake_sequence.in' for reading.
 # mol_name    res_num    res_name    spin_num    spin_name    
 None          1          GLY         None        None         
 None          2          GLY         None        None         
@@ -256,8 +256,8 @@ None          73         GLY         None        None
 
 relax> spin.name(name='N', spin_id=None, force=False)
 
-relax> spectrum.read_intensities(file='500_MHz/reference.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_reference.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/reference.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_reference.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in' for reading.
 Generic formatted data file.
 
 
@@ -331,8 +331,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        27308.616    
 :73@N        17387.446    
 
-relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='CPMG')
-The spectrum ID '500_reference.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_reference.in', exp_type='SQ CPMG')
+The spectrum ID '500_reference.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_reference.in', cpmg_frq=None)
 The spectrum ID '500_reference.in' CPMG frequency is set to None Hz.
@@ -343,8 +343,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_reference.in', time=0.03)
 Setting the '500_reference.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/66.667.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_66.667.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/66.667.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_66.667.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in' for reading.
 Generic formatted data file.
 
 
@@ -418,8 +418,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15189.406    
 :73@N        15887.294    
 
-relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='CPMG')
-The spectrum ID '500_66.667.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_66.667.in', exp_type='SQ CPMG')
+The spectrum ID '500_66.667.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_66.667.in', cpmg_frq=66.6666)
 The spectrum ID '500_66.667.in' CPMG frequency is set to 66.6666 Hz.
@@ -430,8 +430,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_66.667.in', time=0.03)
 Setting the '500_66.667.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/133.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/133.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in' for reading.
 Generic formatted data file.
 
 
@@ -505,8 +505,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15490.596    
 :73@N        15466.502    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='CPMG')
-The spectrum ID '500_133.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_133.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in', cpmg_frq=133.3333)
 The spectrum ID '500_133.33.in' CPMG frequency is set to 133.3333 Hz.
@@ -517,8 +517,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_133.33.in', time=0.03)
 Setting the '500_133.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/133.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='500_MHz/133.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_133.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -592,8 +592,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        15424.051    
 :73@N        15564.511    
 
-relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_133.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_133.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_133.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_133.33.in.bis', cpmg_frq=133.3333)
 The spectrum ID '500_133.33.in.bis' CPMG frequency is set to 133.3333 Hz.
@@ -604,8 +604,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_133.33.in.bis', time=0.03)
 Setting the '500_133.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/200.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_200.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/200.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_200.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in' for reading.
 Generic formatted data file.
 
 
@@ -679,8 +679,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        16024.446    
 :73@N        15026.479    
 
-relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='CPMG')
-The spectrum ID '500_200.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_200.in', exp_type='SQ CPMG')
+The spectrum ID '500_200.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_200.in', cpmg_frq=200.0)
 The spectrum ID '500_200.in' CPMG frequency is set to 200.0 Hz.
@@ -691,8 +691,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_200.in', time=0.03)
 Setting the '500_200.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/266.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_266.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/266.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_266.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in' for reading.
 Generic formatted data file.
 
 
@@ -766,8 +766,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        16854.22     
 :73@N        15165.716    
 
-relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='CPMG')
-The spectrum ID '500_266.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_266.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_266.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_266.67.in', cpmg_frq=266.6666)
 The spectrum ID '500_266.67.in' CPMG frequency is set to 266.6666 Hz.
@@ -778,8 +778,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_266.67.in', time=0.03)
 Setting the '500_266.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/333.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_333.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/333.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_333.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in' for reading.
 Generic formatted data file.
 
 
@@ -853,8 +853,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        17577.352    
 :73@N        15437.358    
 
-relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='CPMG')
-The spectrum ID '500_333.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_333.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_333.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_333.33.in', cpmg_frq=333.3333)
 The spectrum ID '500_333.33.in' CPMG frequency is set to 333.3333 Hz.
@@ -865,8 +865,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_333.33.in', time=0.03)
 Setting the '500_333.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/400.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_400.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/400.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_400.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in' for reading.
 Generic formatted data file.
 
 
@@ -940,8 +940,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        17979.475    
 :73@N        15219.128    
 
-relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='CPMG')
-The spectrum ID '500_400.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_400.in', exp_type='SQ CPMG')
+The spectrum ID '500_400.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_400.in', cpmg_frq=400.0)
 The spectrum ID '500_400.in' CPMG frequency is set to 400.0 Hz.
@@ -952,8 +952,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_400.in', time=0.03)
 Setting the '500_400.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/466.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_466.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/466.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_466.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in' for reading.
 Generic formatted data file.
 
 
@@ -1027,8 +1027,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19245.661    
 :73@N        15467.302    
 
-relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='CPMG')
-The spectrum ID '500_466.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_466.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_466.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_466.67.in', cpmg_frq=466.6666)
 The spectrum ID '500_466.67.in' CPMG frequency is set to 466.6666 Hz.
@@ -1039,8 +1039,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_466.67.in', time=0.03)
 Setting the '500_466.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/533.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/533.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in' for reading.
 Generic formatted data file.
 
 
@@ -1114,8 +1114,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19755.821    
 :73@N        15755.719    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='CPMG')
-The spectrum ID '500_533.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_533.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in', cpmg_frq=533.3333)
 The spectrum ID '500_533.33.in' CPMG frequency is set to 533.3333 Hz.
@@ -1126,8 +1126,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_533.33.in', time=0.03)
 Setting the '500_533.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/533.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='500_MHz/533.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_533.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -1201,8 +1201,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19454.139    
 :73@N        15872.749    
 
-relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_533.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_533.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_533.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_533.33.in.bis', cpmg_frq=533.3333)
 The spectrum ID '500_533.33.in.bis' CPMG frequency is set to 533.3333 Hz.
@@ -1213,8 +1213,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_533.33.in.bis', time=0.03)
 Setting the '500_533.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/600.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_600.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/600.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_600.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in' for reading.
 Generic formatted data file.
 
 
@@ -1288,8 +1288,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        19942.905    
 :73@N        15787.241    
 
-relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='CPMG')
-The spectrum ID '500_600.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_600.in', exp_type='SQ CPMG')
+The spectrum ID '500_600.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_600.in', cpmg_frq=600.0)
 The spectrum ID '500_600.in' CPMG frequency is set to 600.0 Hz.
@@ -1300,8 +1300,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_600.in', time=0.03)
 Setting the '500_600.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/666.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_666.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/666.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_666.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in' for reading.
 Generic formatted data file.
 
 
@@ -1375,8 +1375,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        20695.265    
 :73@N        15430.429    
 
-relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='CPMG')
-The spectrum ID '500_666.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_666.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_666.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_666.67.in', cpmg_frq=666.6666)
 The spectrum ID '500_666.67.in' CPMG frequency is set to 666.6666 Hz.
@@ -1387,8 +1387,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_666.67.in', time=0.03)
 Setting the '500_666.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/733.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_733.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/733.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_733.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in' for reading.
 Generic formatted data file.
 
 
@@ -1462,8 +1462,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        20610.17     
 :73@N        15347.914    
 
-relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='CPMG')
-The spectrum ID '500_733.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_733.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_733.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_733.33.in', cpmg_frq=733.3333)
 The spectrum ID '500_733.33.in' CPMG frequency is set to 733.3333 Hz.
@@ -1474,8 +1474,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_733.33.in', time=0.03)
 Setting the '500_733.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/800.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_800.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/800.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_800.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in' for reading.
 Generic formatted data file.
 
 
@@ -1549,8 +1549,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21181.203    
 :73@N        15224.33     
 
-relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='CPMG')
-The spectrum ID '500_800.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_800.in', exp_type='SQ CPMG')
+The spectrum ID '500_800.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_800.in', cpmg_frq=800.0)
 The spectrum ID '500_800.in' CPMG frequency is set to 800.0 Hz.
@@ -1561,8 +1561,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_800.in', time=0.03)
 Setting the '500_800.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/866.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_866.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/866.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_866.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in' for reading.
 Generic formatted data file.
 
 
@@ -1636,8 +1636,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21504.577    
 :73@N        15418.535    
 
-relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='CPMG')
-The spectrum ID '500_866.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_866.67.in', exp_type='SQ CPMG')
+The spectrum ID '500_866.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_866.67.in', cpmg_frq=866.6666)
 The spectrum ID '500_866.67.in' CPMG frequency is set to 866.6666 Hz.
@@ -1648,8 +1648,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_866.67.in', time=0.03)
 Setting the '500_866.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/933.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/933.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in' for reading.
 Generic formatted data file.
 
 
@@ -1723,8 +1723,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21420.534    
 :73@N        15551.25     
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='CPMG')
-The spectrum ID '500_933.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in', exp_type='SQ CPMG')
+The spectrum ID '500_933.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in', cpmg_frq=933.3333)
 The spectrum ID '500_933.33.in' CPMG frequency is set to 933.3333 Hz.
@@ -1735,8 +1735,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_933.33.in', time=0.03)
 Setting the '500_933.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/933.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='500_MHz/933.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_933.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -1810,8 +1810,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21097.418    
 :73@N        15474.072    
 
-relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='CPMG')
-The spectrum ID '500_933.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_933.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '500_933.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_933.33.in.bis', cpmg_frq=933.3333)
 The spectrum ID '500_933.33.in.bis' CPMG frequency is set to 933.3333 Hz.
@@ -1822,8 +1822,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_933.33.in.bis', time=0.03)
 Setting the '500_933.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='500_MHz/1000.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_1000.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in' for reading.
+relax> spectrum.read_intensities(file='500_MHz/1000.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='500_1000.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in' for reading.
 Generic formatted data file.
 
 
@@ -1897,8 +1897,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        21461.571    
 :73@N        15689.319    
 
-relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='CPMG')
-The spectrum ID '500_1000.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='500_1000.in', exp_type='SQ CPMG')
+The spectrum ID '500_1000.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='500_1000.in', cpmg_frq=1000.0)
 The spectrum ID '500_1000.in' CPMG frequency is set to 1000.0 Hz.
@@ -1909,8 +1909,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='500_1000.in', time=0.03)
 Setting the '500_1000.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/reference.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_reference.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/reference.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/reference.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_reference.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/reference.in' for reading.
 Generic formatted data file.
 
 
@@ -1987,8 +1987,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        73997.834     
 :73@N        29813.262     
 
-relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='CPMG')
-The spectrum ID '800_reference.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_reference.in', exp_type='SQ CPMG')
+The spectrum ID '800_reference.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_reference.in', cpmg_frq=None)
 The spectrum ID '800_reference.in' CPMG frequency is set to None Hz.
@@ -1999,8 +1999,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_reference.in', time=0.03)
 Setting the '800_reference.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/66.667.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_66.667.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/66.667.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/66.667.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_66.667.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/66.667.in' for reading.
 Generic formatted data file.
 
 
@@ -2077,8 +2077,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        33211.541    
 :73@N        32070.576    
 
-relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='CPMG')
-The spectrum ID '800_66.667.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_66.667.in', exp_type='SQ CPMG')
+The spectrum ID '800_66.667.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_66.667.in', cpmg_frq=66.6666)
 The spectrum ID '800_66.667.in' CPMG frequency is set to 66.6666 Hz.
@@ -2089,8 +2089,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_66.667.in', time=0.03)
 Setting the '800_66.667.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/133.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/133.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in' for reading.
 Generic formatted data file.
 
 
@@ -2167,8 +2167,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        34000.102     
 :73@N        26866.432     
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='CPMG')
-The spectrum ID '800_133.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_133.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in', cpmg_frq=133.3333)
 The spectrum ID '800_133.33.in' CPMG frequency is set to 133.3333 Hz.
@@ -2179,8 +2179,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_133.33.in', time=0.03)
 Setting the '800_133.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/133.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='800_MHz/133.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_133.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/133.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -2257,8 +2257,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        33900.1       
 :73@N        25991.649     
 
-relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_133.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_133.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_133.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_133.33.in.bis', cpmg_frq=133.3333)
 The spectrum ID '800_133.33.in.bis' CPMG frequency is set to 133.3333 Hz.
@@ -2269,8 +2269,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_133.33.in.bis', time=0.03)
 Setting the '800_133.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/200.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_200.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/200.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/200.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_200.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/200.in' for reading.
 Generic formatted data file.
 
 
@@ -2347,8 +2347,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        34825.146    
 :73@N        28287.357    
 
-relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='CPMG')
-The spectrum ID '800_200.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_200.in', exp_type='SQ CPMG')
+The spectrum ID '800_200.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_200.in', cpmg_frq=200.0)
 The spectrum ID '800_200.in' CPMG frequency is set to 200.0 Hz.
@@ -2359,8 +2359,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_200.in', time=0.03)
 Setting the '800_200.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/266.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_266.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/266.67.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/266.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_266.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/266.67.in' for reading.
 Generic formatted data file.
 
 
@@ -2437,8 +2437,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        35733.938     
 :73@N        27503.41      
 
-relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='CPMG')
-The spectrum ID '800_266.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_266.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_266.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_266.67.in', cpmg_frq=266.6666)
 The spectrum ID '800_266.67.in' CPMG frequency is set to 266.6666 Hz.
@@ -2449,8 +2449,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_266.67.in', time=0.03)
 Setting the '800_266.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/333.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_333.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/333.33.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/333.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_333.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/333.33.in' for reading.
 Generic formatted data file.
 
 
@@ -2527,8 +2527,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        36602.997     
 :73@N        28550.78      
 
-relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='CPMG')
-The spectrum ID '800_333.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_333.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_333.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_333.33.in', cpmg_frq=333.3333)
 The spectrum ID '800_333.33.in' CPMG frequency is set to 333.3333 Hz.
@@ -2539,8 +2539,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_333.33.in', time=0.03)
 Setting the '800_333.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/400.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_400.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/400.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/400.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_400.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/400.in' for reading.
 Generic formatted data file.
 
 
@@ -2617,8 +2617,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        39107.538     
 :73@N        31162.509     
 
-relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='CPMG')
-The spectrum ID '800_400.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_400.in', exp_type='SQ CPMG')
+The spectrum ID '800_400.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_400.in', cpmg_frq=400.0)
 The spectrum ID '800_400.in' CPMG frequency is set to 400.0 Hz.
@@ -2629,8 +2629,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_400.in', time=0.03)
 Setting the '800_400.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/466.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_466.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/466.67.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/466.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_466.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/466.67.in' for reading.
 Generic formatted data file.
 
 
@@ -2707,8 +2707,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        40902.075     
 :73@N        29867.965     
 
-relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='CPMG')
-The spectrum ID '800_466.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_466.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_466.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_466.67.in', cpmg_frq=466.6666)
 The spectrum ID '800_466.67.in' CPMG frequency is set to 466.6666 Hz.
@@ -2719,8 +2719,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_466.67.in', time=0.03)
 Setting the '800_466.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/533.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/533.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in' for reading.
 Generic formatted data file.
 
 
@@ -2797,8 +2797,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        42816.877     
 :73@N        31685.46      
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='CPMG')
-The spectrum ID '800_533.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_533.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in', cpmg_frq=533.3333)
 The spectrum ID '800_533.33.in' CPMG frequency is set to 533.3333 Hz.
@@ -2809,8 +2809,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_533.33.in', time=0.03)
 Setting the '800_533.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/533.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='800_MHz/533.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_533.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/533.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -2887,8 +2887,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        42668.756     
 :73@N        31758.764     
 
-relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_533.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_533.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_533.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_533.33.in.bis', cpmg_frq=533.3333)
 The spectrum ID '800_533.33.in.bis' CPMG frequency is set to 533.3333 Hz.
@@ -2899,8 +2899,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_533.33.in.bis', time=0.03)
 Setting the '800_533.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/600.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_600.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/600.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/600.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_600.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/600.in' for reading.
 Generic formatted data file.
 
 
@@ -2977,8 +2977,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        45224.729     
 :73@N        28913.476     
 
-relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='CPMG')
-The spectrum ID '800_600.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_600.in', exp_type='SQ CPMG')
+The spectrum ID '800_600.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_600.in', cpmg_frq=600.0)
 The spectrum ID '800_600.in' CPMG frequency is set to 600.0 Hz.
@@ -2989,8 +2989,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_600.in', time=0.03)
 Setting the '800_600.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/666.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_666.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/666.67.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/666.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_666.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/666.67.in' for reading.
 Generic formatted data file.
 
 
@@ -3067,8 +3067,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        46615.226     
 :73@N        29263.491     
 
-relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='CPMG')
-The spectrum ID '800_666.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_666.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_666.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_666.67.in', cpmg_frq=666.6666)
 The spectrum ID '800_666.67.in' CPMG frequency is set to 666.6666 Hz.
@@ -3079,8 +3079,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_666.67.in', time=0.03)
 Setting the '800_666.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/733.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_733.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/733.33.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/733.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_733.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/733.33.in' for reading.
 Generic formatted data file.
 
 
@@ -3157,8 +3157,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        47517.117     
 :73@N        30899.03      
 
-relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='CPMG')
-The spectrum ID '800_733.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_733.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_733.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_733.33.in', cpmg_frq=733.3333)
 The spectrum ID '800_733.33.in' CPMG frequency is set to 733.3333 Hz.
@@ -3169,8 +3169,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_733.33.in', time=0.03)
 Setting the '800_733.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/800.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_800.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/800.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/800.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_800.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/800.in' for reading.
 Generic formatted data file.
 
 
@@ -3247,8 +3247,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        50479.278     
 :73@N        33490.941     
 
-relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='CPMG')
-The spectrum ID '800_800.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_800.in', exp_type='SQ CPMG')
+The spectrum ID '800_800.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_800.in', cpmg_frq=800.0)
 The spectrum ID '800_800.in' CPMG frequency is set to 800.0 Hz.
@@ -3259,8 +3259,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_800.in', time=0.03)
 Setting the '800_800.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/866.67.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_866.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/866.67.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/866.67.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_866.67.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/866.67.in' for reading.
 Generic formatted data file.
 
 
@@ -3337,8 +3337,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        51206.894     
 :73@N        32108.792     
 
-relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='CPMG')
-The spectrum ID '800_866.67.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_866.67.in', exp_type='SQ CPMG')
+The spectrum ID '800_866.67.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_866.67.in', cpmg_frq=866.6666)
 The spectrum ID '800_866.67.in' CPMG frequency is set to 866.6666 Hz.
@@ -3349,8 +3349,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_866.67.in', time=0.03)
 Setting the '800_866.67.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/933.33.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/933.33.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in' for reading.
 Generic formatted data file.
 
 
@@ -3427,8 +3427,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        51533.083     
 :73@N        31916.531     
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='CPMG')
-The spectrum ID '800_933.33.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in', exp_type='SQ CPMG')
+The spectrum ID '800_933.33.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in', cpmg_frq=933.3333)
 The spectrum ID '800_933.33.in' CPMG frequency is set to 933.3333 Hz.
@@ -3439,8 +3439,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_933.33.in', time=0.03)
 Setting the '800_933.33.in' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/933.33.in.bis', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in.bis' for reading.
+relax> spectrum.read_intensities(file='800_MHz/933.33.in.bis', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_933.33.in.bis', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/933.33.in.bis' for reading.
 Generic formatted data file.
 
 
@@ -3517,8 +3517,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        52547.865     
 :73@N        32332.518     
 
-relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='CPMG')
-The spectrum ID '800_933.33.in.bis' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_933.33.in.bis', exp_type='SQ CPMG')
+The spectrum ID '800_933.33.in.bis' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_933.33.in.bis', cpmg_frq=933.3333)
 The spectrum ID '800_933.33.in.bis' CPMG frequency is set to 933.3333 Hz.
@@ -3529,8 +3529,8 @@ RelaxWarning: The precise spectrometer frequency should be suppled, a value such
 relax> relax_disp.relax_time(spectrum_id='800_933.33.in.bis', time=0.03)
 Setting the '800_933.33.in.bis' spectrum relaxation time period to 0.03 s.
 
-relax> spectrum.read_intensities(file='800_MHz/1000.in', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_1000.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/1000.in' for reading.
+relax> spectrum.read_intensities(file='800_MHz/1000.in', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen', spectrum_id='800_1000.in', dim=1, int_method='height', int_col=2, spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/1000.in' for reading.
 Generic formatted data file.
 
 
@@ -3607,8 +3607,8 @@ The following intensities have been loaded into the relax data store:
 :72@N        53798.71      
 :73@N        30040.923     
 
-relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='CPMG')
-The spectrum ID '800_1000.in' is now set to the CPMG-type experiment.
+relax> relax_disp.exp_type(spectrum_id='800_1000.in', exp_type='SQ CPMG')
+The spectrum ID '800_1000.in' is now set to the standard single quantum (SQ) CPMG-type experiment.
 
 relax> relax_disp.cpmg_frq(spectrum_id='800_1000.in', cpmg_frq=1000.0)
 The spectrum ID '800_1000.in' CPMG frequency is set to 1000.0 Hz.
@@ -3631,8 +3631,8 @@ relax> spectrum.replicated(spectrum_ids=['800_533.33.in', '800_533.33.in.bis'])
 
 relax> spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
 
-relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/500_MHz/unresolved' for reading.
+relax> deselect.read(file='unresolved', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/unresolved' for reading.
 The following spins were deselected:
 :9@N
 :27@N
@@ -3642,8 +3642,8 @@ The following spins were deselected:
 :68@N
 :69@N
 
-relax> deselect.read(file='unresolved', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/Hansen/800_MHz/unresolved' for reading.
+relax> deselect.read(file='unresolved', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz', spin_id_col=None, mol_name_col=None, res_num_col=1, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, boolean='AND', change_all=False)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/800_MHz/unresolved' for reading.
 The following spins were deselected:
 :9@N
 :54@N
@@ -3732,6 +3732,17 @@ None          73         GLY         None        N
 =======================================
 = Relaxation dispersion auto-analysis =
 =======================================
+
+
+
+Variable checking
+=================
+
+The dispersion auto-analysis variables are OK.
+
+
+Error analysis
+==============
 
 
 relax> spectrum.error_analysis(subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
