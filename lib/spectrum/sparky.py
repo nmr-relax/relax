@@ -27,10 +27,12 @@
 
 # Python module imports.
 from re import split
+from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import open_write_file, strip
+from lib.warnings import RelaxWarning
 
 
 def read_list(peak_list=None, file_data=None):
@@ -135,7 +137,7 @@ def read_list(peak_list=None, file_data=None):
         try:
             res_name = row1[-4]
         except:
-            raise RelaxWarning("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name.\nSetting residue name to None." % line[0])
+            raise warn(RelaxWarning("Improperly formatted Sparky file, cannot process the assignment '%s' for residue name.\nSetting residue name to None." % line[0]))
             res_name = None
 
         # Chemical shifts.
