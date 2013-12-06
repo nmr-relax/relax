@@ -127,7 +127,7 @@ def read_seriestab(peak_list=None, file_data=None, int_col=None):
         try:
             res_name1 = row1[-4]
         except:
-            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 1 in assignment: %s." % line[0]))
+            warn(RelaxWarning("Improperly formatted NMRPipe SeriesTab file, cannot process the residue name for dimension 1 in assignment: %s. Setting residue name to None." % line[0]))
             res_name1 = None
 
         # The residue name for dimension 2.
