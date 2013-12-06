@@ -336,6 +336,76 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[5].spin[0].name, 'N')
 
 
+    def test_read_spins_peak_list_sparky_with_2dim_ass(self):
+        """Test the reading of spins from a Sparky peak list with two dimensional assignment"""
+
+        # Read the spins from peak list.
+        self.interpreter.spectrum.read_spins(file="sparky2dim.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', dim=1)
+        self.interpreter.spectrum.read_spins(file="sparky2dim.list", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', dim=2)
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 7)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 62)
+        self.assertEqual(cdp.mol[0].res[0].name, 'W')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 2)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'NE1')
+        self.assertEqual(cdp.mol[0].res[0].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[1].name, 'HE1')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 10)
+        self.assertEqual(cdp.mol[0].res[1].name, 'L')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 2)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[1].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[1].name, 'HN')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[2].num, 6)
+        self.assertEqual(cdp.mol[0].res[2].name, 'V')
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 2)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[2].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[1].name, 'HN')
+
+        # 4th residue.
+        self.assertEqual(cdp.mol[0].res[3].num, 2)
+        self.assertEqual(cdp.mol[0].res[3].name, 'T')
+        self.assertEqual(len(cdp.mol[0].res[3].spin), 2)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[3].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[3].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[3].spin[1].name, 'HN')
+
+        # 5th residue.
+        self.assertEqual(cdp.mol[0].res[4].num, 3)
+        self.assertEqual(cdp.mol[0].res[4].name, 'K')
+        self.assertEqual(len(cdp.mol[0].res[4].spin), 1)
+        self.assertEqual(cdp.mol[0].res[4].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[4].spin[0].name, 'N')
+
+        # 6th residue.
+        self.assertEqual(cdp.mol[0].res[5].num, 4)
+        self.assertEqual(cdp.mol[0].res[5].name, 'A')
+        self.assertEqual(len(cdp.mol[0].res[5].spin), 1)
+        self.assertEqual(cdp.mol[0].res[5].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[5].spin[0].name, 'N')
+
+        # 7th residue.
+        self.assertEqual(cdp.mol[0].res[6].num, 5)
+        self.assertEqual(cdp.mol[0].res[6].name, 'V')
+        self.assertEqual(len(cdp.mol[0].res[6].spin), 1)
+        self.assertEqual(cdp.mol[0].res[6].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[6].spin[0].name, 'N')
+
+
     def test_read_spins_peak_list_xeasy(self):
         """Test the reading of spins from an XEasy peak list."""
 
