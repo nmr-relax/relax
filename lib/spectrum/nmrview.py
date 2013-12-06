@@ -82,7 +82,7 @@ def read_list(peak_list=None, file_data=None, int_col=None):
             res_num = res_num.split('.')
             res_num = int(res_num[0])
         except ValueError:
-            raise RelaxError("The peak list is invalid.")
+            raise RelaxError("Improperly formatted NMRView file, cannot process the assignment '%s'." % line[0])
 
         # Nuclei names.
         name2 = ''
