@@ -332,6 +332,49 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[5].spin[0].num, None)
         self.assertEqual(cdp.mol[0].res[5].spin[0].name, 'N')
 
+
+    def test_read_spins_peak_list_xeasy(self):
+        """Test the reading of spins from an XEasy peak list."""
+
+        # Read the peak list.
+        self.interpreter.spectrum.read_spins(file="xeasy_r1_20ms.text", dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists')
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 21)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 21)
+        self.assertEqual(cdp.mol[0].res[0].name, 'LEU')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'N')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 79)
+        self.assertEqual(cdp.mol[0].res[1].name, 'TRP')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'NE1')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[2].num, 110)
+        self.assertEqual(cdp.mol[0].res[2].name, 'PHE')
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 1)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
+
+        # 10th residue.
+        self.assertEqual(cdp.mol[0].res[9].num, 107)
+        self.assertEqual(cdp.mol[0].res[9].name, 'TRP')
+        self.assertEqual(len(cdp.mol[0].res[9].spin), 2)
+        self.assertEqual(cdp.mol[0].res[9].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[9].spin[0].name, 'N')
+        self.assertEqual(cdp.mol[0].res[9].spin[1].num, None)
+        self.assertEqual(cdp.mol[0].res[9].spin[1].name, 'C')
+
+
     def test_read_peak_list_generic(self):
         """Test the reading of a generic peak intensity list."""
 
