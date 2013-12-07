@@ -2651,7 +2651,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
         shift = 0.0
         if hasattr(spin, 'chemical_shift'):
             shift = spin.chemical_shift
-        else:
+        elif has_r1rho_exp_type():
             warn(RelaxWarning("The chemical shift for the spin '%s' cannot be found.  Be careful, it is being set to 0.0 ppm so offset calculations will probably be wrong!" % spin_id))
 
         # Loop over the experiments and spectrometer frequencies.
@@ -2800,7 +2800,8 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
 
     # Check for the presence of data.
     if not hasattr(cdp, 'ri_ids'):
-        warn(RelaxWarning("No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."))
+        if has_r1rho_exp_type():
+            warn(RelaxWarning("No R1 relaxation data has been loaded.  This is essential for the proper handling of offsets in off-resonance R1rho experiments."))
         return 0.0 * r1
 
     # Loop over the Rx IDs.
