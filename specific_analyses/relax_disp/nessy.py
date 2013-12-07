@@ -27,12 +27,13 @@ from os import getcwd
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.float import isNaN
 from lib.io import mkdir_nofail, open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.disp_data import find_intensity_keys, loop_exp_frq, loop_exp_frq_point_time, loop_point, return_index_from_disp_point, return_index_from_frq
+from specific_analyses.relax_disp.disp_data import find_intensity_keys, loop_exp_frq_offset, loop_exp_frq_point_time, loop_point, return_index_from_disp_point, return_index_from_frq
 
 
 def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
@@ -58,10 +59,6 @@ def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):
     # Test if the experiment type has been set.
     if not hasattr(cdp, 'exp_type'):
         raise RelaxError("The relaxation dispersion experiment type has not been specified.")
-
-    # Test if the model has been set.
-    if not hasattr(cdp, 'model_type'):
-        raise RelaxError("The relaxation dispersion model has not been specified.")
 
     # Directory creation.
     if dir != None:
@@ -281,35 +278,32 @@ class Nessy_data:
                 raise RelaxError("A residue number of greater than 700 is not supported in NESSY.")
 
             # Loop over all spectrometer frequencies.
-            for exp_type, frq in loop_exp_frq():
+            for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
                 # Loop over all dispersion points.
-                mi = 0
-                for point in loop_point(exp_type=exp_type, skip_ref=False):
-                    # Indices and keys.
-                    ei = return_index_from_frq(frq)
-                    di = return_index_from_disp_point(point, exp_type=exp_type)
+                di_new = 0
+                for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, skip_ref=False, return_indices=True):
+                    # The keys.
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=cdp.relax_time_list[0])
 
                     # Convert the reference point for NESSY input.
-                    if point == None:
+                    if point == None or isNaN(point):
                         point = 0
 
                     # Loop over the keys.
                     for key in keys:
                         # Another check.
-                        if self.cpmg_data[ei][mi][res_index] != '':
+                        if self.cpmg_data[mi][di_new][res_index] != '':
                             raise RelaxError("Only one spin system per residue is supported in NESSY.")
 
                         # Store the data (if it exists).
                         if key in spin.intensities:
-                            self.cpmg_data[ei][mi][res_index] = str(spin.intensities[key])
+                            self.cpmg_data[mi][di_new][res_index] = str(spin.intensities[key])
 
                         # The CPMG frequency.
-                        self.cpmg_frqs[ei][mi] = str(point)
+                        self.cpmg_frqs[mi][di_new] = str(point)
 
                         # Increment the field index.
-                        mi += 1
-
+                        di_new += 1
 
 
     def _assemble_experiment(self):
