@@ -47,7 +47,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, insignificance=0.0, numeric_only=False, mc_sim_all_models=False):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
@@ -72,6 +72,8 @@ class Relax_disp:
         @type numeric_only:         bool
         @keyword mc_sim_all_models: A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.
         @type mc_sim_all_models:    bool
+        @keyword eliminate:         A flag which if True will enable the elimination of failed models and failed Monte Carlo simulations through the eliminate user function.
+        @type eliminate:            bool
         """
 
         # Printout.
@@ -323,7 +325,8 @@ class Relax_disp:
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
 
         # Model elimination.
-        self.interpreter.eliminate()
+        if self.eliminate:
+            self.interpreter.eliminate()
 
         # Monte Carlo simulations.
         if self.mc_sim_all_models or len(self.models) < 2 or model == 'R2eff':
@@ -331,7 +334,8 @@ class Relax_disp:
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
             self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
-            self.interpreter.eliminate()
+            if self.eliminate:
+                self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
 
@@ -435,7 +439,8 @@ class Relax_disp:
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
                 self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
-                self.interpreter.eliminate()
+                if self.eliminate:
+                    self.interpreter.eliminate()
                 self.interpreter.monte_carlo.error_analysis()
 
             # Writing out the final results.
