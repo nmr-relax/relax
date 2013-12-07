@@ -98,6 +98,7 @@ class Relax_disp:
         self.insignificance = insignificance
         self.numeric_only = numeric_only
         self.mc_sim_all_models = mc_sim_all_models
+        self.eliminate = eliminate
 
         # No results directory, so default to the current directory.
         if not self.results_dir:
