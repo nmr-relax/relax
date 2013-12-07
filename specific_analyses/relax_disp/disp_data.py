@@ -275,13 +275,15 @@ def decompose_r20_key(key=None):
             return exp_type, frq
 
 
-def find_intensity_keys(exp_type=None, frq=None, point=None, time=None, raise_error=True):
+def find_intensity_keys(exp_type=None, frq=None, offset=None, point=None, time=None, raise_error=True):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
     @keyword exp_type:      The experiment type.
     @type exp_type:         str
     @keyword frq:           The spectrometer frequency.
     @type frq:              float
+    @keyword offset:        The optional offset value for off-resonance R1rho-type data.
+    @type offset:           None or float
     @keyword point:         The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @type point:            float
     @keyword time:          The relaxation time period.
@@ -296,6 +298,10 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None, raise_er
     if exp_type == None:
         raise RelaxError("The experiment type has not been supplied.")
 
+    # Catch NaNs.
+    if isNaN(point):
+        point = None
+
     # The dispersion data.
     if exp_type in EXP_TYPE_LIST_CPMG:
         disp_data = cdp.cpmg_frqs
@@ -309,26 +315,31 @@ def find_intensity_keys(exp_type=None, frq=None, point=None, time=None, raise_er
         if cdp.exp_type[id] != exp_type:
             continue
 
-        # The spectrometer frequency.
-        frq2 = None
-        if hasattr(cdp, 'spectrometer_frq'):
-            frq2 = cdp.spectrometer_frq[id]
+        # Skip non-matching spectrometer frequencies.
+        if hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+            continue
 
-        # Matching frequency and dispersion point.
-        if frq2 == frq and id in disp_data.keys() and disp_data[id] == point:
-            # The reference point, so checking the time is pointless (and can fail as specifying the time should not be necessary).
-            if point == None:
-                ids.append(id)
+        # Skip non-matching offsets.
+        if offset != None and hasattr(cdp, 'spin_lock_offset') and cdp.spin_lock_offset[id] != offset:
+            continue
 
-            # Matching time.
-            elif time == None:
-                ids.append(id)
-            elif cdp.relax_times[id] == time:
-                ids.append(id)
+        # Skip non-matching dispersion points.
+        if disp_data[id] != point:
+            continue
+
+        # The reference point, so checking the time is pointless (and can fail as specifying the time should not be necessary).
+        if point == None or isNaN(point):
+            ids.append(id)
+
+        # Matching time.
+        elif time == None:
+            ids.append(id)
+        elif cdp.relax_times[id] == time:
+            ids.append(id)
 
     # Check for missing IDs.
     if raise_error and len(ids) == 0:
-        if point == None:
+        if point == None or isNaN(point):
             raise RelaxError("No reference intensity data could be found corresponding to the spectrometer frequency of %s MHz and relaxation time of %s s." % (frq*1e-6, time))
         else:
             raise RelaxError("No intensity data could be found corresponding to the spectrometer frequency of %s MHz, dispersion point of %s and relaxation time of %s s." % (frq*1e-6, point, time))
