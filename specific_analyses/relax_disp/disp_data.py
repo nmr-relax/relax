@@ -1681,7 +1681,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                     # Loop over the dispersion points.
                     for di in range(len(back_calc[ei][0][mi][oi])):
                         # Skip invalid points (values of 1e100).
-                        if back_calc[ei][0][mi][oi][di]] > 1e50:
+                        if back_calc[ei][0][mi][oi][di] > 1e50:
                             continue
 
                         # The X point.
