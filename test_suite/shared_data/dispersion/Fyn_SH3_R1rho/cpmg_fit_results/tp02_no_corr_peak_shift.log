@@ -1,0 +1,36 @@
+> > > > > > > > > > > > > > > > > > > > > > > > > > Max. number of function evaluation (default): 7000000
+F =    3425.4479
+F =    489.00665
+F =    472.40152
+F =    472.40051
+F =    472.40051
+F =    472.40051
+F =    472.40051
+F =    472.40051
+F =    472.40051
+F =    472.40051
+F =    472.40051
+Error: Minimization failed; INF=7
+> > > # No model set for temperature/pressure dependencies of rate/eq. constants
+# Chemical shifts are given at reference temperature: 0 C;
+# No simultaneous 180 pulse is applied in MQ sequences 
+# Minimization is done. Minimization model is 2
+# F =  472.400507470708874  DF = 0  P_lvl =    0.000000000000000
+
+# type temp/P                  val                  err
+PA:        25    0.945912353996981    0.000000000000000   f ? !
+PB:        25    0.054087646003019    0.000000000000000   u ? !
+
+# type temp/P                  val                  err
+KAB:       25  367.981715073974556    0.000000000000000   u ? !
+
+# type   res nucl  ord                  val                  err
+CS0_A:    55    N    0    0.000000000000000    0.000000000000000   f ? !
+CS0_B:    55    N    0    4.305697497613982    0.000000000000000   u ? !
+
+# type   res nucl/coh temp/P   sfrq                  val                  err
+R2_A:     55      N-R     25    600    9.108060397660111    0.000000000000000   u g ? !
+R1_A:     55      N-R     25    600    3.179051390898238    0.000000000000000   u g ? !
+R2_A:     55      N-R     25    800   13.793213528551924    0.000000000000000   u g ? !
+R1_A:     55      N-R     25    800    4.452840879991469    0.000000000000000   u g ? !
+> 

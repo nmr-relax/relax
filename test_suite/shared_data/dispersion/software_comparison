@@ -226,3 +226,51 @@ chi2              N/A      15.164         N/A      15.164      15.164      15.16
 1 - The relax model 'NS CPMG 2-site expanded'.
 2 - The relax model 'NS CPMG 2-site 3D'.
 3 - The relax model 'NS CPMG 2-site star'.
+
+
+
+
+########################################
+# Dmitry Korzhnev's Fyn SH3 R1rho data #
+########################################
+
+All input and results can be found in the Fyn_SH3_R1rho/ directory.
+
+
+The TP02 model
+==============
+
+Param      cpmg_fit^1  cpmg_fit^2  cpmg_fit^3  cpmg_fit^4  relax^5
+R1 (600)        1.603       1.632       3.164       3.179       3.179
+R1 (800)        2.837       2.848       4.450       4.453       4.453
+R2 (600)        7.513       7.668       8.956       9.108       9.108
+R2 (800)       12.247      12.357      13.689      13.793      13.793
+pA              0.937       0.938       0.946       0.946       0.946
+dw              4.314       4.308       4.312       4.306       4.306
+kex           346.593     345.791     369.403     367.982     367.982
+chi2          483.057     530.048     434.420     472.401     472.401
+
+1 - The original cpmg_fit program.
+2 - The cpmg_fit program with the PEAK_SHIFT definition turned off (da, db -= pB*kex^2*dw/(kex^2+dw^2)).
+3 - The cpmg_fit program with the correction to the Trott-Palmer formula commented out (see Korzhnev et al., JACS 2005, http://dx.doi.org/10.1021/ja0446855).
+4 - The cpmg_fit program with no PEAK_SHIFT and no TP02 correction.
+5 - The R1 parameters in relax are fixed to those found by cpmg_fit in 4.
+
+
+The NS R1rho 2-site model
+=========================
+
+Param      cpmg_fit^1  cpmg_fit^2  relax^3
+R1 (600)        1.625       1.613       1.613
+R1 (800)        2.879       2.877       2.877
+R2 (600)        7.208       7.360       7.115
+R2 (800)       12.052      12.144      12.030
+pA              0.940       0.939       0.940
+dw              4.306       4.300       4.313
+kex           347.879     345.382     347.420
+chi2          435.641     436.970     518.062
+
+1 - The original cpmg_fit program.
+2 - The cpmg_fit program with the PEAK_SHIFT definition turned off (different definition compared to the TP02 model).
+3 - The R1 parameters in relax are fixed to those found by cpmg_fit in 2.
+

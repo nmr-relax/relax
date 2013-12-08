@@ -2,7 +2,7 @@
 
 To run this, type:
 
-$ rm -f solution.log; ../../../../../relax --tee solution.log solution.py
+$ rm -f solution_ns_r1rho_2site.log; ../../../../../relax --tee solution_ns_r1rho_2site.log solution_ns_r1rho_2site.py
 """
 
 # Python module imports.
@@ -63,7 +63,7 @@ for id, file, spin_id, H_frq, field, relax_time in data:
         relax_disp.spin_lock_field(spectrum_id=new_id, field=field)
 
         # Set the spin-lock offset, converting back to ppm.
-        relax_disp.spin_lock_offset(spectrum_id=new_id, offset=frequency_to_ppm(frq=offset, B0=H_frq, isotope='15N'))
+        relax_disp.spin_lock_offset(spectrum_id=new_id, offset=-frequency_to_ppm(frq=offset, B0=H_frq, isotope='15N'))
 
     # Read the R2eff data.
     relax_disp.r2eff_read_spin(id=id, file=file, dir='..', spin_id=spin_id, offset_col=1, data_col=2, error_col=3)
@@ -79,29 +79,36 @@ relax_disp.select_model('NS R1rho 2-site')
 r20_600_key = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=600e6)
 r20_800_key = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
-# Manually set the parameter values.
+# Manually set the parameter values to the cpmg_fit solution.
 spin_N = cdp.mol[0].res[0].spin[0]
 spin_N.r2 = {
-    r20_600_key:   7.207768115862985,
-    r20_800_key:   12.051680792051327,
+    r20_600_key:   7.360025311434811,
+    r20_800_key:  12.144725123551275,
 }
-spin_N.pA = 0.939542621565408
-spin_N.pB = 0.060457378434592
-spin_N.kex = 347.879242672759688
-spin_N.dw = 4.306403630710951
+spin_N.pA = 0.939453418719417
+spin_N.pB = 0.060546581280583
+spin_N.kex = 345.382272267647522
+spin_N.dw = 4.300343252657507
+spin_N.ri_data['600MHz'] = 1.613234983209703
+spin_N.ri_data['800MHz'] = 2.876934088364565
 
 # Calculate.
 calc()
-print("Chi2:  %s" % spin_N.chi2)
+print("%-40s %20.15f" % ("relax chi2:", spin_N.chi2))
+print("%-40s %20.15f" % ("cpmg_fit chi2 (corrections turned off):", 436.970448079015682))
+
+# Minimisation.
+grid_search(inc=7)
+minimise('simplex', constraints=True)
 
 # Plot the dispersion curves.
 relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)
 
 # Save the results.
-state.save('cpmg_fit_solution', dir='.', compress_type=1, force=True)
+state.save('solution_ns_r1rho_2site', dir='.', compress_type=1, force=True)
 
 # Cleanup.
-print("\n\nMoving 'disp_14_N.agr' to 'cpmg_fit_solution.agr'.")
-move('disp_14_N.agr', 'cpmg_fit_solution.agr')
+print("\n\nMoving 'disp_14_N.agr' to 'solution_ns_r1rho_2site.agr'.")
+move('disp_14_N.agr', 'solution_ns_r1rho_2site.agr')
 print("Deleting 'grace2images.py'.")
 remove('grace2images.py')
