@@ -16,7 +16,7 @@ from status import Status; status = Status()
 
 
 # The dispersion models.
-MODELS = ['R2eff', 'No Rex', 'LM63', 'LM63 3-site', 'CR72', 'CR72 full', 'IT99', 'NS CPMG 2-site 3D', 'NS CPMG 2-site expanded', 'NS CPMG 2-site star']
+MODELS = ['R2eff', 'No Rex', 'LM63', 'LM63 3-site', 'CR72', 'CR72 full', 'IT99', 'NS CPMG 2-site 3D', 'NS CPMG 2-site expanded', 'NS CPMG 2-site star', 'MMQ CR72']
 
 # The grid search size (the number of increments per dimension).
 GRID_INC = 11
@@ -34,7 +34,7 @@ MODSEL = 'AIC'
 NUMERIC_ONLY = False
 
 # The R2eff value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.
-INSIGNIFICANCE = 1.0
+INSIGNIFICANCE = 0.0
 
 
 
@@ -57,4 +57,4 @@ spin.isotope('15N')
 ##########################
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, insignificance=INSIGNIFICANCE, numeric_only=NUMERIC_ONLY, eliminate=False)

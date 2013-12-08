@@ -3,20 +3,20 @@
 @with g0
 @    view 0.15, 0.15, 1.28, 0.85
 @    xaxis  label "Residue number"
-@    xaxis  label char size 1.48
-@    xaxis  tick major size 0.75
+@    xaxis  label char size 1.00
+@    xaxis  tick major size 0.50
 @    xaxis  tick major linewidth 0.5
 @    xaxis  tick minor linewidth 0.5
-@    xaxis  tick minor size 0.45
-@    xaxis  ticklabel char size 1.00
+@    xaxis  tick minor size 0.25
+@    xaxis  ticklabel char size 0.70
 @    yaxis  label "\qR\s2,eff\N\Q (rad.s\S-1\N)"
-@    yaxis  label char size 1.48
-@    yaxis  tick major size 0.75
+@    yaxis  label char size 1.00
+@    yaxis  tick major size 0.50
 @    yaxis  tick major linewidth 0.5
 @    yaxis  tick minor linewidth 0.5
-@    yaxis  tick minor size 0.45
-@    yaxis  ticklabel char size 1.00
-@    legend on
+@    yaxis  tick minor size 0.25
+@    yaxis  ticklabel char size 0.70
+@    legend off
 @    legend box fill pattern 1
 @    legend char size 1.0
 @    frame linewidth 0.5
@@ -26,210 +26,210 @@
 @    s0 errorbar size 0.5
 @    s0 errorbar linewidth 0.5
 @    s0 errorbar riser linewidth 0.5
-@    s0 legend "sq_cpmg_500.00000000_1000.000"
+@    s0 legend "sq_cpmg_500.00000000_0.000_1000.000"
 @    s1 symbol 2
 @    s1 symbol size 0.45
 @    s1 symbol linewidth 0.5
 @    s1 errorbar size 0.5
 @    s1 errorbar linewidth 0.5
 @    s1 errorbar riser linewidth 0.5
-@    s1 legend "sq_cpmg_500.00000000_133.333"
+@    s1 legend "sq_cpmg_500.00000000_0.000_133.333"
 @    s2 symbol 3
 @    s2 symbol size 0.45
 @    s2 symbol linewidth 0.5
 @    s2 errorbar size 0.5
 @    s2 errorbar linewidth 0.5
 @    s2 errorbar riser linewidth 0.5
-@    s2 legend "sq_cpmg_500.00000000_200.000"
+@    s2 legend "sq_cpmg_500.00000000_0.000_200.000"
 @    s3 symbol 4
 @    s3 symbol size 0.45
 @    s3 symbol linewidth 0.5
 @    s3 errorbar size 0.5
 @    s3 errorbar linewidth 0.5
 @    s3 errorbar riser linewidth 0.5
-@    s3 legend "sq_cpmg_500.00000000_266.667"
+@    s3 legend "sq_cpmg_500.00000000_0.000_266.667"
 @    s4 symbol 5
 @    s4 symbol size 0.45
 @    s4 symbol linewidth 0.5
 @    s4 errorbar size 0.5
 @    s4 errorbar linewidth 0.5
 @    s4 errorbar riser linewidth 0.5
-@    s4 legend "sq_cpmg_500.00000000_333.333"
+@    s4 legend "sq_cpmg_500.00000000_0.000_333.333"
 @    s5 symbol 6
 @    s5 symbol size 0.45
 @    s5 symbol linewidth 0.5
 @    s5 errorbar size 0.5
 @    s5 errorbar linewidth 0.5
 @    s5 errorbar riser linewidth 0.5
-@    s5 legend "sq_cpmg_500.00000000_400.000"
+@    s5 legend "sq_cpmg_500.00000000_0.000_400.000"
 @    s6 symbol 7
 @    s6 symbol size 0.45
 @    s6 symbol linewidth 0.5
 @    s6 errorbar size 0.5
 @    s6 errorbar linewidth 0.5
 @    s6 errorbar riser linewidth 0.5
-@    s6 legend "sq_cpmg_500.00000000_466.667"
+@    s6 legend "sq_cpmg_500.00000000_0.000_466.667"
 @    s7 symbol 8
 @    s7 symbol size 0.45
 @    s7 symbol linewidth 0.5
 @    s7 errorbar size 0.5
 @    s7 errorbar linewidth 0.5
 @    s7 errorbar riser linewidth 0.5
-@    s7 legend "sq_cpmg_500.00000000_533.333"
+@    s7 legend "sq_cpmg_500.00000000_0.000_533.333"
 @    s8 symbol 9
 @    s8 symbol size 0.45
 @    s8 symbol linewidth 0.5
 @    s8 errorbar size 0.5
 @    s8 errorbar linewidth 0.5
 @    s8 errorbar riser linewidth 0.5
-@    s8 legend "sq_cpmg_500.00000000_600.000"
+@    s8 legend "sq_cpmg_500.00000000_0.000_600.000"
 @    s9 symbol 10
 @    s9 symbol size 0.45
 @    s9 symbol linewidth 0.5
 @    s9 errorbar size 0.5
 @    s9 errorbar linewidth 0.5
 @    s9 errorbar riser linewidth 0.5
-@    s9 legend "sq_cpmg_500.00000000_66.667"
+@    s9 legend "sq_cpmg_500.00000000_0.000_66.667"
 @    s10 symbol 1
 @    s10 symbol size 0.45
 @    s10 symbol linewidth 0.5
 @    s10 errorbar size 0.5
 @    s10 errorbar linewidth 0.5
 @    s10 errorbar riser linewidth 0.5
-@    s10 legend "sq_cpmg_500.00000000_666.667"
+@    s10 legend "sq_cpmg_500.00000000_0.000_666.667"
 @    s11 symbol 2
 @    s11 symbol size 0.45
 @    s11 symbol linewidth 0.5
 @    s11 errorbar size 0.5
 @    s11 errorbar linewidth 0.5
 @    s11 errorbar riser linewidth 0.5
-@    s11 legend "sq_cpmg_500.00000000_733.333"
+@    s11 legend "sq_cpmg_500.00000000_0.000_733.333"
 @    s12 symbol 3
 @    s12 symbol size 0.45
 @    s12 symbol linewidth 0.5
 @    s12 errorbar size 0.5
 @    s12 errorbar linewidth 0.5
 @    s12 errorbar riser linewidth 0.5
-@    s12 legend "sq_cpmg_500.00000000_800.000"
+@    s12 legend "sq_cpmg_500.00000000_0.000_800.000"
 @    s13 symbol 4
 @    s13 symbol size 0.45
 @    s13 symbol linewidth 0.5
 @    s13 errorbar size 0.5
 @    s13 errorbar linewidth 0.5
 @    s13 errorbar riser linewidth 0.5
-@    s13 legend "sq_cpmg_500.00000000_866.667"
+@    s13 legend "sq_cpmg_500.00000000_0.000_866.667"
 @    s14 symbol 5
 @    s14 symbol size 0.45
 @    s14 symbol linewidth 0.5
 @    s14 errorbar size 0.5
 @    s14 errorbar linewidth 0.5
 @    s14 errorbar riser linewidth 0.5
-@    s14 legend "sq_cpmg_500.00000000_933.333"
+@    s14 legend "sq_cpmg_500.00000000_0.000_933.333"
 @    s15 symbol 6
 @    s15 symbol size 0.45
 @    s15 symbol linewidth 0.5
 @    s15 errorbar size 0.5
 @    s15 errorbar linewidth 0.5
 @    s15 errorbar riser linewidth 0.5
-@    s15 legend "sq_cpmg_800.00000000_1000.000"
+@    s15 legend "sq_cpmg_800.00000000_0.000_1000.000"
 @    s16 symbol 7
 @    s16 symbol size 0.45
 @    s16 symbol linewidth 0.5
 @    s16 errorbar size 0.5
 @    s16 errorbar linewidth 0.5
 @    s16 errorbar riser linewidth 0.5
-@    s16 legend "sq_cpmg_800.00000000_133.333"
+@    s16 legend "sq_cpmg_800.00000000_0.000_133.333"
 @    s17 symbol 8
 @    s17 symbol size 0.45
 @    s17 symbol linewidth 0.5
 @    s17 errorbar size 0.5
 @    s17 errorbar linewidth 0.5
 @    s17 errorbar riser linewidth 0.5
-@    s17 legend "sq_cpmg_800.00000000_200.000"
+@    s17 legend "sq_cpmg_800.00000000_0.000_200.000"
 @    s18 symbol 9
 @    s18 symbol size 0.45
 @    s18 symbol linewidth 0.5
 @    s18 errorbar size 0.5
 @    s18 errorbar linewidth 0.5
 @    s18 errorbar riser linewidth 0.5
-@    s18 legend "sq_cpmg_800.00000000_266.667"
+@    s18 legend "sq_cpmg_800.00000000_0.000_266.667"
 @    s19 symbol 10
 @    s19 symbol size 0.45
 @    s19 symbol linewidth 0.5
 @    s19 errorbar size 0.5
 @    s19 errorbar linewidth 0.5
 @    s19 errorbar riser linewidth 0.5
-@    s19 legend "sq_cpmg_800.00000000_333.333"
+@    s19 legend "sq_cpmg_800.00000000_0.000_333.333"
 @    s20 symbol 1
 @    s20 symbol size 0.45
 @    s20 symbol linewidth 0.5
 @    s20 errorbar size 0.5
 @    s20 errorbar linewidth 0.5
 @    s20 errorbar riser linewidth 0.5
-@    s20 legend "sq_cpmg_800.00000000_400.000"
+@    s20 legend "sq_cpmg_800.00000000_0.000_400.000"
 @    s21 symbol 2
 @    s21 symbol size 0.45
 @    s21 symbol linewidth 0.5
 @    s21 errorbar size 0.5
 @    s21 errorbar linewidth 0.5
 @    s21 errorbar riser linewidth 0.5
-@    s21 legend "sq_cpmg_800.00000000_466.667"
+@    s21 legend "sq_cpmg_800.00000000_0.000_466.667"
 @    s22 symbol 3
 @    s22 symbol size 0.45
 @    s22 symbol linewidth 0.5
 @    s22 errorbar size 0.5
 @    s22 errorbar linewidth 0.5
 @    s22 errorbar riser linewidth 0.5
-@    s22 legend "sq_cpmg_800.00000000_533.333"
+@    s22 legend "sq_cpmg_800.00000000_0.000_533.333"
 @    s23 symbol 4
 @    s23 symbol size 0.45
 @    s23 symbol linewidth 0.5
 @    s23 errorbar size 0.5
 @    s23 errorbar linewidth 0.5
 @    s23 errorbar riser linewidth 0.5
-@    s23 legend "sq_cpmg_800.00000000_600.000"
+@    s23 legend "sq_cpmg_800.00000000_0.000_600.000"
 @    s24 symbol 5
 @    s24 symbol size 0.45
 @    s24 symbol linewidth 0.5
 @    s24 errorbar size 0.5
 @    s24 errorbar linewidth 0.5
 @    s24 errorbar riser linewidth 0.5
-@    s24 legend "sq_cpmg_800.00000000_66.667"
+@    s24 legend "sq_cpmg_800.00000000_0.000_66.667"
 @    s25 symbol 6
 @    s25 symbol size 0.45
 @    s25 symbol linewidth 0.5
 @    s25 errorbar size 0.5
 @    s25 errorbar linewidth 0.5
 @    s25 errorbar riser linewidth 0.5
-@    s25 legend "sq_cpmg_800.00000000_666.667"
+@    s25 legend "sq_cpmg_800.00000000_0.000_666.667"
 @    s26 symbol 7
 @    s26 symbol size 0.45
 @    s26 symbol linewidth 0.5
 @    s26 errorbar size 0.5
 @    s26 errorbar linewidth 0.5
 @    s26 errorbar riser linewidth 0.5
-@    s26 legend "sq_cpmg_800.00000000_733.333"
+@    s26 legend "sq_cpmg_800.00000000_0.000_733.333"
 @    s27 symbol 8
 @    s27 symbol size 0.45
 @    s27 symbol linewidth 0.5
 @    s27 errorbar size 0.5
 @    s27 errorbar linewidth 0.5
 @    s27 errorbar riser linewidth 0.5
-@    s27 legend "sq_cpmg_800.00000000_800.000"
+@    s27 legend "sq_cpmg_800.00000000_0.000_800.000"
 @    s28 symbol 9
 @    s28 symbol size 0.45
 @    s28 symbol linewidth 0.5
 @    s28 errorbar size 0.5
 @    s28 errorbar linewidth 0.5
 @    s28 errorbar riser linewidth 0.5
-@    s28 legend "sq_cpmg_800.00000000_866.667"
+@    s28 legend "sq_cpmg_800.00000000_0.000_866.667"
 @    s29 symbol 10
 @    s29 symbol size 0.45
 @    s29 symbol linewidth 0.5
 @    s29 errorbar size 0.5
 @    s29 errorbar linewidth 0.5
 @    s29 errorbar riser linewidth 0.5
-@    s29 legend "sq_cpmg_800.00000000_933.333"
+@    s29 legend "sq_cpmg_800.00000000_0.000_933.333"
 @target G0.S0
 @type xydy
 4                              1.578158834408230              0.117751105583183             
@@ -410,4 +410,5 @@
 70                             12.610863989976654             0.134338230306905             
 71                             7.610856004483271              0.075991874249847             
 &
+@with g0
 @autoscale
