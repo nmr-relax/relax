@@ -72,6 +72,13 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     Wa = omega                  # Larmor frequency [s^-1].
     Wb = omega + dw             # Larmor frequency [s^-1].
     kex2 = kex**2
+    W = pA*Wa + pB*Wb           # Pop-averaged Larmor frequency [s^-1].
+    da = Wa - offset            # Offset of spin-lock from A.
+    db = Wb - offset            # Offset of spin-lock from B.
+    d = W - offset              # Offset of spin-lock from pop-average.
+    da2 = da**2
+    db2 = db**2
+    d2 = d**2
 
     # The numerator.
     numer = pA * pB * dw**2 * kex
@@ -79,13 +86,9 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Loop over the dispersion points, back calculating the R1rho values.
     for i in range(num_points):
         # We assume that A resonates at 0 [s^-1], without loss of generality.
-        W = pA*Wa + pB*Wb                           # Pop-averaged Larmor frequency [s^-1].
-        da = Wa - offset                            # Offset of spin-lock from A.
-        db = Wb - offset                            # Offset of spin-lock from B.
-        d = W - offset                              # Offset of spin-lock from pop-average.
-        waeff2 = spin_lock_fields2[i] + da**2       # Effective field at A.
-        wbeff2 = spin_lock_fields2[i] + db**2       # Effective field at B.
-        weff2 = spin_lock_fields2[i] + d**2         # Effective field at pop-average.
+        waeff2 = spin_lock_fields2[i] + da2       # Effective field at A.
+        wbeff2 = spin_lock_fields2[i] + db2       # Effective field at B.
+        weff2 = spin_lock_fields2[i] + d2         # Effective field at pop-average.
 
         # The rotating frame flip angle.
         theta = atan(spin_lock_fields[i] / d)

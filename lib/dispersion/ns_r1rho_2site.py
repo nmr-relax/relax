@@ -81,13 +81,11 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # Repetitive calculations (to speed up calculations).
     Wa = omega                  # Larmor frequency [s^-1].
     Wb = omega + dw             # Larmor frequency [s^-1].
+    dA = Wa - offset            # Offset of spin-lock from A.
+    dB = Wb - offset            # Offset of spin-lock from B.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
-        Wsl = offset                        # Larmor frequency of spin lock [s^-1].
-        dA = Wa - Wsl                       # Offset of spin-lock from A.
-        dB = Wb - Wsl                       # Offset of spin-lock from B.
-
         # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
         R = rr1rho_3d(R1=r1, Rinf=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
 
