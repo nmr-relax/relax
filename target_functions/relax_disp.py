@@ -1500,10 +1500,6 @@ class Dispersion:
         k_BA = pA * kex
         k_AB = pB * kex
 
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0[0] = pA
-        self.M0[1] = pB
-
         # Chi-squared initialisation.
         chi2_sum = 0.0
 

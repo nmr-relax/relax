@@ -81,8 +81,10 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # Repetitive calculations (to speed up calculations).
     Wa = omega                  # Larmor frequency [s^-1].
     Wb = omega + dw             # Larmor frequency [s^-1].
+    W = pA*Wa + pB*Wb           # Population-averaged Larmor frequency [s^-1].
     dA = Wa - offset            # Offset of spin-lock from A.
     dB = Wb - offset            # Offset of spin-lock from B.
+    d = W - offset              # Offset of spin-lock from population-average.
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
@@ -90,23 +92,15 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
         R = rr1rho_3d(R1=r1, Rinf=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        # A new M0 is obtained:  M0 = [sin(thetaA)*pA sin(thetaB)*pB 0 0 cos(thetaA)*pA cos(thetaB)*pB].
-        thetaA = atan(spin_lock_fields[i]/dA)
-        thetaB = atan(spin_lock_fields[i]/dB)
-        M0[0] = sin(thetaA) * pA
-        M0[1] = sin(thetaB) * pB
-        M0[4] = cos(thetaA) * pA
-        M0[5] = cos(thetaB) * pB
+        theta = atan(spin_lock_fields[i]/d)
+        M0[0] = sin(theta)
+        M0[4] = cos(theta)
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
         Rexpo = matrix_exponential(R*relax_time)
 
         # Magnetization evolution.
-        Moft = dot(Rexpo, M0)
-        MAx = Moft[0].real / pA
-        MAy = Moft[2].real / pA
-        MAz = Moft[4].real / pA
-        MA = sqrt(MAx**2 + MAy**2 + MAz**2)    # For spin A, is equal to 1 if nothing happens (no relaxation).
+        MA = dot(M0, dot(Rexpo, M0))
 
         # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         if MA <= 0.0 or isNaN(MA):

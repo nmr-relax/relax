@@ -666,8 +666,8 @@ The equation for the exchange process is
 in which
 \begin{subequations}
 \begin{align}
-    \delta_A &= \omegaA - \omegarf, \\
-    \delta_B &= \omegaB - \omegarf, \\
+    \delta_A &= \omegaA - \omegarf, \label{eq: deltaA}\\
+    \delta_B &= \omegaB - \omegarf, \label{eq: deltaB} \\
     \aveomega &= \pA\omegaA + \pB\omegaB, \\
     \aveoffset &= \aveomega - \omegarf, \\
     \omega_\textrm{Aeff}^2 &= \omegaone^2 + \delta_A^2, \\
@@ -769,6 +769,31 @@ This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS R1rho 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
+For this model, the equations from \citet{Korzhnev05a} have been used.  The $\Ronerho$ value for state A magnetisation is defined as
+\begin{equation}
+    \Ronerho = - \frac{1}{T_\textrm{relax}}  \cdot \ln \left( M_0^T \cdot e^{R \cdot T_\textrm{relax}} \cdot M_0 \right),
+\end{equation}
+
+where
+\begin{align}
+    M_0    &= \begin{pmatrix} \sin{\theta} \\ 0 \\ 0 \\ 0 \\ \cos{\theta} \\ 0  \end{pmatrix}, \\
+    \theta &= \arctan \left( \frac{\omegaone}{\aveoffset} \right).
+\end{align}
+
+The relaxation evolution matrix is defined as
+\begin{equation}
+    R = -\begin{pmatrix}
+           \Ronerhoprime+\kAB & -\kBA              & \delta_A           & 0                  & 0          & 0 \\
+           -\kAB              & \Ronerhoprime+\kBA & 0                  & \delta_B           & 0          & 0 \\
+           -\delta_A          & 0                  & \Ronerhoprime+\kAB & -\kBA              & \omegaone  & 0 \\
+           0                  & -\delta_B          & -\kAB              & \Ronerhoprime+\kBA & 0          & \omegaone \\
+           0                  & 0                  & -\omegaone         & 0                  & \Rone+\kAB & -\kBA \\
+           0                  & 0                  & 0                  & -\omegaone         & -\kAB      & \Rone+\kBA \\
+         \end{pmatrix},
+\end{equation}
+
+where $\delta_{A,B}$ is defined in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
+
 
 
 % The analytic MMQ CPMG models.
@@ -832,7 +857,7 @@ The references for this model are:
 \begin{itemize}
 \item \bibentry{Korzhnev04a}
 \item \bibentry{Korzhnev04b}
-\item \bibentry{Korzhnev05}
+\item \bibentry{Korzhnev05b}
 \end{itemize}
 
 
@@ -855,7 +880,7 @@ This data combination is labelled as multiple multiple quantum data or MMQ.
 \label{sect: dispersion: NS MMQ 2-site model}
 \index{relaxation dispersion!NS MMQ 2-site model|textbf}
 
-This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+This is the numerical model for 2-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 It is selected by setting the model to `NS MMQ 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 Different sets of equations are used for the different data types.
@@ -958,7 +983,7 @@ The references for this model are:
 \begin{itemize}
 \item \bibentry{Korzhnev04a}
 \item \bibentry{Korzhnev04b}
-\item \bibentry{Korzhnev05}
+\item \bibentry{Korzhnev05b}
 \end{itemize}
 
 
@@ -969,7 +994,7 @@ The references for this model are:
 \label{sect: dispersion: NS MMQ 3-site linear model}
 \index{relaxation dispersion!NS MMQ 3-site linear model|textbf}
 
-This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 As this model is linear, the assumption that $\kAC$~= $\kCA$~= 0 has been made.
 To simplify the optimisation space for the model, the assumption $\RtwozeroA$~= $\RtwozeroB$~= $\RtwozeroC$~= $\Rtwozero$ has also been made.
 
@@ -1045,7 +1070,7 @@ For the model, the assumption $\RtwozeroA = \RtwozeroB = \RtwozeroC = \Rtwozero$
 \label{sect: dispersion: NS MMQ 3-site model}
 \index{relaxation dispersion!NS MMQ 3-site model|textbf}
 
-This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05}.
+This is the numerical model for 3-site exchange for proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data, as derived in \citep{Korzhnev04a,Korzhnev04b,Korzhnev05b}.
 However it has been extended to allow the $A \leftrightarrow C$ transition.
 To simplify the optimisation space for the model as in the `NS MMQ 3-site linear' model, the assumption $\RtwozeroA$~= $\RtwozeroB$~= $\RtwozeroC$~= $\Rtwozero$ has been made.
 
