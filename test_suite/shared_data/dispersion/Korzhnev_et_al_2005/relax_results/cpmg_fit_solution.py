@@ -103,6 +103,9 @@ for data_type, id, file, exp_type, spin_id, H_frq, relax_time in data:
         # Relaxation dispersion CPMG constant time delay T (in s).
         relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
 
+        # Set the CPMG frequency.
+        relax_disp.cpmg_frq(spectrum_id=new_id, cpmg_frq=cpmg_frq)
+
     # Read the R2eff data.
     relax_disp.r2eff_read_spin(id=id, file=file, dir='..', spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
 
