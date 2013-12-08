@@ -235,6 +235,8 @@ class Relax_disp:
         nested_pipe = None
         if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
             nested_pipe = MODEL_CR72
+        if model == MODEL_MMQ_CR72 and MODEL_CR72 in self.models:
+            nested_pipe = MODEL_CR72
         if model == MODEL_NS_CPMG_2SITE_3D_FULL and MODEL_NS_CPMG_2SITE_3D in self.models:
             nested_pipe = MODEL_NS_CPMG_2SITE_3D
         if model == MODEL_NS_CPMG_2SITE_STAR_FULL and MODEL_NS_CPMG_2SITE_STAR in self.models:
