@@ -233,6 +233,8 @@ class Relax_disp:
 
         # The simpler model.
         nested_pipe = None
+        if model == MODEL_LM63_3SITE and MODEL_LM63 in self.models:
+            nested_pipe = MODEL_LM63
         if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
             nested_pipe = MODEL_CR72
         if model == MODEL_MMQ_CR72 and MODEL_CR72 in self.models:
@@ -285,6 +287,13 @@ class Relax_disp:
                 else:
                     setattr(spin, 'r2', deepcopy(nested_spin.r2))
 
+            # The LM63 3-site model parameters.
+            if model == MODEL_LM63_3SITE:
+                setattr(spin, 'phi_ex_B', deepcopy(nested_spin.phi_ex))
+                setattr(spin, 'phi_ex_C', deepcopy(nested_spin.phi_ex))
+                setattr(spin, 'kB', deepcopy(nested_spin.kex))
+                setattr(spin, 'kC', deepcopy(nested_spin.kex))
+
             # All other spin parameters.
             for param in spin.params:
                 if param in ['r2', 'r2a', 'r2b']:
@@ -292,6 +301,10 @@ class Relax_disp:
 
                 # The parameter does not exist.
                 if not hasattr(nested_spin, param):
+                    continue
+
+                # Skip the LM63 3-site model parameters
+                if model == MODEL_LM63_3SITE and param in ['phi_ex', 'kex']:
                     continue
 
                 # Copy the parameter.
