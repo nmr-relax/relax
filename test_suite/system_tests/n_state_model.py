@@ -1047,7 +1047,7 @@ class N_state_model(SystemTestCase):
 
         # Check the populations.
         self.assertEqual(len(cdp.probs), 3)
-        self.assertAlmostEqual(cdp.probs[0], 0.3, 4)
+        self.assertAlmostEqual(cdp.probs[0], 0.3, 3)
         self.assertAlmostEqual(cdp.probs[1], 0.6, 3)
         self.assertAlmostEqual(cdp.probs[2], 0.1, 3)
 
