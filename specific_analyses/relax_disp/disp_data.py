@@ -1385,7 +1385,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     proton_mmq_flag = has_proton_mmq_cpmg()
 
     # Default hardcoded colours (one colour for each magnetic field strength).
-    color_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14] * 1000
+    colour_order = [4, 15, 2, 13, 11, 1, 3, 5, 6, 7, 8, 9, 10, 12, 14] * 1000
 
     # Loop over each spin.
     for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
@@ -1550,6 +1550,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
             # Loop over the spectrometer frequencies and offsets.
             set_index = 0
             err = False
+            colour_index = 0
             for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
                 # Add a new set for the data at each frequency and offset.
                 data[graph_index].append([])
@@ -1568,7 +1569,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                 set_labels[ei].append(label)
 
                 # The other settings.
-                set_colours[graph_index].append(color_order[set_index])
+                set_colours[graph_index].append(colour_order[colour_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(1)
                 symbol_sizes[graph_index].append(0.45)
@@ -1594,8 +1595,10 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
                 # Increment the graph set index.
                 set_index += 1
+                colour_index += 1
 
             # Add the back calculated data.
+            colour_index = 0
             for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
                 # Add a new set for the data at each frequency and offset.
                 data[graph_index].append([])
@@ -1614,7 +1617,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                 set_labels[ei].append(label)
 
                 # The other settings.
-                set_colours[graph_index].append(color_order[set_index])
+                set_colours[graph_index].append(colour_order[colour_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(4)
                 symbol_sizes[graph_index].append(0.45)
@@ -1642,9 +1645,11 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
                 # Increment the graph set index.
                 set_index += 1
+                colour_index += 1
 
             # Add the interpolated back calculated data.
             if interpolated_flag:
+                colour_index = 0
                 for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
                     # Add a new set for the data at each frequency and offset.
                     data[graph_index].append([])
@@ -1663,7 +1668,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                     set_labels[ei].append(label)
 
                     # The other settings.
-                    set_colours[graph_index].append(color_order[set_index])
+                    set_colours[graph_index].append(colour_order[colour_index])
                     x_axis_type_zero[graph_index].append(True)
                     if spin.model in MODEL_LIST_NUMERIC_CPMG:
                         symbols[graph_index].append(8)
@@ -1690,8 +1695,10 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
                     # Increment the graph set index.
                     set_index += 1
+                    colour_index += 1
 
             # Add the residuals for statistical comparison.
+            colour_index = 0
             for frq, offset, mi, oi in loop_frq_offset(exp_type=exp_type, return_indices=True):
                 # Add a new set for the data at each frequency and offset.
                 data[graph_index].append([])
@@ -1707,7 +1714,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                 set_labels[ei].append(label)
 
                 # The other settings.
-                set_colours[graph_index].append(color_order[set_index])
+                set_colours[graph_index].append(colour_order[colour_index])
                 x_axis_type_zero[graph_index].append(True)
                 symbols[graph_index].append(9)
                 symbol_sizes[graph_index].append(0.45)
@@ -1733,6 +1740,7 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
                 # Increment the graph set index.
                 set_index += 1
+                colour_index += 1
 
             # Increment the graph index.
             graph_index += 1
