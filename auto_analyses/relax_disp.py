@@ -290,6 +290,10 @@ class Relax_disp:
                 if param in ['r2', 'r2a', 'r2b']:
                     continue
 
+                # The parameter does not exist.
+                if not hasattr(nested_spin, param):
+                    continue
+
                 # Copy the parameter.
                 setattr(spin, param, deepcopy(getattr(nested_spin, param)))
 
