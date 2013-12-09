@@ -225,28 +225,28 @@ def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC
     matrix[8, 8] = -R1 - k_CA - k_CB
 
     # The AB cross-block.
-    matrix[3, 0] = k_BA
-    matrix[4, 1] = k_BA
-    matrix[5, 2] = k_BA
-    matrix[0, 3] = k_AB
-    matrix[1, 4] = k_AB
-    matrix[2, 5] = k_AB
+    matrix[0, 3] = k_BA
+    matrix[1, 4] = k_BA
+    matrix[2, 5] = k_BA
+    matrix[3, 0] = k_AB
+    matrix[4, 1] = k_AB
+    matrix[5, 2] = k_AB
 
     # The AC cross-block.
-    matrix[6, 0] = k_CA
-    matrix[7, 1] = k_CA
-    matrix[8, 2] = k_CA
-    matrix[0, 6] = k_AC
-    matrix[1, 7] = k_AC
-    matrix[2, 8] = k_AC
+    matrix[0, 6] = k_CA
+    matrix[1, 7] = k_CA
+    matrix[2, 8] = k_CA
+    matrix[6, 0] = k_AC
+    matrix[7, 1] = k_AC
+    matrix[8, 2] = k_AC
 
     # The BC cross-block.
-    matrix[6, 3] = k_CB
-    matrix[7, 4] = k_CB
-    matrix[8, 5] = k_CB
-    matrix[3, 6] = k_BC
-    matrix[4, 7] = k_BC
-    matrix[5, 8] = k_BC
+    matrix[3, 6] = k_CB
+    matrix[4, 7] = k_CB
+    matrix[5, 8] = k_CB
+    matrix[6, 3] = k_BC
+    matrix[7, 4] = k_BC
+    matrix[8, 5] = k_BC
 
 
 def rr1rho_3d(R1A=None, R1=None, Rinf=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
