@@ -53,7 +53,7 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword M0:                This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     @type M0:                   numpy float64, rank-1, 7D array
     @keyword matrix:            A numpy array to be populated to create the evolution matrix.
-    @type matrix:               numpy rank-2, 2D complex64 array
+    @type matrix:               numpy rank-2, 9D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          float
     @keyword omega:             The chemical shift for the spin in rad/s.
