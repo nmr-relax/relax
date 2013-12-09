@@ -48,7 +48,7 @@ from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kB
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.disp_data import has_cpmg_exp_type, has_r1rho_exp_type
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -731,6 +731,8 @@ class Disp_model_list(Model_list):
         MODEL_TAP03,
         MODEL_MP05,
         MODEL_NS_R1RHO_2SITE,
+        MODEL_NS_R1RHO_3SITE_LINEAR,
+        MODEL_NS_R1RHO_3SITE,
         None,
         MODEL_MMQ_CR72,
         MODEL_NS_MMQ_2SITE,
@@ -761,6 +763,8 @@ class Disp_model_list(Model_list):
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r1rho_prime, dw, kex),
+        "{%s, ..., pA, %s, %s, pB, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC),
+        "{%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (r1rho_prime, dw_AB, kAB, dw_BC, kBC, kAC),
         None,
         "{%s, ..., pA, %s, %s, %s}" % (r2, dw, dwH, kex),
         "{%s, ..., pA, %s, %s, %s}" % (r2, dw, dwH, kex),
@@ -791,6 +795,8 @@ class Disp_model_list(Model_list):
         "The Trott, Abergel and Palmer (2003) off-resonance 2-site equation for all time scales.",
         "The Miloushev and Palmer (2005) off-resonance 2-site equation for all time scales.",
         "The 2-site numerical solution using 3D magnetisation vectors.",
+        "The 3-site linearised numerical solution using 3D magnetisation vectors.",
+        "The 3-site numerical solution using 3D magnetisation vectors.",
         None,
         "The CR72 2-site model extended to MMQ CPMG data by Korzhnev et al., 2004.",
         "The 2-site numerical solution of Korzhnev et al. (2004) from multi-quantum CPMG data.",
