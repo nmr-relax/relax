@@ -120,7 +120,7 @@ MODEL_NS_R1RHO_2SITE = 'NS R1rho 2-site'
 MODEL_NS_R1RHO_3SITE = 'NS R1rho 3-site'
 """The numerical solution for the 3-site Bloch-McConnell equations for R1rho data, whereby the simplification R20A = R20B = R20C is assumed."""
 
-MODEL_NS_R1RHO_3SITE_LINEAR = 'NS R1rho 3-site'
+MODEL_NS_R1RHO_3SITE_LINEAR = 'NS R1rho 3-site linear'
 """The numerical solution for the 3-site Bloch-McConnell equations for R1rho data linearised with kAC = kCA = 0, whereby the simplification R20A = R20B = R20C is assumed."""
 
 
