@@ -518,7 +518,7 @@ class Load_method_page(Wiz_page):
         sizer_radio.AddSpacer(20)
 
         # The spectrum.read_spins radio button.
-        self.radio_new_spectrum = wx.RadioButton(self, -1, "From a spectrum formatted file.")
+        self.radio_new_spectrum = wx.RadioButton(self, -1, "From a peak list or spectrum formatted file.")
         sizer_radio.Add(self.radio_new_spectrum, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
         # Bind the buttons.
