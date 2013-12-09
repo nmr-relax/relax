@@ -1,0 +1,33 @@
+# Read the R1rho data.
+read ../T14_600_50.dsp  d 55 R N15 25 600 @ 50  0.04
+read ../T14_600_75.dsp  d 55 R N15 25 600 @ 75  0.04
+read ../T14_600_100.dsp d 55 R N15 25 600 @ 100 0.04
+read ../T14_600_150.dsp d 55 R N15 25 600 @ 150 0.04
+read ../T14_600_200.dsp d 55 R N15 25 600 @ 200 0.04
+read ../T14_800_100.dsp d 55 R N15 25 800 @ 100 0.04
+read ../T14_800_200.dsp d 55 R N15 25 800 @ 200 0.04
+read ../T14_800_400.dsp d 55 R N15 25 800 @ 400 0.04
+
+# Set up the model.
+set m 3 0
+
+# Set the parameters (at the already found minimum).
+set p @ 0 0.576531903402283 u
+set p @ 1 0.036871721967958 u
+set p @ 2 0.386596374629759 u
+set k @ 0 349.172677335404501 u
+set k @ 1 4.494230664781980 u
+set k @ 2 4.494230664781980 u
+set c @ @ 0 0 0 f
+set c @ @ 1 0 4.307941328122205 u
+set c @ @ 2 0 -1.614739454824554 u
+set r @ R N15 25  600 @ 5.529350411646063 u g
+set l @ N15 25  600 @  0.000087239821652 u g
+set r @ R N15 25  800 @ 10.399050915057499 u g
+set l @ N15 25  800 @  1.267443569515087 u g
+
+# Minimisation.
+min
+
+# Printout.
+write > p
