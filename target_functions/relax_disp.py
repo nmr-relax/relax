@@ -328,6 +328,8 @@ class Dispersion:
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.m1 = zeros((3, 3), complex64)
             self.m2 = zeros((3, 3), complex64)
+        elif model == MODEL_NS_R1RHO_2SITE:
+            self.matrix = zeros((6, 6), float64)
         elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.matrix = zeros((9, 9), float64)
 
@@ -1596,7 +1598,7 @@ class Dispersion:
                 # Loop over the offsets.
                 for oi in range(self.num_offsets[0][si][mi]):
                     # Back calculate the R2eff values.
-                    ns_r1rho_2site(M0=self.M0, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], r1=self.r1[si, mi], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][mi][oi], relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+                    ns_r1rho_2site(M0=self.M0, matrix=self.matrix, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], r1=self.r1[si, mi], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0][mi][oi], relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[0][si][mi][oi]):

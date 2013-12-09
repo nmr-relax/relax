@@ -1111,20 +1111,20 @@ For this model, the equations from \citet{Korzhnev05a} have been used.  The $\Ro
 
 where
 \begin{align}
-    M_0    &= \begin{pmatrix} \sin{\theta} \\ 0 \\ 0 \\ 0 \\ \cos{\theta} \\ 0  \end{pmatrix}, \\
-    \theta &= \arctan \left( \frac{\omegaone}{\aveoffset} \right).
+    M_0    &= \begin{pmatrix} \sin{\theta} \\ 0 \\ \cos{\theta} \\ 0 \\ 0 \\ 0  \end{pmatrix}, \\
+    \theta &= \arctan \left( \frac{\omegaone}{\offsetA} \right).
 \end{align}
 
 The relaxation evolution matrix is defined as
 \begin{equation}
-    R = -\begin{pmatrix}
-           \Ronerhoprime+\kAB & -\kBA              & \delta_A           & 0                  & 0          & 0 \\
-           -\kAB              & \Ronerhoprime+\kBA & 0                  & \delta_B           & 0          & 0 \\
-           -\delta_A          & 0                  & \Ronerhoprime+\kAB & -\kBA              & \omegaone  & 0 \\
-           0                  & -\delta_B          & -\kAB              & \Ronerhoprime+\kBA & 0          & \omegaone \\
-           0                  & 0                  & -\omegaone         & 0                  & \Rone+\kAB & -\kBA \\
-           0                  & 0                  & 0                  & -\omegaone         & -\kAB      & \Rone+\kBA \\
-         \end{pmatrix},
+    R = \begin{pmatrix}
+          -\Ronerhoprime-\kAB & -\delta_A           & 0           & \kBA                & 0                   & 0 \\
+          \delta_A            & -\Ronerhoprime-\kAB & -\omegaone  & 0                   & \kBA                & 0 \\
+          0                   & \omegaone           & -\Rone-\kAB & 0                   & 0                   & \kBA \\
+          \kAB                & 0                   & 0           & -\Ronerhoprime-\kBA & -\delta_B           & 0 \\
+          0                   & \kAB                & 0           & \delta_B            & -\Ronerhoprime-\kBA & -\omegaone \\
+          0                   & 0                   & \kAB        & 0                   & \omegaone           & -\Rone-\kBA \\
+        \end{pmatrix},
 \end{equation}
 
 where $\delta_{A,B}$ is defined in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.

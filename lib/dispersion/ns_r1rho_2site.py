@@ -46,7 +46,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -54,6 +54,8 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
 
     @keyword M0:                This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     @type M0:                   numpy float64, rank-1, 7D array
+    @keyword matrix:            A numpy array to be populated to create the evolution matrix.
+    @type matrix:               numpy rank-2, 6D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          float
     @keyword omega:             The chemical shift for the spin in rad/s.
@@ -94,16 +96,16 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
-        # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-        R = rr1rho_3d(R1=r1, Rinf=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
+        # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+        rr1rho_3d(matrix=matrix, R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        theta = atan(spin_lock_fields[i]/d)
-        M0[0] = sin(theta)
-        M0[4] = cos(theta)
+        theta = atan(spin_lock_fields[i]/dA)
+        M0[0] = sin(theta)    # The A state initial X magnetisation.
+        M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = matrix_exponential(R*relax_time)
+        Rexpo = matrix_exponential(matrix*relax_time)
 
         # Magnetization evolution.
         MA = dot(M0, dot(Rexpo, M0))

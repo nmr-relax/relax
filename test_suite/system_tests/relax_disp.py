@@ -2987,20 +2987,20 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Checks for residue :1.
-        self.assertAlmostEqual(spin1.r2[r20_key1], 8.50487445281754, 4)
-        self.assertAlmostEqual(spin1.r2[r20_key2], 13.4707451492195, 4)
-        self.assertAlmostEqual(spin1.pA, 0.864789608883791, 4)
-        self.assertAlmostEqual(spin1.dw, 8.86964329737465, 4)
-        self.assertAlmostEqual(spin1.kex/1000, 1195.60566701785/1000, 4)
-        self.assertAlmostEqual(spin1.chi2, 3.00587274614435, 4)
+        self.assertAlmostEqual(spin1.r2[r20_key1], 8.50207717367548, 4)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 13.4680429589972, 4)
+        self.assertAlmostEqual(spin1.pA, 0.864523128842393, 4)
+        self.assertAlmostEqual(spin1.dw, 8.85204828994151, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1199.56359549637/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 2.99182130153514, 4)
 
         # Checks for residue :2.
-        self.assertAlmostEqual(spin2.r2[r20_key1], 10.2880464246005, 4)
-        self.assertAlmostEqual(spin2.r2[r20_key2], 16.2875959092412, 4)
-        self.assertAlmostEqual(spin2.pA, 0.843381553940209, 4)
-        self.assertAlmostEqual(spin2.dw, 9.59767243628999, 4)
-        self.assertAlmostEqual(spin2.kex/1000, 1491.81723238519/1000, 4)
-        self.assertAlmostEqual(spin2.chi2, 0.000861055839088852, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key1], 10.1334196530849, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 16.140167863407, 4)
+        self.assertAlmostEqual(spin2.pA, 0.829988381197468, 4)
+        self.assertAlmostEqual(spin2.dw, 9.5657894936005, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1404.76852145933/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 0.000150052743893402, 4)
 
 
     def test_tp02_data_to_mp05(self):

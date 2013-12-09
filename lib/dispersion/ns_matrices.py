@@ -249,43 +249,56 @@ def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC
     matrix[8, 5] = k_BC
 
 
-def rr1rho_3d(R1A=None, R1=None, Rinf=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
+def rr1rho_3d(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
     """Definition of the 3D exchange matrix.
 
     This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
 
 
-    @keyword R1:    The longitudinal, spin-lattice relaxation rate.
-    @type R1:       float
-    @keyword Rinf:  The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
-    @type Rinf:     float
-    @keyword pA:    The population of state A.
-    @type pA:       float
-    @keyword pB:    The population of state B.
-    @type pB:       float
-    @keyword wA:    The chemical shift offset of state A from the spin-lock.
-    @type wA:       float
-    @keyword wB:    The chemical shift offset of state A from the spin-lock.
-    @type wB:       float
-    @keyword w1:    The spin-lock field strength in rad/s.
-    @type w1:       float
-    @keyword k_AB:  The forward exchange rate from state A to state B.
-    @type k_AB:     float
-    @keyword k_BA:  The reverse exchange rate from state B to state A.
-    @type k_BA:     float
-    @return:        The relaxation matrix.
-    @rtype:         numpy rank-2, 7D array
+    @keyword matrix:        The matrix to fill.
+    @type matrix:           numpy rank-2 6D array
+    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
+    @type R1:               float
+    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
+    @type r1rho_prime:      float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword wA:            The chemical shift offset of state A from the spin-lock.
+    @type wA:               float
+    @keyword wB:            The chemical shift offset of state A from the spin-lock.
+    @type wB:               float
+    @keyword w1:            The spin-lock field strength in rad/s.
+    @type w1:               float
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
     """
 
-    # Create the matrix.
-    temp = -matrix([
-        [ Rinf+k_AB,     -k_BA,        wA,       0.0,       0.0,       0.0],
-        [     -k_AB, Rinf+k_BA,       0.0,        wB,       0.0,       0.0],
-        [       -wA,       0.0, Rinf+k_AB,     -k_BA,        w1,       0.0],
-        [       0.0,       -wB,     -k_AB, Rinf+k_BA,       0.0,        w1],
-        [       0.0,       0.0,       -w1,       0.0,   R1+k_AB,     -k_BA],
-        [       0.0,       0.0,       0.0,       -w1,     -k_AB,   R1+k_BA]
-    ])
+    # The AB auto-block.
+    matrix[0, 0] = -r1rho_prime - k_AB
+    matrix[0, 1] = -wA
+    matrix[1, 0] = wA
+    matrix[1, 1] = -r1rho_prime - k_AB
+    matrix[1, 2] = -w1
+    matrix[2, 1] = w1
+    matrix[2, 2] = -R1 - k_AB
 
-    # Return the matrix.
-    return temp
+    # The BA auto-block.
+    matrix[3, 3] = -r1rho_prime - k_BA
+    matrix[3, 4] = -wB
+    matrix[4, 3] = wB
+    matrix[4, 4] = -r1rho_prime - k_BA
+    matrix[4, 5] = -w1
+    matrix[5, 4] = w1
+    matrix[5, 5] = -R1 - k_BA
+
+    # The AB cross-block.
+    matrix[0, 3] = k_BA
+    matrix[1, 4] = k_BA
+    matrix[2, 5] = k_BA
+    matrix[3, 0] = k_AB
+    matrix[4, 1] = k_AB
+    matrix[5, 2] = k_AB
