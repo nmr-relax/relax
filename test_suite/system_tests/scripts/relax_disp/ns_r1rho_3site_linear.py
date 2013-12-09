@@ -96,33 +96,33 @@ relax_data.read(ri_id='600MHz', ri_type='R1', frq=600e6, file='R1_600MHz.out', d
 relax_data.read(ri_id='800MHz', ri_type='R1', frq=800e6, file='R1_800MHz.out', dir=DATA_PATH, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
 
 # Change the model.
-relax_disp.select_model('NS R1rho 3-site')
+relax_disp.select_model('NS R1rho 3-site linear')
 
 # The R20 keys.
 r20_600_key = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=600e6)
 r20_800_key = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
-# Manually set the parameter values.
+# Manually set the parameter values to the cpmg_fit solution with the PEAK_SHIFT flag turned off.
 spin = cdp.mol[0].res[0].spin[0]
 spin.r2 = {
-    r20_600_key:   8.0,
-    r20_800_key:   9.0,
+    r20_600_key:   8.000284037933310,
+    r20_800_key:   9.000296050530716,
 }
-spin.pA = 0.85
-spin.pB = 0.05
-spin.pC = 0.10
-spin.kAB = 500.0
-spin.kAC = 0.0
-spin.kBC = 2000.0
-spin.dw_AB = -3.0
-spin.dw_AC =  8.0
-spin.dw_BC = 11.0
+spin.pA = 0.850029879276267
+spin.pB = 0.049922261890898
+spin.pC = 0.100047858832835
+spin.kex_AB = 500.991549690434681
+spin.kex_AC = 0.0
+spin.kex_BC = 2003.189830166320235
+spin.dw_AB = -2.991465198310455
+spin.dw_AC =  8.006033548997912
+spin.dw_BC = spin.dw_AC - spin.dw_AB
 
 # Calculate.
 calc()
 
-# Plot the dispersion curves.
-relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)
+# Plot the dispersion curves (commented out as it is currently too slow).
+#relax_disp.plot_disp_curves(dir=ds.tmpdir, num_points=100, extend=0, force=True)
 
 # Save the results.
 state.save('state', dir=ds.tmpdir, compress_type=1, force=True)
