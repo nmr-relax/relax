@@ -44,6 +44,7 @@ from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
 from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
 from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
 from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
+from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
@@ -51,7 +52,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -87,6 +88,9 @@ class Dispersion:
             - 'NS MMQ 2-site':  The numerical solution for the 2-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZD, DQ, and MQ CPMG data with R20A = R20B.
             - 'NS MMQ 3-site linear':  The numerical solution for the 3-site Bloch-McConnell equations linearised with kAC = kCA = 0 for combined proton-heteronuclear SQ, ZD, DQ, and MQ CPMG data with R20A = R20B = R20C.
             - 'NS MMQ 3-site':  The numerical solution for the 3-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZD, DQ, and MQ CPMG data with R20A = R20B = R20C.
+            - 'NS R1rho 2-site':  The numerical solution for the 2-site Bloch-McConnell equations for R1rho data with R20A = R20B.
+            - 'NS R1rho 3-site linear':  The numerical solution for the 3-site Bloch-McConnell equations linearised with kAC = kCA = 0 for R1rho data with R20A = R20B = R20C.
+            - 'NS R1rho 3-site':  The numerical solution for the 3-site Bloch-McConnell equations for R1rho data with R20A = R20B = R20C.
 
 
         Indices
@@ -228,6 +232,9 @@ class Dispersion:
         self.end_index.append(self.end_index[-1] + self.num_spins)
         if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
             self.end_index.append(self.end_index[-1] + self.num_spins)
+        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.num_spins)
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.end_index.append(self.end_index[-1] + self.num_spins)
             self.end_index.append(self.end_index[-1] + self.num_spins)
@@ -261,6 +268,8 @@ class Dispersion:
             self.M0[0] = 0.5
         if model in [MODEL_NS_R1RHO_2SITE]:
             self.M0 = zeros(6, float64)
+        if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+            self.M0 = zeros(9, float64)
 
         # Special CPMG-type data structures.
         if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01]:
@@ -309,7 +318,7 @@ class Dispersion:
                         self.spin_lock_omega1_squared[ei][mi][oi] = self.spin_lock_omega1[ei][mi][oi] ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE]:
+        if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.inv_relax_times = 1.0 / relax_times
 
         # Special storage matrices for the multi-quantum CPMG N-site numerical models.
@@ -319,6 +328,8 @@ class Dispersion:
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.m1 = zeros((3, 3), complex64)
             self.m2 = zeros((3, 3), complex64)
+        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+            self.matrix = zeros((9, 9), float64)
 
         # Set up the model.
         if model == MODEL_NOREX:
@@ -359,6 +370,10 @@ class Dispersion:
             self.func = self.func_MP05
         if model == MODEL_NS_R1RHO_2SITE:
             self.func = self.func_ns_r1rho_2site
+        if model == MODEL_NS_R1RHO_3SITE:
+            self.func = self.func_ns_r1rho_3site
+        if model == MODEL_NS_R1RHO_3SITE_LINEAR:
+            self.func = self.func_ns_r1rho_3site_linear
         if model == MODEL_MMQ_CR72:
             self.func = self.func_mmq_CR72
         if model == MODEL_NS_MMQ_2SITE:
@@ -630,6 +645,71 @@ class Dispersion:
 
                     # Calculate and return the chi-squared value.
                     chi2_sum += chi2(self.values[ei][si][mi][0], self.back_calc[ei][si][mi][0], self.errors[ei][si][mi][0])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
+
+    def calc_ns_r1rho_3site_chi2(self, r1rho_prime=None, dw_AB=None, dw_BC=None, pA=None, pB=None, kex_AB=None, kex_BC=None, kex_AC=None):
+        """Calculate the chi-squared value for the 'NS MMQ 3-site' models.
+
+        @keyword r1rho_prime:   The R1rho value for all states in the absence of exchange.
+        @type r1rho_prime:      list of float
+        @keyword dw_AB:         The chemical exchange difference between states A and B in rad/s.
+        @type dw_AB:            float
+        @keyword dw_BC:         The chemical exchange difference between states B and C in rad/s.
+        @type dw_BC:            float
+        @keyword pA:            The population of state A.
+        @type pA:               float
+        @keyword kex_AB:        The rate of exchange between states A and B.
+        @type kex_AB:           float
+        @keyword kex_BC:        The rate of exchange between states B and C.
+        @type kex_BC:           float
+        @keyword kex_AC:        The rate of exchange between states A and C.
+        @type kex_AC:           float
+        @return:                The chi-squared value.
+        @rtype:                 float
+        """
+
+        # Once off parameter conversions.
+        pC = 1.0 - pA - pB
+        pA_pB = pA + pB
+        pA_pC = pA + pC
+        pB_pC = pB + pC
+        k_BA = pA * kex_AB / pA_pB
+        k_AB = pB * kex_AB / pA_pB
+        k_CB = pB * kex_BC / pB_pC
+        k_BC = pC * kex_BC / pB_pC
+        k_CA = pA * kex_AC / pA_pC
+        k_AC = pC * kex_AC / pA_pC
+        dw_AC = dw_AB + dw_BC
+
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for si in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for mi in range(self.num_frq):
+                # The R20 index.
+                r20_index = mi + si*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_AB_frq = dw_AB[si] * self.frqs[0][si][mi]
+                dw_AC_frq = dw_AC[si] * self.frqs[0][si][mi]
+
+                # Loop over the offsets.
+                for oi in range(self.num_offsets[0][si][mi]):
+                    # Back calculate the R2eff values for each experiment type.
+                    ns_r1rho_3site(M0=self.M0, matrix=self.matrix, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0][si][mi], offset=self.offset[0][si][mi][oi], r1=self.r1[si, mi], pA=pA, pB=pB, pC=pC, dw_AB=dw_AB_frq, dw_AC=dw_AC_frq, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, spin_lock_fields=self.spin_lock_omega1[0][mi][oi], relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], back_calc=self.back_calc[0][si][mi][oi], num_points=self.num_disp_points[0][si][mi][oi])
+
+                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                    for di in range(self.num_disp_points[0][si][mi][oi]):
+                        if self.missing[0][si][mi][oi][di]:
+                            self.back_calc[0][si][mi][oi][di] = self.values[0][si][mi][oi][di]
+
+                    # Calculate and return the chi-squared value.
+                    chi2_sum += chi2(self.values[0][si][mi][oi], self.back_calc[0][si][mi][oi], self.errors[0][si][mi][oi])
 
         # Return the total chi-squared value.
         return chi2_sum
@@ -1528,6 +1608,59 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_sum
+
+
+    def func_ns_r1rho_3site(self, params):
+        """Target function for the R1rho 3-site numeric solution.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1rho_prime = params[:self.end_index[0]]
+        dw_AB = params[self.end_index[0]:self.end_index[1]]
+        dw_BC = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex_AB = params[self.end_index[2]+1]
+        pB = params[self.end_index[2]+2]
+        kex_BC = params[self.end_index[2]+3]
+        kex_AC = params[self.end_index[2]+4]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_r1rho_3site_chi2(r1rho_prime=r1rho_prime, dw_AB=dw_AB, dw_BC=dw_BC, pA=pA, pB=pB, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC)
+
+
+    def func_ns_r1rho_3site_linear(self, params):
+        """Target function for the R1rho 3-site numeric solution linearised with kAC = kCA = 0.
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        r1rho_prime = params[:self.end_index[0]]
+        dw_AB = params[self.end_index[0]:self.end_index[1]]
+        dw_BC = params[self.end_index[1]:self.end_index[2]]
+        pA = params[self.end_index[2]]
+        kex_AB = params[self.end_index[2]+1]
+        pB = params[self.end_index[2]+2]
+        kex_BC = params[self.end_index[2]+3]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_ns_r1rho_3site_chi2(r1rho_prime=r1rho_prime, dw_AB=dw_AB, dw_BC=dw_BC, pA=pA, pB=pB, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=0.0)
 
 
     def func_TAP03(self, params):
