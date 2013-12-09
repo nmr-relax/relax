@@ -25,6 +25,12 @@
 """This function performs a numerical fit of 2-site Bloch-McConnell equations for R1rho-type experiments.
 
 This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+
+The solution has been modified to use the from presented in:
+
+    - Korzhnev, D. M., Orekhov, V. Y., and Kay, L. E. (2005).  Off-resonance R(1rho) NMR
+studies of exchange dynamics in proteins with low spin-lock fields:  an application to a
+Fyn SH3 domain.  J. Am. Chem. Soc., 127, 713-721. (U{DOI: 10.1021/ja0446855<http://dx.doi.org/10.1021/ja0446855>}).
 """
 
 # Dependency check module.
