@@ -810,6 +810,10 @@ uf.add_keyarg(
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_STAR, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_STAR_FULL, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_EXPANDED, r2, dw, kex),
+        "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_MMQ_CR72, r2, dw, dwH, kex),
+        "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_NS_MMQ_2SITE, r2, dw, dwH, kex),
+        "%s: {%s, ..., pA, %s, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_MMQ_3SITE_LINEAR, r2, dw_AB, dwH_AB, kAB, dw_BC, dwH_BC, kBC),
+        "%s: {%s, ..., pA, %s, %s, %s, pB, %s, %s, %s, %s}" % (MODEL_NS_MMQ_3SITE, r2, dw_AB, dwH_AB, kAB, dw_BC, dwH_BC, kBC, kAC),
         "%s: {%s, ..., %s, %s}" % (MODEL_M61, r1rho_prime, phi_ex, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_M61B, r1rho_prime, dw, kex),
         "%s: {%s, ..., %s, %s}" % (MODEL_DPL94, r1rho_prime, phi_ex, kex),
@@ -818,11 +822,7 @@ uf.add_keyarg(
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_MP05, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_R1RHO_2SITE, r1rho_prime, dw, kex),
         "%s: {%s, ..., pA, %s, %s, pB, %s, %s}" % (MODEL_NS_R1RHO_3SITE_LINEAR, r2, dw_AB, kAB, dw_BC, kBC),
-        "%s: {%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_R1RHO_3SITE, r2, dw_AB, kAB, dw_BC, kBC, kAC),
-        "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_MMQ_CR72, r2, dw, dwH, kex),
-        "%s: {%s, ..., pA, %s, %s, %s}" % (MODEL_NS_MMQ_2SITE, r2, dw, dwH, kex),
-        "%s: {%s, ..., pA, %s, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_MMQ_3SITE_LINEAR, r2, dw_AB, dwH_AB, kAB, dw_BC, dwH_BC, kBC),
-        "%s: {%s, ..., pA, %s, %s, %s, pB, %s, %s, %s, %s}" % (MODEL_NS_MMQ_3SITE, r2, dw_AB, dwH_AB, kAB, dw_BC, dwH_BC, kBC, kAC)
+        "%s: {%s, ..., pA, %s, %s, pB, %s, %s, %s}" % (MODEL_NS_R1RHO_3SITE, r2, dw_AB, kAB, dw_BC, kBC, kAC)
     ],
     wiz_combo_data = [
         MODEL_R2EFF,
@@ -838,6 +838,10 @@ uf.add_keyarg(
         MODEL_NS_CPMG_2SITE_STAR,
         MODEL_NS_CPMG_2SITE_STAR_FULL,
         MODEL_NS_CPMG_2SITE_EXPANDED,
+        MODEL_MMQ_CR72,
+        MODEL_NS_MMQ_2SITE,
+        MODEL_NS_MMQ_3SITE_LINEAR,
+        MODEL_NS_MMQ_3SITE,
         MODEL_M61,
         MODEL_M61B,
         MODEL_DPL94,
@@ -846,11 +850,7 @@ uf.add_keyarg(
         MODEL_MP05,
         MODEL_NS_R1RHO_2SITE,
         MODEL_NS_R1RHO_3SITE_LINEAR,
-        MODEL_NS_R1RHO_3SITE,
-        MODEL_MMQ_CR72,
-        MODEL_NS_MMQ_2SITE,
-        MODEL_NS_MMQ_3SITE_LINEAR,
-        MODEL_NS_MMQ_3SITE
+        MODEL_NS_R1RHO_3SITE
     ],
     wiz_read_only = True
 )
@@ -874,6 +874,13 @@ uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_3D_FULL, "The ful
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_STAR, "The reduced numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices whereby the simplification R20A = R20B is assumed.  It has the parameters {R20, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_STAR_FULL, "The full numerical solution for the 2-site Bloch-McConnell equations using complex conjugate matrices with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_EXPANDED, "The numerical solution for the 2-site Bloch-McConnell equations expanded using Maple by Nikolai Skrynnikov.  It has the parameters {R20, ..., pA, dw, kex}.")
+# MMQ CPMG-type data.
+uf.desc.append(Desc_container('The MMQ CPMG-type experiments'))
+uf.desc[-1].add_paragraph("The currently supported models are:")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_MMQ_CR72, "The the Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by Korzhnev et al., 2004, whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations linearised with kAC = kCA = 0 for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R20, ..., pA, dw(AB), dwH(AB), kex(AB), pB, dw(BC), dwH(BC), kex(BC)}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_3SITE, "The numerical solution for the 3-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R20, ..., pA, dw(AB), dwH(AB), kex(AB), pB, dw(BC), dwH(BC), kex(BC), kex(AC)}.")
 # R1rho-type data.
 uf.desc.append(Desc_container('The R1rho-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
@@ -887,13 +894,6 @@ uf.desc[-1].add_paragraph("The currently supported numeric models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed and linearised with kAC = kCA = 0.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC)}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R1rho', ..., pA, dw, kex}.")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_R1RHO_3SITE, "The numerical solution for the 3-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R1rho', ..., pA, dw(AB), kex(AB), pB, dw(BC), kex(BC), kex(AC)}.")
-# MQ CPMG-type data.
-uf.desc.append(Desc_container('The MQ CPMG-type experiments'))
-uf.desc[-1].add_paragraph("The currently supported models are:")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_MMQ_CR72, "The the Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by Korzhnev et al., 2004, whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_2SITE, "The numerical solution for the 2-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, dwH, kex}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_3SITE_LINEAR, "The numerical solution for the 3-site Bloch-McConnell equations linearised with kAC = kCA = 0 for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R20, ..., pA, dw(AB), dwH(AB), kex(AB), pB, dw(BC), dwH(BC), kex(BC)}.")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_MMQ_3SITE, "The numerical solution for the 3-site Bloch-McConnell equations for combined proton-heteronuclear SQ, ZQ, DQ, and MQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.  Its parameters are {R20, ..., pA, dw(AB), dwH(AB), kex(AB), pB, dw(BC), dwH(BC), kex(BC), kex(AC)}.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
