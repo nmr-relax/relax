@@ -514,10 +514,18 @@ class Load_method_page(Wiz_page):
         self.radio_new_xyz = wx.RadioButton(self, -1, "From a new XYZ structure file.")
         sizer_radio.Add(self.radio_new_xyz, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
 
+        # Spacing.
+        sizer_radio.AddSpacer(20)
+
+        # The spectrum.read_spins radio button.
+        self.radio_new_spectrum = wx.RadioButton(self, -1, "From a spectrum formatted file.")
+        sizer_radio.Add(self.radio_new_spectrum, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL, 0)
+
         # Bind the buttons.
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_seq)
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_pdb)
         self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_xyz)
+        self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_new_spectrum)
         if self.preload_flag:
             self.Bind(wx.EVT_RADIOBUTTON, self._on_select, self.radio_preload)
 
@@ -551,5 +559,7 @@ class Load_method_page(Wiz_page):
             self.selection = 'new pdb'
         elif button == self.radio_new_xyz:
             self.selection = 'new xyz'
+        elif button == self.radio_new_spectrum:
+            self.selection = 'new spectrum'
         elif self.preload_flag and button == self.radio_preload:
             self.selection = 'preload'
