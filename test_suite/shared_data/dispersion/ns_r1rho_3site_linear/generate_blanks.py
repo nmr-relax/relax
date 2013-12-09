@@ -8,8 +8,8 @@ from os import sep
 frqs = [600, 800]
 fields = [50, 75, 100, 200, 300, 400, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]
 offsets = []
-for i in range(81):
-    offsets.append(i * 25.0 - 1000.0)
+for i in range(21):
+    offsets.append(i * 100.0 - 1000.0)
 
 # Loop over the magnetic fields.
 for frq in frqs:
