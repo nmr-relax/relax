@@ -2450,6 +2450,137 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
 
 
+    def test_r1rho_kjaergaard(self):
+        """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
+
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+
+        """
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type= 'relax_disp'
+
+        # Create the data pipe.
+        self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
+
+        # Read the spins.
+        self.interpreter.spectrum.read_spins(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 48)
+
+        # Name the isotope for field strength scaling.
+        self.interpreter.spin.isotope(isotope='15N')
+
+        # Set number of experiments to be used.
+        NR_exp = -1
+
+        # Load the experiments settings file.
+        expfile = open(data_path+sep+'exp_parameters_sort.txt','r')
+        expfileslines = expfile.readlines()[:NR_exp]
+        expfile.close()
+
+        # In MHz
+        yOBS = 81.050
+        # In ppm
+        yCAR = 118.078
+        centerPPM_N15 = yCAR
+
+        ## Read the chemical shift data.
+        self.interpreter.chemical_shift.read(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
+
+        # Test the chemical shift data.
+        cs = [122.223, 122.162, 114.250, 125.852, 118.626, 117.449, 119.999, 122.610, 118.602, 118.291, 115.393, 
+        121.288, 117.448, 116.378, 116.316, 117.263, 122.211, 118.748, 118.103, 119.421, 119.317, 119.386, 117.279, 
+        122.103, 120.038, 116.698, 111.811, 118.639, 118.285, 121.318, 117.770, 119.948, 119.759, 118.314, 118.160, 
+        121.442, 118.714, 113.080, 125.706, 119.183, 120.966, 122.361, 126.675, 117.069, 120.875, 109.372, 119.811, 126.048]
+
+        i = 0
+        for spin, spin_id in spin_loop(return_id=True):
+            print spin.name, spin.num, spin_id, spin.chemical_shift, cs[i]
+            # Check the chemical shift.
+            self.assertEqual(spin.chemical_shift, cs[i])
+
+            # Increment the index.
+            i += 1
+
+        # The lock power to field, has been found in an calibration experiment.
+        spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
+
+        # Apply spectra settings.
+        for i in range(len(expfileslines)):
+            line=expfileslines[i]
+            if line[0] == "#":
+                continue
+            else:
+                # DIRN I deltadof2 dpwr2slock ncyc trim ss sfrq
+                DIRN = line.split()[0]
+                I = int(line.split()[1])
+                deltadof2 = line.split()[2]
+                dpwr2slock = line.split()[3]
+                ncyc = int(line.split()[4])
+                trim = float(line.split()[5])
+                ss = int(line.split()[6])
+                set_sfrq = float(line.split()[7])
+                apod_rmsd = float(line.split()[8])
+                spin_lock_field_strength = spin_lock_field_strengths_Hz[dpwr2slock]
+
+                # Calculate spin_lock time
+                time_sl = 2*ncyc*trim
+
+                # Define file name for peak list.
+                FNAME = "%s_%s_%s_%s_max_standard.ser"%(I, deltadof2, dpwr2slock, ncyc)
+                sp_id = "%s_%s_%s_%s"%(I, deltadof2, dpwr2slock, ncyc)
+
+                # Load the peak intensities.
+                self.interpreter.spectrum.read_intensities(file=FNAME, dir=data_path+sep+'peak_lists', spectrum_id=sp_id, int_method='height')
+
+                # Set the peak intensity errors, as defined as the baseplane RMSD.
+                self.interpreter.spectrum.baseplane_rmsd(error=apod_rmsd, spectrum_id=sp_id)
+
+                # Set the relaxation dispersion experiment type.
+                self.interpreter.relax_disp.exp_type(spectrum_id=sp_id, exp_type='R1rho')
+
+                # Set The spin-lock field strength, nu1, in Hz
+                self.interpreter.relax_disp.spin_lock_field(spectrum_id=sp_id, field=spin_lock_field_strength)
+
+                # Calculating the spin-lock offset in ppm, from offsets values provided in Hz.
+                frq_N15_Hz = yOBS * 1E6
+                offset_ppm_N15 = float(deltadof2) / frq_N15_Hz * 1E6
+                omega_rf_ppm = centerPPM_N15 + offset_ppm_N15
+
+                # Set The spin-lock offset, omega_rf, in ppm.
+                self.interpreter.relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
+
+                # Set the relaxation times (in s).
+                self.interpreter.relax_fit.relax_time(time=time_sl, spectrum_id=sp_id)
+
+                # Set the spectrometer frequency.
+                self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
+
+        # The dispersion models.
+        MODELS = ['R2eff', 'No Rex', 'DPL94']
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+
     def test_r2eff_read(self):
         """Test the operation of the relax_disp.r2eff_read user function."""
 
