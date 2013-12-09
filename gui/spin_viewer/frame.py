@@ -385,6 +385,10 @@ class Spin_view_window(wx.Frame):
         elif self.page_method.selection == 'new xyz':
             return self.page_indices['structure.read_xyz']
 
+        # Go to the spectrum.read_spins page.
+        elif self.page_method.selection == 'new spectrum':
+            return self.page_indices['spectrum.read_spins']
+
         # Skip to the structure.load_spins page.
         elif self.page_method.selection == 'preload':
             return self.page_indices['structure.load_spins']
