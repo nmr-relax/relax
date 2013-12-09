@@ -127,6 +127,8 @@ For the $\Ronerho$-type experiments, the numeric models currently supported are:
 
 \begin{description}
 \item[`NS R1rho 2-site':]\index{relaxation dispersion!NS R1rho 2-site model}  The model for 2-site exchange using 3D magnetisation vectors.  It has the parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS R1rho 2-site model} on page~\pageref{sect: dispersion: NS R1rho 2-site model}.
+\item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.  It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$\}.  See Section~\ref{sect: dispersion: NS R1rho 3-site linear model} on page~\pageref{sect: dispersion: NS R1rho 3-site linear model}.
+\item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model for 3-site exchange whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.  It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.  See Section~\ref{sect: dispersion: NS R1rho 3-site model} on page~\pageref{sect: dispersion: NS R1rho 3-site model}.
 \end{description}
 
 
@@ -1128,6 +1130,143 @@ The relaxation evolution matrix is defined as
 where $\delta_{A,B}$ is defined in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
 
 
+% NS R1rho 3-site model.
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS 3-site $\Ronerho$ model}
+\label{sect: dispersion: NS R1rho 3-site model}
+\index{relaxation dispersion!NS R1rho 3-site model|textbf}
+
+This is the numerical model for 3-site exchange using 3D magnetisation vectors.
+It is selected by setting the model to `NS R1rho 3-site'.
+The constraints $\pA > \pB$ and $\pA > \pC$ is used to decrease the size of the optimisation space, as both sides of the limit are mirror image spaces.
+
+For this model, as for the 2-site model above, the equations from \citet{Korzhnev05a} have been used.
+These have been however rearranged to match the notation in \citet{PalmerMassi06}.
+The $\Ronerho$ value for state A magnetisation is defined as
+\begin{equation}
+    \Ronerho = - \frac{1}{T_\textrm{relax}}  \cdot \ln \left( M_0^T \cdot e^{R \cdot T_\textrm{relax}} \cdot M_0 \right),
+\end{equation}
+
+where
+\begin{align}
+    M_0    &= \begin{pmatrix} \sin{\theta} \\ 0 \\ \cos{\theta} \\ 0 \\ 0 \\ 0 \\ 0 \\ 0 \\ 0  \end{pmatrix}, \\
+    \theta &= \arctan \left( \frac{\omegaone}{\aveoffset} \right).
+\end{align}
+
+This assumes that the starting magnetisation has an X and Z component only for the A state.
+The relaxation evolution matrix is defined as
+\begin{align}
+    R &= \begin{pmatrix}
+           -\RonerhoprimeA-\kAB-\kAC & -\delta_A                 & 0                 & \cdots \\
+           \delta_A                  & -\RonerhoprimeA-\kAB-\kAC & -\omegaone        & \cdots \\
+           0                         & \omegaone                 & -\RoneA-\kAB-\kAC & \cdots \\
+           \vdots                    & \vdots                    & \vdots            & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots  & \vdots                    & \vdots                    & \vdots            & \iddots \\
+           \cdots  & -\RonerhoprimeB-\kBA-\kBC & -\delta_B                 & 0                 & \cdots \\
+           \cdots  & \delta_B                  & -\RonerhoprimeB-\kBA-\kBC & -\omegaone        & \cdots \\
+           \cdots  & 0                         & \omegaone                 & -\RoneB-\kBA-\kBC & \cdots \\
+           \iddots & \vdots                    & \vdots                    & \vdots            & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots & \vdots                    & \vdots                    & \vdots \\
+           \cdots & -\RonerhoprimeC-\kCA-\kCB & -\delta_C                 & 0 \\
+           \cdots & \delta_C                  & -\RonerhoprimeC-\kCA-\kCB & -\omegaone \\
+           \cdots & 0                         & \omegaone                 & -\RoneC-\kCA-\kCB \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+                   &         &         & \kAB    & 0       & 0       & \cdots \\
+                   & \ddots  &         & 0       & \kAB    & 0       & \cdots \\
+                   &         &         & 0       & 0       & \kAB    & \cdots \\
+           \kBA    & 0       & 0       &         &         &         & \\
+           0       & \kBA    & 0       &         & \ddots  &         & \cdots\\
+           0       & 0       & \kBA    &         &         &         & \\
+           \vdots  & \vdots  & \vdots  &         & \vdots  &         & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+                   &         &         & \cdots  & \kAC    & 0       & 0 \\
+                   & \ddots  &         & \cdots  & 0       & \kAC    & 0 \\
+                   &         &         & \cdots  & 0       & 0       & \kAC \\
+           \vdots  & \vdots  & \vdots  & \ddots  & \vdots  & \vdots  & \vdots \\
+           \kCA    & 0       & 0       & \cdots  &         &         & \\
+           0       & \kCA    & 0       & \cdots  &         & \ddots  &  \\       
+           0       & 0       & \kCA    & \cdots  &         &         & \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots  &         & \vdots  &         & \vdots  & \vdots  & \vdots \\
+                   &         &         &         & \kBC    & 0       & 0 \\
+           \cdots  &         & \ddots  &         & 0       & \kBC    & 0 \\
+                   &         &         &         & 0       & 0       & \kBC \\
+           \cdots  & \kCB    & 0       & 0       &         &         &  \\
+           \cdots  & 0       & \kCB    & 0       &         & \ddots  &  \\
+           \cdots  & 0       & 0       & \kCB    &         &         &  \\
+         \end{pmatrix},
+\end{align}
+
+where $\delta_{A,B,C}$ are defined as in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
+For the model, the assumptions $\RonerhoprimeA$ = $\RonerhoprimeB$ = $\RonerhoprimeC$ = $\Ronerhoprime$ and $\RoneA$ = $\RoneB$ = $\RoneC$ = $\Rone$ have been made.
+
+
+% NS R1rho 3-site linear model.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{The NS 3-site linear $\Ronerho$ model}
+\label{sect: dispersion: NS R1rho 3-site linear model}
+\index{relaxation dispersion!NS R1rho 3-site linear model|textbf}
+
+This is the numerical model for 3-site linear exchange using 3D magnetisation vectors.
+The assumption that $\kAC$~= $\kCA$~= 0 has been made to linearise this model.
+It is selected by setting the model to `NS R1rho 3-site linear'.
+The constraints $\pA > \pB$ and $\pA > \pC$ is used to decrease the size of the optimisation space, as both sides of the limit are mirror image spaces.
+To simplify the optimisation space for the model as in the `NS $\Ronerho$ 3-site' model, the assumptions $\RtwozeroA$~= $\RtwozeroB$~= $\RtwozeroC$~= $\Rtwozero$ and $\RoneA$ = $\RoneB$ = $\RoneC$ = $\Rone$ have been made.
+
+The equations are the same as for the `NS R1rho 3-site' model except for the relaxation evolution matrix which simplifies to
+\begin{align}
+    R &= \begin{pmatrix}
+           -\RonerhoprimeA-\kAB & -\delta_A            & 0            & \cdots \\
+           \delta_A             & -\RonerhoprimeA-\kAB & -\omegaone   & \cdots \\
+           0                    & \omegaone            & -\RoneA-\kAB & \cdots \\
+           \vdots               & \vdots               & \vdots       & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots  & \vdots                    & \vdots                    & \vdots            & \iddots \\
+           \cdots  & -\RonerhoprimeB-\kBA-\kBC & -\delta_B                 & 0                 & \cdots \\
+           \cdots  & \delta_B                  & -\RonerhoprimeB-\kBA-\kBC & -\omegaone        & \cdots \\
+           \cdots  & 0                         & \omegaone                 & -\RoneB-\kBA-\kBC & \cdots \\
+           \iddots & \vdots                    & \vdots                    & \vdots            & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots & \vdots               & \vdots               & \vdots \\
+           \cdots & -\RonerhoprimeC-\kCB & -\delta_C            & 0 \\
+           \cdots & \delta_C             & -\RonerhoprimeC-\kCB & -\omegaone \\
+           \cdots & 0                    & \omegaone            & -\RoneC-\kCB \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+                   &         &         & \kAB    & 0       & 0       & \cdots \\
+                   & \ddots  &         & 0       & \kAB    & 0       & \cdots \\
+                   &         &         & 0       & 0       & \kAB    & \cdots \\
+           \kBA    & 0       & 0       &         &         &         & \\
+           0       & \kBA    & 0       &         & \ddots  &         & \cdots\\
+           0       & 0       & \kBA    &         &         &         & \\
+           \vdots  & \vdots  & \vdots  &         & \vdots  &         & \ddots \\
+         \end{pmatrix} \nonumber \\
+      &+ \begin{pmatrix}
+           \ddots  &         & \vdots  &         & \vdots  & \vdots  & \vdots \\
+                   &         &         &         & \kBC    & 0       & 0 \\
+           \cdots  &         & \ddots  &         & 0       & \kBC    & 0 \\
+                   &         &         &         & 0       & 0       & \kBC \\
+           \cdots  & \kCB    & 0       & 0       &         &         &  \\
+           \cdots  & 0       & \kCB    & 0       &         & \ddots  &  \\
+           \cdots  & 0       & 0       & \kCB    &         &         &  \\
+         \end{pmatrix},
+\end{align}
+
+where $\delta_{A,B,C}$ are defined as in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
+For the model, the assumptions $\RonerhoprimeA$ = $\RonerhoprimeB$ = $\RonerhoprimeC$ = $\Ronerhoprime$ and  $\RoneA$ = $\RoneB$ = $\RoneC$ = $\Rone$ have been made.
+
+
 
 % Relaxation dispersion optimisation theory.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1596,8 +1735,6 @@ Synthetic data, or experimental data, can be obtained from the literature.
 Some of the missing models include:
 \begin{description}
 \item[`TP04':]\index{relaxation dispersion!TP04 model}  The $\Ronerho$-type data \citet{TrottPalmer04} N-site analytic equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pone, \dots, \pN, \aveomega, \konetwo, \dots\, \koneN\}$.
-\item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model of the numeric solution for linear 3-site exchange for $\Ronerho$-type data.
-\item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  Similar to the `NS $\Ronerho$ 3-site linear' model but with one of the $\kex$ parameters not set to zero.
 \item[`* $\Ronerho$':]  All of the 3-site and N-site models as summarised in Table~1 of \citet{PalmerMassi06}.
 \end{description}
 
