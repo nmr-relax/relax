@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.disp_data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_LIST_NUMERIC, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_LIST_NUMERIC, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -250,6 +250,14 @@ class Relax_disp:
                 nested_pipe = MODEL_NS_MMQ_3SITE_LINEAR
             elif MODEL_NS_MMQ_2SITE in self.models:
                 nested_pipe = MODEL_NS_MMQ_2SITE
+        if model == MODEL_NS_R1RHO_3SITE_LINEAR and MODEL_NS_R1RHO_2SITE in self.models:
+            nested_pipe = MODEL_NS_R1RHO_2SITE
+        if model == MODEL_NS_R1RHO_3SITE:
+            if MODEL_NS_R1RHO_3SITE_LINEAR in self.models:
+                nested_pipe = MODEL_NS_R1RHO_3SITE_LINEAR
+            elif MODEL_NS_R1RHO_2SITE in self.models:
+                nested_pipe = MODEL_NS_R1RHO_2SITE
+
 
         # Using the analytic solution.
         analytic = False
@@ -525,12 +533,12 @@ class Relax_disp:
         #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA, pB, and pC parameters.
-        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+        if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.interpreter.value.write(param='pA', file='pA.out', dir=path, force=True)
             self.interpreter.value.write(param='pB', file='pB.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', file='pA.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', file='pB.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.interpreter.value.write(param='pC', file='pC.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='pC', file='pC.agr', dir=path, force=True)
 
@@ -550,7 +558,7 @@ class Relax_disp:
         if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_TSMFK01]:
             self.interpreter.value.write(param='dw', file='dw.out', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', file='dw.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.interpreter.value.write(param='dw_AB', file='dw_AB.out', dir=path, force=True)
             self.interpreter.value.write(param='dw_BC', file='dw_BC.out', dir=path, force=True)
             self.interpreter.value.write(param='dw_AC', file='dw_AC.out', dir=path, force=True)
@@ -578,7 +586,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', file='k_AB.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', file='kex.agr', dir=path, force=True)
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', file='tex.agr', dir=path, force=True)
-        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+        if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.interpreter.value.write(param='kex_AB', file='kex_AB.out', dir=path, force=True)
             self.interpreter.value.write(param='kex_BC', file='kex_BC.out', dir=path, force=True)
             self.interpreter.value.write(param='kex_AC', file='kex_AC.out', dir=path, force=True)
