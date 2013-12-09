@@ -8,8 +8,12 @@ $ ../../../../../relax r1rho_4_run.py --tee log_r1rho_4_run.log
 import os
 from auto_analyses.relax_disp import Relax_disp
 
+# Setting variables for pipe names.
+pipe_name = 'base pipe'
+pipe_bundle = 'relax_disp'
+
 # The dispersion models.
-MODELS = ['R2eff', 'DPL94']
+MODELS = ['R2eff', 'No Rex', 'DPL94']
 # The grid search size (the number of increments per dimension).
 GRID_INC = 4
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.

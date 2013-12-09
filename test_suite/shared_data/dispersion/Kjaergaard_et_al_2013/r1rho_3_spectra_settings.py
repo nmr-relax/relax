@@ -24,9 +24,6 @@ centerPPM_N15 = yCAR
 
 writefile = open('omega_rf_ppm.txt','w')
 
-## Read the chemical shift data.
-chemical_shift.read(file='peaks_corr_final.list', dir=None)
-
 for i in range(len(expfileslines)):
     line=expfileslines[i]
     if line[0] == "#":

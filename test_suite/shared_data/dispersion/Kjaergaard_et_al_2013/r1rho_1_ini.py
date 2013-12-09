@@ -11,10 +11,13 @@ pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 # Create the spins
-script(file='relax_2_spins.py', dir=None)
+spectrum.read_spins('peaks_corr_final.list')
 
 # Name the isotope for field strength scaling.
 spin.isotope(isotope='15N')
+
+## Read the chemical shift data.
+chemical_shift.read(file='peaks_corr_final.list', dir=None)
 
 # Set the spectra experimental properties/settings.
 script(file='r1rho_3_spectra_settings.py', dir=None)
