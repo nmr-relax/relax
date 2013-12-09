@@ -2440,6 +2440,16 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[1].chi2, 0.0, 3)
 
 
+    def test_ns_r1rho_3site(self):
+        """Compare the 'NS R1rho 3-site' dispersion model to synthetic data from cpmg_fit."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'ns_r1rho_3site.py')
+
+        # Check the chi-squared value.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 136.13141468674999, 3)
+
+
     def test_ns_r1rho_3site_linear(self):
         """Compare the 'NS R1rho 3-site linear' dispersion model to synthetic data from cpmg_fit."""
 
