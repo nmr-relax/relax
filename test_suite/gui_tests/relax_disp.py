@@ -412,6 +412,43 @@ class Relax_disp(GuiTestCase):
             self.assertEqual(self.app.gui.controller.main_gauge.GetValue(), 100)
 
 
+    def test_read_spins_from_spectrum(self):
+        """Test the GUI load spins from a spectrum formatted file."""
+
+        # The path to the files.
+        path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'peak_lists' + sep
+
+        # Simulate the dispersion analysis wizard.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_disp(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle, uf_exec=uf_exec)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Relaxation dispersion")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+        # Spin loading wizard:  Initialisation.
+        self.app.gui.spin_viewer.load_spins_wizard()
+
+        # Spin loading wizard:  The spectrum.read_spins page.
+        page = self.app.gui.spin_viewer.wizard.get_page(0)
+        page.selection = 'new spectrum'
+        self.app.gui.spin_viewer.wizard._go_next()
+
+
     def test_tp02_data_to_tp02(self):
         """Test the GUI analysis with the relaxation dispersion 'TP02' model fitting to the 'TP02' synthetic data."""
 
