@@ -1,0 +1,59 @@
+# Read in the blank data to know which CPMG frequencies to use.
+read 600_MHz_50.res    d 1 R N15 25 600 @ 50   0.04
+read 600_MHz_75.res    d 1 R N15 25 600 @ 75   0.04
+read 600_MHz_100.res   d 1 R N15 25 600 @ 100  0.04
+read 600_MHz_200.res   d 1 R N15 25 600 @ 200  0.04
+read 600_MHz_300.res   d 1 R N15 25 600 @ 300  0.04
+read 600_MHz_400.res   d 1 R N15 25 600 @ 400  0.04
+read 600_MHz_500.res   d 1 R N15 25 600 @ 500  0.04
+read 600_MHz_1000.res  d 1 R N15 25 600 @ 1000 0.04
+read 600_MHz_1500.res  d 1 R N15 25 600 @ 1500 0.04
+read 600_MHz_2000.res  d 1 R N15 25 600 @ 2000 0.04
+read 600_MHz_2500.res  d 1 R N15 25 600 @ 2500 0.04
+read 600_MHz_3000.res  d 1 R N15 25 600 @ 3000 0.04
+read 600_MHz_3500.res  d 1 R N15 25 600 @ 3500 0.04
+read 600_MHz_4000.res  d 1 R N15 25 600 @ 4000 0.04
+read 600_MHz_4500.res  d 1 R N15 25 600 @ 4500 0.04
+read 600_MHz_5000.res  d 1 R N15 25 600 @ 5000 0.04
+read 600_MHz_5500.res  d 1 R N15 25 600 @ 5500 0.04
+read 600_MHz_6000.res  d 1 R N15 25 600 @ 6000 0.04
+read 800_MHz_50.res    d 1 R N15 25 800 @ 50   0.04
+read 800_MHz_75.res    d 1 R N15 25 800 @ 75   0.04
+read 800_MHz_100.res   d 1 R N15 25 800 @ 100  0.04
+read 800_MHz_200.res   d 1 R N15 25 800 @ 200  0.04
+read 800_MHz_300.res   d 1 R N15 25 800 @ 300  0.04
+read 800_MHz_400.res   d 1 R N15 25 800 @ 400  0.04
+read 800_MHz_500.res   d 1 R N15 25 800 @ 500  0.04
+read 800_MHz_1000.res  d 1 R N15 25 800 @ 1000 0.04
+read 800_MHz_1500.res  d 1 R N15 25 800 @ 1500 0.04
+read 800_MHz_2000.res  d 1 R N15 25 800 @ 2000 0.04
+read 800_MHz_2500.res  d 1 R N15 25 800 @ 2500 0.04
+read 800_MHz_3000.res  d 1 R N15 25 800 @ 3000 0.04
+read 800_MHz_3500.res  d 1 R N15 25 800 @ 3500 0.04
+read 800_MHz_4000.res  d 1 R N15 25 800 @ 4000 0.04
+read 800_MHz_4500.res  d 1 R N15 25 800 @ 4500 0.04
+read 800_MHz_5000.res  d 1 R N15 25 800 @ 5000 0.04
+read 800_MHz_5500.res  d 1 R N15 25 800 @ 5500 0.04
+read 800_MHz_6000.res  d 1 R N15 25 800 @ 6000 0.04
+
+# Set the fixed parameter values.
+set m 3 0                   # 3-site exchange.
+set k @ 0  500.0 u          # KAB.  
+set k @ 1 1000.0 f          # KAC.
+set k @ 2 2000.0 u          # KBC.
+set p @ 0 0.85 u            # pA.
+set p @ 1 0.05 u            # pB.
+set p @ 2 0.10 u            # pC.
+set c @ N15 0 0    @ f      # 15N chemical shift (CS0_A).
+set c @ N15 1 0 -3.0 u      # 15N chemical shift (CS0_B).
+set c @ N15 2 0  8.0 u      # 15N chemical shift (CS0_B).
+set r @ R N15 25  600 @  8.0 u g
+set l @ N15 25  600 @  2.0 f g
+set r @ R N15 25  800 @  9.0 u g
+set l @ N15 25  800 @  3.0 f g
+
+# Minimisation.
+min
+
+# Write out the data.
+write > p
