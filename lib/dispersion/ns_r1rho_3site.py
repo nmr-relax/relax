@@ -112,7 +112,7 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         rr1rho_3d_3site(matrix=matrix, R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, pC=pC, wA=dA, wB=dB, wC=dC, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        theta = atan(spin_lock_fields[i]/d)
+        theta = atan(spin_lock_fields[i]/dA)
         M0[0] = sin(theta)    # The A state initial X magnetisation.
         M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
