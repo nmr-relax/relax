@@ -160,6 +160,96 @@ def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, 
     return temp
 
 
+def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
+    """Definition of the 3D exchange matrix.
+
+    @keyword matrix:        The matrix to fill.
+    @type matrix:           numpy rank-2 9D array
+    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
+    @type R1:               float
+    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
+    @type r1rho_prime:      float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword pC:            The population of state C.
+    @type pC:               float
+    @keyword wA:            The chemical shift offset of state A from the spin-lock.
+    @type wA:               float
+    @keyword wB:            The chemical shift offset of state B from the spin-lock.
+    @type wB:               float
+    @keyword wC:            The chemical shift offset of state C from the spin-lock.
+    @type wC:               float
+    @keyword w1:            The spin-lock field strength in rad/s.
+    @type w1:               float
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    @keyword k_BC:          The forward exchange rate from state B to state C.
+    @type k_BC:             float
+    @keyword k_CB:          The reverse exchange rate from state C to state B.
+    @type k_CB:             float
+    @keyword k_AC:          The forward exchange rate from state A to state C.
+    @type k_AC:             float
+    @keyword k_CA:          The reverse exchange rate from state C to state A.
+    @type k_CA:             float
+    """
+
+    # The AB auto-block.
+    matrix[0, 0] = -r1rho_prime - k_AB - k_AC
+    matrix[0, 1] = -wA
+    matrix[1, 0] = wA
+    matrix[1, 1] = -r1rho_prime - k_AB - k_AC
+    matrix[1, 2] = -w1
+    matrix[2, 1] = w1
+    matrix[2, 2] = -R1 - k_AB - k_AC
+
+    # The AC auto-block.
+    matrix[3, 3] = -r1rho_prime - k_BA - k_BC
+    matrix[3, 4] = -wB
+    matrix[4, 3] = wB
+    matrix[4, 4] = -r1rho_prime - k_BA - k_BC
+    matrix[4, 5] = -w1
+    matrix[5, 4] = w1
+    matrix[5, 5] = -R1 - k_BA - k_BC
+
+    # The BC auto-block.
+    matrix[6, 6] = -r1rho_prime - k_CA - k_CB
+    matrix[6, 7] = -wC
+    matrix[7, 6] = wC
+    matrix[7, 7] = -r1rho_prime - k_CA - k_CB
+    matrix[7, 8] = -w1
+    matrix[8, 7] = w1
+    matrix[8, 8] = -R1 - k_CA - k_CB
+
+    # The AB cross-block.
+    matrix[3, 0] = k_AB
+    matrix[4, 1] = k_AB
+    matrix[5, 2] = k_AB
+    matrix[0, 3] = k_BA
+    matrix[1, 4] = k_BA
+    matrix[2, 5] = k_BA
+
+    # The AC cross-block.
+    matrix[6, 0] = k_AC
+    matrix[7, 1] = k_AC
+    matrix[8, 2] = k_AC
+    matrix[0, 6] = k_CA
+    matrix[1, 7] = k_CA
+    matrix[2, 8] = k_CA
+
+    # The BC cross-block.
+    matrix[6, 3] = k_BC
+    matrix[7, 4] = k_BC
+    matrix[8, 5] = k_BC
+    matrix[3, 6] = k_CB
+    matrix[4, 7] = k_CB
+    matrix[5, 8] = k_CB
+
+
+
 def rr1rho_3d(R1A=None, R1=None, Rinf=None, pA=None, pB=None, wA=None, wB=None, w1=None, k_AB=None, k_BA=None):
     """Definition of the 3D exchange matrix.
 
