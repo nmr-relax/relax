@@ -638,11 +638,11 @@ def linear_constraints(spins=None, scaling_matrix=None):
                     b.append(-1.0 / scaling_matrix[param_index, param_index])
                     j += 1
 
-                    # Then the pB >= pC constraint (rearranged as pA + 2pB >= 1).
+                    # Then the pA >= pC constraint.
                     A.append(zero_array * 0.0)
                     A[j][param_index2] = 1.0
-                    A[j][param_index] = 2.0
-                    b.append(1.0 / scaling_matrix[param_index, param_index])
+                    A[j][param_index] = -1.0
+                    b.append(0.0)
                     j += 1
                     break
 
