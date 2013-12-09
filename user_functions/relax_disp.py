@@ -860,7 +860,7 @@ uf.desc[-1].add_paragraph("A number of different dispersion models are supported
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_R2EFF, "This is the model used to determine the R2eff/R1rho values and errors required as the base data for all other models,")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NOREX, "This is the model for no chemical exchange being present.")
 # CPMG-type data.
-uf.desc.append(Desc_container('The CPMG-type experiments'))
+uf.desc.append(Desc_container('The SQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63_3SITE, "The original Luz and Meiboom (1963) 3-site fast exchange equation with parameters {R20, ..., phi_ex, kex, phi_ex2, kex2},")
