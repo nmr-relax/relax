@@ -223,6 +223,11 @@ class Spin_view_window(wx.Frame):
         self.page_indices['structure.read_xyz'] = self.wizard.add_page(page, skip_button=True)
         self.wizard.set_seq_next_fn(self.page_indices['structure.read_xyz'], self.wizard_page_after_structure_read)
 
+        # The spectrum.read_spins page.
+        page = uf_store['spectrum.read_spins'].create_page(self.wizard)
+        self.page_indices['spectrum.read_spins'] = self.wizard.add_page(page, skip_button=True)
+        self.wizard.set_seq_next_fn(self.page_indices['spectrum.read_spins'], self.wizard_page_after_sequence_read)
+
         # The structure.load_spins page.
         page = uf_store['structure.load_spins'].create_page(self.wizard)
         self.page_indices['structure.load_spins'] = self.wizard.add_page(page)
