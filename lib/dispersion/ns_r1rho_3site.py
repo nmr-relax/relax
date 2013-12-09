@@ -113,8 +113,8 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
         theta = atan(spin_lock_fields[i]/d)
-        M0[0] = sin(theta)
-        M0[1] = cos(theta)
+        M0[0] = sin(theta)    # The A state initial X magnetisation.
+        M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
         # This matrix is a propagator that will evolve the magnetization with the matrix R.
         Rexpo = matrix_exponential(matrix*relax_time)
