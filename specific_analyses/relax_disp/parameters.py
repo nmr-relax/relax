@@ -598,7 +598,7 @@ def linear_constraints(spins=None, scaling_matrix=None):
 
         # Chemical exchange difference (dw >= 0).
         elif param_name in ['dw', 'dw_AB', 'dw_AC', 'dw_BC', 'dwH', 'dwH_AB', 'dwH_AC', 'dwH_BC']:
-            if not spins[0].model in MODEL_LIST_MMQ:
+            if not spins[0].model in MODEL_LIST_MMQ + [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
                 A.append(zero_array * 0.0)
                 A[j][param_index] = 1.0
                 b.append(0.0)
