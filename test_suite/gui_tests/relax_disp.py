@@ -447,6 +447,46 @@ class Relax_disp(GuiTestCase):
         page = self.app.gui.spin_viewer.wizard.get_page(0)
         page.selection = 'new spectrum'
         self.app.gui.spin_viewer.wizard._go_next()
+        page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
+        page.uf_args['file'].SetValue(str_to_gui(path + 'seriesTab.ser'))
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Spin loading wizard:  The spin loading.
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Close the spin viewer window.
+        self.app.gui.spin_viewer.handler_close()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Test some of the sequence.
+        self.assertEqual(len(cdp.mol), 1)
+        self.assertEqual(cdp.mol[0].name, None)
+        self.assertEqual(len(cdp.mol[0].res), 3)
+
+        # 1st residue.
+        self.assertEqual(cdp.mol[0].res[0].num, 62)
+        self.assertEqual(cdp.mol[0].res[0].name, 'W')
+        self.assertEqual(len(cdp.mol[0].res[0].spin), 1)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[0].spin[0].name, 'NE1')
+
+        # 2nd residue.
+        self.assertEqual(cdp.mol[0].res[1].num, 10)
+        self.assertEqual(cdp.mol[0].res[1].name, 'L')
+        self.assertEqual(len(cdp.mol[0].res[1].spin), 1)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[1].spin[0].name, 'N')
+
+        # 3rd residue.
+        self.assertEqual(cdp.mol[0].res[2].num, 6)
+        self.assertEqual(cdp.mol[0].res[2].name, 'V')
+        self.assertEqual(len(cdp.mol[0].res[2].spin), 1)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].num, None)
+        self.assertEqual(cdp.mol[0].res[2].spin[0].name, 'N')
 
 
     def test_tp02_data_to_tp02(self):
