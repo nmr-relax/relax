@@ -243,9 +243,9 @@ def io_streams_log(file_name=None, dir=None, verbosity=1):
 
     # Print out.
     if verbosity:
-        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
+        print("Redirecting the sys.stdin IO stream to the Python stdin IO stream.")
         print("Redirecting the sys.stdout IO stream to the log file '%s'." % file_path)
-        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
+        print("Redirecting the sys.stderr IO stream to both the Python stderr IO stream and the log file '%s'." % file_path)
 
     # Set the logging IO streams.
     log_stdout = log_file
@@ -282,9 +282,9 @@ def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
 
     # Print out.
     if verbosity:
-        print("Redirecting the sys.stdin IO stream to the python stdin IO stream.")
-        print("Redirecting the sys.stdout IO stream to both the python stdout IO stream and the log file '%s'." % file_path)
-        print("Redirecting the sys.stderr IO stream to both the python stderr IO stream and the log file '%s'." % file_path)
+        print("Redirecting the sys.stdin IO stream to the Python stdin IO stream.")
+        print("Redirecting the sys.stdout IO stream to both the Python stdout IO stream and the log file '%s'." % file_path)
+        print("Redirecting the sys.stderr IO stream to both the Python stderr IO stream and the log file '%s'." % file_path)
 
     # Set the tee IO streams.
     tee_stdout.split(stdout, tee_file)
