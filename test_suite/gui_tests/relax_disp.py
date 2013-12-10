@@ -202,6 +202,9 @@ class Relax_disp(GuiTestCase):
         # Now check that the first is set to 'Z_A0', since the keyword 'auto' was used for spectrum_id.
         self.assertEqual(cur_id, 'Z_A0')
 
+        # Finally close the wizard to allow subsequent tests to be able to operate cleanly.
+        wizard.Close()
+
 
     def test_hansen_trunc_data(self):
         """Test the GUI analysis with Flemming Hansen's CPMG data truncated to residues 70 and 71."""
