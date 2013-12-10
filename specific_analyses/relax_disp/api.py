@@ -151,8 +151,8 @@ class Relax_disp(API_base, API_common):
         times = []
         for time in cdp.relax_time_list:
             # The data.
-            values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time))
-            errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
+            values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
+            errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
             times.append(time)
 
         # The scaling matrix in a diagonalised list form.
@@ -218,12 +218,12 @@ class Relax_disp(API_base, API_common):
                     continue
 
                 # Average the reference intensity data and errors.
-                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time)
-                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=None, time=time, error=True)
+                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=None, time=time)
+                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=None, time=time, error=True)
 
                 # Average the intensity data and errors.
-                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
-                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True)
+                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
 
                 # Calculate the R2eff value.
                 spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
@@ -379,8 +379,8 @@ class Relax_disp(API_base, API_common):
                 errors = []
                 times = []
                 for time in cdp.relax_time_list:
-                    values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, sim_index=sim_index))
-                    errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
+                    values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=sim_index))
+                    errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
                     times.append(time)
 
                 # The scaling matrix in a diagonalised list form.
@@ -1374,7 +1374,7 @@ class Relax_disp(API_base, API_common):
             # Generate the data structure to return.
             errors = []
             for time in cdp.relax_time_list:
-                errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time, error=True))
+                errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
 
         # All other models.
         else:

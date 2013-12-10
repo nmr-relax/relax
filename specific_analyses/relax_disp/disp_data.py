@@ -84,7 +84,7 @@ from os import chmod, sep
 R20_KEY_FORMAT = "%s - %.8f MHz"
 
 
-def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, sim_index=None, error=False):
+def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=None, time=None, sim_index=None, error=False):
     """Return the average peak intensity for the spectrometer frequency, dispersion point, and relaxation time.
 
     This is for handling replicate peak intensity data.
@@ -96,6 +96,8 @@ def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None,
     @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
     @type frq:          float
+    @keyword offset:    The spin-lock or hard pulse offset.
+    @type offset:       float
     @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @type point:        float
     @keyword time:      The relaxation time period.
@@ -109,7 +111,7 @@ def average_intensity(spin=None, exp_type=None, frq=None, point=None, time=None,
     """
 
     # The keys.
-    int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+    int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
     # Initialise.
     intensity = 0.0
