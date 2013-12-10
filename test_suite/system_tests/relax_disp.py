@@ -2514,7 +2514,6 @@ class Relax_disp(SystemTestCase):
 
         i = 0
         for spin, spin_id in spin_loop(return_id=True):
-            print spin.name, spin.num, spin_id, spin.chemical_shift, cs[i]
             # Check the chemical shift.
             self.assertEqual(spin.chemical_shift, cs[i])
 
