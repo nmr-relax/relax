@@ -2570,7 +2570,7 @@ class Relax_disp(SystemTestCase):
                 self.interpreter.relax_disp.spin_lock_offset(spectrum_id=sp_id, offset=omega_rf_ppm)
 
                 # Set the relaxation times (in s).
-                self.interpreter.relax_fit.relax_time(time=time_sl, spectrum_id=sp_id)
+                self.interpreter.relax_disp.relax_time(spectrum_id=sp_id, time=time_sl)
 
                 # Set the spectrometer frequency.
                 self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
