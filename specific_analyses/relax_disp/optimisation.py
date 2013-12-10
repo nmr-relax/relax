@@ -181,7 +181,6 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
         if cdp.model_type == 'R2eff':
             # Loop over each experiment type, spectrometer frequency, offset and dispersion point.
             for exp_type, frq, offset, point in loop_exp_frq_offset_point():
-                print exp_type, frq, point
                 # Loop over the parameters.
                 for param_name, param_index, si, r20_key in loop_parameters(spins=spins):
                     # R2eff relaxation rate (from 1 to 40 s^-1).
@@ -279,9 +278,6 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
     # Diagonal scaling of minimisation options.
     lower_new = []
     upper_new = []
-    print lower
-    print upper
-    print scaling_matrix
     for i in range(n):
         lower_new.append(lower[i] / scaling_matrix[i, i])
         upper_new.append(upper[i] / scaling_matrix[i, i])
