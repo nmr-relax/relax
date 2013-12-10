@@ -2076,8 +2076,11 @@ def r2eff_read_spin(id=None, spin_id=None, file=None, dir=None, disp_point_col=N
     new_ids = []
     for line in file_data:
         # Invalid columns.
-        if disp_point_col > len(line):
+        if disp_point_col != None and disp_point_col > len(line):
             warn(RelaxWarning("The data %s is invalid, no dispersion point column can be found." % line))
+            continue
+        if offset_col != None and offset_col > len(line):
+            warn(RelaxWarning("The data %s is invalid, no offset column can be found." % line))
             continue
         if data_col > len(line):
             warn(RelaxWarning("The R2eff/R1rho data %s is invalid, no data column can be found." % line))
