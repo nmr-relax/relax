@@ -39,6 +39,7 @@ __all__ = [
     'ns_mmq_2site',
     'ns_mmq_3site',
     'ns_r1rho_2site',
+    'ns_r1rho_3site',
     'tap03',
     'tp02',
     'tsmfk01',
