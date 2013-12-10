@@ -270,11 +270,11 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @keyword dw_AB:         The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw_AB:            float
     @keyword dw_AC:         The combined chemical exchange difference between states A and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
-    @type dw_AB:            float
+    @type dw_AC:            float
     @keyword dwH_AB:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
-    @type dwH_AC:           float
-    @keyword dwH_AC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
     @type dwH_AB:           float
+    @keyword dwH_AC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
+    @type dwH_AC:           float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
