@@ -204,15 +204,29 @@ def read_list(peak_list=None, file_data=None):
             except ValueError:
                 raise RelaxError("The peak intensity value from the line %s is invalid." % line)
 
-        # Add the assignment to the peak list object.
-        if dim == 1:
-            peak_list.add(res_nums=[res_num1], res_names=[res_name1], spin_names=[name1], shifts=[w1], intensity=intensity)
-        elif dim == 2:
-            peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
-        elif dim == 3:
-            peak_list.add(res_nums=[res_num1, res_num2, res_num1], res_names=[res_name1, res_name2, res_name1], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
-        elif dim == 4:
-            peak_list.add(res_nums=[res_num1, res_num2, res_num1, res_num1], res_names=[res_name1, res_name2, res_name1, res_name1], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
+            # Add the assignment to the peak list object.
+            if dim == 1:
+                peak_list.add(res_nums=[res_num1], res_names=[res_name1], spin_names=[name1], shifts=[w1], intensity=intensity)
+            elif dim == 2:
+                peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2], intensity=intensity)
+            elif dim == 3:
+                peak_list.add(res_nums=[res_num1, res_num2, res_num1], res_names=[res_name1, res_name2, res_name1], spin_names=[name1, name2, name3], shifts=[w1, w2, w3], intensity=intensity)
+            elif dim == 4:
+                peak_list.add(res_nums=[res_num1, res_num2, res_num1, res_num1], res_names=[res_name1, res_name2, res_name1, res_name1], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4], intensity=intensity)
+
+        # If no intensity column, for example when reading spins from a spectrum list.
+        elif int_col == None:
+            warn(RelaxWarning(("The peak intensity value from the line %s is invalid. The return value will be without intensity." % line)))
+
+            # Add the assignment to the peak list object.
+            if dim == 1:
+                peak_list.add(res_nums=[res_num1], res_names=[res_name1], spin_names=[name1], shifts=[w1])
+            elif dim == 2:
+                peak_list.add(res_nums=[res_num1, res_num2], res_names=[res_name1, res_name2], spin_names=[name1, name2], shifts=[w1, w2])
+            elif dim == 3:
+                peak_list.add(res_nums=[res_num1, res_num2, res_num1], res_names=[res_name1, res_name2, res_name1], spin_names=[name1, name2, name3], shifts=[w1, w2, w3])
+            elif dim == 4:
+                peak_list.add(res_nums=[res_num1, res_num2, res_num1, res_num1], res_names=[res_name1, res_name2, res_name1, res_name1], spin_names=[name1, name2, name3, name4], shifts=[w1, w2, w3, w4])
 
 
 def write_list(file_prefix=None, dir=None, res_names=None, res_nums=None, atom1_names=None, atom2_names=None, w1=None, w2=None, data_height=None, force=True):
