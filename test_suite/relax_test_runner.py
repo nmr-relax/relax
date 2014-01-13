@@ -163,6 +163,10 @@ class RelaxTestResult(TextTestResult):
         # Subtract the end time from the start time.
         self.time -= time()
 
+        # Change the test name.
+        test_name = test_name.split('.')
+        test_name = "%s.%s" % (test_name[-2], test_name[-1])
+
         # The printout.
         self.stream.write('  %7.2f s for %s.\n' % (-self.time, test_name))
 
