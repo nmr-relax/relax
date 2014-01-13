@@ -1,3 +1,33 @@
+Version 3.1.2
+(13 January 2014, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.1.2
+
+    Features:
+        N/A
+
+
+    Changes:
+        * The average_intensity() dispersion function now accepts the offset argument.  This is for better support of combined offset and spin-lock varied R1rho-type data.  The argument is then passed into the find_intensity_keys() function.
+        * Improved the DPL94 dispersion model description in the manual.
+        * Copied a Sparky peak list to be modified to be a Sparky file without intensity column.
+        * Modified the Sparky file to have no columns with intensity values.
+        * Implemented to read spins from a SPARKY list, when no intensity column is present.  Addition to Support Request #3044, (https://gna.org/support/index.php?3044) - load spins from Sparky list.
+        * Created the Relax_disp.test_bug_21460_disp_cluster_fail system test.  This is to catch bug #21460 (https://gna.org/bugs/?21460) reported by Min-Kyu Cho.  The save file added to the repository consists solely of the data for the first residue.
+        * Speed ups for the Relax_disp.test_bug_21460_disp_cluster_fail system test.  The optimisation precision is not important for demonstrating this bug.
+        * Updated the main copyright notice for 2014.
+        * Fix for the main copyright notice.
+        * Updated the copyright notice visible to the user to 2014.
+        * Updated the copyright for the relax GUI splash screen for 2014.
+        * Improvement for the relax test suite printout with the --time command line argument flag.  The tests printed out now have the package and module names removed, so that one the test name remains.  This removes a large amount of text, simplifying the printout.
+
+
+    Bugfixes:
+        * Partial fix for bug #21338 (https://gna.org/bugs/?21338) - the bad sRGB profile in some PNGs.  This is only partial as some files are still to be converted (the original Bruker logo, and the 16x16, 22x22 and 32x32 sized Bruker icons).
+        * Fix for bug #21460, the failure of relaxation dispersion due to incorrect spectrometer information.  This is the bug https://gna.org/bugs/?21460, reported by Min-Kyu Cho.  There was only one place in the dispersion analysis which failed due to a spectrometer frequency not containing any relaxation data - in the insignificance testing in the auto-analysis.
+        * Loosened the chi2 check in the Relax_disp.test_korzhnev_2005_15n_mq_data system test.  This is to allow the test to pass on a 32-bit Linux (Mageia 1) test system.
+
+
+
 Version 3.1.1
 (10 December 2013, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.1.1
