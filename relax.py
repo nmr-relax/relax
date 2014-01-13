@@ -12,7 +12,7 @@
 #                                                                             #
 # relax, a program for relaxation data analysis.                              #
 #                                                                             #
-# Copyright (C) 2001-2014  Edward d'Auvergne                                  #
+# Copyright (C) 2001-2006  Edward d'Auvergne                                  #
 # Copyright (C) 2006-2014  the relax development team                         #
 #                                                                             #
 # This program is free software; you can redistribute it and/or modify        #
