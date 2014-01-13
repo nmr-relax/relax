@@ -259,7 +259,9 @@ class Relax_disp(SystemTestCase):
         state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'saved_states'+sep+'bug_21460_bad_fields.bz2'
         self.interpreter.state.load(state, force=True)
 
-        # Execute the auto-analysis.
+        # Execute the auto-analysis (fast).
+        relax_disp.Relax_disp.opt_func_tol = 1e-5
+        relax_disp.Relax_disp.opt_max_iterations = 1000
         relax_disp.Relax_disp(pipe_name="origin - relax_disp (Thu Jan  2 13:46:44 2014)", pipe_bundle="relax_disp (Thu Jan  2 13:46:44 2014)", results_dir=self.tmpdir, models=['R2eff', 'No Rex', 'CR72', 'NS CPMG 2-site expanded'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
 
 
