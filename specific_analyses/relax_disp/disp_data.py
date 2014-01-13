@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
@@ -626,6 +626,10 @@ def insignificance(level=0.0):
         # Loop over the experiments, magnetic fields, and offsets.
         max_diff = 0.0
         for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
+            # No data.
+            if not len(values[ei][0][mi][oi]):
+                continue
+
             # The difference.
             diff = values[ei][0][mi][oi].max() - values[ei][0][mi][oi].min()
 
