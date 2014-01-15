@@ -21,11 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB.
+"""The Ishima and Torchia (1999) 2-site all time scale exchange (with pA >> pB) U{IT99<http://wiki.nmr-relax.com/IT99>} model.
 
-This module is for the function, gradient and Hessian of the IT99 model.  The model is named after the reference:
+Description
+===========
 
-    - Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  J. Biomol. NMR, 14, 369-372.  (U{DOI: 10.1023/A:1008324025406<http://dx.doi.org/10.1023/A:1008324025406>}).
+This module is for the function, gradient and Hessian of the U{IT99<http://wiki.nmr-relax.com/IT99>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Ishima R. and Torchia D.A. (1999).  Estimating the time scale of chemical exchange of proteins from measurements of transverse relaxation rates in solution.  I{J. Biomol. NMR}, B{14}, 369-372.  (U{DOI: 10.1023/A:1008324025406<http://dx.doi.org/10.1023/A:1008324025406>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -46,6 +59,17 @@ where tex = 1/(2kex), kex is the chemical exchange rate constant, pA and pB are 
 and therefore::
 
     omega_1eff^4 = 2304 * nu_cpmg^4
+
+
+Links
+=====
+
+More information on the IT99 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/IT99>},
+    - U{relax manual<http://www.nmr-relax.com/manual/IT99_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#IT99>}.
+
 """
 
 # Python module imports.
