@@ -21,11 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Luz and Meiboom (1963) 2-site fast exchange model.
+"""The Luz and Meiboom (1963) 2-site fast exchange U{LM63<http://wiki.nmr-relax.com/LM63>} model.
 
-This module is for the function, gradient and Hessian of the LM63 model.  The model is named after the reference:
+Description
+===========
 
-    - Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+This module is for the function, gradient and Hessian of the U{LM63<http://wiki.nmr-relax.com/LM63>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, I{J. Chem. Phys.}, B{39}, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -38,6 +51,16 @@ where::
     phi_ex = pA * pB * delta_omega^2 ,
 
 kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states.
+
+
+Links
+=====
+
+More information on the LM63 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/LM63>},
+    - U{relax manual<http://www.nmr-relax.com/manual/LM63_2_site_fast_exchange_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#LM63>}.
 """
 
 # Python module imports.
