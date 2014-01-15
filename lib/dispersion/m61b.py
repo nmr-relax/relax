@@ -21,11 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Meiboom (1961) 2-site on-resonance skewed population R1rho model.
+"""The Meiboom (1961) 2-site on-resonance skewed population R1rho U{M61 skew<http://wiki.nmr-relax.com/M61_skew>} model.
 
-This module is for the function, gradient and Hessian of the M61 skew model.  The model is named after the reference:
+Description
+===========
 
-    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+This module is for the function, gradient and Hessian of the U{M61 skew<http://wiki.nmr-relax.com/M61_skew>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  I{J. Chem. Phys.}, B{34}, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -34,6 +47,16 @@ The equation used is::
                      kex^2 + pA^2.delta_omega^2 + omega_1^2
 
 where R1rho' is the R1rho value in the absence of exchange, kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_1 = omega_e is the effective field in the rotating frame.
+
+
+Links
+=====
+
+More information on the M61 skew model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/M61_skew>},
+    - U{relax manual<http://www.nmr-relax.com/manual/M61_skew_2_site_fast_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61_skew>}.
 """
 
 # Python module imports.
