@@ -22,7 +22,7 @@
 ###############################################################################
 
 # Module docstring.
-"""This Miloushev and Palmer (2005) 2-site exchange R1rho U{MP05<http://wiki.nmr-relax.com/MP05>} model.
+"""The Miloushev and Palmer (2005) 2-site exchange R1rho U{MP05<http://wiki.nmr-relax.com/MP05>} model.
 
 Description
 ===========
