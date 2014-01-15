@@ -21,11 +21,23 @@
 ###############################################################################
 
 # Module docstring.
-"""The Carver and Richards (1972) 2-site all time scale exchange model (pA > pB).
+"""The Carver and Richards (1972) 2-site all time scale exchange U{CR72<http://wiki.nmr-relax.com/CR72>} and U{CR72 full<http://wiki.nmr-relax.com/CR72_full>} models.
 
-This module is for the function, gradient and Hessian of the CR72 model.  The model is named after the reference:
+Description
+===========
 
-    - Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  J. Magn. Reson., 6, 89-105.  (U{DOI: 10.1016/0022-2364(72)90090-X<http://dx.doi.org/10.1016/0022-2364(72)90090-X>}).
+This module is for the function, gradient and Hessian of the U{CR72<http://wiki.nmr-relax.com/CR72>} and U{CR72 full<http://wiki.nmr-relax.com/CR72_full>} models.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  I{J. Magn. Reson.}, B{6}, 89-105.  (U{DOI: 10.1016/0022-2364(72)90090-X<http://dx.doi.org/10.1016/0022-2364(72)90090-X>}).
+
+Equations
+=========
 
 The equation used is::
 
@@ -45,7 +57,13 @@ where::
 
     zeta = 2delta_omega (R2A0 - R2B0 - pA.kex + pB.kex).
 
-kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states in ppm.  Importantly for the implementation of this model, it is assumed that R2A0 and R2B0 are identical.  This simplifies some of the equations to::
+kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states in ppm.
+
+
+CR72 model
+----------
+
+Importantly for the implementation of this model, it is assumed that R2A0 and R2B0 are identical.  This simplifies some of the equations to::
 
     R2eff = R20 + kex/2 - nu_cpmg.cosh^-1 (D+.cosh(eta+) - D-.cos(eta-) ,
 
@@ -54,6 +72,22 @@ where::
     Psi = kex^2 - delta_omega^2 ,
 
     zeta = -2delta_omega (pA.kex - pB.kex).
+
+
+Links
+=====
+
+More information on the CR72 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/CR72>},
+    - U{relax manual<http://www.nmr-relax.com/manual/reduced_CR72_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#CR72>}.
+
+More information on the CR72 full model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/CR72_full>},
+    - U{relax manual<http://www.nmr-relax.com/manual/full_CR72_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#CR72_full>}.
 """
 
 # Python module imports.
