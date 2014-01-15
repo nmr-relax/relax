@@ -21,11 +21,23 @@
 ###############################################################################
 
 # Module docstring.
-"""The Davis, Perlman and London (1994) 2-site fast exchange R1rho model.
+"""The Davis, Perlman and London (1994) 2-site fast exchange R1rho U{DPL94<http://wiki.nmr-relax.com/DPL94>} model.
 
-This module is for the function, gradient and Hessian of the DPL94 model.  The model is named after the reference:
+Description
+===========
 
-    - Davis, D. G., Perlman, M. E. and London, R. E. (1994).  Direct measurements of the dissociation-rate constant for inhibitor-enzyme complexes via the T1rho and T2 (CPMG) methods.  J. Magn. Reson, Series B, 104, 266-275.  (U{DOI: 10.1006/jmrb.1994.1084<http://dx.doi.org/10.1006/jmrb.1994.1084>})
+This module is for the function, gradient and Hessian of the U{DPL94<http://wiki.nmr-relax.com/DPL94>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Davis, D. G., Perlman, M. E. and London, R. E. (1994).  Direct measurements of the dissociation-rate constant for inhibitor-enzyme complexes via the T1rho and T2 (CPMG) methods.  I{J. Magn. Reson.}, Series B, B{104}, 266-275.  (U{DOI: 10.1006/jmrb.1994.1084<http://dx.doi.org/10.1006/jmrb.1994.1084>})
+
+Equations
+=========
 
 The equation used is::
 
@@ -38,6 +50,16 @@ where theta is the rotating frame tilt angle, and::
     phi_ex = pA * pB * delta_omega^2 ,
 
 kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_sl is the spin-lock field strength.
+
+
+Links
+=====
+
+More information on the DPL94 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/DPL94>},
+    - U{relax manual<http://www.nmr-relax.com/manual/DPL94_2_site_fast_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#DPL94>}.
 """
 
 # Python module imports.
