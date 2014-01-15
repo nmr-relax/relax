@@ -20,11 +20,30 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of CR72 model extended for MMQ CPMG data.
+"""This CR72 model extended for MMQ CPMG data, called the U{MMQ CR72<http://wiki.nmr-relax.com/MMQ_CR72>} model.
+
+Description
+===========
+
+This module is for the function, gradient and Hessian of the U{MMQ CR72<http://wiki.nmr-relax.com/MMQ_CR72>} model.
+
+
+References
+==========
 
 The Carver and Richards (1972) 2-site model for all times scales was extended for multiple-MQ (MMQ) CPMG data by:
 
-    - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  J. Am. Chem. Soc., 126, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
+    - Korzhnev, D. M., Kloiber, K., Kanelis, V., Tugarinov, V., and Kay, L. E. (2004).  Probing slow dynamics in high molecular weight proteins by methyl-TROSY NMR spectroscopy: Application to a 723-residue enzyme.  I{J. Am. Chem. Soc.}, B{126}, 3964-3973.  (U{DOI: 10.1021/ja039587i<http://dx.doi.org/10.1021/ja039587i>}).
+
+
+Links
+=====
+
+More information on the MMQ CR72 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/MMQ_CR72>},
+    - U{relax manual<http://www.nmr-relax.com/manual/MMQ_CR72_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#MMQ_CR72>}.
 """
 
 # Python module imports.
