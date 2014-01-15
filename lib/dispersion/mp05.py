@@ -41,12 +41,12 @@ The model is named after the reference:
 Code origin
 ===========
 
-The code was copied from the U{TP02<http://wiki.nmr-relax.com/TP02>} model, hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (U{https://gna.org/task/?7712<https://gna.org/task/?7712>}).  This is code from Nikolai Skrynnikov and Martin Tollinger.
+The code was copied from the U{TP02<http://wiki.nmr-relax.com/TP02>} model, hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (U{https://gna.org/task/?7712}).  This is code from Nikolai Skrynnikov and Martin Tollinger.
 
 Links to the copyright licensing agreements from all authors are:
 
-    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279<http://article.gmane.org/gmane.science.nmr.relax.devel/4279>},
-    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276<http://article.gmane.org/gmane.science.nmr.relax.devel/4276>}.
+    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279},
+    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276}.
 
 
 Links
