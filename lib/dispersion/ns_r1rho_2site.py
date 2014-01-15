@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,15 +22,30 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of 2-site Bloch-McConnell equations for R1rho-type experiments.
+"""The numerical solution for the 2-site Bloch-McConnell equations for R1rho-type data, the U{NS R1rho 2-site<http://wiki.nmr-relax.com/NS_R1rho_2-site>} model.
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+Description
+===========
+
+This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file U{https://gna.org/support/download.php?file_id=18404} attached to U{https://gna.org/task/?7712#comment5}).
+
+
+References
+==========
 
 The solution has been modified to use the from presented in:
 
-    - Korzhnev, D. M., Orekhov, V. Y., and Kay, L. E. (2005).  Off-resonance R(1rho) NMR
-studies of exchange dynamics in proteins with low spin-lock fields:  an application to a
-Fyn SH3 domain.  J. Am. Chem. Soc., 127, 713-721. (U{DOI: 10.1021/ja0446855<http://dx.doi.org/10.1021/ja0446855>}).
+    - Korzhnev, D. M., Orekhov, V. Y., and Kay, L. E. (2005).  Off-resonance R(1rho) NMR studies of exchange dynamics in proteins with low spin-lock fields:  an application to a Fyn SH3 domain.  I{J. Am. Chem. Soc.}, B{127}, 713-721. (U{DOI: 10.1021/ja0446855<http://dx.doi.org/10.1021/ja0446855>}).
+
+
+Links
+=====
+
+More information on the NS R1rho 2-site model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_R1rho_2-site>},
+    - U{relax manual<http://www.nmr-relax.com/manual/NS_2_site_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_R1rho_2-site>}.
 """
 
 # Dependency check module.
