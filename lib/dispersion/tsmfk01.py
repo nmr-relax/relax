@@ -22,13 +22,26 @@
 ###############################################################################
 
 # Module docstring.
-"""The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
-Applicable in the limit of slow exchange, when |R2A-R2B| << k_AB, kB << 1/tau_CP. R20A is the transverse relaxation rate of site A in the absence of exchange.
-2*tau_CP is is the time between successive 180 deg. pulses.
+"""The Tollinger et al (2001) 2-site very-slow exchange U{TSMFK01<http://wiki.nmr-relax.com/TSMFK01>} model.
 
-This module is for the function, gradient and Hessian of the TSMFK01 model.  The model is named after the reference:
+Description
+===========
 
-    - Martin Tollinger, Nikolai R. Skrynnikov, Frans A. A. Mulder, Julie D. Forman-Kay and Lewis E. Kay., (2001)  Slow Dynamics in Folded and Unfolded States of an SH3 Domain, J. Am. Chem. Soc., 2001, 123 (46) (U{DOI: 10.1021/ja011300z<http://dx.doi.org/10.1021/ja011300z>}).
+Applicable in the limit of slow exchange, range of microsecond to second time scale, when |R2A-R2B| << k_AB, kB << 1/tau_CP.  R20A is the transverse relaxation rate of site A in the absence of exchange.  2*tau_CP is is the time between successive 180 degree pulses.
+
+This module is for the function, gradient and Hessian of the U{TSMFK01<http://wiki.nmr-relax.com/TSMFK01>} model
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Tollinger, M., Skrynnikov, N. R., Mulder, F. A. A., Forman-Kay, J. D. and Kay, L. E. (2001).  Slow Dynamics in Folded and Unfolded States of an SH3 Domain, I{J. Am. Chem. Soc.}, B{123} (46) (U{DOI: 10.1021/ja011300z<http://dx.doi.org/10.1021/ja011300z>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -41,6 +54,16 @@ where::
     tau_CP = 1.0/(4*nu_cpmg) ,
 
 R20A is the transverse relaxation rate of site A in the absence of exchange, 2*tau_CP is is the time between successive 180 deg. pulses, k_AB is the forward chemical exchange rate constant, delta_omega is the chemical shift difference between the two states.
+
+
+Links
+=====
+
+More information on the TSMFK01 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/TSMFK01>},
+    - U{relax manual<http://www.nmr-relax.com/manual/TSMFK01_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#TSMFK01>}.
 """
 
 # Python module imports.
