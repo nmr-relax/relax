@@ -36,6 +36,7 @@ The model is named after the reference:
 
     - Carver, J. P. and Richards, R. E. (1972).  General 2-site solution for chemical exchange produced dependence of T2 upon Carr-Purcell pulse separation.  I{J. Magn. Reson.}, B{6}, 89-105.  (U{DOI: 10.1016/0022-2364(72)90090-X<http://dx.doi.org/10.1016/0022-2364(72)90090-X>}).
 
+
 Equations
 =========
 
