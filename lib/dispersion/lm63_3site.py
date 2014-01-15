@@ -21,14 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Luz and Meiboom (1963) 3-site fast exchange model.
+"""The Luz and Meiboom (1963) 3-site fast exchange U{LM63 3-site<http://wiki.nmr-relax.com/LM63_3-site>} model.
 
-This module is for the function, gradient and Hessian of the 'LM63 3-site' model.  The model is named after the reference:
+Description
+===========
 
-    - Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, J. Chem. Phys. 39, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+This module is for the function, gradient and Hessian of the U{LM63 3-site<http://wiki.nmr-relax.com/LM63_3-site>} model.
 
-The phi_ex_i and kex_i factors for the 3-site model were derived in the reference:
 
+References
+==========
+
+The model is named after the reference:
+
+    - Luz, S. and Meiboom S., (1963)  Nuclear Magnetic Resonance study of protolysis of trimethylammonium ion in aqueous solution - order of reaction with respect to solvent, I{J. Chem. Phys}. B{39}, 366-370 (U{DOI: 10.1063/1.1734254<http://dx.doi.org/10.1063/1.1734254>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -40,8 +50,17 @@ The equation used is::
 
 For deconvoluting the parameters, see the relax user manual or the reference:
 
-    - O'Connell, N. E., Grey, M. J., Tang, Y., Kosuri, P., Miloushev, V. Z., Raleigh, D. P., and Palmer, 3rd, A. G. (2009). Partially folded equilibrium intermediate of the villin headpiece HP67 defined by 13C relaxation dispersion. J. Biomol. NMR, 45(1-2), 85-98. (U{DOI: 10.1007/s10858-009-9340-0<http://dx.doi.org/10.1007/s10858-009-9340-0>}).
+    - O'Connell, N. E., Grey, M. J., Tang, Y., Kosuri, P., Miloushev, V. Z., Raleigh, D. P., and Palmer, 3rd, A. G. (2009). Partially folded equilibrium intermediate of the villin headpiece HP67 defined by 13C relaxation dispersion. I{J. Biomol. NMR}, B{45}(1-2), 85-98. (U{DOI: 10.1007/s10858-009-9340-0<http://dx.doi.org/10.1007/s10858-009-9340-0>}).
 
+
+Links
+=====
+
+More information on the LM63 3-site model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/LM63_3-site>},
+    - U{relax manual<http://www.nmr-relax.com/manual/LM63_3_site_fast_exchange_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#LM63_3-site>}.
 """
 
 # Python module imports.
