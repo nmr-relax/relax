@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,11 +22,36 @@
 ###############################################################################
 
 # Module docstring.
-"""This is the numeric solution for the 3-site Bloch-McConnell equations for mixed CPMG data types.
+"""The numeric solution for the 3-site Bloch-McConnell equations for MMQ CPMG data, the U{NS MMQ 3-site linear<http://wiki.nmr-relax.com/NS_MMQ_3-site_linear>} and U{NS MMQ 3-site<http://wiki.nmr-relax.com/NS_MMQ_3-site>} models.
 
-This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.  It uses the equations of:
+Description
+===========
 
-    - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  J. Am. Chem. Soc., 127, 15602-15611.  (doi:  http://dx.doi.org/10.1021/ja054550e).
+This handles proton-heteronuclear SQ, ZQ, DQ and MQ CPMG data.
+
+
+References
+==========
+
+It uses the equations of:
+
+    - Dmitry M. Korzhnev, Philipp Neudecker, Anthony Mittermaier, Vladislav Yu. Orekhov, and Lewis E. Kay (2005).  Multiple-site exchange in proteins studied with a suite of six NMR relaxation dispersion experiments: An application to the folding of a Fyn SH3 domain mutant.  I{J. Am. Chem. Soc.}, B{127}, 15602-15611.  (U{DOI: 10.1021/ja054550e<http://dx.doi.org/10.1021/ja054550e>}).
+
+
+Links
+=====
+
+More information on the NS MMQ 3-site linear model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_MMQ_3-site_linear>},
+    - U{relax manual<http://www.nmr-relax.com/manual/NS_MMQ_3_site_linear_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_MMQ_3-site_linear>}.
+
+More information on the NS MMQ 3-site model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_MMQ_3-site>},
+    - U{relax manual<http://www.nmr-relax.com/manual/NS_MMQ_3_site_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_MMQ_3-site>}.
 """
 
 # Python module imports.
