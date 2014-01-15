@@ -23,7 +23,7 @@
 ###############################################################################
 
 # Module docstring.
-"""The numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments, the U{NS CPMG 2-site 3D<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D>} model.
+"""The numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments, the U{NS CPMG 2-site 3D<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D>} and U{NS CPMG 2-site 3D full<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full>} models.
 
 Description
 ===========
@@ -45,6 +45,12 @@ More information on the NS CPMG 2-site 3D model can be found in the:
     - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D>},
     - U{relax manual<http://www.nmr-relax.com/manual/reduced_NS_2_site_3D_CPMG_model.html>},
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_3D>}.
+
+More information on the NS CPMG 2-site 3D full model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full>},
+    - U{relax manual<http://www.nmr-relax.com/manual/full_NS_2_site_3D_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_3D_full>}.
 """
 
 # Dependency check module.
