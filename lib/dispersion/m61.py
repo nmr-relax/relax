@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Sebastien Morin                                          #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,11 +21,24 @@
 ###############################################################################
 
 # Module docstring.
-"""The Meiboom (1961) 2-site fast exchange R1rho model.
+"""The Meiboom (1961) 2-site fast exchange R1rho U{M61<http://wiki.nmr-relax.com/M61>} model.
 
-This module is for the function, gradient and Hessian of the M61 model.  The model is named after the reference:
+Description
+===========
 
-    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  J. Chem. Phys., 34, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+This module is for the function, gradient and Hessian of the U{M61<http://wiki.nmr-relax.com/M61>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Meiboom S. (1961).  Nuclear magnetic resonance study of the proton transfer in water.  I{J. Chem. Phys.}, B{34}, 375-388.  (U{DOI: 10.1063/1.1700960<http://dx.doi.org/10.1063/1.1700960>}).
+
+
+Equations
+=========
 
 The equation used is::
 
@@ -38,6 +51,16 @@ where::
     phi_ex = pA * pB * delta_omega^2 ,
 
 R1rho' is the R1rho value in the absence of exchange, kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, delta_omega is the chemical shift difference between the two states, and omega_1 is the spin-lock field strength.
+
+
+Links
+=====
+
+More information on the M61 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/M61>},
+    - U{relax manual<http://www.nmr-relax.com/manual/M61_2_site_fast_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61>}.
 """
 
 # Python module imports.
