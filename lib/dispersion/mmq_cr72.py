@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Module docstring.
-"""This CR72 model extended for MMQ CPMG data, called the U{MMQ CR72<http://wiki.nmr-relax.com/MMQ_CR72>} model.
+"""The CR72 model extended for MMQ CPMG data, called the U{MMQ CR72<http://wiki.nmr-relax.com/MMQ_CR72>} model.
 
 Description
 ===========
