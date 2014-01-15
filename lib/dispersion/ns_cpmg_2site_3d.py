@@ -34,7 +34,7 @@ The function uses an explicit matrix that contains relaxation, exchange and chem
 Code origin
 ===========
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates as optimization function number 1 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138<http://thread.gmane.org/gmane.science.nmr.relax.devel/4138>}, U{https://gna.org/task/?7712#comment2<https://gna.org/task/?7712#comment2>} and U{https://gna.org/support/download.php?file_id=18262<https://gna.org/support/download.php?file_id=18262>}).
+This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates as optimization function number 1 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138}, U{https://gna.org/task/?7712#comment2} and U{https://gna.org/support/download.php?file_id=18262}).
 
 
 Links
