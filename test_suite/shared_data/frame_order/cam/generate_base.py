@@ -77,7 +77,7 @@ class Main:
         self._back_calc()
 
         # Save a state file for debugging.
-        self.interpreter.state.save('generate_distribution', force=True)
+        self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
 
 
     def _back_calc(self):
@@ -124,7 +124,7 @@ class Main:
             self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
 
         # Store the state.
-        self.interpreter.state.save('back_calc', force=True)
+        self.interpreter.state.save('back_calc', dir=self.save_path, force=True)
 
 
     def _backup_pos(self):
