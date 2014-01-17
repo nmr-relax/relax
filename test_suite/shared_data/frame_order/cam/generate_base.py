@@ -26,18 +26,20 @@
 from math import pi
 from numpy import array, cross, dot, float16, float64, transpose, zeros
 from numpy.linalg import norm
+from os import getcwd, sep
 import sys
 
 # relax module imports.
-from pipe_control.angles import wrap_angles
 from lib.frame_order.format import print_frame_order_2nd_degree
-from pipe_control.mol_res_spin import spin_loop
-from pipe_control.interatomic import interatomic_loop
 from lib.geometry.coord_transform import cartesian_to_spherical
-from lib.linear_algebra.kronecker_product import kron_prod
 from lib.geometry.rotations import axis_angle_to_R, R_to_euler_zyz
-from prompt.interpreter import Interpreter
 from lib.io import open_write_file
+from lib.linear_algebra.kronecker_product import kron_prod
+from pipe_control.angles import wrap_angles
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import spin_loop
+from prompt.interpreter import Interpreter
+from status import Status; status = Status()
 
 
 class Main:
@@ -45,8 +47,18 @@ class Main:
     PIVOT = array([ 37.254, 0.5, 16.7465])
     COM = array([ 26.83678091, -12.37906417,  28.34154128])
 
-    def run(self):
-        """Generate the distribution and alignment data."""
+    def run(self, save_path=None):
+        """Generate the distribution and alignment data.
+        
+        @keyword save_path: The path to place the files into.  If set to None, then the current path will be used.
+        @type save_path:    None or str
+        """
+
+        # The paths to the files.
+        self.path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep
+        self.save_path = save_path
+        if self.save_path == None:
+            self.save_path = getcwd()
 
         # Load the interpreter.
         self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
@@ -65,14 +77,14 @@ class Main:
         self._back_calc()
 
         # Save a state file for debugging.
-        self.interpreter.state.save('generate_distribution', force=True)
+        self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
 
 
     def _back_calc(self):
         """Calculate the RDCs and PCSs expected for the structural distribution."""
 
         # Load the tensors.
-        self.interpreter.script('../tensors.py')
+        self.interpreter.script(self.path+'tensors.py')
 
         # Set up the model.
         self.interpreter.n_state_model.select_model(model='fixed')
@@ -108,11 +120,11 @@ class Main:
                 spin.pcs_err[tag] = 0.1
 
             # Write the data.
-            self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], bc=True, force=True)
-            self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], bc=True, force=True)
+            self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
+            self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
 
         # Store the state.
-        self.interpreter.state.save('back_calc', force=True)
+        self.interpreter.state.save('back_calc', dir=self.save_path, force=True)
 
 
     def _backup_pos(self):
@@ -138,7 +150,7 @@ class Main:
         self.interpreter.pipe.create('distribution', 'N-state')
 
         # Load the original PDB.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir='..', set_mol_name='C-dom')
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom')
 
         # Set up the 15N and 1H spins.
         self.interpreter.structure.load_spins(spin_id='@N', ave_pos=False)
@@ -159,7 +171,7 @@ class Main:
         self.daeg = zeros((9, 9), float64)
 
         # Open the output files.
-        rot_file = open_write_file('rotations', compress_type=1, force=True)
+        rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
@@ -196,7 +208,7 @@ class Main:
         self.daeg = self.daeg / self.N
 
         # Write out the frame order matrix.
-        file = open('frame_order_matrix', 'w')
+        file = open(self.save_path+sep+'frame_order_matrix', 'w')
         print_frame_order_2nd_degree(self.daeg, file=file)
 
 
@@ -204,7 +216,7 @@ class Main:
         """Print out of the full system."""
 
         # Open the file.
-        file = open('axis_system', 'w')
+        file = open(self.save_path+sep+'axis_system', 'w')
 
         # Header.
         file.write("\n")
@@ -243,12 +255,12 @@ class Main:
 
         # A spinner.
         if i % a == 0:
-            sys.__stderr__.write('\b%s' % chars[i%4])
-            sys.__stderr__.flush()
+            sys.stderr.write('\b%s' % chars[i%4])
+            sys.stderr.flush()
 
         # Dump the progress.
         if i % b == 0:
-            sys.__stderr__.write('\b%i\n' % i)
+            sys.stderr.write('\b%i\n' % i)
 
 
     def axes_to_pdb_full(self):
@@ -274,7 +286,7 @@ class Main:
         self.interpreter.structure.connect_atom(index1=0, index2=3)
 
         # Write out the PDB.
-        self.interpreter.structure.write_pdb('axis.pdb', compress_type=0, force=True)
+        self.interpreter.structure.write_pdb('axis.pdb', dir=self.save_path, compress_type=0, force=True)
 
 
     def axes_to_pdb_main_axis(self):
@@ -294,7 +306,7 @@ class Main:
         self.interpreter.structure.connect_atom(index1=0, index2=1)
 
         # Write out the PDB.
-        self.interpreter.structure.write_pdb('axis.pdb', compress_type=0, force=True)
+        self.interpreter.structure.write_pdb('axis.pdb', dir=self.save_path, compress_type=0, force=True)
 
 
     def build_axes_alt(self):

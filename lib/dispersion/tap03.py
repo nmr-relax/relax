@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,18 +22,41 @@
 ###############################################################################
 
 # Module docstring.
-"""This is the Trott, Abergel and Palmer (2003) off-resonance 2-site exchange R1rho model.
+"""The Trott, Abergel and Palmer (2003) off-resonance 2-site exchange R1rho U{TAP03<http://wiki.nmr-relax.com/TAP03>} model.
 
-This module is for the function, gradient and Hessian of the TAP03 model.  The model is named after the reference:
+Description
+===========
 
-    - Trott, O., Abergel, D., and Palmer, A. (2003).  An average-magnetization analysis of R1rho relaxation outside of the fast exchange.  Mol. Phys., 101, 753-763.  (U{DOI: 10.1080/0026897021000054826<http://dx.doi.org/10.1080/0026897021000054826>}).
+This module is for the function, gradient and Hessian of the U{TAP03<http://wiki.nmr-relax.com/TAP03>} model.
 
-The code was copied from the TP02 model (via the MP05 model), hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (https://gna.org/task/?7712).  This is code from Nikolai Skrynnikov and Martin Tollinger.
+
+References
+==========
+
+The model is named after the reference:
+
+    - Trott, O., Abergel, D., and Palmer, A. (2003).  An average-magnetization analysis of R1rho relaxation outside of the fast exchange.  I{Mol. Phys.}, B{101}, 753-763.  (U{DOI: 10.1080/0026897021000054826<http://dx.doi.org/10.1080/0026897021000054826>}).
+
+
+Code origin
+===========
+
+The code was copied from the U{TP02<http://wiki.nmr-relax.com/TP02>} model (via the U{MP05<http://wiki.nmr-relax.com/MP05>} model), hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (U{https://gna.org/task/?7712}).  This is code from Nikolai Skrynnikov and Martin Tollinger.
 
 Links to the copyright licensing agreements from all authors are:
 
-    - Nikolai Skrynnikov, http://article.gmane.org/gmane.science.nmr.relax.devel/4279
-    - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
+    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279},
+    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276}.
+
+
+Links
+=====
+
+More information on the TAP03 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/TAP03>},
+    - U{relax manual<http://www.nmr-relax.com/manual/TAP03_2_site_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#TAP03>}.
 """
 
 # Python module imports.

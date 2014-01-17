@@ -20,9 +20,9 @@
 ###############################################################################
 
 # Package docstring.
-"""The relax test-suite shared data."""
+"""The relax test-suite shared data for the Frame Order theories."""
 
 
 __all__ = [
-    'frame_order'
+    'cam'
 ]

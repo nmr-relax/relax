@@ -5,7 +5,7 @@
 # Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,26 +25,33 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments.
+"""The numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments, the U{NS CPMG 2-site expanded<http://wiki.nmr-relax.com/NS_CPMG_2-site_expanded>} model.
+
+Description
+===========
 
 This function is exact, just as the explicit Bloch-McConnell numerical treatments.  It comes from a Maple derivation based on the Bloch-McConnell equations.  It is much faster than the numerical Bloch-McConnell solution.  It was derived by Nikolai Skrynnikov and is provided with his permission.
 
-The code originates as optimization function number 5 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see http://thread.gmane.org/gmane.science.nmr.relax.devel/4138, https://gna.org/task/?7712#comment2 and https://gna.org/support/download.php?file_id=18262).
+
+Code origin
+===========
+
+The code originates as optimization function number 5 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138}, U{https://gna.org/task/?7712#comment2} and U{https://gna.org/support/download.php?file_id=18262}).
 
 Links to the copyright licensing agreements from all authors are:
 
-    - Nikolai Skrynnikov, http://article.gmane.org/gmane.science.nmr.relax.devel/4279
-    - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
-    - Paul Schanda, http://article.gmane.org/gmane.science.nmr.relax.devel/4271
-    - Mathilde Lescanne, http://article.gmane.org/gmane.science.nmr.relax.devel/4138
-    - Dominique Marion, http://article.gmane.org/gmane.science.nmr.relax.devel/4157
+    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279},
+    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276},
+    - Paul Schanda, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4271},
+    - Mathilde Lescanne, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4138},
+    - Dominique Marion, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4157}.
 
 The complex path of the code from the original Maple to relax can be described as:
 
-    - p3.analytical (Maple input text file at https://gna.org/task/?7712#comment8),
+    - p3.analytical (Maple input text file at U{https://gna.org/task/?7712#comment8}),
     - Automatically generated FORTRAN,
-    - Manually converted to Matlab by Nikolai (sim_all.tar at https://gna.org/task/?7712#comment5)
-    - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at https://gna.org/task/?7712#comment1)
+    - Manually converted to Matlab by Nikolai (sim_all.tar at U{https://gna.org/task/?7712#comment5})
+    - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at U{https://gna.org/task/?7712#comment1})
     - Converted into Python code for relax (here).
 
 For reference, the original Maple script written by Nikolai for the expansion of the equations is::
@@ -215,6 +222,16 @@ Also for reference, the Matlab code from Nikolai and Martin manually converted f
         residual=sum(sum((y-Rcalc).^2)); 
         rms=sqrt(residual/(size(y,1)*size(y,2)));
     end
+
+
+Links
+=====
+
+More information on the NS CPMG 2-site expanded model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_expanded>},
+    - U{relax manual<http://www.nmr-relax.com/manual/NS_2_site_expanded_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_expanded>}.
 """
 
 # Dependency check module.

@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,18 +22,41 @@
 ###############################################################################
 
 # Module docstring.
-"""This Miloushev and Palmer (2005) 2-site exchange R1rho model.
+"""The Miloushev and Palmer (2005) 2-site exchange R1rho U{MP05<http://wiki.nmr-relax.com/MP05>} model.
 
-This module is for the function, gradient and Hessian of the MP05 model.  The model is named after the reference:
+Description
+===========
+
+This module is for the function, gradient and Hessian of the U{MP05<http://wiki.nmr-relax.com/MP05>} model.
+
+
+References
+==========
+
+The model is named after the reference:
 
     - Miloushev V. Z. and Palmer A. (2005).  R1rho relaxation for two-site chemical exchange:  General approximations and some exact solutions.  J. Magn. Reson., 177, 221-227.  (U{DOI: 10.1016/j.jmr.2005.07.023<http://dx.doi.org/10.1016/j.jmr.2005.07.023>}).
 
-The code was copied from the TP02 model, hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (https://gna.org/task/?7712).  This is code from Nikolai Skrynnikov and Martin Tollinger.
+
+Code origin
+===========
+
+The code was copied from the U{TP02<http://wiki.nmr-relax.com/TP02>} model, hence it originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (U{https://gna.org/task/?7712}).  This is code from Nikolai Skrynnikov and Martin Tollinger.
 
 Links to the copyright licensing agreements from all authors are:
 
-    - Nikolai Skrynnikov, http://article.gmane.org/gmane.science.nmr.relax.devel/4279
-    - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
+    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279},
+    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276}.
+
+
+Links
+=====
+
+More information on the MP05 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/MP05>},
+    - U{relax manual<http://www.nmr-relax.com/manual/MP05_2_site_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#MP05>}.
 """
 
 # Python module imports.

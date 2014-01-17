@@ -16,6 +16,13 @@
 
 Relaxation dispersion is the experimental modulation of chemical exchange relaxation.  For the $\Ronerho$-type experiment in which the nucleus of interest is spin-locked, either the spin-lock field strength or the offset between the spin-lock pulse and the chemical shift of the spins is used to modulate the exchange.  For the CPMG-type experiment, varying the time between the pulses modules the exchange.  Both experiment types are handled by relax.
 
+The primary reference for the relaxation dispersion implemented in relax is:
+\begin{itemize}
+\item \bibentry{Morin14}
+\end{itemize}
+
+For other citations, please see the citation chapter on page~\pageref{ch: citations}.
+
 
 % The models.
 %~~~~~~~~~~~~
@@ -62,7 +69,7 @@ The modelling of relaxation dispersion data can hence be categorised into these 
 \label{sect: dispersion: implemented models}
 
 A number of analytic and numeric models are supported within relax.
-These cover single quantum (SQ) CPMG-type, single quantum (SQ) $\Ronerho$-type, and combined proton-heteronuclear single quantum (SQ), zero quantum (ZQ), double quantum (DQ) and multi quantum (MQ) CPMG-type experiments. 
+These cover single quantum (SQ) CPMG-type, combined proton-heteronuclear single quantum (SQ), zero quantum (ZQ), double quantum (DQ) and multi quantum (MQ) CPMG-type experiments, and $\Ronerho$-type.
 If the model you are interested in is not available, please see Section~\ref{sect: dispersion: model tutorial} on page~\pageref{sect: dispersion: model tutorial} for how you can add new models to relax.
 
 Models which are independent of the experiment type include:
@@ -80,7 +87,7 @@ For the SQ CPMG-type experiments, the analytic models currently supported are:
 \item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.  The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.  See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
 \item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
 \item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
-\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \Phiex, \pA.\dw^2, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
+\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
 \item[`TSMFK01':]\index{relaxation dispersion!TSMFK01 model}  The \citet{Tollinger01}  2-site very-slow exchange model for time scales within range of microsecond to second time scale.
 Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.  $2*\taucpmg$ is the time between successive 180 degree pulses. Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.  See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
 \end{description}
@@ -204,6 +211,17 @@ Both $\Rtwoeff$/$\Ronerho$ and the initial peak intensity $I_0$ are optimised us
 Monte Carlo simulations are used to obtain the parameter errors.
 
 
+% Links.
+\subsubsection{Links}
+
+More information about the R2eff model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/R2eff},
+\item the API documentation (for exponential curves) at \url{http://www.nmr-relax.com/api/3.1/specific\_analyses.relax\_disp.optimisation-module.html#back\_calc\_r2eff},
+\item the API documentation (for the 2-point fit) at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.two\_point-module.html#calc\_two\_point\_r2eff},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#R2eff}.
+\end{itemize}
+
 
 % No Rex model.
 %~~~~~~~~~~~~~~
@@ -216,6 +234,13 @@ This model is provided for model selection purposes.
 In combination with frequentist methods, such as AIC\index{model selection!AIC}, or Bayesian methods\index{model selection!Bayesian} it can show if the presence of chemical exchange is statistically significant.
 Optimisation is still required as one $\Rtwozero$ value per magnetic field strength will be fit to the measured data for each spin system.
 It is selected by setting the model to `No Rex'.
+
+More information about the No Rex model is available from the:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/No\_Rex},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/target\_functions.relax\_disp.Dispersion-class.html#func\_NOREX},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#No\_Rex}.
+\end{itemize}
 
 
 
@@ -262,6 +287,13 @@ The equation for the 2-site exchange process can be expressed as
 The reference for this equation is:
 \begin{itemize}
 \item \bibentry{LuzMeiboom63}
+\end{itemize}
+
+More information about the LM63 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/LM63},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.lm63-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#LM63}.
 \end{itemize}
 
 
@@ -316,6 +348,12 @@ with
 
 The parameter deconvolutions for this model can be performed after a relax analysis, if desired.
 
+More information about the LM63 3-site model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/LM63\_3-site},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.lm63\_3site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#LM63\_3-site}.
+\end{itemize}
 
 
 % Full CR72 model.
@@ -348,6 +386,12 @@ The reference for this equation is:
 \item \bibentry{CarverRichards72}
 \end{itemize}
 
+More information about the CR72 full model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/CR72\_full},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.cr72-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#CR72\_full}.
+\end{itemize}
 
 
 % CR72 model.
@@ -373,6 +417,13 @@ where $D_\pm$ and $\eta_\pm$ are unchanged and
 
 As mentioned in the `CR72 full' model section, this model is not accurate when the motional process is very slow.
 In that case please use the `TSMFK01' model in Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model} instead.
+
+More information about the CR72 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/CR72},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.cr72-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#CR72}.
+\end{itemize}
 
 
 % IT99 model.
@@ -404,6 +455,12 @@ The reference for this equation is:
 \item \bibentry{IshimaTorchia99}
 \end{itemize}
 
+More information about the IT99 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/IT99},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.it99-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#IT99}.
+\end{itemize}
 
 
 % TSMFK01 model.
@@ -412,8 +469,6 @@ The reference for this equation is:
 \subsection{The TSMFK01 2-site CPMG model}
 \label{sect: dispersion: TSMFK01 model}
 \index{relaxation dispersion!TSMFK01 model|textbf}
-
-
 
 This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after \citet{Tollinger01}.  It is selected by setting the model to `TSMFK01'.  A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e., independent of the rate of exchange).  
 
@@ -425,6 +480,13 @@ The equation is:
 The reference for this equation is:
 \begin{itemize}
 \item \bibentry{Tollinger01}
+\end{itemize}
+
+More information about the TSMFK01 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/TSMFK01},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.tsmfk01-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#TSMFK01}.
 \end{itemize}
 
 
@@ -531,6 +593,13 @@ The reference for this model is:
 \item \bibentry{Tollinger01}
 \end{itemize}
 
+More information about the NS CPMG 2-site expanded model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_CPMG\_2-site\_expanded},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_cpmg\_2site\_expanded-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_CPMG\_2-site\_expanded}.
+\end{itemize}
+
 
 % Full NS CPMG 2-site 3D model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -542,6 +611,13 @@ The reference for this model is:
 This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS CPMG 2-site 3D full'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+More information about the NS CPMG 2-site 3D full model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_CPMG\_2-site\_3D\_full},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_cpmg\_2site\_3d-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_CPMG\_2-site\_3D\_full}.
+\end{itemize}
 
 
 % Reduced NS CPMG 2-site 3D model.
@@ -555,6 +631,13 @@ This is the numerical model for 2-site exchange using 3D magnetisation vectors, 
 It is selected by setting the model to `NS CPMG 2-site 3D'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
+More information about the NS CPMG 2-site 3D model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_CPMG\_2-site\_3D},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_cpmg\_2site\_3d-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_CPMG\_2-site\_3D}.
+\end{itemize}
+
 
 % Full NS CPMG 2-site star model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -567,6 +650,13 @@ This is the numerical model for 2-site exchange using complex conjugate matrices
 It is selected by setting the model to `NS CPMG 2-site star full'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
+More information about the NS CPMG 2-site star full model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_CPMG\_2-site\_star\_full},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_cpmg\_2site\_star-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_CPMG\_2-site\_star\_full}.
+\end{itemize}
+
 
 % Reduced NS CPMG 2-site star model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -578,6 +668,13 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 This is the numerical model for 2-site exchange using complex conjugate matrices, whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
 It is selected by setting the model to `NS CPMG 2-site star'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
+
+More information about the NS CPMG 2-site star model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_CPMG\_2-site\_star},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_cpmg\_2site\_star-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_CPMG\_2-site\_star}.
+\end{itemize}
 
 
 
@@ -643,6 +740,13 @@ The references for this model are:
 \item \bibentry{Korzhnev04a}
 \item \bibentry{Korzhnev04b}
 \item \bibentry{Korzhnev05b}
+\end{itemize}
+
+More information about the MMQ CR72 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/MMQ\_CR72},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.mmq\_cr72-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#MMQ\_CR72}.
 \end{itemize}
 
 
@@ -771,6 +875,13 @@ The references for this model are:
 \item \bibentry{Korzhnev05b}
 \end{itemize}
 
+More information about the NS MMQ 2-site model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_MMQ\_2-site},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_mmq\_2site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_MMQ\_2-site}.
+\end{itemize}
+
 
 % NS MMQ 3-site linear model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -847,6 +958,13 @@ The $\mathbf{m_j}$ matrices are
 
 For the model, the assumption $\RtwozeroA = \RtwozeroB = \RtwozeroC = \Rtwozero$ is made.
 
+More information about the NS MMQ 3-site linear model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_MMQ\_3-site\_linear},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_mmq\_3site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_MMQ\_3-site\_linear}.
+\end{itemize}
+
 
 % NS MMQ 3-site model.
 %~~~~~~~~~~~~~~~~~~~~~
@@ -912,6 +1030,13 @@ The $\mathbf{m_j}$ matrices for this model are
 \end{align}
 \end{subequations}
 
+More information about the NS MMQ 3-site model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_MMQ\_3-site},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_mmq\_3site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_MMQ\_3-site}.
+\end{itemize}
+
 
 
 % The analytic R1rho models.
@@ -943,6 +1068,13 @@ The reference for this equation is:
 \item \bibentry{Meiboom61}
 \end{itemize}
 
+More information about the M61 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/M61},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.m61-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#M61}.
+\end{itemize}
+
 
 % M61 skew model.
 %~~~~~~~~~~~~~~~~
@@ -960,6 +1092,13 @@ The equation for the exchange process is
 
 Care must be taken as this model appears to have infinite lines of solutions -- $\pA$ and $\dw$ are convoluted.
 Hence this model is disabled in the dispersion auto-analysis.
+
+More information about the M61 skew model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/M61\_skew},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.m61b-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#M61\_skew}.
+\end{itemize}
 
 
 % DPL94 model.
@@ -981,6 +1120,13 @@ The equation for the exchange process is
 where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
 \begin{itemize}
 \item \bibentry{Davis94}
+\end{itemize}
+
+More information about the DPL94 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/DPL94},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.dpl94-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#DPL94}.
 \end{itemize}
 
 
@@ -1020,6 +1166,13 @@ The reference for this equation is:
 \item \bibentry{TrottPalmer02}
 \end{itemize}
 
+More information about the TP02 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/TP02},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.tp02-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#TP02}.
+\end{itemize}
+
 
 % TAP03 model.
 %~~~~~~~~~~~~
@@ -1056,6 +1209,13 @@ The reference for this equation is:
 \item \bibentry{Trott03}
 \end{itemize}
 
+More information about the TAP03 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/TAP03},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.tap03-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#TAP03}.
+\end{itemize}
+
 
 % MP05 model.
 %~~~~~~~~~~~~
@@ -1079,6 +1239,13 @@ This model supersedes both the `TP02' and `TAP03' models.
 The reference for this equation is:
 \begin{itemize}
 \item \bibentry{MiloushevPalmer05}
+\end{itemize}
+
+More information about the MP05 model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/MP05},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.mp05-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#MP05}.
 \end{itemize}
 
 
@@ -1128,6 +1295,13 @@ The relaxation evolution matrix is defined as
 \end{equation}
 
 where $\delta_{A,B}$ is defined in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
+
+More information about the NS R1rho 2-site model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_R1rho\_2-site},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_r1rho\_2site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_R1rho\_2-site}.
+\end{itemize}
 
 
 % NS R1rho 3-site model.
@@ -1208,6 +1382,13 @@ The relaxation evolution matrix is defined as
 where $\delta_{A,B,C}$ are defined as in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
 For the model, the assumptions $\RonerhoprimeA$ = $\RonerhoprimeB$ = $\RonerhoprimeC$ = $\Ronerhoprime$ and $\RoneA$ = $\RoneB$ = $\RoneC$ = $\Rone$ have been made.
 
+More information about the NS R1rho 3-site model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_R1rho\_3-site},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_r1rho\_3site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_R1rho\_3-site}.
+\end{itemize}
+
 
 % NS R1rho 3-site linear model.
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1265,6 +1446,13 @@ The equations are the same as for the `NS R1rho 3-site' model except for the rel
 
 where $\delta_{A,B,C}$ are defined as in Equations~\ref{eq: deltaA} and~\ref{eq: deltaB}.
 For the model, the assumptions $\RonerhoprimeA$ = $\RonerhoprimeB$ = $\RonerhoprimeC$ = $\Ronerhoprime$ and  $\RoneA$ = $\RoneB$ = $\RoneC$ = $\Rone$ have been made.
+
+More information about the NS R1rho 3-site linear model is available from:
+\begin{itemize}
+\item the relax wiki at \url{http://wiki.nmr-relax.com/NS\_R1rho\_3-site\_linear},
+\item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.ns\_r1rho\_3site-module.html},
+\item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#NS\_R1rho\_3-site\_linear}.
+\end{itemize}
 
 
 

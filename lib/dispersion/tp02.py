@@ -2,7 +2,7 @@
 #                                                                             #
 # Copyright (C) 2000-2001 Nikolai Skrynnikov                                  #
 # Copyright (C) 2000-2001 Martin Tollinger                                    #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,14 +22,41 @@
 ###############################################################################
 
 # Module docstring.
-"""This Trott and Palmer (2002) 2-site exchange R1rho model.
+"""The Trott and Palmer (2002) 2-site exchange R1rho U{TP02<http://wiki.nmr-relax.com/TP02>} model.
 
-The code originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (https://gna.org/task/?7712).  This is code from Nikolai Skrynnikov and Martin Tollinger.
+Description
+===========
+
+This module is for the function, gradient and Hessian of the U{TP02<http://wiki.nmr-relax.com/TP02>} model.
+
+
+References
+==========
+
+The model is named after the reference:
+
+    - Trott, O. and Palmer, 3rd, A. G. (2002). R1rho relaxation outside of the fast-exchange limit. I{J. Magn. Reson.}, B{154}(1), 157-160. (U{DOI: 10.1006/jmre.2001.2466<http://dx.doi.org/10.1006/jmre.2001.2466>}).
+
+
+Code origin
+===========
+
+The code originates as the funTrottPalmer.m Matlab file from the sim_all.tar file attached to task #7712 (U{https://gna.org/task/?7712}).  This is code from Nikolai Skrynnikov and Martin Tollinger.
 
 Links to the copyright licensing agreements from all authors are:
 
-    - Nikolai Skrynnikov, http://article.gmane.org/gmane.science.nmr.relax.devel/4279
-    - Martin Tollinger, http://article.gmane.org/gmane.science.nmr.relax.devel/4276
+    - Nikolai Skrynnikov, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4279},
+    - Martin Tollinger, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4276}.
+
+
+Links
+=====
+
+More information on the TP02 model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/TP02>},
+    - U{relax manual<http://www.nmr-relax.com/manual/TP02_2_site_exchange_R1_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#TP02>}.
 """
 
 # Python module imports.

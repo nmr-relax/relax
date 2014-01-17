@@ -1270,15 +1270,21 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
         data[-1].append(interatom.spin_id1)
         data[-1].append(interatom.spin_id2)
 
+        # Handle the missing rdc_data_types variable.
+        data_type = None
+        if hasattr(interatom, 'rdc_data_types'):
+            data_type = interatom.rdc_data_types[align_id]
+
         # The value.
         if bc:
-            data[-1].append(repr(convert(interatom.rdc_bc[align_id], interatom.rdc_data_types[align_id], align_id)))
+            print interatom
+            data[-1].append(repr(convert(interatom.rdc_bc[align_id], data_type, align_id)))
         else:
-            data[-1].append(repr(convert(interatom.rdc[align_id], interatom.rdc_data_types[align_id], align_id)))
+            data[-1].append(repr(convert(interatom.rdc[align_id], data_type, align_id)))
 
         # The error.
         if hasattr(interatom, 'rdc_err') and align_id in interatom.rdc_err.keys():
-            data[-1].append(repr(convert(interatom.rdc_err[align_id], interatom.rdc_data_types[align_id], align_id)))
+            data[-1].append(repr(convert(interatom.rdc_err[align_id], data_type, align_id)))
         else:
             data[-1].append(repr(None))
 

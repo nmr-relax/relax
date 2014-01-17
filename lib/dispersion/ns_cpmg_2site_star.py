@@ -5,7 +5,7 @@
 # Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,11 +25,34 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments.
+"""The numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments, the U{NS CPMG 2-site star<http://wiki.nmr-relax.com/NS_CPMG_2-site_star>} and U{NS CPMG 2-site star full<http://wiki.nmr-relax.com/NS_CPMG_2-site_star_full>} models.
 
-The function uses an explicit matrix that contains relaxation, exchange and chemical shift terms. It does the 180deg pulses in the CPMG train with conjugate complex matrices.  The approach of Bloch-McConnell can be found in chapter 3.1 of Palmer, A. G. Chem Rev 2004, 104, 3623-3640.  This function was written, initially in MATLAB, in 2010.
+Description
+===========
 
-The code was submitted at http://thread.gmane.org/gmane.science.nmr.relax.devel/4132 by Paul Schanda.
+The function uses an explicit matrix that contains relaxation, exchange and chemical shift terms. It does the 180deg pulses in the CPMG train with conjugate complex matrices.  The approach of Bloch-McConnell can be found in chapter 3.1 of Palmer, A. G. 2004 I{Chem. Rev.}, B{104}, 3623-3640.  This function was written, initially in MATLAB, in 2010.
+
+
+Code origin
+===========
+
+The code was submitted at U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4132} by Paul Schanda.
+
+
+Links
+=====
+
+More information on the NS CPMG 2-site star model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_star>},
+    - U{relax manual<http://www.nmr-relax.com/manual/reduced_NS_2_site_star_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_star>}.
+
+More information on the NS CPMG 2-site star full model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_star_full>},
+    - U{relax manual<http://www.nmr-relax.com/manual/full_NS_2_site_star_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_star_full>}.
 """
 
 # Dependency check module.

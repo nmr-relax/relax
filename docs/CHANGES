@@ -1,3 +1,50 @@
+Version 3.1.3
+(16 January 2014, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.1.3
+
+    Features:
+        N/A
+
+
+    Changes:
+        * Fix for the parameters listed for the IT99 dispersion model in the manual.  
+        * Improvements and addition of many links to the lib.dispersion.cr72 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.cr72-module.html.  
+        * Spacing fix for the lib.dispersion.cr72 module docstring.  
+        * Improvements and addition of many links to the lib.dispersion.dpl94 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.dpl94-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.it99 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.it99-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.lm63_3site API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.lm63_3site-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.lm63 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.lm63-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.m61b API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.m61b-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.m61 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.m61-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.mmq_cr72 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.mmq_cr72-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.mp05 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.mp05-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.ns_cpmg_2site_3d API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_cpmg_2site_3d-module.html.  
+        * Epydoc URL simplifications.  
+        * Improvements and addition of many links to the lib.dispersion.ns_cpmg_2site_expanded API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_cpmg_2site_expanded-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.ns_cpmg_2site_star API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_cpmg_2site_star-module.html.  
+        * Added the 'NS CPMG 2-site 3D full' model to the lib.dispersion.ns_cpmg_2site_3d module docstring.  
+        * Improvements and addition of many links to the lib.dispersion.ns_mmq_2site API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_mmq_2site-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.ns_mmq_3site API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_mmq_3site-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.ns_r1rho_2site API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_r1rho_2site-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.ns_r1rho_3site API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.ns_r1rho_3site-module.html.  
+        * Small docstring edit for the lib.dispersion.mp05 module.  
+        * Improvements and addition of many links to the lib.dispersion.tap03 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.tap03-module.html.  
+        * Improvements and addition of many links to the lib.dispersion.tp02 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.tp02-module.html.  
+        * Epydoc URL simplifications in the lib.dispersion.mp05 module.  
+        * Epydoc docstring edit in the lib.dispersion.mmq_cr72 module.  
+        * Improvements and addition of many links to the lib.dispersion.tsmfk01 API documentation.  This is for the API documentation at http://www.nmr-relax.com/api/3.1/lib.dispersion.tsmfk01-module.html.  
+        * Copyright notice updates for the lib.dispersion modules changed today.  
+        * Added links to the relax wiki, API documentation, and relax website to all dispersion models in the manual.  This is to make it easier to find additional information about each of the models.
+        * Updated the author list for the submitted paper for the relaxation dispersion analysis.  
+        * Added the primary reference for relaxation dispersion in relax to the dispersion chapter of the manual.  This is the paper which is not published yet.  
+        * Removed the single quantum R1rho-type data reference in the introduction of the dispersion chapter of the manual.  This is redundant as R1rho data is always single quantum.
+
+
+    Bugfixes:
+        N/A
+
+
+
 Version 3.1.2
 (13 January 2014, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.1.2

@@ -3,7 +3,7 @@
 # Copyright (C) 2010-2013 Paul Schanda (https://gna.org/users/pasa)           #
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,11 +23,34 @@
 ###############################################################################
 
 # Module docstring.
-"""This function performs a numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments.
+"""The numerical fit of 2-site Bloch-McConnell equations for CPMG-type experiments, the U{NS CPMG 2-site 3D<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D>} and U{NS CPMG 2-site 3D full<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full>} models.
+
+Description
+===========
 
 The function uses an explicit matrix that contains relaxation, exchange and chemical shift terms.  It does the 180deg pulses in the CPMG train.  The approach of Bloch-McConnell can be found in chapter 3.1 of Palmer, A. G. Chem Rev 2004, 104, 3623-3640.  This function was written, initially in MATLAB, in 2010.
 
-This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates as optimization function number 1 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see http://thread.gmane.org/gmane.science.nmr.relax.devel/4138, https://gna.org/task/?7712#comment2 and https://gna.org/support/download.php?file_id=18262).
+
+Code origin
+===========
+
+This is the model of the numerical solution for the 2-site Bloch-McConnell equations.  It originates as optimization function number 1 from the fitting_main_kex.py script from Mathilde Lescanne, Paul Schanda, and Dominique Marion (see U{http://thread.gmane.org/gmane.science.nmr.relax.devel/4138}, U{https://gna.org/task/?7712#comment2} and U{https://gna.org/support/download.php?file_id=18262}).
+
+
+Links
+=====
+
+More information on the NS CPMG 2-site 3D model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D>},
+    - U{relax manual<http://www.nmr-relax.com/manual/reduced_NS_2_site_3D_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_3D>}.
+
+More information on the NS CPMG 2-site 3D full model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/NS_CPMG_2-site_3D_full>},
+    - U{relax manual<http://www.nmr-relax.com/manual/full_NS_2_site_3D_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_3D_full>}.
 """
 
 # Dependency check module.
