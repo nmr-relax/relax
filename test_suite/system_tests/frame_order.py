@@ -24,6 +24,7 @@ from math import pi
 import platform
 import numpy
 from os import sep
+from tempfile import mkdtemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -112,6 +113,9 @@ class Frame_order(SystemTestCase):
 
         # The path to the CaM scripts.
         self.cam_path = status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'cam'+sep
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
 
 
     def tearDown(self):
@@ -632,6 +636,13 @@ class Frame_order(SystemTestCase):
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
         self.check_chi2(0.080669539157379247)
+
+
+    def test_generate_rotor2_distribution(self):
+        """Generate the rotor2 distribution of CaM."""
+
+        # Execute the script.
+        self.interpreter.run(script_file=self.cam_path+'generate_rotor2_distribution.py')
 
 
     def fixme_test_model_free_rotor(self):
