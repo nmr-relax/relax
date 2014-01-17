@@ -42,8 +42,8 @@ from lib.io import open_write_file
 
 class Main:
     # The pivot and CoM for the CaM system.
-    pivot = array([ 37.254, 0.5, 16.7465])
-    com = array([ 26.83678091, -12.37906417,  28.34154128])
+    PIVOT = array([ 37.254, 0.5, 16.7465])
+    COM = array([ 26.83678091, -12.37906417,  28.34154128])
 
     def run(self):
         """Generate the distribution and alignment data."""
@@ -175,7 +175,7 @@ class Main:
             # Rotate the atomic position.
             for spin in spin_loop():
                 if hasattr(spin, 'pos'):
-                    spin.pos[i] = dot(self.R, (spin.orig_pos[0] - self.pivot)) + self.pivot
+                    spin.pos[i] = dot(self.R, (spin.orig_pos[0] - self.PIVOT)) + self.PIVOT
 
             # Rotate the NH vector.
             for interatom in interatomic_loop():
@@ -258,12 +258,12 @@ class Main:
         self.interpreter.pipe.create('axes', 'N-state')
 
         # The end points of the vectors.
-        end_pt_x = self.axes[:, 0] * norm(self.com - self.pivot) + self.pivot
-        end_pt_y = self.axes[:, 1] * norm(self.com - self.pivot) + self.pivot
-        end_pt_z = self.axes[:, 2] * norm(self.com - self.pivot) + self.pivot
+        end_pt_x = self.axes[:, 0] * norm(self.COM - self.PIVOT) + self.PIVOT
+        end_pt_y = self.axes[:, 1] * norm(self.COM - self.PIVOT) + self.PIVOT
+        end_pt_z = self.axes[:, 2] * norm(self.COM - self.PIVOT) + self.PIVOT
 
         # Add atoms for the system.
-        self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.pivot, element='C')
+        self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.PIVOT, element='C')
         self.interpreter.structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt_x, element='N')
         self.interpreter.structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt_y, element='N')
         self.interpreter.structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt_z, element='N')
@@ -284,10 +284,10 @@ class Main:
         self.interpreter.pipe.create('axes', 'N-state')
 
         # The end points of the vectors.
-        end_pt = self.axes[:, 2] * norm(self.com - self.pivot) + self.pivot
+        end_pt = self.axes[:, 2] * norm(self.COM - self.PIVOT) + self.PIVOT
 
         # Add atoms for the system.
-        self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.pivot, element='C')
+        self.interpreter.structure.add_atom(atom_name='C', res_name='AXE', res_num=1, pos=self.PIVOT, element='C')
         self.interpreter.structure.add_atom(atom_name='N', res_name='AXE', res_num=1, pos=end_pt, element='N')
 
         # Connect the atoms to form the vectors.
@@ -301,7 +301,7 @@ class Main:
         """An alternative axis system for the CaM system."""
 
         # The z-axis for the rotations (the pivot point to CoM axis).
-        axis_z = self.com - self.pivot
+        axis_z = self.COM - self.PIVOT
         axis_z = axis_z / norm(axis_z)
 
         # The y-axis (to check the torsion angle).
@@ -339,7 +339,7 @@ class Main:
         """A standard axis system for the CaM system with the z-axis along the pivot-com axis."""
 
         # The z-axis for the rotations (the pivot point to CoM axis).
-        axis_z = self.com - self.pivot
+        axis_z = self.COM - self.PIVOT
         axis_z = axis_z / norm(axis_z)
 
         # The y-axis (to check the torsion angle).
