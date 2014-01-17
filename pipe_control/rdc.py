@@ -1277,7 +1277,6 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # The value.
         if bc:
-            print interatom
             data[-1].append(repr(convert(interatom.rdc_bc[align_id], data_type, align_id)))
         else:
             data[-1].append(repr(convert(interatom.rdc[align_id], data_type, align_id)))
