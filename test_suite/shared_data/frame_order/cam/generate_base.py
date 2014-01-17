@@ -255,12 +255,12 @@ class Main:
 
         # A spinner.
         if i % a == 0:
-            sys.__stderr__.write('\b%s' % chars[i%4])
-            sys.__stderr__.flush()
+            sys.stderr.write('\b%s' % chars[i%4])
+            sys.stderr.flush()
 
         # Dump the progress.
         if i % b == 0:
-            sys.__stderr__.write('\b%i\n' % i)
+            sys.stderr.write('\b%i\n' % i)
 
 
     def axes_to_pdb_full(self):
