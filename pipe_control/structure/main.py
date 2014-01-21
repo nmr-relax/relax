@@ -1179,8 +1179,8 @@ def web_of_motion(file=None, dir=None, models=None, force=False):
 def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False):
     """The PDB writing function.
 
-    @keyword file:          The name of the PDB file to write.
-    @type file:             str
+    @keyword file:          The name of the PDB file to write.  This can also be a file instance.
+    @type file:             str or file instance
     @keyword dir:           The directory where the PDB file will be placed.  If set to None, then the file will be placed in the current directory.
     @type dir:              str or None
     @keyword model_num:     The model to place into the PDB file.  If not supplied, then all models will be placed into the file.
@@ -1198,15 +1198,17 @@ def write_pdb(file=None, dir=None, model_num=None, compress_type=0, force=False)
     if not hasattr(cdp, 'structure'):
         raise RelaxError("No structural data is present in the current data pipe.")
 
-    # The file path.
-    file_path = get_file_path(file, dir)
+    # Path handling.
+    if isinstance(file, str):
+        # The file path.
+        file = get_file_path(file, dir)
 
-    # Add '.pdb' to the end of the file path if it isn't there yet.
-    if not search(".pdb$", file_path):
-        file_path = file_path + '.pdb'
+        # Add '.pdb' to the end of the file path if it isn't there yet.
+        if not search(".pdb$", file):
+            file = file + '.pdb'
 
     # Open the file for writing.
-    file = open_write_file(file_path, compress_type=compress_type, force=force)
+    file = open_write_file(file, compress_type=compress_type, force=force)
 
     # Write the structures.
     cdp.structure.write_pdb(file, model_num=model_num)
