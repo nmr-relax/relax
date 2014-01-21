@@ -2358,12 +2358,6 @@ class Internal:
         # Validate the structural data.
         self.validate()
 
-        # Initialise record counts.
-        num_hetatm = 0
-        num_atom = 0
-        num_ter = 0
-        num_conect = 0
-
         # Print out.
         print("\nCreating the PDB records\n")
 
@@ -2562,6 +2556,11 @@ class Internal:
 
         # Loop over the models.
         for model in self.model_loop(model_num):
+            # Initialise record counts.
+            num_hetatm = 0
+            num_atom = 0
+            num_ter = 0
+
             # MODEL record, for multiple models.
             ####################################
 
@@ -2649,6 +2648,9 @@ class Internal:
 
         # Print out.
         print("CONECT")
+
+        # Initialise record counts.
+        num_conect = 0
 
         # Loop over the molecules of the first model.
         for mol in self.structural_data[0].mol:
