@@ -1058,7 +1058,7 @@ uf.title = "Writing structures to a PDB file."
 uf.title_short = "PDB writing."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
+    py_type = "str_or_inst",
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
