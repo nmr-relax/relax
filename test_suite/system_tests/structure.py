@@ -131,7 +131,7 @@ class Structure(SystemTestCase):
         # Check the created PDB file.
         lines = file.readlines()
         for i in range(len(lines)):
-            self.assertEqual(result[i], lines[i])
+            self.assertEqual(contents[i], lines[i])
 
 
     def test_delete_empty(self):
