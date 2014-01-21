@@ -47,6 +47,9 @@ class Main:
     PIVOT = array([ 37.254, 0.5, 16.7465])
     COM = array([ 26.83678091, -12.37906417,  28.34154128])
 
+    # The PDB distribution flag.
+    DIST_PDB = False
+
     def run(self, save_path=None):
         """Generate the distribution and alignment data.
         
@@ -177,9 +180,14 @@ class Main:
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
 
         # Load N copies of the original C-domain.
+        self.interpreter.off()
         for i in range(self.N):
             # Print out.
             self._progress(i)
+
+            # Load the structure for the PDB distribution.
+            if self.DIST_PDB:
+                self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=i+1)
 
             # Generate the distribution specific rotation.
             self.rotation(i)
@@ -201,6 +209,10 @@ class Main:
             # The frame order matrix component.
             self.daeg += kron_prod(self.R, self.R)
 
+            # Rotate the structure for the PDB distribution.
+            if self.DIST_PDB:
+                self.interpreter.structure.rotate(R=self.R, origin=self.PIVOT, model=i+1)
+
         # Print out.
         sys.stdout.write('\n\n')
 
@@ -210,6 +222,11 @@ class Main:
         # Write out the frame order matrix.
         file = open(self.save_path+sep+'frame_order_matrix', 'w')
         print_frame_order_2nd_degree(self.daeg, file=file)
+
+        # Write out the PDB distribution.
+        self.interpreter.on()
+        if self.DIST_PDB:
+            self.interpreter.structure.write_pdb('distribution.pdb', compress_type=2, force=True)
 
 
     def _print_axis_system(self):
