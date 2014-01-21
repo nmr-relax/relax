@@ -95,6 +95,45 @@ class Structure(SystemTestCase):
         self.interpreter.structure.load_spins(spin_id='@HE1', ave_pos=True)
 
 
+    def test_bug_21522_master_record_atom_count(self):
+        """Catch U{bug #21522<https://gna.org/bugs/?21522>}, the structure.write_pdb user function creating an incorrect MASTER record.
+
+        This also triggers bug #21520<https://gna.org/bugs/?21520>}, the failure of the structure.write_pdb user function when creating the MASTER record due to too many ATOM and HETATM records being present.
+        """
+
+        # Create 2 models.
+        self.interpreter.structure.add_model(model_num=1)
+        self.interpreter.structure.add_model(model_num=2)
+
+        # Add a single atom.
+        self.interpreter.structure.add_atom(atom_name='N', res_name='Pro', res_num=2, pos=[1., 2., 3.], element='N')
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, as they should be.
+        contents = [
+            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
+            "MODEL        1                                                                  \n",
+            "ATOM      1  N   Pro     2       1.000   2.000   3.000  1.00  0.00           N  \n",
+            "TER       2      Pro     2                                                      \n",
+            "ENDMDL                                                                          \n",
+            "MODEL        2                                                                  \n",
+            "ATOM      1  N   Pro     2       1.000   2.000   3.000  1.00  0.00           N  \n",
+            "TER       2      Pro     2                                                      \n",
+            "ENDMDL                                                                          \n",
+            "MASTER        0    0    0    0    0    0    0    0    1    1    0    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        for i in range(len(lines)):
+            self.assertEqual(result[i], lines[i])
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
