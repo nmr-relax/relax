@@ -180,14 +180,17 @@ class Main:
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
 
         # Load N copies of the original C-domain.
+        if self.DIST_PDB:
+            # Loop over the N states.
+            for i in range(self.N):
+                # Load the structure for the PDB distribution.
+                self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=i+1)
+
+        # Loop over the N states.
         self.interpreter.off()
         for i in range(self.N):
             # Print out.
             self._progress(i)
-
-            # Load the structure for the PDB distribution.
-            if self.DIST_PDB:
-                self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=i+1)
 
             # Generate the distribution specific rotation.
             self.rotation(i)
