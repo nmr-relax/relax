@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -1674,6 +1674,31 @@ class Internal:
                 # Return the matching molecule.
                 if mol.mol_name == molecule:
                     return mol
+
+
+    def has_molecule(self, name=None):
+        """Check if the molecule name exists.
+
+        @param name:    The molecule name.
+        @type name:     str
+        @return:        True if the molecule exists, False otherwise.
+        @rtype:         bool
+        """
+
+        # No models.
+        if not len(self.structural_data):
+            return False
+
+        # Loop over the models.
+        for model_cont in self.model_loop():
+            # Loop over the molecules.
+            for mol in model_cont.mol:
+                # Matching molecule.
+                if mol.mol_name == name:
+                    return True
+
+        # No match.
+        return False
 
 
     def load_gaussian(self, file_path, set_mol_name=None, set_model_num=None, verbosity=False):
