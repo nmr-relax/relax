@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,8 +65,13 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     # Normalise.
     axis_norm = axis / norm(axis)
 
-    # Add a structure.
-    structure.add_molecule(name='rotor')
+    # Add a structure (handling up to 3 rotors).
+    if structure.has_molecule(name='rotor') and structure.has_molecule(name='rotor2'):
+        structure.add_molecule(name='rotor3')
+    elif structure.has_molecule(name='rotor'):
+        structure.add_molecule(name='rotor2')
+    else:
+        structure.add_molecule(name='rotor')
 
     # Loop over the models.
     for model in structure.model_loop(model):
