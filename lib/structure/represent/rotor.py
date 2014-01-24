@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,29 +65,37 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
     # Normalise.
     axis_norm = axis / norm(axis)
 
-    # Add a structure.
-    structure.add_molecule(name='rotor')
+    # Add a structure (handling up to 3 rotors).
+    if structure.has_molecule(name='rotor') and structure.has_molecule(name='rotor2'):
+        structure.add_molecule(name='rotor3')
+        mol_name = 'rotor3'
+    elif structure.has_molecule(name='rotor'):
+        structure.add_molecule(name='rotor2')
+        mol_name = 'rotor2'
+    else:
+        structure.add_molecule(name='rotor')
+        mol_name = 'rotor'
 
     # Loop over the models.
     for model in structure.model_loop(model):
         # Alias the single molecule from the single model.
-        mol = structure.get_molecule('rotor', model=model.num)
+        mol = structure.get_molecule(mol_name, model=model.num)
 
         # The central point.
         mid_point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
-        mol.atom_add(pdb_record='HETATM', atom_num=1, atom_name='CTR', res_name='AX', res_num=1, pos=mid_point, element='PT')
+        pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='AX', res_num=1, pos=mid_point, element='PT')
 
         # Centre of the propellers.
         prop1 = mid_point + axis_norm * span
-        prop1_index = 1
-        mol.atom_add(pdb_record='HETATM', atom_num=2, atom_name='PRP', res_name='PRC', res_num=2, pos=prop1, element='O')
-        mol.atom_connect(index1=0, index2=prop1_index)
+        prop1_index = pos_index + 1
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=2, pos=prop1, element='O')
+        mol.atom_connect(index1=pos_index, index2=prop1_index)
 
         # Centre of the propellers.
         prop2 = mid_point - axis_norm * span
-        prop2_index = 2
-        mol.atom_add(pdb_record='HETATM', atom_num=3, atom_name='PRP', res_name='PRC', res_num=3, pos=prop2, element='O')
-        mol.atom_connect(index1=0, index2=prop2_index)
+        prop2_index = pos_index + 2
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=3, pos=prop2, element='O')
+        mol.atom_connect(index1=pos_index, index2=prop2_index)
 
         # Create the rotor propellers.
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,8 @@
 
 # Python module imports.
 from math import acos, cos, pi, sin
+from numpy import array, float64
+from numpy.linalg import norm
 from random import uniform
 
 
@@ -48,3 +50,25 @@ def random_unit_vector(vector):
     vector[0] = cos(theta) * sin(phi)
     vector[1] = sin(theta) * sin(phi)
     vector[2] = cos(phi)
+
+
+def unit_vector_from_2point(point1, point2):
+    """Generate the unit vector connecting point 1 to point 2.
+
+    @param point1:  The first point.
+    @type point1:   list of float or numpy array
+    @param point2:  The second point.
+    @type point2:   list of float or numpy array
+    @return:        The unit vector.
+    @rtype:         numpy float64 array
+    """
+
+    # Convert to numpy data structures.
+    point1 = array(point1, float64)
+    point2 = array(point2, float64)
+
+    # The vector.
+    vect = point2 - point1
+
+    # Return the unit vector.
+    return vect / norm(vect)
