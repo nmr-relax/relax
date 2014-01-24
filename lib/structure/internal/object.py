@@ -2398,6 +2398,9 @@ class Internal:
             if hasattr(model, 'num') and model.num != None:
                 model_records = True
 
+        # Chain IDs.
+        chain_id_list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
 
         ####################
         # Hetrogen section #
@@ -2425,7 +2428,7 @@ class Internal:
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, atom count array).
                 if not het_data[index] or not mol.res_num[i] == het_data[index][-1][0]:
-                    het_data[index].append([mol.res_num[i], mol.res_name[i], mol.chain_id[i], 0, []])
+                    het_data[index].append([mol.res_num[i], mol.res_name[i], chain_id_list[index], 0, []])
 
                     # Catch missing chain_ids.
                     if het_data[index][-1][2] == None:
@@ -2454,23 +2457,24 @@ class Internal:
                 # Find the entry in the collective structure.
                 found = False
                 for j in range(len(het_data_coll)):
-                    # Matching residue numbers.
-                    if het_data[index][i][0] == het_data_coll[j][0]:
-                        # Change the flag.
-                        found = True
+                    # Different residue numbers.
+                    if het_data[index][i][0] != het_data_coll[j][0]:
+                        continue
 
-                        # The checks.
-                        if het_data_coll[j][1] != het_data[index][i][1]:
-                            raise RelaxError("The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures.")
+                    # Different chain IDs.
+                    if het_data_coll[j][2] != het_data[index][i][2]:
+                        continue
 
-                        elif het_data_coll[j][2] != het_data[index][i][2]:
-                            raise RelaxError("The hetrogen chain id " + repr(het_data[index][i][2]) + " does not match " + repr(het_data_coll[j][2]) + " of residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of the previous structures.")
+                    # Sanity checks.
+                    if het_data_coll[j][1] != het_data[index][i][1]:
+                        raise RelaxError("The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures.")
+                    elif het_data_coll[j][3] != het_data[index][i][3]:
+                        raise RelaxError("The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures.")
+                    elif het_data_coll[j][4] != het_data[index][i][4]:
+                        raise RelaxError("The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures.")
 
-                        elif het_data_coll[j][3] != het_data[index][i][3]:
-                            raise RelaxError("The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures.")
-
-                        elif het_data_coll[j][4] != het_data[index][i][4]:
-                            raise RelaxError("The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures.")
+                    # Change the flag.
+                    found = True
 
                 # If there is no match, add the new residue to the collective.
                 if not found:
@@ -2585,6 +2589,7 @@ class Internal:
             num_hetatm = 0
             num_atom = 0
             num_ter = 0
+            ser_num = 1
 
             # MODEL record, for multiple models.
             ####################################
@@ -2601,6 +2606,7 @@ class Internal:
             ############################################################
 
             # Loop over the molecules.
+            index = 0
             for mol in model.mol:
                 # Print out.
                 print("ATOM, HETATM, TER")
@@ -2625,19 +2631,21 @@ class Internal:
                             atom_name = "%s" % mol.atom_name[i]
 
                         # Write out.
-                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
-                        num_atom = num_atom + 1
+                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=chain_id_list[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
+                        num_atom += 1
+                        ser_num += 1
 
                         # Info for the TER record.
                         ter_num = atom_num + 1
                         ter_name = mol.res_name[i]
-                        ter_chain_id = mol.chain_id[i]
+                        ter_chain_id = chain_id_list[index]
                         ter_res_num = mol.res_num[i]
 
                 # Finish the ATOM section with the TER record.
                 if atom_record:
-                    pdb_write.ter(file, serial=ter_num, res_name=ter_name, chain_id=self._translate(ter_chain_id), res_seq=ter_res_num)
-                    num_ter = num_ter + 1
+                    pdb_write.ter(file, serial=ser_num, res_name=ter_name, chain_id=chain_id_list[index], res_seq=ter_res_num)
+                    num_ter += 1
+                    ser_num += 1
 
                 # Loop over the atomic data.
                 count_shift = False
@@ -2656,8 +2664,12 @@ class Internal:
                             atom_num += 1
 
                         # Write out.
-                        pdb_write.hetatm(file, serial=atom_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=self._translate(mol.chain_id[i]), res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
-                        num_hetatm = num_hetatm + 1
+                        pdb_write.hetatm(file, serial=ser_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=chain_id_list[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
+                        num_hetatm += 1
+                        ser_num += 1
+
+                # Increment the molecule index.
+                index += 1
 
 
             # ENDMDL record, for multiple structures.
@@ -2677,7 +2689,18 @@ class Internal:
         # Initialise record counts.
         num_conect = 0
 
+        # The per molecule incremented atom counts.
+        atom_counts = [0]
+        index = 0
+        for mol in self.structural_data[0].mol:
+            if index == 0:
+                atom_counts.append(len(mol.atom_name))
+            else:
+                atom_counts.append(atom_counts[index] + len(mol.atom_name))
+            index += 1
+
         # Loop over the molecules of the first model.
+        index = 0
         for mol in self.structural_data[0].mol:
             # Loop over the atoms.
             for i in range(len(mol.atom_name)):
@@ -2689,6 +2712,7 @@ class Internal:
                 flush = 0
                 bonded_index = 0
                 bonded = ['', '', '', '']
+                bonded_shifted = ['', '', '', '']
 
                 # Loop over the bonded atoms.
                 for j in range(len(mol.bonded[i])):
@@ -2715,9 +2739,10 @@ class Internal:
                                     bonded[k] = mol.atom_num[bonded[k]]
                                 else:
                                     bonded[k] = bonded[k] + 1
+                                bonded_shifted[k] = bonded[k] + atom_counts[index]
 
                         # Write the CONECT record.
-                        pdb_write.conect(file, serial=i+1, bonded1=bonded[0], bonded2=bonded[1], bonded3=bonded[2], bonded4=bonded[3])
+                        pdb_write.conect(file, serial=i+1+atom_counts[index], bonded1=bonded_shifted[0], bonded2=bonded_shifted[1], bonded3=bonded_shifted[2], bonded4=bonded_shifted[3])
 
                         # Reset the flush flag, the bonded atom count, and the bonded atom names.
                         flush = False
@@ -2727,6 +2752,8 @@ class Internal:
                         # Increment the CONECT record count.
                         num_conect = num_conect + 1
 
+            # Increment the molecule index.
+            index += 1
 
 
         # MASTER record.
