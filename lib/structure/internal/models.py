@@ -84,15 +84,6 @@ class ModelList(list):
         # Update the current model list.
         self.current_models.append(model_num)
 
-        # Store the model indices.
-        if not hasattr(self, 'model_indices'):
-            self.model_indices = {}
-        self.model_indices[model_num] = len(self) - 1
-
-        # The sorted model numbers.
-        self.model_list = list(self.model_indices.keys())
-        self.model_list.sort()
-
 
     def is_empty(self):
         """Method for testing if this ModelList object is empty.
