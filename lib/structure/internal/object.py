@@ -1856,9 +1856,8 @@ class Internal:
                 else:
                     # Number of structures already present for the model.
                     num_struct = 0
-                    for model in self.structural_data:
-                        if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == model.num):
-                            num_struct = len(model.mol)
+                    if self.structural_data != None and len(self.structural_data) and (not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[0].num)):
+                        num_struct = len(self.structural_data[0].mol)
 
                     # Set the name to the file name plus the structure number.
                     new_mol_name.append(file_root(file) + '_mol' + repr(mol_num+num_struct))
