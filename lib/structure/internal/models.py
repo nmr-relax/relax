@@ -75,9 +75,8 @@ class ModelList(list):
         # Otherwise append an empty ModelContainer.
         else:
             # Test if the model number already exists.
-            for i in range(len(self)):
-                if self[i].num == model_num:
-                    raise RelaxError("The model '" + repr(model_num) + "' already exists.")
+            if model_num in self.current_models:
+                raise RelaxError("The model '" + repr(model_num) + "' already exists.")
 
             # Append an empty ModelContainer.
             self.append(ModelContainer(model_num))
