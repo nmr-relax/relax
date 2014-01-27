@@ -1,6 +1,6 @@
-###############################################################################
+0##############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,6 +37,16 @@ class ModelList(list):
     Here different models are defined as the same molecule but with different conformations.
     """
 
+    def __init__(self):
+        """Set up the class."""
+
+        # Execute the base class method.
+        super(ModelList, self).__init__()
+
+        # The current model list (used for speed).
+        self.current_models = []
+
+
     def __repr__(self):
         """The string representation of the object.
 
@@ -71,6 +81,9 @@ class ModelList(list):
 
             # Append an empty ModelContainer.
             self.append(ModelContainer(model_num))
+
+        # Update the current model list.
+        self.current_models.append(model_num)
 
         # Store the model indices.
         if not hasattr(self, 'model_indices'):

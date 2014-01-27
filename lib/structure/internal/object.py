@@ -2107,32 +2107,34 @@ class Internal:
             raise RelaxError("Failure of the mapping of new molecule names, %s new molecule names verses %s molecules in the structural data." % (len(set_mol_name), len(data_matrix[0])))
 
         # Test that the target models and structures are absent, and get the already existing model numbers.
-        current_models = []
-        for i in range(len(self.structural_data)):
-            # Create a list of current models.
-            current_models.append(self.structural_data[i].num)
+        for i in range(len(set_model_num)):
+            # Merging flag is set, so skip the checks.
+            if merge:
+                continue
+
+            # A new model, so no need to check.
+            if not set_model_num[i] in self.structural_data.current_models:
+                continue
 
             # Loop over the structures.
-            for j in range(len(self.structural_data[i].mol)):
-                if not merge and self.structural_data[i].num in set_model_num and self.structural_data[i].mol[j].mol_name in set_mol_name:
+            index = self.structural_data.current_models.index(set_model_num[i])
+            for j in range(len(self.structural_data[index].mol)):
+                if self.structural_data[index].mol[j].mol_name in set_mol_name:
                     raise RelaxError("The molecule '%s' of model %s already exists." % (self.structural_data[i].mol[j].mol_name, self.structural_data[i].num))
 
         # Loop over the models.
         for i in range(len(set_model_num)):
             # The model doesn't currently exist.
-            if set_model_num[i] not in current_models:
+            if set_model_num[i] not in self.structural_data.current_models:
                 # Create the model.
                 self.structural_data.add_item(set_model_num[i])
-
-                # Add the model number to the current_models list.
-                current_models.append(set_model_num[i])
 
                 # Get the model.
                 model = self.structural_data[-1]
 
             # Otherwise get the pre-existing model.
             else:
-                model = self.structural_data[current_models.index(set_model_num[i])]
+                model = self.structural_data[self.structural_data.current_models.index(set_model_num[i])]
 
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
