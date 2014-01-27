@@ -1261,14 +1261,9 @@ class Internal:
                         pos = zeros(3, float64)
 
                         # Loop over the models.
-                        for j in range(len(self.structural_data)):
-                            # A single model.
-                            if model_num != None and self.structural_data[j].num != model_num:
-                                continue
-
+                        for model in self.model_loop(model=model_num):
                             # Alias.
-                            model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
-                            mol2 = self.structural_data[model_index].mol[mol_index]
+                            mol2 = model.mol[mol_index]
 
                             # Some sanity checks.
                             if mol2.atom_num[i] != atom_num:
@@ -1286,14 +1281,9 @@ class Internal:
                         pos = []
 
                         # Loop over the models.
-                        for j in range(len(self.structural_data)):
-                            # A single model.
-                            if model_num != None and self.structural_data[j].num != model_num:
-                                continue
-
+                        for model in self.model_loop(model=model_num):
                             # Alias.
-                            model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
-                            mol2 = self.structural_data[model_index].mol[mol_index]
+                            mol2 = model.mol[mol_index]
 
                             # Append the position.
                             pos.append([mol2.x[i], mol2.y[i], mol2.z[i]])
@@ -1389,14 +1379,9 @@ class Internal:
             # Found the atom.
             if index != None:
                 # Loop over the models.
-                for j in range(len(self.structural_data)):
-                    # A single model.
-                    if model_num != None and self.structural_data[j].num != model_num:
-                        continue
-
-                    # Alias the molecule.
-                    model_index = self.structural_data.model_indices[self.structural_data.model_list[j]]
-                    mol = self.structural_data[model_index].mol[mol_index]
+                for model in self.model_loop(model=model_num):
+                    # Alias.
+                    mol = model.mol[mol_index]
 
                     # Get the atom bonded to this model/molecule/residue/atom.
                     bonded_num, bonded_name, element, pos, attached_name, warnings = self._bonded_atom(attached_atom, index, mol)
@@ -1856,9 +1841,8 @@ class Internal:
                 else:
                     # Number of structures already present for the model.
                     num_struct = 0
-                    for model in self.structural_data:
-                        if not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == model.num):
-                            num_struct = len(model.mol)
+                    if self.structural_data != None and len(self.structural_data) and (not set_model_num or (model_index <= len(set_model_num) and set_model_num[model_index] == self.structural_data[0].num)):
+                        num_struct = len(self.structural_data[0].mol)
 
                     # Set the name to the file name plus the structure number.
                     new_mol_name.append(file_root(file) + '_mol' + repr(mol_num+num_struct))
