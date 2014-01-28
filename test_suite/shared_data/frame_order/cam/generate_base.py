@@ -141,9 +141,6 @@ class Main:
             self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
             self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
 
-        # Store the state.
-        self.interpreter.state.save('back_calc', dir=self.save_path, force=True)
-
 
     def _backup_pos(self):
         """Back up the positional data prior to the rotations."""
