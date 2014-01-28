@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, float16, float64, transpose, zeros
+from numpy import array, cross, dot, eye, float16, float64, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
@@ -206,6 +206,9 @@ class Main:
             # The progress meter.
             self._progress(global_index)
 
+            # Total rotation matrix (for construction of the frame order matrix).
+            total_R = eye(3)
+
             # Loop over each motional mode.
             for motion_index in range(self.MODES):
                 # Generate the distribution specific rotation.
@@ -225,18 +228,21 @@ class Main:
                 a, b, g = R_to_euler_zyz(self.R)
                 rot_file.write('%10.7f %10.7f %10.7f\n' % (a, b, g))
 
-                # The frame order matrix component.
-                self.daeg += kron_prod(self.R, self.R)
-
                 # Rotate the structure for the PDB distribution.
                 if self.DIST_PDB:
                     self.interpreter.structure.rotate(R=self.R, origin=self.PIVOT[motion_index], model=global_index+1)
+
+                # Contribution to the total rotation.
+                total_R = dot(self.R, total_R)
+
+            # The frame order matrix component.
+            self.daeg += kron_prod(total_R, total_R)
 
         # Print out.
         sys.stdout.write('\n\n')
 
         # Frame order matrix averaging.
-        self.daeg = self.daeg / self.N
+        self.daeg = self.daeg / self.N**self.MODES
 
         # Write out the frame order matrix.
         file = open(self.save_path+sep+'frame_order_matrix', 'w')
