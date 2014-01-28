@@ -243,7 +243,7 @@ class Main:
 
         # Write out the frame order matrix.
         file = open(self.save_path+sep+'frame_order_matrix', 'w')
-        print_frame_order_2nd_degree(self.daeg, file=file)
+        print_frame_order_2nd_degree(self.daeg, file=file, places=8)
 
         # Write out the PDB distribution.
         self.interpreter.on()
