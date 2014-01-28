@@ -61,6 +61,9 @@ class Main:
     # The PDB distribution flag.
     DIST_PDB = False
 
+    # The rotations file.
+    ROT_FILE = True
+
     def run(self, save_path=None):
         """Generate the distribution and alignment data.
         
@@ -186,7 +189,8 @@ class Main:
         self.daeg = zeros((9, 9), float64)
 
         # Open the output files.
-        rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
+        if self.ROT_FILE:
+            rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
@@ -222,8 +226,9 @@ class Main:
                         interatom.vector[global_index] = dot(self.R, interatom.orig_vect)
 
                 # Decompose the rotation into Euler angles and store them.
-                a, b, g = R_to_euler_zyz(self.R)
-                rot_file.write('%10.7f %10.7f %10.7f\n' % (a, b, g))
+                if self.ROT_FILE:
+                    a, b, g = R_to_euler_zyz(self.R)
+                    rot_file.write('Mode %i:  %10.7f %10.7f %10.7f\n' % (motion_index, a, b, g))
 
                 # Rotate the structure for the PDB distribution.
                 if self.DIST_PDB:
