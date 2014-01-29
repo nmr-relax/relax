@@ -64,6 +64,9 @@ class Main:
     # The rotations file.
     ROT_FILE = True
 
+    # The state file.
+    SAVE_STATE = True
+
     def run(self, save_path=None):
         """Generate the distribution and alignment data.
         
@@ -95,7 +98,8 @@ class Main:
         self._back_calc()
 
         # Save a state file for debugging.
-        self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
+        if self.SAVE_STATE:
+            self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
 
 
     def _back_calc(self):
