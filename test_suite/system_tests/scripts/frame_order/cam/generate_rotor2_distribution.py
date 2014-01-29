@@ -29,11 +29,11 @@ class Generate(Main):
         self.build_axes = self.build_axes_alt
 
 
-    def rotation(self, i):
+    def rotation(self, i, motion_index=0):
         """Set up the rotation for state i."""
 
         # The rotation angle.
-        angle = (i - (self.N-1)/2) * self.INC / 360.0 * 2.0 * pi
+        angle = (i - (self.N-1)/2) * self.INC[motion_index] / 360.0 * 2.0 * pi
 
         # The rotation matrix.
         axis_angle_to_R(self.axes[:, 2], angle, self.R)
