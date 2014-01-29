@@ -30,13 +30,15 @@ import sys
 from lib.float import isNaN
 
 
-def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, dot=False, comma=True, file=None):
+def print_frame_order_2nd_degree(daeg, name=None, places=4, epsilon=1e-15, integer=False, dot=False, comma=True, file=None):
     """Nicely print out the Frame Order matrix of the 2nd degree.
 
     @param daeg:        The 3D, rank-4 Frame Order matrix.
     @type daeg:         numpy 3D, rank-4 array
     @keyword name:      The name of the matrix.
     @type name:         None or str
+    @keyword places:    The number of decimal places to print.
+    @type places:       int
     @keyword epsilon:   The minimum value, below which is considered zero.
     @type epsilon:      float
     @keyword integer:   A flag which if true will only print the integer part of the number.
@@ -92,30 +94,30 @@ def print_frame_order_2nd_degree(daeg, name=None, epsilon=1e-15, integer=False, 
                 # Integer printout.
                 if integer:
                     val = int(daeg[i, j])
-                    format = "%4i%s"
+                    format = "%" + repr(places) + "i%s"
 
                 # Float printout.
                 else:
                     val = daeg[i, j]
-                    format = "%10.4f%s"
+                    format = "%" + repr(places+6) + "." + repr(places) + "f%s"
 
             # NaN.
             elif isNaN(daeg[i, j]):
                 val = 'NaN'
                 if integer:
-                    format = "%4i%s"
+                    format = "%" + repr(places) + "i%s"
                 else:
-                    format = "%10s%s"
+                    format = "%" + repr(places+6) + "s%s"
 
             # Write out the zero elements.
             else:
                 # Integer printout.
                 if integer:
-                    format = "%4s%s"
+                    format = "%" + repr(places) + "s%s"
 
                 # Float printout.
                 else:
-                    format = "%10s%s"
+                    format = "%" + repr(places+6) + "s%s"
 
                 # The character.
                 if dot:
