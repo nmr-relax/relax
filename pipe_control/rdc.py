@@ -1267,8 +1267,8 @@ def write(align_id=None, file=None, dir=None, bc=False, force=False):
 
         # Append the spin data.
         data.append([])
-        data[-1].append(interatom.spin_id1)
-        data[-1].append(interatom.spin_id2)
+        data[-1].append(repr(interatom.spin_id1))
+        data[-1].append(repr(interatom.spin_id2))
 
         # Handle the missing rdc_data_types variable.
         data_type = None
