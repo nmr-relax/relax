@@ -245,6 +245,12 @@ def update_model():
         cdp.params.append('pivot_y')
         cdp.params.append('pivot_z')
 
+        # Double rotor.
+        if cdp.model == 'double rotor':
+            cdp.params.append('pivot_x_2')
+            cdp.params.append('pivot_y_2')
+            cdp.params.append('pivot_z_2')
+
     # The average domain position translation parameters.
     if not translation_fixed():
         cdp.params.append('ave_pos_x')
@@ -264,9 +270,14 @@ def update_model():
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'double rotor']:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
+
+    # Frame order eigenframe - the second axis.
+    if cdp.model in ['double rotor']:
+        cdp.params.append('axis_theta_2')
+        cdp.params.append('axis_phi_2')
 
     # Cone parameters - pseudo-elliptic cone parameters.
     if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
@@ -280,10 +291,14 @@ def update_model():
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
-    if cdp.model in ['rotor', 'line', 'iso cone', 'pseudo-ellipse']:
+    if cdp.model in ['double rotor', 'rotor', 'line', 'iso cone', 'pseudo-ellipse']:
         cdp.params.append('cone_sigma_max')
+
+    # Cone parameters - 2nd torsion angle.
+    if cdp.model in ['double rotor']:
+        cdp.params.append('cone_sigma_max_2')
 
     # Initialise the parameters in the current data pipe.
     for param in cdp.params:
-        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
+        if not param in ['pivot_x', 'pivot_y', 'pivot_z', 'pivot_x_2', 'pivot_y_2', 'pivot_z_2'] and not hasattr(cdp, param):
             setattr(cdp, param, 0.0)
