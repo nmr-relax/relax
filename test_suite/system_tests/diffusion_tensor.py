@@ -407,6 +407,23 @@ class Diffusion_tensor(SystemTestCase):
                 self.assertAlmostEqual(spin.ri_data_bc[ri_id], spin.ri_data[ri_id])
 
 
+    def test_bug_21561_tensor_pdb_failure(self):
+        """Catch U{bug #21561<https://gna.org/bugs/?21561>} reported by Martin Ballaschk, the failure of the diffusion tensor PDB creation when Monte Carlo simulations are not present."""
+
+        # Create a data pipe.
+        self.interpreter.pipe.create('diff PDB', 'mf')
+
+        # Initialise a diffusion tensor.
+        self.interpreter.diffusion_tensor.init((2e-8, 1.3, 60, 290), spheroid_type='prolate', param_types=2, fixed=True)
+
+        # Load a random protein structure.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+        self.interpreter.structure.read_pdb('Ap4Aase_res1-12.pdb', dir=path)
+
+        # Generate the tensor PDB without MC sims.
+        self.interpreter.structure.create_diff_tensor_pdb(file=self.tmpfile_spheroid)
+
+
     def test_copy(self):
         """The user function diffusion_tensor.copy()."""
 
