@@ -250,8 +250,8 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
         sim_axes = []
         if diff_type in ['oblate', 'prolate']:
             axes.append(pipe.diff_tensor.Dpar * pipe.diff_tensor.Dpar_unit)
+            sim_axes.append([])
             if sim_num != None:
-                sim_axes.append([])
                 for i in range(sim_num):
                     sim_axes[0].append(pipe.diff_tensor.Dpar_sim[i] * pipe.diff_tensor.Dpar_unit_sim[i])
 
@@ -259,10 +259,10 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
             axes.append(pipe.diff_tensor.Dx * pipe.diff_tensor.Dx_unit)
             axes.append(pipe.diff_tensor.Dy * pipe.diff_tensor.Dy_unit)
             axes.append(pipe.diff_tensor.Dz * pipe.diff_tensor.Dz_unit)
+            sim_axes.append([])
+            sim_axes.append([])
+            sim_axes.append([])
             if sim_num != None:
-                sim_axes.append([])
-                sim_axes.append([])
-                sim_axes.append([])
                 for i in range(sim_num):
                     sim_axes[0].append(pipe.diff_tensor.Dx_sim[i] * pipe.diff_tensor.Dx_unit_sim[i])
                     sim_axes[1].append(pipe.diff_tensor.Dy_sim[i] * pipe.diff_tensor.Dy_unit_sim[i])
