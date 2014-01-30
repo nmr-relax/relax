@@ -422,7 +422,7 @@ relax_data.read(ri_id='R2_500',  ri_type='R2',  frq=500.0*1e6, file='r2.500.out'
 relax_data.read(ri_id='NOE_500', ri_type='NOE', frq=500.0*1e6, file='noe.500.out', res_num_col=1, data_col=3, error_col=4)
 
 # Initialise the diffusion tensor.
-diffusion_tensor.init((2e-8, 1.3, 60, 290), param_types=1, axial_type='prolate', fixed=True)
+diffusion_tensor.init((2e-8, 1.3, 60, 290), spheroid_type='prolate', param_types=2, fixed=True)
 
 # Create all attached protons.
 sequence.attach_protons()
