@@ -26,7 +26,7 @@
 from lib.errors import RelaxError, RelaxFuncSetupError
 from pipe_control import pipes
 from specific_analyses.consistency_tests import Consistency_tests
-from specific_analyses.frame_order import Frame_order
+from specific_analyses.frame_order.api import Frame_order
 from specific_analyses.hybrid import Hybrid
 from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free

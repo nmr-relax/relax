@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.setup import frame_order_obj
+from specific_analyses.frame_order.user_functions import average_position, num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -86,7 +86,7 @@ uf.desc[-1].add_paragraph("To use the motional pivot as the average domain rotat
 uf.desc[-1].add_prompt("relax> frame_order.translate('motional')")
 uf.desc[-1].add_prompt("relax> frame_order.translate('motional', False)")
 uf.desc[-1].add_prompt("relax> frame_order.translate(pivot='motional', translation=False)")
-uf.backend = frame_order_obj._average_position
+uf.backend = average_position
 uf.menu_text = "&average_position"
 uf.wizard_height_desc = 450
 uf.wizard_size = (1000, 750)
@@ -162,7 +162,7 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This function creates a PDB file containing an artificial geometric structure representing the Frame Order cone models.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The cone axis vector is presented as the residue 'AXE' with one carbon atom positioned at the pivot and the other x Angstroms away on the cone axis (set by the geometric object size).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the multiple cone axes.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined by the cone axis.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
-uf.backend = frame_order_obj._pdb_model
+uf.backend = pdb_model
 uf.menu_text = "pdb_&model"
 uf.gui_icon = "oxygen.actions.document-save"
 uf.wizard_height_desc = 400
@@ -195,7 +195,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the pivot point, type one of:")
 uf.desc[-1].add_prompt("relax> frame_order.pivot([12.067, 14.313, -3.2675])")
 uf.desc[-1].add_prompt("relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])")
-uf.backend = frame_order_obj._pivot
+uf.backend = pivot
 uf.menu_text = "&pivot"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
@@ -217,7 +217,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the number of integration points used during the Frame Order target function optimisation to be changed from the default.  This is used in the quasi-random Sobol' sequence for the numerical integration.")
-uf.backend = frame_order_obj._num_int_pts
+uf.backend = num_int_pts
 uf.menu_text = "&num_int_pts"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (900, 500)
@@ -238,7 +238,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows the high precision numerical integration of the Scipy quad() and related functions to be used instead of the lower precision quasi-random Sobol' sequence integration.  This is for the optimisation of the Frame Order target functions.  The quadratic integration is orders of magnitude slower than the Sobol' sequence integration, but the precision is much higher.")
-uf.backend = frame_order_obj._quad_int
+uf.backend = quad_int
 uf.menu_text = "&quad_int"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_size = (900, 500)
@@ -262,7 +262,7 @@ uf.desc[-1].add_paragraph("Prior to optimisation of the '2-domain' Frame Order t
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set up the isotropic cone frame order model with 'centre' domain being the frame of reference, type:")
 uf.desc[-1].add_prompt("relax> frame_order.ref_domain(ref='centre')")
-uf.backend = frame_order_obj._ref_domain
+uf.backend = ref_domain
 uf.menu_text = "&ref_domain"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
@@ -331,7 +331,7 @@ uf.desc[-1].add_item_list_element("'free rotor'", "The only motion is free rotat
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
 uf.desc[-1].add_prompt("relax> frame_order.select_model(model='iso cone')")
-uf.backend = frame_order_obj._select_model
+uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 560
