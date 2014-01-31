@@ -121,18 +121,28 @@ class Noe_main:
             # Average intensities (if required).
             sat = 0.0
             sat_err = 0.0
+            sat_count = 0
             ref = 0.0
             ref_err = 0.0
+            ref_count = 0
             for id in cdp.spectrum_ids:
                 # Sat spectra.
                 if cdp.spectrum_type[id] == 'sat':
-                    sat = sat + spin.intensities[id]
-                    sat_err = sat_err + spin.intensity_err[id]
+                    sat += spin.intensities[id]
+                    sat_err += spin.intensity_err[id]
+                    sat_count += 1
 
                 # Ref spectra.
                 if cdp.spectrum_type[id] == 'ref':
-                    ref = ref + spin.intensities[id]
-                    ref_err = ref_err + spin.intensity_err[id]
+                    ref += spin.intensities[id]
+                    ref_err += spin.intensity_err[id]
+                    ref_count += 1
+
+            # Average the values.
+            sat = sat / sat_count
+            sat_err = sat_err / sat_count
+            ref = ref / ref_count
+            ref_err = ref_err / ref_count
 
             # Calculate the NOE.
             spin.noe = sat / ref
