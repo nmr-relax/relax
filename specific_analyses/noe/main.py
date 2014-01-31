@@ -166,14 +166,14 @@ class Noe_main:
                 continue
 
             # Check for sufficient data.
-            if not hasattr(spin, 'intensities') or not len(spin.intensities) == 2:
+            if not hasattr(spin, 'intensities') or not len(spin.intensities) > 2:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Check for sufficient errors.
-            elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) == 2:
+            elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) > 2:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors'))
                 spin.select = False
                 deselect_flag = True
