@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -118,37 +118,37 @@ class Noe_main:
             if not spin.select:
                 continue
 
-            # Average intensities (if required).
+            # Average intensities and squared errors (if required).
             sat = 0.0
-            sat_err = 0.0
+            sat_err2 = 0.0
             sat_count = 0
             ref = 0.0
-            ref_err = 0.0
+            ref_err2 = 0.0
             ref_count = 0
             for id in cdp.spectrum_ids:
                 # Sat spectra.
                 if cdp.spectrum_type[id] == 'sat':
                     sat += spin.intensities[id]
-                    sat_err += spin.intensity_err[id]
+                    sat_err2 += spin.intensity_err[id]**2
                     sat_count += 1
 
                 # Ref spectra.
                 if cdp.spectrum_type[id] == 'ref':
                     ref += spin.intensities[id]
-                    ref_err += spin.intensity_err[id]
+                    ref_err2 += spin.intensity_err[id]**2
                     ref_count += 1
 
-            # Average the values.
+            # Average the values and errors (variance averaging).
             sat = sat / sat_count
-            sat_err = sat_err / sat_count
+            sat_err2 = sat_err2 / sat_count
             ref = ref / ref_count
-            ref_err = ref_err / ref_count
+            ref_err2 = ref_err2 / ref_count
 
             # Calculate the NOE.
             spin.noe = sat / ref
 
             # Calculate the error.
-            spin.noe_err = sqrt((sat_err * ref)**2 + (ref_err * sat)**2) / ref**2
+            spin.noe_err = sqrt(sat_err2 * ref**2 + ref_err2 * sat**2) / ref**2
 
 
     def overfit_deselect(self, data_check=True, verbose=True):
