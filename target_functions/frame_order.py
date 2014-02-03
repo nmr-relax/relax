@@ -365,6 +365,8 @@ class Frame_order:
                 self.func = self.func_rigid
             elif model == 'free rotor':
                 self.func = self.func_free_rotor
+            elif model == 'double rotor':
+                self.func = self.func_double_rotor
 
 
     def _init_tensors(self):
