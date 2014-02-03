@@ -35,6 +35,7 @@ from lib.alignment.pcs import pcs_tensor
 from lib.alignment.rdc import rdc_tensor
 from lib.errors import RelaxError
 from lib.float import isNaN
+from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_int_double_rotor
 from lib.frame_order.free_rotor import compile_2nd_matrix_free_rotor
 from lib.frame_order.iso_cone import compile_2nd_matrix_iso_cone, pcs_numeric_int_iso_cone, pcs_numeric_int_iso_cone_qrint
 from lib.frame_order.iso_cone_free_rotor import compile_2nd_matrix_iso_cone_free_rotor

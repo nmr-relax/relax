@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,6 +23,7 @@
 """The relax-lib NMR package - a library of functions for the frame order theories."""
 
 __all__ = [
+    'double_rotor',
     'format',
     'free_rotor',
     'iso_cone_free_rotor',
