@@ -78,6 +78,61 @@ class Noe(SystemTestCase):
             self.assertEqual(data[i], lines[i])
 
 
+    def test_bug_21591_noe_calculation_fail(self):
+        """Catch U{bug #21591<https://gna.org/bugs/?21591>}, the failure of the NOE analysis."""
+
+        # Generate the sequence.
+        self.interpreter.spin.create(mol_name='XYZ_mol1', res_num=120, res_name='GLY', spin_num=1865, spin_name='N')
+
+        # Load the reference spectrum and saturated spectrum peak intensities.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists'
+        self.interpreter.spectrum.read_intensities(file='noe.140109.8.001.list', dir=path, spectrum_id='ref_ave')
+        self.interpreter.spectrum.read_intensities(file='noe.140109.8.002.list', dir=path, spectrum_id='sat_ave')
+
+        # Set the spectrum types.
+        self.interpreter.noe.spectrum_type('ref', 'ref_ave')
+        self.interpreter.noe.spectrum_type('sat', 'sat_ave')
+
+        # Set the errors.
+        self.interpreter.spectrum.baseplane_rmsd(error=1.3e06, spectrum_id='ref_ave')
+        self.interpreter.spectrum.baseplane_rmsd(error=1.4e06, spectrum_id='sat_ave')
+
+        # Peak intensity error analysis.
+        self.interpreter.spectrum.error_analysis()
+
+        # Calculate the NOEs.
+        self.interpreter.calc()
+
+        # Save the NOEs.
+        self.interpreter.value.write(param='noe', file=ds.tmpfile)
+
+        # Open the NOE output file.
+        file = open(ds.tmpfile)
+        lines = file.readlines()
+        file.close()
+
+        # How the file should look like.
+        data = [
+            "# Parameter description:  The NOE.\n",
+            "#\n",
+            "# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   \n",
+            "XYZ_mol1      120        GLY         1865        N               0.5203739657160172     0.20810473864150658   \n",
+        ]
+
+        # Printout of the real and generated data.
+        print("\n\nThe real data:")
+        for i in range(len(lines)):
+            print(repr(data[i]))
+        print("\nThe generated data:")
+        for i in range(len(lines)):
+            print(repr(lines[i]))
+        print("\n")
+
+        # Check each line.
+        for i in range(len(lines)):
+            self.assertEqual(data[i], lines[i])
+
+
     def test_noe_analysis(self):
         """Test the NOE analysis."""
 
