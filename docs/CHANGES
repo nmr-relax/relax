@@ -1,3 +1,22 @@
+Version 3.1.5
+(4 February 2014, from /trunk)
+http://svn.gna.org/svn/relax/tags/3.1.5
+
+    Features:
+        N/A
+
+
+    Changes:
+        * Updated the interatom.unit_vectors user function description to add the text '3D structure'.  This is in response to the http://thread.gmane.org/gmane.science.nmr.relax.user/1547 relax-users mailing list message and the change is to clarify the usage of the user function.
+        * Created the Noe.test_bug_21591_noe_calculation_fail system test.  This is to catch bug #21591 (https://gna.org/bugs/?21591) submitted by Martin Ballaschk (https://gna.org/users/mab).  This is the complete failure of the NOE analysis.  The peak lists attached to the bug report have been included in the test suite to create the system test.
+        * Improvements for the steady-state NOE analysis overfit_deselect() method.  The spin deselection which occurs at the start of the calc user function call, used to calculate the NOE, is now clearer.  Each deselection condition is now explained in detail and the text is now far more informative.  In addition, the special condition of all spins being deselected is now caught.  If this happens, a RelaxError is raised to prevent the user from going forwards.  This should remove confusion as to why the output file is empty.
+
+
+    Bugfixes:
+        * Fix for bug #21591 (https://gna.org/bugs/?21591), the complete failure of the NOE analysis.  This bug was reported by Martin Ballaschk (https://gna.org/users/mab).  The issue was introduced in the fix for bug #21562 (https://gna.org/bugs/?21562).  The problem is that the overfit_deselect() method was deselecting all spins with two data points or less rather than one or less.
+
+
+
 Version 3.1.4
 (31 January 2014, from /trunk)
 http://svn.gna.org/svn/relax/tags/3.1.4
