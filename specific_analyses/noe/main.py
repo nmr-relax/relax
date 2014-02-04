@@ -184,7 +184,7 @@ class Noe_main:
                 continue
 
             # Check for sufficient data.
-            if not len(spin.intensities) > 2:
+            if not len(spin.intensities) >= 2:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data (less than two data points)'))
                 spin.select = False
                 deselect_flag = True
@@ -198,7 +198,7 @@ class Noe_main:
                 continue
 
             # Check for sufficient errors.
-            if not len(spin.intensity_err) > 2:
+            if not len(spin.intensity_err) >= 2:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors (less than two error points)'))
                 spin.select = False
                 deselect_flag = True
