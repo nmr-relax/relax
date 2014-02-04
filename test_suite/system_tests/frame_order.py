@@ -268,7 +268,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.0010998457430728529)
+        self.check_chi2(0.0010998457430728529, places=4)
 
 
     def test_cam_double_rotor_rdc(self):
