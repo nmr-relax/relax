@@ -116,7 +116,7 @@ class Noe(SystemTestCase):
             "# Parameter description:  The NOE.\n",
             "#\n",
             "# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   \n",
-            "XYZ_mol1      120        GLY         1865        N               0.5203739657160172     0.20810473864150658   \n",
+            "XYZ_mol1      120        GLY         1865        N               0.520373965716017       0.208104738641507    \n",
         ]
 
         # Printout of the real and generated data.
