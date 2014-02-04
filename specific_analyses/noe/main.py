@@ -170,28 +170,50 @@ class Noe_main:
 
         # Loop over spin data.
         deselect_flag = False
+        all_desel = True
         for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
+            # No intensity data.
+            if not hasattr(spin, 'intensities'):
+                warn(RelaxDeselectWarning(spin_id, 'the absence of intensity data'))
+                spin.select = False
+                deselect_flag = True
+                continue
+
             # Check for sufficient data.
-            if not hasattr(spin, 'intensities') or not len(spin.intensities) > 2:
-                warn(RelaxDeselectWarning(spin_id, 'insufficient data'))
+            if not len(spin.intensities) > 2:
+                warn(RelaxDeselectWarning(spin_id, 'insufficient data (less than two data points)'))
+                spin.select = False
+                deselect_flag = True
+                continue
+
+            # No error data.
+            if not hasattr(spin, 'intensity_err'):
+                warn(RelaxDeselectWarning(spin_id, 'the absence of errors'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Check for sufficient errors.
-            elif not hasattr(spin, 'intensity_err') or not len(spin.intensity_err) > 2:
-                warn(RelaxDeselectWarning(spin_id, 'missing errors'))
+            if not len(spin.intensity_err) > 2:
+                warn(RelaxDeselectWarning(spin_id, 'missing errors (less than two error points)'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
+            # Not all spins have been deselected.
+            all_desel = False
+
         # Final printout.
         if verbose and not deselect_flag:
             print("No spins have been deselected.")
+
+        # Catch complete failures - i.e. no spins are selected.
+        if all_desel:
+            raise RelaxError("All spins have been deselected.")
 
 
     return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
