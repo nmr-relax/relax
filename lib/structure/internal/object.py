@@ -29,7 +29,6 @@ import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
 from re import search
-from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
@@ -715,7 +714,7 @@ class Internal:
 
         # Convert to the molecule index.
         if chain_id:
-            mol_index = ascii_uppercase.index(chain_id)
+            mol_index = CHAIN_ID_LIST.index(chain_id)
 
         # Return the index.
         return mol_index
