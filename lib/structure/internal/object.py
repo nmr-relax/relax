@@ -1103,7 +1103,7 @@ class Internal:
         # Construct the structural data for the model from the other models.
         for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Add the atom.
-            self.add_atom(self, mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
+            self.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
 
         # Return the model.
         return self.structural_data[-1]
