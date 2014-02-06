@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,12 +24,13 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, float16, float64, transpose, zeros
+from numpy import array, cross, dot, float64, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
 
 # relax module imports.
+from lib.check_types import float16
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import axis_angle_to_R, R_to_euler_zyz
