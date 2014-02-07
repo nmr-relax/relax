@@ -35,6 +35,7 @@ import sys
 
 # The default module list.
 MOD_LIST = [
+    'python',
     'minfx',
     'bmrblib',
     'numpy',
