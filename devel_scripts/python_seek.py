@@ -73,6 +73,8 @@ class Python_info:
                 self.version_minfx(file)
             if 'bmrblib' in self.module_list:
                 self.version_bmrblib(file)
+            if 'Numeric' in self.module_list:
+                self.version_numeric(file)
             if 'numpy' in self.module_list:
                 self.version_numpy(file)
             if 'scipy' in self.module_list:
@@ -184,8 +186,7 @@ class Python_info:
 
             # Loop over the arguments.
             for i in range(1, len(sys.argv)):
-                if sys.argv[i] in MOD_LIST:
-                    self.module_list.append(sys.argv[i])
+                self.module_list.append(sys.argv[i])
 
         # Use the defaults.
         else:
@@ -264,6 +265,23 @@ class Python_info:
 
         # Execute and print the version
         self.execute(label="mpi4py:", file=file, commands=commands)
+
+
+    def version_numeric(self, file=None):
+        """Determine and print out the Numeric module version info."""
+
+        # The commands.
+        commands = [
+            "try:\n",
+            "    import Numeric\n",
+            "    version = Numeric.__version__\n",
+            "except:\n",
+            "    version = '-'\n",
+            "print(version)\n",
+        ]
+
+        # Execute and print the version
+        self.execute(label="Numeric:", file=file, commands=commands)
 
 
     def version_numpy(self, file=None):
