@@ -89,10 +89,10 @@ class Python_info:
                 self.version_bmrblib(file)
             if 'Numeric' in self.module_list:
                 self.version_numeric(file)
-            if 'numpy' in self.module_list:
-                self.version_numpy(file)
             if 'Scientific' in self.module_list:
                 self.version_scientific(file)
+            if 'numpy' in self.module_list:
+                self.version_numpy(file)
             if 'scipy' in self.module_list:
                 self.version_scipy(file)
             if 'wx' in self.module_list:
