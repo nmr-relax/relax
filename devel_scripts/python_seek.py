@@ -122,6 +122,9 @@ class Python_info:
             if file not in binaries:
                 binaries.append(file)
 
+        # Sort the list.
+        binaries.sort()
+
         # Return the file list.
         return binaries
 
