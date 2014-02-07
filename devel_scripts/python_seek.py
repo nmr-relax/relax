@@ -45,6 +45,19 @@ MOD_LIST = [
     'epydoc'
 ]
 
+MOD_ALL_LIST = [
+    'python',
+    'minfx',
+    'bmrblib',
+    'Numeric',
+    'Scientific',
+    'numpy',
+    'scipy',
+    'wx',
+    'mpi4py',
+    'epydoc'
+]
+
 
 class Python_info:
     """Find all Python versions and the supported modules."""
@@ -184,12 +197,18 @@ class Python_info:
 
         # Arguments supplied, so use these.
         if len(sys.argv) > 1:
-            # Initialise the list.
-            self.module_list = []
+            # The special 'all' argument.
+            if sys.argv[1] == 'all':
+                self.module_list = MOD_ALL_LIST
 
-            # Loop over the arguments.
-            for i in range(1, len(sys.argv)):
-                self.module_list.append(sys.argv[i])
+            # Individual modules.
+            else:
+                # Initialise the list.
+                self.module_list = []
+
+                # Loop over the arguments.
+                for i in range(1, len(sys.argv)):
+                    self.module_list.append(sys.argv[i])
 
         # Use the defaults.
         else:
