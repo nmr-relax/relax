@@ -77,6 +77,8 @@ class Python_info:
                 self.version_numeric(file)
             if 'numpy' in self.module_list:
                 self.version_numpy(file)
+            if 'Scientific' in self.module_list:
+                self.version_scientific(file)
             if 'scipy' in self.module_list:
                 self.version_scipy(file)
             if 'wx' in self.module_list:
@@ -299,6 +301,23 @@ class Python_info:
 
         # Execute and print the version
         self.execute(label="numpy:", file=file, commands=commands)
+
+
+    def version_scientific(self, file=None):
+        """Determine and print out the Scientific module version info."""
+
+        # The commands.
+        commands = [
+            "try:\n",
+            "    import Scientific\n",
+            "    version = Scientific.__version__\n",
+            "except:\n",
+            "    version = '-'\n",
+            "print(version)\n",
+        ]
+
+        # Execute and print the version
+        self.execute(label="Scientific:", file=file, commands=commands)
 
 
     def version_scipy(self, file=None):
