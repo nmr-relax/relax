@@ -62,7 +62,7 @@ MOD_ALL_LIST = [
 class Python_info:
     """Find all Python versions and the supported modules."""
 
-    def __init__(self, format="    %-10s %-20s", debug=False):
+    def __init__(self, format="    %-15s %-20s", debug=False):
         """Set up and run."""
 
         # Store the args.
