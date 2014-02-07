@@ -31,8 +31,8 @@ msg = ''
 for line in lines:
     # The separator, so reinitialise everything.
     if search('^-----', line):
-        # First, print the old message.
-        print("        * " + msg)
+        # First, print the old message, removing trailing whitespace.
+        print("        * " + msg.rstrip())
 
         # Reinitialise.
         msg = ''

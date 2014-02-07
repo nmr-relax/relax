@@ -29,7 +29,6 @@ import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
 from re import search
-from string import ascii_uppercase
 from warnings import warn
 
 # relax module imports.
@@ -45,6 +44,9 @@ from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.warnings import RelaxWarning
 
+
+# Module variables.
+CHAIN_ID_LIST = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
 
 
 class Internal:
@@ -712,7 +714,7 @@ class Internal:
 
         # Convert to the molecule index.
         if chain_id:
-            mol_index = ascii_uppercase.index(chain_id)
+            mol_index = CHAIN_ID_LIST.index(chain_id)
 
         # Return the index.
         return mol_index
@@ -1101,7 +1103,7 @@ class Internal:
         # Construct the structural data for the model from the other models.
         for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
             # Add the atom.
-            self.add_atom(self, mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
+            self.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
 
         # Return the model.
         return self.structural_data[-1]
@@ -2384,9 +2386,6 @@ class Internal:
             if hasattr(model, 'num') and model.num != None:
                 model_records = True
 
-        # Chain IDs.
-        chain_id_list = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
-
 
         ####################
         # Hetrogen section #
@@ -2414,7 +2413,7 @@ class Internal:
                 # If the residue is not already stored initialise a new het_data element.
                 # (residue number, residue name, chain ID, number of atoms, atom count array).
                 if not het_data[index] or not mol.res_num[i] == het_data[index][-1][0]:
-                    het_data[index].append([mol.res_num[i], mol.res_name[i], chain_id_list[index], 0, []])
+                    het_data[index].append([mol.res_num[i], mol.res_name[i], CHAIN_ID_LIST[index], 0, []])
 
                     # Catch missing chain_ids.
                     if het_data[index][-1][2] == None:
@@ -2617,19 +2616,19 @@ class Internal:
                             atom_name = "%s" % mol.atom_name[i]
 
                         # Write out.
-                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=chain_id_list[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
+                        pdb_write.atom(file, serial=atom_num, name=atom_name, res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0, element=mol.element[i])
                         num_atom += 1
                         ser_num += 1
 
                         # Info for the TER record.
                         ter_num = atom_num + 1
                         ter_name = mol.res_name[i]
-                        ter_chain_id = chain_id_list[index]
+                        ter_chain_id = CHAIN_ID_LIST[index]
                         ter_res_num = mol.res_num[i]
 
                 # Finish the ATOM section with the TER record.
                 if atom_record:
-                    pdb_write.ter(file, serial=ser_num, res_name=ter_name, chain_id=chain_id_list[index], res_seq=ter_res_num)
+                    pdb_write.ter(file, serial=ser_num, res_name=ter_name, chain_id=CHAIN_ID_LIST[index], res_seq=ter_res_num)
                     num_ter += 1
                     ser_num += 1
 
@@ -2650,7 +2649,7 @@ class Internal:
                             atom_num += 1
 
                         # Write out.
-                        pdb_write.hetatm(file, serial=ser_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=chain_id_list[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
+                        pdb_write.hetatm(file, serial=ser_num, name=self._translate(mol.atom_name[i]), res_name=mol.res_name[i], chain_id=CHAIN_ID_LIST[index], res_seq=mol.res_num[i], x=mol.x[i], y=mol.y[i], z=mol.z[i], occupancy=1.0, temp_factor=0.0, element=mol.element[i])
                         num_hetatm += 1
                         ser_num += 1
 
