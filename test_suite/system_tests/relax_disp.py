@@ -556,7 +556,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("kex", spin70.kex, spin71.kex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.74326615264889, 3)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57331164382438, 3)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57331164382438, 2)
         self.assertAlmostEqual(spin70.phi_ex, 0.312767653822936, 3)
         self.assertAlmostEqual(spin70.kex/10000, 4723.44390412119/10000, 3)
         self.assertAlmostEqual(spin70.chi2, 363.534049046805, 3)
