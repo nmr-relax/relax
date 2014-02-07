@@ -1,4 +1,4 @@
-﻿"""Script for demonstrating bug #21562, the failure of the NOE analysis when replicated spectra are used."""
+"""Script for demonstrating bug #21562, the failure of the NOE analysis when replicated spectra are used."""
 
 # Python module imports.
 from os import sep
