@@ -10,6 +10,17 @@ from os.path import abspath, dirname, isabs, isfile, islink, join
 from subprocess import PIPE, Popen
 import sys
 
+# The default module list.
+MOD_LIST = [
+    'minfx',
+    'bmrblib',
+    'numpy',
+    'scipy',
+    'wx',
+    'mpi4py',
+    'epydoc'
+]
+
 
 class Python_info:
     """Find all Python versions and the supported modules."""
@@ -24,20 +35,31 @@ class Python_info:
         # Get a list of all Python binaries.
         files = self.get_files()
 
+        # The modules to find.
+        self.modules()
+
         # Loop over the binaries.
         for file in files:
             # Printout.
             print("Testing %s:" % file)
 
             # Determine and print out the version info.
-            self.version_python(file)
-            self.version_minfx(file)
-            self.version_bmrblib(file)
-            self.version_numpy(file)
-            self.version_scipy(file)
-            self.version_wx(file)
-            self.version_mpi4py(file)
-            self.version_epydoc(file)
+            if 'python' in self.module_list:
+                self.version_python(file)
+            if 'minfx' in self.module_list:
+                self.version_minfx(file)
+            if 'bmrblib' in self.module_list:
+                self.version_bmrblib(file)
+            if 'numpy' in self.module_list:
+                self.version_numpy(file)
+            if 'scipy' in self.module_list:
+                self.version_scipy(file)
+            if 'wx' in self.module_list:
+                self.version_wx(file)
+            if 'mpi4py' in self.module_list:
+                self.version_mpi4py(file)
+            if 'epydoc' in self.module_list:
+                self.version_epydoc(file)
 
 
     def execute(self, label=None, file=None, commands=None):
@@ -127,6 +149,24 @@ class Python_info:
 
         # Return the file list.
         return binaries
+
+
+    def modules(self):
+        """Determine the modules to find."""
+
+        # Arguments supplied, so use these.
+        if len(sys.argv) > 1:
+            # Initialise the list.
+            self.module_list = []
+
+            # Loop over the arguments.
+            for i in range(1, len(sys.argv)):
+                if sys.argv[i] in MOD_LIST:
+                    self.module_list.append(sys.argv[i])
+
+        # Use the defaults.
+        else:
+            self.module_list = MOD_LIST
 
 
     def version_bmrblib(self, file=None):
