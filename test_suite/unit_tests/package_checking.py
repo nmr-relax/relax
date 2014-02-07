@@ -54,6 +54,10 @@ class PackageTestCase(UnitTestCase):
             if search("^\.", file):
                 continue
 
+            # Skip the Python 3 '__pycache__' directories.
+            if file == '__pycache__':
+                continue
+
             # Only check Python files and directories.
             if not search("\.py$", file) and not isdir(path):
                 continue
