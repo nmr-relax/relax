@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009 Michael Bieri                                            #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -413,7 +413,7 @@ class Auto_model_free(Base_analysis):
                 missing.append(msg % ("nuclear isotope data", "spin.isotope"))
 
             # Test if the CSA value has been set for the heteronuclei.
-            if spin.isotope in ['15N', '13C'] and (not hasattr(spin, 'csa') or spin.csa == None):
+            if (hasattr(spin, 'isotope') and spin.isotope in ['15N', '13C']) and (not hasattr(spin, 'csa') or spin.csa == None):
                 missing.append(msg % ("CSA data", "value.set"))
 
         # Interatomic data container variables.
