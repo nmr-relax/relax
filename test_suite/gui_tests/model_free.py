@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -185,6 +185,91 @@ class Mf(GuiTestCase):
 
             # Exceptions in the thread.
             self.check_exceptions()
+
+
+    def test_bug_21615_incomplete_setup_failure(self):
+        """Catch U{bug #21615<https://gna.org/bugs/?21615>}, the failure of showing the missing data dialog when executing the analysis with an incomplete setup.
+
+        This was reported by Ivan Leung.
+        """
+
+        # Simulate the new analysis wizard.
+        self.app.gui.analysis.menu_new(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
+        page.select_mf(None)
+        page.analysis_name.SetValue(str_to_gui("Model-free incomplete setup failure"))
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+        page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
+        self.app.gui.analysis.new_wizard.wizard._go_next(None)
+
+        # Get the data.
+        analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
+
+        # Set up the analysis.
+        self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
+
+        # Alias the analysis.
+        analysis = self.app.gui.analysis.get_page_from_name("Model-free incomplete setup failure")
+
+        # Change the results directory.
+        analysis.field_results_dir.SetValue(str_to_gui(ds.tmpdir))
+
+        # The data path.
+        data_path = status.install_path + sep + 'test_suite' + sep + 'shared_data' + sep + 'model_free' + sep + 'bug_21615_incomplete_setup_failure' + sep
+
+        # Launch the spin viewer window.
+        self.app.gui.show_tree()
+
+        # Spin loading wizard:  Initialisation.
+        self.app.gui.spin_viewer.load_spins_wizard()
+
+        # Spin loading wizard:  The PDB file.
+        page = self.app.gui.spin_viewer.wizard.get_page(0)
+        page.selection = 'new pdb'
+        self.app.gui.spin_viewer.wizard._go_next()
+        page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
+        page.uf_args['file'].SetValue(str_to_gui(data_path + 'Truncated_ForBugReport.pdb'))
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Spin loading wizard:  The spin loading.
+        page = self.app.gui.spin_viewer.wizard.get_page(self.app.gui.spin_viewer.wizard._current_page)
+        page.uf_args['spin_id'].SetValue(str_to_gui('@N'))
+        self.app.gui.spin_viewer.wizard._apply()
+        page.uf_args['spin_id'].SetValue(str_to_gui('@H'))
+        self.app.gui.spin_viewer.wizard._go_next()
+        interpreter.flush()    # Required because of the asynchronous uf call.
+
+        # Close the spin viewer window.
+        self.app.gui.spin_viewer.handler_close()
+
+        # Flush the interpreter in preparation for the synchronous user functions of the peak list wizard.
+        interpreter.flush()
+
+        # Set the element type.
+        self._execute_uf(uf_name='spin.element', element='N')
+
+        # Load the relaxation data.
+        data = [
+            ['NOE_ForBugReport.txt', 'noe_800', 'NOE', 800000001.0],
+            ['T1_ForBugReport.txt',  'r1_800',  'R1',  800000001.0],
+            ['T2_ForBugReport.txt',  'r2_800',  'R2',  800000001.0]
+        ]
+        for i in range(len(data)):
+            self._execute_uf(uf_name='relax_data.read', file=data_path+data[i][0], ri_id=data[i][1], ri_type=data[i][2], frq=data[i][3], mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # Execute relax.
+        state = analysis.execute(wx.CommandEvent(wx.wxEVT_COMMAND_BUTTON_CLICKED, analysis.button_exec_relax.GetId()))
+
+        # Wait for execution to complete.
+        if hasattr(analysis, 'thread'):
+            analysis.thread.join()
+
+        # Flush all wx events.
+        wx.Yield()
+
+        # Exceptions in the thread.
+        self.check_exceptions()
 
 
     def test_mf_auto_analysis(self):
