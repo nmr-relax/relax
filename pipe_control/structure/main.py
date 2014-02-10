@@ -546,8 +546,8 @@ def load_spins(spin_id=None, str_id=None, mol_name_target=None, ave_pos=False):
     @type spin_id:              str
     @keyword str_id:            The structure identifier.  This can be the file name, model number, or structure number.
     @type str_id:               int or str
-    @keyword mol_name:          The name of target molecule container, overriding the name of the loaded structures
-    @type mol_name:             str or None
+    @keyword mol_name_target:   The name of target molecule container, overriding the name of the loaded structures
+    @type mol_name_target:      str or None
     @keyword ave_pos:           A flag specifying if the average atom position or the atom position from all loaded structures is loaded into the SpinContainer.
     @type ave_pos:              bool
     """

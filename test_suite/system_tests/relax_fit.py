@@ -82,7 +82,7 @@ class Relax_fit(SystemTestCase):
 
         # Check the errors.
         for key in cdp.sigma_I:
-            self.assertEqual(cdp.sigma_I[key], 10578.039482421433)
+            self.assertEqual(cdp.sigma_I[key], 10578.039482421433, 6)
             self.assertEqual(cdp.var_I[key], 111894919.29166669)
 
         # Spin data check.
