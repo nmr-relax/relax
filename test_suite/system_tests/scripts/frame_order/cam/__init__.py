@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,11 +23,23 @@
 """The CaM frame order system test scripts."""
 
 
-__all__ = ['base_script',
-           'free_rotor',
-           'free_rotor2',
-           'iso_cone_free_rotor',
-           'iso_cone_free_rotor2',
-           'rigid',
-           'rotor',
-           'rotor2']
+__all__ = [
+    'base_script',
+    'double_rotor',
+    'free_rotor',
+    'free_rotor_missing_data',
+    'free_rotor2',
+    'generate_rotor2_distribution',
+    'iso_cone',
+    'iso_cone_free_rotor',
+    'iso_cone_free_rotor2',
+    'iso_cone_free_torsionless',
+    'pseudo_ellipse',
+    'pseudo_ellipse_free_rotor',
+    'pseudo_ellipse_torsionless',
+    'pseudo_ellipse2',
+    'rigid',
+    'rotor',
+    'rotor_2_state',
+    'rotor2'
+]
