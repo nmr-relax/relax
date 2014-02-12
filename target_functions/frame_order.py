@@ -56,7 +56,7 @@ from target_functions.chi2 import chi2
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=zeros(3), pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -103,6 +103,8 @@ class Frame_order:
         @type translation_opt:      bool
         @keyword pivot:             The pivot point for the ball-and-socket joint motion.  This is needed if PCS or PRE values are used.
         @type pivot:                numpy rank-1, 3D array or None
+        @keyword pivot2:            The second pivot point for the motion.  This is needed if PCS or PRE values are used and if a double-motional model is to be optimised.
+        @type pivot2:               numpy rank-1, 3D array or None
         @keyword pivot_opt:         A flag which if True will allow the pivot point of the motion to be optimised.
         @type pivot_opt:            bool
         @keyword quad_int:          A flag which if True will perform high precision numerical integration via the scipy.integrate quad(), dblquad() and tplquad() integration methods rather than the rough quasi-random numerical integration.
@@ -136,6 +138,7 @@ class Frame_order:
         self.ave_pos_piv_sync = ave_pos_piv_sync
         self.translation_opt = translation_opt
         self._param_pivot = pivot
+        self._param_pivot2 = pivot2
         self.pivot_opt = pivot_opt
 
         # Tensor setup.
@@ -422,7 +425,7 @@ class Frame_order:
         # Unpack the parameters.
         if self.translation_opt and self.pivot_opt:
             self._param_pivot = params[:3]
-            self._param_pivot_2 = params[3:6]
+            self._param_pivot2 = params[3:6]
             self._translation_vector = params[6:9]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[9:]
         elif self.translation_opt:
@@ -430,7 +433,7 @@ class Frame_order:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[3:]
         elif self.pivot_opt:
             self._param_pivot = params[:3]
-            self._param_pivot_2 = params[3:6]
+            self._param_pivot2 = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[6:]
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params
