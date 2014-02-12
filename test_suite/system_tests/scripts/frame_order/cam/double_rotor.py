@@ -22,21 +22,31 @@
 # Module docstring.
 """Script for optimising the second rotor frame order test model of CaM."""
 
+# Python module imports
+from numpy import array, float32
+
 # relax module imports.
 from base_script import Base_script
 
 
 class Analysis(Base_script):
-
-    # Set up some class variables.
+    # The directory containing the data files.
     DIRECTORY = 'double_rotor'
+
+    # The frame order model.
     MODEL = 'double rotor'
+
+    # The model parameters.
     AXIS_THETA = 1.494291741547518
     AXIS_PHI = 2.525044022476957
     CONE_SIGMA_MAX = 10.5 / 360.0 * 2.0 * pi
     AXIS_THETA2 = 2.30381499622381
     AXIS_PHI2 = -2.249696457768556
     CONE_SIGMA_MAX2 = 11.5 / 360.0 * 2.0 * pi
+
+    # The pivot points.
+    PIVOT = array([41.739, 6.03, -0.764], float32)
+    PIVOT2 = array([26.837, -12.379, 28.342], float32)
 
 
 # Execute the analysis.
