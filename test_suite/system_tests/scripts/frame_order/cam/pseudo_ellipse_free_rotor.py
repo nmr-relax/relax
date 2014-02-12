@@ -24,7 +24,6 @@
 
 # relax module imports.
 from base_script import Base_script
-from lib.geometry.rotations import reverse_euler_zyz
 
 
 class Analysis(Base_script):
@@ -32,14 +31,11 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'pseudo_ellipse_free_rotor'
     MODEL = 'pseudo-ellipse, free rotor'
-    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     EIGEN_ALPHA = 3.1415926535897931
     EIGEN_BETA = 0.96007997859534311
     EIGEN_GAMMA = 4.0322755062196229
     CONE_THETA_X = 0.5
     CONE_THETA_Y = 0.3
-    CONE = True
-    NUM_INT_PTS = 50
 
 
 # Execute the analysis.

@@ -24,7 +24,6 @@
 
 # relax module imports.
 from base_script import Base_script
-from lib.geometry.rotations import reverse_euler_zyz
 
 
 class Analysis(Base_script):
@@ -32,9 +31,7 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'rigid'
     MODEL = 'rigid'
-    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     CONE = False
-    NUM_INT_PTS = 50
 
 
 # Execute the analysis.

@@ -24,7 +24,6 @@
 
 # relax module imports.
 from base_script import Base_script
-from lib.geometry.rotations import reverse_euler_zyz
 
 
 class Analysis(Base_script):
@@ -32,15 +31,12 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'double_rotor'
     MODEL = 'double rotor'
-    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     AXIS_THETA = 1.494291741547518
     AXIS_PHI = 2.525044022476957
     CONE_SIGMA_MAX = 10.5 / 360.0 * 2.0 * pi
     AXIS_THETA2 = 2.30381499622381
     AXIS_PHI2 = -2.249696457768556
     CONE_SIGMA_MAX2 = 11.5 / 360.0 * 2.0 * pi
-    CONE = True
-    NUM_INT_PTS = 50
 
 
 # Execute the analysis.

@@ -28,7 +28,7 @@ from os import F_OK, access, sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from lib.geometry.rotations import euler_to_R_zyz
+from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
 from status import Status; status = Status()
 
 
@@ -37,9 +37,34 @@ BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 
 
 class Base_script:
-    # Class variables.
+    # Flags for turning certain features on or off.
     CONE = True
     LOAD_STATE = False
+
+    # The directory containing the data files.
+    DIRECTORY = None
+
+    # The frame order model.
+    MODEL = None
+
+    # The model parameters.
+    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
+    AXIS_THETA = None
+    AXIS_PHI = None
+    EIGEN_ALPHA = None
+    EIGEN_BETA = None
+    EIGEN_GAMMA = None
+    CONE_THETA = None
+    CONE_THETA_X = None
+    CONE_THETA_Y = None
+    CONE_SIGMA_MAX = None
+    AXIS_THETA2 = None
+    AXIS_PHI2 = None
+    CONE_SIGMA_MAX2 = None
+
+    # The number of integration points.
+    NUM_INT_PTS = 50
+
 
     def __init__(self, exec_fn):
         """Execute the frame order analysis."""
@@ -83,31 +108,31 @@ class Base_script:
 
         # Check the minimum.
         if self.MODEL not in ['free rotor', 'iso cone, free rotor']:
-            if hasattr(self, 'AVE_POS_ALPHA'):
+            if hasattr(self, 'AVE_POS_ALPHA') and self.AVE_POS_ALPHA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_ALPHA, param='ave_pos_alpha')
-            if hasattr(self, 'AVE_POS_BETA'):
+            if hasattr(self, 'AVE_POS_BETA') and self.AVE_POS_BETA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_BETA, param='ave_pos_beta')
-            if hasattr(self, 'AVE_POS_GAMMA'):
+            if hasattr(self, 'AVE_POS_GAMMA') and self.AVE_POS_GAMMA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_GAMMA, param='ave_pos_gamma')
-        if hasattr(self, 'EIGEN_ALPHA'):
+        if hasattr(self, 'EIGEN_ALPHA') and self.EIGEN_ALPHA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_ALPHA, param='eigen_alpha')
-        if hasattr(self, 'EIGEN_BETA'):
+        if hasattr(self, 'EIGEN_BETA') and self.EIGEN_BETA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_BETA, param='eigen_beta')
-        if hasattr(self, 'EIGEN_GAMMA'):
+        if hasattr(self, 'EIGEN_GAMMA') and self.EIGEN_GAMMA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_GAMMA, param='eigen_gamma')
-        if hasattr(self, 'AXIS_THETA'):
+        if hasattr(self, 'AXIS_THETA') and self.AXIS_THETA != None:
             self._execute_uf(uf_name='value.set', val=self.AXIS_THETA, param='axis_theta')
-        if hasattr(self, 'AXIS_PHI'):
+        if hasattr(self, 'AXIS_PHI') and self.AXIS_PHI != None:
             self._execute_uf(uf_name='value.set', val=self.AXIS_PHI, param='axis_phi')
-        if hasattr(self, 'CONE_THETA_X'):
+        if hasattr(self, 'CONE_THETA_X') and self.CONE_THETA_X != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA_X, param='cone_theta_x')
-        if hasattr(self, 'CONE_THETA_Y'):
+        if hasattr(self, 'CONE_THETA_Y') and self.CONE_THETA_Y != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA_Y, param='cone_theta_y')
-        if hasattr(self, 'CONE_THETA'):
+        if hasattr(self, 'CONE_THETA') and self.CONE_THETA != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA, param='cone_theta')
-        if hasattr(self, 'CONE_S1'):
+        if hasattr(self, 'CONE_S1') and self.CONE_S1 != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_S1, param='cone_s1')
-        if hasattr(self, 'CONE_SIGMA_MAX'):
+        if hasattr(self, 'CONE_SIGMA_MAX') and self.CONE_SIGMA_MAX != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_SIGMA_MAX, param='cone_sigma_max')
         self._execute_uf(uf_name='calc')
         print("\nchi2: %s" % cdp.chi2)
