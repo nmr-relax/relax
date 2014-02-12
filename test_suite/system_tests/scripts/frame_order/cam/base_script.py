@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -38,8 +38,8 @@ BASE_PATH = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_
 
 class Base_script:
     # Class variables.
-    cone = True
-    load_state = False
+    CONE = True
+    LOAD_STATE = False
 
     def __init__(self, exec_fn):
         """Execute the frame order analysis."""
@@ -48,10 +48,10 @@ class Base_script:
         self._execute_uf = exec_fn
 
         # The data path.
-        self.data_path = BASE_PATH + self.directory
+        self.data_path = BASE_PATH + self.DIRECTORY
 
         # Pre-created set up.
-        if self.load_state:
+        if self.LOAD_STATE:
             self.setup_state()
 
         # New set up.
@@ -78,37 +78,37 @@ class Base_script:
         """Optimise the frame order model."""
 
         # Set the number of numerical integration points.
-        if hasattr(self, 'num_int_pts'):
-            self._execute_uf(uf_name='frame_order.num_int_pts', num=self.num_int_pts)
+        if hasattr(self, 'NUM_INT_PTS'):
+            self._execute_uf(uf_name='frame_order.num_int_pts', num=self.NUM_INT_PTS)
 
         # Check the minimum.
-        if self.model not in ['free rotor', 'iso cone, free rotor']:
-            if hasattr(self, 'ave_pos_alpha'):
-                self._execute_uf(uf_name='value.set', val=self.ave_pos_alpha, param='ave_pos_alpha')
-            if hasattr(self, 'ave_pos_beta'):
-                self._execute_uf(uf_name='value.set', val=self.ave_pos_beta, param='ave_pos_beta')
-            if hasattr(self, 'ave_pos_gamma'):
-                self._execute_uf(uf_name='value.set', val=self.ave_pos_gamma, param='ave_pos_gamma')
-        if hasattr(self, 'eigen_alpha'):
-            self._execute_uf(uf_name='value.set', val=self.eigen_alpha, param='eigen_alpha')
-        if hasattr(self, 'eigen_beta'):
-            self._execute_uf(uf_name='value.set', val=self.eigen_beta, param='eigen_beta')
-        if hasattr(self, 'eigen_gamma'):
-            self._execute_uf(uf_name='value.set', val=self.eigen_gamma, param='eigen_gamma')
-        if hasattr(self, 'axis_theta'):
-            self._execute_uf(uf_name='value.set', val=self.axis_theta, param='axis_theta')
-        if hasattr(self, 'axis_phi'):
-            self._execute_uf(uf_name='value.set', val=self.axis_phi, param='axis_phi')
-        if hasattr(self, 'cone_theta_x'):
-            self._execute_uf(uf_name='value.set', val=self.cone_theta_x, param='cone_theta_x')
-        if hasattr(self, 'cone_theta_y'):
-            self._execute_uf(uf_name='value.set', val=self.cone_theta_y, param='cone_theta_y')
-        if hasattr(self, 'cone_theta'):
-            self._execute_uf(uf_name='value.set', val=self.cone_theta, param='cone_theta')
-        if hasattr(self, 'cone_s1'):
-            self._execute_uf(uf_name='value.set', val=self.cone_s1, param='cone_s1')
-        if hasattr(self, 'cone_sigma_max'):
-            self._execute_uf(uf_name='value.set', val=self.cone_sigma_max, param='cone_sigma_max')
+        if self.MODEL not in ['free rotor', 'iso cone, free rotor']:
+            if hasattr(self, 'AVE_POS_ALPHA'):
+                self._execute_uf(uf_name='value.set', val=self.AVE_POS_ALPHA, param='ave_pos_alpha')
+            if hasattr(self, 'AVE_POS_BETA'):
+                self._execute_uf(uf_name='value.set', val=self.AVE_POS_BETA, param='ave_pos_beta')
+            if hasattr(self, 'AVE_POS_GAMMA'):
+                self._execute_uf(uf_name='value.set', val=self.AVE_POS_GAMMA, param='ave_pos_gamma')
+        if hasattr(self, 'EIGEN_ALPHA'):
+            self._execute_uf(uf_name='value.set', val=self.EIGEN_ALPHA, param='eigen_alpha')
+        if hasattr(self, 'EIGEN_BETA'):
+            self._execute_uf(uf_name='value.set', val=self.EIGEN_BETA, param='eigen_beta')
+        if hasattr(self, 'EIGEN_GAMMA'):
+            self._execute_uf(uf_name='value.set', val=self.EIGEN_GAMMA, param='eigen_gamma')
+        if hasattr(self, 'AXIS_THETA'):
+            self._execute_uf(uf_name='value.set', val=self.AXIS_THETA, param='axis_theta')
+        if hasattr(self, 'AXIS_PHI'):
+            self._execute_uf(uf_name='value.set', val=self.AXIS_PHI, param='axis_phi')
+        if hasattr(self, 'CONE_THETA_X'):
+            self._execute_uf(uf_name='value.set', val=self.CONE_THETA_X, param='cone_theta_x')
+        if hasattr(self, 'CONE_THETA_Y'):
+            self._execute_uf(uf_name='value.set', val=self.CONE_THETA_Y, param='cone_theta_y')
+        if hasattr(self, 'CONE_THETA'):
+            self._execute_uf(uf_name='value.set', val=self.CONE_THETA, param='cone_theta')
+        if hasattr(self, 'CONE_S1'):
+            self._execute_uf(uf_name='value.set', val=self.CONE_S1, param='cone_s1')
+        if hasattr(self, 'CONE_SIGMA_MAX'):
+            self._execute_uf(uf_name='value.set', val=self.CONE_SIGMA_MAX, param='cone_sigma_max')
         self._execute_uf(uf_name='calc')
         print("\nchi2: %s" % cdp.chi2)
 
@@ -133,7 +133,7 @@ class Base_script:
         """Load the original structure into a dedicated data pipe."""
 
         # Delete the data pipe (if a loaded state has been used).
-        if self.load_state:
+        if self.LOAD_STATE:
             self._execute_uf(uf_name='pipe.delete', pipe_name='orig pos')
 
         # Create a special data pipe for the original rigid body position.
@@ -154,7 +154,7 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
         # Create the cone PDB file.
-        if self.cone:
+        if self.CONE:
             self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
 
 
@@ -169,10 +169,10 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
         # Solve the {a, b, g} -> {0, b', g'} angle conversion problem in the rotor models by pre-rotating the domain!
-        if self.model in ['free rotor', 'iso cone, free rotor']:
+        if self.MODEL in ['free rotor', 'iso cone, free rotor']:
             # The rotation matrix.
             R = zeros((3, 3), float64)
-            euler_to_R_zyz(self.ave_pos_alpha, self.ave_pos_beta, self.ave_pos_gamma, R)
+            euler_to_R_zyz(self.AVE_POS_ALPHA, self.AVE_POS_BETA, self.AVE_POS_GAMMA, R)
 
             # Rotate.
             self._execute_uf(uf_name='structure.rotate', R=R, atom_id='#C-dom')
@@ -226,7 +226,7 @@ class Base_script:
             self._execute_uf(uf_name='align_tensor.reduction', full_tensor=full[i], red_tensor=red[i])
 
         # Select the model.
-        self._execute_uf(uf_name='frame_order.select_model', model=self.model)
+        self._execute_uf(uf_name='frame_order.select_model', model=self.MODEL)
 
         # Set up the mechanics of the displacement to the average domain position.
         self._execute_uf(uf_name='frame_order.average_position', pivot='motional', translation=False)
@@ -273,7 +273,7 @@ class Base_script:
         pivot = cdp.pivot
 
         # Delete the data pipe (if a loaded state has been used).
-        if self.load_state:
+        if self.LOAD_STATE:
             self._execute_uf(uf_name='pipe.delete', pipe_name='ave pos')
 
         # Create a special data pipe for the average rigid body position.

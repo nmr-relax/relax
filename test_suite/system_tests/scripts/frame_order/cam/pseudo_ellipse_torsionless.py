@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,16 +30,16 @@ from lib.geometry.rotations import reverse_euler_zyz
 class Analysis(Base_script):
 
     # Set up some class variables.
-    directory = 'pseudo_ellipse_torsionless'
-    model = 'pseudo-ellipse, torsionless'
-    ave_pos_alpha, ave_pos_beta, ave_pos_gamma = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
-    eigen_alpha = 3.1415926535897931
-    eigen_beta = 0.96007997859534311
-    eigen_gamma = 4.0322755062196229
-    cone_theta_x = 1.3
-    cone_theta_y = 1.1
-    cone = True
-    num_int_pts = 50
+    DIRECTORY = 'pseudo_ellipse_torsionless'
+    MODEL = 'pseudo-ellipse, torsionless'
+    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
+    EIGEN_ALPHA = 3.1415926535897931
+    EIGEN_BETA = 0.96007997859534311
+    EIGEN_GAMMA = 4.0322755062196229
+    CONE_THETA_X = 1.3
+    CONE_THETA_Y = 1.1
+    CONE = True
+    NUM_INT_PTS = 50
 
 
 # Execute the analysis.
