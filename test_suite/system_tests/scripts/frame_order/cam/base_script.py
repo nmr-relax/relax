@@ -23,7 +23,7 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
+from numpy import array, float32, float64, transpose, zeros
 from os import F_OK, access, sep
 
 # relax module imports.
@@ -47,6 +47,9 @@ class Base_script:
     # The frame order model.
     MODEL = None
 
+    # The number of integration points.
+    NUM_INT_PTS = 50
+
     # The model parameters.
     AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     AXIS_THETA = None
@@ -62,8 +65,9 @@ class Base_script:
     AXIS_PHI2 = None
     CONE_SIGMA_MAX2 = None
 
-    # The number of integration points.
-    NUM_INT_PTS = 50
+    # The pivot points.
+    PIVOT = array([ 37.254, 0.5, 16.7465], float32)
+    PIVOT2 = None
 
 
     def __init__(self, exec_fn):
@@ -259,9 +263,10 @@ class Base_script:
         # Set the reference domain.
         self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
-        # Set the initial pivot point.
-        pivot = array([ 37.254, 0.5, 16.7465])
-        self._execute_uf(uf_name='frame_order.pivot', pivot=pivot, fix=True)
+        # Set the initial pivot point(s).
+        self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=True)
+        if self.PIVOT2 != None:
+            self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT2, order=2, fix=True)
 
         # Set the paramagnetic centre.
         self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
