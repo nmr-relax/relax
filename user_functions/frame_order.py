@@ -172,7 +172,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 # The frame_order.pivot user function.
 uf = uf_info.add_uf('frame_order.pivot')
-uf.title = "Set the pivot point for the two body motion in the structural coordinate system."
+uf.title = "Set the pivot points for the two body motion in the structural coordinate system."
 uf.title_short = "Pivot point setting."
 uf.add_keyarg(
     name = "pivot",
@@ -182,14 +182,25 @@ uf.add_keyarg(
     desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates)."
 )
 uf.add_keyarg(
+    name = "order",
+    default = 1,
+    min = 1,
+    max = 100,
+    py_type = "int",
+    desc_short = "pivot point number",
+    desc = "The ordinal number of the pivot point.  The value of 1 is for the first pivot point, the value of 2 for the second pivot point, and so on.",
+    wiz_element_type = "spin"
+)
+uf.add_keyarg(
     name = "fix",
     py_type = "bool",
+    default = False,
     desc_short = "fixed flag",
     desc = "A flag specifying if the pivot point should be fixed during optimisation."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This will set the pivot point for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
+uf.desc[-1].add_paragraph("This will set the pivot points for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the pivot point, type one of:")
@@ -197,6 +208,7 @@ uf.desc[-1].add_prompt("relax> frame_order.pivot([12.067, 14.313, -3.2675])")
 uf.desc[-1].add_prompt("relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])")
 uf.backend = pivot
 uf.menu_text = "&pivot"
+uf.wizard_size = (900, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

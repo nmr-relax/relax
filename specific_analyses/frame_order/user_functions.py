@@ -29,6 +29,7 @@ from numpy import array, dot, eye, float64, transpose, zeros
 import sys
 
 # relax module imports.
+from lib.arg_check import is_float_array
 from lib.errors import RelaxError
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
@@ -395,11 +396,13 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
     pdb_distribution(file=dist_file, dir=dir, force=force)
 
 
-def pivot(pivot=None, fix=None):
+def pivot(pivot=None, order=1, fix=False):
     """Set the pivot point for the 2 body motion.
 
     @keyword pivot: The pivot point of the two bodies (domains, etc.) in the structural coordinate system.
     @type pivot:    list of num
+    @keyword order: The ordinal number of the pivot point.  The value of 1 is for the first pivot point, the value of 2 for the second pivot point, and so on.
+    @type order:    int
     @keyword fix:   A flag specifying if the pivot point should be fixed during optimisation.
     @type fix:      bool
     """
@@ -407,13 +410,24 @@ def pivot(pivot=None, fix=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Set the pivot point and fixed flag.
-    cdp.pivot = pivot
-    cdp.pivot_fixed = fix
+    # Convert the pivot to a numpy array.
+    pivot = array(pivot, float64)
 
-    # Convert to floats.
-    for i in range(3):
-        cdp.pivot[i] = float(cdp.pivot[i])
+    # Check the pivot validity.
+    is_float_array(pivot, name='pivot point', size=3)
+
+    # Store the pivot point. and fixed flag.
+    if order == 1:
+        cdp.pivot = pivot
+    else:
+        # The variable name.
+        name = 'pivot%i' % order
+
+        # Store the variable.
+        setattr(cdp, name, pivot)
+
+    # Store the fixed flag.
+    cdp.pivot_fixed = fix
 
 
 def quad_int(flag=False):
