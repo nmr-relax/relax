@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ from status import Status; status = Status()
 
 
 # Initialise the interpreter.
-interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+interpreter = Interpreter(show_script=False, raise_relax_error=True)
 interpreter.populate_self()
 interpreter.on()
 

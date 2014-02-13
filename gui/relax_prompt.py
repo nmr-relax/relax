@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -181,7 +181,7 @@ class InterpClass(wx.py.interpreter.Interpreter):
         self.introText = info.intro_text()
 
         # The relax interpreter.
-        interp = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        interp = interpreter.Interpreter(show_script=False, raise_relax_error=True)
 
         # The locals.
         self.locals = interp._locals

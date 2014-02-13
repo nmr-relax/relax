@@ -216,7 +216,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter = interpreter.Interpreter(show_script=False, raise_relax_error=True)
             self.interpreter.on()
 
             # Run the tests.
@@ -229,7 +229,7 @@ class Relax:
             from test_suite.test_suite_runner import Test_suite_runner
 
             # Load the interpreter and turn intros on.
-            self.interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self.interpreter = interpreter.Interpreter(show_script=False, raise_relax_error=True)
             self.interpreter.on()
 
             # Run the tests.

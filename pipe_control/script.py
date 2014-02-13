@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -59,7 +59,7 @@ def script(file=None, dir=None):
     status.uf_intro = True
 
     # Load the interpreter.
-    interpreter = prompt.interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+    interpreter = prompt.interpreter.Interpreter(show_script=False, raise_relax_error=True)
     interpreter.populate_self()
     interpreter.on(verbose=False)
 
