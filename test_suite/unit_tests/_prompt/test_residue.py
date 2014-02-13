@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,7 +41,7 @@ class Test_residue(Residue_base_class, TestCase):
         super(Test_residue, self).__init__(methodName)
 
         # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 

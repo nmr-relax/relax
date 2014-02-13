@@ -62,7 +62,7 @@ class Main:
             self.save_path = getcwd()
 
         # Load the interpreter.
-        self.interpreter = Interpreter(show_script=False, quit=False, raise_relax_error=True)
+        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 

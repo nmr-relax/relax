@@ -53,7 +53,7 @@ class Interpreter(object):
             self._instance = object.__new__(self, *args, **kargs)
 
             # Load a copy of the relax interpreter.
-            self._instance._interpreter = interpreter.Interpreter(show_script=False, quit=False, raise_relax_error=True)
+            self._instance._interpreter = interpreter.Interpreter(show_script=False, raise_relax_error=True)
             self._instance._interpreter.populate_self()
             self._instance._interpreter.on(verbose=False)
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,15 +65,12 @@ PS3_COLOUR = "\n%s%s%s" % (ansi.relax_prompt, PS1_ORIG, ansi.end)
 
 
 class Interpreter:
-    def __init__(self, show_script=True, quit=True, raise_relax_error=False):
+    def __init__(self, show_script=True, raise_relax_error=False):
         """The interpreter class.
 
         @param show_script:         If true, the relax will print the script contents prior to
                                     executing the script.
         @type show_script:          bool
-        @param quit:                If true, the default, then relax will exit after running the
-                                    run() method.
-        @type quit:                 bool
         @param raise_relax_error:   If false, the default, then relax will print a nice error
                                     message to STDERR, without a traceback, when a RelaxError
                                     occurs.  This is to make things nicer for the user.
@@ -82,7 +79,6 @@ class Interpreter:
 
         # Place the arguments in the class namespace.
         self.__show_script = show_script
-        self.__quit_flag = quit
         self.__raise_relax_error = raise_relax_error
 
         # Build the intro string.
@@ -275,7 +271,7 @@ class Interpreter:
             status.uf_intro = True
 
             # Run the script.
-            return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, quit=self.__quit_flag, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
+            return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
 
         # Go to the prompt.
         else:
@@ -398,7 +394,7 @@ def interact_prompt(self, intro=None, local={}):
             more = False
 
 
-def interact_script(self, intro=None, local={}, script_file=None, quit=True, show_script=True, raise_relax_error=False):
+def interact_script(self, intro=None, local={}, script_file=None, show_script=True, raise_relax_error=False):
     """Replacement function for 'code.InteractiveConsole.interact'.
 
     This will execute the script file.
@@ -412,8 +408,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     @type local:                dict
     @param script_file:         The script file to be executed.
     @type script_file:          None or str
-    @param quit:                If true, the default, then relax will exit after running the script.
-    @type quit:                 bool
     @param show_script:         If true, the relax will print the script contents prior to executing
                                 the script.
     @type show_script:          bool
@@ -510,11 +504,6 @@ def interact_script(self, intro=None, local={}, script_file=None, quit=True, sho
     if show_script:
         sys.stdout.write("\n")
 
-    # Quit relax.
-    # FIXME: need to drop off end of interpreter loop to exit cleanly
-    #if quit:
-    #    sys.exit()
-
     # Return the execution flag.
     return exec_pass
 
@@ -542,7 +531,7 @@ def prompt(intro=None, local=None):
     console.interact(intro, local)
 
 
-def run_script(intro=None, local=None, script_file=None, quit=True, show_script=True, raise_relax_error=False):
+def run_script(intro=None, local=None, script_file=None, show_script=True, raise_relax_error=False):
     """Python interpreter emulation.
 
     This function replaces 'code.interact'.
@@ -556,8 +545,6 @@ def run_script(intro=None, local=None, script_file=None, quit=True, show_script=
     @type local:                dict
     @param script_file:         The script file to be executed.
     @type script_file:          None or str
-    @param quit:                If true, the default, then relax will exit after running the script.
-    @type quit:                 bool
     @param show_script:         If true, the relax will print the script contents prior to executing
                                 the script.
     @type show_script:          bool
@@ -573,7 +560,7 @@ def run_script(intro=None, local=None, script_file=None, quit=True, show_script=
 
     # The console.
     console = InteractiveConsole(local)
-    return console.interact(intro, local, script_file, quit, show_script=show_script, raise_relax_error=raise_relax_error)
+    return console.interact(intro, local, script_file, show_script=show_script, raise_relax_error=raise_relax_error)
 
 
 def runcode(self, code):
