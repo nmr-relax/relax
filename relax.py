@@ -279,7 +279,7 @@ class Relax:
         parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
-        parser.add_option('-p', '--pedantic', action='store_true', dest='pedantic', default=0, help='escalate all warnings to errors')
+        parser.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
@@ -301,9 +301,9 @@ class Relax:
         if options.numpy_raise:
             numpy.seterr(all='raise')
 
-        # Pedantic flag.
-        if options.pedantic:
-            status.pedantic = True
+        # escalate flag.
+        if options.escalate:
+            status.escalate = True
 
         # Logging.
         if options.log:
