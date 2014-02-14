@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, pi, sqrt
-from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
+from numpy import array, cross, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
@@ -46,7 +46,7 @@ from lib.frame_order.pseudo_ellipse_free_rotor import compile_2nd_matrix_pseudo_
 from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless, pcs_numeric_int_pseudo_ellipse_torsionless_qrint
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
 from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
+from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
@@ -56,7 +56,7 @@ from target_functions.chi2 import chi2
 class Frame_order:
     """Class containing the target function of the optimisation of Frame Order matrix components."""
 
-    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
+    def __init__(self, model=None, init_params=None, full_tensors=None, full_in_ref_frame=None, rdcs=None, rdc_errors=None, rdc_weights=None, rdc_vect=None, dip_const=None, pcs=None, pcs_errors=None, pcs_weights=None, atomic_pos=None, temp=None, frq=None, paramag_centre=zeros(3), scaling_matrix=None, num_int_pts=500, com=None, ave_pos_pivot=zeros(3), ave_pos_piv_sync=True, translation_opt=False, pivot=None, pivot2=None, pivot_opt=False, quad_int=True):
         """Set up the target functions for the Frame Order theories.
 
         @keyword model:             The name of the Frame Order model.
@@ -95,6 +95,8 @@ class Frame_order:
         @type scaling_matrix:       numpy rank-2 array
         @keyword num_int_pts:       The number of points to use for the numerical integration technique.
         @type num_int_pts:          int
+        @keyword com:               The centre of mass of the system.  This is used for defining the rotor model systems.
+        @type com:                  numpy 3D rank-1 array
         @keyword ave_pos_pivot:     The pivot point to rotate all atoms about to the average domain position.  For example this can be the centre of mass of the moving domain.
         @type ave_pos_pivot:        numpy 3D rank-1 array
         @keyword ave_pos_piv_sync:  A flag which if True will cause pivot point to rotate to the average domain position to be synchronised with the motional pivot.  This will cause ave_pos_pivot argument to be ignored.
@@ -134,6 +136,7 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
+        self.com = com
         self.ave_pos_pivot = ave_pos_pivot
         self.ave_pos_piv_sync = ave_pos_piv_sync
         self.translation_opt = translation_opt
@@ -404,6 +407,9 @@ class Frame_order:
 
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
+
+        # A rotation matrix for general use.
+        self.R = zeros((3, 3), float64)
 
 
     def func_double_rotor(self, params):
@@ -1879,18 +1885,23 @@ class Frame_order:
         if self.translation_opt and self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[6:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[6:]
         elif self.translation_opt:
             self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
         elif self.pivot_opt:
             self._param_pivot = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params[3:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
         else:
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, sigma_max = params
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params
 
-        # Generate the cone axis from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+        # Generate the rotation axis from the CoM, pivot point, and alpha angle.
+        r_compiv = array(self._param_pivot, float64) - self.com
+        r_compiv = r_compiv / norm(r_compiv)
+        mu_xy = cross(r_compiv, self.z_axis)
+        mu_xy = mu_xy / norm(mu_xy)
+        axis_angle_to_R(r_compiv, axis_alpha, self.R)
+        self.cone_axis = dot(self.R, mu_xy)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
