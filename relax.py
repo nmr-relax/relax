@@ -215,7 +215,7 @@ class Relax:
             # Only import the module in the test modes (to improve program start up speeds).
             from test_suite.test_suite_runner import Test_suite_runner
 
-            # Load the interpreter and turn intros on.launch relax in prompt mode after running any optionally supplied scripts
+            # Load the interpreter and turn intros on.
             self.interpreter = interpreter.Interpreter(show_script=False, raise_relax_error=True)
             self.interpreter.on()
 
@@ -280,7 +280,7 @@ class Relax:
         parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
         parser.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
-        parser.add_option('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
+        parser.add_option('-p', '--prompt', action='store_true', dest='prompt', default=0, help='execute the given script and continue into the prompt mode to allow for interactive inspection')
         parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
         parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
         parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')

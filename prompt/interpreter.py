@@ -266,16 +266,12 @@ class Interpreter:
             readline.parse_and_bind("tab: complete")
 
         # Execute the script file if given.
-        if script_file and not status.prompt:
+        if script_file:
             # Turn on the user function intro flag.
             status.uf_intro = True
 
             # Run the script.
             return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
-
-        if script_file and status.prompt:
-            run_script(intro=self.__intro_string, local=locals(), script_file=script_file, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
-            prompt(intro=None, local=locals())
 
         # Go to the prompt.
         else:
@@ -336,18 +332,13 @@ def exec_script(name, globals):
         # Reverse the system path so that the script path is first.
         sys.path.reverse()
 
-        # Execute the script as a module if the inspect interactively prompt flag is not true.
-        if dep_check.runpy_module and not status.prompt:
-            runpy.run_module(module, globals)
-
-        # Execute the script as a module if the inspect interactively prompt flag is not true.
-        elif dep_check.runpy_module and not status.prompt:
+        # Execute the script as a module.
+        if dep_check.runpy_module:
             runpy.run_module(module, globals)
 
         # Allow scripts to run under Python <= 2.4.
         else:
             exec(compile(open(name).read(), name, 'exec'), globals)
-
 
     finally:
         # Switch back to the original working directory.
