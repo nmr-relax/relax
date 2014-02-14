@@ -129,6 +129,8 @@ class Base_script:
             self._execute_uf(uf_name='value.set', val=self.AXIS_THETA, param='axis_theta')
         if self.AXIS_PHI != None:
             self._execute_uf(uf_name='value.set', val=self.AXIS_PHI, param='axis_phi')
+        if self.AXIS_ALPHA != None:
+            self._execute_uf(uf_name='value.set', val=self.AXIS_ALPHA, param='axis_alpha')
         if self.CONE_THETA_X != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA_X, param='cone_theta_x')
         if self.CONE_THETA_Y != None:
