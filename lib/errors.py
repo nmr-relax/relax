@@ -131,9 +131,9 @@ class BaseError(Exception):
     def __str__(self):
         """Modify the behaviour of the error system."""
 
-        # Save the state if the pedantic flag is turned on.
+        # Save the state if the escalate flag is turned on.
         from status import Status; status = Status()
-        if status.pedantic:
+        if status.escalate:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).

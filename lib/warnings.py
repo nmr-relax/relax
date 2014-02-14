@@ -39,8 +39,8 @@ def format(message, category, filename, lineno, line=None):
     # Add the text 'RelaxWarning: ' to the start of the warning message.
     message = "RelaxWarning: %s\n" % message
 
-    # Print stack-trace in pedantic mode.
-    if status.pedantic:
+    # Print stack-trace in escalate mode.
+    if status.escalate:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
@@ -77,7 +77,7 @@ def setup():
     warnings.formatwarning = format
 
     # Set warning filters.
-    if status.pedantic:
+    if status.escalate:
         warnings.filterwarnings('error', category=BaseWarning)
     else:
         warnings.filterwarnings('always', category=BaseWarning)
