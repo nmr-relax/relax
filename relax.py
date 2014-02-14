@@ -41,7 +41,7 @@ import dep_check
 
 # Python modules.
 import numpy
-from optparse import Option, OptionParser
+from optparse import Option, OptionGroup, OptionParser
 from os import F_OK, access, getpid, putenv
 if dep_check.cprofile_module:
     import cProfile as profile
@@ -273,25 +273,43 @@ class Relax:
         # Parser object.
         parser = RelaxParser(self, usage="usage: %prog [options] [script_file]")
 
-        # Recognised command line options.
-        parser.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
-        parser.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
-        parser.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
-        parser.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
-        parser.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
-        parser.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
-        parser.add_option('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
-        parser.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
-        parser.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
-        parser.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
-        parser.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
-        parser.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
-        parser.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
-        parser.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
-        parser.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
-        parser.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
-        parser.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
-        parser.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
+        # Recognised command line options for the UI.
+        group = OptionGroup(parser, 'UI options')
+        group.add_option('-p', '--prompt', action='store_true', dest='prompt', default=0, help='launch relax in prompt mode after running any optionally supplied scripts')
+        group.add_option('-g', '--gui', action='store_true', dest='gui', default=0, help='launch the relax GUI')
+        group.add_option('-i', '--info', action='store_true', dest='info', default=0, help='display information about this version of relax')
+        group.add_option('-v', '--version', action='store_true', dest='version', default=0, help='show the version number and exit')
+        group.add_option('--licence', action='store_true', dest='licence', default=0, help='display the licence')
+        group.add_option('--test', action='store_true', dest='test', default=0, help='run relax in test mode')
+        parser.add_option_group(group)
+
+        # Recognised command line options for the multiprocessor.
+        group = OptionGroup(parser, 'Multi-processor options')
+        group.add_option('-m', '--multi', action='store', type='string', dest='multiprocessor', default='uni', help='set multi processor method')
+        group.add_option('-n', '--processors', action='store', type='int', dest='n_processors', default=-1, help='set number of processors (may be ignored)')
+        parser.add_option_group(group)
+
+        # Recognised command line options for IO redirection.
+        group = OptionGroup(parser, 'IO redirection options')
+        group.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
+        group.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
+        parser.add_option_group(group)
+
+        # Recognised command line options for the test suite.
+        group = OptionGroup(parser, 'Test suite options')
+        group.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
+        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
+        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
+        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
+        group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
+        parser.add_option_group(group)
+
+        # Recognised command line options for debugging.
+        group = OptionGroup(parser, 'Debugging options')
+        group.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
+        group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
+        group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
+        parser.add_option_group(group)
 
         # Parse the options.
         (options, args) = parser.parse_args()
