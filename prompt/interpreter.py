@@ -276,7 +276,16 @@ class Interpreter:
 
         # Execute the script and go into prompt if the interactive flag -p --prompt is given at startup.
         if script_file and status.prompt:
+            # Turn on the user function intro flag.
+            status.uf_intro = True
+
+            # Run the script.
             run_script(intro=self.__intro_string, local=locals(), script_file=script_file, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
+
+            # Turn off the user function intro flag.
+            status.uf_intro = False
+
+            # Go to the prompt.
             prompt(intro=None, local=locals())
 
         # Go to the prompt.
