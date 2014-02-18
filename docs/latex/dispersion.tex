@@ -2434,3 +2434,122 @@ Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR
 This will start the auto-analysis.
 If you are adventurous, you can replace this line with your own \uf{grid\_search}, \uf{minimise}, and \uf{monte\_carlo.*} user function calls and design your own protocol.
 For ideas in designing your own advanced analysis, see the \file{auto\_analysis/\linebreak[0]{}relax\_disp.py} file.
+
+
+
+% GUI.
+%%%%%%
+
+\newpage
+\section{The relaxation dispersion auto-analysis in the GUI}
+
+The following demonstration of the relaxation dispersion analysis in the graphical user interface (GUI) uses the experimental data from Flemming Hansen located in the relax directory \directory{test\_suite/shared\_data/dispersion/Hansen}.
+This is the data from the paper:
+\begin{itemize}
+\item \bibentry{Hansen08}
+\end{itemize}
+
+More details can be seen in the \file{README} file in that directory.
+
+Note that the dispersion analysis in the GUI used the automated protocol as implemented in the \file{auto\_analyses/relax\_disp.py} relax script.
+If you wish to perform a custom analysis or implement your own protocol, please use the prompt/scripting user interface instead to have access to the full flexibility and power of relax.
+
+When running the analysis, it is best to keep a permanent log of all of the printouts, warnings, errors and messages produced by relax.
+This can be achieved by running relax with the command line options:
+
+\example{\$ relax --log log --gui}
+
+All output from relax will then be visible both in the relax controller window (see Figure~\ref{fig: screenshot: relax controller} on page~\pageref{fig: screenshot: relax controller}) and in the \file{log} file.
+Other relax options can be seen by running:
+
+\example{\$ relax --help}
+
+
+% Two analyses.
+%~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- two analyses}
+
+To process this test data, two separate analyses will be performed:
+\begin{itemize}
+\item The first analysis will consists of treating all spins independently from each other.  This will use model selection to determine if any statistically significant relaxation dispersion is present by comparing to the `No Rex' dispersion model.
+\item The second analysis will consists of clustering spins with similar kinetics and thermodynamics parameters (exchange rates and populations respectively) and optimising these clusters using a common set of exchange parameters.
+\end{itemize}
+
+
+% Initialisation of the data pipe.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- initialisation of the data pipe}
+
+After starting relax in the GUI mode, the dispersion analysis should be initialised by launching the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).
+The relaxation dispersion analysis should be selected and the name changed if multiple dispersion analyses are to be performed within one relax session.
+In this case the name \gui{Dispersion - Hansen (non-clustered)} will be used.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/analysis_wizard1}}
+\end{minipage}
+
+Click on the \guibutton{Next} button to move to the second wizard page.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/analysis_wizard2}}
+\end{minipage}
+
+Here the values need not be changed.
+The data pipe bundle will be used to hold all the separate data pipes for each dispersion model type together.
+
+
+% General setup.
+%~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- general setup}
+
+A blank analysis tab should now be visible:
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/blank}}
+\end{minipage}
+
+The first step will be to change the \gui{Results directory} where all of the automatically created results file, 2D Grace plots, and relax state files will be saved.
+The directory \directory{$\sim$/tmp/dispersion\_test/non\_clustered} will be used for this initial non-clustered analysis.
+
+
+% Spin systems.
+%~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- setting up the spin systems}
+
+As the relaxation dispersion data is specific to individual nuclear spins, the molecule, residue and spin data structures need to be set up.
+For this, the special \gui{Spin systems} GUI element can be used.
+The initial state will be \gui{0 spins loaded and selected}.
+Click on the \guibutton{Spin editor} button to launch the spin viewer window.
+The steps for setting up the spin containers using PDB files are described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} or for sequence files in section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file}.
+
+In this tutorial, the sequence file \file{fake\_sequence.in} in the \directory{test\-\_suite/\-shared\-\_data/dispersion/Hansen} directory will be loaded.
+In the spin loading wizard, which can be launched by clicking on the \guibutton{Load spins} button, select the \gui{From a file containing sequence data} option and click on \guibutton{Next}.
+In the \uf{sequence.read} user function wizard page, select the file \file{fake\_sequence.in}.
+As this file only contains residue numbers and names, edit the \gui{Free format file settings} to set the residue number and name columns to 1 and 2 respectively, and all other columns to blank values.
+Click on \guibutton{Save} to store the free format settings.
+Back in the \uf{sequence.read} user function wizard page, click on \guibutton{Next} to load the sequence.
+Finally click on \guibutton{Finish} to close the wizard, but do not close the spin viewer window.
+The \gui{Spin systems} GUI element in the main analysis tab will now say \gui{73 spins loaded and selected}.
+
+
+% Unresolved spins.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- unresolved spins}
+
+As in the prompt/script UI section~\ref{sect: dispersion setup fin}, the spins can be deselected at this point using the same \file{unresolved} file.
+This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
+
+Within the currently opened spin viewer window, click on the \guimenuitemthree{User functions}{deselect}{read} menu item.
+In the \uf{deselect.read} user function window, select the file \file{test\_suite/shared\_data/dispersion/Hansen/500\_MHz/unresolved}.
+As this file only contains residue number, edit the \gui{Free format file settings} to set the residue number column to 1 and all other columns to empty values.
+Click the \guibutton{Apply} button rather than \guibutton{OK} to allow a second file to be read.
+The relax controller window may appear and can be closed.
+Select the new file \file{test\_suite/shared\_data/dispersion/Hansen/800\_MHz/unresolved} and click on \guibutton{OK}.
+Now all spins from these two files will be deselected and skipped in the analysis.
+
+
