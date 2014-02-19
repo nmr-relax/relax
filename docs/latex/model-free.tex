@@ -7,7 +7,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/model_free/model_free_600x600}
+  \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/model_free/model_free_600x600}
 \end{figure*}
 
 
@@ -841,8 +841,25 @@ The following sections will describe both the original diffusion seeded approach
 
 % Mandel et al., 1995 figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 436 539]{images/model_free/mandel95}}
-\caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{A schematic of the model-free optimisation protocol of \citet{Mandel95}.  This specific protocol is for single field strength data.  The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.  The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each spin $i$ are optimised and 500 Monte Carlo simulations executed.  Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.  These steps are repeated for all spins of the molecule.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).} \label{fig: Mandel et al.}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=0 0 436 539
+    ]
+    {images/model_free/mandel95}
+  }
+  \caption[A schematic of the model-free optimisation protocol of Mandel et al., 1995]{
+    A schematic of the model-free optimisation protocol of \citet{Mandel95}.
+    This specific protocol is for single field strength data.
+    The initial diffusion tensor estimate is calculated using the $\Rtwo/\Rone$ ratio.
+    The diffusion parameters of $\Diffset$ are held constant while model-free models $m1$ to $m5$ (\ref{model: m1}--\ref{model: m5}) of the set $\Mfset_i$ for each spin $i$ are optimised and 500 Monte Carlo simulations executed.
+    Using a web of ANOVA statistical tests, specifically $\chi^2$ and F-tests, a step-up hypothesis testing model selection procedure is used to choose the best model-free model.
+    These steps are repeated for all spins of the molecule.
+    The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.
+    These steps are repeated until convergence of the global model.
+    The iterative process is repeated for both isotropic diffusion (sphere) and anisotropic diffusion (spheroid).
+  }
+  \label{fig: Mandel et al.}
 \end{figure}
 
 By presenting a systematic methodology for obtaining a consistent model-free description of the dynamics of the system, the manuscript of \citet{Mandel95} revolutionised the application of model-free analysis.
@@ -879,8 +896,23 @@ The full protocol, when combined with AIC model selection \citep{dAuvergneGooley
 
 % The diffusion seeded paradigm figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 437 523]{images/model_free/init_diff_est}}
-\caption[Model-free analysis using the diffusion seeded paradigm]{A schematic of model-free analysis using the diffusion seeded paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.  The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.  The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.  These steps are repeated until convergence of the global model.  The entire iterative process is repeated for each of the Brownian diffusion models.  Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.  Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.} \label{fig: init diff estimate}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=0 0 437 523
+    ]
+    {images/model_free/init_diff_est}
+  }
+  \caption[Model-free analysis using the diffusion seeded paradigm]{
+    A schematic of model-free analysis using the diffusion seeded paradigm -- the initial diffusion tensor estimate -- together with AIC model selection and model elimination.
+    The initial estimates of the parameters of $\Diffset$ are held constant while model-free models $m0$ to $m9$ (\ref{model: m0}--\ref{model: m9}) of the set $\Mfset_i$ for each spin system $i$ are optimised, model elimination applied to remove failed models, and AIC model selection used to determine the best model.
+    The global model $\Space$, the union of $\Diffset$ and all $\Mfset_i$, is then optimised.
+    These steps are repeated until convergence of the global model.
+    The entire iterative process is repeated for each of the Brownian diffusion models.
+    Finally AIC model selection is used to determine the best description of the dynamics of the molecule by selecting between the global models $\Space$ including the sphere, oblate spheroid, prolate spheroid, and ellipsoid.
+    Once the solution has been found, Monte Carlo simulations can be utilised for error analysis.
+  }
+  \label{fig: init diff estimate}
 \end{figure}
 
 Again this protocol is not implemented in the relax sample scripts.
@@ -1017,8 +1049,22 @@ The technique can, at times, suffer from a number of issues including the two mi
 
 % New model-free optimisation protocol figure.
 \begin{figure}
-\centerline{\includegraphics[width=0.8\textwidth, bb=0 0 461 697]{images/model_free/new_protocol}}
-\caption[A schematic of the new model-free optimisation protocol]{A schematic of the new model-free optimisation protocol.  Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.  Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.  These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.  Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.  The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.} \label{fig: new protocol}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=0 0 461 697
+    ]
+    {images/model_free/new_protocol}
+  }
+  \caption[A schematic of the new model-free optimisation protocol]{
+    A schematic of the new model-free optimisation protocol.
+    Initially models $tm0$ to $tm9$ (\ref{model: tm0}--\ref{model: tm9}) of the set $\Localset_i$ for each spin system $i$ are optimised, model elimination used to remove failed models, and AIC model selection used to pick the best model.
+    Once all the $\Localset_i$ have been determined for the system the the local $\tau_m$ parameter is removed, the model-free parameters are held fixed, and the global diffusion parameters of $\Diffset$ are optimised.
+    These parameters are used as input for the central part of the schematic which follows the same procedure as that of Figure~\ref{fig: init diff estimate}.
+    Convergence is however precisely defined as identical models $\Space$, identical $\chi^2$ values, and identical parameters $\theta$ between two iterations.
+    The universal solution $\widehat\Univset$, the best description of the dynamics of the molecule, is determined using AIC model selection to select between the local $\tau_m$ models for all spins, the sphere, oblate spheroid, prolate spheroid, ellipsoid, and possibly hybrid models whereby multiple diffusion tensors have been applied to different parts of the molecule.
+  }
+  \label{fig: new protocol}
 \end{figure}
 
 
@@ -1551,14 +1597,26 @@ Therefore this model-free GUI analysis tutorial will be launched with the full c
 First launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}) and click on the model-free analysis button.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_wizard1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/analysis_wizard1}
+  }
 \end{minipage}
 
 Click on the \guibutton{Next} button and on the second page click on the \guibutton{Start} button.
 The text in the second page need not be changed.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_wizard2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/analysis_wizard2}
+  }
 \end{minipage}
 
 
@@ -1570,13 +1628,25 @@ The text in the second page need not be changed.
 Once the analysis is initialised, the screen should look like:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/blank}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/blank}
+  }
 \end{minipage}
 
 The \guibutton{About} button in the bottom left will bring up a window with the same description as given in the sample script:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/about}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/about}
+  }
 \end{minipage}
 
 At this point, back in the main relax window, the results directory where all of the output files and directories will be saved can be changed.
@@ -1618,7 +1688,13 @@ For the later, click on the \guibutton{Add Bruker} button.
 After clicking on \guibutton{Add}, you will see the relaxation data loading wizard:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_file}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/relax_data_file}
+  }
 \end{minipage}
 
 In this first page, the unique relaxation data identification string (\guistring{r2\_500}), the relaxation data type (\guistring{R2}), the frequency in Hertz (\guistring{500208174.2}) and the file (\guistring{r2.500.out}) are specified.
@@ -1630,7 +1706,13 @@ The first is how the peak intensities were measured, either peak heights or volu
 Select the appropriate value, then click on \guibutton{Next}.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_intensity}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/relax_data_intensity}
+  }
 \end{minipage}
 
 Then the temperature control method is given.
@@ -1638,7 +1720,13 @@ For more details, please read the documentation provided in the wizard and see s
 Click on \guibutton{Next} to continue.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_temp_control}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/relax_data_temp_control}
+  }
 \end{minipage}
 
 The temperature calibration method can finally be specified.
@@ -1646,19 +1734,37 @@ Again, see section~\ref{sect: temperature control and calibration} on page~\page
 Click on the \guibutton{Finish} button to close the wizard.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_data_temp_calibration}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/relax_data_temp_calibration}
+  }
 \end{minipage}
 
 After you have repeated this for the NOE, $\Rone$ and $\Rtwo$ at both 500 and 600 MHz, you should now see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/analysis_tab_full}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/analysis_tab_full}
+  }
 \end{minipage}
 
 Check that the metadata has been properly entered by clicking on the \guibutton{View metadata} button in the \gui{Relaxation data list} GUI element:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/metadata}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/metadata}
+  }
 \end{minipage}
 
 
@@ -1673,7 +1779,13 @@ All coupled nitrogen and proton spins should already be loaded at this point.
 Click on the \guibutton{Dipolar relaxation} button in the model-free tab in the main relax window to launch the magnetic dipole-dipole interaction wizard:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_define}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/dipole_wizard_define}
+  }
 \end{minipage}
 
 For this example, directly bonded nitrogens and protons will be analysed.
@@ -1686,7 +1798,13 @@ Now the $\langle r^{-3} \rangle$ averaged distance of 1.02~\AA\ will be set.
 Leave all settings as they are and click on \guibutton{Next}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_distance}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/dipole_wizard_distance}
+  }
 \end{minipage}
 
 If multiple models have been loaded in the previous steps, then the unit vectors between each model need to be calculated.
@@ -1695,7 +1813,13 @@ Therefore the averaged vector flag must be left on \guistring{True}.
 Click on \guibutton{Finish} to terminate the set up of the magnetic dipole-dipole interactions:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/dipole_wizard_unit_vector}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/dipole_wizard_unit_vector}
+  }
 \end{minipage}
 
 Secondly the chemical shift anisotropy (CSA) relaxation mechanism needs to be defined.
@@ -1703,7 +1827,13 @@ Click on the \guibutton{CSA relaxation} button in the model-free tab in the main
 An averaged CSA value of -172~ppm will be used for all spins, so simply click on \guibutton{Ok} to finish.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/csa_wizard}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/csa_wizard}
+  }
 \end{minipage}
 
 
@@ -1716,7 +1846,13 @@ As the PDB file contains no isotope information, this needs to now be specified.
 First click on the \guibutton{X isotope} button to set the nuclear isotope type of the heteronuclei:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/x_isotope}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/x_isotope}
+  }
 \end{minipage}
 
 As nitrogen relaxation is being studied, the nuclear isotope name can be left as \guistring{15N} and the spin ID string to \guistring{@N*}.
@@ -1743,7 +1879,13 @@ However if you are studying a system without a 3D structure, you can execute eac
 This will make the protocol mode selection window appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/protocol_mode}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/protocol_mode}
+  }
 \end{minipage}
 
 From this you can first select the \gui{Local $\tau$m} model, then the \gui{Sphere} and finally the \gui{Final} mode, clicking on \guibutton{Execute relax} between each selection.
@@ -1783,7 +1925,13 @@ If all the messages in the relax controller or \file{log} file appear to be fine
 This will start the calculations, freeze most of the GUI and open up the relax controller to give you feedback on the progress of the calculations:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/relax_controller_executing}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/relax_controller_executing}
+  }
 \end{minipage}
 
 At the start of the protocol, you should again check the messages carefully to be sure that relax is operating as you would expect.
@@ -1811,7 +1959,13 @@ Simply select the \guimenuitemtwo{File}{Export for BMRB deposition} menu item.
 You will then see the BMRB export window:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/mf_analysis/bmrb_export_window}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/mf_analysis/bmrb_export_window}
+  }
 \end{minipage}
 
 From here you can complete the relaxation data metadata if needed, set up all the molecule information needed for a BMRB deposition, specify the software you have used running up to the model-free analysis and any spectral processing or relax scripts you have used.

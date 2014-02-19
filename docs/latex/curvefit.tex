@@ -6,7 +6,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r1_600x600} \hfill \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r2_600x600}
+  \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r1_600x600} \hfill \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/r2_600x600}
 \end{figure*}
 
 
@@ -635,7 +635,13 @@ To begin the analysis, launch the analysis selection wizard (see Figure~\ref{fig
 Select either the $\Rone$ or $\Rtwo$ analyses, and change the name of the analysis if you plan on running multiple analyses from different field strengths in one relax instance.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/analysis_wizard1}
+  }
 \end{minipage}
 
 Then click on the \guibutton{Next} button.
@@ -644,7 +650,13 @@ For the $\Rone$ and $\Rtwo$ analyses in the GUI, a data pipe bundle containing o
 This data pipe bundle can be safely ignored.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_wizard2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/analysis_wizard2}
+  }
 \end{minipage}
 
 
@@ -656,7 +668,13 @@ This data pipe bundle can be safely ignored.
 You will now be presented with a blank analysis tab:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/blank}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/blank}
+  }
 \end{minipage}
 
 Here there are two things unique to the GUI which need to be preformed:
@@ -702,7 +720,13 @@ In both the $\Rone$ and $\Rtwo$ analysis tabs is a \gui{Spectra list} GUI elemen
 Click on the \guibutton{Add} button to launch the peak intensity loading wizard:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_bb_peaks}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_bb_peaks}
+  }
 \end{minipage}
 
 In this example, a Sparky peak list containing the peak heights determined from the averaged chemical shift positions for all spectra will be loaded.
@@ -711,7 +735,13 @@ Click on \guibutton{Next}.
 This will most likely cause a \prompt{RelaxWarning} message to appear for all peak list elements which do not correspond to any spins loaded into the relax data store:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_warnings}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_warnings}
+  }
 \end{minipage}
 
 These messages must be carefully checked to be sure that the correct data has been loaded.
@@ -721,7 +751,13 @@ Then click on \guibutton{Next}.
 You should now see the error type page:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_err_type}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_err_type}
+  }
 \end{minipage}
 
 The description for this wizard page should be very carefully read -- it will tell you about all of the error analysis options available and how these are implemented in relax.
@@ -731,20 +767,38 @@ The \gui{Baseplane RMSD} option is documented in the NOE chapter.
 After clicking on \guibutton{Next} you will see:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_replicates1}
+  }
 \end{minipage}
 
 For the first of the duplicate spectra, or any spectrum without a duplicate, you can click on the \guibutton{Skip} button.
 If this is the second spectrum you have loaded from a duplicated set, select the two replicated spectra and then click on \guibutton{Next}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_replicates2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_replicates2}
+  }
 \end{minipage}
 
 Finally set the relaxation time period for this experiment in seconds:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/peak_intensity_times}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/peak_intensity_times}
+  }
 \end{minipage}
 
 All delays and pulse lengths in the pulse sequence should be carefully checked to be sure that the time is exactly what you would expect -- the estimated time may not match the real time.
@@ -754,7 +808,13 @@ This procedure should be repeated for every experiment you have collected (you c
 In the end you should see something such as:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/analysis_tab_full}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/analysis_tab_full}
+  }
 \end{minipage}
 
 
@@ -769,13 +829,25 @@ To perform the optimisation and error analysis, click on the \guibutton{Execute 
 The relax controller will open to show you the progress of the optimisation and simulations:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/mc_sim}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/mc_sim}
+  }
 \end{minipage}
 
 Once finished, the \gui{Results viewer} window will also appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/r1_analysis/fin}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/r1_analysis/fin}
+  }
 \end{minipage}
 
 This window can be used to open the text files in the default text editor for your operating system or the 2D Grace plots in \prompt{xmgrace} if available on your system.
@@ -793,8 +865,17 @@ If Xmgrace or a compatible program is not available for your operating system, t
  
 % Xmgrace screenshot
 \begin{figure}
-\centerline{\includegraphics[width=\textwidth, bb=14 14 923 724]{graphics/screenshots/xmgrace_peak_intensities}}
-\caption[Peak intensity 2D plot xmgrace screenshot]{Screenshot of the 2D peak intensity plots for the exponential relaxation curves in Xmgrace.}\label{fig: screenshot: xmgrace peak intensities}
+  \centerline{
+    \includegraphics[
+      width=\textwidth,
+      bb=14 14 923 724
+    ]
+    {graphics/screenshots/xmgrace_peak_intensities}
+  }
+  \caption[Peak intensity 2D plot xmgrace screenshot]{
+    Screenshot of the 2D peak intensity plots for the exponential relaxation curves in Xmgrace.
+  }
+  \label{fig: screenshot: xmgrace peak intensities}
 \end{figure}
 
 Note that errors resulting in systematic bias in the data -- for example if temperature control (single-scan interleaving or temperature compensation blocks) or per-experiment/per-spectrometer temperature calibration on MeOH or ethylene glycol have not been performed -- will not be detected by looking at the decay curves.

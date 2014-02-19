@@ -5,7 +5,7 @@
 \index{relaxation dispersion|textbf}
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/relax_disp_600x600}
+  \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/relax_disp_600x600}
 \end{figure*}
 
 
@@ -248,9 +248,20 @@ This formula significantly underestimates the real errors.
 The use of the same $I_0$ value for all dispersion points does not cause a decrease in the $\Rtwoeff$ error but rather a correlation in the errors.
 
 \begin{figure*}[h]
-\centerline{\includegraphics[width=0.9\textwidth, bb=14 14 728 512]{graphics/analyses/dispersion/error_comparison}}
-\caption[Comparison of relaxation dispersion errors]{A demonstration of the inaccuracy of the error formula of Equation~\ref{eq: IT05 dispersion error} from \citet{IshimaTorchia05}.  This plot was generated using the script \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}error\osus{}testing\ossep{}simulation.py}.  The bootstrapping simulation involves randomising noise-free $I_0$ and $I_1$ values for each dispersion data point assuming Gaussian errors.  The full error formula is from Equation~\ref{eq: dispersion error}, the reduced error formula is from Equation~\ref{eq: IT05 dispersion error}, the bootstrapping using individual dispersion points estimates the errors assuming different $I_0$ randomisations for each dispersion point and each simulation, and the bootstrapping group graph uses the same randomised $I_0$ value for all dispersion points for each simulation.}
-\label{fig: dispersion error comparison}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 728 512
+    ]
+    {graphics/analyses/dispersion/error_comparison}
+  }
+  \caption[Comparison of relaxation dispersion errors]{
+    A demonstration of the inaccuracy of the error formula of Equation~\ref{eq: IT05 dispersion error} from \citet{IshimaTorchia05}.
+    This plot was generated using the script \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}error\osus{}testing\ossep{}simulation.py}.
+    The bootstrapping simulation involves randomising noise-free $I_0$ and $I_1$ values for each dispersion data point assuming Gaussian errors.
+    The full error formula is from Equation~\ref{eq: dispersion error}, the reduced error formula is from Equation~\ref{eq: IT05 dispersion error}, the bootstrapping using individual dispersion points estimates the errors assuming different $I_0$ randomisations for each dispersion point and each simulation, and the bootstrapping group graph uses the same randomised $I_0$ value for all dispersion points for each simulation.
+  }
+  \label{fig: dispersion error comparison}
 \end{figure*}
 
 
@@ -1623,7 +1634,7 @@ However this can be changed with clustering whereby the relaxation data from a g
 \subsection{The clustered relaxation dispersion analysis}
 
 \begin{figure*}[h]
-\includegraphics[width=3cm, bb=14 14 399 399]{graphics/misc/cluster_600x600}
+  \includegraphics[width=3cm, bb=14 14 399 399]{graphics/misc/cluster_600x600}
 \end{figure*}
 
 Often in a relaxation dispersion analysis you will wish to fit a number of spin systems together using global parameters such as $\kex$, $\pA$, etc.
@@ -2617,13 +2628,25 @@ The relaxation dispersion analysis should be selected and the name changed if mu
 In this case the name \gui{Dispersion - Hansen (non-clustered)} will be used.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/analysis_wizard1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/analysis_wizard1}
+  }
 \end{minipage}
 
 Click on the \guibutton{Next} button to move to the second wizard page.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/analysis_wizard2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/analysis_wizard2}
+  }
 \end{minipage}
 
 Here the values need not be changed.
@@ -2638,7 +2661,13 @@ The data pipe bundle will be used to hold all the separate data pipes for each d
 A blank analysis tab should now be visible:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/blank}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/blank}
+  }
 \end{minipage}
 
 The first step will be to change the \gui{Results directory} where all of the automatically created results file, 2D Grace plots, and relax state files will be saved.
