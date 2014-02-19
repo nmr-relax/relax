@@ -39,7 +39,7 @@ For a set of recommendations for how to obtain the best quality relaxation rates
 
 \subsection{NOE script mode -- the sample script}
 
-This sample script can be found in the \directory{sample\_scripts} directory and will be used as the template for the next sections describing how to use relax.
+This sample script can be found in the \directory{sample\osus{}scripts} directory and will be used as the template for the next sections describing how to use relax.
 
 \begin{lstlisting}
 # Script for calculating NOEs.
@@ -127,7 +127,7 @@ structure.read_pdb('Ap4Aase_new_3.pdb')
 \end{lstlisting}
 \index{PDB}
 
-will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
+will load the PDB file \file{Ap4Aase\osus{}new\osus{}3.pdb} into relax.  Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
 
 \begin{lstlisting}[firstnumber=8]
 structure.load_spins(spin_id='@N')
@@ -293,7 +293,7 @@ will create three separate plots of the peak intensity of the reference and satu
 grace.write(x_data_type='ref', y_data_type='sat', file='ref_vs_sat.agr', force=True)
 \end{lstlisting}
 
-would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{./grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
+would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{.\ossep{}grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
 
 \begin{lstlisting}[firstnumber=46]
 # View the Grace files.

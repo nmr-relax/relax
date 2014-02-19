@@ -111,7 +111,7 @@ nmrPipe -in fid/$FILEROOT.fid \
 | nmrPipe -out ft/$FILEROOT.dat -ov
 \end{lstlisting}
 
-The script is run by suppling the FILEROOT value as a command line option so if the script is called \file{nmrpipe.sh} and the \file{var2pipe} or \file{bruk2pipe} processed file \file{R1\_ncyc4.fid} is in the \directory{fid} directory, you would run:
+The script is run by suppling the FILEROOT value as a command line option so if the script is called \file{nmrpipe.sh} and the \file{var2pipe} or \file{bruk2pipe} processed file \file{R1\osus{}ncyc4.fid} is in the \directory{fid} directory, you would run:
 \begin{lstlisting}[language=bash,numbers=none]
 $ ./nmrpipe.sh R1_ncyc4
 \end{lstlisting}
@@ -168,7 +168,7 @@ If using Sparky then, to be sure that the peak heights are properly updated, for
 
 \subsection{Relax-fit script mode -- the sample script}
 
-The following is a verbatim copy of the contents of the \file{sample\_scripts/relax\_fit.py} file.  If your copy of the sample script is different than that below, please send an email to the relax-devel mailing list\index{mailing list!relax-devel} to tell the relax developers that the manual is out of date (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  You will need to first copy this script to a dedicated analysis directory containing peak lists, a PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.  The script contents are:
+The following is a verbatim copy of the contents of the \file{sample\osus{}scripts\ossep{}relax\osus{}fit.py} file.  If your copy of the sample script is different than that below, please send an email to the relax-devel mailing list\index{mailing list!relax-devel} to tell the relax developers that the manual is out of date (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  You will need to first copy this script to a dedicated analysis directory containing peak lists, a PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.  The script contents are:
 
 \begin{lstlisting}
 # Script for relaxation curve-fitting.
@@ -300,7 +300,7 @@ structure.read_pdb(name, 'Ap4Aase_new_3.pdb')
 \end{lstlisting}
 \index{PDB}
 
-will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then 
+will load the PDB file \file{Ap4Aase\osus{}new\osus{}3.pdb} into relax.  Then 
 
 \begin{lstlisting}[firstnumber=8]
 structure.load_spins(spin_id='@N')
@@ -682,7 +682,7 @@ This window can be used to open the text files in the default text editor for yo
 
 \section{Final checks of the curve-fitting}
 
-To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \file{intensities.agr} and \file{intensities\_norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see Figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain text representations of the curves at the end which can opened, edited and visualised in any another 2D graphing software package.
+To be sure that the data has been properly collected and that no instrumentation or pulse sequence timing errors have occurred, it is essential to carefully check the \file{intensities.agr} and \file{intensities\osus{}norm.agr} 2D Grace\index{software!Grace|textbf} files.  These are plots of the decay curves for each spin system analysed, and any non-exponential behaviour should be clearly visible (see Figure~\ref{fig: screenshot: xmgrace peak intensities}).  If Xmgrace or a compatible program is not available for your operating system, the Grace files contain text representations of the curves at the end which can opened, edited and visualised in any another 2D graphing software package.
  
 % Xmgrace screenshot
 \begin{figure}

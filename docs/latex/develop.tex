@@ -37,7 +37,7 @@ Modifications can be made to these sources.
 
 \section{Coding conventions}
 
-The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions is distributed with relax and is located at \file{scripts/code\_validator}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
+The following conventions should be followed at all times for any code to be accepted into the relax repository.  A Python script which tests if code meets relax's coding conventions is distributed with relax and is located at \file{scripts\ossep{}code\osus{}validator}.  The main reason for these conventions is for readability.  By using a consistent coding style and a high comment ratio, the code becomes much easier to read for non-coders and those new to Python.  It significantly decreases the barrier of entry into the relax source code for NMR spectroscopists.
 
 
 
@@ -53,7 +53,7 @@ set shiftwidth=4 \\
 set expandtab
 \end{exampleenv}
 
-For UNIX systems, including Linux and Mac OS X, the \file{vimrc} file is \file{$\sim$/.vimrc} whereas in MS Windows the file is \file{\$VIM/\_vimrc} which is usually \file{C:$\backslash$Program Files$\backslash$vim$\backslash$\_vimrc}.  Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \file{vimrc} file (although typing \promptstring{:set tabstop=4} in vim will fix it).  One solution is to edit the file \file{python.vim} which on GNU/Linux systems is located in the path \directory{/usr/share/vim/ftplugin/}.  It contains the two lines
+For UNIX systems, including Linux and Mac OS X, the \file{vimrc} file is \file{$\sim$\ossep{}.vimrc} whereas in MS Windows the file is \file{\$VIM\ossep{}\_vimrc} which is usually \file{C:$\backslash$Program Files$\backslash$vim$\backslash$\osus{}vimrc}.  Certain versions of vim, those within the 6.2 series, contain a bug where the tabstop value cannot be changed using the \file{vimrc} file (although typing \promptstring{:set tabstop=4} in vim will fix it).  One solution is to edit the file \file{python.vim} which on GNU/Linux systems is located in the path \directory{\ossep{}usr\ossep{}share\ossep{}vim\ossep{}ftplugin\ossep{}}.  It contains the two lines
 
 \begin{exampleenv}
 " Python always uses a `tabstop' of 8. \\
@@ -240,7 +240,7 @@ class Internal:
 % Comments.
 \subsection{Comments}
 
-Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \file{scripts/code\_validator} can be used to check the comment density.
+Comments are a very important component within relax.  In the current source code the percentage of comment lines relative to lines of code ranges from 15\% to over 30\% for different files.  The average comment density would be close to 25\%.  The purpose of having so many comment lines, much more than you would expect from source code, is so that the relax's code is fully self documented.  It allows someone who is not familiar with the codebase to read the code and quickly understand what is happening.  It simplifies the process of learning and allows NMR spectroscopists who are not coders to dive into the code.  If writing code for relax, please attempt to maintain the tradition by aiming towards a 25\% comment ratio.  The comment should be descriptive of what the code below it is supposed to do.  Most importantly the comment explains why that code exists.  The script \file{scripts\ossep{}code\osus{}validator} can be used to check the comment density.
 
 
 
@@ -262,7 +262,7 @@ The preferred method for submitting fixes and improvements to the relax source c
 \subsection{Modification of official releases -- creating patches with diff}
 \index{patch!diff|textbf}
 
-If your modifications have been made to the source code of one of the official relax releases (for example 2.1.1) then the Unix command \file{diff} can be used to create a patch.  A patch file is simply the output of the diff command run with the recursive flag and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \directory{relax\_orig} and the modified sources in \directory{relax\_mod} then the patch can be created by typing
+If your modifications have been made to the source code of one of the official relax releases (for example 2.1.1) then the Unix command \file{diff} can be used to create a patch.  A patch file is simply the output of the diff command run with the recursive flag and presented in the `unified' format.  Therefore two directories need to be compared.  If the original sources are located in the directory \directory{relax\osus{}orig} and the modified sources in \directory{relax\osus{}mod} then the patch can be created by typing
 
 \example{\$ diff -ur relax\_orig relax\_mod > patch}
 
@@ -409,7 +409,7 @@ replacing \prompt{xxxxx} with your login name.  You can then check out your priv
 
 \example{\$ svn co svn+ssh://xxxxx@svn.gna.org/svn/relax/branches/molmol\_macros}
 
-which will create a directory called \directory{molmol\_macros} containing all the relax source files.  To have the files placed into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.
+which will create a directory called \directory{molmol\osus{}macros} containing all the relax source files.  To have the files placed into a different directory, type the name of that directory at the end of the last command.  Modifications can be made to this copy while normal development continues on the main line.
 
 
 \subsection{Keeping the branch up to date using \file{svnmerge.py}}
@@ -524,7 +524,7 @@ To create the PDF version of the relax user manual type
 \example{\$ scons user\_manual\_pdf}
 \index{SCons!user manual (PDF version)|textbf}
 
-in the base directory.  SCons will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \directory{docs/latex} directory.  This is dependent on the programs \file{latex}, \file{makeindex}, \file{dvips}, and \file{ps2pdf} being located within the environment's path.
+in the base directory.  SCons will then run a series of shell commands to create the manual from the \LaTeX\ sources located in the \directory{docs\ossep{}latex} directory.  This is dependent on the programs \file{latex}, \file{makeindex}, \file{dvips}, and \file{ps2pdf} being located within the environment's path.
 
 
 
@@ -550,7 +550,7 @@ The HTML version of the relax API documentation is made by typing
 \example{\$ scons api\_manual\_html}
 \index{SCons!API documentation|textbf}
 
-in the base directory.  The programs Epydoc and Graphviz are required for creating this documentation.  The resultant HTML pages will be located in the directory \directory{docs/api}.
+in the base directory.  The programs Epydoc and Graphviz are required for creating this documentation.  The resultant HTML pages will be located in the directory \directory{docs\ossep{}api}.
 
 
 
@@ -591,7 +591,7 @@ If the command
 \example{\$ scons clean}
 \index{SCons!clean up|textbf}
 
-is run in the base directory all Python byte compiled files \file{*.pyc}, all C object files \file{*.o} and \file{*.os}, and any backup files with the extension \file{*.bak} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \directory{docs/latex} directory.
+is run in the base directory all Python byte compiled files \file{*.pyc}, all C object files \file{*.o} and \file{*.os}, and any backup files with the extension \file{*.bak} are removed from all sub-directories.  In addition any temporary \LaTeX\ compilation files are removed from the \directory{docs\ossep{}latex} directory.
 
 The more powerful command
 
@@ -644,7 +644,7 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
 
-\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \directory{prompt/}.
+\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.  The namespace of the interpreter contains the various user functions which are front ends to the generic code.  The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.  The code for the prompt is located in the directory \directory{prompt\ossep{}}.
 
 \item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.  Hence the script has access to all the user functions available at the relax prompt.  This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
 
@@ -652,15 +652,15 @@ Each of the boxes in Figure~\ref{fig: core design} represents a different groupi
 
 \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.  This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
 
-\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \directory{pipe\_control/}.
+\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.  All this code is located in the directory \directory{pipe\osus{}control\ossep{}}.
 
-\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \module{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \file{specific\_fns/specific\_setup.py}.
+\item[Specific setup:]  This code implements the internal interface between the generic and specific code.  The generic code calls the specific setup asking for a specific function for the given data pipe type.  For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \module{minimise()} method is returned.  Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.  The code is located in the file \file{specific\osus{}fns\ossep{}specific\osus{}setup.py}.
 
-\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \directory{specific\_fns/}.
+\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.  Each type is located in a separate file in the directory \directory{specific\osus{}fns\ossep{}}.
 
-\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \directory{maths\_fns/}.
+\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.  The code may be written in Python however C code can be used to significantly increase the speed of the calculations.  For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.  These functions are located in the directory \directory{maths\osus{}fns\ossep{}}.
 
-\item[Data:]  The program state stored in the relax data store singleton object.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data/\_\_init\_\_.py}.
+\item[Data:]  The program state stored in the relax data store singleton object.  This class contains all the program data and is accessed by the generic and specific code.  The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data\ossep{}\_\_init\_\_.py}.
 \end{description}
 
 

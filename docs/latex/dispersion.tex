@@ -198,7 +198,7 @@ This is not implemented in relax as it can be shown by simple simulation that th
 
 \begin{figure*}[h]
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 728 512]{graphics/analyses/dispersion/error_comparison}}
-\caption[Comparison of relaxation dispersion errors]{A demonstration of the inaccuracy of the error formula of Equation~\ref{eq: IT05 dispersion error} from \citet{IshimaTorchia05}.  This plot was generated using the script \file{test\_suite/shared\_data/dispersion/error\_testing/simulation.py}.  The bootstrapping simulation involves randomising noise-free $I_0$ and $I_1$ values for each dispersion data point assuming Gaussian errors.  The full error formula is from Equation~\ref{eq: dispersion error}, the reduced error formula is from Equation~\ref{eq: IT05 dispersion error}, the bootstrapping using individual dispersion points estimates the errors assuming different $I_0$ randomisations for each dispersion point and each simulation, and the bootstrapping group graph uses the same randomised $I_0$ value for all dispersion points for each simulation.}
+\caption[Comparison of relaxation dispersion errors]{A demonstration of the inaccuracy of the error formula of Equation~\ref{eq: IT05 dispersion error} from \citet{IshimaTorchia05}.  This plot was generated using the script \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}error\osus{}testing\ossep{}simulation.py}.  The bootstrapping simulation involves randomising noise-free $I_0$ and $I_1$ values for each dispersion data point assuming Gaussian errors.  The full error formula is from Equation~\ref{eq: dispersion error}, the reduced error formula is from Equation~\ref{eq: IT05 dispersion error}, the bootstrapping using individual dispersion points estimates the errors assuming different $I_0$ randomisations for each dispersion point and each simulation, and the bootstrapping group graph uses the same randomised $I_0$ value for all dispersion points for each simulation.}
 \label{fig: dispersion error comparison}
 \end{figure*}
 
@@ -1473,7 +1473,7 @@ To understand the concepts in this subsection, it is best to look at that chapte
 In relax, optimisation can either be performed manually or one of the auto-analyses can be employed.
 Note that if you are using the relax GUI, you will be using the dispersion auto-analysis.
 The auto-analysis is a fully self-contained protocol designed to make the analysis as simple as possible.
-All details can be seen in the \file{auto\_analyses/relax\_disp.py} file which, in reality, is simply a large relax script.
+All details can be seen in the \file{auto\osus{}analyses\ossep{}relax\osus{}disp.py} file which, in reality, is simply a large relax script.
 
 The relaxation dispersion auto-analysis implements many of the concepts described in detail in the next sections.
 It can be summarised as:
@@ -1986,7 +1986,7 @@ The dispersion analysis is parallelised on the level of the spin cluster and Mon
 
 \subsection{Dispersion script mode -- the sample script}
 
-The following is a verbatim copy of the contents of the \file{sample\_scripts/relax\_disp/\linebreak[0]{}cpmg\_analysis.py} file.
+The following is a verbatim copy of the contents of the \file{sample\osus{}scripts\ossep{}relax\osus{}disp\ossep{}cpmg\osus{}analysis.py} file.
 You will need to first copy this script to a dedicated analysis directory containing peak lists, a sequence or PDB file and a file listing unresolved spin systems, and then modify its contents to suit your specific analysis.
 The script contents are:
 
@@ -2261,7 +2261,7 @@ The first thing which needs to be completed prior to any spin specific command i
 sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
 \end{lstlisting}
 
-will load residue names and numbers from the \file{fake\_sequence.in} file into relax, creating one spin per residue.  Then:
+will load residue names and numbers from the \file{fake\osus{}sequence.in} file into relax, creating one spin per residue.  Then:
 
 \begin{lstlisting}[firstnumber=48]
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
@@ -2323,7 +2323,7 @@ data = [
 ]
 \end{lstlisting}
 
-In Python terminology, this is a list of lists data structure.  It is essentially a matrix of information which is used in the subsequent \pycode{for} loop.  The comment explains what each element is.  For $\Ronerho$-type experiments, the CPMG frequency column can be replaced with the spin-lock field strength.  This data structure will need to be tailored to your data.  It can be seen that the \pycode{sep} variable is now being used to specify that the Sparky files are either located in the \directory{500\_MHz} or \directory{800\_MHz} directories.  It is used here to make this script independent of the operating system.
+In Python terminology, this is a list of lists data structure.  It is essentially a matrix of information which is used in the subsequent \pycode{for} loop.  The comment explains what each element is.  For $\Ronerho$-type experiments, the CPMG frequency column can be replaced with the spin-lock field strength.  This data structure will need to be tailored to your data.  It can be seen that the \pycode{sep} variable is now being used to specify that the Sparky files are either located in the \directory{500\osus{}MHz} or \directory{800\osus{}MHz} directories.  It is used here to make this script independent of the operating system.
 
 The Python \pycode{for} loop starts with the lines:
 
@@ -2433,7 +2433,7 @@ Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR
 
 This will start the auto-analysis.
 If you are adventurous, you can replace this line with your own \uf{grid\_search}, \uf{minimise}, and \uf{monte\_carlo.*} user function calls and design your own protocol.
-For ideas in designing your own advanced analysis, see the \file{auto\_analysis/\linebreak[0]{}relax\_disp.py} file.
+For ideas in designing your own advanced analysis, see the \file{auto\osus{}analysis\ossep{}relax\osus{}disp.py} file.
 
 
 
@@ -2443,7 +2443,7 @@ For ideas in designing your own advanced analysis, see the \file{auto\_analysis/
 \newpage
 \section{The relaxation dispersion auto-analysis in the GUI}
 
-The following demonstration of the relaxation dispersion analysis in the graphical user interface (GUI) uses the experimental data from Flemming Hansen located in the relax directory \directory{test\_suite/shared\_data/dispersion/Hansen}.
+The following demonstration of the relaxation dispersion analysis in the graphical user interface (GUI) uses the experimental data from Flemming Hansen located in the relax directory \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen}.
 This is the data from the paper:
 \begin{itemize}
 \item \bibentry{Hansen08}
@@ -2451,7 +2451,7 @@ This is the data from the paper:
 
 More details can be seen in the \file{README} file in that directory.
 
-Note that the dispersion analysis in the GUI used the automated protocol as implemented in the \file{auto\_analyses/relax\_disp.py} relax script.
+Note that the dispersion analysis in the GUI used the automated protocol as implemented in the \file{auto\osus{}analyses\ossep{}relax\osus{}disp.py} relax script.
 If you wish to perform a custom analysis or implement your own protocol, please use the prompt/scripting user interface instead to have access to the full flexibility and power of relax.
 
 When running the analysis, it is best to keep a permanent log of all of the printouts, warnings, errors and messages produced by relax.
@@ -2512,7 +2512,7 @@ A blank analysis tab should now be visible:
 \end{minipage}
 
 The first step will be to change the \gui{Results directory} where all of the automatically created results file, 2D Grace plots, and relax state files will be saved.
-The directory \directory{$\sim$/tmp/dispersion\_test/non\_clustered} will be used for this initial non-clustered analysis.
+The directory \directory{$\sim$\ossep{}tmp\ossep{}dispersion\osus{}test\ossep{}non\osus{}clustered} will be used for this initial non-clustered analysis.
 
 
 % Spin systems.
@@ -2526,9 +2526,9 @@ The initial state will be \gui{0 spins loaded and selected}.
 Click on the \guibutton{Spin editor} button to launch the spin viewer window.
 The steps for setting up the spin containers using PDB files are described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} or for sequence files in section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file}.
 
-In this tutorial, the sequence file \file{fake\_sequence.in} in the \directory{test\-\_suite/\-shared\-\_data/dispersion/Hansen} directory will be loaded.
+In this tutorial, the sequence file \file{fake\osus{}sequence.in} in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen} directory will be loaded.
 In the spin loading wizard, which can be launched by clicking on the \guibutton{Load spins} button, select the \gui{From a file containing sequence data} option and click on \guibutton{Next}.
-In the \uf{sequence.read} user function wizard page, select the file \file{fake\_sequence.in}.
+In the \uf{sequence.read} user function wizard page, select the file \file{fake\osus{}sequence.in}.
 As this file only contains residue numbers and names, edit the \gui{Free format file settings} to set the residue number and name columns to 1 and 2 respectively, and all other columns to blank values.
 Click on \guibutton{Save} to store the free format settings.
 Back in the \uf{sequence.read} user function wizard page, click on \guibutton{Next} to load the sequence.
@@ -2545,11 +2545,11 @@ As in the prompt/script UI section~\ref{sect: dispersion setup fin}, the spins c
 This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
 
 Within the currently opened spin viewer window, click on the \guimenuitemthree{User functions}{deselect}{read} menu item.
-In the \uf{deselect.read} user function window, select the file \file{test\_suite/shared\_data/dispersion/Hansen/500\_MHz/unresolved}.
+In the \uf{deselect.read} user function window, select the file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz\ossep{}unresolved}.
 As this file only contains residue number, edit the \gui{Free format file settings} to set the residue number column to 1 and all other columns to empty values.
 Click the \guibutton{Apply} button rather than \guibutton{OK} to allow a second file to be read.
 The relax controller window may appear and can be closed.
-Select the new file \file{test\_suite/shared\_data/dispersion/Hansen/800\_MHz/unresolved} and click on \guibutton{OK}.
+Select the new file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}800\osus{}MHz\ossep{}unresolved} and click on \guibutton{OK}.
 Now all spins from these two files will be deselected and skipped in the analysis.
 
 

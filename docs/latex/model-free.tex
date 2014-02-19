@@ -572,7 +572,7 @@ For the model-free analysis the scaling factor of one is used for the order para
 
 \subsection{Single model-free model script mode -- the sample script}
 
-The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \file{model\_free/single\_model.py}.  The text of the script is:
+The sample script which demonstrates the optimisation of model-free model $m4$ which consists of the parameters \{$S^2$, $\tau_e$, $R_{ex}$\} is \file{model\osus{}free\ossep{}single\osus{}model.py}.  The text of the script is:
 
 \begin{lstlisting}
 # Script for model-free analysis.
@@ -658,7 +658,7 @@ The above script consists of three major sections:
 
 \subsection{All model-free models script mode -- the sample script}
 
-The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \file{model\_free/mf\_multimodel.py}.  The important parts of the script are:
+The sample script which demonstrates the optimisation of all model-free models from $m0$ to $m9$ of individual spins is \file{model\osus{}free\ossep{}mf\osus{}multimodel.py}.  The important parts of the script are:
 
 \begin{lstlisting}
 # Set the data pipe names (also the names of preset model-free models).
@@ -737,7 +737,7 @@ The above script is very similar in spirit to the previous single model script i
 
 \subsection{Model-free model selection script mode -- the sample script}
 
-The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \file{model\_free/modsel.py}.  The text of the script is:
+The sample script which demonstrates both model-free model elimination and model-free model selection between models from $m0$ to $m9$ is \file{model\osus{}free\ossep{}modsel.py}.  The text of the script is:
 
 \begin{lstlisting}
 # Set the data pipe names.
@@ -770,7 +770,7 @@ results.write(file='results', force=True)
 
 \subsection{Model-free model selection script mode -- explanation}
 
-This script is designed to be used in conjunction with the \file{model\_free/mf\_multimodel.py} script in the previous section.  It will load all of the results files from the previous script and then perform the following:
+This script is designed to be used in conjunction with the \file{model\osus{}free\ossep{}mf\osus{}multimodel.py} script in the previous section.  It will load all of the results files from the previous script and then perform the following:
 
 \begin{description}
 \item[Model-free model elimination]  The optimisation of model-free models performed by the previous script will fail for certain data sets together with certain models.  To ensure that these models are never selected, they are removed from the analysis (see \citet{dAuvergneGooley06}).
@@ -797,7 +797,7 @@ By presenting a systematic methodology for obtaining a consistent model-free des
 
 All of the data analysis techniques required for this protocol can be implemented within relax.  The chi-squared distributions required for the chi-squared tests are constructed by Modelfree4 from the Monte Carlo simulations.  If the optimisation algorithms and Monte Carlo simulations built into relax are utilised, then the relax script will need to construct the chi-squared distributions from the results as this is not yet coded into relax.  The specific step-up hypothesis testing model selection of \citet{Mandel95} is available through the \uf{model\_selection} user function.  Coding the rest of the protocol into a script should be straightforward.
 
-To implement this analysis, a number of scripts would need to be written.  There is no sample script in relax for performing this analysis.  The simple sample scripts from above would need to be extended.  For example a starting script for determining the initial diffusion tensor estimates based on the R1/R2 ratio of \citet{Kay89} would have to be written.  The tensor from this script could then be feed into the \file{model\_free/mf\_multimodel.py} script, followed by the \file{model\_free/modsel.py} script, and then a third script written to optimise the diffusion tensor.  A master script could be written first run the initial diffusion tensor script, then to iteratively execute the last three scripts until convergence, and finally to select the best diffusion model (see Figure~\ref{fig: Mandel et al.}).  Alternatively, these could all be combined into one super script.
+To implement this analysis, a number of scripts would need to be written.  There is no sample script in relax for performing this analysis.  The simple sample scripts from above would need to be extended.  For example a starting script for determining the initial diffusion tensor estimates based on the R1/R2 ratio of \citet{Kay89} would have to be written.  The tensor from this script could then be feed into the \file{model\osus{}free\ossep{}mf\osus{}multimodel.py} script, followed by the \file{model\osus{}free\ossep{}modsel.py} script, and then a third script written to optimise the diffusion tensor.  A master script could be written first run the initial diffusion tensor script, then to iteratively execute the last three scripts until convergence, and finally to select the best diffusion model (see Figure~\ref{fig: Mandel et al.}).  Alternatively, these could all be combined into one super script.
 
 
 
@@ -948,7 +948,7 @@ The new model-free protocol built into relax utilises the core foundation of the
 
 \subsection{d'Auvergne protocol script mode -- the sample script}
 
-The sample script for performing this new analysis is \file{sample\linebreak[0]{}\_scripts\linebreak[0]{}/model\linebreak[0]{}\_free\linebreak[0]{}/dauvergne\linebreak[0]{}\_protocol\linebreak[0]{}.py}.  The full script is replicated below.  The docstring at the start of the script explains the practical implementation of the full protocol.  If your copy of the \file{dauvergne\_protocol.py} script taken from the same relax version as this manual does not match the text below, please contact the relax developers via the relax-devel mailing list\index{mailing list!relax-devel} (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  To use this script, copy it to a dedicated directory containing your PDB file and relaxation data files.  The protocol will produce many files and directories, so it is best that these are placed within a dedicated and results directory.  The contents of the script are:
+The sample script for performing this new analysis is \file{sample\osus{}scripts\ossep{}model\osus{}free\ossep{}dauvergne\osus{}protocol\linebreak[0]{}.py}.  The full script is replicated below.  The docstring at the start of the script explains the practical implementation of the full protocol.  If your copy of the \file{dauvergne\osus{}protocol.py} script taken from the same relax version as this manual does not match the text below, please contact the relax developers via the relax-devel mailing list\index{mailing list!relax-devel} (see section~\ref{sect: relax-devel mailing list} on page~\pageref{sect: relax-devel mailing list}).  To use this script, copy it to a dedicated directory containing your PDB file and relaxation data files.  The protocol will produce many files and directories, so it is best that these are placed within a dedicated and results directory.  The contents of the script are:
 
 \begin{lstlisting}
 """Script for black-box model-free analysis.
@@ -1328,7 +1328,7 @@ This script needs to be executed multiple times, once for each of the diffusion 
 
 You should use a different log file for each diffusion model, though relax will prevent you from overwriting an old log file.  Note that the \file{log.*} files for each diffusion model may end up being a few gigabytes in size.
 
-For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  This can be speed up using Gary Thompson's multi-processor code (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script called \file{auto\linebreak[0]{}\_analyses/\linebreak[0]{}dauvergne\linebreak[0]{}\_protocol.py} (which must never be changed).  This automatic analysis script hides all of the complexity of the full protocol from the sample script.
+For a full analysis of a protein system, the analysis may require between one to two weeks to complete.  This can be speed up using Gary Thompson's multi-processor code (see section~\ref{sect: multi-processor} on page~\pageref{sect: multi-processor}).  The analysis is performed as described in the previous sections and summarised in Figure~\ref{fig: new protocol}.  If you are curious, the implementation is within a very large relax script called \file{auto\osus{}analyses\ossep{}dauvergne\osus{}protocol.py} (which must never be changed).  This automatic analysis script hides all of the complexity of the full protocol from the sample script.
 
 
 
@@ -1352,7 +1352,7 @@ For the full analysis to complete, for a protein system this may take about a we
 
 \example{\$ mpirun -np 5 /usr/local/bin/relax --multi=`mpi4py' --gui --log log}
 
-This assumes that OpenMPI and the Python mpi4py module have been installed on your system, and relax is installed into the \directory{/usr/local/bin/} directory.  If this is successful, you should only see a single relax GUI window (and not five windows) and in the relax controller, you should see text similar to:
+This assumes that OpenMPI and the Python mpi4py module have been installed on your system, and relax is installed into the \directory{\ossep{}usr\ossep{}local\ossep{}bin\ossep{}} directory.  If this is successful, you should only see a single relax GUI window (and not five windows) and in the relax controller, you should see text similar to:
 
 \example{Processor fabric:  MPI 2.1 running via mpi4py with 4 slave processors \& 1 master.  Using Open MPI 1.4.3.}
 

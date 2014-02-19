@@ -48,12 +48,12 @@ in the base directory where relax has been installed and the C modules should, h
 \subsection{Installation on GNU/Linux}
 \index{Operating system!GNU/Linux|textbf}
 
-To install the program relax on a GNU/Linux system download either the precompiled distribution\index{distribution archive} labelled \file{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \file{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user ``root'', unpack and decompress the archive within the \directory{/usr/local} directory by typing, for instance
+To install the program relax on a GNU/Linux system download either the precompiled distribution\index{distribution archive} labelled \file{relax-x.x.x.GNU-Linux.\textit{arch}.tar.bz2} matching your machine architecture or the source distribution \file{relax-x.x.x.src.tar.bz2}.  A number of installation methods are possible.  The simplest way is to switch to the user ``root'', unpack and decompress the archive within the \directory{\ossep{}usr\ossep{}local} directory by typing, for instance
 
 \example{\$ tar jxvf relax-x.x.x.GNU-Linux.i686.tar.bz2}
 \index{tar}
 
-then create a symbolic link in \directory{/usr/local/bin} by moving to that directory and typing
+then create a symbolic link in \directory{\ossep{}usr\ossep{}local\ossep{}bin} by moving to that directory and typing
 
 \example{\$ ln -s ../relax/relax .}
 \index{symbolic link}
@@ -67,7 +67,7 @@ in the relax base directory.  Alternatively if the Scons system is installed, by
 \example{\$ scons install}
 \index{SCons!install|textbf}
 
-in the relax base directory, a directory in \directory{/usr/local/} called \file{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \directory{/usr/local/bin} to the file \directory{/usr/local/relax/relax} will be created, and then finally the Python \file{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \file{sconstruct} in the base relax directory should be modified by changing the variable \prompt{INSTALL\_PATH} to point to the desired location.
+in the relax base directory, a directory in \directory{\ossep{}usr\ossep{}local\ossep{}} called \file{relax} will be created, all the uncompressed and untarred files will be copied into this directory, a symbolic link in \directory{\ossep{}usr\ossep{}local\ossep{}bin} to the file \directory{\ossep{}usr\ossep{}local\ossep{}relax\ossep{}relax} will be created, and then finally the Python \file{*.pyc} files will be byte-compiled.  To change the installation path to a non-standard location the Scons script \file{sconstruct} in the base relax directory should be modified by changing the variable \prompt{INSTALL\osus{}PATH} to point to the desired location.
 
 
 
