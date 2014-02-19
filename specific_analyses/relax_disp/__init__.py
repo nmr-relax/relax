@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -30,6 +30,9 @@ __all__ = [
     'checks',
     'cpmgfit',
     'disp_data',
+    'nessy',
+    'optimisation',
     'parameters',
+    'sherekhan',
     'variables'
 ]
