@@ -975,7 +975,7 @@ class Fetch_docstrings:
             item = self.word_formatting(item)
 
             # Write to file.
-            self.file.write("\\item[]%s\n" % item)
+            self.file.write("  \\item[]%s\n" % item)
 
         # End the environment.
         self.file.write("\\end{itemize}\n\n")
