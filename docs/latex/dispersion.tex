@@ -1480,7 +1480,7 @@ It can be summarised as:
 \begin{description}
 \item[Peak intensity error analysis:]  An error analysis is performed to determine the peak intensity errors, if not already calculated (see Section~\ref{uf: spectrum.error_analysis} on page~\pageref{uf: spectrum.error_analysis}).
 \item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise} user function) or simply calculated (using the \uf{calc} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
-\item[Dispersion curve insignificance:]  Spins with insignificant dispersion profiles will be deselected with the \uf{relax\_disp.insignificance} user function, as described below, excluding the `No Rex' model.
+\item[Dispersion curve insignificance:]  Spins with insignificant dispersion profiles will be deselected with the \uf{relax\ufus{}disp\ufsep{}insignificance} user function, as described below, excluding the `No Rex' model.
 \item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.  This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.  Each model will be stored in a different data pipe.  See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
 \item[Grid search avoidance:]  A number of tricks are used to speed up optimisation by skipping or decreasing the size of the initial grid search:
 \begin{description}
@@ -1492,8 +1492,8 @@ It can be summarised as:
 \item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.  The relax implementation is described in \citet{dAuvergneGooley06}.  This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.
 \item[Per-model error analysis:]  If desired, Monte Carlo simulations for error propagation can be performed for each model.  This does however require far greater computation time.
 \item[Model selection:]  If more than one model is analysed, AIC model selection will be performed to judge statistical significance of the models \citep{Akaike73}.  This is used to determine if statistically significant $\Rex$ contributions can be extracted form the data, as well as determine if one model is better than the other.  Different statistical techniques such as AICc and BIC can be used when using the script UI \citep{HurvichTsai89,Schwarz78}.  The AIC, AICc and BIC equations for NMR relaxation data were derived in \citet{dAuvergneGooley03}.  In most cases, the list models to choose from should be severely limited.  The results will be stored in a new `final' data pipe and output files placed in the \directory{final} directory.
-\item[Error analysis:]  Monte Carlo simulations for error propagation is performed on the final data pipe (see Section~\ref{uf: monte_carlo.setup} on page~\pageref{uf: monte_carlo.setup} as well as the descriptions for all of the other \uf{monte\_carlo} user functions).  Model elimination is performed again to remove the Monte Carlo simulations which have failed.
-\item[Output file creation:]  For each of the models and the final model selection results, the \uf{relax\_disp.plot\_disp\_curves} (Section~\ref{uf: relax_disp.plot_disp_curves} on page~\pageref{uf: relax_disp.plot_disp_curves}), \uf{relax\_disp.plot\_exp\_curves} (Section~\ref{uf: relax_disp.plot_exp_curves} on page~\pageref{uf: relax_disp.plot_exp_curves}), \uf{relax\_disp.write\_disp\_curves} (Section~\ref{uf: relax_disp.write_disp_curves} on page~\pageref{uf: relax_disp.write_disp_curves}), \uf{grace.write} (Section~\ref{uf: grace.write} on page~\pageref{uf: grace.write}) and \uf{value.write} (Section~\ref{uf: value.write} on page~\pageref{uf: value.write}) user functions will be called to generate all the output files you would need.  These generate both Grace 2D plots of the data as well as plain text files.  Additional output files can be created after the analysis by using the user functions manually.
+\item[Error analysis:]  Monte Carlo simulations for error propagation is performed on the final data pipe (see Section~\ref{uf: monte_carlo.setup} on page~\pageref{uf: monte_carlo.setup} as well as the descriptions for all of the other \uf{monte\ufus{}carlo} user functions).  Model elimination is performed again to remove the Monte Carlo simulations which have failed.
+\item[Output file creation:]  For each of the models and the final model selection results, the \uf{relax\ufus{}disp\ufsep{}plot\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_disp_curves} on page~\pageref{uf: relax_disp.plot_disp_curves}), \uf{relax\ufus{}disp\ufsep{}plot\ufus{}exp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_exp_curves} on page~\pageref{uf: relax_disp.plot_exp_curves}), \uf{relax\ufus{}disp\ufsep{}write\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.write_disp_curves} on page~\pageref{uf: relax_disp.write_disp_curves}), \uf{grace\ufsep{}write} (Section~\ref{uf: grace.write} on page~\pageref{uf: grace.write}) and \uf{value\ufsep{}write} (Section~\ref{uf: value.write} on page~\pageref{uf: value.write}) user functions will be called to generate all the output files you would need.  These generate both Grace 2D plots of the data as well as plain text files.  Additional output files can be created after the analysis by using the user functions manually.
 \end{description}
 
 All these steps will be shown in full detail in the relax logs.
@@ -1509,7 +1509,7 @@ The relax test suite will ensure the protocol remains functional for the lifetim
 
 \subsection{Dispersion curve insignificance}
 
-To avoid severe model failure due to the fitting of statistically insignificant dispersion curves, the \uf{relax\_disp.insignificance} user function can be used.
+To avoid severe model failure due to the fitting of statistically insignificant dispersion curves, the \uf{relax\ufus{}disp\ufsep{}insignificance} user function can be used.
 This is activated by default in the auto-analysis.
 The user function takes a single insignificance value and if the difference between the smallest and largest $\Rtwoeff$ or $\Ronerho$ value for an individual spin for all dispersion curves is less than this, then that spin will be deselected.
 See Section~\ref{uf: relax_disp.insignificance} on page~\pageref{uf: relax_disp.insignificance} for more details.
@@ -1544,7 +1544,7 @@ This can be achieved through the concept of clustering.
 A cluster is defined by an ID string and can contain any number of spins.
 Multiple clusters in one analysis can be defined.
 Any spins not included in a cluster will be treated as a free spin whereby all parameters of the dispersion model are local to that spin.
-Spin clusters can be defined using the \uf{relax\_disp.cluster} user function (see Section~\ref{uf: relax_disp.cluster} on page~\pageref{uf: relax_disp.cluster}) or via the spin cluster GUI element.
+Spin clusters can be defined using the \uf{relax\ufus{}disp\ufsep{}cluster} user function (see Section~\ref{uf: relax_disp.cluster} on page~\pageref{uf: relax_disp.cluster}) or via the spin cluster GUI element.
 
 
 % Grid search.
@@ -1553,7 +1553,7 @@ Spin clusters can be defined using the \uf{relax\_disp.cluster} user function (s
 \subsection{Dispersion parameter grid search}
 
 One of the most statistically unbiased methods for determining an initial parameter estimate prior to optimisation is to perform a grid search.
-This is performed via the \uf{grid\_search} user function (see Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search}).
+This is performed via the \uf{grid\ufus{}search} user function (see Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search}).
 
 
 For some dispersion models the grid search can be too computationally expensive.
@@ -2246,7 +2246,7 @@ pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 
 The first two lines define variables for the data pipe name and the pipe bundle name.  The pipe bundle is used to group together all of the data pipes created by the automated protocol.  See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
 
-The \uf{pipe.create} user function will then create a relaxation dispersion specific data pipe labelled with the pipe and bundle names.  The third argument sets the pipe type to that of relaxation dispersion.  The rest of the script is used to fill this base data pipe with all of the data required for a dispersion analysis.  The auto-analysis will then copy the data from this pipe as it sees fit.
+The \uf{pipe\ufsep{}create} user function will then create a relaxation dispersion specific data pipe labelled with the pipe and bundle names.  The third argument sets the pipe type to that of relaxation dispersion.  The rest of the script is used to fill this base data pipe with all of the data required for a dispersion analysis.  The auto-analysis will then copy the data from this pipe as it sees fit.
 
 
 % Spin systems.
@@ -2254,7 +2254,7 @@ The \uf{pipe.create} user function will then create a relaxation dispersion spec
 
 \subsection{Dispersion script mode -- setting up the spin systems}
 
-The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure.read\_pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).  In the case of the sample script, the command:
+The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure\ufsep{}read\ufus{}pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).  In the case of the sample script, the command:
 
 \begin{lstlisting}[firstnumber=45]
 # Load the sequence.
@@ -2378,7 +2378,7 @@ And finally the relaxation time period is set with:
     relax_disp.relax_time(spectrum_id=id, time=0.030)
 \end{lstlisting}
 
-If exponential data has been collected rather than fixed time period data, then the \pycode{data} data structure can have an additional column added for the relaxation times, and then this same user function can be used.  The \pycode{for} loop will need one extra variable for the times, and this should be passed into this \uf{relax\_disp.relax\_time} user function for the time argument.
+If exponential data has been collected rather than fixed time period data, then the \pycode{data} data structure can have an additional column added for the relaxation times, and then this same user function can be used.  The \pycode{for} loop will need one extra variable for the times, and this should be passed into this \uf{relax\ufus{}disp\ufsep{}relax\ufus{}time} user function for the time argument.
 
 Finally, once the \pycode{for} loop has completed, replicated spectra are defined with the commands:
 
@@ -2432,7 +2432,7 @@ Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR
 \end{lstlisting}
 
 This will start the auto-analysis.
-If you are adventurous, you can replace this line with your own \uf{grid\_search}, \uf{minimise}, and \uf{monte\_carlo.*} user function calls and design your own protocol.
+If you are adventurous, you can replace this line with your own \uf{grid\ufus{}search}, \uf{minimise}, and \uf{monte\ufus{}carlo\ufsep{}*} user function calls and design your own protocol.
 For ideas in designing your own advanced analysis, see the \file{auto\osus{}analysis\ossep{}relax\osus{}disp.py} file.
 
 
@@ -2528,10 +2528,10 @@ The steps for setting up the spin containers using PDB files are described in se
 
 In this tutorial, the sequence file \file{fake\osus{}sequence.in} in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen} directory will be loaded.
 In the spin loading wizard, which can be launched by clicking on the \guibutton{Load spins} button, select the \gui{From a file containing sequence data} option and click on \guibutton{Next}.
-In the \uf{sequence.read} user function wizard page, select the file \file{fake\osus{}sequence.in}.
+In the \uf{sequence\ufsep{}read} user function wizard page, select the file \file{fake\osus{}sequence.in}.
 As this file only contains residue numbers and names, edit the \gui{Free format file settings} to set the residue number and name columns to 1 and 2 respectively, and all other columns to blank values.
 Click on \guibutton{Save} to store the free format settings.
-Back in the \uf{sequence.read} user function wizard page, click on \guibutton{Next} to load the sequence.
+Back in the \uf{sequence\ufsep{}read} user function wizard page, click on \guibutton{Next} to load the sequence.
 Finally click on \guibutton{Finish} to close the wizard, but do not close the spin viewer window.
 The \gui{Spin systems} GUI element in the main analysis tab will now say \gui{73 spins loaded and selected}.
 
@@ -2545,7 +2545,7 @@ As in the prompt/script UI section~\ref{sect: dispersion setup fin}, the spins c
 This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
 
 Within the currently opened spin viewer window, click on the \guimenuitemthree{User functions}{deselect}{read} menu item.
-In the \uf{deselect.read} user function window, select the file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz\ossep{}unresolved}.
+In the \uf{deselect\ufsep{}read} user function window, select the file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz\ossep{}unresolved}.
 As this file only contains residue number, edit the \gui{Free format file settings} to set the residue number column to 1 and all other columns to empty values.
 Click the \guibutton{Apply} button rather than \guibutton{OK} to allow a second file to be read.
 The relax controller window may appear and can be closed.

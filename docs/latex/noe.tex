@@ -150,7 +150,7 @@ spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
 
 will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  relax will automatically determine the format of the peak list.  Currently only Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView} and a generic columnar formatted text file are supported.
 
-In this example, relax will determine from the file contents that these are Sparky\index{software!Sparky} peak lists (saved after typing \gui{lt}).  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume (though this can be in any column -- the \prompt{int\_col} argument is used to specify where the data is).  Without specifying the \prompt{int\_method} argument, peak heights will be assumed.  See page~\pageref{uf: spectrum.read_intensities} for a description of all the \uf{spectrum.read\_intensities} user function arguments.  In this example, the peak list looks like:
+In this example, relax will determine from the file contents that these are Sparky\index{software!Sparky} peak lists (saved after typing \gui{lt}).  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume (though this can be in any column -- the \prompt{int\_col} argument is used to specify where the data is).  Without specifying the \prompt{int\_method} argument, peak heights will be assumed.  See page~\pageref{uf: spectrum.read_intensities} for a description of all the \uf{spectrum\ufsep{}read\ufus{}intensities} user function arguments.  In this example, the peak list looks like:
 
 {\footnotesize \begin{verbatim}
      Assignment         w1         w2   Data Height
@@ -192,7 +192,7 @@ spectrum.baseplane_rmsd(error=122000, spectrum_type='ref', res_num=114)
 spectrum.baseplane_rmsd(error=8500, spectrum_type='sat', res_num=114)
 \end{lstlisting}
 
-There are many other ways of setting the errors, for example via spectrum duplication, triplication, etc.  See the documentation for the \uf{spectrum.error\_analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.  This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
+There are many other ways of setting the errors, for example via spectrum duplication, triplication, etc.  See the documentation for the \uf{spectrum\ufsep{}error\ufus{}analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.  This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
 
 \begin{lstlisting}[firstnumber=29]
 # Peak intensity error analysis.
@@ -272,13 +272,13 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 
 \begin{figure}
 \centerline{\includegraphics[width=0.9\textwidth, bb=0 -1 826 521]{graphics/screenshots/noe_analysis/grace}}
-\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \uf{grace.write}.}\label{fig: NOE plot}
+\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \uf{grace\ufsep{}write}.}\label{fig: NOE plot}
 \end{figure}
 
 
 \subsection{NOE script mode -- viewing the results}
 
-Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \uf{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
+Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \uf{grace\ufsep{}write} is capable of producing 2D plots of any x-y data sets.  The three commands
 
 \begin{lstlisting}[firstnumber=41]
 # Create Grace files.

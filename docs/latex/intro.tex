@@ -279,7 +279,7 @@ relax> help_python()
 
 Tab completion is implemented to prevent insanity as the function names can be quite long -- a deliberate feature to improve usability.  The behaviour of the tab completion is very similar to that of the bash prompt.
 
-Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \uf{model\_free} type
+Not only is tab completion useful for preventing RSI but it can also be used for listing all available functions.  To begin with if you hit the [TAB] key without typing any text all available functions will be listed (along with function classes\index{function class} and other python objects).  This extends to the exploration of user functions\index{user functions} within a function class\index{function class}.  For example to list the user functions within the function class \uf{model\ufus{}free} type
 
 \begin{lstlisting}[numbers=none]
 relax> model_free.
@@ -302,7 +302,7 @@ model_free.select_model
 relax> model_free.
 \end{lstlisting}
 
-All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \uf{copy}, \uf{create\_model}, \uf{delete}, \uf{remove\_tm}, and \uf{select\_model} contained within \uf{model\_free} are all visible.
+All the objects beginning with an underscore are ``hidden'', they contain information about the function class\index{function class} and should be ignored.  From the listing the user functions\index{user functions} \uf{copy}, \uf{create\ufus{}model}, \uf{delete}, \uf{remove\ufus{}tm}, and \uf{select\ufus{}model} contained within \uf{model\ufus{}free} are all visible.
 
 % GUI screenshot
 \begin{figure}
@@ -318,11 +318,11 @@ All the objects beginning with an underscore are ``hidden'', they contain inform
 \subsection{The data pipe} \label{sect: the data pipe}
 \index{data pipe|textbf}
 
-Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \uf{model\_selection} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \uf{pipe.switch} user function to jump between pipes. 
+Within relax all user functions operate on data stored within the current data pipe.  This pipe stores data is input, processed, or output as user functions are called.  There are different types of data pipe for different analyses, e.g. a reduced spectral density mapping pipe, a model-free pipe, an exponential curve-fitting pipe, etc.  Multiple data pipes can be created within relax and various operations performed in sequence on these pipes.  This is useful for operations such as model selection whereby the function \uf{model\ufus{}selection} can operate on a number of pipes corresponding to different models and then assign the results to a newly created pipe.  When running relax you choose which pipe you are currently in by using the \uf{pipe\ufsep{}switch} user function to jump between pipes. 
 
 The flow of data through relax can be thought of as travelling through these pipes.  User functions\index{user functions} exist to transfer data between these pipes and other functions combine data from multiple pipes into one or vice versa.  The simplest invocation of relax would be the creation of a single data pipe and with the data being processed as it is passing through this pipe.
 
-The primary method for creating a data pipe is through the user function\index{user functions} \uf{pipe.create}.  For example
+The primary method for creating a data pipe is through the user function\index{user functions} \uf{pipe\ufsep{}create}.  For example
 
 \begin{lstlisting}[numbers=none]
 relax> pipe.create('m1', 'mf')
