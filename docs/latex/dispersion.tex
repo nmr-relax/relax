@@ -14,7 +14,10 @@
 
 \section{Introduction to relaxation dispersion}
 
-Relaxation dispersion is the experimental modulation of chemical exchange relaxation.  For the $\Ronerho$-type experiment in which the nucleus of interest is spin-locked, either the spin-lock field strength or the offset between the spin-lock pulse and the chemical shift of the spins is used to modulate the exchange.  For the CPMG-type experiment, varying the time between the pulses modules the exchange.  Both experiment types are handled by relax.
+Relaxation dispersion is the experimental modulation of chemical exchange relaxation.
+For the $\Ronerho$-type experiment in which the nucleus of interest is spin-locked, either the spin-lock field strength or the offset between the spin-lock pulse and the chemical shift of the spins is used to modulate the exchange.
+For the CPMG-type experiment, varying the time between the pulses modules the exchange.
+Both experiment types are handled by relax.
 
 The primary reference for the relaxation dispersion implemented in relax is:
 \begin{itemize}
@@ -75,67 +78,107 @@ If the model you are interested in is not available, please see Section~\ref{sec
 Models which are independent of the experiment type include:
 
 \begin{description}
-\item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ or $\Ronerho$ values and errors required as the base data for all other models.  See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
-\item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.  See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
+\item[`R2eff':]\index{relaxation dispersion!R2eff model}  This is the model used to determine the $\Rtwoeff$ or $\Ronerho$ values and errors required as the base data for all other models.
+See Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}.
+\item[`No Rex':]\index{relaxation dispersion!No Rex model}  This is the model for no chemical exchange being present.
+See Section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}.
 \end{description}
 
 
 For the SQ CPMG-type experiments, the analytic models currently supported are:
 
 \begin{description}
-\item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
-\item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.  The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.  See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
-\item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
-\item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
-\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
+\item[`LM63':]\index{relaxation dispersion!LM63 model}  The original \citet{LuzMeiboom63} 2-site fast exchange equation with parameters $\{\Rtwozero, \dots, \Phiex, \kex\}$.
+See Section~\ref{sect: dispersion: LM63 model} on page~\pageref{sect: dispersion: LM63 model}.
+\item[`LM63 3-site':]\index{relaxation dispersion!LM63 3-site model}  The original \citet{LuzMeiboom63} 3-site fast exchange equation with parameters $\{\Rtwozero, \dots, \PhiexB, \kB, \PhiexC, \kC\}$.
+The equations of \citet{OConnell09} can be used to approximately convert the parameters $\{\PhiexB, \kB, \PhiexC, \kC\}$ to more biologically relevant parameters.
+See Section~\ref{sect: dispersion: LM63 3-site model} on page~\pageref{sect: dispersion: LM63 3-site model}.
+\item[`CR72':]\index{relaxation dispersion!CR72 model}  The reduced \citet{CarverRichards72} 2-site equation for most time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}.
+\item[`CR72 full':]\index{relaxation dispersion!CR72 full model}  The full \citet{CarverRichards72} 2-site equation for most time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: CR72 full model} on page~\pageref{sect: dispersion: CR72 full model}.
+\item[`IT99':]\index{relaxation dispersion!IT99 model}  The \citet{IshimaTorchia99} 2-site model for all time scales with $\pA \gg \pB$ and with parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: IT99 model} on page~\pageref{sect: dispersion: IT99 model}.
 \item[`TSMFK01':]\index{relaxation dispersion!TSMFK01 model}  The \citet{Tollinger01}  2-site very-slow exchange model for time scales within range of microsecond to second time scale.
-Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.  $2*\taucpmg$ is the time between successive 180 degree pulses. Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.  See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
+Applicable in the limit of slow exchange, when $|\RtwozeroA - \RtwozeroB| \ll \kAB, \kBA \ll 1/\taucpmg$.
+$2*\taucpmg$ is the time between successive 180 degree pulses.
+Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.
+See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
 \end{description}
 
 For the SQ CPMG-type experiments, the numeric models currently supported are:
 
 \begin{description}
-\item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!NS CPMG 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov \citep{Tollinger01}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}.
-\item[`NS CPMG 2-site 3D':]\index{relaxation dispersion!NS CPMG 2-site 3D model}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site 3D model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D model}.
-\item[`NS CPMG 2-site 3D full':]\index{relaxation dispersion!NS CPMG 2-site 3D full model}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site 3D full model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D full model}.
-\item[`NS CPMG 2-site star':]\index{relaxation dispersion!NS CPMG 2-site star model}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site star model} on page~\pageref{sect: dispersion: NS CPMG 2-site star model}.
-\item[`NS CPMG 2-site star full':]\index{relaxation dispersion!NS CPMG 2-site star full model}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS CPMG 2-site star full model} on page~\pageref{sect: dispersion: NS CPMG 2-site star full model}.
+\item[`NS CPMG 2-site expanded':]\index{relaxation dispersion!NS CPMG 2-site expanded model}  A model for 2-site exchange expanded using Maple by Nikolai Skrynnikov \citep{Tollinger01}.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}.
+\item[`NS CPMG 2-site 3D':]\index{relaxation dispersion!NS CPMG 2-site 3D model}  The reduced model for 2-site exchange using 3D magnetisation vectors whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS CPMG 2-site 3D model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D model}.
+\item[`NS CPMG 2-site 3D full':]\index{relaxation dispersion!NS CPMG 2-site 3D full model}  The full model for 2-site exchange using 3D magnetisation vectors with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS CPMG 2-site 3D full model} on page~\pageref{sect: dispersion: NS CPMG 2-site 3D full model}.
+\item[`NS CPMG 2-site star':]\index{relaxation dispersion!NS CPMG 2-site star model}  The reduced model for 2-site exchange using complex conjugate matrices whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS CPMG 2-site star model} on page~\pageref{sect: dispersion: NS CPMG 2-site star model}.
+\item[`NS CPMG 2-site star full':]\index{relaxation dispersion!NS CPMG 2-site star full model}  The full model for 2-site exchange using complex conjugate matrices with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS CPMG 2-site star full model} on page~\pageref{sect: dispersion: NS CPMG 2-site star full model}.
 \end{description}
 
 
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the analytic models currently supported are:
 
 \begin{description}
-\item[`MMQ CR72':]\index{relaxation dispersion!MMQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by \citet{Korzhnev04a}.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: MMQ CR72 model} on page~\pageref{sect: dispersion: MMQ CR72 model}.
+\item[`MMQ CR72':]\index{relaxation dispersion!MMQ CR72 model}  The Carver and Richards (1972) 2-site model for most time scales expanded for MMQ CPMG data by \citet{Korzhnev04a}.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.
+See Section~\ref{sect: dispersion: MMQ CR72 model} on page~\pageref{sect: dispersion: MMQ CR72 model}.
 \end{description}
 
 
 For the combined proton-heteronuclear SQ, ZQ, DQ and MQ CPMG-type experiments (MMQ -- or multi-multiple quantum), the numeric models currently supported are:
 
 \begin{description}
-\item[`NS MMQ 2-site':]\index{relaxation dispersion!NS MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.  It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.  See Section~\ref{sect: dispersion: NS MMQ 2-site model} on page~\pageref{sect: dispersion: NS MMQ 2-site model}.
-\item[`NS MMQ 3-site linear':]\index{relaxation dispersion!NS MMQ 3-site model linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site linear model} on page~\pageref{sect: dispersion: NS MMQ 3-site linear model}.
-\item[`NS MMQ 3-site':]\index{relaxation dispersion!NS MMQ 3-site model}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.  It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.  See Section~\ref{sect: dispersion: NS MMQ 3-site model} on page~\pageref{sect: dispersion: NS MMQ 3-site model}.
+\item[`NS MMQ 2-site':]\index{relaxation dispersion!NS MMQ 2-site model}  The model for 2-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \dwH, \kex\}$.
+See Section~\ref{sect: dispersion: NS MMQ 2-site model} on page~\pageref{sect: dispersion: NS MMQ 2-site model}.
+\item[`NS MMQ 3-site linear':]\index{relaxation dispersion!NS MMQ 3-site model linear}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
+It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$\}.
+See Section~\ref{sect: dispersion: NS MMQ 3-site linear model} on page~\pageref{sect: dispersion: NS MMQ 3-site linear model}.
+\item[`NS MMQ 3-site':]\index{relaxation dispersion!NS MMQ 3-site model}  The model for 3-site exchange whereby the simplification $\RtwozeroA = \RtwozeroB = \RtwozeroC$ is assumed.
+It has the parameters \{$\Rtwozero$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\dwHAB$, $\dwHBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.
+See Section~\ref{sect: dispersion: NS MMQ 3-site model} on page~\pageref{sect: dispersion: NS MMQ 3-site model}.
 \end{description}
 
 For the $\Ronerho$-type experiments, the analytic models currently supported are:
 
 \begin{description}
-\item[`M61':]\index{relaxation dispersion!M61 model}  The \citet{Meiboom61} 2-site fast exchange equation for on-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: M61 model} on page~\pageref{sect: dispersion: M61 model}.
-\item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} extension of the `M61' model for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.  See Section~\ref{sect: dispersion: DPL94 model} on page~\pageref{sect: dispersion: DPL94 model}.
-\item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  This model is disabled by default in the dispersion auto-analysis.  See Section~\ref{sect: dispersion: M61 skew model} on page~\pageref{sect: dispersion: M61 skew model}.
-\item[`TP02':]\index{relaxation dispersion!TP02 model}  The \citet{TrottPalmer02} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: TP02 model} on page~\pageref{sect: dispersion: TP02 model}.
+\item[`M61':]\index{relaxation dispersion!M61 model}  The \citet{Meiboom61} 2-site fast exchange equation for on-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
+See Section~\ref{sect: dispersion: M61 model} on page~\pageref{sect: dispersion: M61 model}.
+\item[`DPL94':]\index{relaxation dispersion!DPL94 model}  The \citet{Davis94} extension of the `M61' model for off-resonance data with parameters $\{\Ronerhoprime, \dots, \Phiex, \kex\}$.
+See Section~\ref{sect: dispersion: DPL94 model} on page~\pageref{sect: dispersion: DPL94 model}.
+\item[`M61 skew':]\index{relaxation dispersion!M61 skew model}  The \citet{Meiboom61} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+This model is disabled by default in the dispersion auto-analysis.
+See Section~\ref{sect: dispersion: M61 skew model} on page~\pageref{sect: dispersion: M61 skew model}.
+\item[`TP02':]\index{relaxation dispersion!TP02 model}  The \citet{TrottPalmer02} 2-site equation for all time scales with $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: TP02 model} on page~\pageref{sect: dispersion: TP02 model}.
 \item[`TAP03':]\index{relaxation dispersion!TAP03 model}  The \citet{Trott03} off-resonance 2-site analytic equation for all time scales with the weak condition $\pA \gg \pB$ and with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
-\item[`MP05':]\index{relaxation dispersion!MP05 model}  The \citet{MiloushevPalmer05} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: MP05 model} on page~\pageref{sect: dispersion: MP05 model}.
+\item[`MP05':]\index{relaxation dispersion!MP05 model}  The \citet{MiloushevPalmer05} off-resonance 2-site equation for all time scales with parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: MP05 model} on page~\pageref{sect: dispersion: MP05 model}.
 \end{description}
 
 
 For the $\Ronerho$-type experiments, the numeric models currently supported are:
 
 \begin{description}
-\item[`NS R1rho 2-site':]\index{relaxation dispersion!NS R1rho 2-site model}  The model for 2-site exchange using 3D magnetisation vectors.  It has the parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.  See Section~\ref{sect: dispersion: NS R1rho 2-site model} on page~\pageref{sect: dispersion: NS R1rho 2-site model}.
-\item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.  It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$\}.  See Section~\ref{sect: dispersion: NS R1rho 3-site linear model} on page~\pageref{sect: dispersion: NS R1rho 3-site linear model}.
-\item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model for 3-site exchange whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.  It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.  See Section~\ref{sect: dispersion: NS R1rho 3-site model} on page~\pageref{sect: dispersion: NS R1rho 3-site model}.
+\item[`NS R1rho 2-site':]\index{relaxation dispersion!NS R1rho 2-site model}  The model for 2-site exchange using 3D magnetisation vectors.
+It has the parameters $\{\Ronerhoprime, \dots, \pA, \dw, \kex\}$.
+See Section~\ref{sect: dispersion: NS R1rho 2-site model} on page~\pageref{sect: dispersion: NS R1rho 2-site model}.
+\item[`NS $\Ronerho$ 3-site linear':]\index{relaxation dispersion!NS R1rho 3-site linear model}  The model for 3-site exchange linearised with $\kAC=\kCA=0$ whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
+It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$\}.
+See Section~\ref{sect: dispersion: NS R1rho 3-site linear model} on page~\pageref{sect: dispersion: NS R1rho 3-site linear model}.
+\item[`NS $\Ronerho$ 3-site':]\index{relaxation dispersion!NS R1rho 3-site model}  The model for 3-site exchange whereby the simplification $\RonerhoprimeA = \RonerhoprimeB = \RonerhoprimeC$ is assumed.
+It has the parameters \{$\Ronerhoprime$, $\dots$, $\pA$, $\pB$, $\dwAB$, $\dwBC$, $\kexAB$, $\kexBC$, $\kexAC$\}.
+See Section~\ref{sect: dispersion: NS R1rho 3-site model} on page~\pageref{sect: dispersion: NS R1rho 3-site model}.
 \end{description}
 
 
@@ -168,7 +211,11 @@ The parameters of the models and of relaxation dispersion in general are given i
 \label{sect: dispersion: R2eff model}
 \index{relaxation dispersion!R2eff model|textbf}
 
-This is the simplest of all models in that the dispersion component of the base data -- the peak intensity values -- is not modelled.  It is used to determine either the $\Rtwoeff$ or $\Ronerho$ values and errors as required for the base data for all other models.  It can be selected by setting the model to `R2eff'.  Depending on the experiment type, this model will be handled differently.  The $\Rtwoeff$/$\Ronerho$ values determined can be later copied to the data pipes of the other dispersion models using the appropriate user functions.
+This is the simplest of all models in that the dispersion component of the base data -- the peak intensity values -- is not modelled.
+It is used to determine either the $\Rtwoeff$ or $\Ronerho$ values and errors as required for the base data for all other models.
+It can be selected by setting the model to `R2eff'.
+Depending on the experiment type, this model will be handled differently.
+The $\Rtwoeff$/$\Ronerho$ values determined can be later copied to the data pipes of the other dispersion models using the appropriate user functions.
 
 
 % Fixed relaxation period experiments.
@@ -179,7 +226,8 @@ For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ron
     \Rtwoeff(\nucpmg) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
-The values and errors are determined with a single call of the \uf{calc} user function.  The $\Ronerho$ version of the equation is essentially the same:
+The values and errors are determined with a single call of the \uf{calc} user function.
+The $\Ronerho$ version of the equation is essentially the same:
 \begin{equation}
     \Ronerho(\omega_1) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
 \end{equation}
@@ -189,12 +237,15 @@ Errors are calculated using the formula
     \sigma_{\Rtwo} = \frac{1}{T_\textrm{relax}} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
 \end{equation}
 
-In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.  This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
+In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.
+This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
 \begin{equation} \label{eq: IT05 dispersion error}
     \sigma_{\Rtwo} = \frac{\sigma_{I_1}}{T_\textrm{relax} I_1(\omega_1)} .
 \end{equation}
 
-This is not implemented in relax as it can be shown by simple simulation that the formula is incorrect (see Figure~\ref{fig: dispersion error comparison}).  This formula significantly underestimates the real errors.  The use of the same $I_0$ value for all dispersion points does not cause a decrease in the $\Rtwoeff$ error but rather a correlation in the errors.
+This is not implemented in relax as it can be shown by simple simulation that the formula is incorrect (see Figure~\ref{fig: dispersion error comparison}).
+This formula significantly underestimates the real errors.
+The use of the same $I_0$ value for all dispersion points does not cause a decrease in the $\Rtwoeff$ error but rather a correlation in the errors.
 
 \begin{figure*}[h]
 \centerline{\includegraphics[width=0.9\textwidth, bb=14 14 728 512]{graphics/analyses/dispersion/error_comparison}}
@@ -433,7 +484,9 @@ More information about the CR72 model is available from:
 \label{sect: dispersion: IT99 model}
 \index{relaxation dispersion!IT99 model|textbf}
 
-This is the model for 2-site exchange on all times scales (with the constraint that $\pA \gg \pB$), named after \citet{IshimaTorchia99}.  It is selected by setting the model to `IT99'.  The equation is:
+This is the model for 2-site exchange on all times scales (with the constraint that $\pA \gg \pB$), named after \citet{IshimaTorchia99}.
+It is selected by setting the model to `IT99'.
+The equation is:
 \begin{align}
     \Rex       &\simeq \frac{\Phiex\tex}{1 + \omega_a^2\tex^2} , \\
     \omega_a^2 &= \sqrt{\omega_\textrm{1eff}^4 + \pA^2\dw^4} , \\
@@ -470,7 +523,9 @@ More information about the IT99 model is available from:
 \label{sect: dispersion: TSMFK01 model}
 \index{relaxation dispersion!TSMFK01 model|textbf}
 
-This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after \citet{Tollinger01}.  It is selected by setting the model to `TSMFK01'.  A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e., independent of the rate of exchange).  
+This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after \citet{Tollinger01}.
+It is selected by setting the model to `TSMFK01'.
+A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e., independent of the rate of exchange).
 
 The equation is:
 \begin{align}
@@ -512,7 +567,11 @@ This is the numerical model for 2-site exchange expanded using Maple by Nikolai 
 It is selected by setting the model to `NS CPMG 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
-This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.  The following is the set of equations of the expansion used in relax.  It has been modified from the original for speed.  See the \module{lib\pysep{}dispersion\pysep{}ns\pyus{}cpmg\pyus{}2site\pyus{}expanded} module for more details including the original code.  Further simplifications can be found in the code.
+This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.
+The following is the set of equations of the expansion used in relax.
+It has been modified from the original for speed.
+See the \module{lib\pysep{}dispersion\pysep{}ns\pyus{}cpmg\pyus{}2site\pyus{}expanded} module for more details including the original code.
+Further simplifications can be found in the code.
 
 \begin{subequations}
 \renewcommand{\theequation}{\theparentequation .\arabic{equation}}
@@ -586,7 +645,8 @@ The relative peak intensities, magnitisation, and effective $\Rtwo$ relaxation r
 \end{align}
 \end{subequations}
 
-In these equations $\taucpmg$ and $n_\textrm{CPMG}$ are numpy arrays and hence $t_{139}$ is also a numpy array.  This avoids a Python loop over the dispersion points until the very end of the calculation, required to populate the $\Rtwoeff$ data structure, resulting in very fast calculations.
+In these equations $\taucpmg$ and $n_\textrm{CPMG}$ are numpy arrays and hence $t_{139}$ is also a numpy array.
+This avoids a Python loop over the dispersion points until the very end of the calculation, required to populate the $\Rtwoeff$ data structure, resulting in very fast calculations.
 
 The reference for this model is:
 \begin{itemize}
@@ -1117,7 +1177,8 @@ The equation for the exchange process is
     \Ronerho = \Rone \cos^2\theta  +  \left( \Ronerhoprime + \frac{\Phiex\kex}{\kex^2 + \omegae^2} \right) \sin^2\theta,
 \end{equation}
 
-where $\theta$ is the rotating frame tilt angle.  The reference for this equation is:
+where $\theta$ is the rotating frame tilt angle.
+The reference for this equation is:
 \begin{itemize}
 \item \bibentry{Davis94}
 \end{itemize}
@@ -1271,7 +1332,8 @@ This is the numerical model for 2-site exchange using 3D magnetisation vectors.
 It is selected by setting the model to `NS R1rho 2-site'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
-For this model, the equations from \citet{Korzhnev05a} have been used.  The $\Ronerho$ value for state A magnetisation is defined as
+For this model, the equations from \citet{Korzhnev05a} have been used.
+The $\Ronerho$ value for state A magnetisation is defined as
 \begin{equation}
     \Ronerho = - \frac{1}{T_\textrm{relax}}  \cdot \ln \left( M_0^T \cdot e^{R \cdot T_\textrm{relax}} \cdot M_0 \right),
 \end{equation}
@@ -1481,19 +1543,44 @@ It can be summarised as:
 \item[Peak intensity error analysis:]  An error analysis is performed to determine the peak intensity errors, if not already calculated (see Section~\ref{uf: spectrum.error_analysis} on page~\pageref{uf: spectrum.error_analysis}).
 \item[`R2eff' model optimisation:]  Firstly the `R2eff' model is either optimised (using the \uf{minimise} user function) or simply calculated (using the \uf{calc} user function) to find the $\Rtwoeff$ or $\Ronerho$ values used as the base data for all other dispersion models (see Section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
 \item[Dispersion curve insignificance:]  Spins with insignificant dispersion profiles will be deselected with the \uf{relax\ufus{}disp\ufsep{}insignificance} user function, as described below, excluding the `No Rex' model.
-\item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.  This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.  Each model will be stored in a different data pipe.  See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
+\item[Model optimisation:]  Sequential optimisation of each of the specified dispersion models.
+This consists of a grid search followed by Nelder-Mead simplex optimisation constrained using the log-barrier constraint algorithm.
+Each model will be stored in a different data pipe.
+See Section~\ref{uf: grid_search} on page~\pageref{uf: grid_search} for the grid search and Section~\ref{uf: minimise} on page~\pageref{uf: minimise} for minimisation.
 \item[Grid search avoidance:]  A number of tricks are used to speed up optimisation by skipping or decreasing the size of the initial grid search:
 \begin{description}
-\item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is used in a clustered analysis whereby the pre-run directory contains results from a non-clustered analysis.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
-\item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.  The currently supported nested model pairs are `LM63' and `LM63 3-site', `CR72' and `CR72 full', `CR72' and `MMQ CR72', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.  In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
-\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.  This is used in the auto-analysis for avoiding the grid search in the numeric models.  The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.  The optimised `MMQ CR72' model is used for the `NS MMQ 2-site' model.  And the `MP05' model is used for the `NS R1rho 2-site' model.
+\item[Pre-run directory:]  If a pre-run directory is supplied -- a separate directory containing the dispersion auto-analysis results from a previous run -- the optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.
+This is used in a clustered analysis whereby the pre-run directory contains results from a non-clustered analysis.
+This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.
+At some point a RelaxError will occur because the grid search is impossibly large.
+For the cluster specific parameters, i.e.\ the populations of the states and the exchange parameters, an average value will be used as the starting point.
+For all other parameters, the $\Rtwozero$ values for each spin and magnetic field, as well as the parameters related to the chemical shift difference $\dw$, the optimised values of the previous run will be directly copied.
+\item[Model nesting:]  If two models are nested, then the parameters of the simpler will be used as the starting point for optimisation of the more complex.
+The currently supported nested model pairs are `LM63' and `LM63 3-site', `CR72' and `CR72 full', `CR72' and `MMQ CR72', `NS CPMG 2-site 3D' and `NS CPMG 2-site 3D full', and `NS CPMG 2-site star' and `NS CPMG 2-site star full'.
+In these cases, the $\RtwozeroA$ and $\RtwozeroB$ parameter values are set to the simpler model $\Rtwozero$ value and the grid search is bypassed.
+\item[Model equivalence:]  When two models are equivalent, the optimised parameters of one model can be used as the starting point of the other rather than performing a grid search.
+This is used in the auto-analysis for avoiding the grid search in the numeric models.
+The optimised `CR72' model is used for the `NS CPMG 2-site expanded', `NS CPMG 2-site 3D', and  `NS CPMG 2-site star' models.
+The optimised `MMQ CR72' model is used for the `NS MMQ 2-site' model.
+And the `MP05' model is used for the `NS R1rho 2-site' model.
 \end{description}
 \item[Interruption:]  The optimisation procedure of the auto-analysis can read saved results files if a previous calculation was interrupted.
-\item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.  The relax implementation is described in \citet{dAuvergneGooley06}.  This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.
-\item[Per-model error analysis:]  If desired, Monte Carlo simulations for error propagation can be performed for each model.  This does however require far greater computation time.
-\item[Model selection:]  If more than one model is analysed, AIC model selection will be performed to judge statistical significance of the models \citep{Akaike73}.  This is used to determine if statistically significant $\Rex$ contributions can be extracted form the data, as well as determine if one model is better than the other.  Different statistical techniques such as AICc and BIC can be used when using the script UI \citep{HurvichTsai89,Schwarz78}.  The AIC, AICc and BIC equations for NMR relaxation data were derived in \citet{dAuvergneGooley03}.  In most cases, the list models to choose from should be severely limited.  The results will be stored in a new `final' data pipe and output files placed in the \directory{final} directory.
-\item[Error analysis:]  Monte Carlo simulations for error propagation is performed on the final data pipe (see Section~\ref{uf: monte_carlo.setup} on page~\pageref{uf: monte_carlo.setup} as well as the descriptions for all of the other \uf{monte\ufus{}carlo} user functions).  Model elimination is performed again to remove the Monte Carlo simulations which have failed.
-\item[Output file creation:]  For each of the models and the final model selection results, the \uf{relax\ufus{}disp\ufsep{}plot\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_disp_curves} on page~\pageref{uf: relax_disp.plot_disp_curves}), \uf{relax\ufus{}disp\ufsep{}plot\ufus{}exp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_exp_curves} on page~\pageref{uf: relax_disp.plot_exp_curves}), \uf{relax\ufus{}disp\ufsep{}write\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.write_disp_curves} on page~\pageref{uf: relax_disp.write_disp_curves}), \uf{grace\ufsep{}write} (Section~\ref{uf: grace.write} on page~\pageref{uf: grace.write}) and \uf{value\ufsep{}write} (Section~\ref{uf: value.write} on page~\pageref{uf: value.write}) user functions will be called to generate all the output files you would need.  These generate both Grace 2D plots of the data as well as plain text files.  Additional output files can be created after the analysis by using the user functions manually.
+\item[Model elimination:]  As it is quite common that some of the dispersion models fail to optimise to reasonable values, or will even optimise to non-physically possible values where the global minimum is located, model elimination is performed to remove these models.
+The relax implementation is described in \citet{dAuvergneGooley06}.
+This needs to be performed prior to model selection as a failed model will often provide a statistically better fit than a non-failed model.
+\item[Per-model error analysis:]  If desired, Monte Carlo simulations for error propagation can be performed for each model.
+This does however require far greater computation time.
+\item[Model selection:]  If more than one model is analysed, AIC model selection will be performed to judge statistical significance of the models \citep{Akaike73}.
+This is used to determine if statistically significant $\Rex$ contributions can be extracted form the data, as well as determine if one model is better than the other.
+Different statistical techniques such as AICc and BIC can be used when using the script UI \citep{HurvichTsai89,Schwarz78}.
+The AIC, AICc and BIC equations for NMR relaxation data were derived in \citet{dAuvergneGooley03}.
+In most cases, the list models to choose from should be severely limited.
+The results will be stored in a new `final' data pipe and output files placed in the \directory{final} directory.
+\item[Error analysis:]  Monte Carlo simulations for error propagation is performed on the final data pipe (see Section~\ref{uf: monte_carlo.setup} on page~\pageref{uf: monte_carlo.setup} as well as the descriptions for all of the other \uf{monte\ufus{}carlo} user functions).
+Model elimination is performed again to remove the Monte Carlo simulations which have failed.
+\item[Output file creation:]  For each of the models and the final model selection results, the \uf{relax\ufus{}disp\ufsep{}plot\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_disp_curves} on page~\pageref{uf: relax_disp.plot_disp_curves}), \uf{relax\ufus{}disp\ufsep{}plot\ufus{}exp\ufus{}curves} (Section~\ref{uf: relax_disp.plot_exp_curves} on page~\pageref{uf: relax_disp.plot_exp_curves}), \uf{relax\ufus{}disp\ufsep{}write\ufus{}disp\ufus{}curves} (Section~\ref{uf: relax_disp.write_disp_curves} on page~\pageref{uf: relax_disp.write_disp_curves}), \uf{grace\ufsep{}write} (Section~\ref{uf: grace.write} on page~\pageref{uf: grace.write}) and \uf{value\ufsep{}write} (Section~\ref{uf: value.write} on page~\pageref{uf: value.write}) user functions will be called to generate all the output files you would need.
+These generate both Grace 2D plots of the data as well as plain text files.
+Additional output files can be created after the analysis by using the user functions manually.
 \end{description}
 
 All these steps will be shown in full detail in the relax logs.
@@ -1935,7 +2022,9 @@ Information for how these can be added is given in the next section.
 \section{Tutorial for adding relaxation dispersion models}
 \label{sect: dispersion: model tutorial}
 
-As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!CPMG-type experiment} or $\Ronerho$-type\index{relaxation dispersion!$\Ronerho$-type experiment} experiments in relax.  However it is not too difficult to add new models for your own needs if you have some Python, Matlab, Mathematica, or similar scripting skills.  The steps required are detailed on the \href{http://wiki.nmr-relax.com/}{relax wiki} page \url{http://wiki.nmr-relax.com/Tutorial\_for\_adding\_relaxation\_dispersion\_models\_to\_relax}.
+As the field of NMR relaxation dispersion has a very long history, it is not possible to include all analytic and numeric relaxation dispersion models for both CPMG-type\index{relaxation dispersion!CPMG-type experiment} or $\Ronerho$-type\index{relaxation dispersion!$\Ronerho$-type experiment} experiments in relax.
+However it is not too difficult to add new models for your own needs if you have some Python, Matlab, Mathematica, or similar scripting skills.
+The steps required are detailed on the \href{http://wiki.nmr-relax.com/}{relax wiki} page \url{http://wiki.nmr-relax.com/Tutorial\_for\_adding\_relaxation\_dispersion\_models\_to\_relax}.
 
 
 % Software comparison.
@@ -1950,11 +2039,16 @@ The following is a list of the officially released software which you can use in
 \begin{description}
 \item[CPMGFit] Art Palmer's original dispersion analysis software at \url{http://www.palmer.hs.columbia.edu/software/cpmgfit.html}.
 \item[cpmg\_fit] Dmitry Korzhnev's dispersion software available upon request.
-\item[CATIA] Flemming Hansen's dispersion software at \url{http://www.biochem.ucl.ac.uk/hansen/catia/}.  The reference is \citet{Hansen08}.
-\item[NESSY] Michael Bieri's dispersion software at \url{http://home.gna.org/nessy/}.  The reference is \citet{BieriGooley11}.
-\item[GUARDD] Ian Kleckner's dispersion software at \url{http://code.google.com/p/guardd/}.  The reference is \citet{KlecknerFoster12}.
-\item[ShereKhan] See the web server at \url{http://sherekhan.bionmr.org/}.  The reference is \citet{Mazur13}.
-\item[GLOVE] Peter Wright's dispersion software at \url{http://www.scripps.edu/wright/}.  The reference is \citet{Sugase13}.
+\item[CATIA] Flemming Hansen's dispersion software at \url{http://www.biochem.ucl.ac.uk/hansen/catia/}.
+The reference is \citet{Hansen08}.
+\item[NESSY] Michael Bieri's dispersion software at \url{http://home.gna.org/nessy/}.
+The reference is \citet{BieriGooley11}.
+\item[GUARDD] Ian Kleckner's dispersion software at \url{http://code.google.com/p/guardd/}.
+The reference is \citet{KlecknerFoster12}.
+\item[ShereKhan] See the web server at \url{http://sherekhan.bionmr.org/}.
+The reference is \citet{Mazur13}.
+\item[GLOVE] Peter Wright's dispersion software at \url{http://www.scripps.edu/wright/}.
+The reference is \citet{Sugase13}.
 \item[chemex] Guillaume Bouvignies' dispersion software which can be found at \url{http://code.google.com/p/chemex/}.
 \end{description}
 
@@ -2132,14 +2226,17 @@ Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=RESULTS_DIR
 
 \subsection{Dispersion script mode -- imports} \label{sect: dispersion script imports}
 
-At the very start of the script are two import statements.  This is simply the standard Python import system for modules.  The first will import the \pycode{sep} variable which is the operating system independent directory separator:
+At the very start of the script are two import statements.
+This is simply the standard Python import system for modules.
+The first will import the \pycode{sep} variable which is the operating system independent directory separator:
 
 \begin{lstlisting}[firstnumber=4]
 # Python module imports.
 from os import sep
 \end{lstlisting}
 
-This \pycode{sep} variable will be used later on in the script.  The second import is that of the automated relaxation dispersion class \pycode{Relax\_disp} which will be used at the very end of the script to perform the full analysis:
+This \pycode{sep} variable will be used later on in the script.
+The second import is that of the automated relaxation dispersion class \pycode{Relax\_disp} which will be used at the very end of the script to perform the full analysis:
 
 \begin{lstlisting}[firstnumber=7]
 # relax module imports.
@@ -2152,7 +2249,8 @@ from auto_analyses.relax_disp import Relax_disp
 
 \subsection{Dispersion script mode -- analysis variables} \label{sect: dispersion script variables}
 
-The next part of the script is the definition of a number of analysis variables.  As the example in this section is for CPMG-type experiments, the relaxation dispersion models which will be used in the auto-analysis are:
+The next part of the script is the definition of a number of analysis variables.
+As the example in this section is for CPMG-type experiments, the relaxation dispersion models which will be used in the auto-analysis are:
 
 \begin{lstlisting}[firstnumber=14]
 # The dispersion models.
@@ -2180,7 +2278,10 @@ The next variable affects the optimisation precision:
 GRID_INC = 21
 \end{lstlisting}
 
-The number of grid search increments may be decreased, but only after careful checking with a higher number of increments.  Setting this value too low may place the initial optimisation too far away from the minimum.  Although as-of-yet undetected and unpublished, if multiple local minima do exist then optimisation may not reach the global minimum.  Too little grid search increments can also cause the total optimisation time to increase as the Nelder-Mead simplex\index{optimisation!simplex algorithm}\index{optimisation!Nelder-Mead algorithm} optimisation together with the Logarithmic-barrier penalty function\index{optimisation!logarithmic-barrier penalty function} as used in the auto-analysis may require more time to reach the minimum.
+The number of grid search increments may be decreased, but only after careful checking with a higher number of increments.
+Setting this value too low may place the initial optimisation too far away from the minimum.
+Although as-of-yet undetected and unpublished, if multiple local minima do exist then optimisation may not reach the global minimum.
+Too little grid search increments can also cause the total optimisation time to increase as the Nelder-Mead simplex\index{optimisation!simplex algorithm}\index{optimisation!Nelder-Mead algorithm} optimisation together with the Logarithmic-barrier penalty function\index{optimisation!logarithmic-barrier penalty function} as used in the auto-analysis may require more time to reach the minimum.
 
 The Monte Carlo simulation\index{Monte Carlo simulation} number \pycode{MC\_NUM} variable affects the error estimate precision:
 
@@ -2205,7 +2306,9 @@ The \pycode{MODSEL} variable defines how the best dispersion model for the measu
 MODSEL = 'AIC'
 \end{lstlisting}
 
-For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\index{model selection!AICc}, and BIC\index{model selection!BIC} are supported.  For details about these frequentist\index{model selection!frequentist} model selection techniques and their application to NMR data, see \citet{dAuvergneGooley03}.  Post-analysis comparisons can also be preformed if desired.
+For the automated analysis, currently only AIC\index{model selection!AIC}, AICc\index{model selection!AICc}, and BIC\index{model selection!BIC} are supported.
+For details about these frequentist\index{model selection!frequentist} model selection techniques and their application to NMR data, see \citet{dAuvergneGooley03}.
+Post-analysis comparisons can also be preformed if desired.
 The \pycode{NUMERIC\_ONLY} variable can be used to choose if only numeric or all models will be used in the model selection for the final results:
 
 \begin{lstlisting}[firstnumber=29]
@@ -2244,9 +2347,14 @@ pipe_bundle = 'relax_disp'
 pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type='relax_disp')
 \end{lstlisting}
 
-The first two lines define variables for the data pipe name and the pipe bundle name.  The pipe bundle is used to group together all of the data pipes created by the automated protocol.  See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
+The first two lines define variables for the data pipe name and the pipe bundle name.
+The pipe bundle is used to group together all of the data pipes created by the automated protocol.
+See section~\ref{sect: data pipe bundles} on page~\pageref{sect: data pipe bundles} for more details.
 
-The \uf{pipe\ufsep{}create} user function will then create a relaxation dispersion specific data pipe labelled with the pipe and bundle names.  The third argument sets the pipe type to that of relaxation dispersion.  The rest of the script is used to fill this base data pipe with all of the data required for a dispersion analysis.  The auto-analysis will then copy the data from this pipe as it sees fit.
+The \uf{pipe\ufsep{}create} user function will then create a relaxation dispersion specific data pipe labelled with the pipe and bundle names.
+The third argument sets the pipe type to that of relaxation dispersion.
+The rest of the script is used to fill this base data pipe with all of the data required for a dispersion analysis.
+The auto-analysis will then copy the data from this pipe as it sees fit.
 
 
 % Spin systems.
@@ -2254,14 +2362,17 @@ The \uf{pipe\ufsep{}create} user function will then create a relaxation dispersi
 
 \subsection{Dispersion script mode -- setting up the spin systems}
 
-The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.  In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure\ufsep{}read\ufus{}pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).  In the case of the sample script, the command:
+The first thing which needs to be completed prior to any spin specific command is to generate the molecule, residue and spin data structures for storing the spin specific data.
+In the sample script above, this is generated from a plain text file with the sequence information, however a PDB file can be used instead (see the \uf{structure\ufsep{}read\ufus{}pdb} user function on page~\pageref{uf: structure.read_pdb} for more details).
+In the case of the sample script, the command:
 
 \begin{lstlisting}[firstnumber=45]
 # Load the sequence.
 sequence.read('fake_sequence.in', res_num_col=1, res_name_col=2)
 \end{lstlisting}
 
-will load residue names and numbers from the \file{fake\osus{}sequence.in} file into relax, creating one spin per residue.  Then:
+will load residue names and numbers from the \file{fake\osus{}sequence.in} file into relax, creating one spin per residue.
+Then:
 
 \begin{lstlisting}[firstnumber=48]
 # Name the spins so they can be matched to the assignments, and the isotope for field strength scaling.
@@ -2323,7 +2434,13 @@ data = [
 ]
 \end{lstlisting}
 
-In Python terminology, this is a list of lists data structure.  It is essentially a matrix of information which is used in the subsequent \pycode{for} loop.  The comment explains what each element is.  For $\Ronerho$-type experiments, the CPMG frequency column can be replaced with the spin-lock field strength.  This data structure will need to be tailored to your data.  It can be seen that the \pycode{sep} variable is now being used to specify that the Sparky files are either located in the \directory{500\osus{}MHz} or \directory{800\osus{}MHz} directories.  It is used here to make this script independent of the operating system.
+In Python terminology, this is a list of lists data structure.
+It is essentially a matrix of information which is used in the subsequent \pycode{for} loop.
+The comment explains what each element is.
+For $\Ronerho$-type experiments, the CPMG frequency column can be replaced with the spin-lock field strength.
+This data structure will need to be tailored to your data.
+It can be seen that the \pycode{sep} variable is now being used to specify that the Sparky files are either located in the \directory{500\osus{}MHz} or \directory{800\osus{}MHz} directories.
+It is used here to make this script independent of the operating system.
 
 The Python \pycode{for} loop starts with the lines:
 
@@ -2332,7 +2449,10 @@ The Python \pycode{for} loop starts with the lines:
 for id, file, cpmg_frq, H_frq in data:
 \end{lstlisting}
 
-and includes all subsequently indented lines.  This line of code takes the elements of the \pycode{data} data structure and splits it into 4 variables.  Therefore for the first line, \pycode{id} will be set to \pycode{`500\_reference.in'}, \pycode{file} will be set to \pycode{`500\_MHz/reference.in\_sparky'} on a Linux machine, \pycode{cpmg\_frq} will be \pycode{None}, and \pycode{H\_frq} will be 500~MHz.  For $\Ronerho$-type data, you could change the \pycode{cpmg\_frq} variable to \pycode{field} for example.
+and includes all subsequently indented lines.
+This line of code takes the elements of the \pycode{data} data structure and splits it into 4 variables.
+Therefore for the first line, \pycode{id} will be set to \pycode{`500\_reference.in'}, \pycode{file} will be set to \pycode{`500\_MHz/reference.in\_sparky'} on a Linux machine, \pycode{cpmg\_frq} will be \pycode{None}, and \pycode{H\_frq} will be 500~MHz.
+For $\Ronerho$-type data, you could change the \pycode{cpmg\_frq} variable to \pycode{field} for example.
 
 The first user function in the block loads the peak intensity data from the peak lists:
 
@@ -2341,7 +2461,9 @@ The first user function in the block loads the peak intensity data from the peak
     spectrum.read_intensities(file=file, spectrum_id=id, int_method='height')
 \end{lstlisting}
 
-This assumes that peak heights were measured.  All data will be tagged with the given ID string.  For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.
+This assumes that peak heights were measured.
+All data will be tagged with the given ID string.
+For examples of peak list formats supported by relax, see Section~\ref{sect: Rx data loading} on page~\pageref{sect: Rx data loading}.
 The next step is to specify the dispersion experiment type for each spectrum:
 
 \begin{lstlisting}[firstnumber=99]
@@ -2378,7 +2500,8 @@ And finally the relaxation time period is set with:
     relax_disp.relax_time(spectrum_id=id, time=0.030)
 \end{lstlisting}
 
-If exponential data has been collected rather than fixed time period data, then the \pycode{data} data structure can have an additional column added for the relaxation times, and then this same user function can be used.  The \pycode{for} loop will need one extra variable for the times, and this should be passed into this \uf{relax\ufus{}disp\ufsep{}relax\ufus{}time} user function for the time argument.
+If exponential data has been collected rather than fixed time period data, then the \pycode{data} data structure can have an additional column added for the relaxation times, and then this same user function can be used.
+The \pycode{for} loop will need one extra variable for the times, and this should be passed into this \uf{relax\ufus{}disp\ufsep{}relax\ufus{}time} user function for the time argument.
 
 Finally, once the \pycode{for} loop has completed, replicated spectra are defined with the commands:
 
@@ -2398,7 +2521,10 @@ spectrum.replicated(spectrum_ids=['800_933.33.in', '800_933.33.in.bis'])
 
 \subsection{Dispersion script mode -- the rest of the setup} \label{sect: dispersion setup fin}
 
-Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.  Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.  The peak intensity errors also have to be calculated using the standard deviation formula.  These two operations are executed by the user functions:
+Once all the peak intensity data has been loaded a few calculations are required prior to optimisation.
+Firstly the peak intensities for individual spins needs to be averaged across replicated spectra.
+The peak intensity errors also have to be calculated using the standard deviation formula.
+These two operations are executed by the user functions:
 
 \begin{lstlisting}[firstnumber=119]
 # Peak intensity error analysis.
@@ -2408,7 +2534,9 @@ spectrum.error_analysis(subset=['800_reference.in', '800_66.667.in', '800_133.33
 
 Here the 500~MHz and 800~MHz peak intensity errors have been calculated separately as they should not be the same.
 
-Any spins which cannot be resolved due to peak overlap were included in a file called \file{unresolved}.  This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.  The matching spins are excluded from the analysis by the user functions:
+Any spins which cannot be resolved due to peak overlap were included in a file called \file{unresolved}.
+This file can consist of optional columns of the molecule name, the residue name and number, and the spin name and number.
+The matching spins are excluded from the analysis by the user functions:
 
 \begin{lstlisting}[firstnumber=123]
 # Deselect unresolved spins.
@@ -2421,7 +2549,8 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 %~~~~~~~~~~~
 \subsection{Dispersion script mode -- execution}
 
-Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\pyus{}disp} class.  This is the final lines of the script:
+Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\pyus{}disp} class.
+This is the final lines of the script:
 
 \begin{lstlisting}[firstnumber=129]
 # Auto-analysis execution.
@@ -2472,7 +2601,8 @@ Other relax options can be seen by running:
 
 To process this test data, two separate analyses will be performed:
 \begin{itemize}
-\item The first analysis will consists of treating all spins independently from each other.  This will use model selection to determine if any statistically significant relaxation dispersion is present by comparing to the `No Rex' dispersion model.
+\item The first analysis will consists of treating all spins independently from each other.
+This will use model selection to determine if any statistically significant relaxation dispersion is present by comparing to the `No Rex' dispersion model.
 \item The second analysis will consists of clustering spins with similar kinetics and thermodynamics parameters (exchange rates and populations respectively) and optimising these clusters using a common set of exchange parameters.
 \end{itemize}
 

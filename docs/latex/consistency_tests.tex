@@ -10,11 +10,20 @@
 
 \section{Introduction to the consistency testing of relaxation data}
 
-In spin relaxation, datasets are often recorded at different magnetic fields.  This is especially important when $\Rtwo$ values are to be used since $\mu$s-ms motions contribute to $\Rtwo$.  This contribution being scaled quadratically with the strength of the magnetic field, recording at multiple magnetic fields helps extract it.  Also, acquiring data at multiple magnetic fields allows over-determination of the mathematical problems, e.g. in the model-free approach.
+In spin relaxation, datasets are often recorded at different magnetic fields.
+This is especially important when $\Rtwo$ values are to be used since $\mu$s-ms motions contribute to $\Rtwo$.
+This contribution being scaled quadratically with the strength of the magnetic field, recording at multiple magnetic fields helps extract it.
+Also, acquiring data at multiple magnetic fields allows over-determination of the mathematical problems, e.g. in the model-free approach.
 
-Recording at multiple magnetic fields is a good practice.  However, it can cause artifacts if those different datasets are inconsistent.  Inconsistencies can originate from, inter alia, the sample or the acquisition.  Sample variations can be linked to changes in temperature, concentration, pH, etc.  Water suppression is the main cause of acquisition variations as it affect relaxation parameters (especially NOE) of exposed and exchangeable moieties (e.g. the NH moiety).
+Recording at multiple magnetic fields is a good practice.
+However, it can cause artifacts if those different datasets are inconsistent.
+Inconsistencies can originate from, inter alia, the sample or the acquisition.
+Sample variations can be linked to changes in temperature, concentration, pH, etc.
+Water suppression is the main cause of acquisition variations as it affect relaxation parameters (especially NOE) of exposed and exchangeable moieties (e.g. the NH moiety).
 
-It is thus a good idea to assess consistency of datasets acquired at different magnetic fields.  For this purpose, three tests are implemented in relax.  They are all based on the same principle -- calculate a field independent value and compare it from one field to another.
+It is thus a good idea to assess consistency of datasets acquired at different magnetic fields.
+For this purpose, three tests are implemented in relax.
+They are all based on the same principle -- calculate a field independent value and compare it from one field to another.
 
 The three tests are:
 
@@ -24,9 +33,12 @@ The three tests are:
 \item[$F_{R_2}$]  A consistency function proposed by \citet{Fushman98}.
 \end{description}
 
-These three tests are very similar (all probing consistency of $R_2$ data and all suffering from the same limitations) and any of them can be used for consistency testing.  In the example below, the $J(0)$ values are used for consistency testing.
+These three tests are very similar (all probing consistency of $R_2$ data and all suffering from the same limitations) and any of them can be used for consistency testing.
+In the example below, the $J(0)$ values are used for consistency testing.
 
-Different methods exist to compare tests values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients. The details of how to interpret such analyses are avaliable at the end of this chapter in Section~\ref{sec: Visualisation and data output}.
+Different methods exist to compare tests values calculated from one field to another.
+These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+The details of how to interpret such analyses are avaliable at the end of this chapter in Section~\ref{sec: Visualisation and data output}.
 
 For more details on the tests and their implementation within relax, see:
 
@@ -160,7 +172,8 @@ This is similar in spirit to the reduced spectral density mapping sample script 
 
 \section{Consistency testing script mode -- data pipe and spin system setup}
 
-The steps for setting up relax and the data model concept are described in full detail in Chapter~\ref{ch: data model}.  The first step, as for all analyses in relax, is to create a data pipe for storing all the data:
+The steps for setting up relax and the data model concept are described in full detail in Chapter~\ref{ch: data model}.
+The first step, as for all analyses in relax, is to create a data pipe for storing all the data:
 
 \begin{lstlisting}[firstnumber=31]
 # Create the data pipe.
@@ -194,7 +207,10 @@ This is needed to define the magnetic dipole-dipole interaction which governs re
 
 \section{Consistency testing script mode -- relaxation data loading}
 
-The loading of relaxation data is straight forward.  This is performed prior to the creation of the proton spins so that the data is loaded only into the $^{15}$N spin containers and not both spins for each spin system.  Note that if the relaxation data files contain spin information, then this order is not important.  For this analysis, only data for a single field strength can be loaded:
+The loading of relaxation data is straight forward.
+This is performed prior to the creation of the proton spins so that the data is loaded only into the $^{15}$N spin containers and not both spins for each spin system.
+Note that if the relaxation data files contain spin information, then this order is not important.
+For this analysis, only data for a single field strength can be loaded:
 
 \begin{lstlisting}[firstnumber=41]
 # Load the relaxation data.
@@ -217,7 +233,8 @@ consistency_tests.set_frq(frq=600.0 * 1e6)
 
 \section{Consistency testing script mode -- relaxation interactions}
 
-Prior to calculating the $J(0)$, $F_\eta$, and $F_{R_2}$ values, the physical interactions which govern relaxation of the spins must be defined.  For the magnetic dipole-dipole relaxation interaction, the user functions are:
+Prior to calculating the $J(0)$, $F_\eta$, and $F_{R_2}$ values, the physical interactions which govern relaxation of the spins must be defined.
+For the magnetic dipole-dipole relaxation interaction, the user functions are:
 
 \begin{lstlisting}[firstnumber=49]
 # Define the magnetic dipole-dipole relaxation interaction.
@@ -245,14 +262,18 @@ value.set(val=15.7, param='orientation')
 
 \section{Consistency testing script mode -- calculation and error propagation}
 
-Optimisation for this analysis is not needed as this is a direct calculation.  Therefore the $J(0)$, $F_\eta$, and $F_{R_2}$ values are simply calculated with the call:
+Optimisation for this analysis is not needed as this is a direct calculation.
+Therefore the $J(0)$, $F_\eta$, and $F_{R_2}$ values are simply calculated with the call:
 
 \begin{lstlisting}[firstnumber=65]
 # Consistency tests.
 calc()
 \end{lstlisting}
 
-The propagation of errors is more complicated.  The Monte Carlo simulation framework of relax can be used to propagate the relaxation data errors to the spectral density errors.  As this is a direct calculation, this collapses into the standard bootstrapping method.  The normal Monte Carlo user functions can be called:
+The propagation of errors is more complicated.
+The Monte Carlo simulation framework of relax can be used to propagate the relaxation data errors to the spectral density errors.
+As this is a direct calculation, this collapses into the standard bootstrapping method.
+The normal Monte Carlo user functions can be called:
 
 \begin{lstlisting}[firstnumber=68]
 # Monte Carlo simulations.
@@ -273,7 +294,9 @@ In this case, the \uf{monte\ufus{}carlo\ufsep{}initial\ufus{}values} user functi
 
 The rest of the script is used to output the results to 2D Grace files for visualisation (the \uf{grace\ufsep{}view} user function calls will launch Grace with the created files), and the output of the values into plain text files.
 
-However, simply visualizing the calculated $J(0)$, $F_\eta$, and $F_{R_2}$ values this way does not allow proper consistency testing. Indeed, for assessing the consistency of relaxation data using these tests, different methods exist to compare values calculated from one field to another.  These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
+However, simply visualizing the calculated $J(0)$, $F_\eta$, and $F_{R_2}$ values this way does not allow proper consistency testing.
+Indeed, for assessing the consistency of relaxation data using these tests, different methods exist to compare values calculated from one field to another.
+These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
 
 To complete the consistency testing analysis, the following steps are needed:
 
@@ -281,7 +304,10 @@ To complete the consistency testing analysis, the following steps are needed:
 \item Extract the $J(0)$ values at multiple magnetic fields.
 \item Join together the data from a pair of magnetic fields either by pasting them as two columns of one file (approach A), or by dividing values from a first magnetic field by values from a second magnetic field (approach B).
 \item Make either a correlation plot (approach A), or an histogram of the ratios (approach B).
-\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).  If yes, data from multiple magnetic fields is consistent from one magnetic field to another.  If no, data is inconsistent.  In the case where inconsistency arises, if data from more than two magnetic fields is available, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
+\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).
+If yes, data from multiple magnetic fields is consistent from one magnetic field to another.
+If no, data is inconsistent.
+In the case where inconsistency arises, if data from more than two magnetic fields is available, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
 \end{itemize}
 
 \begin{figure*}[h]
@@ -290,8 +316,16 @@ To complete the consistency testing analysis, the following steps are needed:
 \caption[Example of consistency testing visual analysis]{Example of consistency testing visual analysis.  Relaxation data from three different magnetic fields are compared.  For each pair of magnetic field, a correlation plot of the calculated $J(0)$ values (approach A, top) as well as an histogram of the ration of calculated $J(0)$ values (approach B, bottom) are shown.  These graphs must be manually created from the output of the sample script shown in section~\ref{sect: consistency tests - sample script}.  The PSE-4 data, as published in \citet{MorinGagne09b}, has been reused for the purpose of this example.}
 \end{figure*}
 
-An example of such an analysis is shown in Figure~\ref{fig: consistency analysis}.  This example displays both consistent and inconsistent data.  As the figure shows, the data recorded at 500 MHz and 600 MHz are consistent with each other whereas the data recorded at 800 MHz is consistent with the neither the 500 MHz nor 600 MHz data.  Since more than two magnetic fields were used, this allowed the identification of the 800 MHz data as being inconsistent allowing the authors to take special care with this data set.
+An example of such an analysis is shown in Figure~\ref{fig: consistency analysis}.
+This example displays both consistent and inconsistent data.
+As the figure shows, the data recorded at 500 MHz and 600 MHz are consistent with each other whereas the data recorded at 800 MHz is consistent with the neither the 500 MHz nor 600 MHz data.
+Since more than two magnetic fields were used, this allowed the identification of the 800 MHz data as being inconsistent allowing the authors to take special care with this data set.
 
-The 800 MHz data inconsistency is seen in the correlation plots (top) by a deviation from the dotted line (which represents the theoretical situation when equal $J(0)$ values are extracted from both magnetic fields.  It is also observable in the histograms (bottom) where the ratio of the data from two magnetic fields is not centered at 1.0.  In fact, there seems to be a systematic shift of the calculated $J(0)$ values at 800 MHz when compared to the two other magnetic fields.  This is caused by a similar shift in the experimental $\Rtwo$ (transversal relaxation rate) data.
+The 800 MHz data inconsistency is seen in the correlation plots (top) by a deviation from the dotted line (which represents the theoretical situation when equal $J(0)$ values are extracted from both magnetic fields.
+It is also observable in the histograms (bottom) where the ratio of the data from two magnetic fields is not centered at 1.0.
+In fact, there seems to be a systematic shift of the calculated $J(0)$ values at 800 MHz when compared to the two other magnetic fields.
+This is caused by a similar shift in the experimental $\Rtwo$ (transversal relaxation rate) data.
 
-For the 500 MHz and 600 MHz data pair, the data are centered around the dotted line in the correlation plot (approach A, top left) as well as centered around a value of 1.0 in the histogram comparing the ratios of values from both magnetic fields (approach B, bottom left).  Of course, there are some outlier values even in the case of consistent data.  There are caused by specific dynamic characteristics of these spins and are different from systematic inconsistencies such as depicted in the example above with the data recorded at 800 MHz.
+For the 500 MHz and 600 MHz data pair, the data are centered around the dotted line in the correlation plot (approach A, top left) as well as centered around a value of 1.0 in the histogram comparing the ratios of values from both magnetic fields (approach B, bottom left).
+Of course, there are some outlier values even in the case of consistent data.
+There are caused by specific dynamic characteristics of these spins and are different from systematic inconsistencies such as depicted in the example above with the data recorded at 800 MHz.
