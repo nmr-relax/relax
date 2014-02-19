@@ -38,3 +38,31 @@ class Test_disp_data(UnitTestCase):
 
         # Create a dispersion data pipe.
         ds.add(pipe_name='orig', pipe_type='relax_disp')
+
+
+    def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_calc(self):
+        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data
+        ncyc_1 = [20, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28]
+        sfrq_1 = 499.86214*1E6
+        time_T2_1 = 0.04
+        cpmg_1 = [ncyc/time_T2_1 for ncyc in ncyc_1]
+        cpmg_1.sort()
+
+        ncyc_2 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 24, 14]
+        sfrq_2 = 599.8908587*1E6
+        time_T2_2 = 0.06
+        cpmg_2 = [ncyc/time_T2_2 for ncyc in ncyc_2]
+        cpmg_2.sort()
+
+        # Test the loop function.
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            if frq == sfrq_1:
+                self.assertEqual(time, time_T2_1)
+            if frq == sfrq_2:
+                self.assertEqual(time, time_T2_2)
