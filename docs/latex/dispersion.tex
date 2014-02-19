@@ -2574,7 +2574,7 @@ For ideas in designing your own advanced analysis, see the \file{auto\osus{}anal
 \newpage
 \section{The relaxation dispersion auto-analysis in the GUI}
 
-The following demonstration of the relaxation dispersion analysis in the graphical user interface (GUI) uses the experimental data from Flemming Hansen located in the relax directory \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen}.
+The following demonstration of the relaxation dispersion analysis in the graphical user interface (GUI) uses the experimental single quantum (SQ) CPMG-type data from Flemming Hansen located in the relax directory \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen}.
 This is the data from the paper:
 \begin{itemize}
   \item \bibentry{Hansen08}
@@ -2702,4 +2702,35 @@ The relax controller window may appear and can be closed.
 Select the new file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}800\osus{}MHz\ossep{}unresolved} and click on \guibutton{OK}.
 Now all spins from these two files will be deselected and skipped in the analysis.
 
+
+% Metadata setup.
+%~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- metadata setup}
+
+The next step is to set up the metadata for the analysis.
+This is performed by clicking on the buttons between the \gui{Spin cluster ID} and \gui{Spectra list} GUI elements.
+The buttons are as follows:
+\begin{description}
+  \item[Spin isotope:]  This is needed to specify the spin isotope information for each spin in the system, for example if the data is from $^{15}$N, $^{13}$C, $^1$H, etc.
+  \item[$\Rone$ relaxation data:]  This is used to load a text file containing $\Rone$ relaxation data for each spin of interest.
+    The button launches the \uf{relax\_data.read} user function (see section~\ref{uf: relax_data.read} on page~\pageref{uf: relax_data.read}).
+    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
+  \item[Chemical shift:]  Again this is for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
+    The button launches the \uf{chemical\_shift.read} user function (see section~\ref{uf: chemical_shift.read} on page~\pageref{uf: chemical_shift.read}).
+  \item[Interatomic interaction:]  This button launches the \uf{interatom.define} user function (see section~\ref{uf: interatom.define} on page~\pageref{uf: interatom.define}).
+    This is needed to link, for example, $^1$H to $^{15}$N spins into a spin system so that MMQ-type data, which relies on a multiple-spin system, can be handled.
+  \item[Value setting:]  When one of the parameters of the dispersion model is already known, its value can be set by clicking on this button which launches the \uf{value.set} user function (see section~\ref{uf: value.set} on page~\pageref{uf: value.set}).
+    Setting a parameter value will fix the parameter in the initial grid search.
+    However it will be free to vary in the non-linear least squares optimisation to refine its value.
+\end{description}
+
+For SQ CPMG-type dispersion data, only the spin isotope information is required.
+
+\begin{minipage}[h]{\linewidth}
+\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/spin_isotope}}
+\end{minipage}
+
+In this case, all spins are $^{15}$N so simply leave the values to the defaults and click on \guibutton{OK}.
+The other buttons can be ignored.
 
