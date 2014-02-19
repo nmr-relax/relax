@@ -8,16 +8,15 @@ Organic molecules, proteins, RNA, DNA, sugars, and other biomolecules are all su
 It was originally written for the model-free analysis of protein dynamics, though its scope has been significantly expanded.
 It is a community driven project created by NMR spectroscopists for NMR spectroscopists.
 It supports many analysis types including:
-
 \begin{description}
-\item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data
-\item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the R$_x$ NMR relaxation rates.
-\item[NOE] - the calculation of the steady-state NOE NMR relaxation data.
-\item[Data consistency] - the consistency testing of multiple field NMR relaxation data.
-\item[RSDM] - Reduced Spectral Density Mapping.
-\item[Frame order and N-state model] - study of domain motions via the N-state model and frame order dynamics theories using anisotropic NMR parameters such as RDCs and PCSs.
-\item[Stereochemistry] - investigations of absolute stereochemistry of flexible molecules.
-\item[Relaxation dispersion] - the study of processes on the chemical exchange timescale.
+  \item[Model-free analysis] - the Lipari and Szabo model-free analysis of NMR relaxation data
+  \item[$\Rone$ and $\Rtwo$] - the exponential curve fitting for the calculation of the R$_x$ NMR relaxation rates.
+  \item[NOE] - the calculation of the steady-state NOE NMR relaxation data.
+  \item[Data consistency] - the consistency testing of multiple field NMR relaxation data.
+  \item[RSDM] - Reduced Spectral Density Mapping.
+  \item[Frame order and N-state model] - study of domain motions via the N-state model and frame order dynamics theories using anisotropic NMR parameters such as RDCs and PCSs.
+  \item[Stereochemistry] - investigations of absolute stereochemistry of flexible molecules.
+  \item[Relaxation dispersion] - the study of processes on the chemical exchange timescale.
 \end{description}
 
 The aim of relax is to provide a seamless and extremely flexible environment able to accept input in any format produced by other NMR software, able to faultlessly create input files, control, and read output from various programs including Modelfree and Dasha, output results in many formats, and visualise the data by controlling programs such as Grace\index{software!Grace|textbf}, OpenDX\index{software!OpenDX|textbf}, MOLMOL\index{software!MOLMOL|textbf}, and PyMOL\index{software!PyMOL|textbf}.
@@ -55,20 +54,19 @@ To properly cite the various parts of relax used in your analysis, please see Ch
 \subsection{Supported NMR theories}
 
 The following relaxation data analysis techniques are currently supported by relax:
-
 \begin{itemize}
-\item Model-free analysis (\citet{LipariSzabo82a, LipariSzabo82b, Clore90a} and the specific implementation of \citet{dAuvergneGooley03,dAuvergneGooley06,dAuvergneGooley07,dAuvergneGooley08a,dAuvergneGooley08b}).
-This includes the hybridisation of global diffusion models to study residual domain dynamics \citep{Horne07}.
-\item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
-\item Consistency testing -- the validation of multiple field NMR relaxation data \citep{MorinGagne09a,Fushman99}.
-\item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
-\item Steady-state NOE calculation\index{NOE}.
-\item Determination of absolute stereochemistry of flexible molecules via the N-state model using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD \citep{Sun11}.
-\item The N-state model for investigating domain motions.
-\item The frame order theory.
-\item Conformational analysis of paramagnetically tagged molecules via the N-state model \citep{Erdelyi11}.
-\item Analysis and comparison of ensembles of structures using RDCs, PCSs, NOEs, etc. (the N-state model of dynamics).
-\item The analysis of relaxation dispersion\index{relaxation dispersion}.
+  \item Model-free analysis (\citet{LipariSzabo82a, LipariSzabo82b, Clore90a} and the specific implementation of \citet{dAuvergneGooley03,dAuvergneGooley06,dAuvergneGooley07,dAuvergneGooley08a,dAuvergneGooley08b}).
+    This includes the hybridisation of global diffusion models to study residual domain dynamics \citep{Horne07}.
+  \item Reduced spectral density mapping \citep{Farrow95, Lefevre96}\index{reduced spectral density mapping}.
+  \item Consistency testing -- the validation of multiple field NMR relaxation data \citep{MorinGagne09a,Fushman99}.
+  \item Exponential curve fitting (to find the $\Rone$ and $\Rtwo$ relaxation rates)\index{exponential curve fitting}.
+  \item Steady-state NOE calculation\index{NOE}.
+  \item Determination of absolute stereochemistry of flexible molecules via the N-state model using isotropic and anisotropic NMR parameters such as NOE, ROE, and RDC combined with MD simulation or simulated annealing, and ORD \citep{Sun11}.
+  \item The N-state model for investigating domain motions.
+  \item The frame order theory.
+  \item Conformational analysis of paramagnetically tagged molecules via the N-state model \citep{Erdelyi11}.
+  \item Analysis and comparison of ensembles of structures using RDCs, PCSs, NOEs, etc. (the N-state model of dynamics).
+  \item The analysis of relaxation dispersion\index{relaxation dispersion}.
 \end{itemize}
 
 
@@ -86,20 +84,19 @@ Please see the Open Source chapter on page~\pageref{ch: open source} for more de
 \subsection{Data analysis tools}
 
 The following tools are implemented as modular components to be used by any data analysis technique:
-
 \begin{itemize}
-\item Numerous high-precision optimisation algorithms\index{optimisation!algorithm}.
-\item Model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}:
-    \begin{itemize}
+  \item Numerous high-precision optimisation algorithms\index{optimisation!algorithm}.
+  \item Model selection \citep{dAuvergneGooley03, Chen04}\index{model selection}:
+  \begin{itemize}
     \item Akaike's Information Criteria (AIC)\index{model selection!AIC}.
     \item Small sample size corrected AIC (AICc)\index{model selection!AICc}.
     \item Bayesian or Schwarz Information Criteria (BIC)\index{model selection!BIC}.
     \item Bootstrap model selection\index{model selection!bootstrap}.
     \item Single-item-out cross-validation (CV)\index{model selection!cross-validation}.
     \item Hypothesis testing ANOVA model selection (only the model-free specific technique of \citet{Mandel95} is supported)\index{model selection!hypothesis testing}\index{model selection!ANOVA}.
-    \end{itemize}
-\item Monte Carlo simulations (error analysis for all data analysis techniques)\index{Monte Carlo simulation}.
-\item Model elimination -- the removal of failed models prior to model selection \citep{dAuvergneGooley06}\index{model elimination}.
+  \end{itemize}
+  \item Monte Carlo simulations (error analysis for all data analysis techniques)\index{Monte Carlo simulation}.
+  \item Model elimination -- the removal of failed models prior to model selection \citep{dAuvergneGooley06}\index{model elimination}.
 \end{itemize}
 
 
@@ -109,12 +106,11 @@ The following tools are implemented as modular components to be used by any data
 \subsection{Data visualisation}
 
 The results of an analysis, or any data input into relax, can be visualised using a number of programs:
-
 \begin{description}
-\item[MOLMOL] 1D data can be mapped onto a structure either by the creation of MOLMOL macros or by direct control of the program\index{software!MOLMOL}.
-\item[PyMOL] 3D objects such as the diffusion tensor representation can be displayed with the structure\index{software!PyMOL}.
-\item[Grace] any 2D data can be plotted\index{software!Grace}.
-\item[OpenDX] The chi-squared space of models with three parameters can be mapped and 3D images of the space produced\index{software!OpenDX}.
+  \item[MOLMOL] 1D data can be mapped onto a structure either by the creation of MOLMOL macros or by direct control of the program\index{software!MOLMOL}.
+  \item[PyMOL] 3D objects such as the diffusion tensor representation can be displayed with the structure\index{software!PyMOL}.
+  \item[Grace] any 2D data can be plotted\index{software!Grace}.
+  \item[OpenDX] The chi-squared space of models with three parameters can be mapped and 3D images of the space produced\index{software!OpenDX}.
 \end{description}
 
 
@@ -125,10 +121,9 @@ The results of an analysis, or any data input into relax, can be visualised usin
 
 relax can create the input files, execute in-line, and then read the output of the following programs.
 These programs can be used as optimisation engines replacing the minimisation algorithms built into relax:
-
 \begin{itemize}
-\item Dasha (model-free analysis)\index{software!Dasha}.
-\item Modelfree (model-free analysis)\index{software!Modelfree}.
+  \item Dasha (model-free analysis)\index{software!Dasha}.
+  \item Modelfree (model-free analysis)\index{software!Modelfree}.
 \end{itemize}
 
 
@@ -138,18 +133,17 @@ These programs can be used as optimisation engines replacing the minimisation al
 \subsection{The user interfaces (UI)}
 
 relax can be used through the following UIs:
-
 \begin{description}
-\item[The prompt] this is the primary interface of relax.
-Rather than reinventing a new command language, relax's interface is the powerful Python prompt.
-This gives the power user full access to a proven programming language.
-See Figure~\ref{fig: relax prompt} for a screenshot.
-\item[Scripting] this provides a more powerful and flexible framework for controlling the program.
-The script will be executed as Python code enabling advanced programming for automating data analysis.
-All the features available within the prompt environment are accessible to the script.
-See Figure~\ref{fig: relax script} for a screenshot.
-\item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the \module{dauvergne\pyus{}protocol} module \citep{dAuvergneGooley08b}.
-See Figure~\ref{fig: GUI screenshot - start} for a screenshot.
+  \item[The prompt] this is the primary interface of relax.
+    Rather than reinventing a new command language, relax's interface is the powerful Python prompt.
+    This gives the power user full access to a proven programming language.
+    See Figure~\ref{fig: relax prompt} for a screenshot.
+  \item[Scripting] this provides a more powerful and flexible framework for controlling the program.
+    The script will be executed as Python code enabling advanced programming for automating data analysis.
+    All the features available within the prompt environment are accessible to the script.
+    See Figure~\ref{fig: relax script} for a screenshot.
+  \item[GUI] the graphical user interface provides a sub-set of relax's features - the automatic R$_1$ and R$_2$ relaxation rate curve-fitting, the NOE calculations, and the automatic model-free analysis provided by the \module{dauvergne\pyus{}protocol} module \citep{dAuvergneGooley08b}.
+    See Figure~\ref{fig: GUI screenshot - start} for a screenshot.
 \end{description}
 
 
@@ -491,14 +485,13 @@ The spin and interatomic data containers and their associated data can be manipu
 What ever is done within the prompt is also accessible through scripting (Figure~\ref{fig: relax script}).
 First type your commands into a text file ending in \file{*.py}.
 To use this mode of relax, you will need to open up a terminal in your respective operating system:
-
 \begin{description}
-\item[GNU/Linux:]  Here you have an incredible number of choices.
-If you don't have a preferred shell already, you could try one of \software{Konsole}, \software{GNOME Terminal} or even \software{XTerm} if you are a masochist.
-\item[Mac OS X:]  This is as simple as in GNU/Linux -- just launch \software{Terminal.app} from the \directory{Utilities} folder.
-\item[MS Windows:]  If your system supports it, you should install and use \software{Windows PowerShell}.
-The alternative is the nasty \software{cmd} command line terminal program which comes installed by default on all Windows versions.
-The \software{PowerShell}, although no where near as powerful as the Linux and Mac terminals, is a huge improvement on the ancient \software{cmd} program and will make relax much better to use on MS Windows.
+  \item[GNU/Linux:]  Here you have an incredible number of choices.
+    If you don't have a preferred shell already, you could try one of \software{Konsole}, \software{GNOME Terminal} or even \software{XTerm} if you are a masochist.
+  \item[Mac OS X:]  This is as simple as in GNU/Linux -- just launch \software{Terminal.app} from the \directory{Utilities} folder.
+  \item[MS Windows:]  If your system supports it, you should install and use \software{Windows PowerShell}.
+    The alternative is the nasty \software{cmd} command line terminal program which comes installed by default on all Windows versions.
+    The \software{PowerShell}, although no where near as powerful as the Linux and Mac terminals, is a huge improvement on the ancient \software{cmd} program and will make relax much better to use on MS Windows.
 \end{description}
 
 Once your terminal is running, go to the directory containing your script using the \prompt{cd} command (if you do not know what this is, please see the documentation for your terminal program to understand some of its basic usage).
@@ -694,13 +687,12 @@ The GUI is currently an interface to the automated analyses, providing an easy w
 The interface consists of a tab for each analysis.
 By clicking on the \guimenuitemtwo{File}{New analysis} menu entry or the \guibutton{New analysis} toolbar button, the analysis wizard will appear (see Figure~\ref{fig: screenshot: analysis wizard}).
 The following analyses can be set up using this wizard:
-
 \begin{description}
-\item[Steady-state NOE:]  this provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).
-See Figure~\ref{fig: screenshot: NOE analysis} on page~\pageref{fig: screenshot: NOE analysis}.
-\item[$\Rone$ and $\Rtwo$]:  these provide easy access to optimisations and error analysis for the $\Rone$ and $\Rtwo$ relaxation rates via exponential curve-fitting (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis} on pages~\pageref{fig: screenshot: R1 analysis} and~\pageref{fig: screenshot: R2 analysis}).
-\item[Model-free analysis]:  A fully automatic model-free protocol is provided in another tab.
-This operates via the \module{dauvergne\pyus{}protocol} module which implements the protocol of \cite{dAuvergneGooley08b} (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).
+  \item[Steady-state NOE:]  this provides access to the steady-state NOE calculation with pseudo Monte Carlo simulations for error analysis (this falls back to bootstrapping as this is a calculation rather than optimisation).
+    See Figure~\ref{fig: screenshot: NOE analysis} on page~\pageref{fig: screenshot: NOE analysis}.
+  \item[$\Rone$ and $\Rtwo$]:  these provide easy access to optimisations and error analysis for the $\Rone$ and $\Rtwo$ relaxation rates via exponential curve-fitting (see Figures~\ref{fig: screenshot: R1 analysis} and~\ref{fig: screenshot: R2 analysis} on pages~\pageref{fig: screenshot: R1 analysis} and~\pageref{fig: screenshot: R2 analysis}).
+  \item[Model-free analysis]:  A fully automatic model-free protocol is provided in another tab.
+    This operates via the \module{dauvergne\pyus{}protocol} module which implements the protocol of \cite{dAuvergneGooley08b} (see Figure~\ref{fig: screenshot: model-free analysis} on page~\pageref{fig: screenshot: model-free analysis}).
 \end{description}
 
 A number of windows in the GUI provide user feedback or allow for the viewing and editing of data.
@@ -794,11 +786,11 @@ These include:
 
 
 \begin{description}
-\item[The relax controller]:  This window shows the progress of relax's execution and displays relax's text output for checking if the analysis has been performed correctly and has completed successfully (see Figure~\ref{fig: screenshot: relax controller}).
-\item[Spin viewer window]:  This is used to load spins system information into the relax data store and to see the contents of the spin containers (see Figure~\ref{fig: screenshot: spin viewer}).
-\item[Results viewer window]:  This presents a list of the results files which can be opened by double clicking for visualisation using a text editor, Grace, PyMOL, MOLMOL, etc (see Figure~\ref{fig: screenshot: results viewer}).
-\item[Data pipe editor]:  This window allows for easy manipulation of the data pipes of the relax data store (see Figure~\ref{fig: screenshot: pipe editor}).
-\item[The relax prompt]:  This window gives access to the relax prompt (see Figure~\ref{fig: screenshot: prompt window}).
+  \item[The relax controller]:  This window shows the progress of relax's execution and displays relax's text output for checking if the analysis has been performed correctly and has completed successfully (see Figure~\ref{fig: screenshot: relax controller}).
+  \item[Spin viewer window]:  This is used to load spins system information into the relax data store and to see the contents of the spin containers (see Figure~\ref{fig: screenshot: spin viewer}).
+  \item[Results viewer window]:  This presents a list of the results files which can be opened by double clicking for visualisation using a text editor, Grace, PyMOL, MOLMOL, etc (see Figure~\ref{fig: screenshot: results viewer}).
+  \item[Data pipe editor]:  This window allows for easy manipulation of the data pipes of the relax data store (see Figure~\ref{fig: screenshot: pipe editor}).
+  \item[The relax prompt]:  This window gives access to the relax prompt (see Figure~\ref{fig: screenshot: prompt window}).
 \end{description}
 
 
@@ -854,13 +846,12 @@ relax>
 Thanks to Gary Thompson's multi-processor framework, relax can be run on multi-core/multi-CPU systems or on clusters to speed up calculations.
 As most analyses are relatively quick and would not benefit from the multi-processor framework, only the model-free and frame order analyses have currently been parallelised to run within this framework.
 To use the multi-processor framework, the following should be installed:
-
 \begin{description}
-\item[\href{http://www.open-mpi.org/}{OpenMPI}\index{MPI!OpenMPI|textbf}:]  This is the most commonly used Message Passing Interface (MPI)\index{MPI} protocol software.
-The rest of this manual will assume that this is the implementation in use.
-If another implementation is used, please see the specific documentation for that software for how to set up a program to run via MPI.
-\item[\href{http://mpi4py.scipy.org/}{mpi4py}\index{MPI!mpi4py|textbf}:]  This dependency is essential for running in MPI mode in relax.
-If you would like to use another Python implementation to access the MPI protocol, please consider becoming a relax developer.
+  \item[\href{http://www.open-mpi.org/}{OpenMPI}\index{MPI!OpenMPI|textbf}:]  This is the most commonly used Message Passing Interface (MPI)\index{MPI} protocol software.
+    The rest of this manual will assume that this is the implementation in use.
+    If another implementation is used, please see the specific documentation for that software for how to set up a program to run via MPI.
+  \item[\href{http://mpi4py.scipy.org/}{mpi4py}\index{MPI!mpi4py|textbf}:]  This dependency is essential for running in MPI mode in relax.
+    If you would like to use another Python implementation to access the MPI protocol, please consider becoming a relax developer.
 \end{description}
 
 

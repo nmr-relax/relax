@@ -92,14 +92,13 @@ Another way to fix the problem is to install newer versions of the run-time file
 
 The following are relax's conventions for docstrings.
 Many of these are Python conventions.
-
 \begin{itemize}
-\item The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.
-This line must start with a capital letter and end in a period.
-This convention is required for certain docstring parsers (see the Python docs).
-\item All functions should have a docstring describing in detail the function, structure, and organisation of the code.
-\item A docstring should be followed by an empty line.
-\item Indentation of the docstring should be the same as that of the first line of code, excluding indented lists, etc.
+  \item The standard Python convention of a one line description separated from a detailed description by an empty line should be adhered to.
+    This line must start with a capital letter and end in a period.
+    This convention is required for certain docstring parsers (see the Python docs).
+  \item All functions should have a docstring describing in detail the function, structure, and organisation of the code.
+  \item A docstring should be followed by an empty line.
+  \item Indentation of the docstring should be the same as that of the first line of code, excluding indented lists, etc.
 \end{itemize}
 
 An example of a single line docstring is:
@@ -239,15 +238,14 @@ For example naming the parameter vector \pycode{self.param\_vector}, the relaxat
 \subsection{Whitespace}
 
 The following conventions are for general code cleanliness and readability:
-
 \begin{itemize}
-\item Trailing whitespace should be avoided, although this is not very important.
-\item All functions should be preceded by two empty lines.
-The only exception is the first function of the class definition.
-\item Function arguments should be separated by a comma followed by a single space.
-\item The assignment operator should be surrounded by spaces, for example \verb*!tm = 1e-8!.
-The exception is function arguments where for example \verb*!self.classic\_colour(res\_num=None, width=0.3)!.
-\item The comparison operators should also be surrounded by spaces, e.g.\ \verb*! < !, \verb*! > !, \verb*! == !, \verb*! <= !, \verb*! => !, \verb*! <> !, \verb*! != !, \verb*! is !, and \verb*! in !.
+  \item Trailing whitespace should be avoided, although this is not very important.
+  \item All functions should be preceded by two empty lines.
+    The only exception is the first function of the class definition.
+  \item Function arguments should be separated by a comma followed by a single space.
+  \item The assignment operator should be surrounded by spaces, for example \verb*!tm = 1e-8!.
+    The exception is function arguments where for example \verb*!self.classic\_colour(res\_num=None, width=0.3)!.
+  \item The comparison operators should also be surrounded by spaces, e.g.\ \verb*! < !, \verb*! > !, \verb*! == !, \verb*! <= !, \verb*! => !, \verb*! <> !, \verb*! != !, \verb*! is !, and \verb*! in !.
 \end{itemize}
 
 An example which shows most of these conventions is:
@@ -412,29 +410,22 @@ If you have been approved (see section~\ref{becoming a committer}) you will be a
 \index{commit log|textbf}
 
 If you are a relax developer and you have commit access to the repository the following conventions should be followed for all commit messages.
-
 \begin{itemize}
-\item The length of all lines in the commit log should never exceed 100 characters.
-This is so that the log message viewed in either emails or by the command prompt command \mbox{\prompt{svn log}} is legible.
-
-\item The first line of the commit log should be a short description or synopsis of the changes.
-If the change relates to a bug or a task, include the bug and task number using the notation \texttt{type \#num} where type is either \texttt{bug}, \texttt{task} or \texttt{support} and \texttt{num} is the id number (for example \texttt{bug \#6503}).
-This terminology is important because the Gna!\ infrastructure knows how to translate this into a link to the issue.
-Also include a link to the issue.
-
-\item The second line should be blank.
-
-\item If the commit is a bug fix reported by a non-committer or if the commit originates from a patch posted by a non-committer the next lines should be reserved for crediting.
-The name of the person and their obfuscated email address (for example edward \_at\_ nmr-relax \_dot\_ com) should be included in the message.
-
-\item Next should be another blank line.
-
-\item If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).
-All relevant links should be included to allow easy navigation between the repository\index{repository}, mailing lists\index{mailing list}, bug tracker\index{bug!tracker}, etc.
-An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org''\index{mailing list!relax-devel} describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
-
-\item A full description with all the details can follow.
-This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
+  \item The length of all lines in the commit log should never exceed 100 characters.
+    This is so that the log message viewed in either emails or by the command prompt command \mbox{\prompt{svn log}} is legible.
+  \item The first line of the commit log should be a short description or synopsis of the changes.
+    If the change relates to a bug or a task, include the bug and task number using the notation \texttt{type \#num} where type is either \texttt{bug}, \texttt{task} or \texttt{support} and \texttt{num} is the id number (for example \texttt{bug \#6503}).
+    This terminology is important because the Gna!\ infrastructure knows how to translate this into a link to the issue.
+    Also include a link to the issue.
+  \item The second line should be blank.
+  \item If the commit is a bug fix reported by a non-committer or if the commit originates from a patch posted by a non-committer the next lines should be reserved for crediting.
+    The name of the person and their obfuscated email address (for example edward \_at\_ nmr-relax \_dot\_ com) should be included in the message.
+  \item Next should be another blank line.
+  \item If the commit relates to an entry in the bug tracker or to a discussion on the mailing lists then the web address of either the bug report or the mailing list archive message should be cited in the next section (separated from the synopsis or credit section by a blank line).
+    All relevant links should be included to allow easy navigation between the repository\index{repository}, mailing lists\index{mailing list}, bug tracker\index{bug!tracker}, etc.
+    An example is bug \#5559 which is located at \href{https://gna.org/bugs/?func=detailitem\&item\_id=5559}{https://gna.org/bugs/?func=detailitem\&item\_id=5559} and the post to ``relax-devel at gna.org''\index{mailing list!relax-devel} describing the fix to that bug which is located at \href{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}{https://mail.gna.org/public/relax-devel/2006-03/msg00013.html}.
+  \item A full description with all the details can follow.
+    This description should follow a blank line, can itself be sectioned using blank lines, and finally the log is terminated by one blank line at the end of the message.
 \end{itemize}
 
 An example of a commit message for the closure of a bug is:
@@ -745,20 +736,15 @@ The core modular design of the program is shown in Figure~\ref{fig: core design}
 \subsection{The divisions of relax's source code}
 
 relax's source code can be divided into five major areas:  the initialisation code, the user interface (UI) code, the functional code, the number crunching code, and the code storing the program state.
-
 \begin{description}
-\item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
-
-\item[UI:]  The current UI modes in relax include the prompt, the script and the GUI modes.
-These consist of separate code paths, all sitting on top of the underlying functional code.
-In the future, a web-based interface may be added.
-
-\item[Functional code:]  This code is the main part of the program.
-It includes anything which does not fit into the other sections and comprises the generic code, the specific code, and the specific setup code used as an interface between the two.
-
-\item[Number crunching:]  The computationally expensive code belongs in this section.
-
-\item[Program state:]  The state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
+  \item[Initialisation:]  The code belonging to this section initialises the program, processes the command-line arguments, and determines what mode the program will be run in including the choice of the UI.
+  \item[UI:]  The current UI modes in relax include the prompt, the script and the GUI modes.
+    These consist of separate code paths, all sitting on top of the underlying functional code.
+    In the future, a web-based interface may be added.
+  \item[Functional code:]  This code is the main part of the program.
+    It includes anything which does not fit into the other sections and comprises the generic code, the specific code, and the specific setup code used as an interface between the two.
+  \item[Number crunching:]  The computationally expensive code belongs in this section.
+  \item[Program state:]  The state of the program is contained within the relax data store which is accessible from all parts of the program as a singleton object.
 \end{description}
 
 % Core relax design figure.
@@ -781,45 +767,35 @@ It includes anything which does not fit into the other sections and comprises th
 
 Each of the boxes in Figure~\ref{fig: core design} represents a different grouping of code.
 \begin{description}
-\item[relax:]  The top level module.
-This initialises the entire program, tests the dependencies, sets up the multi-processor framework and specific processor fabric, and prints the program's introduction message.
-
-\item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
-
-\item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.
-The namespace of the interpreter contains the various user functions which are front ends to the generic code.
-The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.
-The code for the prompt is located in the directory \directory{prompt\ossep{}}.
-
-\item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.
-Hence the script has access to all the user functions available at the relax prompt.
-This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
-
-\item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui} directory.
-
-\item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.
-This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
-
-\item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.
-All this code is located in the directory \directory{pipe\osus{}control\ossep{}}.
-
-\item[Specific setup:]  This code implements the internal interface between the generic and specific code.
-The generic code calls the specific setup asking for a specific function for the given data pipe type.
-For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \pycode{minimise()} method is returned.
-Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.
-The code is located in the file \file{specific\osus{}fns\ossep{}specific\osus{}setup.py}.
-
-\item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.
-Each type is located in a separate file in the directory \directory{specific\osus{}fns\ossep{}}.
-
-\item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.
-The code may be written in Python however C code can be used to significantly increase the speed of the calculations.
-For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.
-These functions are located in the directory \directory{maths\osus{}fns\ossep{}}.
-
-\item[Data:]  The program state stored in the relax data store singleton object.
-This class contains all the program data and is accessed by the generic and specific code.
-The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data\ossep{}\_\_init\_\_.py}.
+  \item[relax:]  The top level module.
+    This initialises the entire program, tests the dependencies, sets up the multi-processor framework and specific processor fabric, and prints the program's introduction message.
+  \item[Command line arguments:]  This code processes the arguments supplied to the program and decides whether to print the help message, initialise the prompt, execute a script, initialise a different UI, run the program in test mode, or run the program as a slave thread.
+  \item[Prompt:]  The main user interface consisting of a Python\index{Python} prompt\index{User interface!prompt|textbf}.
+    The namespace of the interpreter contains the various user functions which are front ends to the generic code.
+    The user functions are simply Python functions which test the supplied arguments to make sure they are of the correct type (string\index{string}, integer\index{integer}, list\index{list}, or any other type) before sending the values to the generic code.
+    The code for the prompt is located in the directory \directory{prompt\ossep{}}.
+  \item[Script:]  If a script\index{User interface!scripting|textbf} is supplied on the command line or executed within another user interface it will be run in the same namespace as that of the prompt.
+    Hence the script has access to all the user functions available at the relax prompt.
+    This allows commands which are typed at the prompt to be pasted directly and unmodified into a text file to be run as a script.
+  \item[GUI:]  The graphical user interface\index{User interface!GUI|textbf} code base is located in the \directory{gui} directory.
+  \item[Other interfaces:]  Any number of interfaces (for example a web-based interface or an ncurses interface) could be added to relax without modification of the current sources.
+    This must be, without question, developed within the relax source code repository otherwise the code will not be maintainable in the future and will be almost impossible back into relax later on.
+  \item[Generic code:]  This code includes classes and functions which are independent of the UI and not specific to a certain data pipe type, for example not being involved in model-free analysis, relaxation curve-fitting, the NOE calculation, and reduced spectral density mapping.
+    All this code is located in the directory \directory{pipe\osus{}control\ossep{}}.
+  \item[Specific setup:]  This code implements the internal interface between the generic and specific code.
+    The generic code calls the specific setup asking for a specific function for the given data pipe type.
+    For example by asking for the minimise function when the data pipe type is model-free analysis the model-free specific \pycode{minimise()} method is returned.
+    Although the generic code accesses the specific code solely through this interface the specific code can access the generic code directly.
+    The code is located in the file \file{specific\osus{}fns\ossep{}specific\osus{}setup.py}.
+  \item[Specific code:]  This is the code which is specific to the data pipe type -- model-free analysis, relaxation curve-fitting, reduced spectral density mapping, and the NOE calculation.
+    Each type is located in a separate file in the directory \directory{specific\osus{}fns\ossep{}}.
+  \item[Mathematical functions:]  This is reserved for CPU intensive code involved in calculations.
+    The code may be written in Python however C code can be used to significantly increase the speed of the calculations.
+    For optimisation the code can include function evaluations, calculation of gradients, and calculation of Hessians.
+    These functions are located in the directory \directory{maths\osus{}fns\ossep{}}.
+  \item[Data:]  The program state stored in the relax data store singleton object.
+    This class contains all the program data and is accessed by the generic and specific code.
+    The mathematical functions may also access this data but this is not recommended.  The structure is initialised by the file \file{data\ossep{}\_\_init\_\_.py}.
 \end{description}
 
 
@@ -945,24 +921,22 @@ The web of links is useful for catching those Google bots.
 That way the Google searching of the mailing list archives located on the \href{http://www.nmr-relax.com/\-communication.html}{communication web page} will be more up to date.
 However to increase the search engine ranking of the web site, links to \href{http://www.nmr-relax.com}{http://www.nmr-relax.com} from external sites is required.
 This is one reason why relax can be found at a number of sites across the web:
-
 \begin{description}
-\item[Freecode:]  New relax releases are announced not only on the \href{https://mail.gna.org/public/relax-announce/}{relax-announce} mailing list and on the relax \href{https://gna.org/news/?group=relax}{news} pages, but also on \href{http://freecode.com/projects/nmr-relax}{Freecode}.
-This used to be called Freshmeat.
-\item[The mail archive:]  This site archives all of the relax mailing lists, including \href{http://mail-archive.com/relax-announce@gna.org/}{relax-announce}, \href{http://mail-archive.com/relax-users@gna.org/}{relax-users}, \href{http://mail-archive.com/relax-devel@gna.org/}{relax-devel}, and \href{http://mail-archive.com/relax-commits@gna.org/}{relax-commits}.
-\item[Gmane:]  Pronounced as ``main'', the relax mailing lists are also archived at Gmane in numerous formats.
-The archived relax mailing lists include relax-announce (\href{http://news.gmane.org/gmane.science.nmr.relax.announce}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.announce}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.announce}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.announce}{RSS}), relax-users (\href{http://news.gmane.org/gmane.science.nmr.relax.user}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.user}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.user}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.user}{RSS}), relax-devel (\href{http://news.gmane.org/gmane.science.nmr.relax.devel}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.devel}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.devel}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.devel}{RSS}), and relax-commits (\href{http://news.gmane.org/gmane.science.nmr.relax.scm}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.scm}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.scm}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.scm}{RSS}).
-\item[MARC -  Mailing list ARChives:]  This site archives all of the relax mailing lists, including \href{http://marc.info/?l=relax-announce&r=1&w=2}{relax-announce}, \href{http://marc.info/?l=relax-users&r=1&w=2}{relax-users}, \href{http://marc.info/?l=relax-devel&r=1&w=2}{relax-devel}, and \href{http://marc.info/?l=relax-commits&r=1&w=2}{relax-commits}.
-\item[CIA.vc:]  This is the open source version control informant.
-CIA tracks open source projects in real-time.
-The relax real-time open source activity stats page is \href{http://cia.vc/stats/project/relax}{http://cia.vc/stats/project/relax}.
-This website also has pages for each of the relax developers (in alphabetical order):  \href{http://cia.vc/stats/author/bugman}{Edward d'Auvergne}, \href{http://cia.vc/stats/author/michaelbieri}{Michael Bieri}, \href{http://cia.vc/stats/author/macraild}{Chris MacRaild}, \href{http://cia.vc/stats/author/semor}{S\'ebastien Morin}, \href{http://cia.vc/stats/author/pansapiens}{Andrew Perry}, \href{http://cia.vc/stats/author/han87}{Han Sun}, \href{http://cia.vc/stats/author/varioustoxins}{Gary Thompson}.
-\item[LinuxLinks.com:]  LinuxLinks.com, the Linux portal, is a website listing many Linux software projects.
-relax can be found on the \href{http://linuxlinks.com/Software/Scientific/Biology/Proteins/}{Software:\-Scientific:\-Biology:\-Proteins} page.
-\item[Softpedia:]  This is the encyclopedia of free software downloads.
-The relax page on Softpedia is \href{http://linux.softpedia.com/get/Science/relax-22351.shtml}{http://linux.softpedia.com/get/Science/relax-22351.shtml}.
-The relax developers pages are:  \href{http://linux.softpedia.com/developer/Edward-d-039-Auvergne-5136.html}{Edward d'Auvergne}.
-\item[Pro-Linux:]  Diese ist eine der gr\"o{\ss}ten deutschsprachigen Seiten zum Thema Linux.
-The relax page is \href{http://www.pro-linux.de/cgi-bin/DBApp/check.cgi?ShowApp..10010.100}{http://\-www.\-pro\--linux.\-de/\-cgi\--bin/\-DB\-App/\-check\-.cgi\-?ShowApp..10010.100}.
+  \item[Freecode:]  New relax releases are announced not only on the \href{https://mail.gna.org/public/relax-announce/}{relax-announce} mailing list and on the relax \href{https://gna.org/news/?group=relax}{news} pages, but also on \href{http://freecode.com/projects/nmr-relax}{Freecode}.
+    This used to be called Freshmeat.
+  \item[The mail archive:]  This site archives all of the relax mailing lists, including \href{http://mail-archive.com/relax-announce@gna.org/}{relax-announce}, \href{http://mail-archive.com/relax-users@gna.org/}{relax-users}, \href{http://mail-archive.com/relax-devel@gna.org/}{relax-devel}, and \href{http://mail-archive.com/relax-commits@gna.org/}{relax-commits}.
+  \item[Gmane:]  Pronounced as ``main'', the relax mailing lists are also archived at Gmane in numerous formats.
+    The archived relax mailing lists include relax-announce (\href{http://news.gmane.org/gmane.science.nmr.relax.announce}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.announce}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.announce}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.announce}{RSS}), relax-users (\href{http://news.gmane.org/gmane.science.nmr.relax.user}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.user}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.user}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.user}{RSS}), relax-devel (\href{http://news.gmane.org/gmane.science.nmr.relax.devel}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.devel}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.devel}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.devel}{RSS}), and relax-commits (\href{http://news.gmane.org/gmane.science.nmr.relax.scm}{thread}, \href{http://blog.gmane.org/gmane.science.nmr.relax.scm}{blog}, \href{nntp://news.gmane.org/gmane.science.nmr.relax.scm}{NNTP}, \href{http://rss.gmane.org/messages/excerpts/gmane.science.nmr.relax.scm}{RSS}).
+  \item[MARC -  Mailing list ARChives:]  This site archives all of the relax mailing lists, including \href{http://marc.info/?l=relax-announce&r=1&w=2}{relax-announce}, \href{http://marc.info/?l=relax-users&r=1&w=2}{relax-users}, \href{http://marc.info/?l=relax-devel&r=1&w=2}{relax-devel}, and \href{http://marc.info/?l=relax-commits&r=1&w=2}{relax-commits}.
+  \item[CIA.vc:]  This is the open source version control informant.
+    CIA tracks open source projects in real-time.
+    The relax real-time open source activity stats page is \href{http://cia.vc/stats/project/relax}{http://cia.vc/stats/project/relax}.
+    This website also has pages for each of the relax developers (in alphabetical order):  \href{http://cia.vc/stats/author/bugman}{Edward d'Auvergne}, \href{http://cia.vc/stats/author/michaelbieri}{Michael Bieri}, \href{http://cia.vc/stats/author/macraild}{Chris MacRaild}, \href{http://cia.vc/stats/author/semor}{S\'ebastien Morin}, \href{http://cia.vc/stats/author/pansapiens}{Andrew Perry}, \href{http://cia.vc/stats/author/han87}{Han Sun}, \href{http://cia.vc/stats/author/varioustoxins}{Gary Thompson}.
+  \item[LinuxLinks.com:]  LinuxLinks.com, the Linux portal, is a website listing many Linux software projects.
+    relax can be found on the \href{http://linuxlinks.com/Software/Scientific/Biology/Proteins/}{Software:\-Scientific:\-Biology:\-Proteins} page.
+  \item[Softpedia:]  This is the encyclopedia of free software downloads.
+    The relax page on Softpedia is \href{http://linux.softpedia.com/get/Science/relax-22351.shtml}{http://linux.softpedia.com/get/Science/relax-22351.shtml}.
+    The relax developers pages are:  \href{http://linux.softpedia.com/developer/Edward-d-039-Auvergne-5136.html}{Edward d'Auvergne}.
+  \item[Pro-Linux:]  Diese ist eine der gr\"o{\ss}ten deutschsprachigen Seiten zum Thema Linux.
+    The relax page is \href{http://www.pro-linux.de/cgi-bin/DBApp/check.cgi?ShowApp..10010.100}{http://\-www.\-pro\--linux.\-de/\-cgi\--bin/\-DB\-App/\-check\-.cgi\-?ShowApp..10010.100}.
 \end{description}
-

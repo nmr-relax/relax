@@ -676,18 +676,17 @@ state.save('save', force=True)
 \subsection{Single model-free model script mode -- explanation}
 
 The above script consists of three major sections:
-
 \begin{description}
-\item[Loading of data] Firstly a data pipe called \promptstring{m4} is created to hold all of the analysis data.
-Then the $^{15}$N spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the \file{noe.500.out} file, assuming that only residue numbers and names are present and are in the first and second columns respectively.
-The options of this \uf{sequence\ufsep{}read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.
-The $^{15}$N spin is then set up using the \uf{spin} user functions.
-The next part is to load all of the relaxation data, to set up the initial diffusion tensor, create the $^1$H spins required for the magnetic dipole-dipole interaction, and to set up the magnetic dipole-dipole and CSA relaxation mechanisms.
-Finally the model-free model \promptstring{m4} is chosen.
-\item[Optimisation] The optimisation of model-free models requires an initial grid search to find a position close to the minimum, followed by the high precision Newton optimisation together with the Method of Multipliers constraint algorithm \citep{dAuvergneGooley08a}.
-Errors are propagated from the relaxation data to the model-free parameters via Monte Carlo simulations which is a multi-step process in relax (designed for flexibility and to teach how the simulations are constructed and carried out).
-\item[Data output] The last stage consists of writing out the XML formatted results file which contains all of the data in the current data pipe, as well as the XML formatted save file which contains not only the current data pipe data but all of the relax data store data.
-Both files can be loaded back into relax later on.
+  \item[Loading of data] Firstly a data pipe called \promptstring{m4} is created to hold all of the analysis data.
+    Then the $^{15}$N spin system data consisting of molecule, residue, and spin information is loaded into relax from the columns of the \file{noe.500.out} file, assuming that only residue numbers and names are present and are in the first and second columns respectively.
+    The options of this \uf{sequence\ufsep{}read} user function allow the molecule name, residue number, residue name, spin number, or spin name columns to be specified if desired.
+    The $^{15}$N spin is then set up using the \uf{spin} user functions.
+    The next part is to load all of the relaxation data, to set up the initial diffusion tensor, create the $^1$H spins required for the magnetic dipole-dipole interaction, and to set up the magnetic dipole-dipole and CSA relaxation mechanisms.
+    Finally the model-free model \promptstring{m4} is chosen.
+  \item[Optimisation] The optimisation of model-free models requires an initial grid search to find a position close to the minimum, followed by the high precision Newton optimisation together with the Method of Multipliers constraint algorithm \citep{dAuvergneGooley08a}.
+    Errors are propagated from the relaxation data to the model-free parameters via Monte Carlo simulations which is a multi-step process in relax (designed for flexibility and to teach how the simulations are constructed and carried out).
+  \item[Data output] The last stage consists of writing out the XML formatted results file which contains all of the data in the current data pipe, as well as the XML formatted save file which contains not only the current data pipe data but all of the relax data store data.
+    Both files can be loaded back into relax later on.
 \end{description}
 
 
@@ -820,12 +819,11 @@ results.write(file='results', force=True)
 
 This script is designed to be used in conjunction with the \file{model\osus{}free\ossep{}mf\osus{}multimodel.py} script in the previous section.
 It will load all of the results files from the previous script and then perform the following:
-
 \begin{description}
-\item[Model-free model elimination]  The optimisation of model-free models performed by the previous script will fail for certain data sets together with certain models.
-To ensure that these models are never selected, they are removed from the analysis (see \citet{dAuvergneGooley06}).
-\item[Model-free model selection]  The AIC model selection as described in \citet{dAuvergneGooley03} will be used to determine which model-free model best describes the relaxation data.
-\item[Data output]  Finally both a save state and result file will be created.
+  \item[Model-free model elimination]  The optimisation of model-free models performed by the previous script will fail for certain data sets together with certain models.
+    To ensure that these models are never selected, they are removed from the analysis (see \citet{dAuvergneGooley06}).
+  \item[Model-free model selection]  The AIC model selection as described in \citet{dAuvergneGooley03} will be used to determine which model-free model best describes the relaxation data.
+  \item[Data output]  Finally both a save state and result file will be created.
 \end{description}
 
 These three sample scripts describe the basic components of model-free analysis.
@@ -1342,15 +1340,14 @@ dAuvergne_protocol(pipe_name=name, pipe_bundle=pipe_bundle, diff_model=DIFF_MODE
 
 At the start of the script you will notice a number of \pycode{Analysis variables}.
 Unless you know what you are doing, you should only change the \pycode{DIFF\_MODEL} variable to the following:
-
 \begin{description}
-\item[\pystring{local\_tm}:]  This is the first diffusion model which must be optimised prior to optimising any of the other diffusion models.
-It consists of the local $\tau_m$ models (equations~\ref{model: tm0} to~\ref{model: tm9} on page~\pageref{model: tm0}).
-\item[\pystring{sphere}:]  This second diffusion model is that of isotropic Brownian diffusion.
-\item[\pystring{prolate}:]  This third diffusion model is that of the prolate axially-symmetric rotor.
-\item[\pystring{oblate}:]  This fourth diffusion model is that of the oblate axially-symmetric rotor.
-\item[\pystring{ellipsoid}:]  This fifth diffusion model is that of fully rhombic Brownian diffusion (see \citet{Perrin34,Perrin36} for the original theory).
-\item[\pystring{final}:]  This is a special value which will finalise the analysis by selecting the best diffusion model to describe your system and to perform Monte Carlo simulations for error propagation.
+  \item[\pystring{local\_tm}:]  This is the first diffusion model which must be optimised prior to optimising any of the other diffusion models.
+    It consists of the local $\tau_m$ models (equations~\ref{model: tm0} to~\ref{model: tm9} on page~\pageref{model: tm0}).
+  \item[\pystring{sphere}:]  This second diffusion model is that of isotropic Brownian diffusion.
+  \item[\pystring{prolate}:]  This third diffusion model is that of the prolate axially-symmetric rotor.
+  \item[\pystring{oblate}:]  This fourth diffusion model is that of the oblate axially-symmetric rotor.
+  \item[\pystring{ellipsoid}:]  This fifth diffusion model is that of fully rhombic Brownian diffusion (see \citet{Perrin34,Perrin36} for the original theory).
+  \item[\pystring{final}:]  This is a special value which will finalise the analysis by selecting the best diffusion model to describe your system and to perform Monte Carlo simulations for error propagation.
 \end{description}
 
 The \pycode{MF\_MODELS} and  \pycode{LOCAL\_TM\_MODELS} variables specify which model-free models will be used in the analysis.
@@ -1897,11 +1894,10 @@ From this you can first select the \gui{Local $\tau$m} model, then the \gui{Sphe
 
 Prior to executing relax, you should very carefully check the relax controller window for any strange messages, warnings or errors.
 You can open this window in three ways:
-
 \begin{itemize}
-\item Selecting the \guimenuitemtwo{View}{Controller} menu item.
-\item Typing \shortcutkey{Ctrl+Z} within the main relax window.
-\item Clicking on the \guibutton{relax controller} button on the toolbar.
+  \item Selecting the \guimenuitemtwo{View}{Controller} menu item.
+  \item Typing \shortcutkey{Ctrl+Z} within the main relax window.
+  \item Clicking on the \guibutton{relax controller} button on the toolbar.
 \end{itemize}
 
 These messages are very important and will indicate to you if there are any problems prior to starting the very long model-free calculation.
@@ -1909,16 +1905,15 @@ This information should be stored in the \file{log} file as well.
 As the execution of a fully iterative and complete model-free protocol takes a very long time to finish, it is advisable to save the current relax state.
 This will allow you restart the calculation without performing all of the steps detailed above.
 Just in case you cannot work out how to do this yourself, here is a list of the different ways you can do this (if this is not enough for you, please email the relax-users mailing list with your suggestions):
-
 \begin{itemize}
-\item Selecting the \guimenuitemtwo{File}{Save relax state} menu item.
-\item Typing \shortcutkey{Ctrl+S} within the main relax window.
-\item Clicking on the \guibutton{Save relax state} button on the toolbar.
-\item Selecting the \guimenuitemtwo{File}{Save as...} menu item.
-\item Typing \shortcutkey{Shift+Ctrl+S} within the main relax window.
-\item Clicking on the \guibutton{Save as} button on the toolbar.
-\item Selecting the \guimenuitemthree{User functions}{state}{save} menu item.
-\item Opening up the relax prompt window with \guimenuitemtwo{View}{relax prompt} or \shortcutkey{Ctrl+P} and using the \uf{state\ufsep{}save} user function.
+  \item Selecting the \guimenuitemtwo{File}{Save relax state} menu item.
+  \item Typing \shortcutkey{Ctrl+S} within the main relax window.
+  \item Clicking on the \guibutton{Save relax state} button on the toolbar.
+  \item Selecting the \guimenuitemtwo{File}{Save as...} menu item.
+  \item Typing \shortcutkey{Shift+Ctrl+S} within the main relax window.
+  \item Clicking on the \guibutton{Save as} button on the toolbar.
+  \item Selecting the \guimenuitemthree{User functions}{state}{save} menu item.
+  \item Opening up the relax prompt window with \guimenuitemtwo{View}{relax prompt} or \shortcutkey{Ctrl+P} and using the \uf{state\ufsep{}save} user function.
 \end{itemize}
 
 If all the messages in the relax controller or \file{log} file appear to be fine and you have saved the current relax state, then click on \guibutton{Execute relax}.

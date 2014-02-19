@@ -26,11 +26,10 @@ For this purpose, three tests are implemented in relax.
 They are all based on the same principle -- calculate a field independent value and compare it from one field to another.
 
 The three tests are:
-
 \begin{description}
-\item[$J(0)$]  The spectral density at the zero frequency calculated using the reduced spectral density approach.
-\item[$F_\eta$]  A consistency function proposed by \citet{Fushman98}.
-\item[$F_{R_2}$]  A consistency function proposed by \citet{Fushman98}.
+  \item[$J(0)$]  The spectral density at the zero frequency calculated using the reduced spectral density approach.
+  \item[$F_\eta$]  A consistency function proposed by \citet{Fushman98}.
+  \item[$F_{R_2}$]  A consistency function proposed by \citet{Fushman98}.
 \end{description}
 
 These three tests are very similar (all probing consistency of $R_2$ data and all suffering from the same limitations) and any of them can be used for consistency testing.
@@ -41,21 +40,18 @@ These include correlation plots and histograms, and calculation of correlation, 
 The details of how to interpret such analyses are avaliable at the end of this chapter in Section~\ref{sec: Visualisation and data output}.
 
 For more details on the tests and their implementation within relax, see:
-
 \begin{itemize}
-\item \bibentry{MorinGagne09a}
+  \item \bibentry{MorinGagne09a}
 \end{itemize}
 
 Or for the origin of the tests themselves:
-
 \begin{itemize}
-\item \bibentry{Fushman99}
+  \item \bibentry{Fushman99}
 \end{itemize}
 
 In addition, see the following review which includes a discussion on how to evaluate the reliability of recorded relaxation data:
-
 \begin{itemize}
-\item \bibentry{Morin11}
+  \item \bibentry{Morin11}
 \end{itemize}
 
 
@@ -299,15 +295,14 @@ Indeed, for assessing the consistency of relaxation data using these tests, diff
 These include correlation plots and histograms, and calculation of correlation, skewness and kurtosis coefficients.
 
 To complete the consistency testing analysis, the following steps are needed:
-
 \begin{itemize}
-\item Extract the $J(0)$ values at multiple magnetic fields.
-\item Join together the data from a pair of magnetic fields either by pasting them as two columns of one file (approach A), or by dividing values from a first magnetic field by values from a second magnetic field (approach B).
-\item Make either a correlation plot (approach A), or an histogram of the ratios (approach B).
-\item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).
-If yes, data from multiple magnetic fields is consistent from one magnetic field to another.
-If no, data is inconsistent.
-In the case where inconsistency arises, if data from more than two magnetic fields is available, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
+  \item Extract the $J(0)$ values at multiple magnetic fields.
+  \item Join together the data from a pair of magnetic fields either by pasting them as two columns of one file (approach A), or by dividing values from a first magnetic field by values from a second magnetic field (approach B).
+  \item Make either a correlation plot (approach A), or an histogram of the ratios (approach B).
+  \item See if the correlation plot is centered around a perfect correlation or skewed away (approach A), or if the values are centered around 1 in the histogram (approach B).
+    If yes, data from multiple magnetic fields is consistent from one magnetic field to another.
+    If no, data is inconsistent.
+    In the case where inconsistency arises, if data from more than two magnetic fields is available, more than one pair of data can be checked and the inconsistent magnetic field data can be identified.
 \end{itemize}
 
 \begin{figure*}[h]
