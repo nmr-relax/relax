@@ -265,6 +265,35 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name="origin - relax_disp (Thu Jan  2 13:46:44 2014)", pipe_bundle="relax_disp (Thu Jan  2 13:46:44 2014)", results_dir=self.tmpdir, models=['R2eff', 'No Rex', 'CR72', 'NS CPMG 2-site expanded'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
 
 
+    def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_calc(self):
+        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Run the calculation.
+        self.interpreter.calc(verbosity=1)
+
+
+    def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_relax_disp(self):
+        """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times using auto_analysis."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Execute the auto-analysis (fast).
+        relax_disp.Relax_disp.opt_func_tol = 1e-5
+        relax_disp.Relax_disp.opt_max_iterations = 1000
+        relax_disp.Relax_disp(pipe_name="compare_128_FT_R2eff", pipe_bundle="cpmg_disp_sod1d90a", results_dir=self.tmpdir, models=['R2eff'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
+
 
     def test_curve_type_cpmg_fixed_time(self):
         """Test the curve type detection using the Dr. Flemming Hansen's CPMG fixed time test data."""

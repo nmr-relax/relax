@@ -1,7 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
-# Copyright (C) 2009 Sebastien Morin                                          #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,19 +19,5 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relaxation dispersion analysis."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'catia',
-    'checks',
-    'cpmgfit',
-    'disp_data',
-    'nessy',
-    'optimisation',
-    'parameters',
-    'sherekhan',
-    'variables'
-]
+__all__ = ['']

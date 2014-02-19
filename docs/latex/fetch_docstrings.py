@@ -936,9 +936,9 @@ class Fetch_docstrings:
 
             # Write to file.
             if item != '':
-                latex_lines.append("\\item[%s --] %s\n" % (item, desc))
+                latex_lines.append("  \\item[%s --] %s\n" % (item, desc))
             else:
-                latex_lines.append("\\item[]%s\n" % desc)
+                latex_lines.append("  \\item[]%s\n" % desc)
 
         # Start the environment.
         if not items:
@@ -975,7 +975,7 @@ class Fetch_docstrings:
             item = self.word_formatting(item)
 
             # Write to file.
-            self.file.write("\\item[]%s\n" % item)
+            self.file.write("  \\item[]%s\n" % item)
 
         # End the environment.
         self.file.write("\\end{itemize}\n\n")

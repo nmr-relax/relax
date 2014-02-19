@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -430,7 +430,7 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function allows the software used in the analysis to be specified in full detail.")
-uf.desc[-1].add_paragraph("For the tasks list, this should be a python list of strings (eg. ['spectral processing']).  Although not restricted to these, the values suggested by the BMRB are:")
+uf.desc[-1].add_paragraph("For the tasks list, this should be a python list of strings (e.g. ['spectral processing']).  Although not restricted to these, the values suggested by the BMRB are:")
 uf.desc[-1].add_list_element("'chemical shift assignment',")
 uf.desc[-1].add_list_element("'chemical shift calculation',")
 uf.desc[-1].add_list_element("'collection',")

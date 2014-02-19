@@ -6,7 +6,7 @@
 
 
 \begin{figure*}[h]
-\includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/noe_600x600}
+  \includegraphics[width=5cm, bb=0 0 1701 1701]{graphics/analyses/noe_600x600}
 \end{figure*}
 
 
@@ -15,7 +15,9 @@
 
 \section{Introduction to the steady-state NOE}
 
-The calculation of NOE values is a straight forward and quick procedure which involves two components -- the calculation of the value itself and the calculation of the errors.  To understand the steps involved the execution of a sample NOE calculation script will be followed in detail.  Then the same operations will be presented for the perspective of the graphical user interface.
+The calculation of NOE values is a straight forward and quick procedure which involves two components -- the calculation of the value itself and the calculation of the errors.
+To understand the steps involved the execution of a sample NOE calculation script will be followed in detail.
+Then the same operations will be presented for the perspective of the graphical user interface.
 
 
 
@@ -24,7 +26,8 @@ The calculation of NOE values is a straight forward and quick procedure which in
 
 \section{From spectra to peak intensities for the NOE}
 
-For a set of recommendations for how to obtain the best quality relaxation rates, please see section~\ref{sect: spectra to intensities} on page~\pageref{sect: spectra to intensities}.  In summary the following are important -- temperature control (though the standard steady-state NOE single FID interleaved pulse sequences are fine), per-experiment temperature calibration, spectral processing with massive zero-filling and no baseplane rolling, and using an averaged peak list for determining the peak heights.
+For a set of recommendations for how to obtain the best quality relaxation rates, please see section~\ref{sect: spectra to intensities} on page~\pageref{sect: spectra to intensities}.
+In summary the following are important -- temperature control (though the standard steady-state NOE single FID interleaved pulse sequences are fine), per-experiment temperature calibration, spectral processing with massive zero-filling and no baseplane rolling, and using an averaged peak list for determining the peak heights.
 
 
 
@@ -39,7 +42,7 @@ For a set of recommendations for how to obtain the best quality relaxation rates
 
 \subsection{NOE script mode -- the sample script}
 
-This sample script can be found in the \directory{sample\_scripts} directory and will be used as the template for the next sections describing how to use relax.
+This sample script can be found in the \directory{sample\osus{}scripts} directory and will be used as the template for the next sections describing how to use relax.
 
 \begin{lstlisting}
 # Script for calculating NOEs.
@@ -104,14 +107,16 @@ state.save('save', force=True)
 
 \subsection{NOE script mode -- initialisation of the data pipe} \label{NOE initialisation}
 
-The start of this sample script is very similar to that of the relaxation curve-fitting calculation on page~\pageref{Rx initialisation}.  The command
+The start of this sample script is very similar to that of the relaxation curve-fitting calculation on page~\pageref{Rx initialisation}.
+The command
 
 \begin{lstlisting}[firstnumber=3]
 # Create the data pipe.
 pipe.create('NOE', 'noe')
 \end{lstlisting}
 
-initialises the data pipe labelled \promptstring{NOE}.  The data pipe type is set to the NOE calculation by the argument \promptstring{noe}.
+initialises the data pipe labelled \promptstring{NOE}.
+The data pipe type is set to the NOE calculation by the argument \promptstring{noe}.
 
 
 % Spin systems.
@@ -119,7 +124,8 @@ initialises the data pipe labelled \promptstring{NOE}.  The data pipe type is se
 
 \subsection{NOE script mode -- setting up the spin systems}
 
-The backbone amide nitrogen sequence is extracted from a PDB\index{PDB} file using the same commands as the relaxation curve-fitting script (Chapter~\ref{ch: relax-fit}.  The command
+The backbone amide nitrogen sequence is extracted from a PDB\index{PDB} file using the same commands as the relaxation curve-fitting script (Chapter~\ref{ch: relax-fit}.
+The command
 
 \begin{lstlisting}[firstnumber=6]
 # Load the sequence from a PDB file.
@@ -127,7 +133,8 @@ structure.read_pdb('Ap4Aase_new_3.pdb')
 \end{lstlisting}
 \index{PDB}
 
-will load the PDB file \file{Ap4Aase\_new\_3.pdb} into relax.  Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
+will load the PDB file \file{Ap4Aase\osus{}new\osus{}3.pdb} into relax.
+Then the following commands will generate both the backbone amide and tryptophan indole $^{15}$N spins
 
 \begin{lstlisting}[firstnumber=8]
 structure.load_spins(spin_id='@N')
@@ -148,9 +155,15 @@ spectrum.read_intensities(file='ref.list', spectrum_id='ref_ave')
 spectrum.read_intensities(file='sat.list', spectrum_id='sat_ave')
 \end{lstlisting}
 
-will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).  relax will automatically determine the format of the peak list.  Currently only Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView} and a generic columnar formatted text file are supported.
+will load the peak heights\index{peak!height} of the reference and saturated NOE experiments (although the volume\index{peak!volume} could be used instead).
+relax will automatically determine the format of the peak list.
+Currently only Sparky\index{software!Sparky}, XEasy\index{software!XEasy}, NMRView\index{software!NMRView} and a generic columnar formatted text file are supported.
 
-In this example, relax will determine from the file contents that these are Sparky\index{software!Sparky} peak lists (saved after typing \gui{lt}).  The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume (though this can be in any column -- the \prompt{int\_col} argument is used to specify where the data is).  Without specifying the \prompt{int\_method} argument, peak heights will be assumed.  See page~\pageref{uf: spectrum.read_intensities} for a description of all the \uf{spectrum.read\_intensities} user function arguments.  In this example, the peak list looks like:
+In this example, relax will determine from the file contents that these are Sparky\index{software!Sparky} peak lists (saved after typing \gui{lt}).
+The first column of the file should be the Sparky assignment string and it is assumed that the 4$^\textrm{th}$ column contains either the peak height or peak volume (though this can be in any column -- the \prompt{int\_col} argument is used to specify where the data is).
+Without specifying the \prompt{int\_method} argument, peak heights will be assumed.
+See page~\pageref{uf: spectrum.read_intensities} for a description of all the \uf{spectrum\ufsep{}read\ufus{}intensities} user function arguments.
+In this example, the peak list looks like:
 
 {\footnotesize \begin{verbatim}
      Assignment         w1         w2   Data Height
@@ -176,7 +189,10 @@ If you have any other format you would like read by relax please send an email t
 
 \subsection{NOE script mode -- setting the errors}
 
-In this example the errors where measured from the base plain noise.  The Sparky\index{software!Sparky} RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.  For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.  These errors are set by the commands
+In this example the errors where measured from the base plain noise.
+The Sparky\index{software!Sparky} RMSD\index{RMSD} function was used to estimate the maximal noise levels across the spectrum in regions containing no peaks.
+For the reference spectrum the RMSD was approximately 3600 whereas in the saturated spectrum the RMSD was 3000.
+These errors are set by the commands
 
 \begin{lstlisting}[firstnumber=21]
 # Set the errors.
@@ -184,7 +200,8 @@ spectrum.baseplane_rmsd(error=3600, spectrum_id='ref_ave')
 spectrum.baseplane_rmsd(error=3000, spectrum_id='sat_ave')
 \end{lstlisting}
 
-For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.  The higher errors for this residue are specified by the commands
+For the residue G114, the noise levels are significantly increased compared to the rest of the protein as the peak is located close to the water signal.
+The higher errors for this residue are specified by the commands
 
 \begin{lstlisting}[firstnumber=25]
 # Individual residue errors.
@@ -192,7 +209,9 @@ spectrum.baseplane_rmsd(error=122000, spectrum_type='ref', res_num=114)
 spectrum.baseplane_rmsd(error=8500, spectrum_type='sat', res_num=114)
 \end{lstlisting}
 
-There are many other ways of setting the errors, for example via spectrum duplication, triplication, etc.  See the documentation for the \uf{spectrum.error\_analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.  This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
+There are many other ways of setting the errors, for example via spectrum duplication, triplication, etc.
+See the documentation for the \uf{spectrum\ufsep{}error\ufus{}analysis} user function on page~\pageref{uf: spectrum.error_analysis} for all possible options.
+This user function needs to be executed at this stage to correctly set up the errors for all spin systems:
 
 \begin{lstlisting}[firstnumber=29]
 # Peak intensity error analysis.
@@ -205,7 +224,8 @@ spectrum.error_analysis()
 
 \subsection{NOE script mode -- unresolved spins}
 
-As the peaks of certain spins overlap to such an extent that the heights or volumes cannot be resolved, a simple text file was created called \promptstring{unresolved} in which each line consists of the residue number followed by the atom name.  By using the command
+As the peaks of certain spins overlap to such an extent that the heights or volumes cannot be resolved, a simple text file was created called \promptstring{unresolved} in which each line consists of the residue number followed by the atom name.
+By using the command
 
 \begin{lstlisting}[firstnumber=32]
 # Deselect unresolved spins.
@@ -221,31 +241,37 @@ all spins in the file \promptstring{unresolved} are excluded from the analysis.
 
 \subsection{NOE script mode -- the NOE calculation}
 
-At this point the NOE can be calculated.  The user function
+At this point the NOE can be calculated.
+The user function
 
 \begin{lstlisting}[firstnumber=35]
 # Calculate the NOEs.
 calc()
 \end{lstlisting}
 
-will calculate both the NOE and the errors.  The NOE value will be calculated using the formula
+will calculate both the NOE and the errors.
+The NOE value will be calculated using the formula
 \begin{equation}
 NOE = \frac{I_{sat}}{I_{ref}},
 \end{equation}
 
-\noindent where $I_{sat}$ is the intensity of the peak in the saturated spectrum and $I_{ref}$ is that of the reference spectrum.  The error is calculated by
+\noindent where $I_{sat}$ is the intensity of the peak in the saturated spectrum and $I_{ref}$ is that of the reference spectrum.
+The error is calculated by
 \begin{equation}
 \sigma_{NOE} = \sqrt{\frac{(\sigma_{sat} \cdot I_{ref})^2 + (\sigma_{ref} \cdot I_{sat})^2}{I_{ref}}},
 \end{equation}
 
-\noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.  To create a file of the NOEs the command
+\noindent where $\sigma_{sat}$ and $\sigma_{ref}$ are the peak intensity errors in the saturated and reference spectra respectively.
+To create a file of the NOEs the command
 
 \begin{lstlisting}[firstnumber=38]
 # Save the NOEs.
 value.write(param='noe', file='noe.out', force=True)
 \end{lstlisting}
 
-will create a file called \file{noe.out} with the NOE values and errors.  The force flag will cause any file with the same name to be overwritten.  An example of the format of \file{noe.out} is
+will create a file called \file{noe.out} with the NOE values and errors.
+The force flag will cause any file with the same name to be overwritten.
+An example of the format of \file{noe.out} is
 
 {\scriptsize \begin{verbatim}
 # mol_name          res_num  res_name  spin_num  spin_name  value                  error                   
@@ -271,14 +297,27 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 %~~~~~~~~~~~~~~~~~~~~~
 
 \begin{figure}
-\centerline{\includegraphics[width=0.9\textwidth, bb=0 -1 826 521]{graphics/screenshots/noe_analysis/grace}}
-\caption[NOE plot]{A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.  This is an example of the output of the user function \uf{grace.write}.}\label{fig: NOE plot}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=0 -1 826 521
+    ]
+    {graphics/screenshots/noe_analysis/grace}
+  }
+  \caption[NOE plot]{
+    A Grace\index{software!Grace|textbf} plot of the NOE value and error against the residue number.
+    This is an example of the output of the user function \uf{grace\ufsep{}write}.
+  }
+  \label{fig: NOE plot}
 \end{figure}
 
 
 \subsection{NOE script mode -- viewing the results}
 
-Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.  The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.  The highly flexible relax user function \uf{grace.write} is capable of producing 2D plots of any x-y data sets.  The three commands
+Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.
+The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.
+The highly flexible relax user function \uf{grace\ufsep{}write} is capable of producing 2D plots of any x-y data sets.
+The three commands
 
 \begin{lstlisting}[firstnumber=41]
 # Create Grace files.
@@ -287,13 +326,18 @@ grace.write(y_data_type='sat', file='sat.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 \end{lstlisting}
 
-will create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.  The x-axis in all three defaults to the residue number.  As the x and y-axes can be any parameter the command
+will create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.
+The x-axis in all three defaults to the residue number.
+As the x and y-axes can be any parameter the command
 
 \begin{lstlisting}[numbers=none]
 grace.write(x_data_type='ref', y_data_type='sat', file='ref_vs_sat.agr', force=True)
 \end{lstlisting}
 
-would create a plot of the reference verses the saturated intensity with one point per residue.  Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{./grace}.  These can be visualised by opening the file within Grace.  However relax will do that for you with the commands
+would create a plot of the reference verses the saturated intensity with one point per residue.
+Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{.\ossep{}grace}.
+These can be visualised by opening the file within Grace.
+However relax will do that for you with the commands
 
 \begin{lstlisting}[firstnumber=46]
 # View the Grace files.
@@ -311,7 +355,9 @@ An example of the output after modifying the axes is shown in figure~\ref{fig: N
 \newpage
 \section{The NOE auto-analysis in the GUI}
 
-The relax graphical user interface provides access to an automated steady-state NOE analysis.  This auto-analysis operates in the same way as the sample script described earlier in this chapter.  In this example, relax will be launched with:
+The relax graphical user interface provides access to an automated steady-state NOE analysis.
+This auto-analysis operates in the same way as the sample script described earlier in this chapter.
+In this example, relax will be launched with:
 
 \example{\$ relax --log log --gui}
 
@@ -323,16 +369,31 @@ The \prompt{--log} command line argument will cause all of relax's text printout
 
 \subsection{NOE GUI mode -- initialisation of the data pipe}
 
-First launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).  Select the NOE analysis and, if you plan on running steady-state NOE analyses from multiple fields in one relax instance, change the name of the analysis:
+First launch the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).
+Select the NOE analysis and, if you plan on running steady-state NOE analyses from multiple fields in one relax instance, change the name of the analysis:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/analysis_wizard1}
+  }
 \end{minipage}
 
-The second part of the wizard need not be modified, just click on \guibutton{Start} to begin.  This will create a dedicated data pipe for the analysis.  A data pipe bundle will also be created, but for the steady-state NOE will only contain a single data throughout the analysis.
+The second part of the wizard need not be modified, just click on \guibutton{Start} to begin.
+This will create a dedicated data pipe for the analysis.
+A data pipe bundle will also be created, but for the steady-state NOE will only contain a single data throughout the analysis.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_wizard2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/analysis_wizard2}
+  }
 \end{minipage}
 
 
@@ -344,12 +405,21 @@ The second part of the wizard need not be modified, just click on \guibutton{Sta
 You should then see the blank analysis tab:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/blank}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/blank}
+  }
 \end{minipage}
 
-The first thing to do now is to set the NMR frequency label.  This is only used for the name of the NOE output file.  For example if you set the label to \guistring{500}, the file \file{noe.500.out} will be created at the end of the analysis.
+The first thing to do now is to set the NMR frequency label.
+This is only used for the name of the NOE output file.
+For example if you set the label to \guistring{500}, the file \file{noe.500.out} will be created at the end of the analysis.
 
-You can also choose to change the \gui{Results directory} where all of the automatically created results files will be placed.  These two steps are unique to the GUI mode.
+You can also choose to change the \gui{Results directory} where all of the automatically created results files will be placed.
+These two steps are unique to the GUI mode.
 
 
 % Spin systems.
@@ -357,7 +427,12 @@ You can also choose to change the \gui{Results directory} where all of the autom
 
 \subsection{NOE GUI mode -- setting up the spin systems}
 
-Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.  The \gui{Spin systems} GUI element is used for this purpose.  Before any spin systems have been set up, this should say something like \gui{0 spins loaded and selected}.  To fix this, click on the \guibutton{Spin editor} button and you should then see the spin viewer window.  The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file} for a sequence file.  The spin viewer window can now be closed.
+Just as in the prompt and scripting UI modes, the molecule, residue and spin data structures need to be set up prior to the loading of any spin specific data.
+The \gui{Spin systems} GUI element is used for this purpose.
+Before any spin systems have been set up, this should say something like \gui{0 spins loaded and selected}.
+To fix this, click on the \guibutton{Spin editor} button and you should then see the spin viewer window.
+The next steps are fully described in section~\ref{sect: GUI - structural data} on page~\pageref{sect: GUI - structural data} for PDB files or section~\ref{sect: GUI - sequence file} on page~\pageref{sect: GUI - sequence file} for a sequence file.
+The spin viewer window can now be closed.
 
 
 % Unresolved spins.
@@ -365,7 +440,8 @@ Just as in the prompt and scripting UI modes, the molecule, residue and spin dat
 
 \subsection{NOE GUI mode -- unresolved spins}
 
-Using the unresolved spins file as described in the prompt/script UI sections, the same spins can be deselected at this point.  See Section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins} for the details of how to deselect the spins in the GUI.
+Using the unresolved spins file as described in the prompt/script UI sections, the same spins can be deselected at this point.
+See Section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins} for the details of how to deselect the spins in the GUI.
 
 
 % Loading the data.
@@ -373,51 +449,106 @@ Using the unresolved spins file as described in the prompt/script UI sections, t
 
 \subsection{NOE GUI mode -- loading the data}
 
-The next step is to load the saturated and reference NOE peak lists.  From the main NOE auto-analysis tab, click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.  This will launch the NOE peak intensity loading wizard.  From the first wizard page, select the peak list file containing the reference intensities (from the averaged shift list):
+The next step is to load the saturated and reference NOE peak lists.
+From the main NOE auto-analysis tab, click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.
+This will launch the NOE peak intensity loading wizard.
+From the first wizard page, select the peak list file containing the reference intensities (from the averaged shift list):
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity1}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity1}
+  }
 \end{minipage}
 
-Then set the obligatory spectrum ID string to a unique value (in this case \guistring{ref}).  The spectral dimension may need to be changed so that the peak intensities are associated with the correct atom of the pair.  In case you have forgotten the spin names or the format of the peak list next to the file name selection button is a preview button which can be used to open the peak list in the default text editor.  Set the other fields as needed.
+Then set the obligatory spectrum ID string to a unique value (in this case \guistring{ref}).
+The spectral dimension may need to be changed so that the peak intensities are associated with the correct atom of the pair.
+In case you have forgotten the spin names or the format of the peak list next to the file name selection button is a preview button which can be used to open the peak list in the default text editor.
+Set the other fields as needed.
 Click on \guibutton{Next}
-Note that a \prompt{RelaxWarning} will be thrown for all peak list entries which do not match a spin system within the relax data store.  This will cause the relax controller window to appear:
+Note that a \prompt{RelaxWarning} will be thrown for all peak list entries which do not match a spin system within the relax data store.
+This will cause the relax controller window to appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity2}
+  }
 \end{minipage}
 
-Carefully check these warnings to be sure that the data is correctly loaded and, if everything is fine, the relax controller window can be closed.  If the dimension has been wrongly specified or some other setting is incorrect a \prompt{RelaxError} might appear saying that no data was loaded -- you will then need to fix the settings and click on \guibutton{Apply} again.
+Carefully check these warnings to be sure that the data is correctly loaded and, if everything is fine, the relax controller window can be closed.
+If the dimension has been wrongly specified or some other setting is incorrect a \prompt{RelaxError} might appear saying that no data was loaded -- you will then need to fix the settings and click on \guibutton{Apply} again.
 The error type page should now appear.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity4}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity4}
+  }
 \end{minipage}
 
-Please read the description in this window very carefully to know what to do next.  In this example, we will choose \gui{Baseplane RMSD}.  For this specific example, Sparky's \guimenuitemthree{Extensions}{Spectrum}{Spectrum baseplane RMSD} option in the \gui{F1} selection mode was used to measure empty regions of the spectrum (mainly in the random coil region) to determine an average RMSD of approximately 3600.  Set the value and click on \guibutton{Apply}.
+Please read the description in this window very carefully to know what to do next.
+In this example, we will choose \gui{Baseplane RMSD}.
+For this specific example, Sparky's \guimenuitemthree{Extensions}{Spectrum}{Spectrum baseplane RMSD} option in the \gui{F1} selection mode was used to measure empty regions of the spectrum (mainly in the random coil region) to determine an average RMSD of approximately 3600.
+Set the value and click on \guibutton{Apply}.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity5}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity5}
+  }
 \end{minipage}
 
-As glycine 114 is located close to the noise signal, its error was much higher at 122000.  Individual spin errors can be set via the spin ID string (see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for information about spin IDs):
+As glycine 114 is located close to the noise signal, its error was much higher at 122000.
+Individual spin errors can be set via the spin ID string (see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for information about spin IDs):
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity6}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity6}
+  }
 \end{minipage}
 
 Finally select which type of spectrum this is and click on \guibutton{Finish}:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/peak_intensity7}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/peak_intensity7}
+  }
 \end{minipage}
 
-The entire procedure should be repeated for the saturated spectrum (or you may have worked out that both can be loaded simultaneously by using the \guibutton{Apply} button more often).  For this example, the spectrum ID was set to \guistring{sat} and the baseplane RMSD to 3000 for all spins (except for G114 which had an error of 8500).
+The entire procedure should be repeated for the saturated spectrum (or you may have worked out that both can be loaded simultaneously by using the \guibutton{Apply} button more often).
+For this example, the spectrum ID was set to \guistring{sat} and the baseplane RMSD to 3000 for all spins (except for G114 which had an error of 8500).
 
 The NOE analysis tab should now look like:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/analysis_tab2}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/analysis_tab2}
+  }
 \end{minipage}
 
 
@@ -426,12 +557,22 @@ The NOE analysis tab should now look like:
 
 \subsection{NOE GUI mode -- the NOE calculation}
 
-Now that everything is set up, simply click on \guibutton{Execute relax} in the NOE analysis tab.  The relax controller window will appear displaying many messages.  These should all be checked very carefully to make sure that everything has executed as you expected.  The \gui{Results viewer} window will also appear:
+Now that everything is set up, simply click on \guibutton{Execute relax} in the NOE analysis tab.
+The relax controller window will appear displaying many messages.
+These should all be checked very carefully to make sure that everything has executed as you expected.
+The \gui{Results viewer} window will also appear:
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1415 1019]{graphics/screenshots/noe_analysis/fin}}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1415 1019
+    ]
+    {graphics/screenshots/noe_analysis/fin}
+  }
 \end{minipage}
 
 The results viewer window can be used to launch a text editor to see the NOE values and error or Grace to visualise the results (see Figure~\ref{fig: NOE plot} on page~\pageref{fig: NOE plot}).
 
-As a last step, the relax state can be saved (via the \guimenuitemone{File} menu) and relax closed.  Take one last look at the \file{noe.out} log file to be certain that there are no strange warnings or errors.
+As a last step, the relax state can be saved (via the \guimenuitemone{File} menu) and relax closed.
+Take one last look at the \file{noe.out} log file to be certain that there are no strange warnings or errors.
