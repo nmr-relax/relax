@@ -512,7 +512,7 @@ This is the numerical model for 2-site exchange expanded using Maple by Nikolai 
 It is selected by setting the model to `NS CPMG 2-site expanded'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 
-This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.  The following is the set of equations of the expansion used in relax.  It has been modified from the original for speed.  See the \module{lib.dispersion.ns\_cpmg\_2site\_expanded} module for more details including the original code.  Further simplifications can be found in the code.
+This model will give the same results as the other numerical solutions whereby $\RtwozeroA = \RtwozeroB$.  The following is the set of equations of the expansion used in relax.  It has been modified from the original for speed.  See the \module{lib\pysep{}dispersion\pysep{}ns\pyus{}cpmg\pyus{}2site\pyus{}expanded} module for more details including the original code.  Further simplifications can be found in the code.
 
 \begin{subequations}
 \renewcommand{\theequation}{\theparentequation .\arabic{equation}}
@@ -2421,7 +2421,7 @@ deselect.read(file='unresolved', dir='800_MHz', res_num_col=1)
 %~~~~~~~~~~~
 \subsection{Dispersion script mode -- execution}
 
-Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\linebreak[0]{}\_disp} class.  This is the final lines of the script:
+Once the data has set up and you have modified your script to match your analysis needs, then the data pipe, pipe bundle and analysis variables are passed into the \module{Relax\pyus{}disp} class.  This is the final lines of the script:
 
 \begin{lstlisting}[firstnumber=129]
 # Auto-analysis execution.
