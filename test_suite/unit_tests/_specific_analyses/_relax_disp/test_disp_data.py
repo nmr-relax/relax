@@ -40,7 +40,7 @@ class Test_disp_data(UnitTestCase):
         ds.add(pipe_name='orig', pipe_type='relax_disp')
 
 
-    def test_bug_21665_cpmg_two_fields_two_delaytimes_fail_calc(self):
+    def test_loop_exp_time(self):
         """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
 
         # Load the state.
