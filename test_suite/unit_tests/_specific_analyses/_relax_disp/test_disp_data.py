@@ -54,15 +54,22 @@ class Test_disp_data(UnitTestCase):
         cpmg_1 = [ncyc/time_T2_1 for ncyc in ncyc_1]
         cpmg_1.sort()
 
-        ncyc_2 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 24, 14]
+        ncyc_2 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 24, 14, 22]
         sfrq_2 = 599.8908587*1E6
         time_T2_2 = 0.06
         cpmg_2 = [ncyc/time_T2_2 for ncyc in ncyc_2]
         cpmg_2.sort()
 
         # Test the loop function.
+        # First initialize index for the two lists.
+        i = -1
+        j = -1
         for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
             if frq == sfrq_1:
+                i += 1
                 self.assertEqual(time, time_T2_1)
+                self.assertAlmostEqual(point, cpmg_1[i],3)
             if frq == sfrq_2:
+                j += 1
                 self.assertEqual(time, time_T2_2)
+                self.assertAlmostEqual(point, cpmg_2[j],3)
