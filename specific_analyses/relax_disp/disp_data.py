@@ -2369,7 +2369,7 @@ def return_cpmg_frqs(ref_flag=True):
     return cpmg_frqs
 
 
-def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, ref_flag=True):
+def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref_flag=True):
     """Return the list of nu_CPMG frequencies.
 
     @keyword exp_type:  The experiment type.
@@ -2378,6 +2378,8 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, ref_flag=True)
     @type frq:          float
     @keyword offset:    The hard pulse offset, if desired.
     @type offset:       None or float
+    @keyword time:      The relaxation time period.
+    @type time:         float
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
