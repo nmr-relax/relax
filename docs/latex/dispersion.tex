@@ -2715,7 +2715,7 @@ The buttons are as follows:
   \item[Spin isotope:]  This is needed to specify the spin isotope information for each spin in the system, for example if the data is from $^{15}$N, $^{13}$C, $^1$H, etc.
   \item[$\Rone$ relaxation data:]  This is used to load a text file containing $\Rone$ relaxation data for each spin of interest.
     The button launches the \uf{relax\_data.read} user function (see section~\ref{uf: relax_data.read} on page~\pageref{uf: relax_data.read}).
-    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
+    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data but may be extended, in the future, to handle off-resonance effects in the CPMG-type experiments.
   \item[Chemical shift:]  Again this is for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
     The button launches the \uf{chemical\_shift.read} user function (see section~\ref{uf: chemical_shift.read} on page~\pageref{uf: chemical_shift.read}).
   \item[Interatomic interaction:]  This button launches the \uf{interatom.define} user function (see section~\ref{uf: interatom.define} on page~\pageref{uf: interatom.define}).
@@ -2733,4 +2733,48 @@ For SQ CPMG-type dispersion data, only the spin isotope information is required.
 
 In this case, all spins are $^{15}$N so simply leave the values to the defaults and click on \guibutton{OK}.
 The other buttons can be ignored.
+
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- loading the data}
+
+The standard way for handling experimental NMR data for starting a relaxation dispersion analysis in the relax GUI is to load the peak intensity values (either height or volume) from a peak list.
+For a list of all the currently supported peak list formats, see the \uf{spectrum\ufsep{}read\ufus{}intensities} user function documentation in section~\ref{uf: spectrum.read_intensities} on page~\pageref{uf: spectrum.read_intensities}.
+
+Note that relax also accepts pre-fitted or pre-calculated $\Rtwoeff$ or $\Ronerho$ values via the \uf{relax\ufus{}disp\ufsep{}r2eff\ufus{}read} and \uf{relax\ufus{}disp\ufsep{}r2eff\ufus{}read\ufus{}spin} user functions (see section~\ref{uf: relax_disp.r2eff_read} on page~\pageref{uf: relax_disp.r2eff_read} and section~\ref{uf: relax_disp.r2eff_read_spin} on page~\pageref{uf: relax_disp.r2eff_read_spin} respectively), however this is not the standard way of using the GUI.
+As this is not tested, if you decide to work with pre-calculated relaxation rates please report any bugs encountered as described in section~\ref{reporting bugs} on page~\pageref{reporting bugs}.
+To access the user functions, click on \guimenuitemthree{User functions}{relax\_disp}{r2eff\_read} or \guimenuitemthree{User functions}{relax\_disp}{r2eff\_read\_spin}.
+
+In this tutorial, the Sparky\index{software!Sparky} formatted peak lists in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz} and \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}800\osus{}MHz} directories will be loaded.
+First click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.
+At this stage a warning message will appear as the spins have not been named, hence they cannot be matched to the data in the peak lists:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_incomplete_setup}
+  }
+\end{minipage}
+
+Simply click on \guibutton{Yes} to allow the spins to be named in the next step.
+The \uf{spin\ufsep{}name} user function wizard page should now appear.
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.8\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_spin_name}
+  }
+\end{minipage}
+
+As all data is from $^{15}$N spins and these spins have been named as `N' in the Sparky peak lists, set the new spin name to \guistring{N} and click on \guibutton{Next}.
+The \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page should appear.
+To simplify the loading, all of the 500 MHz data will be loaded in one go.
 
