@@ -1143,7 +1143,7 @@ def loop_offset_point(exp_type=None, frq=None, skip_ref=True, return_indices=Fal
                 yield offset, point
 
 
-def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indices=False):
+def loop_point(exp_type=None, frq=None, offset=None, time=None, skip_ref=True, return_indices=False):
     """Generator method for looping over the dispersion points.
 
     @keyword exp_type:          The experiment type.
@@ -1152,6 +1152,8 @@ def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indic
     @type frq:                  float
     @keyword offset:            The spin-lock or hard pulse offset value in ppm.
     @type offset:               None or float
+    @keyword time:              The relaxation time period.
+    @type time:                 float
     @keyword skip_ref:          A flag which if True will cause the reference point to be skipped.
     @type skip_ref:             bool
     @keyword return_indices:    A flag which if True will cause the experiment type index to be returned as well.
@@ -1171,7 +1173,7 @@ def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indic
     # Assemble the dispersion data.
     ref_flag = not skip_ref
     if exp_type in EXP_TYPE_LIST_CPMG:
-        fields = return_cpmg_frqs_single(exp_type=exp_type, frq=frq, offset=offset, ref_flag=ref_flag)
+        fields = return_cpmg_frqs_single(exp_type=exp_type, frq=frq, offset=offset, time=time, ref_flag=ref_flag)
     elif exp_type in EXP_TYPE_LIST_R1RHO:
         fields = return_spin_lock_nu1_single(exp_type=exp_type, frq=frq, offset=offset, ref_flag=ref_flag)
     else:
