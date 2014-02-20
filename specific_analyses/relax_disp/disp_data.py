@@ -2414,6 +2414,10 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref
             if offset != None and hasattr(cdp, 'spin_lock_offset') and cdp.spin_lock_offset[id] != offset:
                 continue
 
+            # Skip non-matching time points.
+            if time != None and hasattr(cdp, 'relax_times') and cdp.relax_times[id] != time:
+                continue
+
             # Skip non-matching points.
             if cdp.cpmg_frqs[id] != point:
                 continue
