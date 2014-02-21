@@ -65,6 +65,12 @@ class File_element:
         @type preview:              bool
         """
 
+        # Store the arguments.
+        self.default = default
+        self.parent = parent
+        self.wildcard = wildcard
+        self.style = style
+
         # A vertical sizer for the two elements of the file selection GUI elements and a spacer element.
         self.sizer = wx.BoxSizer(wx.VERTICAL)
 
@@ -76,7 +82,7 @@ class File_element:
 
         # The file index.
         desc = str_to_gui("%i:  " % (index+1))
-        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+        text = wx.StaticText(self.parent, -1, desc, style=wx.ALIGN_LEFT)
         text.SetFont(font.normal_bold)
         text.SetMinSize((35, -1))
         sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
@@ -85,7 +91,7 @@ class File_element:
         sub_sizer.AddSpacer(width_spacer)
 
         # The input field.
-        self.field = wx.TextCtrl(parent, -1, default)
+        self.field = wx.TextCtrl(self.parent, -1, self.default)
         self.field.SetMinSize((-1, height_element))
         self.field.SetFont(font.normal)
         sub_sizer.Add(self.field, 1, wx.EXPAND|wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
@@ -93,15 +99,12 @@ class File_element:
         # A little spacing.
         sub_sizer.AddSpacer(width_spacer)
 
-        # The file selection object.
-        obj = RelaxFileDialog(parent, field=self.field, message="File selection", defaultFile=default, wildcard=wildcard, style=style)
-
         # The file selection button.
-        button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
+        button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-open', "16x16"), wx.BITMAP_TYPE_ANY))
         button.SetMinSize((height_element, height_element))
         button.SetToolTipString("Select the file.")
         sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-        parent.Bind(wx.EVT_BUTTON, obj.select_event, button)
+        self.parent.Bind(wx.EVT_BUTTON, self.select_file, button)
 
         # File preview.
         if preview:
@@ -109,11 +112,11 @@ class File_element:
             sub_sizer.AddSpacer(width_spacer)
 
             # The preview button.
-            button = wx.BitmapButton(parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-preview', "16x16"), wx.BITMAP_TYPE_ANY))
+            button = wx.BitmapButton(self.parent, -1, wx.Bitmap(fetch_icon('oxygen.actions.document-preview', "16x16"), wx.BITMAP_TYPE_ANY))
             button.SetMinSize((height_element, height_element))
             button.SetToolTipString("Preview")
             sub_sizer.Add(button, 0, wx.ADJUST_MINSIZE|wx.ALIGN_CENTER_VERTICAL, 0)
-            parent.Bind(wx.EVT_BUTTON, self.preview_file, button)
+            self.parent.Bind(wx.EVT_BUTTON, self.preview_file, button)
 
         # Right padding.
         sub_sizer.AddSpacer(padding)
@@ -163,6 +166,22 @@ class File_element:
 
         # Open the file as text.
         open_file(file, force_text=True)
+
+
+    def select_file(self, event=None):
+        """Select a file.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The file selection object (initialised in this function and not __init__() so that the working directory is more logical).
+        dialog = RelaxFileDialog(self.parent, field=self.field, message="File selection", defaultFile=self.default, wildcard=self.wildcard, style=self.style)
+
+        # Show the dialog and catch if no file has been selected.
+        if status.show_gui:
+            dialog.select_event(event)
+
 
 
 
