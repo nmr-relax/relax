@@ -25,7 +25,7 @@ from os import sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
-from specific_analyses.relax_disp.disp_data import loop_exp_frq_offset_point_time
+from specific_analyses.relax_disp.disp_data import loop_exp_frq, loop_exp_frq_offset_point_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -38,6 +38,52 @@ class Test_disp_data(UnitTestCase):
 
         # Create a dispersion data pipe.
         ds.add(pipe_name='orig', pipe_type='relax_disp')
+
+
+    def test_loop_exp_frq(self):
+        """Unit test of the loop_exp_frq() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data (exp_type, frq).
+        data = [
+            ['SQ CPMG', 499862140.0],
+            ['SQ CPMG', 599890858.69999993]
+        ]
+
+        # Original indices (ei, mi).
+        indices = [
+            [0, 0],
+            [0, 1]
+        ]
+
+        # Check the number of iterations.
+        print("Checking the number of iterations of the loop.")
+        count = 0
+        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+            print exp_type, frq, ei, mi
+            count += 1
+        self.assertEqual(count, 2)
+
+        # Check the values.
+        print("Checking the values returned by the loop.")
+        index = 0
+        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+            # Check the experiment info.
+            self.assertEqual(exp_type, data[index][0])
+            self.assertEqual(ei, indices[index][0])
+
+            # Check the frequency info.
+            self.assertEqual(frq, data[index][1])
+            self.assertEqual(mi, indices[index][1])
+
+            # Increment the data index.
+            index += 1
 
 
     def test_loop_exp_frq_offset_point_time(self):
