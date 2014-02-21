@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -308,6 +308,9 @@ def mkdir_nofail(dir=None, verbosity=1):
     # No directory given.
     if dir == None:
         return
+
+    # Expand any ~ characters.
+    dir = expanduser(dir)
 
     # Make the directory.
     try:
