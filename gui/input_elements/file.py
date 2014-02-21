@@ -495,11 +495,6 @@ class Selector_file_multiple:
         if isinstance(value, list) and len(value) == 1:
             value = value[0]
 
-        # Convert single values to sequences as needed.
-        elif value != None:
-            if not isinstance(value, list):
-                value = [value]
-
         # Handle empty list and tuple values.
         if len(value) == 0:
             return None

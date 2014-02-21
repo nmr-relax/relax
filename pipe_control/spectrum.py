@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
@@ -465,8 +465,8 @@ def integration_points(N=0, spectrum_id=None, spin_id=None):
 def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None, verbose=True):
     """Read the peak intensity data.
 
-    @keyword file:          The name of the file containing the peak intensities.
-    @type file:             str
+    @keyword file:          The name of the file(s) containing the peak intensities.
+    @type file:             str or list of str
     @keyword dir:           The directory where the file is located.
     @type dir:              str
     @keyword spectrum_id:   The spectrum identification string.
@@ -511,13 +511,48 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     if hasattr(cdp, 'int_method') and cdp.int_method != int_method:
         raise RelaxError("The '%s' measure of peak intensities does not match '%s' of the previously loaded spectra." % (int_method, cdp.int_method))
 
+    # Multiple ID flags.
+    flag_multi = False
+    flag_multi_file = False
+    flag_multi_col = False
+    if isinstance(spectrum_id, list) or spectrum_id == 'auto':
+        flag_multi = True
+    if isinstance(file, list):
+        flag_multi_file = True
+    if isinstance(int_col, list) or spectrum_id == 'auto':
+        flag_multi_col = True
+
+    # List argument checks.
+    if flag_multi:
+        # Too many lists.
+        if flag_multi_file and flag_multi_col:
+            raise RelaxError("If a list of spectrum IDs is supplied, the file names and intensity column arguments cannot both be lists.")
+
+        # Not enough lists.
+        if not flag_multi_file and not flag_multi_col:
+            raise RelaxError("If a list of spectrum IDs is supplied, either the file name or intensity column arguments must be a list of equal length.")
+
+        # List lengths for multiple files.
+        if flag_multi_file and len(spectrum_id) != len(file):
+                raise RelaxError("The file list %s and spectrum ID list %s do not have the same number of elements." % (file, spectrum_id))
+
+        # List lengths for multiple intensity columns.
+        if flag_multi_col and spectrum_id != 'auto' and len(spectrum_id) != len(int_col):
+            raise RelaxError("The spectrum ID list %s and intensity column list %s do not have the same number of elements." % (spectrum_id, int_col))
+
+    # More list argument checks (when only one spectrum ID is supplied).
+    else:
+        # Multiple files.
+        if flag_multi_file:
+            raise RelaxError("If multiple files are supplied, then multiple spectrum IDs must also be supplied.")
+
+        # Multiple intensity columns.
+        if flag_multi_col:
+            raise RelaxError("If multiple intensity columns are supplied, then multiple spectrum IDs must also be supplied.")
+
     # Intensity column checks.
-    if isinstance(spectrum_id, list) and not isinstance(int_col, list):
-        raise RelaxError("If a list of spectrum IDs is supplied, the intensity column argument must also be a list of equal length.")
-    if spectrum_id != 'auto' and not isinstance(spectrum_id, list) and isinstance(int_col, list):
+    if spectrum_id != 'auto' and not flag_multi and flag_multi_col:
         raise RelaxError("If a list of intensity columns is supplied, the spectrum ID argument must also be a list of equal length.")
-    if isinstance(spectrum_id, list) and len(spectrum_id) != len(int_col):
-        raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, int_col))
 
     # Check the intensity measure.
     if not int_method in ['height', 'point sum', 'other']:
@@ -526,87 +561,94 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
     # Set the peak intensity measure.
     cdp.int_method = int_method
 
-    # Read the peak list data.
-    peak_list = read_peak_list(file=file, dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
+    # Convert the file argument to a list if necessary.
+    if not isinstance(file, list):
+        file = [file]
 
-    # Automatic spectrum IDs.
-    if spectrum_id == 'auto':
-        spectrum_id = peak_list[0].intensity_name
+    # Loop over all files.
+    for file_index in range(len(file)):
+        # Read the peak list data.
+        peak_list = read_peak_list(file=file[file_index], dir=dir, int_col=int_col, spin_id_col=spin_id_col, mol_name_col=mol_name_col, res_num_col=res_num_col, res_name_col=res_name_col, spin_num_col=spin_num_col, spin_name_col=spin_name_col, sep=sep, spin_id=spin_id)
 
-    # Loop over the assignments.
-    data = []
-    data_flag = False
-    for assign in peak_list:
-        # Generate the spin_id.
-        spin_id = generate_spin_id_unique(res_num=assign.res_nums[dim-1], spin_name=assign.spin_names[dim-1])
+        # Automatic spectrum IDs.
+        if spectrum_id == 'auto':
+            spectrum_id = peak_list[0].intensity_name
 
-        # Convert the intensity data and spectrum IDs to lists if needed.
-        intensity = assign.intensity
-        if not isinstance(intensity, list):
-            intensity = [intensity]
-        if not isinstance(spectrum_id, list):
-            spectrum_id = [spectrum_id]
+        # Loop over the assignments.
+        data = []
+        data_flag = False
+        for assign in peak_list:
+            # Generate the spin_id.
+            spin_id = generate_spin_id_unique(res_num=assign.res_nums[dim-1], spin_name=assign.spin_names[dim-1])
 
-        # Checks for matching length of spectrum IDs and intensities columns.
-        if len(spectrum_id) != len(intensity):
-            raise RelaxError("The spectrum ID list %s has a different number of elements to the intensity column list %s." % (spectrum_id, len(intensity)))
+            # Convert the intensity data to a list if needed.
+            intensity = assign.intensity
+            if not isinstance(intensity, list):
+                intensity = [intensity]
 
-        # Loop over the intensity data.
-        for i in range(len(intensity)):
-            # Sanity check.
-            if intensity[i] == 0.0:
-                warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
+            # Loop over the intensity data.
+            for int_index in range(len(intensity)):
+                # Sanity check.
+                if intensity[int_index] == 0.0:
+                    warn(RelaxWarning("A peak intensity of zero has been encountered for the spin '%s' - this could be fatal later on." % spin_id))
 
-            # Get the spin container.
-            spin = return_spin(spin_id)
-            if not spin:
-                warn(RelaxNoSpinWarning(spin_id))
-                continue
+                # Get the spin container.
+                spin = return_spin(spin_id)
+                if not spin:
+                    warn(RelaxNoSpinWarning(spin_id))
+                    continue
 
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
 
-            # Initialise.
-            if not hasattr(spin, 'intensities'):
-                spin.intensities = {}
+                # Initialise.
+                if not hasattr(spin, 'intensities'):
+                    spin.intensities = {}
 
-            # Intensity scaling.
+                # Intensity scaling.
+                if ncproc != None:
+                    intensity[int_index] = intensity[int_index] / float(2**ncproc)
+
+                # Add the data.
+                if flag_multi_file:
+                    id = spectrum_id[file_index]
+                elif flag_multi_col:
+                    id = spectrum_id[int_index]
+                else:
+                    id = spectrum_id
+                spin.intensities[id] = intensity[int_index]
+
+                # Switch the flag.
+                data_flag = True
+
+                # Append the data for printing out.
+                data.append([spin_id, repr(intensity[int_index])])
+
+        # Add the spectrum id (and ncproc) to the relax data store.
+        spectrum_ids = spectrum_id
+        if isinstance(spectrum_id, str):
+            spectrum_ids = [spectrum_id]
+        if ncproc != None and not hasattr(cdp, 'ncproc'):
+            cdp.ncproc = {}
+        for i in range(len(spectrum_ids)):
+            add_spectrum_id(spectrum_ids[i])
             if ncproc != None:
-                intensity[i] = intensity[i] / float(2**ncproc)
+                cdp.ncproc[spectrum_ids[i]] = ncproc
 
-            # Add the data.
-            spin.intensities[spectrum_id[i]] = intensity[i]
+        # No data.
+        if not data_flag:
+            # Delete all the data.
+            delete(spectrum_id)
 
-            # Switch the flag.
-            data_flag = True
+            # Raise the error.
+            raise RelaxError("No data could be loaded from the peak list")
 
-            # Append the data for printing out.
-            data.append([spin_id, repr(intensity[i])])
-
-    # Add the spectrum id (and ncproc) to the relax data store.
-    spectrum_ids = spectrum_id
-    if isinstance(spectrum_id, str):
-        spectrum_ids = [spectrum_id]
-    if ncproc != None and not hasattr(cdp, 'ncproc'):
-        cdp.ncproc = {}
-    for i in range(len(spectrum_ids)):
-        add_spectrum_id(spectrum_ids[i])
-        if ncproc != None:
-            cdp.ncproc[spectrum_ids[i]] = ncproc
-
-    # No data.
-    if not data_flag:
-        # Delete all the data.
-        delete(spectrum_id)
-
-        # Raise the error.
-        raise RelaxError("No data could be loaded from the peak list")
-
-    # Print out.
-    if verbose:
-        print("\nThe following intensities have been loaded into the relax data store:\n")
-        write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
+        # Printout.
+        if verbose:
+            print("\nThe following intensities have been loaded into the relax data store:\n")
+            write_data(out=sys.stdout, headings=["Spin_ID", "Intensity"], data=data)
+        print('')
 
 
 def read_spins(file=None, dir=None, dim=1, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, verbose=True):
