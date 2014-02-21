@@ -60,17 +60,16 @@ class User_functions(GuiTestCase):
         # Set the models to read.
         uf.page.SetValue('read_model', str_to_gui('6'))
         uf.page.uf_args['read_model'].selection_win_show()
-        uf.page.uf_args['read_model'].sel_win.append_row(None)
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(2))
-        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=0, label=int_to_gui(4))
+        uf.page.uf_args['read_model'].sel_win.add_element(None)
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(2))
+        uf.page.uf_args['read_model'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(4))
         uf.page.uf_args['read_model'].selection_win_data()
 
         # Renumber the models.
         uf.page.uf_args['set_model_num'].selection_win_show()
-        uf.page.uf_args['set_model_num'].sel_win.append_row(None)
-        uf.page.uf_args['set_model_num'].sel_win.append_row(None)
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(1))
-        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=1, col=0, label=int_to_gui(3))
+        uf.page.uf_args['set_model_num'].sel_win.add_element(None)
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(3))
         uf.page.uf_args['set_model_num'].selection_win_data()
 
         # GUI data checks.
