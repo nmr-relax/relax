@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2004-2013 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -218,10 +218,10 @@ uf.title = "Read peak intensities from a file."
 uf.title_short = "Peak intensity reading."
 uf.add_keyarg(
     name = "file",
-    py_type = "str",
-    arg_type = "file sel",
-    desc_short = "file name",
-    desc = "The name of the file containing the intensity data.",
+    py_type = "str_or_str_list",
+    arg_type = "file sel multi",
+    desc_short = "file name(s)",
+    desc = "The name of the file or the list of files containing the intensity data.",
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -236,7 +236,7 @@ uf.add_keyarg(
     name = "spectrum_id",
     py_type = "str_or_str_list",
     desc_short = "spectrum ID string",
-    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the IDs are auto generated in form of Z_A{i}."
+    desc = "The unique spectrum ID string or list of strings to associate with the peak intensity values.  If multiple files are given, then each file should have a corresponding spectrum ID string.  If 'auto' is provided for a NMRPipe seriesTab formatted file, the IDs are auto generated in form of Z_A{i}."
 )
 uf.add_keyarg(
     name = "dim",
@@ -348,6 +348,8 @@ uf.desc[-1].add_paragraph("XEasy peak list:  The file should be the saved XEasy 
 uf.desc[-1].add_paragraph("NMRView:  The file should be a NMRView peak list. The default is to use column 16 (which contains peak heights) for peak intensities. To use use peak volumes (or evolumes), int_col must be set to 15.")
 uf.desc[-1].add_paragraph("NMRPipe seriesTab:  The file should be a NMRPipe-format Spectral Series list.  If the spectrum_id='auto', the IDs are auto generated in form of Z_A{i}.")
 uf.desc[-1].add_paragraph("Generic intensity file:  This is a generic format which can be created by scripting to support non-supported peak lists.  It should contain in the first few columns enough information to identify the spin.  This can include columns for the molecule name, residue number, residue name, spin number, and spin name.  Alternatively a spin ID string column can be used. The peak intensities can be placed in another column specified by the integration column number.  Intensities from multiple spectra can be placed into different columns, and these can then be specified simultaneously by setting the integration column value to a list of columns.  This list must be matched by setting the spectrum ID to a list of the same length.  If columns are delimited by a character other than whitespace, this can be specified with the column separator.  The spin ID can be used to restrict the loading to specific spin subsets.")
+uf.desc.append(Desc_container("Multiple files"))
+uf.desc[-1].add_paragraph("The data from multiple files can be loaded simultaneously if a list of files is supplied.  In this case, a list of spectrum ID strings of equal length must be supplied.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To read the reference and saturated spectra peak heights from the Sparky formatted files 'ref.list' and 'sat.list', type:")

@@ -2616,24 +2616,24 @@ To process this test data, two separate analyses will be performed:
 
 After starting relax in the GUI mode, the dispersion analysis should be initialised by launching the analysis selection wizard (see Figure~\ref{fig: screenshot: analysis wizard} on page \pageref{fig: screenshot: analysis wizard}).
 The relaxation dispersion analysis should be selected and the name changed if multiple dispersion analyses are to be performed within one relax session.
-In this case the name \gui{Dispersion - Hansen (non-clustered)} will be used.
+In this case the name \gui{Dispersion - Hansen (non-clustered)} will be used:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
     \includegraphics[
-      width=0.8\textwidth,
+      width=0.9\textwidth,
       bb=14 14 1065 802
     ]
     {graphics/screenshots/dispersion_analysis/analysis_wizard1}
   }
 \end{minipage}
 
-Click on the \guibutton{Next} button to move to the second wizard page.
+Click on the \guibutton{Next} button to move to the second wizard page:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
     \includegraphics[
-      width=0.8\textwidth,
+      width=0.9\textwidth,
       bb=14 14 1065 802
     ]
     {graphics/screenshots/dispersion_analysis/analysis_wizard2}
@@ -2654,7 +2654,7 @@ A blank analysis tab should now be visible:
 \begin{minipage}[h]{\linewidth}
   \centerline{
     \includegraphics[
-      width=0.8\textwidth,
+      width=0.9\textwidth,
       bb=14 14 1065 802
     ]
     {graphics/screenshots/dispersion_analysis/blank}
@@ -2715,7 +2715,7 @@ The buttons are as follows:
   \item[Spin isotope:]  This is needed to specify the spin isotope information for each spin in the system, for example if the data is from $^{15}$N, $^{13}$C, $^1$H, etc.
   \item[$\Rone$ relaxation data:]  This is used to load a text file containing $\Rone$ relaxation data for each spin of interest.
     The button launches the \uf{relax\_data.read} user function (see section~\ref{uf: relax_data.read} on page~\pageref{uf: relax_data.read}).
-    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
+    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data but may be extended, in the future, to handle off-resonance effects in the CPMG-type experiments.
   \item[Chemical shift:]  Again this is for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
     The button launches the \uf{chemical\_shift.read} user function (see section~\ref{uf: chemical_shift.read} on page~\pageref{uf: chemical_shift.read}).
   \item[Interatomic interaction:]  This button launches the \uf{interatom.define} user function (see section~\ref{uf: interatom.define} on page~\pageref{uf: interatom.define}).
@@ -2728,9 +2728,183 @@ The buttons are as follows:
 For SQ CPMG-type dispersion data, only the spin isotope information is required.
 
 \begin{minipage}[h]{\linewidth}
-\centerline{\includegraphics[width=0.8\textwidth, bb=14 14 1065 802]{graphics/screenshots/dispersion_analysis/spin_isotope}}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/spin_isotope}
+  }
 \end{minipage}
 
 In this case, all spins are $^{15}$N so simply leave the values to the defaults and click on \guibutton{OK}.
 The other buttons can be ignored.
 
+
+% Loading the data.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- loading the data}
+
+The standard way for handling experimental NMR data for starting a relaxation dispersion analysis in the relax GUI is to load the peak intensity values (either height or volume) from a peak list.
+For a list of all the currently supported peak list formats, see the \uf{spectrum\ufsep{}read\ufus{}intensities} user function documentation in section~\ref{uf: spectrum.read_intensities} on page~\pageref{uf: spectrum.read_intensities}.
+
+Note that relax also accepts pre-fitted or pre-calculated $\Rtwoeff$ or $\Ronerho$ values via the \uf{relax\ufus{}disp\ufsep{}r2eff\ufus{}read} and \uf{relax\ufus{}disp\ufsep{}r2eff\ufus{}read\ufus{}spin} user functions (see section~\ref{uf: relax_disp.r2eff_read} on page~\pageref{uf: relax_disp.r2eff_read} and section~\ref{uf: relax_disp.r2eff_read_spin} on page~\pageref{uf: relax_disp.r2eff_read_spin} respectively), however this is not the standard way of using the GUI.
+As this is not tested, if you decide to work with pre-calculated relaxation rates please report any bugs encountered as described in section~\ref{reporting bugs} on page~\pageref{reporting bugs}.
+To access the user functions, click on \guimenuitemthree{User functions}{relax\_disp}{r2eff\_read} or \guimenuitemthree{User functions}{relax\_disp}{r2eff\_read\_spin}.
+
+In this tutorial, the Sparky\index{software!Sparky} formatted peak lists in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz} and \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}800\osus{}MHz} directories will be loaded.
+First click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.
+At this stage a warning message will appear as the spins have not been named, hence they cannot be matched to the data in the peak lists:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_incomplete_setup}
+  }
+\end{minipage}
+
+Simply click on \guibutton{Yes} to allow the spins to be named in the next step.
+The \uf{spin\ufsep{}name} user function wizard page should now appear:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1065 802
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_spin_name}
+  }
+\end{minipage}
+
+As all data is from $^{15}$N spins and these spins have been named as `N' in the Sparky peak lists, set the new spin name to \guistring{N} and click on \guibutton{Next}.
+The \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page should appear.
+
+To help to understanding the next steps of the peak intensity loading wizard, please take note of the following table which summarises the peak list metadata for this analysis:
+
+\begin{center}        
+\begin{footnotesize}
+\begin{tabular}{llllll}
+\toprule
+
+File name   & Spectrum ID & Spectrometer & $\nucpmg$ & Replicate \\
+            &             & frq. (MHz)   & (Hz)      & IDs       \\
+
+\midrule
+
+\file{500\osus{}MHz\ossep{}reference.in\osus{}sparky}   & 500\_ref      &  500.0  &       None   &              \\
+\file{500\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 500\_133.33   &  500.0  &    66.6666   & 500\_133.33b \\
+\file{500\osus{}MHz\ossep{}133.33.in.bis\osus{}sparky}  & 500\_133.33b  &  500.0  &   133.3333   & 500\_133.33  \\
+\file{500\osus{}MHz\ossep{}200.in\osus{}sparky}         & 500\_200.00   &  500.0  &   133.3333   &              \\
+\file{500\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 500\_266.67   &  500.0  &   200.0000   &              \\
+\file{500\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 500\_333.33   &  500.0  &   266.6666   &              \\
+\file{500\osus{}MHz\ossep{}400.in\osus{}sparky}         & 500\_400.00   &  500.0  &   333.3333   &              \\
+\file{500\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 500\_466.67   &  500.0  &   400.0000   &              \\
+\file{500\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 500\_533.33   &  500.0  &   466.6666   & 500\_533.33b \\
+\file{500\osus{}MHz\ossep{}533.33.in.bis\osus{}sparky}  & 500\_533.33b  &  500.0  &   533.3333   & 500\_533.33  \\
+\file{500\osus{}MHz\ossep{}600.in\osus{}sparky}         & 500\_600.00   &  500.0  &   533.3333   &              \\
+\file{500\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 500\_66.667   &  500.0  &   600.0000   &              \\
+\file{500\osus{}MHz\ossep{}666.67.in\osus{}sparky}      & 500\_666.67   &  500.0  &   666.6666   &              \\
+\file{500\osus{}MHz\ossep{}733.33.in\osus{}sparky}      & 500\_733.33   &  500.0  &   733.3333   &              \\
+\file{500\osus{}MHz\ossep{}800.in\osus{}sparky}         & 500\_800.00   &  500.0  &   800.0000   &              \\
+\file{500\osus{}MHz\ossep{}866.67.in\osus{}sparky}      & 500\_866.67   &  500.0  &   866.6666   &              \\
+\file{500\osus{}MHz\ossep{}933.33.in\osus{}sparky}      & 500\_933.33   &  500.0  &   933.3333   & 500\_933.33b \\
+\file{500\osus{}MHz\ossep{}933.33.in.bis\osus{}sparky}  & 500\_933.33b  &  500.0  &   933.3333   & 500\_933.33  \\
+\file{500\osus{}MHz\ossep{}1000.in\osus{}sparky}        & 500\_1000.0   &  500.0  &  1000.0000   &              \\
+ \\
+\file{800\osus{}MHz\ossep{}reference.in\osus{}sparky}   & 800\_ref      &  800.0  &       None   &              \\
+\file{800\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 800\_133.33   &  800.0  &    66.6666   & 800\_133.33b \\
+\file{800\osus{}MHz\ossep{}133.33.in.bis\osus{}sparky}  & 800\_133.33b  &  800.0  &   133.3333   & 800\_133.33  \\
+\file{800\osus{}MHz\ossep{}200.in\osus{}sparky}         & 800\_200.00   &  800.0  &   133.3333   &              \\
+\file{800\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 800\_266.67   &  800.0  &   200.0000   &              \\
+\file{800\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 800\_333.33   &  800.0  &   266.6666   &              \\
+\file{800\osus{}MHz\ossep{}400.in\osus{}sparky}         & 800\_400.00   &  800.0  &   333.3333   &              \\
+\file{800\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 800\_466.67   &  800.0  &   400.0000   &              \\
+\file{800\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 800\_533.33   &  800.0  &   466.6666   &              \\
+\file{800\osus{}MHz\ossep{}533.33.in.bis\osus{}sparky}  & 800\_533.33b  &  800.0  &   533.3333   & 800\_533.33b \\
+\file{800\osus{}MHz\ossep{}600.in\osus{}sparky}         & 800\_600.00   &  800.0  &   533.3333   & 800\_533.33  \\
+\file{800\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 800\_66.667   &  800.0  &   600.0000   &              \\
+\file{800\osus{}MHz\ossep{}666.67.in\osus{}sparky}      & 800\_666.67   &  800.0  &   666.6666   &              \\
+\file{800\osus{}MHz\ossep{}733.33.in\osus{}sparky}      & 800\_733.33   &  800.0  &   733.3333   &              \\
+\file{800\osus{}MHz\ossep{}800.in\osus{}sparky}         & 800\_800.00   &  800.0  &   800.0000   &              \\
+\file{800\osus{}MHz\ossep{}866.67.in\osus{}sparky}      & 800\_866.67   &  800.0  &   866.6666   &              \\
+\file{800\osus{}MHz\ossep{}933.33.in\osus{}sparky}      & 800\_933.33   &  800.0  &   933.3333   & 800\_933.33b \\
+\file{800\osus{}MHz\ossep{}933.33.in.bis\osus{}sparky}  & 800\_933.33b  &  800.0  &   933.3333   & 800\_933.33  \\
+\file{800\osus{}MHz\ossep{}1000.in\osus{}sparky}        & 800\_1000.0   &  800.0  &  1000.0000   &              \\
+
+\bottomrule
+\end{tabular}
+\end{footnotesize}
+\end{center}
+
+For all of these files, the experiment type is SQ CPMG and the relaxation delay time is 30~ms.
+All files are located in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen} directory.
+
+To simplify the loading of the data, all of the 500 MHz data will be read simultaneously (followed by all of the 800 MHz data).
+Firstly, to select all of the 500~MHz files, click on the button at the end of the \guistring{file name(s)} GUI element.
+This will launch the multiple file selection window:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_file_selection}
+  }
+\end{minipage}
+
+Add the first file by typing the file name or clicking on the file selection button to the right of the file input field and choosing the file.
+A preview button is included to allow the file to be checked.
+Then click on the \guibutton{Add} button to insert a new file selection item, add the next file, and continue until complete.
+You should now see:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_file_selection_fin}
+  }
+\end{minipage}
+
+Click on \guibutton{OK} to return to the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page.
+Next, the spectrum IDs should be set.
+For this, click on the button to the far right of the spectrum ID string element.
+Click on \guibutton{Add} and fill in the spectrum IDs corresponding to the files selected.
+As 19 files exist for the 500 MHz data, 19 spectrum IDs should be added.
+You will now see:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/spectrum_spectrum_ids}
+  }
+\end{minipage}
+
+Click on \guibutton{OK} to return to the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page.
+
+There is one shortcut to these previous steps.
+The file names and spectrum IDs can be manually typed into the input elements of the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page.
+For the file names, assuming relax is installed in the directory \directory{data\ossep{}relax\ossep{}relax-trunk} and a Unix-like system is being used, the following text can be added:
+\begin{lstlisting}[numbers=none]
+['/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in_sparky']
+\end{lstlisting}
+
+The spectrum IDs can be added by copying and pasting the following text:
+\begin{lstlisting}[numbers=none]
+['500_reference', '500_133.33', '500_133.33b', '500_200', '500_266.67', '500_333.33', '500_400', '500_466.67', '500_533.33', '500_533.33b', '500_600', '500_66.667', '500_666.67', '500_733.33', '500_800', '500_866.67', '500_933.33', '500_933.33b', '500_1000']
+\end{lstlisting}
+
+Note that the files can also be loaded one by one.
+
+For this SQ CPMG data, none of the other settings in the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page need to be changed.
+But clicking on the \guibutton{Apply} button, the 500 MHz data will be loaded but the wizard will stay on the same page.
+This will allow the 800 MHz data to also be loaded.

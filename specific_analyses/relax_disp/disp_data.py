@@ -869,10 +869,10 @@ def loop_exp_frq_offset_point_time(return_indices=False):
         for frq, mi in loop_frq(return_indices=True):
             # Then loop over the offset data.
             for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
-                # Then the dispersion points.
-                for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
-                    # Finally the relaxation times.
-                    for time, ti in loop_time(return_indices=True):
+                # Then the relaxation times.
+                for time, ti in loop_time(return_indices=True):
+                    # Finally the dispersion points.
+                    for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, time=time, return_indices=True):
                         # Yield the data.
                         if return_indices:
                             yield exp_type, frq, offset, point, time, ei, mi, oi, di, ti
@@ -1143,7 +1143,7 @@ def loop_offset_point(exp_type=None, frq=None, skip_ref=True, return_indices=Fal
                 yield offset, point
 
 
-def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indices=False):
+def loop_point(exp_type=None, frq=None, offset=None, time=None, skip_ref=True, return_indices=False):
     """Generator method for looping over the dispersion points.
 
     @keyword exp_type:          The experiment type.
@@ -1152,6 +1152,8 @@ def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indic
     @type frq:                  float
     @keyword offset:            The spin-lock or hard pulse offset value in ppm.
     @type offset:               None or float
+    @keyword time:              The relaxation time period.
+    @type time:                 float
     @keyword skip_ref:          A flag which if True will cause the reference point to be skipped.
     @type skip_ref:             bool
     @keyword return_indices:    A flag which if True will cause the experiment type index to be returned as well.
@@ -1171,7 +1173,7 @@ def loop_point(exp_type=None, frq=None, offset=None, skip_ref=True, return_indic
     # Assemble the dispersion data.
     ref_flag = not skip_ref
     if exp_type in EXP_TYPE_LIST_CPMG:
-        fields = return_cpmg_frqs_single(exp_type=exp_type, frq=frq, offset=offset, ref_flag=ref_flag)
+        fields = return_cpmg_frqs_single(exp_type=exp_type, frq=frq, offset=offset, time=time, ref_flag=ref_flag)
     elif exp_type in EXP_TYPE_LIST_R1RHO:
         fields = return_spin_lock_nu1_single(exp_type=exp_type, frq=frq, offset=offset, ref_flag=ref_flag)
     else:
@@ -2369,7 +2371,7 @@ def return_cpmg_frqs(ref_flag=True):
     return cpmg_frqs
 
 
-def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, ref_flag=True):
+def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, time=None, ref_flag=True):
     """Return the list of nu_CPMG frequencies.
 
     @keyword exp_type:  The experiment type.
@@ -2378,6 +2380,8 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, ref_flag=True)
     @type frq:          float
     @keyword offset:    The hard pulse offset, if desired.
     @type offset:       None or float
+    @keyword time:      The relaxation time period.
+    @type time:         float
     @keyword ref_flag:  A flag which if False will cause the reference spectrum frequency of None to be removed from the list.
     @type ref_flag:     bool
     @return:            The list of nu_CPMG frequencies in Hz.
@@ -2410,6 +2414,10 @@ def return_cpmg_frqs_single(exp_type=None, frq=None, offset=None, ref_flag=True)
 
             # Skip non-matching offsets.
             if offset != None and hasattr(cdp, 'spin_lock_offset') and cdp.spin_lock_offset[id] != offset:
+                continue
+
+            # Skip non-matching time points.
+            if time != None and hasattr(cdp, 'relax_times') and cdp.relax_times[id] != time:
                 continue
 
             # Skip non-matching points.

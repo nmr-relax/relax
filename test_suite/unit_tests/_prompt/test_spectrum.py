@@ -24,7 +24,7 @@ from unittest import TestCase
 
 # relax module imports.
 from prompt.interpreter import Interpreter
-from lib.errors import RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError
+from lib.errors import RelaxIntError, RelaxNoneIntError, RelaxNoneIntListIntError, RelaxNoneStrError, RelaxNumError, RelaxStrError, RelaxStrListStrError
 
 # Unit test imports.
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
@@ -136,7 +136,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, file=data[1])
+            self.assertRaises(RelaxStrListStrError, self.spectrum_fns.read_intensities, file=data[1])
 
 
     def test_read_intensities_argfail_dir(self):
@@ -162,7 +162,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, spectrum_id=data[1])
+            self.assertRaises(RelaxStrListStrError, self.spectrum_fns.read_intensities, spectrum_id=data[1])
 
 
     def test_read_intensities_argfail_dim(self):
@@ -171,11 +171,11 @@ class Test_spectrum(TestCase):
         # Loop over the data types.
         for data in DATA_TYPES:
             # Catch the int argument, and skip it.
-            if data[0] == 'int':
+            if data[0] == 'int' or data[0] == 'bin':
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, dim=data[1])
+            self.assertRaises(RelaxIntError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', dim=data[1])
 
 
     def test_read_intensities_argfail_int_col(self):
@@ -201,7 +201,7 @@ class Test_spectrum(TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, int_method=data[1])
+            self.assertRaises(RelaxStrError, self.spectrum_fns.read_intensities, file='a', spectrum_id='x', int_method=data[1])
 
 
     def test_read_intensities_argfail_mol_name_col(self):

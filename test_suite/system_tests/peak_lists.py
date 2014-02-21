@@ -804,6 +804,26 @@ class Peak_lists(SystemTestCase):
         self.assertEqual(list(cdp.mol[0].res[3].spin[0].intensities.values())[0], 128690)
 
 
+    def test_read_peak_list_sparky_double(self):
+        """Test the reading of two Sparky peak lists simultaneously."""
+
+        # Create the sequence data, and name the spins.
+        self.interpreter.residue.create(3)
+        self.interpreter.residue.create(4)
+        self.interpreter.residue.create(5)
+        self.interpreter.residue.create(6)
+        self.interpreter.spin.name(name='N')
+
+        # Read the peak list.
+        self.interpreter.spectrum.read_intensities(file=["ref_ave.list", "sat_ave.list"], dir=status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'peak_lists', spectrum_id=['ref', 'sat'], int_method='height')
+
+        # Test the data.
+        self.assertEqual(list(cdp.mol[0].res[0].spin[0].intensities.values())[0], 6262)
+        self.assertEqual(list(cdp.mol[0].res[1].spin[0].intensities.values())[0], 148614)
+        self.assertEqual(list(cdp.mol[0].res[2].spin[0].intensities.values())[0], 166842)
+        self.assertEqual(list(cdp.mol[0].res[3].spin[0].intensities.values())[0], 128690)
+
+
     def test_read_peak_list_xeasy(self):
         """Test the reading of an XEasy peak list."""
 
