@@ -40,13 +40,15 @@ from status import Status; status = Status()
 class File_element:
     """A single file element for the multiple file input GUI element."""
 
-    def __init__(self, default='', parent=None, wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, padding=3, height_spacer=1, width_spacer=2, height_element=27, preview=True):
+    def __init__(self, default='', parent=None, index=None, wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, padding=3, height_spacer=1, width_spacer=2, height_element=27, preview=True):
         """Set up the file GUI element.
 
         @keyword default:           The default value of the element.
         @type default:              str
         @keyword parent:            The parent GUI element.
         @type parent:               wx.Panel instance
+        @keyword index:             The index of the file element, to display its sequence number in the GUI element.
+        @type index:                int
         @keyword wildcard:          The file wildcard pattern.  For example for opening PDB files, this could be "PDB files (*.pdb)|*.pdb;*.PDB".
         @type wildcard:             String
         @keyword style:             The dialog style.  To open a single file, set to wx.FD_OPEN.  To open multiple files, set to wx.FD_OPEN|wx.FD_MULTIPLE.  To save a single file, set to wx.FD_SAVE.  To save multiple files, set to wx.FD_SAVE|wx.FD_MULTIPLE.
@@ -71,6 +73,16 @@ class File_element:
 
         # Left padding.
         sub_sizer.AddSpacer(padding)
+
+        # The file index.
+        desc = str_to_gui("%i:  " % (index+1))
+        text = wx.StaticText(parent, -1, desc, style=wx.ALIGN_LEFT)
+        text.SetFont(font.normal_bold)
+        text.SetMinSize((35, -1))
+        sub_sizer.Add(text, 0, wx.LEFT|wx.ALIGN_CENTER_VERTICAL|wx.ADJUST_MINSIZE, 0)
+
+        # A little spacing.
+        sub_sizer.AddSpacer(width_spacer)
 
         # The input field.
         self.field = wx.TextCtrl(parent, -1, default)
@@ -726,7 +738,7 @@ class Selector_file_window(wx.Dialog):
         """
 
         # Initialise the element.
-        element = File_element(parent=self.panel)
+        element = File_element(parent=self.panel, index=len(self.elements))
 
         # Set its value.
         if path != None:
