@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,7 +37,7 @@ from gui.errors import gui_raise
 from gui.fonts import font
 from gui.input_elements.bool import Selector_bool
 from gui.input_elements.dir import Selector_dir
-from gui.input_elements.file import Selector_file
+from gui.input_elements.file import Selector_file, Selector_file_multiple
 from gui.input_elements.sequence import Sequence
 from gui.input_elements.sequence_2D import Sequence_2D
 from gui.input_elements.spin_id import Spin_id
@@ -524,6 +524,10 @@ class Uf_page(Wiz_page):
             # Special arg type:  file selection dialog.
             if arg['arg_type'] == 'file sel':
                 self.uf_args[arg['name']] = Selector_file(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
+
+            # Special arg type:  multiple file selection dialog.
+            elif arg['arg_type'] == 'file sel multi':
+                self.uf_args[arg['name']] = Selector_file_multiple(name=arg['name'], parent=self, default=arg['default'], sizer=sizer, desc=desc, wildcard=arg['wiz_filesel_wildcard'], style=arg['wiz_filesel_style'], tooltip=arg['desc'], divider=self._div_left, height_element=self.height_element, preview=arg['wiz_filesel_preview'], read_only=arg['wiz_read_only'])
 
             # Special arg type:  dir arg.
             elif arg['arg_type'] == 'dir':
