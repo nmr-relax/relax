@@ -53,6 +53,7 @@ The data structures used in this module consist of many different index types wh
 # Python module imports.
 from math import atan, floor, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
+from os.path import expanduser
 from random import gauss
 from re import search
 import sys
@@ -1802,11 +1803,13 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
     # Write the file.
     script_grace2images(file=file)
 
-    # Close the batch script, then make it executable.
+    # Close the batch script, then make it executable (expanding any ~ characters).
     file.close()
     if dir:
+        dir = expanduser(dir)
         chmod(dir + sep + file_name, S_IRWXU|S_IRGRP|S_IROTH)
     else:
+        file_name = expanduser(file_name)
         chmod(file_name, S_IRWXU|S_IRGRP|S_IROTH)
 
 
