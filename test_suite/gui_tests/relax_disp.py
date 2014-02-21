@@ -182,7 +182,7 @@ class Relax_disp(GuiTestCase):
         # The spectrum, where the use of Keyword auto will auto-assign spectra Z_A{i}.
         page = wizard.get_page(wizard.page_indices['read'])
         page.uf_args['file'].SetValue(str_to_gui("%sfolded_sparky_corr_final_max_standard_trunc.ser" % data_path))
-        page.uf_args['spectrum_id'].SetValue(['auto'])
+        page.uf_args['spectrum_id'].SetValue('auto')
         wizard._go_next(None)
 
         # The error type window.
