@@ -503,6 +503,10 @@ class Sequence_window(wx.Dialog):
         # Add the bottom buttons.
         self.add_buttons(sizer)
 
+        # Initialise the list of elements to a single element.
+        if not self.sequence.GetItemCount():
+            self.add_element()
+
 
     def GetValue(self):
         """Return the values as a sequence of values.
@@ -559,8 +563,10 @@ class Sequence_window(wx.Dialog):
 
             # Variable dimension sequences - append the item to the end of the blank list.
             else:
-                # First add the index+1.
-                self.sequence.InsertStringItem(i, int_to_gui(i+1))
+                # The first element already exists.
+                if i != 0:
+                    # First add the index+1.
+                    self.sequence.InsertStringItem(i, int_to_gui(i+1))
 
                 # Then set the value.
                 self.sequence.SetStringItem(index=i, col=1, label=self.convert_to_gui(values[i]))
@@ -586,7 +592,7 @@ class Sequence_window(wx.Dialog):
             button.SetToolTipString("Add an item to the list.")
             button.SetMinSize(self.SIZE_BUTTON)
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
-            self.Bind(wx.EVT_BUTTON, self.append_row, button)
+            self.Bind(wx.EVT_BUTTON, self.add_element, button)
 
             # Spacer.
             button_sizer.AddSpacer(20)
@@ -624,6 +630,20 @@ class Sequence_window(wx.Dialog):
         self.Bind(wx.EVT_BUTTON, self.close, button)
 
 
+    def add_element(self, event=None):
+        """Append a new row to the list.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # The next index.
+        next = self.sequence.GetItemCount()
+
+        # Add a new empty row.
+        self.sequence.InsertStringItem(next, int_to_gui(next+1))
+
+
     def add_list(self, sizer):
         """Set up the list control.
 
@@ -651,21 +671,7 @@ class Sequence_window(wx.Dialog):
         # The fixed dimension sequence - add all the rows needed.
         if self.dim:
             for i in range(self.dim):
-                self.append_row(None)
-
-
-    def append_row(self, event):
-        """Append a new row to the list.
-
-        @param event:   The wx event.
-        @type event:    wx event
-        """
-
-        # The next index.
-        next = self.sequence.GetItemCount()
-
-        # Add a new empty row.
-        self.sequence.InsertStringItem(next, int_to_gui(next+1))
+                self.add_element()
 
 
     def close(self, event):
@@ -690,6 +696,10 @@ class Sequence_window(wx.Dialog):
         item = self.sequence.GetItemCount()
         self.sequence.DeleteItem(item-1)
 
+        # If the list is empty, start again with a single blank element.
+        if not self.sequence.GetItemCount():
+            self.add_element()
+
 
     def delete_all(self, event):
         """Remove all items from the list.
@@ -700,3 +710,6 @@ class Sequence_window(wx.Dialog):
 
         # Delete.
         self.sequence.DeleteAllItems()
+
+        # Start again with a single blank element.
+        self.add_element()
