@@ -687,7 +687,6 @@ class Sequence_window(wx.Dialog):
         """
 
         # Delete the last item.
-        print self.sequence.GetItemCount()
         item = self.sequence.GetItemCount()
         self.sequence.DeleteItem(item-1)
 
