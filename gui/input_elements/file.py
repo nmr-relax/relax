@@ -699,10 +699,22 @@ class Selector_file_window(wx.Dialog):
         button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
         button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
         button.SetFont(font.normal)
-        button.SetToolTipString("Add a row to the list.")
+        button.SetToolTipString("Add a file selection item to the list.")
         button.SetMinSize(self.SIZE_BUTTON)
         button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
         self.Bind(wx.EVT_BUTTON, self.add_element, button)
+
+        # Spacer.
+        button_sizer.AddSpacer(20)
+
+        # The delete button.
+        button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete")
+        button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
+        button.SetFont(font.normal)
+        button.SetToolTipString("Delete the last file selection item.")
+        button.SetMinSize(self.SIZE_BUTTON)
+        button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+        self.Bind(wx.EVT_BUTTON, self.delete, button)
 
         # Spacer.
         button_sizer.AddSpacer(20)
@@ -799,8 +811,30 @@ class Selector_file_window(wx.Dialog):
         self.Destroy()
 
 
+    def delete(self, event=None):
+        """Remove the last file selection item from the list.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Destroy the last subsizer.
+        self.elements[-1].sizer.DeleteWindows()
+        self.element_sizer.Remove(self.elements[-1].sizer)
+
+        # Destroy the Python structures.
+        self.elements.pop()
+
+        # If the list is empty, start again with a single blank element.
+        if not len(self.elements):
+            self.add_element()
+
+        # Redraw.
+        self.panel.Layout()
+
+
     def delete_all(self, event=None):
-        """Remove all items from the list.
+        """Remove all file selection items from the list.
 
         @keyword event: The wx event.
         @type event:    wx event
