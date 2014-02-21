@@ -429,7 +429,7 @@ class Sequence_window(wx.Dialog):
     """The Python sequence object editor window."""
 
     # The window size.
-    SIZE = (600, 600)
+    SIZE = (800, 600)
 
     # A border.
     BORDER = 10
@@ -583,10 +583,22 @@ class Sequence_window(wx.Dialog):
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
             button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
             button.SetFont(font.normal)
-            button.SetToolTipString("Add a row to the list.")
+            button.SetToolTipString("Add an item to the list.")
             button.SetMinSize(self.SIZE_BUTTON)
             button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
             self.Bind(wx.EVT_BUTTON, self.append_row, button)
+
+            # Spacer.
+            button_sizer.AddSpacer(20)
+
+            # The delete button.
+            button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Delete")
+            button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-remove', "22x22"), wx.BITMAP_TYPE_ANY))
+            button.SetFont(font.normal)
+            button.SetToolTipString("Delete the last item.")
+            button.SetMinSize(self.SIZE_BUTTON)
+            button_sizer.Add(button, 0, wx.ADJUST_MINSIZE, 0)
+            self.Bind(wx.EVT_BUTTON, self.delete, button)
 
             # Spacer.
             button_sizer.AddSpacer(20)
@@ -665,6 +677,19 @@ class Sequence_window(wx.Dialog):
 
         # Destroy the window.
         self.Destroy()
+
+
+    def delete(self, event):
+        """Remove the last item from the list.
+
+        @param event:   The wx event.
+        @type event:    wx event
+        """
+
+        # Delete the last item.
+        print self.sequence.GetItemCount()
+        item = self.sequence.GetItemCount()
+        self.sequence.DeleteItem(item-1)
 
 
     def delete_all(self, event):
