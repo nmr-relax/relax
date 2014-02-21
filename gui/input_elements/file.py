@@ -184,7 +184,6 @@ class File_element:
 
 
 
-
 class Selector_file:
     """Wizard GUI element for selecting files."""
 
