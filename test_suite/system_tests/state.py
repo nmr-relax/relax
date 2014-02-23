@@ -105,7 +105,7 @@ class State(SystemTestCase):
 
 
     def test_bug_21716_no_cdp_state_save(self):
-        """Catch U{bug #20470<https://gna.org/bugs/?21716>}, the failure to save the relax state when no current data pipe is set."""
+        """Catch U{bug #21716<https://gna.org/bugs/?21716>}, the failure to save the relax state when no current data pipe is set."""
 
         # Create two data pipes.
         self.interpreter.pipe.create('a', 'mf')
