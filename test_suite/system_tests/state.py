@@ -104,6 +104,20 @@ class State(SystemTestCase):
                 i += 1
 
 
+    def test_bug_21716_no_cdp_state_save(self):
+        """Catch U{bug #20470<https://gna.org/bugs/?21716>}, the failure to save the relax state when no current data pipe is set."""
+
+        # Create two data pipes.
+        self.interpreter.pipe.create('a', 'mf')
+        self.interpreter.pipe.create('b', 'mf')
+
+        # Delete the current data pipe.
+        self.interpreter.pipe.delete('b')
+
+        # Save the state.
+        self.interpreter.state.save(self.tmpfile, force=True)
+
+
     def test_state_xml(self):
         """Test the saving, loading, and second saving and loading of the program state in XML format."""
 
