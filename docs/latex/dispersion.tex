@@ -2598,6 +2598,10 @@ Other relax options can be seen by running:
 
 \example{\$ relax --help}
 
+In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
+
+\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
+
 
 % Two analyses.
 %~~~~~~~~~~~~~~
@@ -2665,7 +2669,7 @@ A blank analysis tab should now be visible:
 \end{minipage}
 
 The first step will be to change the \gui{Results directory} where all of the automatically created results file, 2D Grace plots, and relax state files will be saved.
-The directory \directory{$\sim$\ossep{}tmp\ossep{}dispersion\osus{}test\ossep{}non\osus{}clustered} will be used for this initial non-clustered analysis.
+The directory \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}non\osus{}clustered} will be used for this initial non-clustered analysis.
 
 
 % Spin systems.
@@ -2740,7 +2744,8 @@ For SQ CPMG-type dispersion data, only the spin isotope information is required.
   }
 \end{minipage}
 
-In this case, all spins are $^{15}$N so simply leave the values to the defaults and click on \guibutton{OK}.
+In this case, all spins are $^{15}$N.
+However as no spins are named yet, the text \guistring{@N*} cannot be used so simply change this to \guistring{@*} and click on \guibutton{OK}.
 The other buttons can be ignored.
 
 
@@ -2798,17 +2803,17 @@ File name   & Spectrum ID & Spectrometer & $\nucpmg$ & Replicate \\
 \midrule
 
 \file{500\osus{}MHz\ossep{}reference.in\osus{}sparky}   & 500\_ref      &  500.0  &       None   &              \\
-\file{500\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 500\_66.667   &  500.0  &   600.0000   &              \\
-\file{500\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 500\_133.33   &  500.0  &    66.6666   & 500\_133.33b \\
+\file{500\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 500\_66.667   &  500.0  &    66.6666   &              \\
+\file{500\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 500\_133.33   &  500.0  &   133.3333   & 500\_133.33b \\
 \file{500\osus{}MHz\ossep{}133.33.in.bis\osus{}sparky}  & 500\_133.33b  &  500.0  &   133.3333   & 500\_133.33  \\
-\file{500\osus{}MHz\ossep{}200.in\osus{}sparky}         & 500\_200.00   &  500.0  &   133.3333   &              \\
-\file{500\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 500\_266.67   &  500.0  &   200.0000   &              \\
-\file{500\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 500\_333.33   &  500.0  &   266.6666   &              \\
-\file{500\osus{}MHz\ossep{}400.in\osus{}sparky}         & 500\_400.00   &  500.0  &   333.3333   &              \\
-\file{500\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 500\_466.67   &  500.0  &   400.0000   &              \\
-\file{500\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 500\_533.33   &  500.0  &   466.6666   & 500\_533.33b \\
+\file{500\osus{}MHz\ossep{}200.in\osus{}sparky}         & 500\_200.00   &  500.0  &   200.0000   &              \\
+\file{500\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 500\_266.67   &  500.0  &   266.6666   &              \\
+\file{500\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 500\_333.33   &  500.0  &   333.3333   &              \\
+\file{500\osus{}MHz\ossep{}400.in\osus{}sparky}         & 500\_400.00   &  500.0  &   400.0000   &              \\
+\file{500\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 500\_466.67   &  500.0  &   466.6666   &              \\
+\file{500\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 500\_533.33   &  500.0  &   533.3333   & 500\_533.33b \\
 \file{500\osus{}MHz\ossep{}533.33.in.bis\osus{}sparky}  & 500\_533.33b  &  500.0  &   533.3333   & 500\_533.33  \\
-\file{500\osus{}MHz\ossep{}600.in\osus{}sparky}         & 500\_600.00   &  500.0  &   533.3333   &              \\
+\file{500\osus{}MHz\ossep{}600.in\osus{}sparky}         & 500\_600.00   &  500.0  &   600.0000   &              \\
 \file{500\osus{}MHz\ossep{}666.67.in\osus{}sparky}      & 500\_666.67   &  500.0  &   666.6666   &              \\
 \file{500\osus{}MHz\ossep{}733.33.in\osus{}sparky}      & 500\_733.33   &  500.0  &   733.3333   &              \\
 \file{500\osus{}MHz\ossep{}800.in\osus{}sparky}         & 500\_800.00   &  500.0  &   800.0000   &              \\
@@ -2818,17 +2823,17 @@ File name   & Spectrum ID & Spectrometer & $\nucpmg$ & Replicate \\
 \file{500\osus{}MHz\ossep{}1000.in\osus{}sparky}        & 500\_1000.0   &  500.0  &  1000.0000   &              \\
  \\
 \file{800\osus{}MHz\ossep{}reference.in\osus{}sparky}   & 800\_ref      &  800.0  &       None   &              \\
-\file{800\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 800\_66.667   &  800.0  &   600.0000   &              \\
-\file{800\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 800\_133.33   &  800.0  &    66.6666   & 800\_133.33b \\
+\file{800\osus{}MHz\ossep{}66.667.in\osus{}sparky}      & 800\_66.667   &  800.0  &    66.6666   &              \\
+\file{800\osus{}MHz\ossep{}133.33.in\osus{}sparky}      & 800\_133.33   &  800.0  &   133.3333   & 800\_133.33b \\
 \file{800\osus{}MHz\ossep{}133.33.in.bis\osus{}sparky}  & 800\_133.33b  &  800.0  &   133.3333   & 800\_133.33  \\
-\file{800\osus{}MHz\ossep{}200.in\osus{}sparky}         & 800\_200.00   &  800.0  &   133.3333   &              \\
-\file{800\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 800\_266.67   &  800.0  &   200.0000   &              \\
-\file{800\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 800\_333.33   &  800.0  &   266.6666   &              \\
-\file{800\osus{}MHz\ossep{}400.in\osus{}sparky}         & 800\_400.00   &  800.0  &   333.3333   &              \\
-\file{800\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 800\_466.67   &  800.0  &   400.0000   &              \\
-\file{800\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 800\_533.33   &  800.0  &   466.6666   &              \\
-\file{800\osus{}MHz\ossep{}533.33.in.bis\osus{}sparky}  & 800\_533.33b  &  800.0  &   533.3333   & 800\_533.33b \\
-\file{800\osus{}MHz\ossep{}600.in\osus{}sparky}         & 800\_600.00   &  800.0  &   533.3333   & 800\_533.33  \\
+\file{800\osus{}MHz\ossep{}200.in\osus{}sparky}         & 800\_200.00   &  800.0  &   200.0000   &              \\
+\file{800\osus{}MHz\ossep{}266.67.in\osus{}sparky}      & 800\_266.67   &  800.0  &   266.6666   &              \\
+\file{800\osus{}MHz\ossep{}333.33.in\osus{}sparky}      & 800\_333.33   &  800.0  &   333.3333   &              \\
+\file{800\osus{}MHz\ossep{}400.in\osus{}sparky}         & 800\_400.00   &  800.0  &   400.0000   &              \\
+\file{800\osus{}MHz\ossep{}466.67.in\osus{}sparky}      & 800\_466.67   &  800.0  &   466.6666   &              \\
+\file{800\osus{}MHz\ossep{}533.33.in\osus{}sparky}      & 800\_533.33   &  800.0  &   533.3333   & 800\_533.33b \\
+\file{800\osus{}MHz\ossep{}533.33.in.bis\osus{}sparky}  & 800\_533.33b  &  800.0  &   533.3333   & 800\_533.33  \\
+\file{800\osus{}MHz\ossep{}600.in\osus{}sparky}         & 800\_600.00   &  800.0  &   600.0000   &              \\
 \file{800\osus{}MHz\ossep{}666.67.in\osus{}sparky}      & 800\_666.67   &  800.0  &   666.6666   &              \\
 \file{800\osus{}MHz\ossep{}733.33.in\osus{}sparky}      & 800\_733.33   &  800.0  &   733.3333   &              \\
 \file{800\osus{}MHz\ossep{}800.in\osus{}sparky}         & 800\_800.00   &  800.0  &   800.0000   &              \\
@@ -3028,6 +3033,12 @@ For the missing spectrometer frequency for the \guistring{500\_866.67} spectrum 
 For the missing $\nucpmg$ value for the \guistring{800\_133.33} spectrum ID, the \guimenuitemone{Set the CPMG pulse frequeny $\nucpmg$} menu entry can be used.
 All of the metadata should be double checked and fixed where required using the popup menu.
 
+
+% Choosing the models to optimise.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- choosing the models to optimise}
+
 The next step is to specify which relaxation dispersion models will be used in the analysis.
 The number of models used should be limited based on your knowledge of the problem.
 Depending on experimental information, a number of models can be ruled out.
@@ -3058,16 +3069,27 @@ To chose which models will be used in the analysis, click on the \guibutton{Modi
 The \guistring{Pure numerical solution} flag will be left on \guistring{False}.
 But if you prefer to only have results from the numerical models, this can be changed to \guistring{True} by clicking on the \guibutton{Toggle} button (note that the `CR72' model should nevertheless be used to speed up optimisation -- see section~\ref{sect: Dispersion parameter grid search} on page~\pageref{sect: Dispersion parameter grid search} for details).
 
+
+% Optimisation settings.
+%~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- optimisation settings}
+
 The grid search increment number of 21 might be excessive, especially if the multiprocessor framework is not used to speed up calculations (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}).
 This value can be changed to 11, as this number is probably sufficient for most dispersion analyses.
-For the tutorial however, the value of 3 will be used to cut the calculation time by orders of magnitude.
 
-Also for speed, the number of Monte Carlo simulations will be set to 5.
+Also for speed, the number of Monte Carlo simulations will be set to 200.
 However for real analyses, the minimum number of 500 should be used for accurate parameter error estimates.
 The \guistring{Per model error analysis} setting will be left to \guistring{False}.
 And the \guistring{Insignificance level} will be left at 1.0 (see section~\ref{sect: Dispersion curve insignificance} on page~\pageref{sect: Dispersion curve insignificance}).
 
-Finally, click the \guibutton{Execute} button to start the analysis:
+
+% Execution of the non-clustered analysis.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- execution of the non-clustered analysis}
+
+To start the analysis, simply click the \guibutton{Execute} button to start the analysis:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
@@ -3078,3 +3100,273 @@ Finally, click the \guibutton{Execute} button to start the analysis:
     {graphics/screenshots/dispersion_analysis/executing}
   }
 \end{minipage}
+
+If the setup is incomplete, an error window will appear describing the problem.
+If a slow computer is used without Gary Thompson's multiprocessor, the calculation time could take one to several days.
+But on a modern, multi-core system using the OpenMPI multiprocessor, the calculation should only take hours.
+Once complete, you will see:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/fin_non_clustered}
+  }
+\end{minipage}
+
+The relax controller window can be closed.
+At all stages of the analysis, the logs should be checked for all warnings.
+For example searching for the text `RelaxWarning' in the log file \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered}, the only warnings can be seen at the end of the analysis.
+These can be seen to be harmless as they are indicating that certain Grace 2D plots contain no data -- specifically those for dispersion parameters not present in the set of models optimised.
+Any other warnings should however be very carefully noted and checked.
+
+
+% Inspection of the results.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- inspection of the results}
+
+To view the results of the analysis, the relax results window should now be opened.
+Otherwise, click on the \guimenuitemtwo{View}{Results viewer} menu entry to open the window.
+This window will list all of the \file{*.out} text files and \file{*.agr} 2D Grace plots created by the auto-analysis.
+By double clicking on the file, these can be opened.
+The operating specific text editor will be launched for the text files.
+For the Grace files, the installed Grace version (Xmgrace, QtGrace, or GraceGTK) will be launched.
+
+Firstly, to see which models have been chosen for the spin systems and which have no statistically significant dispersion, find the \file{model.out} file and double click on it.
+You should see the following:
+
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+# Parameter description:  The dispersion model.
+#
+# mol_name    res_num    res_name    spin_num    spin_name    value                        error    
+None          1          GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          2          GLY         None        N            'No Rex'                     None     
+None          3          GLY         None        N            'No Rex'                     None     
+None          4          GLY         None        N            'No Rex'                     None     
+None          5          GLY         None        N            'CR72'                       None     
+None          6          GLY         None        N            'No Rex'                     None     
+None          7          GLY         None        N            'No Rex'                     None     
+None          8          GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          9          GLY         None        N            None                         None     
+None          10         GLY         None        N            'No Rex'                     None     
+None          11         GLY         None        N            'No Rex'                     None     
+None          12         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          13         GLY         None        N            'No Rex'                     None     
+None          14         GLY         None        N            'CR72'                       None     
+None          15         GLY         None        N            'No Rex'                     None     
+None          16         GLY         None        N            'No Rex'                     None     
+None          17         GLY         None        N            'No Rex'                     None     
+None          18         GLY         None        N            'No Rex'                     None     
+None          19         GLY         None        N            'No Rex'                     None     
+None          20         GLY         None        N            'No Rex'                     None     
+None          21         GLY         None        N            'CR72'                       None     
+None          22         GLY         None        N            'No Rex'                     None     
+None          23         GLY         None        N            'CR72'                       None     
+None          24         GLY         None        N            'No Rex'                     None     
+None          25         GLY         None        N            'No Rex'                     None     
+None          26         GLY         None        N            'CR72'                       None     
+None          27         GLY         None        N            None                         None     
+None          28         GLY         None        N            None                         None     
+None          29         GLY         None        N            'No Rex'                     None     
+None          30         GLY         None        N            None                         None     
+None          31         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          32         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          33         GLY         None        N            'No Rex'                     None     
+None          34         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          35         GLY         None        N            'No Rex'                     None     
+None          36         GLY         None        N            'No Rex'                     None     
+None          37         GLY         None        N            'No Rex'                     None     
+None          38         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          39         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          40         GLY         None        N            'No Rex'                     None     
+None          41         GLY         None        N            'No Rex'                     None     
+None          42         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          43         GLY         None        N            'No Rex'                     None     
+None          44         GLY         None        N            'No Rex'                     None     
+None          45         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          46         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          47         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          48         GLY         None        N            'No Rex'                     None     
+None          49         GLY         None        N            'No Rex'                     None     
+None          50         GLY         None        N            'No Rex'                     None     
+None          51         GLY         None        N            'CR72'                       None     
+None          52         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          53         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          54         GLY         None        N            None                         None     
+None          55         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          56         GLY         None        N            'No Rex'                     None     
+None          57         GLY         None        N            'No Rex'                     None     
+None          58         GLY         None        N            'No Rex'                     None     
+None          59         GLY         None        N            'CR72'                       None     
+None          60         GLY         None        N            'No Rex'                     None     
+None          61         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          62         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          63         GLY         None        N            'CR72'                       None     
+None          64         GLY         None        N            'CR72'                       None     
+None          65         GLY         None        N            'CR72'                       None     
+None          66         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          67         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          68         GLY         None        N            None                         None     
+None          69         GLY         None        N            None                         None     
+None          70         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          71         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          72         GLY         None        N            'NS CPMG 2-site expanded'    None     
+None          73         GLY         None        N            'CR72'                       None     
+\end{lstlisting}
+
+Excluding the deselected spin systems with the model `None' and those with no statistically significant dispersion, `No Rex', it can be seen that in some cased the `CR72' model is selected whereas in others the `NS CPMG 2-site expanded' model is selected.
+The differences between the `CR72' analytic model and the `NS CPMG 2-site expanded' numeric model are insignificant.
+To see this, open the \file{CR72\ossep{}chi2.agr} and \file{NS CPMG 2-site expanded\ossep{}chi2.agr} Grace files in the \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered} directory in a text editor and compare the optimised chi-squared values.
+
+To see the optimised parameter values, double click on the \file{kex.agr} file to see the exchange rates.
+This will open the \uf{grace\ufsep{}view} user function window by which the file can be opened.
+The default settings produces the following graph:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1224 915
+    ]
+    {graphics/screenshots/dispersion_analysis/grace_kex}
+  }
+\end{minipage}
+
+The exchange rate for most spins experiencing exchange is between 1000 and 2000~s$^{-1}$.
+Opening the \file{pA.agr} file, it can be seen that the population of state A is approximately 0.98.
+A number of spins have much lower values than this, but their errors are huge meaning that all but 3 are statistically the same as 0.98.
+
+To see one of the dispersion curves, open the \file{disp\osus{}64\osus{}N.agr} file in Grace.
+The default settings will produce the graph:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=\textwidth,
+      bb=14 14 788 523
+    ]
+    {graphics/screenshots/dispersion_analysis/disp_64_N}
+  }
+\end{minipage}
+
+To improve the appearance of this plot, please refer to the Grace software documentation.
+
+
+% comparing models.
+%~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- comparing models}
+
+To compare the results of the different optimised models, the pipe editor window can be used to switch between the data pipes containing the results of the individual models.
+Select the \guimenuitemtwo{View}{Data pipe editor} menu entry.
+Right click on the model of interest and select \guimenuitemone{Switch to this pipe}:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1377 642
+    ]
+    {graphics/screenshots/dispersion_analysis/pipe_window}
+  }
+\end{minipage}
+
+The results viewer window can then be used to open the text files and Grace plots for that model.
+Switch to the data pipe of another model and open the same file to compare the results.
+
+
+% The clustered analysis.
+%~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- the clustered analysis}
+
+For the clustered analysis, we will focus on one group of spins -- those from residues 59 to 67.
+These can be seen to have very similar dynamics:
+
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+# Parameter description:  The population for state A.
+#
+# mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
+[snip]
+None        59       GLY       None      N             0.991889219955985    0.0450783237839957    
+None        60       GLY       None      N          None                  None                    
+None        61       GLY       None      N             0.988921118720546  0.000172502417409869    
+None        62       GLY       None      N             0.890931457907137     0.144215844986902    
+None        63       GLY       None      N              0.99156311187483   0.00115458534680375    
+None        64       GLY       None      N             0.983421376088971   0.00136664677079204    
+None        65       GLY       None      N             0.993825345814723   0.00190588775997763    
+None        66       GLY       None      N             0.996758947832568    0.0446859094999393    
+None        67       GLY       None      N             0.987205570324475  0.000218557328139047    
+[snip]
+\end{lstlisting}
+
+\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+# Parameter description:  The exchange rate.
+#
+# mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
+[snip]
+None        59       GLY       None      N              1809.98484500718      220.217062176079    
+None        60       GLY       None      N          None                  None                    
+None        61       GLY       None      N              1721.40918090412      77.6195110540786    
+None        62       GLY       None      N              1561.11252768657      234.177688850931    
+None        63       GLY       None      N              1444.52431393838      116.228169825369    
+None        64       GLY       None      N              1920.62433476407      92.6644161872285    
+None        65       GLY       None      N              1310.87783806055      162.660315854685    
+None        66       GLY       None      N               1227.3688268331      261.646351662978    
+None        67       GLY       None      N              1768.87422361068      75.8203628883989    
+[snip]
+\end{lstlisting}
+
+All other spins will be deselected.
+
+From the non-clustered results, it could be argued that all spins in the entire system experience the same dynamic process, i.e. have the same $\pA$ and $\kex$ values.
+Such an analysis could be performed at a later stage.
+
+To start the analysis, open the analysis selection wizard as was performed previously.
+Name the analysis as `Dispersion - Hansen (clustered :59 to :67)'.
+Once the analysis is initialised, change the results directory to \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}clustered}.
+To use the results of the previous analysis to speed up this analysis, the clustering will cause the grid search to be impossibly long, change the \guistring{Previous run directory} value to \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}non\osus{}clustered}.
+
+Set up the spin systems as for the non-clustered analysis.
+This time however deselect all spins except for those of residues 59 to 67 (excluding 60).
+This can be performed by right clicking on the spins in the spin viewer window.
+The next step is to cluster these eight spins.
+
+In the \guistring{Spin cluster IDs} GUI element, click on the \guibutton{Cluster} button.
+This launches the \uf{relax\ufus{}disp\ufsep{}cluster} user function.
+Set the cluster ID to \guistring{res\_59\_to\_67}, for example, and the spin ID string to \guistring{:59-67} (this says all residues from 59 to 67, see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for details):
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/relax_disp_cluster}
+  }
+\end{minipage}
+
+Then set the spin isotope and load all of the Sparky peak lists as before.
+Chose the models `R2eff', `No Rex', `CR72', and `NS CPMG 2-site expanded'.
+As the `CR72' and `NS CPMG 2-site expanded' were seen as being statistically equivalent in the non-clustered analysis, click on the \guibutton{Toggle} button of the \guistring{Pure numerical solutions} GUI element to avoid the `CR72' model in the model selection step.
+
+Set the grid search to 11 increments, though this will have no effect as no grid searches will be performed as the results from the non-clustered analysis will be used as the optimisation starting point.
+Set the Monte Carlo simulations to 200.
+The main window should now look like:
+
+\begin{minipage}[h]{\linewidth}
+  \centerline{
+    \includegraphics[
+      width=0.9\textwidth,
+      bb=14 14 1415 1065
+    ]
+    {graphics/screenshots/dispersion_analysis/clustered_setup}
+  }
+\end{minipage}
+
+Start the analysis by clicking on the \guibutton{Execute} button.
+
+
