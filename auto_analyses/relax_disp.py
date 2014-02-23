@@ -216,6 +216,20 @@ class Relax_disp:
             self.interpreter.spectrum.error_analysis(subset=ids)
 
 
+    def name_pipe(self, prefix):
+        """Generate a unique name for the data pipe.
+
+        @param prefix:  The prefix of the data pipe name.
+        @type prefix:   str
+        """
+
+        # The unique pipe name.
+        name = "%s - %s" % (prefix, self.pipe_bundle)
+
+        # Return the name.
+        return name
+
+
     def nesting(self, model=None):
         """Support for model nesting.
 
@@ -377,19 +391,22 @@ class Relax_disp:
         # Printout.
         subsection(file=sys.stdout, text="Pre-run parameters", prespace=1)
 
+        # The data pipe name.
+        pipe_name = self.name_pipe('pre')
+
         # Create a temporary data pipe for the previous run.
-        self.interpreter.pipe.create(pipe_name='pre', pipe_type='relax_disp')
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type='relax_disp')
 
         # Load the previous results.
         path = self.pre_run_dir + sep + model
         self.interpreter.results.read(file='results', dir=path)
 
         # Copy the parameters.
-        self.interpreter.relax_disp.parameter_copy(pipe_from='pre', pipe_to=model)
+        self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name, pipe_to=model)
 
         # Finally, switch back to the original data pipe and delete the temporary one.
         self.interpreter.pipe.switch(pipe_name=model)
-        self.interpreter.pipe.delete(pipe_name='pre')
+        self.interpreter.pipe.delete(pipe_name=pipe_name)
 
 
     def run(self):
@@ -409,7 +426,7 @@ class Relax_disp:
             path = self.results_dir+sep+model
 
             # The name of the data pipe for the model.
-            model_pipe = model
+            model_pipe = self.name_pipe(model)
             if self.is_model_for_selection(model):
                 self.model_pipes.append(model_pipe)
 
@@ -440,7 +457,7 @@ class Relax_disp:
 
             # Copy the R2eff values from the R2eff model data pipe.
             if model != MODEL_R2EFF and MODEL_R2EFF in self.models:
-                self.interpreter.value.copy(pipe_from=MODEL_R2EFF, pipe_to=model, param='r2eff')
+                self.interpreter.value.copy(pipe_from=self.pipe_name(MODEL_R2EFF), pipe_to=model_pipe, param='r2eff')
 
             # Calculate the R2eff values for the fixed relaxation time period data types.
             if model == MODEL_R2EFF and not has_exponential_exp_type():
