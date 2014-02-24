@@ -149,7 +149,7 @@ class Relax_disp(API_base, API_common):
         values = []
         errors = []
         times = []
-        for time in cdp.relax_time_list:
+        for time in loop_time(frq=frq):
             # The data.
             values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
             errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
@@ -378,7 +378,7 @@ class Relax_disp(API_base, API_common):
                 values = []
                 errors = []
                 times = []
-                for time in cdp.relax_time_list:
+                for time in loop_time(frq=frq):
                     values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=sim_index))
                     errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
                     times.append(time)
@@ -1373,7 +1373,7 @@ class Relax_disp(API_base, API_common):
 
             # Generate the data structure to return.
             errors = []
-            for time in cdp.relax_time_list:
+            for time in loop_time(frq=frq):
                 errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
 
         # All other models.
@@ -1597,7 +1597,7 @@ class Relax_disp(API_base, API_common):
 
             # Loop over each time point.
             ti = 0
-            for time in loop_time():
+            for time in loop_time(frq=frq):
                 # Get the intensity keys.
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 

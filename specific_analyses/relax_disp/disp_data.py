@@ -1930,7 +1930,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     set_labels.append("Spin %s" % id)
 
                 # Loop over the relaxation time periods.
-                for time in cdp.relax_time_list:
+                for time in loop_time(frq=frq):
                     # The key.
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
