@@ -195,7 +195,7 @@ class Test_disp_data(UnitTestCase):
                 disp_index += 1
 
 
-    def test_loop_exp_frq_offset_point_time(self):
+    def test_loop_exp_frq_offset_point_time_setup(self):
         """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
 
         # Load the state.

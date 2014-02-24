@@ -113,12 +113,14 @@ class Relax_disp:
         self.interpreter.on(verbose=False)
 
         # Execute.
-        self.run()
+        try:
+            self.run()
 
         # Finish and unlock execution.
-        status.auto_analysis[self.pipe_bundle].fin = True
-        status.current_analysis = None
-        status.exec_lock.release()
+        finally:
+            status.auto_analysis[self.pipe_bundle].fin = True
+            status.current_analysis = None
+            status.exec_lock.release()
 
 
     def is_model_for_selection(self, model=None):

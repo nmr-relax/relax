@@ -196,3 +196,6 @@ class GuiTestCase(TestCase):
 
         # Reset relax.
         reset()
+
+        # Flush all wx events again to allow the reset event to propagate throughout the GUI and the execution lock to be released before the next test starts.
+        wx.Yield()
