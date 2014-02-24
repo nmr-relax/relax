@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -191,18 +191,20 @@ class InteratomList(list):
             xml_to_object(interatom_node, self[-1], file_version=file_version)
 
 
-    def to_xml(self, doc, element):
+    def to_xml(self, doc, element, pipe_type=None):
         """Create XML elements for each spin.
 
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the spin XML elements to.
-        @type element:  XML element object
+        @param doc:         The XML document object.
+        @type doc:          xml.dom.minidom.Document instance
+        @param element:     The element to add the spin XML elements to.
+        @type element:      XML element object
+        @keyword pipe_type: The type of the pipe being converted to XML.
+        @type pipe_type:    str
         """
 
         # Get the specific functions.
-        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_control.pipes.get_type(), raise_error=False)
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_control.pipes.get_type(), raise_error=False)
+        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_type, raise_error=False)
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_type, raise_error=False)
 
         # Loop over the containers.
         for i in range(len(self)):

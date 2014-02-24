@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -305,18 +305,21 @@ class SpinList(list):
             self[-1]._back_compat_hook(file_version)
 
 
-    def to_xml(self, doc, element):
+    def to_xml(self, doc, element, pipe_type=None):
         """Create XML elements for each spin.
 
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the spin XML elements to.
-        @type element:  XML element object
+        @param doc:         The XML document object.
+        @type doc:          xml.dom.minidom.Document instance
+        @param element:     The element to add the spin XML elements to.
+        @type element:      XML element object
+        @keyword pipe_type: The type of the pipe being converted to XML.
+        @type pipe_type:    str
         """
 
         # Get the specific functions.
-        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_control.pipes.get_type(), raise_error=False)
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_control.pipes.get_type(), raise_error=False)
+        print `pipe_type`
+        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_type, raise_error=False)
+        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_type, raise_error=False)
 
         # Loop over the spins.
         for i in range(len(self)):
@@ -565,13 +568,15 @@ class ResidueList(list):
             self[-1].spin.from_xml(spin_nodes, file_version=file_version)
 
 
-    def to_xml(self, doc, element):
+    def to_xml(self, doc, element, pipe_type=None):
         """Create XML elements for each residue.
 
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the residue XML elements to.
-        @type element:  XML element object
+        @param doc:         The XML document object.
+        @type doc:          xml.dom.minidom.Document instance
+        @param element:     The element to add the residue XML elements to.
+        @type element:      XML element object
+        @keyword pipe_type: The type of the pipe being converted to XML.
+        @type pipe_type:    str
         """
 
         # Loop over the residues.
@@ -589,7 +594,7 @@ class ResidueList(list):
             fill_object_contents(doc, res_element, object=self[i], blacklist=['name', 'num', 'spin'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
-            self[i].spin.to_xml(doc, res_element)
+            self[i].spin.to_xml(doc, res_element, pipe_type=pipe_type)
 
 
 
@@ -779,13 +784,15 @@ class MoleculeList(list):
             self[-1].res.from_xml(res_nodes, file_version=file_version)
 
 
-    def to_xml(self, doc, element):
+    def to_xml(self, doc, element, pipe_type=None):
         """Create XML elements for each molecule.
 
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The element to add the molecule XML elements to.
-        @type element:  XML element object
+        @param doc:         The XML document object.
+        @type doc:          Xml.dom.minidom.Document instance
+        @param element:     The element to add the molecule XML elements to.
+        @type element:      XML element object
+        @keyword pipe_type: The type of the pipe being converted to XML.
+        @type pipe_type:    str
         """
 
         # Loop over the molecules.
@@ -803,4 +810,4 @@ class MoleculeList(list):
             fill_object_contents(doc, mol_element, object=self[i], blacklist=['name', 'res', 'type'] + list(self[i].__class__.__dict__.keys()))
 
             # Add the residue data.
-            self[i].res.to_xml(doc, mol_element)
+            self[i].res.to_xml(doc, mol_element, pipe_type=pipe_type)
