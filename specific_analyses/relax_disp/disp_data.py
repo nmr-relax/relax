@@ -873,7 +873,7 @@ def loop_exp_frq_offset_point_time(return_indices=False):
                 # Then the dispersion points.
                 for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
                     # Finally the relaxation times.
-                    for time, ti in loop_time(return_indices=True):
+                    for time, ti in loop_time(frq=frq, return_indices=True):
                         # Yield the data.
                         if return_indices:
                             yield exp_type, frq, offset, point, time, ei, mi, oi, di, ti
@@ -1281,9 +1281,13 @@ def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
         yield id
 
 
-def loop_time(return_indices=False):
+def loop_time(exp_type=None, frq=None, return_indices=False):
     """Generator method for looping over the relaxation times.
 
+    @keyword exp_type:          The experiment type.
+    @type exp_type:             str
+    @keyword frq:               The spectrometer frequency in Hz.
+    @type frq:                  float
     @keyword return_indices:    A flag which if True will cause the relaxation time index to be returned as well.
     @type return_indices:       bool
     @return:                    The relaxation time.
@@ -1296,6 +1300,28 @@ def loop_time(return_indices=False):
     # Loop over the time points.
     if hasattr(cdp, 'relax_time_list'):
         for time in cdp.relax_time_list:
+            # Find a matching experiment ID.
+            found = False
+            for id in cdp.exp_type.keys():
+                # Skip non-matching experiments.
+                if exp_type != None and cdp.exp_type[id] != exp_type:
+                    continue
+
+                # Skip non-matching spectrometer frequencies.
+                if frq != None and hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
+                    continue
+
+                if time != cdp.relax_times[id]:
+                    continue
+
+                # Found.
+                found = True
+                break
+
+            # No data.
+            if not found:
+                continue
+
             # Increment the index.
             ti += 1
 

@@ -66,7 +66,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            print exp_type, frq, ei, mi
+            print(exp_type, frq, ei, mi)
             count += 1
         self.assertEqual(count, 2)
 
@@ -112,7 +112,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
-            print exp_type, frq, offset, ei, mi, oi
+            print(exp_type, frq, offset, ei, mi, oi)
             count += 1
         self.assertEqual(count, 2)
 
@@ -162,7 +162,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-            print exp_type, frq, offset, point, ei, mi, oi, di
+            print(exp_type, frq, offset, point, ei, mi, oi, di)
             count += 1
         self.assertEqual(count, 34)
 
@@ -186,6 +186,69 @@ class Test_disp_data(UnitTestCase):
             # Check the dispersion point info.
             self.assertAlmostEqual(point, data[frq_index][3][disp_index],2)
             self.assertEqual(di, indices[frq_index][3][disp_index])
+
+            # Increment the data index.
+            if disp_index == 16:
+                frq_index += 1
+                disp_index = 0
+            else:
+                disp_index += 1
+
+
+    def test_loop_exp_frq_offset_point_time(self):
+        """Unit test of the loop_exp_frq_offset_point_time() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data (exp_type, frq, offset, point).
+        data = [
+            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0],0.04],
+            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0],0.06]
+        ]
+
+        # Original indices (ei, mi, oi).
+        indices = [
+            [0, 0, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 0],
+            [0, 1, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 1]
+        ]
+
+        # Check the number of iterations.
+        print("Checking the number of iterations of the loop.")
+        count = 0
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            print(exp_type, frq, offset, point, time, ei, mi, oi, di, ti)
+            count += 1
+        self.assertEqual(count, 34)
+
+        # Check the values.
+        print("Checking the values returned by the loop.")
+        frq_index = 0
+        disp_index = 0
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            # Check the experiment info.
+            self.assertEqual(exp_type, data[frq_index][0])
+            self.assertEqual(ei, indices[frq_index][0])
+
+            # Check the frequency info.
+            self.assertEqual(frq, data[frq_index][1])
+            self.assertEqual(mi, indices[frq_index][1])
+
+            # Check the offset info.
+            self.assertEqual(offset, data[frq_index][2])
+            self.assertEqual(oi, indices[frq_index][2])
+
+            # Check the dispersion point info.
+            self.assertAlmostEqual(point, data[frq_index][3][disp_index],2)
+            self.assertEqual(di, indices[frq_index][3][disp_index])
+
+            # Check the time point info.
+            self.assertEqual(time, data[frq_index][4])
+            self.assertEqual(ti, indices[frq_index][4])
 
             # Increment the data index.
             if disp_index == 16:
