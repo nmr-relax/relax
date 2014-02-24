@@ -248,41 +248,41 @@ class Relax_disp:
         # The simpler model.
         nested_pipe = None
         if model == MODEL_LM63_3SITE and MODEL_LM63 in self.models:
-            nested_pipe = MODEL_LM63
+            nested_pipe = self.name_pipe(MODEL_LM63)
         if model == MODEL_CR72_FULL and MODEL_CR72 in self.models:
-            nested_pipe = MODEL_CR72
+            nested_pipe = self.name_pipe(MODEL_CR72)
         if model == MODEL_MMQ_CR72 and MODEL_CR72 in self.models:
-            nested_pipe = MODEL_CR72
+            nested_pipe = self.name_pipe(MODEL_CR72)
         if model == MODEL_NS_CPMG_2SITE_3D_FULL and MODEL_NS_CPMG_2SITE_3D in self.models:
-            nested_pipe = MODEL_NS_CPMG_2SITE_3D
+            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_3D)
         if model == MODEL_NS_CPMG_2SITE_STAR_FULL and MODEL_NS_CPMG_2SITE_STAR in self.models:
-            nested_pipe = MODEL_NS_CPMG_2SITE_STAR
+            nested_pipe = self.name_pipe(MODEL_NS_CPMG_2SITE_STAR)
         if model == MODEL_NS_MMQ_3SITE_LINEAR and MODEL_NS_MMQ_2SITE in self.models:
-            nested_pipe = MODEL_NS_MMQ_2SITE
+            nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
         if model == MODEL_NS_MMQ_3SITE:
             if MODEL_NS_MMQ_3SITE_LINEAR in self.models:
-                nested_pipe = MODEL_NS_MMQ_3SITE_LINEAR
+                nested_pipe = self.name_pipe(MODEL_NS_MMQ_3SITE_LINEAR)
             elif MODEL_NS_MMQ_2SITE in self.models:
-                nested_pipe = MODEL_NS_MMQ_2SITE
+                nested_pipe = self.name_pipe(MODEL_NS_MMQ_2SITE)
         if model == MODEL_NS_R1RHO_3SITE_LINEAR and MODEL_NS_R1RHO_2SITE in self.models:
-            nested_pipe = MODEL_NS_R1RHO_2SITE
+            nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
         if model == MODEL_NS_R1RHO_3SITE:
             if MODEL_NS_R1RHO_3SITE_LINEAR in self.models:
-                nested_pipe = MODEL_NS_R1RHO_3SITE_LINEAR
+                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_3SITE_LINEAR)
             elif MODEL_NS_R1RHO_2SITE in self.models:
-                nested_pipe = MODEL_NS_R1RHO_2SITE
+                nested_pipe = self.name_pipe(MODEL_NS_R1RHO_2SITE)
 
 
         # Using the analytic solution.
         analytic = False
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR] and MODEL_CR72 in self.models:
-            nested_pipe = MODEL_CR72
+            nested_pipe = self.name_pipe(MODEL_CR72)
             analytic = True
         elif model == MODEL_NS_MMQ_2SITE and MODEL_MMQ_CR72 in self.models:
-            nested_pipe = MODEL_MMQ_CR72
+            nested_pipe = self.name_pipe(MODEL_MMQ_CR72)
             analytic = True
         if model == MODEL_NS_R1RHO_2SITE and MODEL_MP05 in self.models:
-            nested_pipe = MODEL_MP05
+            nested_pipe = self.name_pipe(MODEL_MP05)
             analytic = True
 
         # No nesting.
