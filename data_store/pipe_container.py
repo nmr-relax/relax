@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -288,13 +288,15 @@ class PipeContainer(Prototype):
         return True
 
 
-    def to_xml(self, doc, element):
+    def to_xml(self, doc, element, pipe_type=None):
         """Create a XML element for the current data pipe.
 
-        @param doc:     The XML document object.
-        @type doc:      xml.dom.minidom.Document instance
-        @param element: The XML element to add the pipe XML element to.
-        @type element:  XML element object
+        @param doc:         The XML document object.
+        @type doc:          xml.dom.minidom.Document instance
+        @param element:     The XML element to add the pipe XML element to.
+        @type element:      XML element object
+        @keyword pipe_type: The type of the pipe being converted to XML.
+        @type pipe_type:    str
         """
 
         # Add all simple python objects within the PipeContainer to the global element.
@@ -319,10 +321,10 @@ class PipeContainer(Prototype):
             self.align_tensors.to_xml(doc, element)
 
         # Add the molecule-residue-spin data.
-        self.mol.to_xml(doc, element)
+        self.mol.to_xml(doc, element, pipe_type=pipe_type)
 
         # Add the interatomic data.
-        self.interatomic.to_xml(doc, element)
+        self.interatomic.to_xml(doc, element, pipe_type=pipe_type)
 
         # Add the structural data, if it exists.
         if hasattr(self, 'structure'):

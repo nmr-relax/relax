@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -615,7 +615,7 @@ class Relax_data_store(dict):
             pipe_element.setAttribute('type', self[pipe].pipe_type)
 
             # Fill the data pipe XML element.
-            self[pipe].to_xml(xmldoc, pipe_element)
+            self[pipe].to_xml(xmldoc, pipe_element, pipe_type=self[pipe].pipe_type)
 
         # Write out the XML file.
         file.write(xmldoc.toprettyxml(indent='    '))
