@@ -29,6 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoPipeError
 from lib.list import unique_elements
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
@@ -404,10 +405,10 @@ class Relax_disp:
         self.interpreter.results.read(file='results', dir=path)
 
         # Copy the parameters.
-        self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name, pipe_to=model)
+        self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name, pipe_to=self.name_pipe(model))
 
         # Finally, switch back to the original data pipe and delete the temporary one.
-        self.interpreter.pipe.switch(pipe_name=model)
+        self.interpreter.pipe.switch(pipe_name=self.name_pipe(model))
         self.interpreter.pipe.delete(pipe_name=pipe_name)
 
 
