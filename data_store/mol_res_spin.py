@@ -317,6 +317,7 @@ class SpinList(list):
         """
 
         # Get the specific functions.
+        print `pipe_type`
         data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_type, raise_error=False)
         return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_type, raise_error=False)
 

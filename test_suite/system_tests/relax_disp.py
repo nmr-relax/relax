@@ -90,21 +90,20 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope('15N')
 
         # Create the R2eff data pipe and load the results.
-        self.interpreter.pipe.create(pipe_name='R2eff - relax_disp', pipe_type='relax_disp')
-        self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
+        self.interpreter.pipe.create(pipe_name='R2eff', pipe_type='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff')
         self.interpreter.results.read(data_path+sep+'r2eff_pipe')
         self.interpreter.deselect.spin(':4')
 
         # The model data pipe.
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
 
         # Set the model.
         self.interpreter.relax_disp.select_model(model=model)
 
         # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to=pipe_name, param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 
     def setup_kteilum_fmpoulsen_makke_cpmg_data(self, model=None, expfolder=None):
@@ -125,15 +124,14 @@ class Relax_disp(SystemTestCase):
         self.interpreter.results.read(data_path+sep+'r2eff_pipe_trunc')
 
         # The model data pipe.
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
 
         # Set the model.
         self.interpreter.relax_disp.select_model(model=model)
 
         # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
 
     def setup_korzhnev_2005_data(self, data_list=[]):
@@ -362,7 +360,7 @@ class Relax_disp(SystemTestCase):
             phi_ex.append(pA * (1.0 - pA) * delta_omega[i]**2)
 
         # Switch to the 'DPL94' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('DPL94 - relax_disp')
+        self.interpreter.pipe.switch('DPL94')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -560,7 +558,7 @@ class Relax_disp(SystemTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
-        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -576,7 +574,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 3908.00127830003, 3)
 
         # The 'LM63' model checks.
-        self.interpreter.pipe.switch(pipe_name='LM63 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='LM63')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -598,7 +596,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 17.0776426190574, 3)
 
         # The 'CR72' model checks.
-        self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='CR72')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -645,7 +643,7 @@ class Relax_disp(SystemTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
-        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -661,7 +659,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2/10000, 3908.00127830003/10000, 3)
 
         # The 'CR72' model checks.
-        self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='CR72')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -686,7 +684,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 15.6595374286822, 3)
 
         # The 'NS CPMG 2-site expanded' model checks.
-        self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='NS CPMG 2-site expanded')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -711,7 +709,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 15.1644904768219, 3)
 
         # The final data pipe checks.
-        self.interpreter.pipe.switch(pipe_name='final - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='final')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         self.assertEqual(spin70.model, 'NS CPMG 2-site expanded')
@@ -741,7 +739,7 @@ class Relax_disp(SystemTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
-        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -757,7 +755,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 3908.00127830003, 3)
 
         # The 'LM63' model checks.
-        self.interpreter.pipe.switch(pipe_name='LM63 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='LM63')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -779,7 +777,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 17.0776426190574, 3)
 
         # The 'CR72' model checks.
-        self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='CR72')
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
         print("\n\nOptimised parameters:\n")
@@ -827,7 +825,7 @@ class Relax_disp(SystemTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
 
         # The 'No Rex' model checks.
-        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex')
         spin4 = return_spin(":4")
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
@@ -846,7 +844,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 127.636629246204, 3)
 
         # The 'CR72' model checks.
-        self.interpreter.pipe.switch(pipe_name='CR72 - relax_disp')
+        self.interpreter.pipe.switch(pipe_name='CR72')
         spin4 = return_spin(":4")
         spin70 = return_spin(":70")
         spin71 = return_spin(":71")
@@ -2349,7 +2347,7 @@ class Relax_disp(SystemTestCase):
         rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
 
         # Switch to the 'R2eff' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('R2eff - relax_disp')
+        self.interpreter.pipe.switch('R2eff')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -2366,7 +2364,7 @@ class Relax_disp(SystemTestCase):
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'M61' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('M61 - relax_disp')
+        self.interpreter.pipe.switch('M61')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -2403,7 +2401,7 @@ class Relax_disp(SystemTestCase):
         rates = [[3.59768160399, 2.85730469783, 2.59328084312, 2.47019857325, 2.40310451058, 2.36256876552, 2.33622716364, 2.31815271355, 2.30521680479, 2.29564174079, 2.28835686631], [29.390726416, 26.4292187913, 25.3731233725, 24.880794293, 24.6124180423, 24.4502750621, 24.3449086546, 24.2726108542, 24.2208672192, 24.1825669632, 24.1534274652]]
 
         # Switch to the 'R2eff' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('R2eff - relax_disp')
+        self.interpreter.pipe.switch('R2eff')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -2420,7 +2418,7 @@ class Relax_disp(SystemTestCase):
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'M61' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('M61 - relax_disp')
+        self.interpreter.pipe.switch('M61')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -2452,7 +2450,7 @@ class Relax_disp(SystemTestCase):
         r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'M61 skew' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch("%s - relax_disp" % MODEL_M61B)
+        self.interpreter.pipe.switch(MODEL_M61B)
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -2900,9 +2898,8 @@ class Relax_disp(SystemTestCase):
 
         # The model data pipe.
         model = 'MMQ CR72'
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
 
         # Set the model.
         self.interpreter.relax_disp.select_model(model=model)
@@ -2911,7 +2908,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":135-137")
 
         # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
         # Alias the spins.
         spin135S = cdp.mol[0].res[0].spin[0]
@@ -3026,9 +3023,8 @@ class Relax_disp(SystemTestCase):
 
         # The model data pipe.
         model = 'NS MMQ 2-site'
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
 
         # Set the model.
         self.interpreter.relax_disp.select_model(model=model)
@@ -3037,7 +3033,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":135-137")
 
         # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
         # Alias the spins.
         spin135S = cdp.mol[0].res[0].spin[0]
@@ -3136,15 +3132,14 @@ class Relax_disp(SystemTestCase):
 
         # The model data pipe.
         model = 'NS R1rho 2-site'
-        pipe_name = "%s - relax_disp" % model
-        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=pipe_name, bundle_to='relax_disp')
-        self.interpreter.pipe.switch(pipe_name=pipe_name)
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to=model, bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name=model)
 
         # Set the model.
         self.interpreter.relax_disp.select_model(model=model)
 
         # Copy the data.
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=pipe_name, param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to=model, param='r2eff')
 
         # Alias the spins.
         spin1 = cdp.mol[0].res[0].spin[0]
@@ -3236,7 +3231,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Switch to the 'MP05' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('MP05 - relax_disp')
+        self.interpreter.pipe.switch('MP05')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -3296,7 +3291,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
         # Switch to the 'MP05' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('TAP03 - relax_disp')
+        self.interpreter.pipe.switch('TAP03')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -3334,7 +3329,7 @@ class Relax_disp(SystemTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'TP02' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('TP02 - relax_disp')
+        self.interpreter.pipe.switch('TP02')
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
