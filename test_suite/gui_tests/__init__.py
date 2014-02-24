@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,6 +36,7 @@ from test_suite.gui_tests.bruker import Bruker
 from test_suite.gui_tests.consistency_tests import Ct
 from test_suite.gui_tests.dead_uf_pages import Dead_uf_pages
 from test_suite.gui_tests.frame_order import Frame_order
+from test_suite.gui_tests.general import General
 from test_suite.gui_tests.interatomic import Interatomic
 from test_suite.gui_tests.jw_mapping import Jw_mapping
 from test_suite.gui_tests.model_free import Mf
@@ -51,6 +52,7 @@ from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
 
 __all__ = ['bmrb',
            'consistency_tests',
+           'gui',
            'interatomic',
            'jw_mapping',
            'model_free',
@@ -118,6 +120,7 @@ class GUI_test_runner:
             suite_array.append(TestLoader().loadTestsFromTestCase(Ct))
             suite_array.append(TestLoader().loadTestsFromTestCase(Dead_uf_pages))
             suite_array.append(TestLoader().loadTestsFromTestCase(Frame_order))
+            suite_array.append(TestLoader().loadTestsFromTestCase(General))
             suite_array.append(TestLoader().loadTestsFromTestCase(Interatomic))
             suite_array.append(TestLoader().loadTestsFromTestCase(Jw_mapping))
             suite_array.append(TestLoader().loadTestsFromTestCase(Mf))
