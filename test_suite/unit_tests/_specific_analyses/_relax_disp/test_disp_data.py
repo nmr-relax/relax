@@ -66,7 +66,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            print exp_type, frq, ei, mi
+            print(exp_type, frq, ei, mi)
             count += 1
         self.assertEqual(count, 2)
 
@@ -112,7 +112,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
-            print exp_type, frq, offset, ei, mi, oi
+            print(exp_type, frq, offset, ei, mi, oi)
             count += 1
         self.assertEqual(count, 2)
 
@@ -162,7 +162,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-            print exp_type, frq, offset, point, ei, mi, oi, di
+            print(exp_type, frq, offset, point, ei, mi, oi, di)
             count += 1
         self.assertEqual(count, 34)
 
@@ -221,7 +221,7 @@ class Test_disp_data(UnitTestCase):
         print("Checking the number of iterations of the loop.")
         count = 0
         for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
-            print exp_type, frq, offset, point, time, ei, mi, oi, di, ti
+            print(exp_type, frq, offset, point, time, ei, mi, oi, di, ti)
             count += 1
         self.assertEqual(count, 34)
 
