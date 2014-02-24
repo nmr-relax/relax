@@ -870,10 +870,10 @@ def loop_exp_frq_offset_point_time(return_indices=False):
         for frq, mi in loop_frq(return_indices=True):
             # Then loop over the offset data.
             for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
-                # Then the relaxation times.
-                for time, ti in loop_time(return_indices=True):
-                    # Finally the dispersion points.
-                    for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, time=time, return_indices=True):
+                # Then the dispersion points.
+                for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
+                    # Finally the relaxation times.
+                    for time, ti in loop_time(return_indices=True):
                         # Yield the data.
                         if return_indices:
                             yield exp_type, frq, offset, point, time, ei, mi, oi, di, ti
