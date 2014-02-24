@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -242,21 +242,6 @@ class Analysis_controller:
             print("debug> %s:  Deleting the analysis GUI object." % full_name)
         self._analyses.pop(index)
 
-        # The current page has been deleted, so switch one back (if possible).
-        if index == self._current and self._current != 0:
-            if status.debug:
-                print("debug> %s:  Switching to page %s." % (full_name, self._current-1))
-            self.switch_page(self._current-1)
-
-        # No more analyses, so in the initial state.
-        if self._num_analyses == 0:
-            if status.debug:
-                print("debug> %s:  Setting the initial state." % full_name)
-            self.set_init_state()
-
-        # Notify the observers of the change.
-        status.observers.gui_analysis.notify()
-
         # Store the pipe bundle.
         pipe_bundle = ds.relax_gui.analyses[index].pipe_bundle
 
@@ -271,6 +256,29 @@ class Analysis_controller:
                 if status.debug:
                     print("debug> %s:  Deleting the data pipe '%s' from the '%s' bundle." % (full_name, pipe, pipe_bundle))
                 pipes.delete(pipe)
+
+        # No more analyses, so in the initial state.
+        if self._num_analyses == 0:
+            if status.debug:
+                print("debug> %s:  Setting the initial state." % full_name)
+            self.set_init_state()
+
+        # The current page has been deleted, so handle page switching to another page.
+        elif index == self._current:
+            # Default to the current page index - so that the switch is to the next page.
+            page_index = self._current
+
+            # Switch back one page.
+            if self._num_analyses <= self._current:
+                page_index = self._current - 1
+
+            # Make the switch.
+            if status.debug:
+                print("debug> %s:  Switching to page %s." % (full_name, page_index))
+            self.switch_page(page_index)
+
+        # Notify the observers of the change.
+        status.observers.gui_analysis.notify()
 
 
     def get_page_from_name(self, name):
@@ -739,6 +747,10 @@ class Analysis_controller:
 
         # Set the current page number.
         self._current = index
+
+        # Switch to the major data pipe of the page if not the current one.
+        if pipes.cdp_name() != ds.relax_gui.analyses[self._current].pipe_name:
+            self.gui.interpreter.apply('pipe.switch', ds.relax_gui.analyses[self._current].pipe_name)
 
         # Switch to the page.
         wx.CallAfter(self.notebook.SetSelection, self._current)
