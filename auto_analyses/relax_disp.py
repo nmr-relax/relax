@@ -29,6 +29,7 @@ import sys
 from warnings import warn
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxNoPipeError
 from lib.list import unique_elements
 from lib.text.sectioning import section, subsection, subtitle, title
 from lib.warnings import RelaxWarning
