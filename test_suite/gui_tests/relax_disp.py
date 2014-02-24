@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -681,7 +681,7 @@ class Relax_disp(GuiTestCase):
         r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
 
         # Switch to the 'TP02' model data pipe, then check for each spin.
-        switch('TP02')
+        switch("%s - %s" % ('TP02', pipe_bundle))
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
