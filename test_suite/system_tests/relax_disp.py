@@ -297,6 +297,23 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name="compare_128_FT_R2eff", pipe_bundle="cpmg_disp_sod1d90a", results_dir=self.tmpdir, models=['R2eff'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
 
 
+    def test_bug_21715_clustered_indexerror(self):
+        """Catch U{bug #21715<https://gna.org/bugs/?21715>}, the failure of a clustered auto-analysis due to an IndexError."""
+
+        # Clear the data store.
+        self.interpreter.reset()
+
+        # Load the state.
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21715_clustered_indexerror'+sep+'state.bz2'
+        self.interpreter.state.load(state, force=True)
+
+        # Execute the auto-analysis (fast).
+        pre_run_dir = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21715_clustered_indexerror'+sep+'non_clustered'
+        relax_disp.Relax_disp.opt_func_tol = 1e-5
+        relax_disp.Relax_disp.opt_max_iterations = 1000
+        relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=2, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
+
+
     def test_curve_type_cpmg_fixed_time(self):
         """Test the curve type detection using the Dr. Flemming Hansen's CPMG fixed time test data."""
 
