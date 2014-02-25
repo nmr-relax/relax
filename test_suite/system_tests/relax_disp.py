@@ -1787,12 +1787,12 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g\n" % ("chi2", spin.chi2))
 
         # Checks for residue :9.
-        self.assertAlmostEqual(spin.r2[r20_key1], 8.334232330326190, 4)
-        self.assertAlmostEqual(spin.r2[r20_key2], 8.756773997879968, 4)
-        self.assertAlmostEqual(spin.r2[r20_key3], 10.219320492033058, 4)
-        self.assertAlmostEqual(spin.pA, 0.950310172115387, 4)
-        self.assertAlmostEqual(spin.dw, 4.356737157889636, 4)
-        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 4)
+        self.assertAlmostEqual(spin.r2[r20_key1], 8.334232330326190, 2)
+        self.assertAlmostEqual(spin.r2[r20_key2], 8.756773997879968, 2)
+        self.assertAlmostEqual(spin.r2[r20_key3], 10.219320492033058, 1)
+        self.assertAlmostEqual(spin.pA, 0.950310172115387, 3)
+        self.assertAlmostEqual(spin.dw, 4.356737157889636, 3)
+        self.assertAlmostEqual(spin.kex/1000, 433.176323890829849/1000, 3)
         self.assertAlmostEqual(spin.chi2, 17.37460582872912, 1)
 
 
