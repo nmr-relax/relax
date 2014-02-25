@@ -410,7 +410,9 @@ def get_curve_type(id=None):
     else:
         # Determine the curve type.
         curve_type = 'exponential'
-        if count_relax_times(ei = cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
+        exp_type = cdp.exp_type[id]
+        frq = cdp.spectrometer_frq[id]
+        if count_relax_times(exp_type = exp_type, frq = frq, ei = cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
             curve_type = 'fixed time'
 
     # Return the type.
