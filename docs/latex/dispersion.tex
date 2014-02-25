@@ -3140,7 +3140,6 @@ For the Grace files, the installed Grace version (Xmgrace, QtGrace, or GraceGTK)
 
 Firstly, to see which models have been chosen for the spin systems and which have no statistically significant dispersion, find the \file{model.out} file and double click on it.
 You should see the following:
-
 \begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The dispersion model.
 #
@@ -3224,6 +3223,43 @@ Excluding the deselected spin systems with the model `None' and those with no st
 The differences between the `CR72' analytic model and the `NS CPMG 2-site expanded' numeric model are insignificant.
 To see this, open the \file{CR72\ossep{}chi2.agr} and \file{NS CPMG 2-site expanded\ossep{}chi2.agr} Grace files in the \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered} directory in a text editor and compare the optimised chi-squared values.
 
+To see which spins have been assigned the model `No Rex' due to the $\Rtwoeff/\Ronerho$ insignificance level of 1.0 rad/s, search the log messages for `insignificance'.
+You should see:
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+relax> relax_disp.insignificance(level=1.0)
+Deselecting spin ':2@N', the maximum dispersion curve difference for all curves is 0.772528040762 rad/s.
+Deselecting spin ':3@N', the maximum dispersion curve difference for all curves is 0.572686080104 rad/s.
+Deselecting spin ':4@N', the maximum dispersion curve difference for all curves is 0.20753288407 rad/s.
+Deselecting spin ':7@N', the maximum dispersion curve difference for all curves is 0.184120905625 rad/s.
+Deselecting spin ':10@N', the maximum dispersion curve difference for all curves is 0.746360942576 rad/s.
+Deselecting spin ':11@N', the maximum dispersion curve difference for all curves is 0.372702361421 rad/s.
+Deselecting spin ':13@N', the maximum dispersion curve difference for all curves is 0.261522940719 rad/s.
+Deselecting spin ':15@N', the maximum dispersion curve difference for all curves is 0.743965404051 rad/s.
+Deselecting spin ':16@N', the maximum dispersion curve difference for all curves is 0.198783344901 rad/s.
+Deselecting spin ':17@N', the maximum dispersion curve difference for all curves is 0.469568638477 rad/s.
+Deselecting spin ':18@N', the maximum dispersion curve difference for all curves is 0.720840385548 rad/s.
+Deselecting spin ':19@N', the maximum dispersion curve difference for all curves is 0.290773963568 rad/s.
+Deselecting spin ':20@N', the maximum dispersion curve difference for all curves is 0.983669594767 rad/s.
+Deselecting spin ':22@N', the maximum dispersion curve difference for all curves is 0.507488886605 rad/s.
+Deselecting spin ':24@N', the maximum dispersion curve difference for all curves is 0.984086643389 rad/s.
+Deselecting spin ':25@N', the maximum dispersion curve difference for all curves is 0.638104572082 rad/s.
+Deselecting spin ':29@N', the maximum dispersion curve difference for all curves is 0.525261970487 rad/s.
+Deselecting spin ':33@N', the maximum dispersion curve difference for all curves is 0.822112754666 rad/s.
+Deselecting spin ':35@N', the maximum dispersion curve difference for all curves is 0.713976877685 rad/s.
+Deselecting spin ':36@N', the maximum dispersion curve difference for all curves is 0.413602640091 rad/s.
+Deselecting spin ':37@N', the maximum dispersion curve difference for all curves is 0.302953864843 rad/s.
+Deselecting spin ':40@N', the maximum dispersion curve difference for all curves is 0.401535026435 rad/s.
+Deselecting spin ':41@N', the maximum dispersion curve difference for all curves is 0.805657060225 rad/s.
+Deselecting spin ':43@N', the maximum dispersion curve difference for all curves is 0.582523964429 rad/s.
+Deselecting spin ':44@N', the maximum dispersion curve difference for all curves is 0.325638582443 rad/s.
+Deselecting spin ':45@N', the maximum dispersion curve difference for all curves is 0.947956877688 rad/s.
+Deselecting spin ':49@N', the maximum dispersion curve difference for all curves is 0.872396631779 rad/s.
+Deselecting spin ':50@N', the maximum dispersion curve difference for all curves is 0.403543891199 rad/s.
+Deselecting spin ':56@N', the maximum dispersion curve difference for all curves is 0.468272490195 rad/s.
+Deselecting spin ':57@N', the maximum dispersion curve difference for all curves is 0.634215047495 rad/s.
+Deselecting spin ':58@N', the maximum dispersion curve difference for all curves is 0.953109267554 rad/s.
+\end{lstlisting}
+
 To see the optimised parameter values, double click on the \file{kex.agr} file to see the exchange rates.
 This will open the \uf{grace\ufsep{}view} user function window by which the file can be opened.
 The default settings produces the following graph:
@@ -3295,7 +3331,6 @@ When the GUI has started, load the \file{state.bz2} file.
 
 For the clustered analysis, we will focus on one group of spins -- those from residues 59 to 67.
 These can be seen to have very similar dynamics:
-
 \begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The population for state A.
 #
@@ -3379,7 +3414,6 @@ The main window should now look like:
 
 Start the analysis by clicking on the \guibutton{Execute} button.
 You should notice that the spin cluster printout in the log messages in the relax controller window now show the text:
-
 \begin{lstlisting}[numbers=none]
 The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
 \end{lstlisting}
@@ -3496,5 +3530,6 @@ Clustered       & 26            & 240           & 510.966       & 562.966 \\
 \end{center}
 
 As the Akaike Information Criterion value is much less for the non-clustered analysis, then this result is the most parsimonious (the closest to Occam's razor as defined in frequentist statistics).
-Therefore the non-clustered analysis is a statistically better description of the experimental data.
+Therefore the non-clustered analysis is a statistically better description of the experimental data for this set of residues.
+For a different spin cluster, this result might be different.
 If the assumptions of the same dynamics for all spins (both populations $\pA$ and exchange rates $\kex$) is correct, the results of the clustered analysis are nevertheless useful as it can decrease parameter uncertainty.
