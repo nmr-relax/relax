@@ -2598,10 +2598,6 @@ Other relax options can be seen by running:
 
 \example{\$ relax --help}
 
-In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
-
-\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
-
 
 % Two analyses.
 %~~~~~~~~~~~~~~
@@ -2614,6 +2610,13 @@ To process this test data, two separate analyses will be performed:
     This will use model selection to determine if any statistically significant relaxation dispersion is present by comparing to the `No Rex' dispersion model.
   \item The second analysis will consists of clustering spins with similar kinetics and thermodynamics parameters (exchange rates and populations respectively) and optimising these clusters using a common set of exchange parameters.
 \end{itemize}
+
+In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
+
+\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
+
+A different command will be used for the clustered analysis to store the log messages in a separate file.
+The logs will be used in the end to compare the two analysis types.
 
 
 % Initialisation of the data pipe.
@@ -2975,7 +2978,7 @@ Again use the \guibutton{Apply} button to set the value, repeating for all match
 Change the frequency to 800.0 MHz and continue for the next set of matching spectrum IDs.
 Finally click on \guibutton{Next} to move to the next wizard page.
 If you have not used the exact values from the files, the relax controller window will appear with the warning:
-\begin{lstlisting}[numbers=none]
+\begin{lstlisting}[language=relax_log,numbers=none]
 relax> spectrometer.frequency(id='500_reference', frq=500.0, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 \end{lstlisting}
@@ -3138,7 +3141,7 @@ For the Grace files, the installed Grace version (Xmgrace, QtGrace, or GraceGTK)
 Firstly, to see which models have been chosen for the spin systems and which have no statistically significant dispersion, find the \file{model.out} file and double click on it.
 You should see the following:
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The dispersion model.
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                        error    
@@ -3255,7 +3258,7 @@ The default settings will produce the graph:
 To improve the appearance of this plot, please refer to the Grace software documentation.
 
 
-% comparing models.
+% Comparing models.
 %~~~~~~~~~~~~~~~~~~
 
 \subsection{Dispersion GUI mode -- comparing models}
@@ -3283,10 +3286,17 @@ Switch to the data pipe of another model and open the same file to compare the r
 
 \subsection{Dispersion GUI mode -- the clustered analysis}
 
+Before this second analysis will be performed, the relax state will be saved in the file \file{state.bz2} and the program closed.
+Then to store the details of the second analysis, relax will be restarted with the command:
+
+\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_clustered --gui}
+
+When the GUI has started, load the \file{state.bz2} file.
+
 For the clustered analysis, we will focus on one group of spins -- those from residues 59 to 67.
 These can be seen to have very similar dynamics:
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The population for state A.
 #
 # mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
@@ -3303,7 +3313,7 @@ None        67       GLY       None      N             0.987205570324475  0.0002
 [snip]
 \end{lstlisting}
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The exchange rate.
 #
 # mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
@@ -3323,7 +3333,7 @@ None        67       GLY       None      N              1768.87422361068      75
 All other spins will be deselected.
 
 From the non-clustered results, it could be argued that all spins in the entire system experience the same dynamic process, i.e. have the same $\pA$ and $\kex$ values.
-Such an analysis could be performed at a later stage.
+Such an analysis could be performed at a later stage if desired.
 
 To start the analysis, open the analysis selection wizard as was performed previously.
 Name the analysis as `Dispersion - Hansen (clustered :59 to :67)'.
@@ -3368,5 +3378,123 @@ The main window should now look like:
 \end{minipage}
 
 Start the analysis by clicking on the \guibutton{Execute} button.
+You should notice that the spin cluster printout in the log messages in the relax controller window now show the text:
+
+\begin{lstlisting}[numbers=none]
+The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
+\end{lstlisting}
+
+As residue 60 is deselected, it will not be used in the optimisation or any part of the analysis.
+The full analysis should take a few hours to complete.
 
 
+% Comparison of the analyses.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- comparison of the analyses}
+
+To statistically compare the non-clustered and clustered analyses, the advanced Akaike's Information Criterion (AIC) as derived in \cite{dAuvergneGooley03} can be used.
+This information is stored within the recorded log files.
+Open the \file{$\sim$/tmp/dispersion/log\_non\_clustered} file and search for the model selection section.
+The text for residues 59 to 67 should be:
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+The spin cluster [':59@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   1886.14016    1890.14016    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   32.15110      42.15110      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   32.61624      42.61624      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':60@N'].
+# Data pipe                                            Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)         2                 31                   3240.49312    3244.49312    
+The model from the data pipe 'No Rex - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':61@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   17285.66217    17289.66217    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   95.95234       105.95234      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   92.56628       102.56628      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':62@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2         Criterion    
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   851.74421    855.74421    
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   31.48142     41.48142     
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':63@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   6452.87623    6456.87623    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   61.70881      71.70881      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   63.14294      73.14294      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':64@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   16028.66123    16032.66123    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   29.25973       39.25973       
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   30.24274       40.24274       
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':65@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   2997.14849    3001.14849    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   37.54956      47.54956      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   38.74910      48.74910      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':66@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   1129.05612    1133.05612    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   15.81233      25.81233      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   15.79713      25.79713      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':67@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 31                   18252.93240    18256.93240    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 31                   120.14948      130.14948      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 31                   113.41542      123.41542      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+\end{lstlisting}
+
+For the log file from the clustered analysis (the \file{$\sim$/tmp/dispersion/log\_clustered} file), the text should be as follows:
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Sun Feb 23 19:36:51 2014)                     16                240                  56914.82514    56946.82514    
+NS CPMG 2-site expanded - relax_disp (Sun Feb 23 19:36:51 2014)    26                240                  510.96553      562.96553      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Sun Feb 23 19:36:51 2014)' has been selected.
+\end{lstlisting}
+
+The numbers for the `NS CPMG 2-site expanded' model can be directly compared.
+This is because the parameter number, data set number, chi-squared value and AIC value (labelled as `Criterion' in the logs) can be summed for the non-clustered analysis and then compared to the clustered values.
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+
+Analysis        & Parameter     & Data set      & Chi-squared   & AIC value \\
+                & number (k)    & number (n)    & value \\
+
+\midrule
+
+Non-clustered   & 40            & 248           & 418.011       & 498.011 \\
+Clustered       & 26            & 240           & 510.966       & 562.966 \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+As the Akaike Information Criterion value is much less for the non-clustered analysis, then this result is the most parsimonious (the closest to Occam's razor as defined in frequentist statistics).
+Therefore the non-clustered analysis is a statistically better description of the experimental data.
+If the assumptions of the same dynamics for all spins (both populations $\pA$ and exchange rates $\kex$) is correct, the results of the clustered analysis are nevertheless useful as it can decrease parameter uncertainty.
