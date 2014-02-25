@@ -25,7 +25,7 @@ from os import sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
-from specific_analyses.relax_disp.disp_data import loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time
+from specific_analyses.relax_disp.disp_data import loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -214,7 +214,7 @@ class Test_disp_data(UnitTestCase):
         # Original indices (ei, mi, oi).
         indices = [
             [0, 0, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 0],
-            [0, 1, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 1]
+            [0, 1, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 0]
         ]
 
         # Check the number of iterations.
@@ -291,3 +291,38 @@ class Test_disp_data(UnitTestCase):
                 j += 1
                 self.assertEqual(time, time_T2_2)
                 self.assertAlmostEqual(point, cpmg_2[j],3)
+
+
+    def test_loop_time(self):
+        """Unit test of the loop_time() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data (exp_type, frq, offset, point).
+        data = [
+            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0],0.04],
+            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0],0.06]
+        ]
+
+        # Original indices (ei, mi, oi, ti).
+        indices = [
+            [0, 0, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 0],
+            [0, 1, 0, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16], 0]
+        ]
+
+        # Check the number of iterations.
+        print("Checking the number of iterations of the loop.")
+        count_frq = 0
+        for dat in data:
+            frq = dat[1]
+            for time, ti in loop_time(frq=frq, return_indices=True):
+                print(time, ti)
+                count_frq += 1
+        self.assertEqual(count_frq, 2)
+
+

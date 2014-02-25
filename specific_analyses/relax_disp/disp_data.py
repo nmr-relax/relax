@@ -1281,13 +1281,17 @@ def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
         yield id
 
 
-def loop_time(exp_type=None, frq=None, return_indices=False):
+def loop_time(exp_type=None, frq=None, offset=None, point=None, return_indices=False):
     """Generator method for looping over the relaxation times.
 
     @keyword exp_type:          The experiment type.
     @type exp_type:             str
     @keyword frq:               The spectrometer frequency in Hz.
     @type frq:                  float
+    @keyword offset:            The spin-lock or hard pulse offset value in ppm.
+    @type offset:               None or float
+    @keyword point:             The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:                float
     @keyword return_indices:    A flag which if True will cause the relaxation time index to be returned as well.
     @type return_indices:       bool
     @return:                    The relaxation time.
@@ -1310,6 +1314,25 @@ def loop_time(exp_type=None, frq=None, return_indices=False):
                 # Skip non-matching spectrometer frequencies.
                 if frq != None and hasattr(cdp, 'spectrometer_frq') and cdp.spectrometer_frq[id] != frq:
                     continue
+
+                # Skip non-matching offsets.
+                if offset != None and hasattr(cdp, 'spin_lock_offset') and cdp.spin_lock_offset[id] != offset:
+                    continue
+
+                # The dispersion point filter.
+                if point != None:
+                    # No experiment type set.
+                    if not hasattr(cdp, 'exp_type') or id not in cdp.exp_type:
+                        continue
+
+                    # The experiment type.
+                    exp_type = cdp.exp_type[id]
+
+                    # The CPMG dispersion data.
+                    if exp_type in EXP_TYPE_LIST_CPMG:
+                        # No dispersion point data set.
+                        if not hasattr(cdp, 'cpmg_frqs') or id not in cdp.cpmg_frqs:
+                            continue
 
                 if time != cdp.relax_times[id]:
                     continue
@@ -1907,7 +1930,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     set_labels.append("Spin %s" % id)
 
                 # Loop over the relaxation time periods.
-                for time in cdp.relax_time_list:
+                for time in loop_time(frq=frq):
                     # The key.
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
