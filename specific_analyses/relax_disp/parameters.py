@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -33,7 +33,7 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
-from specific_analyses.relax_disp.disp_data import generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import count_spins, generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq, return_value_from_frq_index
 from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR
 
 
@@ -342,6 +342,10 @@ def disassemble_param_vector(param_vector=None, key=None, spins=None, sim_index=
 
     # Initialise parameters if needed.
     for spin in spins:
+        # Skip deselected spins.
+        if not spin.select:
+            continue
+
         # The R2 parameter.
         if 'r2' in spin.params:
             if sim_index != None:
@@ -687,6 +691,10 @@ def loop_parameters(spins=None):
     if cdp.model_type == 'R2eff':
         # Loop over the spins.
         for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
             # Yield the two parameters.
             params = ['r2eff', 'i0']
             for i in range(2):
@@ -700,6 +708,10 @@ def loop_parameters(spins=None):
     else:
         # First the R2 parameters (one per spin per field strength).
         for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
             # The R2 parameter.
             if 'r2' in spins[0].params:
                 for exp_type, frq in loop_exp_frq():
@@ -720,6 +732,10 @@ def loop_parameters(spins=None):
 
         # Then the chemical shift difference parameters 'phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2', 'dw', 'dw_AB', 'dw_BC', 'dw_AB' (one per spin).
         for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
             # Yield the data.
             if 'phi_ex' in spins[spin_index].params:
                 param_index += 1
@@ -748,6 +764,10 @@ def loop_parameters(spins=None):
 
         # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
         for spin_index in range(len(spins)):
+            # Skip deselected spins.
+            if not spins[spin_index].select:
+                continue
+
             if 'dwH' in spins[spin_index].params:
                 param_index += 1
                 yield 'dwH', param_index, spin_index, None
@@ -857,12 +877,15 @@ def param_num(spins=None):
 
     # The R2eff model.
     if cdp.model_type == 'R2eff':
+        # Count the selected spins.
+        spin_num = count_spins(spins)
+
         # Exponential curves (with clustering).
         if has_exponential_exp_type():
-            return 2 * len(spins)
+            return 2 * spin_num
 
         # Fixed time period experiments (with clustering).
-        return 1 * len(spins)
+        return 1 * spin_num
 
     # Check the spin cluster.
     for spin in spins:
@@ -969,6 +992,10 @@ def set_value(value=None, key=None, spins=None, sim_index=None, param_name=None,
     else:
         # Set the same parameter value for all spins in the cluster.
         for spin in spins:
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
             # Set the simulation value.
             if sim_index != None:
                 sim_obj = getattr(spin, param_name+'_sim')

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ from lib.check_types import is_float
 from lib.errors import RelaxError
 from lib.text.sectioning import subsection
 from multi import Memo, Result_command, Slave_command
-from specific_analyses.relax_disp.disp_data import has_disp_data, has_proton_mmq_cpmg, loop_exp, loop_exp_frq, loop_exp_frq_offset_point, loop_frq, loop_offset, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
+from specific_analyses.relax_disp.disp_data import count_spins, has_disp_data, has_proton_mmq_cpmg, loop_exp, loop_exp_frq, loop_exp_frq_offset_point, loop_frq, loop_offset, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, return_value_from_frq_index
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints, loop_parameters, param_conversion, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_LIST_CPMG, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_TAP03, MODEL_TP02
 from target_functions.relax_disp import Dispersion
@@ -431,7 +431,7 @@ class Disp_minimise_command(Slave_command):
                 print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % self.grid_size)
 
         # Initialise the function to minimise.
-        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=len(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, frqs_H=self.frqs_H, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, offset=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
+        model = Dispersion(model=self.spins[0].model, num_params=self.param_num, num_spins=count_spins(self.spins), num_frq=len(self.fields), exp_types=self.exp_types, values=self.values, errors=self.errors, missing=self.missing, frqs=self.frqs, frqs_H=self.frqs_H, cpmg_frqs=self.cpmg_frqs, spin_lock_nu1=self.spin_lock_nu1, chemical_shifts=self.chemical_shifts, offset=self.offsets, tilt_angles=self.tilt_angles, r1=self.r1, relax_times=self.relax_times, scaling_matrix=self.scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', self.min_algor):
@@ -539,6 +539,10 @@ class Disp_result_command(Result_command):
         # Monte Carlo minimisation statistics.
         if memo.sim_index != None:
             for spin in memo.spins:
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
                 # Chi-squared statistic.
                 spin.chi2_sim[memo.sim_index] = self.chi2
 
@@ -560,6 +564,10 @@ class Disp_result_command(Result_command):
         # Normal statistics.
         else:
             for spin in memo.spins:
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
                 # Chi-squared statistic.
                 spin.chi2 = self.chi2
 
@@ -584,5 +592,14 @@ class Disp_result_command(Result_command):
             proton_mmq_flag = has_proton_mmq_cpmg()
 
             # Loop over each spin, packing the data.
-            for si in range(len(memo.spins)):
-                pack_back_calc_r2eff(spin=memo.spins[si], spin_id=memo.spin_ids[si], si=si, back_calc=self.back_calc, proton_mmq_flag=proton_mmq_flag)
+            si = 0
+            for spin_index in range(len(memo.spins)):
+                # Skip deselected spins.
+                if not memo.spins[spin_index].select:
+                    continue
+
+                # Pack the data.
+                pack_back_calc_r2eff(spin=memo.spins[spin_index], spin_id=memo.spin_ids[spin_index], si=si, back_calc=self.back_calc, proton_mmq_flag=proton_mmq_flag)
+
+                # Increment the spin index.
+                si += 1

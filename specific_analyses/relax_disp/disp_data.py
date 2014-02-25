@@ -216,6 +216,19 @@ def count_relax_times(ei=None):
     return count
 
 
+def count_spins(spins=None):
+    """Count the number of selected spins in the spin cluster."""
+
+    # Count the selected spins.
+    spin_num = 0
+    for spin in spins:
+        if spin.select:
+            spin_num += 1
+
+    # Return the count.
+    return spin_num
+
+
 def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     """Set the CPMG frequency associated with a given spectrum.
 
@@ -2698,7 +2711,10 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
 
     # The counts.
     exp_num = num_exp_types()
-    spin_num = len(spins)
+    spin_num = 0
+    for spin in spins:
+        if spin.select:
+            spin_num += 1
 
     # Initialise the data structures for the target function.
     fields_orig = fields
@@ -2723,10 +2739,15 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
 
     # Assemble the data.
     data_flag = False
-    for si in range(spin_num):
+    si = 0
+    for spin_index in range(len(spins)):
+        # Skip deselected spins.
+        if not spins[spin_index].select:
+            continue
+
         # Alias the spin.
-        spin = spins[si]
-        spin_id = spin_ids[si]
+        spin = spins[spin_index]
+        spin_id = spin_ids[spin_index]
 
         # No data.
         shift = 0.0
@@ -2809,6 +2830,9 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                 else:
                     theta[ei][si][mi][oi].append(atan(omega1 / Delta_omega))
 
+        # Increment the spin index.
+        si += 1
+
     # No shift data for the spin cluster.
     if not data_flag:
         return None, None, None
@@ -2874,7 +2898,7 @@ def return_r1_data(spins=None, spin_ids=None, field_count=None, sim_index=None):
     """
 
     # The spin count.
-    spin_num = len(spins)
+    spin_num = count_spins(spins)
 
     # Initialise the data structure.
     r1 = -ones((spin_num, field_count), float64)
@@ -2949,7 +2973,7 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
     # The counts.
     exp_num = num_exp_types()
-    spin_num = len(spins)
+    spin_num = count_spins(spins)
 
     # 1H MMQ flag.
     proton_mmq_flag = has_proton_mmq_cpmg()
@@ -2990,10 +3014,15 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
     # Pack the R2eff/R1rho data.
     data_flag = False
-    for si in range(spin_num):
+    si = 0
+    for spin_index in range(len(spins)):
+        # Skip deselected spins.
+        if not spins[spin_index].select:
+            continue
+
         # Alias the spin.
-        spin = spins[si]
-        spin_id = spin_ids[si]
+        spin = spins[spin_index]
+        spin_id = spin_ids[spin_index]
 
         # Get the attached proton.
         proton = None
@@ -3089,6 +3118,9 @@ def return_r2eff_arrays(spins=None, spin_ids=None, fields=None, field_count=None
 
             # Store the time.
             relax_times[ei][mi] = relax_time
+
+        # Increment the spin index.
+        si += 1
 
     # No R2eff/R1rho data for the spin cluster.
     if not data_flag:
