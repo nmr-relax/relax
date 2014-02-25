@@ -25,7 +25,7 @@ from os import sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
-from specific_analyses.relax_disp.disp_data import loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -38,6 +38,48 @@ class Test_disp_data(UnitTestCase):
 
         # Create a dispersion data pipe.
         ds.add(pipe_name='orig', pipe_type='relax_disp')
+
+
+    def test_count_relax_times(self):
+        """Unit test of the count_relax_times() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data (exp_type, frq).
+        data = [
+            ['SQ CPMG', 499862140.0],
+            ['SQ CPMG', 599890858.69999993]
+        ]
+
+        # Original indices (ei, mi).
+        indices = [
+            [0, 0],
+            [0, 1]
+        ]
+
+        # Check the number of time counts.
+        print("Checking the number of time counts.")
+        for id in cdp.exp_type.keys():
+            exp_type = cdp.exp_type[id]
+            frq = cdp.spectrometer_frq[id]
+            point = cdp.cpmg_frqs[id]
+            count = count_relax_times(exp_type = exp_type, frq = frq, point = point, ei = cdp.exp_type_list.index(cdp.exp_type[id]))
+            print(id, exp_type, frq, point, count)
+
+            # Test the data
+            if id.split('A')[0] == 'Z_':
+                self.assertEqual(exp_type, data[0][0])
+                self.assertEqual(frq, data[0][1])
+            elif id.split('B')[0] == 'Z_':
+                self.assertEqual(exp_type, data[1][0])
+                self.assertEqual(frq, data[1][1])
+            # Test the time count
+            self.assertEqual(count, 1)
 
 
     def test_loop_exp_frq(self):
