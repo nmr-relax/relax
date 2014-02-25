@@ -82,6 +82,17 @@ class Test_disp_data(UnitTestCase):
             # Test the time count
             self.assertEqual(count, 1)
 
+
+    def test_get_curve_type(self):
+        """Unit test of the get_curve_type() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
         # Check the return of get_curve_type function.
         curve_type = get_curve_type()
         print(curve_type)
