@@ -25,7 +25,7 @@ from os import sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
-from specific_analyses.relax_disp.disp_data import count_relax_times, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, get_curve_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -80,6 +80,11 @@ class Test_disp_data(UnitTestCase):
                 self.assertEqual(frq, data[1][1])
             # Test the time count
             self.assertEqual(count, 1)
+
+        # Check the return of get_curve_type function.
+        curve_type = get_curve_type()
+        print(curve_type)
+        self.assertEqual(curve_type, 'fixed time')
 
 
     def test_loop_exp_frq(self):
