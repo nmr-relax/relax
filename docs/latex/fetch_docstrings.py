@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -795,47 +795,52 @@ class Fetch_docstrings:
             'def',
         ]
 
-        # The relax language.
-        file.write("\lstdefinelanguage{relax}{\n")
+        # Loop over the relax definitions.
+        for lang in ['relax', 'relax_log']:
+            # The relax language.
+            file.write("\lstdefinelanguage{%s}{\n" % lang)
 
-        # Allow the user function '.' character to be part of the keywords.
-        file.write("    alsoletter={.>|},\n")
+            # Allow the user function '.' character to be part of the keywords.
+            file.write("    alsoletter={.>|},\n")
 
-        # Output the first set of Python keywords.
-        file.write("    morekeywords={")
-        for name in py_keywords:
-            file.write("%s," % name)
-        file.write("},\n")
+            # Output the first set of Python keywords.
+            if lang == 'relax':
+                file.write("    morekeywords={")
+                for name in py_keywords:
+                    file.write("%s," % name)
+                file.write("},\n")
 
-        # Output the second set of Python keywords.
-        file.write("    morekeywords=[2]{")
-        for name in py_keywords2:
-            file.write("%s," % name)
-        file.write("},\n")
+            # Output the second set of Python keywords.
+            if lang == 'relax':
+                file.write("    morekeywords=[2]{")
+                for name in py_keywords2:
+                    file.write("%s," % name)
+                file.write("},\n")
 
-        # Output the third set of Python keywords.
-        file.write("    morekeywords=[3]{")
-        for name in py_keywords3:
-            file.write("%s," % name)
-        file.write("},\n")
+            # Output the third set of Python keywords.
+            if lang == 'relax':
+                file.write("    morekeywords=[3]{")
+                for name in py_keywords3:
+                    file.write("%s," % name)
+                file.write("},\n")
 
-        # Output the relax prompt.
-        file.write("    morekeywords=[4]{relax>,relax|},\n")
+            # Output the relax prompt.
+            file.write("    morekeywords=[4]{relax>,relax|},\n")
 
-        # Output the relax user functions as keywords.
-        file.write("    morekeywords=[5]{")
-        for name in uf_names:
-            file.write("%s," % name)
-        file.write("},\n")
+            # Output the relax user functions as keywords.
+            file.write("    morekeywords=[5]{")
+            for name in uf_names:
+                file.write("%s," % name)
+            file.write("},\n")
 
-        # The rest of the definition.
-        file.write("    moreprocnamekeys={def,class},\n")
-        file.write("    sensitive=true,\n")
-        file.write("    morecomment=[l]{\#},\n")
-        file.write("    morestring=[b]',\n")
-        file.write("    morestring=[b]\",\n")
-        file.write("    morestring=[b]\"\"\",\n")
-        file.write("}\n")
+            # The rest of the definition.
+            file.write("    moreprocnamekeys={def,class},\n")
+            file.write("    sensitive=true,\n")
+            file.write("    morecomment=[l]{\#},\n")
+            file.write("    morestring=[b]',\n")
+            file.write("    morestring=[b]\",\n")
+            file.write("    morestring=[b]\"\"\",\n")
+            file.write("}\n")
 
         # Close the file.
         file.close()
