@@ -103,12 +103,13 @@ def check_exp_type_fixed_time():
     @raises RelaxError: If exponential curves are present.
     """
 
-    # Get the times.
-    times = get_times()
+    # Loop over the id's.
+    for id in cdp.exp_type.keys():
+        # Get the exp_type and frq.
+        exp_type = cdp.exp_type[id]
+        frq = cdp.spectrometer_frq[id]
 
-    # Loop over all experiment types.
-    for exp_type in times:
-        if len(times[exp_type]) > 1:
+        if specific_analyses.relax_disp.disp_data.count_relax_times(exp_type = exp_type, frq = frq, ei = cdp.exp_type_list.index(cdp.exp_type[id])) > 1:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type." % exp_type)
 
 
