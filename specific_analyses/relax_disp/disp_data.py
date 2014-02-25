@@ -182,18 +182,26 @@ def count_frq():
     return cdp.spectrometer_frq_count
 
 
-def count_relax_times(ei=None):
+def count_relax_times(exp_type=None, frq=None, offset=None, point=None, ei=None):
     """Count the number of relaxation times present.
 
-    @keyword ei:    The experiment type index.
-    @type ei:       str
-    @return:        The relaxation time count for the given experiment.
-    @rtype:         int
+    @keyword exp_type:          The experiment type.
+    @type exp_type:             str
+    @keyword frq:               The spectrometer frequency in Hz.
+    @type frq:                  float
+    @keyword offset:            The spin-lock or hard pulse offset value in ppm.
+    @type offset:               None or float
+    @keyword point:             The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:                float
+    @keyword ei:                The experiment type index.
+    @type ei:                   str
+    @return:                    The relaxation time count for the given experiment.
+    @rtype:                     int
     """
 
     # Loop over the times.
     count = 0
-    for time in loop_time():
+    for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
         # Find a matching experiment ID.
         found = False
         for id in cdp.exp_type.keys():
@@ -402,7 +410,7 @@ def get_curve_type(id=None):
     else:
         # Determine the curve type.
         curve_type = 'exponential'
-        if count_relax_times(cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
+        if count_relax_times(ei = cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
             curve_type = 'fixed time'
 
     # Return the type.
