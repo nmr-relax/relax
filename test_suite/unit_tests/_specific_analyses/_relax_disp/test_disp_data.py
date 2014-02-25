@@ -88,15 +88,15 @@ class Test_disp_data(UnitTestCase):
             print(times[exp_type])
             self.assertEqual(len(times[exp_type]), 2)
 
-        # Check the return of has_exponential_exp_type.
-        exponential_exp_type = has_exponential_exp_type()
-        print(exponential_exp_type)
-        self.assertEqual(exponential_exp_type, False)
-
         # Check the return of get_curve_type function.
         curve_type = get_curve_type()
         print(curve_type)
         self.assertEqual(curve_type, 'fixed time')
+
+        # Check the return of has_exponential_exp_type.
+        exponential_exp_type = has_exponential_exp_type()
+        print(exponential_exp_type)
+        self.assertEqual(exponential_exp_type, False)
 
 
     def test_loop_exp_frq(self):
