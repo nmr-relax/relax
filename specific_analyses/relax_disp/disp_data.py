@@ -182,18 +182,26 @@ def count_frq():
     return cdp.spectrometer_frq_count
 
 
-def count_relax_times(ei=None):
+def count_relax_times(exp_type=None, frq=None, offset=None, point=None, ei=None):
     """Count the number of relaxation times present.
 
-    @keyword ei:    The experiment type index.
-    @type ei:       str
-    @return:        The relaxation time count for the given experiment.
-    @rtype:         int
+    @keyword exp_type:          The experiment type.
+    @type exp_type:             str
+    @keyword frq:               The spectrometer frequency in Hz.
+    @type frq:                  float
+    @keyword offset:            The spin-lock or hard pulse offset value in ppm.
+    @type offset:               None or float
+    @keyword point:             The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
+    @type point:                float
+    @keyword ei:                The experiment type index.
+    @type ei:                   str
+    @return:                    The relaxation time count for the given experiment.
+    @rtype:                     int
     """
 
     # Loop over the times.
     count = 0
-    for time in loop_time():
+    for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
         # Find a matching experiment ID.
         found = False
         for id in cdp.exp_type.keys():
@@ -402,7 +410,9 @@ def get_curve_type(id=None):
     else:
         # Determine the curve type.
         curve_type = 'exponential'
-        if count_relax_times(cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
+        exp_type = cdp.exp_type[id]
+        frq = cdp.spectrometer_frq[id]
+        if count_relax_times(exp_type = exp_type, frq = frq, ei = cdp.exp_type_list.index(cdp.exp_type[id])) == 1:
             curve_type = 'fixed time'
 
     # Return the type.
@@ -886,7 +896,7 @@ def loop_exp_frq_offset_point_time(return_indices=False):
                 # Then the dispersion points.
                 for point, di in loop_point(exp_type=exp_type, frq=frq, offset=offset, return_indices=True):
                     # Finally the relaxation times.
-                    for time, ti in loop_time(frq=frq, return_indices=True):
+                    for time, ti in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point, return_indices=True):
                         # Yield the data.
                         if return_indices:
                             yield exp_type, frq, offset, point, time, ei, mi, oi, di, ti
@@ -938,7 +948,7 @@ def loop_exp_frq_point_time(return_indices=False):
             # Then the dispersion points.
             for point, di in loop_point(exp_type=exp_type, frq=frq, offset=0.0, return_indices=True):
                 # Finally the relaxation times.
-                for time, ti in loop_time(return_indices=True):
+                for time, ti in loop_time(exp_type=exp_type, frq=frq, point=point, return_indices=True):
                     # Yield all data.
                     if return_indices:
                         yield exp_type, frq, point, time, ei, mi, di, ti
@@ -1054,7 +1064,7 @@ def loop_frq_point_time(exp_type=None, return_indices=False):
         # Then the dispersion points.
         for point, di in loop_point(exp_type=exp_type, frq=frq, offset=0.0, return_indices=True):
             # Finally the relaxation times.
-            for time, ti in loop_time(return_indices=True):
+            for time, ti in loop_time(exp_type=exp_type, frq=frq, point=point, return_indices=True):
                 # Yield all data.
                 if return_indices:
                     yield frq, point, time, mi, di, ti
@@ -1943,7 +1953,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     set_labels.append("Spin %s" % id)
 
                 # Loop over the relaxation time periods.
-                for time in loop_time(frq=frq):
+                for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                     # The key.
                     keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
