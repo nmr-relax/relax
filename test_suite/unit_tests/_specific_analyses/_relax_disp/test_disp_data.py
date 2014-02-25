@@ -87,11 +87,6 @@ class Test_disp_data(UnitTestCase):
         print(curve_type)
         self.assertEqual(curve_type, 'fixed time')
 
-        # Check the return of has_exponential_exp_type.
-        exponential_exp_type = has_exponential_exp_type()
-        print(exponential_exp_type)
-        self.assertEqual(exponential_exp_type, False)
-
 
     def test_get_times(self):
         """Unit test of the get_times() function.
@@ -108,6 +103,22 @@ class Test_disp_data(UnitTestCase):
         for exp_type in times:
             print(times[exp_type])
             self.assertEqual(len(times[exp_type]), 2)
+
+
+    def test_has_exponential_exp_type(self):
+        """Unit test of the has_exponential_exp_type() function.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Check the return of has_exponential_exp_type.
+        exponential_exp_type = has_exponential_exp_type()
+        print(exponential_exp_type)
+        self.assertEqual(exponential_exp_type, False)
 
 
     def test_loop_exp_frq(self):
