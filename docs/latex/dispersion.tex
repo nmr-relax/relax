@@ -638,7 +638,7 @@ Further simplifications can be found in the code.
 \end{align}
 \end{subequations}
 
-The relative peak intensities, magnitisation, and effective $\Rtwo$ relaxation rate are calculated as
+The relative peak intensities, magnetisation, and effective $\Rtwo$ relaxation rate are calculated as
 \begin{subequations}
 \begin{align}
     I_0 &= \pA, \\
@@ -2991,7 +2991,7 @@ If you have not used the exact values from the files, the relax controller windo
 
 \begin{lstlisting}[language=relax_log,numbers=none]
 relax> spectrometer.frequency(id='500_reference', frq=500.0, units='MHz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 \end{lstlisting}
 
 The controller window can be safely closed.
@@ -3044,7 +3044,7 @@ The missing metadata can now easily be filled in by right clicking on the corres
 For example here the \guistring{500\_733.33} spectrum ID does not have the experiment type set.
 Simply right click and select the \guimenuitemone{Set the experiment type} menu entry from the popup menu.
 For the missing spectrometer frequency for the \guistring{500\_866.67} spectrum ID, the \guimenuitemone{Set the spectrometer frequency} menu entry can be used.
-For the missing $\nucpmg$ value for the \guistring{800\_133.33} spectrum ID, the \guimenuitemone{Set the CPMG pulse frequeny $\nucpmg$} menu entry can be used.
+For the missing $\nucpmg$ value for the \guistring{800\_133.33} spectrum ID, the \guimenuitemone{Set the CPMG pulse frequency $\nucpmg$} menu entry can be used.
 All of the metadata should be double and triple checked and fixed where required using the popup menu.
 Any errors in this metadata would be catastrophic for the subsequent dispersion analysis.
 
