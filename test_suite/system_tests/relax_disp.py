@@ -2561,12 +2561,12 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.create(pipe_name=pipe_name, bundle=pipe_bundle, pipe_type=pipe_type)
 
         # Read the spins.
-        self.interpreter.spectrum.read_spins(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
+        self.interpreter.spectrum.read_spins(file='1_0_46_0_max_standard_trunk.ser', dir=data_path+sep+'peak_lists')
 
         # Test some of the sequence.
         self.assertEqual(len(cdp.mol), 1)
         self.assertEqual(cdp.mol[0].name, None)
-        self.assertEqual(len(cdp.mol[0].res), 48)
+        self.assertEqual(len(cdp.mol[0].res), 5)
 
         # Name the isotope for field strength scaling.
         self.interpreter.spin.isotope(isotope='15N')
