@@ -1354,7 +1354,12 @@ def loop_time(exp_type=None, frq=None, offset=None, point=None, return_indices=F
                     # The CPMG dispersion data.
                     if exp_type in EXP_TYPE_LIST_CPMG:
                         # No dispersion point data set.
-                        if not hasattr(cdp, 'cpmg_frqs') or id not in cdp.cpmg_frqs:
+                        if hasattr(cdp, 'cpmg_frqs') and cdp.cpmg_frqs[id] != point:
+                            continue
+
+                    # The R1rho data
+                    if exp_type in EXP_TYPE_R1RHO:
+                        if hasattr(cdp, 'spin_lock_nu1') and cdp.spin_lock_nu1[id] != point:
                             continue
 
                 if time != cdp.relax_times[id]:
