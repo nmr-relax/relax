@@ -2606,6 +2606,8 @@ class Relax_disp(SystemTestCase):
         spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
 
         # Apply spectra settings.
+        # Count settings
+        j = 0
         for i in range(len(expfileslines)):
             line=expfileslines[i]
             if line[0] == "#":
@@ -2655,6 +2657,15 @@ class Relax_disp(SystemTestCase):
 
                 # Set the spectrometer frequency.
                 self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
+
+                # Add to counter
+                j += 1
+
+        print("Testing the number of settings")
+        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
+        self.assertEqual(70, len(expfileslines))
+        self.assertEqual(69, j)
+        self.assertEqual(69, len(cdp.exp_type.keys()) )
 
         # The dispersion models.
         MODELS = ['R2eff', 'No Rex', 'DPL94']
