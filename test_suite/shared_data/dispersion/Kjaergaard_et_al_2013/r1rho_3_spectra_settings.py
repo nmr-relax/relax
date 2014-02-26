@@ -1,3 +1,4 @@
+# Copyright (C) 2013 Troels E. Linnet
 # Set settings for experiment
 import os, math
 

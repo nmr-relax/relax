@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2008-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,7 +42,7 @@ class Test_disp_data(UnitTestCase):
         ds.add(pipe_name='orig', pipe_type='relax_disp')
 
 
-    def test_count_relax_times(self):
+    def test_count_relax_times_cpmg(self):
         """Unit test of the count_relax_times() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -83,7 +84,118 @@ class Test_disp_data(UnitTestCase):
             self.assertEqual(count, 1)
 
 
-    def test_get_curve_type(self):
+    def test_count_relax_times_r1rho(self):
+        """Unit test of the count_relax_times() function.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data (spectrum id: exp_type, frq, omega_rf_ppm, spin_lock_field_strength, time_spin_lock).
+        data = {
+        '46_0_35_0':['R1rho', 799777399.1, 118.078, 431.0, 0.0],
+        '48_0_35_4':['R1rho', 799777399.1, 118.078, 431.0, 0.04],
+        '47_0_35_10':['R1rho', 799777399.1, 118.078, 431.0, 0.1],
+        '49_0_35_20':['R1rho', 799777399.1, 118.078, 431.0, 0.2],
+        '36_0_39_0':['R1rho', 799777399.1, 118.078, 651.2, 0.0],
+        '39_0_39_4':['R1rho', 799777399.1, 118.078, 651.2, 0.04],
+        '37_0_39_10':['R1rho', 799777399.1, 118.078, 651.2, 0.1],
+        '40_0_39_20':['R1rho', 799777399.1, 118.078, 651.2, 0.2],
+        '38_0_39_40':['R1rho', 799777399.1, 118.078, 651.2, 0.4],
+        '41_0_41_0':['R1rho', 799777399.1, 118.078, 800.5, 0.0],
+        '44_0_41_4':['R1rho', 799777399.1, 118.078, 800.5, 0.04],
+        '42_0_41_10':['R1rho', 799777399.1, 118.078, 800.5, 0.1],
+        '45_0_41_20':['R1rho', 799777399.1, 118.078, 800.5, 0.2],
+        '43_0_41_40':['R1rho', 799777399.1, 118.078, 800.5, 0.4],
+        '31_0_43_0':['R1rho', 799777399.1, 118.078, 984.0, 0.0],
+        '34_0_43_4':['R1rho', 799777399.1, 118.078, 984.0, 0.04],
+        '32_0_43_10':['R1rho', 799777399.1, 118.078, 984.0, 0.1],
+        '35_0_43_20':['R1rho', 799777399.1, 118.078, 984.0, 0.2],
+        '33_0_43_40':['R1rho', 799777399.1, 118.078, 984.0, 0.4],
+        '1_0_46_0':['R1rho', 799777399.1, 118.078, 1341.10, 0.0],
+        '4_0_46_4':['R1rho', 799777399.1, 118.078, 1341.10, 0.04],
+        '2_0_46_10':['R1rho', 799777399.1, 118.078, 1341.10, 0.1],
+        '5_0_46_20':['R1rho', 799777399.1, 118.078, 1341.10, 0.2],
+        '3_0_46_40':['R1rho', 799777399.1, 118.078, 1341.10, 0.4],
+        '60_0_48_0':['R1rho', 799777399.1, 118.078, 1648.5, 0.0],
+        '63_0_48_4':['R1rho', 799777399.1, 118.078, 1648.5, 0.04],
+        '61_0_48_10':['R1rho', 799777399.1, 118.078, 1648.5, 0.1],
+        '62_0_48_14':['R1rho', 799777399.1, 118.078, 1648.5, 0.14],
+        '64_0_48_20':['R1rho', 799777399.1, 118.078, 1648.5, 0.2],
+        '11_500_46_0':['R1rho', 799777399.1, 124.24703146206046, 1341.10, 0.0],
+        '14_500_46_4':['R1rho', 799777399.1, 124.24703146206046, 1341.10, 0.04],
+        '12_500_46_10':['R1rho', 799777399.1, 124.24703146206046, 1341.10, 0.1],
+        '15_500_46_20':['R1rho', 799777399.1, 124.24703146206046, 1341.10, 0.2],
+        '13_500_46_40':['R1rho', 799777399.1, 124.24703146206046, 1341.10, 0.4],
+        '50_1000_41_0':['R1rho', 799777399.1, 130.41606292412092, 800.5, 0.0],
+        '53_1000_41_4':['R1rho', 799777399.1, 130.41606292412092, 800.5, 0.04],
+        '51_1000_41_10':['R1rho', 799777399.1, 130.41606292412092, 800.5, 0.1],
+        '54_1000_41_20':['R1rho', 799777399.1, 130.41606292412092, 800.5, 0.2],
+        '52_1000_41_40':['R1rho', 799777399.1, 130.41606292412092, 800.5, 0.4],
+        '21_1000_46_0':['R1rho', 799777399.1, 130.41606292412092, 1341.10, 0.0],
+        '24_1000_46_4':['R1rho', 799777399.1, 130.41606292412092, 1341.10, 0.04],
+        '22_1000_46_10':['R1rho', 799777399.1, 130.41606292412092, 1341.10, 0.1],
+        '25_1000_46_20':['R1rho', 799777399.1, 130.41606292412092, 1341.10, 0.2],
+        '23_1000_46_40':['R1rho', 799777399.1, 130.41606292412092, 1341.10, 0.4],
+        '65_1000_48_0':['R1rho', 799777399.1, 130.41606292412092, 1648.5, 0.0],
+        '68_1000_48_4':['R1rho', 799777399.1, 130.41606292412092, 1648.5, 0.04],
+        '66_1000_48_10':['R1rho', 799777399.1, 130.41606292412092, 1648.5, 0.1],
+        '67_1000_48_14':['R1rho', 799777399.1, 130.41606292412092, 1648.5, 0.14],
+        '69_1000_48_20':['R1rho', 799777399.1, 130.41606292412092, 1648.5, 0.2],
+        '55_2000_41_0':['R1rho', 799777399.1, 142.75412584824184, 800.5, 0.0],
+        '58_2000_41_4':['R1rho', 799777399.1, 142.75412584824184, 800.5, 0.04],
+        '56_2000_41_10':['R1rho', 799777399.1, 142.75412584824184, 800.5, 0.1],
+        '59_2000_41_20':['R1rho', 799777399.1, 142.75412584824184, 800.5, 0.2],
+        '57_2000_41_40':['R1rho', 799777399.1, 142.75412584824184, 800.5, 0.4],
+        '6_2000_46_0':['R1rho', 799777399.1, 142.75412584824184, 1341.10, 0.0],
+        '9_2000_46_4':['R1rho', 799777399.1, 142.75412584824184, 1341.10, 0.04],
+        '7_2000_46_10':['R1rho', 799777399.1, 142.75412584824184, 1341.10, 0.1],
+        '10_2000_46_20':['R1rho', 799777399.1, 142.75412584824184, 1341.10, 0.2],
+        '8_2000_46_40':['R1rho', 799777399.1, 142.75412584824184, 1341.10, 0.4],
+        '16_5000_46_0':['R1rho', 799777399.1, 179.76831462060457, 1341.10, 0.0],
+        '19_5000_46_4':['R1rho', 799777399.1, 179.76831462060457, 1341.10, 0.04],
+        '17_5000_46_10':['R1rho', 799777399.1, 179.76831462060457, 1341.10, 0.1],
+        '20_5000_46_20':['R1rho', 799777399.1, 179.76831462060457, 1341.10, 0.2],
+        '18_5000_46_40':['R1rho', 799777399.1, 179.76831462060457, 1341.10, 0.4],
+        '26_10000_46_0':['R1rho', 799777399.1, 241.45862924120914, 1341.10, 0.0],
+        '29_10000_46_4':['R1rho', 799777399.1, 241.45862924120914, 1341.10, 0.04],
+        '27_10000_46_10':['R1rho', 799777399.1, 241.45862924120914, 1341.10, 0.1],
+        '30_10000_46_20':['R1rho', 799777399.1, 241.45862924120914, 1341.10, 0.2]}
+
+        time_comp = { 
+        '118.078_431.0':4,
+        '118.078_651.2':5,
+        '118.078_800.5':5,
+        '118.078_984.0':5,
+        '118.078_1341.1':5,
+        '118.078_1648.5':5,
+        '124.247031462_1341.11':5,
+        '130.416062924_800.5':5,
+        '130.416062924_1341.11':5,
+        '130.416062924_1648.5':5,
+        '142.754125848_800.5':5,
+        '142.754125848_1341.11':5,
+        '179.768314621_1341.11':5,
+        '241.458629241_1341.11':4}
+
+        # Check the number of time counts.
+        print("Checking the number of time counts.")
+        for id in cdp.exp_type.keys():
+            exp_type = cdp.exp_type[id]
+            frq = cdp.spectrometer_frq[id]
+            offset = cdp.spin_lock_offset[id]
+            point = cdp.spin_lock_nu1[id]
+            count = count_relax_times(exp_type = exp_type, frq = frq, offset=offset, point = point, ei = cdp.exp_type_list.index(cdp.exp_type[id]))
+            print(id, exp_type, frq, offset, point, count)
+
+            # Test the time count
+            self.assertEqual(count, time_comp['%s_%s'%(offset, point)])
+
+
+    def test_get_curve_type_cpmg(self):
         """Unit test of the get_curve_type() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -99,7 +211,7 @@ class Test_disp_data(UnitTestCase):
         self.assertEqual(curve_type, 'fixed time')
 
 
-    def test_get_times(self):
+    def test_get_times_cpmg(self):
         """Unit test of the get_times() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -116,7 +228,7 @@ class Test_disp_data(UnitTestCase):
             self.assertEqual(len(times[exp_type]), 2)
 
 
-    def test_has_exponential_exp_type(self):
+    def test_has_exponential_exp_type_cpmg(self):
         """Unit test of the has_exponential_exp_type() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -132,7 +244,7 @@ class Test_disp_data(UnitTestCase):
         self.assertEqual(exponential_exp_type, False)
 
 
-    def test_loop_exp_frq(self):
+    def test_loop_exp_frq_cpmg(self):
         """Unit test of the loop_exp_frq() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -178,7 +290,7 @@ class Test_disp_data(UnitTestCase):
             index += 1
 
 
-    def test_loop_exp_frq_offset(self):
+    def test_loop_exp_frq_offset_cpmg(self):
         """Unit test of the loop_exp_frq_offset() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -228,7 +340,7 @@ class Test_disp_data(UnitTestCase):
             index += 1
 
 
-    def test_loop_exp_frq_offset_point(self):
+    def test_loop_exp_frq_offset_point_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -287,7 +399,7 @@ class Test_disp_data(UnitTestCase):
                 disp_index += 1
 
 
-    def test_loop_exp_frq_offset_point_time(self):
+    def test_loop_exp_frq_offset_point_time_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point_time() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -350,7 +462,7 @@ class Test_disp_data(UnitTestCase):
                 disp_index += 1
 
 
-    def test_loop_exp_frq_offset_point_time_setup(self):
+    def test_loop_exp_frq_offset_point_time_cpmg_setup(self):
         """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
 
         # Load the state.
@@ -385,7 +497,7 @@ class Test_disp_data(UnitTestCase):
                 self.assertAlmostEqual(point, cpmg_2[j],3)
 
 
-    def test_loop_time(self):
+    def test_loop_time_cpmg(self):
         """Unit test of the loop_time() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -416,5 +528,30 @@ class Test_disp_data(UnitTestCase):
                 print(time, ti)
                 count_frq += 1
         self.assertEqual(count_frq, 2)
+
+
+    def test_loop_time_r1rho(self):
+        """Unit test of the loop_time() function for R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data, list of time points
+        times_list = [0.0, 0.04, 0.1, 0.14, 0.2, 0.4]
+
+
+        # Check the number of iterations.
+        print("Checking the number of iterations of the loop.")
+        count_frq = 0
+        frq = 799777399.1
+
+        for time, ti in loop_time(frq=frq, return_indices=True):
+            print(time, ti)
+            count_frq += 1
+        self.assertEqual(count_frq, len(times_list))
 
 

@@ -638,7 +638,7 @@ Further simplifications can be found in the code.
 \end{align}
 \end{subequations}
 
-The relative peak intensities, magnitisation, and effective $\Rtwo$ relaxation rate are calculated as
+The relative peak intensities, magnetisation, and effective $\Rtwo$ relaxation rate are calculated as
 \begin{subequations}
 \begin{align}
     I_0 &= \pA, \\
@@ -1934,6 +1934,7 @@ The scaling matrix for the parameters \{$\Rtwozero$, $\RtwozeroA$, $\RtwozeroB$,
 %~~~~~~~~~~~~~~~~~~~
 
 \subsection{Relaxation dispersion model elimination}
+\label{sect: relaxation dispersion model elimination}
 
 Relaxation dispersion models will often fail.
 This may be due to data quality and quantity issues, inherent instability in certain models, or the use of analytic models outside of the range of their defined viability.
@@ -2584,11 +2585,13 @@ This is the data from the paper:
 \end{itemize}
 
 More details can be seen in the \file{README} file in that directory.
+By using the data in this directory and following the instructions below, a complete dispersion analysis can be performed.
 
-Note that the dispersion analysis in the GUI used the automated protocol as implemented in the \file{auto\osus{}analyses\ossep{}relax\osus{}disp.py} relax script.
+Note that the dispersion analysis in the GUI uses the automated protocol as implemented in the \file{auto\osus{}analyses\ossep{}relax\osus{}disp.py} relax script.
 If you wish to perform a custom analysis or implement your own protocol, please use the prompt/scripting user interface instead to have access to the full flexibility and power of relax.
 
 When running the analysis, it is best to keep a permanent log of all of the printouts, warnings, errors and messages produced by relax.
+Such information will be an invaluable reference when comparing the non-clustered and clustered results, as well as understanding what happened to each spin system under study.
 This can be achieved by running relax with the command line options:
 
 \example{\$ relax --log log --gui}
@@ -2597,10 +2600,6 @@ All output from relax will then be visible both in the relax controller window (
 Other relax options can be seen by running:
 
 \example{\$ relax --help}
-
-In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
-
-\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
 
 
 % Two analyses.
@@ -2614,6 +2613,14 @@ To process this test data, two separate analyses will be performed:
     This will use model selection to determine if any statistically significant relaxation dispersion is present by comparing to the `No Rex' dispersion model.
   \item The second analysis will consists of clustering spins with similar kinetics and thermodynamics parameters (exchange rates and populations respectively) and optimising these clusters using a common set of exchange parameters.
 \end{itemize}
+
+In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
+
+\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
+
+Note that the \directory{$\sim$\ossep{}tmp\ossep{}dispersion} directory should be created before starting relax.
+A different command will be used for the clustered analysis to store the log messages in a separate file.
+The two logs will be used to compare the two analysis types at the end.
 
 
 % Initialisation of the data pipe.
@@ -2685,12 +2692,13 @@ The steps for setting up the spin containers using PDB files are described in se
 
 In this tutorial, the sequence file \file{fake\osus{}sequence.in} in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen} directory will be loaded.
 In the spin loading wizard, which can be launched by clicking on the \guibutton{Load spins} button, select the \gui{From a file containing sequence data} option and click on \guibutton{Next}.
-In the \uf{sequence\ufsep{}read} user function wizard page, select the file \file{fake\osus{}sequence.in}.
-As this file only contains residue numbers and names, edit the \gui{Free format file settings} to set the residue number and name columns to 1 and 2 respectively, and all other columns to blank values.
-Click on \guibutton{Save} to store the free format settings.
+In the \uf{sequence\ufsep{}read} user function wizard page, select the \file{fake\osus{}sequence.in} file.
+As this file only contains residue numbers and names (click on the \guibutton{preview} button to see the file contents), edit the \gui{Free format file settings} to set the residue number and name columns to 1 and 2 respectively and all other columns to blank values.
+Click on \guibutton{Save} to store the free format settings and close the window.
 Back in the \uf{sequence\ufsep{}read} user function wizard page, click on \guibutton{Next} to load the sequence.
-Finally click on \guibutton{Finish} to close the wizard, but do not close the spin viewer window.
-The \gui{Spin systems} GUI element in the main analysis tab will now say \gui{73 spins loaded and selected}.
+Finally click on \guibutton{Finish} to close the wizard.
+Do not close the spin viewer window yet.
+Back in the main analysis tab, the \gui{Spin systems} GUI element will now say \gui{73 spins loaded and selected}.
 
 
 % Unresolved spins.
@@ -2698,10 +2706,10 @@ The \gui{Spin systems} GUI element in the main analysis tab will now say \gui{73
 
 \subsection{Dispersion GUI mode -- unresolved spins}
 
-As in the prompt/script UI section~\ref{sect: dispersion setup fin}, the spins can be deselected at this point using the same \file{unresolved} file.
+As in the prompt/script UI section~\ref{sect: dispersion setup fin}, the spins can be deselected at this point using the same \file{unresolved} files.
 This is described in detail in section~\ref{sect: GUI - deselect spins} on page~\pageref{sect: GUI - deselect spins}.
 
-Within the currently opened spin viewer window, click on the \guimenuitemthree{User functions}{deselect}{read} menu item.
+Within the open spin viewer window, click on the \guimenuitemthree{User functions}{deselect}{read} menu item.
 In the \uf{deselect\ufsep{}read} user function window, select the file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz\ossep{}unresolved}.
 As this file only contains residue number, edit the \gui{Free format file settings} to set the residue number column to 1 and all other columns to empty values.
 Click the \guibutton{Apply} button rather than \guibutton{OK} to allow a second file to be read.
@@ -2710,29 +2718,30 @@ Select the new file \file{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispe
 Now all spins from these two files will be deselected and skipped in the analysis.
 
 
-% Metadata setup.
-%~~~~~~~~~~~~~~~~
+% Dispersion setup.
+%~~~~~~~~~~~~~~~~~~
 
-\subsection{Dispersion GUI mode -- metadata setup}
+\subsection{Dispersion GUI mode -- dispersion setup}
 
-The next step is to set up the metadata for the analysis.
+The next step is to set up the data defining the relaxation dispersion process.
 This is performed by clicking on the buttons between the \gui{Spin cluster ID} and \gui{Spectra list} GUI elements.
 The buttons are as follows:
 \begin{description}
   \item[Spin isotope:]  This is needed to specify the spin isotope information for each spin in the system, for example if the data is from $^{15}$N, $^{13}$C, $^1$H, etc.
-  \item[$\Rone$ relaxation data:]  This is used to load a text file containing $\Rone$ relaxation data for each spin of interest.
+    The button launches the \uf{spin.isotope} user function (see section~\ref{uf: spin.isotope} on page~\pageref{uf: spin.isotope}).
+  \item[$\Rone$ relaxation data:]  This is used to load a text file containing $\Rone$ relaxation data for each spin of interest (see Chapter~\ref{ch: relax-fit} for calculating $\Rone$ values).
     The button launches the \uf{relax\_data.read} user function (see section~\ref{uf: relax_data.read} on page~\pageref{uf: relax_data.read}).
-    It is currently only used for properly handling off-resonance effects in the $\Ronerho$-type dispersion data but may be extended, in the future, to handle off-resonance effects in the CPMG-type experiments.
-  \item[Chemical shift:]  Again this is for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
+    It is currently only used for handling off-resonance effects in the $\Ronerho$-type dispersion data but may be extended, in the future, to handle off-resonance effects in the CPMG-type experiments.
+  \item[Chemical shift:]  As with the $\Rone$ button, this is for properly handling off-resonance effects in the $\Ronerho$-type dispersion data.
     The button launches the \uf{chemical\_shift.read} user function (see section~\ref{uf: chemical_shift.read} on page~\pageref{uf: chemical_shift.read}).
   \item[Interatomic interaction:]  This button launches the \uf{interatom.define} user function (see section~\ref{uf: interatom.define} on page~\pageref{uf: interatom.define}).
     This is needed to link, for example, $^1$H to $^{15}$N spins into a spin system so that MMQ-type data, which relies on a multiple-spin system, can be handled.
   \item[Value setting:]  When one of the parameters of the dispersion model is already known, its value can be set by clicking on this button which launches the \uf{value.set} user function (see section~\ref{uf: value.set} on page~\pageref{uf: value.set}).
     Setting a parameter value will fix the parameter in the initial grid search.
-    However it will be free to vary in the non-linear least squares optimisation to refine its value.
+    However it will be free to vary in the non-linear least squares optimisation used to refine its value.
 \end{description}
 
-For SQ CPMG-type dispersion data, only the spin isotope information is required.
+For SQ CPMG-type dispersion data, only the spin isotope information is required:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
@@ -2745,7 +2754,8 @@ For SQ CPMG-type dispersion data, only the spin isotope information is required.
 \end{minipage}
 
 In this case, all spins are $^{15}$N.
-However as no spins are named yet, the text \guistring{@N*} cannot be used so simply change this to \guistring{@*} and click on \guibutton{OK}.
+However as no spins are named yet, the text \guistring{@N*} cannot be used.
+So simply change this to \guistring{@*} and click on \guibutton{OK}.
 The other buttons can be ignored.
 
 
@@ -2763,7 +2773,7 @@ To access the user functions, click on \guimenuitemthree{User functions}{relax\_
 
 In this tutorial, the Sparky\index{software!Sparky} formatted peak lists in the \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}500\osus{}MHz} and \directory{test\osus{}suite\ossep{}shared\osus{}data\ossep{}dispersion\ossep{}Hansen\ossep{}800\osus{}MHz} directories will be loaded.
 First click on the \guibutton{Add} button in the \gui{Spectra list} GUI element.
-A warning message will appear as the spins have not yet been named, hence they cannot be matched to the data in the peak lists:
+A warning message will appear as the spins have not yet been named, spin names were not present in the \file{fake\osus{}sequence.in} file, hence they cannot be matched to the data in the peak lists:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
@@ -2790,7 +2800,7 @@ As all data is from $^{15}$N spins and these spins have been named as \guistring
 \end{minipage}
 
 The \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page should appear.
-To help understand the next steps of the peak intensity loading wizard, the following table summarises the peak list metadata for this analysis:
+To help understand the next steps of the peak intensity loading wizard, note the following table which summarises the peak list metadata for this analysis:
 
 \begin{center}        
 \begin{footnotesize}
@@ -2900,16 +2910,19 @@ Click on \guibutton{OK} to return to the \uf{spectrum\ufsep{}read\ufus{}intensit
 
 There is a shortcut to these previous steps in that the file names and spectrum IDs can be manually typed into the input elements of the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page.
 For the file names, assuming relax is installed in the base directory \directory{\ossep{}data\ossep{}relax\ossep{}relax-trunk} and a Unix-like system is being used, the following text can be added:
+
 \begin{lstlisting}[numbers=none]
 ['/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in_sparky']
 \end{lstlisting}
 
 The spectrum IDs can be added by copying and pasting the following text, making sure all text is on one line:
+
 \begin{lstlisting}[numbers=none]
 ['500_reference', '500_133.33', '500_133.33b', '500_200', '500_266.67', '500_333.33', '500_400', '500_466.67', '500_533.33', '500_533.33b', '500_600', '500_66.667', '500_666.67', '500_733.33', '500_800', '500_866.67', '500_933.33', '500_933.33b', '500_1000']
 \end{lstlisting}
 
-If the buttons to the right of the GUI elements are clicked on, you should see these correctly listed in the multiple file selection window and the sequence input window.
+To see if the data has been correctly entered, click on the buttons to the right of the GUI elements.
+You should see the files and spectrum IDs correctly listed in the multiple file selection window and the sequence input window respectively.
 
 For the SQ CPMG data of this tutorial, none of the other settings in the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page need to be changed.
 By clicking on the \guibutton{Apply} button, the 500 MHz data will be loaded but the wizard will stay on the same page.
@@ -2975,9 +2988,10 @@ Again use the \guibutton{Apply} button to set the value, repeating for all match
 Change the frequency to 800.0 MHz and continue for the next set of matching spectrum IDs.
 Finally click on \guibutton{Next} to move to the next wizard page.
 If you have not used the exact values from the files, the relax controller window will appear with the warning:
-\begin{lstlisting}[numbers=none]
+
+\begin{lstlisting}[language=relax_log,numbers=none]
 relax> spectrometer.frequency(id='500_reference', frq=500.0, units='MHz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 \end{lstlisting}
 
 The controller window can be safely closed.
@@ -3030,8 +3044,9 @@ The missing metadata can now easily be filled in by right clicking on the corres
 For example here the \guistring{500\_733.33} spectrum ID does not have the experiment type set.
 Simply right click and select the \guimenuitemone{Set the experiment type} menu entry from the popup menu.
 For the missing spectrometer frequency for the \guistring{500\_866.67} spectrum ID, the \guimenuitemone{Set the spectrometer frequency} menu entry can be used.
-For the missing $\nucpmg$ value for the \guistring{800\_133.33} spectrum ID, the \guimenuitemone{Set the CPMG pulse frequeny $\nucpmg$} menu entry can be used.
-All of the metadata should be double checked and fixed where required using the popup menu.
+For the missing $\nucpmg$ value for the \guistring{800\_133.33} spectrum ID, the \guimenuitemone{Set the CPMG pulse frequency $\nucpmg$} menu entry can be used.
+All of the metadata should be double and triple checked and fixed where required using the popup menu.
+Any errors in this metadata would be catastrophic for the subsequent dispersion analysis.
 
 
 % Choosing the models to optimise.
@@ -3044,17 +3059,19 @@ The number of models used should be limited based on your knowledge of the probl
 Depending on experimental information, a number of models can be ruled out.
 For example for the data used in this tutorial, the exchange is known to be slow.
 Hence all of the fast exchange models can be excluded.
-For the conditions under which the various dispersion models can be used, please read the original references.
+For the conditions under which the various dispersion models can be used, please refer to the original references.
+In relax many dispersion models are provided, however you should never use them all.
 
 For this tutorial, we will only use the following dispersion models:
 \begin{description}
   \item[`R2eff':]  This is essential for calculating the $\Rtwoeff$ values used as the input data for all other models (see section~\ref{sect: dispersion: R2eff model} on page~\pageref{sect: dispersion: R2eff model}).
   \item[`No Rex':]  This model will be important in the model selection stage to determine if any statistically significant relaxation dispersion is present in the $\Rtwoeff$ data (see section~\ref{sect: dispersion: No Rex model} on page~\pageref{sect: dispersion: No Rex model}).
-  \item[`CR72':]  The Carver and Richards model for most time scales (see Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model})
+  \item[`CR72':]  The Carver and Richards model for most time scales (see Section~\ref{sect: dispersion: CR72 model} on page~\pageref{sect: dispersion: CR72 model}).
+    This is the standard model for slow timescale CPMG-type data (for fast timescales use the `LM63' model instead and for very slow exchange the `TSMFK01' model).
   \item[`NS CPMG 2-site expanded':]  The best and fastest of the numerical models for 2-site exchange (see Section~\ref{sect: dispersion: NS CPMG 2-site expanded model} on page~\pageref{sect: dispersion: NS CPMG 2-site expanded model}).
 \end{description}
 
-To chose which models will be used in the analysis, click on the \guibutton{Modify} button of the \guistring{Relaxation dispersion models} GUI element in the main relax window:
+To chose which models will be used in the analysis, click on the \guibutton{Modify} button of the \guistring{Relaxation dispersion models} GUI element in the main relax window and change the model list to:
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
@@ -3120,7 +3137,7 @@ The relax controller window can be closed.
 At all stages of the analysis, the logs should be checked for all warnings.
 For example searching for the text `RelaxWarning' in the log file \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered}, the only warnings can be seen at the end of the analysis.
 These can be seen to be harmless as they are indicating that certain Grace 2D plots contain no data -- specifically those for dispersion parameters not present in the set of models optimised.
-Any other warnings should however be very carefully noted and checked.
+Any other warnings should however be very carefully noted and checked as these could be pointing to a serious problem.
 
 
 % Inspection of the results.
@@ -3128,8 +3145,8 @@ Any other warnings should however be very carefully noted and checked.
 
 \subsection{Dispersion GUI mode -- inspection of the results}
 
-To view the results of the analysis, the relax results window should now be opened.
-Otherwise, click on the \guimenuitemtwo{View}{Results viewer} menu entry to open the window.
+To view the results of the analysis, the relax results window will have been automatically opened.
+If it was closed, click on the \guimenuitemtwo{View}{Results viewer} menu entry or the \guibutton{Results viewer window} button in the toolbar to open the window.
 This window will list all of the \file{*.out} text files and \file{*.agr} 2D Grace plots created by the auto-analysis.
 By double clicking on the file, these can be opened.
 The operating specific text editor will be launched for the text files.
@@ -3138,7 +3155,7 @@ For the Grace files, the installed Grace version (Xmgrace, QtGrace, or GraceGTK)
 Firstly, to see which models have been chosen for the spin systems and which have no statistically significant dispersion, find the \file{model.out} file and double click on it.
 You should see the following:
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The dispersion model.
 #
 # mol_name    res_num    res_name    spin_num    spin_name    value                        error    
@@ -3219,7 +3236,61 @@ None          73         GLY         None        N            'CR72'            
 
 Excluding the deselected spin systems with the model `None' and those with no statistically significant dispersion, `No Rex', it can be seen that in some cased the `CR72' model is selected whereas in others the `NS CPMG 2-site expanded' model is selected.
 The differences between the `CR72' analytic model and the `NS CPMG 2-site expanded' numeric model are insignificant.
-To see this, open the \file{CR72\ossep{}chi2.agr} and \file{NS CPMG 2-site expanded\ossep{}chi2.agr} Grace files in the \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered} directory in a text editor and compare the optimised chi-squared values.
+To see this, open the \file{CR72\ossep{}chi2.out} and \file{NS CPMG 2-site expanded\ossep{}chi2.out} text files in the \directory{$\sim$\ossep{}dispersion\ossep{}log\osus{}non\osus{}clustered} directory and compare the optimised chi-squared values (this can be performed with the mouse by using the pipe editor window, changing the current data pipe, and double clicking on the files in the results viewer window for each data pipe -- see below for more details).
+
+To see which spins have been assigned the model `No Rex' due to the $\Rtwoeff/\Ronerho$ insignificance level of 1.0 rad/s, search the log messages for `insignificance'.
+You should see:
+
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+relax> relax_disp.insignificance(level=1.0)
+Deselecting spin ':2@N', the maximum dispersion curve difference for all curves is 0.772528040762 rad/s.
+Deselecting spin ':3@N', the maximum dispersion curve difference for all curves is 0.572686080104 rad/s.
+Deselecting spin ':4@N', the maximum dispersion curve difference for all curves is 0.20753288407 rad/s.
+Deselecting spin ':7@N', the maximum dispersion curve difference for all curves is 0.184120905625 rad/s.
+Deselecting spin ':10@N', the maximum dispersion curve difference for all curves is 0.746360942576 rad/s.
+Deselecting spin ':11@N', the maximum dispersion curve difference for all curves is 0.372702361421 rad/s.
+Deselecting spin ':13@N', the maximum dispersion curve difference for all curves is 0.261522940719 rad/s.
+Deselecting spin ':15@N', the maximum dispersion curve difference for all curves is 0.743965404051 rad/s.
+Deselecting spin ':16@N', the maximum dispersion curve difference for all curves is 0.198783344901 rad/s.
+Deselecting spin ':17@N', the maximum dispersion curve difference for all curves is 0.469568638477 rad/s.
+Deselecting spin ':18@N', the maximum dispersion curve difference for all curves is 0.720840385548 rad/s.
+Deselecting spin ':19@N', the maximum dispersion curve difference for all curves is 0.290773963568 rad/s.
+Deselecting spin ':20@N', the maximum dispersion curve difference for all curves is 0.983669594767 rad/s.
+Deselecting spin ':22@N', the maximum dispersion curve difference for all curves is 0.507488886605 rad/s.
+Deselecting spin ':24@N', the maximum dispersion curve difference for all curves is 0.984086643389 rad/s.
+Deselecting spin ':25@N', the maximum dispersion curve difference for all curves is 0.638104572082 rad/s.
+Deselecting spin ':29@N', the maximum dispersion curve difference for all curves is 0.525261970487 rad/s.
+Deselecting spin ':33@N', the maximum dispersion curve difference for all curves is 0.822112754666 rad/s.
+Deselecting spin ':35@N', the maximum dispersion curve difference for all curves is 0.713976877685 rad/s.
+Deselecting spin ':36@N', the maximum dispersion curve difference for all curves is 0.413602640091 rad/s.
+Deselecting spin ':37@N', the maximum dispersion curve difference for all curves is 0.302953864843 rad/s.
+Deselecting spin ':40@N', the maximum dispersion curve difference for all curves is 0.401535026435 rad/s.
+Deselecting spin ':41@N', the maximum dispersion curve difference for all curves is 0.805657060225 rad/s.
+Deselecting spin ':43@N', the maximum dispersion curve difference for all curves is 0.582523964429 rad/s.
+Deselecting spin ':44@N', the maximum dispersion curve difference for all curves is 0.325638582443 rad/s.
+Deselecting spin ':45@N', the maximum dispersion curve difference for all curves is 0.947956877688 rad/s.
+Deselecting spin ':49@N', the maximum dispersion curve difference for all curves is 0.872396631779 rad/s.
+Deselecting spin ':50@N', the maximum dispersion curve difference for all curves is 0.403543891199 rad/s.
+Deselecting spin ':56@N', the maximum dispersion curve difference for all curves is 0.468272490195 rad/s.
+Deselecting spin ':57@N', the maximum dispersion curve difference for all curves is 0.634215047495 rad/s.
+Deselecting spin ':58@N', the maximum dispersion curve difference for all curves is 0.953109267554 rad/s.
+\end{lstlisting}
+
+Search for `eliminate' to see which models have been removed due to the model elimination step (see section~\ref{sect: relaxation dispersion model elimination} on page~\pageref{sect: relaxation dispersion model elimination} for details).
+For example for the CR72 model:
+
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+relax> eliminate(function=None, args=None)
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50003 is less than  0.50100, eliminating the spin cluster [':6@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50001 is less than  0.50100, eliminating the spin cluster [':38@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50001 is less than  0.50100, eliminating the spin cluster [':42@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50001 is less than  0.50100, eliminating the spin cluster [':45@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50000 is less than  0.50100, eliminating the spin cluster [':46@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50002 is less than  0.50100, eliminating the spin cluster [':47@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50000 is less than  0.50100, eliminating the spin cluster [':48@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50002 is less than  0.50100, eliminating the spin cluster [':60@N'].
+Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50000 is less than  0.50100, eliminating the spin cluster [':62@N'].
+\end{lstlisting}
 
 To see the optimised parameter values, double click on the \file{kex.agr} file to see the exchange rates.
 This will open the \uf{grace\ufsep{}view} user function window by which the file can be opened.
@@ -3229,7 +3300,7 @@ The default settings produces the following graph:
   \centerline{
     \includegraphics[
       width=0.9\textwidth,
-      bb=14 14 1224 915
+      bb=14 14 1231 922
     ]
     {graphics/screenshots/dispersion_analysis/grace_kex}
   }
@@ -3237,7 +3308,7 @@ The default settings produces the following graph:
 
 The exchange rate for most spins experiencing exchange is between 1000 and 2000~s$^{-1}$.
 Opening the \file{pA.agr} file, it can be seen that the population of state A is approximately 0.98.
-A number of spins have much lower values than this, but their errors are huge meaning that all but 3 are statistically the same as 0.98.
+A number of spins have much lower values than this, but their errors are huge meaning that all but 3 are statistically the same as 0.98 (note that a proper ANOVA statistics analysis would be required to make such statements).
 
 To see one of the dispersion curves, open the \file{disp\osus{}64\osus{}N.agr} file in Grace.
 The default settings will produce the graph:
@@ -3255,7 +3326,7 @@ The default settings will produce the graph:
 To improve the appearance of this plot, please refer to the Grace software documentation.
 
 
-% comparing models.
+% Comparing models.
 %~~~~~~~~~~~~~~~~~~
 
 \subsection{Dispersion GUI mode -- comparing models}
@@ -3283,61 +3354,71 @@ Switch to the data pipe of another model and open the same file to compare the r
 
 \subsection{Dispersion GUI mode -- the clustered analysis}
 
-For the clustered analysis, we will focus on one group of spins -- those from residues 59 to 67.
+Before the second analysis with spin clustering will be performed, the relax state will be saved in the file \file{state.bz2} and the program closed.
+To store the details of the second analysis in a separate log file, relax will be restarted with the command:
+
+\example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_clustered --gui}
+
+When the GUI has started, load the \file{state.bz2} file.
+If relax is not restarted, all messages will be in a single log file.
+
+For the clustered analysis, we will focus on one group of spins -- those from residues :59 to :67.
 These can be seen to have very similar dynamics:
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The population for state A.
 #
 # mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
 [snip]
-None        59       GLY       None      N             0.991889219955985    0.0450783237839957    
+None        59       GLY       None      N             0.991169677577733    0.0254974551085798    
 None        60       GLY       None      N          None                  None                    
-None        61       GLY       None      N             0.988921118720546  0.000172502417409869    
-None        62       GLY       None      N             0.890931457907137     0.144215844986902    
-None        63       GLY       None      N              0.99156311187483   0.00115458534680375    
-None        64       GLY       None      N             0.983421376088971   0.00136664677079204    
-None        65       GLY       None      N             0.993825345814723   0.00190588775997763    
-None        66       GLY       None      N             0.996758947832568    0.0446859094999393    
-None        67       GLY       None      N             0.987205570324475  0.000218557328139047    
+None        61       GLY       None      N             0.989169345780449  0.000173707304433962    
+None        62       GLY       None      N             0.892612114003636     0.156741312688688    
+None        63       GLY       None      N             0.991579380015928   0.00101555844987099    
+None        64       GLY       None      N             0.983519617639107   0.00141882200997569    
+None        65       GLY       None      N             0.993831316342131   0.00840481515172743    
+None        66       GLY       None      N             0.996816227018878   0.00495523034494496    
+None        67       GLY       None      N             0.987206586948786  0.000217099775069814    
 [snip]
 \end{lstlisting}
 
-\begin{lstlisting}[basicstyle=\scriptsize,numbers=none]
+\begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The exchange rate.
 #
 # mol_name  res_num  res_name  spin_num  spin_name  value                 error                   
 [snip]
-None        59       GLY       None      N              1809.98484500718      220.217062176079    
+None        59       GLY       None      N              1856.39029180567      258.796681611922    
 None        60       GLY       None      N          None                  None                    
-None        61       GLY       None      N              1721.40918090412      77.6195110540786    
-None        62       GLY       None      N              1561.11252768657      234.177688850931    
-None        63       GLY       None      N              1444.52431393838      116.228169825369    
-None        64       GLY       None      N              1920.62433476407      92.6644161872285    
-None        65       GLY       None      N              1310.87783806055      162.660315854685    
-None        66       GLY       None      N               1227.3688268331      261.646351662978    
-None        67       GLY       None      N              1768.87422361068      75.8203628883989    
+None        61       GLY       None      N              1706.42820099893      79.5779060629935    
+None        62       GLY       None      N              1560.77926730839      246.876174669559    
+None        63       GLY       None      N              1448.69535431372      121.940593279104    
+None        64       GLY       None      N               1922.2405164604      96.0557804598977    
+None        65       GLY       None      N               1333.8423680145      168.000554346898    
+None        66       GLY       None      N              1243.45993122534      238.215664971556    
+None        67       GLY       None      N              1753.32557147779      78.2028166128168    
 [snip]
 \end{lstlisting}
 
 All other spins will be deselected.
 
-From the non-clustered results, it could be argued that all spins in the entire system experience the same dynamic process, i.e. have the same $\pA$ and $\kex$ values.
-Such an analysis could be performed at a later stage.
+From the non-clustered results, it could be argued that all spins in the entire system experience the same dynamic process, i.e.\ they have the same $\pA$ and $\kex$ values.
+Such an analysis could be performed at a later stage if desired.
+The dispersion curves for the residue :60 could also be inspected to see that dispersion is likely to be present and another clustered analysis including this spin performed. 
+The number of clustered analyses performed is up to the user -- imagination is the only limit.
 
 To start the analysis, open the analysis selection wizard as was performed previously.
 Name the analysis as `Dispersion - Hansen (clustered :59 to :67)'.
 Once the analysis is initialised, change the results directory to \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}clustered}.
-To use the results of the previous analysis to speed up this analysis, the clustering will cause the grid search to be impossibly long, change the \guistring{Previous run directory} value to \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}non\osus{}clustered}.
+To use the results of the previous analysis to speed up this analysis, as clustering will cause the grid search to be impossibly long, change the \guistring{Previous run directory} value to \directory{$\sim$\ossep{}tmp\ossep{}dispersion\ossep{}non\osus{}clustered}.
 
 Set up the spin systems as for the non-clustered analysis.
-This time however deselect all spins except for those of residues 59 to 67 (excluding 60).
+This time however deselect all spins except for those of residues :59 to :67 (excluding :60).
 This can be performed by right clicking on the spins in the spin viewer window.
-The next step is to cluster these eight spins.
 
+The next step is to cluster these eight spins.
 In the \guistring{Spin cluster IDs} GUI element, click on the \guibutton{Cluster} button.
 This launches the \uf{relax\ufus{}disp\ufsep{}cluster} user function.
-Set the cluster ID to \guistring{res\_59\_to\_67}, for example, and the spin ID string to \guistring{:59-67} (this says all residues from 59 to 67, see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for details):
+Set the cluster ID to \guistring{res\_59\_to\_67}, for example, and the spin ID string to \guistring{:59-67} (this says all residues from :59 to :67, see section~\ref{sect: spin ID} on page~\pageref{sect: spin ID} for details):
 
 \begin{minipage}[h]{\linewidth}
   \centerline{
@@ -3349,11 +3430,15 @@ Set the cluster ID to \guistring{res\_59\_to\_67}, for example, and the spin ID 
   }
 \end{minipage}
 
+As spin :60 is deselected, that residue will be skipped in the analysis.
+
 Then set the spin isotope and load all of the Sparky peak lists as before.
 Chose the models `R2eff', `No Rex', `CR72', and `NS CPMG 2-site expanded'.
 As the `CR72' and `NS CPMG 2-site expanded' were seen as being statistically equivalent in the non-clustered analysis, click on the \guibutton{Toggle} button of the \guistring{Pure numerical solutions} GUI element to avoid the `CR72' model in the model selection step.
+Actually, as the initial parameters for the `NS CPMG 2-site expanded' model in the dispersion auto-analysis will be taken as the average from the non-clustered analysis, the `CR72' model could be completely skipped.
 
-Set the grid search to 11 increments, though this will have no effect as no grid searches will be performed as the results from the non-clustered analysis will be used as the optimisation starting point.
+Ignore the grid search increment setting as this will have no effect.
+No grid searches will be performed because the results from the non-clustered analysis will be used as the optimisation starting point.
 Set the Monte Carlo simulations to 200.
 The main window should now look like:
 
@@ -3368,5 +3453,140 @@ The main window should now look like:
 \end{minipage}
 
 Start the analysis by clicking on the \guibutton{Execute} button.
+You should notice that the spin cluster printout in the log messages in the relax controller window now show the text:
+
+\begin{lstlisting}[numbers=none]
+The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
+\end{lstlisting}
+
+As residue 60 is deselected, it will not be used in the optimisation or any part of the analysis.
+The full analysis should take a few hours to complete.
 
 
+% Comparison of the analyses.
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection{Dispersion GUI mode -- comparison of the analyses}
+
+To statistically compare the non-clustered and clustered analyses, the advanced Akaike's Information Criterion (AIC) as derived in \cite{dAuvergneGooley03} can be used.
+This information is stored within the recorded log files.
+Open the \file{$\sim$/tmp/dispersion/log\_non\_clustered} file and search for the model selection section.
+The text for residues 59 to 67 should be:
+
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+The spin cluster [':59@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   1577.42286    1581.42286    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   31.48415      41.48415      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   31.84758      41.84758      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':60@N'].
+# Data pipe                                       Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)    2                 30                   2647.97449    2651.97449    
+The model from the data pipe 'No Rex - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':61@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   15019.24382    15023.24382    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   77.50622       87.50622       
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   74.73334       84.73334       
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':62@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2         Criterion    
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   722.91592    726.91592    
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   30.11618     40.11618     
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':63@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   5455.72135    5459.72135    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   58.56731      68.56731      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   59.90738      69.90738      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':64@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   13736.91051    13740.91051    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   28.66223       38.66223       
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   29.54008       39.54008       
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':65@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   2498.29408    2502.29408    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   35.13518      45.13518      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   36.17043      46.17043      
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':66@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2         Criterion    
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   962.74016    966.74016    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   15.02929     25.02929     
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   15.08439     25.08439     
+The model from the data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+
+
+The spin cluster [':67@N'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Mon Feb 17 18:00:16 2014)                     2                 30                   16773.20431    16777.20431    
+CR72 - relax_disp (Mon Feb 17 18:00:16 2014)                       5                 30                   118.17857      128.17857      
+NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)    5                 30                   111.56710      121.56710      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 18:00:16 2014)' has been selected.
+\end{lstlisting}
+
+For the log file from the clustered analysis (the \file{$\sim$/tmp/dispersion/log\_clustered} file), the text should be as follows:
+
+\begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
+The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
+# Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
+No Rex - relax_disp (Sun Feb 23 19:36:51 2014)                     16                240                  56914.82514    56946.82514    
+NS CPMG 2-site expanded - relax_disp (Sun Feb 23 19:36:51 2014)    26                240                  510.96553      562.96553      
+The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Sun Feb 23 19:36:51 2014)' has been selected.
+\end{lstlisting}
+
+The numbers for the `NS CPMG 2-site expanded' model can be directly compared.
+This is because the parameter number, data set number, chi-squared value and AIC value (labelled as `Criterion' in the logs) can be summed for the non-clustered analysis and then compared to the clustered values.
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+
+Analysis        & Parameter     & Data set      & Chi-squared   & AIC value \\
+                & number (k)    & number (n)    & value \\
+
+\midrule
+
+Non-clustered   & 40            & 240           & 388.966       & 468.966 \\
+Clustered       & 26            & 240           & 510.966       & 562.966 \\
+
+\bottomrule
+\end{tabular}
+\end{center}
+
+The Akaike Information Criterion value is much less for the non-clustered analysis.
+Therefore this result is the most parsimonious -- the result closest to Occam's razor as defined by frequentist statistics.
+Therefore the non-clustered analysis is a statistically better description of the experimental data for this set of residues.
+For a different cluster of spins, the result may be different.
+If the assumptions of the same dynamics for all spins (both populations $\pA$ and exchange rates $\kex$) is correct, the results of the clustered analysis are nevertheless useful as it can decrease parameter uncertainty.
+If the assumption is not correct, then the decrease in parameter uncertainty will be coupled with a parameter bias -- a shift of the parameter away from reality.
+This should be avoided at all costs.
+
+To perform a relaxation dispersion analysis on your own system, care in the setup, model choice and design of the clustering should be taken:
+\begin{itemize}
+  \item Inspect the dispersion curves of all spin systems one by one and decide if any spins should be deselected for the entire analysis (due to the data being of insufficient quality).
+  \item Depending on the dynamics of the system, the type of data collected (SQ CPMG vs.\ MMQ CPMG vs.\ $\Ronerho$), and personal preferences, chose which limited set of models will be used in the analysis.
+    For this, the published literature should be consulted.
+    Only use models for which you are sure are suited to the system being studied.
+  \item Decide on a number of spin clustering schemes to compare to the non-clustered analysis.
+  \item For deciding which analysis is best for representing the dynamics of the system, a balance between the statistical significance (based on modern frequentist statistics such as AIC), the decrease in parameter uncertainty, and the increase in parameter bias needs to be made.
+  \item All results for all spins should be carefully inspected and compared.
+\end{itemize}
