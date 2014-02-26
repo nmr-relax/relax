@@ -275,7 +275,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.reset()
 
         # Load the state.
-        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         self.interpreter.state.load(state, force=True)
 
         # Execute the auto-analysis (fast).

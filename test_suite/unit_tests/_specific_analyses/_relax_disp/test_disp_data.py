@@ -91,7 +91,7 @@ class Test_disp_data(UnitTestCase):
         """
 
         # Load the state.
-        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         state.load_state(statefile, force=True)
 
         # Original data (spectrum id: exp_type, frq, omega_rf_ppm, spin_lock_field_strength, time_spin_lock).
@@ -538,7 +538,7 @@ class Test_disp_data(UnitTestCase):
         """
 
         # Load the state.
-        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         state.load_state(statefile, force=True)
 
         # Offset and point combinations, with their associated time.
