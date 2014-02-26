@@ -134,7 +134,7 @@ def frequency_checks(frq):
     # Make sure the precise value has been supplied.
     frac, integer = modf(frq / 1e6)
     if frac == 0.0 or frac > 0.99999:
-        warn(RelaxWarning("The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
+        warn(RelaxWarning("The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file."))
 
     # Check that the frequency value is reasonable.
     if frq < 1e8:
