@@ -41,7 +41,7 @@ class Test_disp_data(UnitTestCase):
         ds.add(pipe_name='orig', pipe_type='relax_disp')
 
 
-    def test_count_relax_times(self):
+    def test_count_relax_times_cpmg(self):
         """Unit test of the count_relax_times() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -83,7 +83,7 @@ class Test_disp_data(UnitTestCase):
             self.assertEqual(count, 1)
 
 
-    def test_get_curve_type(self):
+    def test_get_curve_type_cpmg(self):
         """Unit test of the get_curve_type() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -99,7 +99,7 @@ class Test_disp_data(UnitTestCase):
         self.assertEqual(curve_type, 'fixed time')
 
 
-    def test_get_times(self):
+    def test_get_times_cpmg(self):
         """Unit test of the get_times() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -116,7 +116,7 @@ class Test_disp_data(UnitTestCase):
             self.assertEqual(len(times[exp_type]), 2)
 
 
-    def test_has_exponential_exp_type(self):
+    def test_has_exponential_exp_type_cpmg(self):
         """Unit test of the has_exponential_exp_type() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -132,7 +132,7 @@ class Test_disp_data(UnitTestCase):
         self.assertEqual(exponential_exp_type, False)
 
 
-    def test_loop_exp_frq(self):
+    def test_loop_exp_frq_cpmg(self):
         """Unit test of the loop_exp_frq() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -178,7 +178,7 @@ class Test_disp_data(UnitTestCase):
             index += 1
 
 
-    def test_loop_exp_frq_offset(self):
+    def test_loop_exp_frq_offset_cpmg(self):
         """Unit test of the loop_exp_frq_offset() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -228,7 +228,7 @@ class Test_disp_data(UnitTestCase):
             index += 1
 
 
-    def test_loop_exp_frq_offset_point(self):
+    def test_loop_exp_frq_offset_point_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -287,7 +287,7 @@ class Test_disp_data(UnitTestCase):
                 disp_index += 1
 
 
-    def test_loop_exp_frq_offset_point_time(self):
+    def test_loop_exp_frq_offset_point_time_cpmg(self):
         """Unit test of the loop_exp_frq_offset_point_time() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
@@ -350,7 +350,7 @@ class Test_disp_data(UnitTestCase):
                 disp_index += 1
 
 
-    def test_loop_exp_frq_offset_point_time_setup(self):
+    def test_loop_exp_frq_offset_point_time_cpmg_setup(self):
         """U{Bug #21665<https://gna.org/bugs/?21665>} catch, the failure due to a a CPMG analysis recorded at two fields at two delay times, using calc()."""
 
         # Load the state.
@@ -385,7 +385,7 @@ class Test_disp_data(UnitTestCase):
                 self.assertAlmostEqual(point, cpmg_2[j],3)
 
 
-    def test_loop_time(self):
+    def test_loop_time_cpmg(self):
         """Unit test of the loop_time() function.
 
         This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
