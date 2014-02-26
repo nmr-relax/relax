@@ -27,7 +27,7 @@ from os import sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import count_relax_times, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -194,6 +194,34 @@ class Test_disp_data(UnitTestCase):
 
             # Test the time count
             self.assertEqual(count, time_comp['%s_%s'%(offset, point)])
+
+
+    def test_find_intensity_keys_r1rho(self):
+        """Unit test of the find_intensity_keys() function.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        state.load_state(statefile, force=True)
+
+        # Check the number of time counts.
+        print("Checking the id return experiment.")
+        for id in cdp.exp_type.keys():
+            exp_type = cdp.exp_type[id]
+            frq = cdp.spectrometer_frq[id]
+            offset = cdp.spin_lock_offset[id]
+            point = cdp.spin_lock_nu1[id]
+            time = cdp.relax_times[id]
+
+            ids = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+
+            print(exp_type, frq, offset, point, time, id, ids)
+
+            # Test the id return
+            self.assertEqual(len(ids), 1)
+            self.assertEqual(ids[0], id)
 
 
     def test_get_curve_type_cpmg(self):
