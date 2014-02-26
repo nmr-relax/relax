@@ -1602,9 +1602,6 @@ class Relax_disp(API_base, API_common):
                 # Get the intensity keys.
                 int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
 
-                if len(int_keys) > 1:
-                    raise RelaxError("Error %s" % int_keys)
-
                 # Loop over the intensity keys.
                 for int_key in int_keys:
                     # Test if the simulation data point already exists.
