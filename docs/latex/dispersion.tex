@@ -3569,3 +3569,14 @@ For a different cluster of spins, the result may be different.
 If the assumptions of the same dynamics for all spins (both populations $\pA$ and exchange rates $\kex$) is correct, the results of the clustered analysis are nevertheless useful as it can decrease parameter uncertainty.
 If the assumption is not correct, then the decrease in parameter uncertainty will be coupled with a parameter bias -- a shift of the parameter away from reality.
 This should be avoided at all costs.
+
+To perform a relaxation dispersion analysis on your own system, care in the setup, model choice and design of the clustering should be taken:
+\begin{itemize}
+  \item Inspect the dispersion curves of all spin systems one by one and decide if any spins should be deselected for the entire analysis (due to the data being of insufficient quality).
+  \item Depending on the dynamics of the system, the type of data collected (SQ CPMG vs.\ MMQ CPMG vs.\ $\Ronerho$), and personal preferences, chose which limited set of models will be used in the analysis.
+    For this, the published literature should be consulted.
+    Only use models for which you are sure are suited to the system being studied.
+  \item Decide on a number of spin clustering schemes to compare to the non-clustered analysis.
+  \item For deciding which analysis is best for representing the dynamics of the system, a balance between the statistical significance (based on modern frequentist statistics such as AIC), the decrease in parameter uncertainty, and the increase in parameter bias needs to be made.
+  \item All results for all spins should be carefully inspected and compared.
+\end{itemize}
