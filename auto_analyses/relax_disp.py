@@ -628,6 +628,7 @@ class Relax_disp:
 
         # Minimisation statistics.
         if not (model == 'R2eff' and has_fixed_time_exp_type()):
+            self.interpreter.value.write(param='chi2', file='chi2.out', dir=path, force=True)
             self.interpreter.grace.write(y_data_type='chi2', file='chi2.agr', dir=path, force=True)
 
         # Finally save the results.  This is last to allow the continuation of an interrupted analysis while ensuring that all results files have been created.
