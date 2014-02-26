@@ -541,18 +541,34 @@ class Test_disp_data(UnitTestCase):
         statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
         state.load_state(statefile, force=True)
 
-        # Original data, list of time points
-        times_list = [0.0, 0.04, 0.1, 0.14, 0.2, 0.4]
+        # Offset and point combinations, with their associated time.
+        offset_point_time_list = [
+        [118.078, 431.0, [0.0, 0.04, 0.1, 0.2]],
+        [118.078, 651.2, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [118.078, 800.5, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [118.078, 984.0, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [118.078, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [118.078, 1648.5, [0.0, 0.04, 0.1, 0.14, 0.2]],
+        [124.247031462, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [130.416062924, 800.5, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [130.416062924, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [130.416062924, 1648.5, [0.0, 0.04, 0.1, 0.14, 0.2]],
+        [142.754125848, 800.5, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [142.754125848, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [179.768314621, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]],
+        [241.458629241, 1341.1, [0.0, 0.04, 0.1, 0.2, 0.4]]]
 
 
         # Check the number of iterations.
         print("Checking the number of iterations of the loop.")
-        count_frq = 0
         frq = 799777399.1
 
-        for time, ti in loop_time(frq=frq, return_indices=True):
-            print(time, ti)
-            count_frq += 1
-        self.assertEqual(count_frq, len(times_list))
-
+        for offset, point, time_list in offset_point_time_list:
+            # Define count
+            count = 0
+            for time, ti in loop_time(frq=frq, offset=offset, point=point, return_indices=True):
+                print(frq, offset, point, time, ti, count)
+                self.assertEqual(time, time_list[count])
+                self.assertEqual(ti, count)
+                count += 1
 
