@@ -2572,7 +2572,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope(isotope='15N')
 
         # Set number of experiments to be used.
-        NR_exp = -1
+        NR_exp = 70
 
         # Load the experiments settings file.
         expfile = open(data_path+sep+'exp_parameters_sort.txt','r')
