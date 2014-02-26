@@ -267,7 +267,7 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name="origin - relax_disp (Thu Jan  2 13:46:44 2014)", pipe_bundle="relax_disp (Thu Jan  2 13:46:44 2014)", results_dir=self.tmpdir, models=['R2eff', 'No Rex', 'CR72', 'NS CPMG 2-site expanded'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
 
 
-    def test_bug_21344_cpmg_two_fields_two_delaytimes_fail_relax_disp(self):
+    def test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp(self):
         """U{Bug #21665<https://gna.org/bugs/?21344>} catch, the failure of an analysis of a sparse acquired R1rho dataset with missing combinations of time and spin-lock field strengths using auto_analysis."""
 
         # Clear the data store.
