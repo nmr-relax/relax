@@ -2910,11 +2910,13 @@ Click on \guibutton{OK} to return to the \uf{spectrum\ufsep{}read\ufus{}intensit
 
 There is a shortcut to these previous steps in that the file names and spectrum IDs can be manually typed into the input elements of the \uf{spectrum\ufsep{}read\ufus{}intensities} user function wizard page.
 For the file names, assuming relax is installed in the base directory \directory{\ossep{}data\ossep{}relax\ossep{}relax-trunk} and a Unix-like system is being used, the following text can be added:
+
 \begin{lstlisting}[numbers=none]
 ['/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/reference.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/133.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/200.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/266.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/333.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/400.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/466.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/533.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/600.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/66.667.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/666.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/733.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/800.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/866.67.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/933.33.in.bis_sparky', '/data/relax/relax-trunk/test_suite/shared_data/dispersion/Hansen/500_MHz/1000.in_sparky']
 \end{lstlisting}
 
 The spectrum IDs can be added by copying and pasting the following text, making sure all text is on one line:
+
 \begin{lstlisting}[numbers=none]
 ['500_reference', '500_133.33', '500_133.33b', '500_200', '500_266.67', '500_333.33', '500_400', '500_466.67', '500_533.33', '500_533.33b', '500_600', '500_66.667', '500_666.67', '500_733.33', '500_800', '500_866.67', '500_933.33', '500_933.33b', '500_1000']
 \end{lstlisting}
@@ -2986,6 +2988,7 @@ Again use the \guibutton{Apply} button to set the value, repeating for all match
 Change the frequency to 800.0 MHz and continue for the next set of matching spectrum IDs.
 Finally click on \guibutton{Next} to move to the next wizard page.
 If you have not used the exact values from the files, the relax controller window will appear with the warning:
+
 \begin{lstlisting}[language=relax_log,numbers=none]
 relax> spectrometer.frequency(id='500_reference', frq=500.0, units='MHz')
 RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
@@ -3151,6 +3154,7 @@ For the Grace files, the installed Grace version (Xmgrace, QtGrace, or GraceGTK)
 
 Firstly, to see which models have been chosen for the spin systems and which have no statistically significant dispersion, find the \file{model.out} file and double click on it.
 You should see the following:
+
 \begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The dispersion model.
 #
@@ -3236,6 +3240,7 @@ To see this, open the \file{CR72\ossep{}chi2.out} and \file{NS CPMG 2-site expan
 
 To see which spins have been assigned the model `No Rex' due to the $\Rtwoeff/\Ronerho$ insignificance level of 1.0 rad/s, search the log messages for `insignificance'.
 You should see:
+
 \begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
 relax> relax_disp.insignificance(level=1.0)
 Deselecting spin ':2@N', the maximum dispersion curve difference for all curves is 0.772528040762 rad/s.
@@ -3273,6 +3278,7 @@ Deselecting spin ':58@N', the maximum dispersion curve difference for all curves
 
 Search for `eliminate' to see which models have been removed due to the model elimination step (see section~\ref{sect: relaxation dispersion model elimination} on page~\pageref{sect: relaxation dispersion model elimination} for details).
 For example for the CR72 model:
+
 \begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
 relax> eliminate(function=None, args=None)
 Data pipe 'CR72 - relax_disp (Mon Feb 17 18:00:16 2014)':  The pA parameter of 0.50003 is less than  0.50100, eliminating the spin cluster [':6@N'].
@@ -3358,6 +3364,7 @@ If relax is not restarted, all messages will be in a single log file.
 
 For the clustered analysis, we will focus on one group of spins -- those from residues :59 to :67.
 These can be seen to have very similar dynamics:
+
 \begin{lstlisting}[basicstyle=\ttfamily \scriptsize,numbers=none]
 # Parameter description:  The population for state A.
 #
@@ -3447,6 +3454,7 @@ The main window should now look like:
 
 Start the analysis by clicking on the \guibutton{Execute} button.
 You should notice that the spin cluster printout in the log messages in the relax controller window now show the text:
+
 \begin{lstlisting}[numbers=none]
 The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
 \end{lstlisting}
@@ -3464,6 +3472,7 @@ To statistically compare the non-clustered and clustered analyses, the advanced 
 This information is stored within the recorded log files.
 Open the \file{$\sim$/tmp/dispersion/log\_non\_clustered} file and search for the model selection section.
 The text for residues 59 to 67 should be:
+
 \begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
 The spin cluster [':59@N'].
 # Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2          Criterion     
@@ -3535,6 +3544,7 @@ The model from the data pipe 'NS CPMG 2-site expanded - relax_disp (Mon Feb 17 1
 \end{lstlisting}
 
 For the log file from the clustered analysis (the \file{$\sim$/tmp/dispersion/log\_clustered} file), the text should be as follows:
+
 \begin{lstlisting}[basicstyle=\ttfamily \tiny,language=relax_log,numbers=none]
 The spin cluster [':59', ':60', ':61', ':62', ':63', ':64', ':65', ':66', ':67'].
 # Data pipe                                                        Num_params_(k)    Num_data_sets_(n)    Chi2           Criterion      
