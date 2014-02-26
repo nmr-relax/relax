@@ -81,7 +81,7 @@ In all other cases (P1 is not zero), this scale factor should be 1.0. This is be
   \item Phase correction values can be determined easily.
   \item If the delay is not a multiple of 1/2 point, the phase of folded peaks will be distorted.
   \item The Hilbert transform (HT) is used, sometimes automatically, to reconstruct previously deleted imaginary data for interactive rephasing or inverse processing. But, the HT can only reconstruct imaginary data perfectly if the phase is a multiple of 1/2 point.
-  \item Data with P1 = 360 have the first point t=0 missing (i.e. 1 point delay). Since the first point of the FID corresponds to the sum of points in the corresponding spectrum, this missing first point can be ``restored'' by adding a constant to the phased spectrum.  This can be done conveniently by automated zero-order baseline correction, as shown in table~\ref{table: NMRPipe -c}.
+  \item Data with P1 = 360 have the first point t=0 missing (i.e.\ 1 point delay). Since the first point of the FID corresponds to the sum of points in the corresponding spectrum, this missing first point can be ``restored'' by adding a constant to the phased spectrum.  This can be done conveniently by automated zero-order baseline correction, as shown in table~\ref{table: NMRPipe -c}.
   
     \begin{table}
     \begin{center}
