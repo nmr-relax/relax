@@ -529,3 +529,28 @@ class Test_disp_data(UnitTestCase):
         self.assertEqual(count_frq, 2)
 
 
+    def test_loop_time_r1rho(self):
+        """Unit test of the loop_time() function for R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        state.load_state(statefile, force=True)
+
+        # Original data, list of time points
+        times_list = [0.0, 0.04, 0.1, 0.14, 0.2, 0.4]
+
+
+        # Check the number of iterations.
+        print("Checking the number of iterations of the loop.")
+        count_frq = 0
+        frq = 799777399.1
+
+        for time, ti in loop_time(frq=frq, return_indices=True):
+            print(time, ti)
+            count_frq += 1
+        self.assertEqual(count_frq, len(times_list))
+
+
