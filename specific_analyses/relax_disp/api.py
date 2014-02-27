@@ -1600,7 +1600,7 @@ class Relax_disp(API_base, API_common):
             ti = 0
             for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                 # Get the intensity keys.
-                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
                 # Loop over the intensity keys.
                 for int_key in int_keys:
