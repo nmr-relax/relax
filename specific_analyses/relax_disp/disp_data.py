@@ -368,6 +368,10 @@ def find_intensity_key(exp_type=None, frq=None, offset=None, point=None, time=No
         else:
             raise RelaxError("No intensity data could be found corresponding to the spectrometer frequency of %s MHz, dispersion point of %s and relaxation time of %s s." % (frq*1e-6, point, time))
 
+    # Check that number of returned IDs is not larger than 1.
+    if len(ids) > 1:
+        raise RelaxError("The number of returned IDs should not be larger than 1. Returned number is: %i."%(len(ids)))
+
     # Return the IDs.
     return ids
 
