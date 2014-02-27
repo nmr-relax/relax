@@ -1226,13 +1226,15 @@ def loop_point(exp_type=None, frq=None, offset=None, time=None, skip_ref=True, r
             yield field
 
 
-def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
+def loop_spectrum_ids(exp_type=None, frq=None, offset=None, point=None, time=None):
     """Generator method for selectively looping over the spectrum IDs.
 
     @keyword exp_type:  The experiment type.
     @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
     @type frq:          float
+    @keyword offset:    For R1rho-type data, the spin-lock offset value in ppm.
+    @type offset:       None or float
     @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @type point:        float
     @keyword time:      The relaxation time period.
