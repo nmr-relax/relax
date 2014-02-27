@@ -1262,7 +1262,7 @@ def loop_spectrum_ids(exp_type=None, frq=None, offset=None, point=None, time=Non
                 continue
 
             # No match.
-            if cdp.spectrometer_frq[id] != spectrometer_frq:
+            if cdp.spectrometer_frq[id] != frq:
                 continue
 
         # The dispersion point filter.
