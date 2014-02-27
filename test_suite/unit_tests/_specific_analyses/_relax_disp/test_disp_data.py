@@ -677,6 +677,26 @@ class Test_disp_data(UnitTestCase):
                 count += 1
 
 
+    def test_return_intensity_cpmg(self):
+        """Unit test of the return_intensity() function for cpmg setup.
+
+        This uses the data of the saved state attached to U{bug #21665<https://gna.org/bugs/?21665>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21665.bz2'
+        state.load_state(statefile, force=True)
+
+        # Loop over the experiments
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            # Loop over the spins
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Return intensity
+                intensity = return_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+                intensity_ref = return_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, ref=True)
+                print(exp_type, frq, offset, point, time, spin_id, intensity, intensity_ref)
+
+
     def test_return_intensity_r1rho(self):
         """Unit test of the return_intensity() function for R1rho setup.
 
