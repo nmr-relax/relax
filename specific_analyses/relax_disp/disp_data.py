@@ -299,7 +299,7 @@ def decompose_r20_key(key=None):
             return exp_type, frq
 
 
-def find_intensity_keys(exp_type=None, frq=None, offset=None, point=None, time=None, raise_error=True):
+def find_intensity_key(exp_type=None, frq=None, offset=None, point=None, time=None, raise_error=True):
     """Return the key corresponding to the spectrometer frequency, dispersion point, and relaxation time.
 
     @keyword exp_type:      The experiment type.
