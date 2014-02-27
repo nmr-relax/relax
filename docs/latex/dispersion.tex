@@ -2619,6 +2619,7 @@ In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect
 \example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
 
 Note that the \directory{$\sim$\ossep{}tmp\ossep{}dispersion} directory should be created before starting relax.
+If running on a system where your home directory is not defined as \directory{$\sim$\ossep{}}, MS Windows for example, the \directory{$\sim$} part will need to be replaced with some other directory.
 A different command will be used for the clustered analysis to store the log messages in a separate file.
 The two logs will be used to compare the two analysis types at the end.
 
