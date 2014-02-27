@@ -2659,7 +2659,7 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
         keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
 
     # Return the intensity.
-    return spin.intensities[key]
+    return spin.intensities[keys[0]]
 
 
 def return_key_from_di(mi=None, di=None):
