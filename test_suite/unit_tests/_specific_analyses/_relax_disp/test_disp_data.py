@@ -26,8 +26,9 @@ from os import sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
+from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_intensity
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -674,4 +675,24 @@ class Test_disp_data(UnitTestCase):
                 self.assertEqual(time, time_list[count])
                 self.assertEqual(ti, count)
                 count += 1
+
+
+    def test_return_intensity_r1rho(self):
+        """Unit test of the return_intensity() function for R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        state.load_state(statefile, force=True)
+
+        # Loop over the experiments
+        for exp_type, frq, offset, point, time, ei, mi, oi, di, ti in loop_exp_frq_offset_point_time(return_indices=True):
+            # Loop over the spins
+            for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+                # Return intensity
+                intensity = return_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
+                print(exp_type, frq, offset, point, time, spin_id, intensity)
+
 
