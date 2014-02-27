@@ -112,7 +112,7 @@ def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=Non
     """
 
     # The keys.
-    int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+    int_keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
     # Initialise.
     intensity = 0.0
@@ -1960,7 +1960,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Loop over the relaxation time periods.
                 for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                     # The key.
-                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+                    keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
 
                     # Loop over each key.
                     for key in keys:
@@ -2650,9 +2650,9 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
 
     # The key.
     if ref:
-        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
+        keys = find_intensity_key(exp_type=exp_type, frq=frq, point=None, time=time)
     else:
-        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+        keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
 
     # Return the intensity.
     return spin.intensities[key]
@@ -3172,7 +3172,7 @@ def return_relax_times():
     # Loop over the experiment types.
     for exp_type, frq, point, time, ei, mi, di, ti in loop_exp_frq_point_time(return_indices=True):
         # Fetch all of the matching intensity keys.
-        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time, raise_error=False)
+        keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time, raise_error=False)
 
         # No data.
         if not len(keys):

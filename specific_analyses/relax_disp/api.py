@@ -46,7 +46,7 @@ from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_key, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, get_value, linear_constraints, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -203,8 +203,8 @@ class Relax_disp(API_base, API_common):
             # Loop over all the data.
             for exp_type, frq, offset, point, time in loop_exp_frq_offset_point_time():
                 # The three keys.
-                ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
-                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+                ref_keys = find_intensity_key(exp_type=exp_type, frq=frq, point=None, time=time)
+                int_keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # Check for missing data.
@@ -1600,7 +1600,7 @@ class Relax_disp(API_base, API_common):
             ti = 0
             for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                 # Get the intensity keys.
-                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+                int_keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
                 # Loop over the intensity keys.
                 for int_key in int_keys:

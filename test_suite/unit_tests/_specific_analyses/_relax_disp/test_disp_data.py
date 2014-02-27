@@ -27,7 +27,7 @@ from os import sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import state
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_key, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -196,8 +196,8 @@ class Test_disp_data(UnitTestCase):
             self.assertEqual(count, time_comp['%s_%s'%(offset, point)])
 
 
-    def test_find_intensity_keys_r1rho(self):
-        """Unit test of the find_intensity_keys() function.
+    def test_find_intensity_key_r1rho(self):
+        """Unit test of the find_intensity_key() function.
 
         This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
         """
@@ -288,7 +288,7 @@ class Test_disp_data(UnitTestCase):
 
             # Loop over time
             for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-                ids = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
+                ids = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
                 print(exp_type, frq, offset, point, time, data["%s_%s_%s"%(offset, point, time)][5], id, ids)
 
