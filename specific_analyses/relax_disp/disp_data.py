@@ -1960,7 +1960,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Loop over the relaxation time periods.
                 for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                     # The key.
-                    keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
+                    keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
                     # Loop over each key.
                     for key in keys:

@@ -203,8 +203,8 @@ class Relax_disp(API_base, API_common):
             # Loop over all the data.
             for exp_type, frq, offset, point, time in loop_exp_frq_offset_point_time():
                 # The three keys.
-                ref_keys = find_intensity_key(exp_type=exp_type, frq=frq, point=None, time=time)
-                int_keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
+                ref_keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=None, time=time)
+                int_keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
                 param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
                 # Check for missing data.
