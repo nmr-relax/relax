@@ -2626,7 +2626,7 @@ def return_index_from_disp_point_key(key, exp_type=None):
         return return_index_from_disp_point(cdp.spin_lock_nu1[key], exp_type=exp_type)
 
 
-def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, ref=False):
+def return_intensity(spin=None, exp_type=None, frq=None, offset=None, point=None, time=None, ref=False):
     """Return the peak intensity corresponding to the given field strength and dispersion point.
 
     The corresponding reference intensity can be returned if the ref flag is set.  This assumes that the data is of the fixed relaxation time period type.
@@ -2638,6 +2638,8 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
     @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
     @type frq:          float
+    @keyword offset:    For R1rho-type data, the spin-lock offset value in ppm.
+    @type offset:       None or float
     @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @type point:        float
     @keyword time:      The relaxation time period.
@@ -2648,15 +2650,15 @@ def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, 
 
     # Checks.
     if ref:
-        for id in loop_spectrum_ids(exp_type=exp_type, frq=frq, point=point, time=time):
+        for id in loop_spectrum_ids(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time):
             if get_curve_type(id) == 'exponential':
                 raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
 
     # The key.
     if ref:
-        keys = find_intensity_key(exp_type=exp_type, frq=frq, point=None, time=time)
+        keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=None, time=time)
     else:
-        keys = find_intensity_key(exp_type=exp_type, frq=frq, point=point, time=time)
+        keys = find_intensity_key(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
     # Return the intensity.
     return spin.intensities[keys[0]]

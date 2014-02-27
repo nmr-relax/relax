@@ -692,7 +692,7 @@ class Test_disp_data(UnitTestCase):
             # Loop over the spins
             for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
                 # Return intensity
-                intensity = return_intensity(spin=spin, exp_type=exp_type, frq=frq, point=point, time=time)
+                intensity = return_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
                 print(exp_type, frq, offset, point, time, spin_id, intensity)
 
 
