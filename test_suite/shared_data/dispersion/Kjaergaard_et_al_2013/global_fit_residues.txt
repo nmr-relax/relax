@@ -1,18 +1,18 @@
 # Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 # Residues used for global fitting, in Figure 2.
 # This uses the data from Kjaergaard's paper at http://dx.doi.org/10.1021/bi4001062
-L13N_HN
-R15N_HN
-T16N_HN
-Q25N_HN
-Q26N_HN
-Q28N_HN
-L39N_HN
-M40N_HN
-A41N_HN
-F43N_HN
-I44N_HN
-K45N_HN
-A49N_HN
-V52N_HN
-A53N_HN
+L13N-HN
+R15N-HN
+T16N-HN
+Q25N-HN
+Q26N-HN
+Q28N-HN
+L39N-HN
+M40N-HN
+A41N-HN
+F43N-HN
+I44N-HN
+K45N-HN
+A49N-HN
+V52N-HN
+A53N-HN
