@@ -275,7 +275,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.reset()
 
         # Load the state.
-        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        state = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         self.interpreter.state.load(state, force=True)
 
         # Execute the auto-analysis (fast).
@@ -2572,7 +2572,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spin.isotope(isotope='15N')
 
         # Set number of experiments to be used.
-        NR_exp = -1
+        NR_exp = 70
 
         # Load the experiments settings file.
         expfile = open(data_path+sep+'exp_parameters_sort.txt','r')
@@ -2606,6 +2606,8 @@ class Relax_disp(SystemTestCase):
         spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984.0, '46': 1341.11, '48': 1648.5}
 
         # Apply spectra settings.
+        # Count settings
+        j = 0
         for i in range(len(expfileslines)):
             line=expfileslines[i]
             if line[0] == "#":
@@ -2655,6 +2657,93 @@ class Relax_disp(SystemTestCase):
 
                 # Set the spectrometer frequency.
                 self.interpreter.spectrometer.frequency(id=sp_id, frq=set_sfrq, units='MHz')
+
+                # Add to counter
+                j += 1
+
+        print("Testing the number of settings")
+        print("Number of settings iterations is: %s. Number of cdp.exp_type.keys() is: %s"%(i, len(cdp.exp_type.keys() ) ) )
+        self.assertEqual(70, len(expfileslines))
+        self.assertEqual(69, j)
+        self.assertEqual(69, len(cdp.exp_type.keys()) )
+
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Cluster spins
+        for curspin in cluster_ids:
+            print("Adding spin %s to cluster"%curspin)
+            self.interpreter.relax_disp.cluster('model_cluster', curspin)
+
+        # De-select for analysis those spins who have not been clustered
+        for free_spin in cdp.clustering['free spins']:
+            print("Deselecting free spin %s"%free_spin)
+            self.interpreter.deselect.spin(spin_id=free_spin, change_all=False)
+
+        # Initialize counter
+        i = 0
+        j = 0
+        # Count instances of select/deselect
+        for curspin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
+            if curspin.select == True:
+                i += 1
+            if curspin.select == False:
+                j += 1
+
+        # Test number of selected/deselected spins. 
+        self.assertEqual(i, 15)
+        self.assertEqual(j, 48-15)
+
+        # Paper reference values
+        #             Resi	Resn	  R1	    R1err	R2	      R2err	  kEX	       kEXerr	    phi       	phierr
+        ref = dict()
+        ref['13@N'] = [13, 'L13N-HN', 1.32394, 0.14687, 8.16007, 1.01237, 13193.82986, 2307.09152, 58703.06446, 22413.09854]
+        ref['15@N'] = [15, 'R15N-HN', 1.34428, 0.14056, 7.83256, 0.67559, 13193.82986, 2307.09152, 28688.33492, 13480.72253]
+        ref['16@N'] = [16, 'T16N-HN', 1.71514, 0.13651, 17.44216, 0.98583, 13193.82986, 2307.09152, 57356.77617, 21892.44205]
+        ref['25@N'] = [25, 'Q25N-HN', 1.82412, 0.15809, 9.09447, 2.09215, 13193.82986, 2307.09152, 143111.13431, 49535.80302]
+        ref['26@N'] = [26, 'Q26N-HN', 1.45746, 0.14127, 10.22801, 0.67116, 13193.82986, 2307.09152, 28187.06876, 13359.01615]
+        ref['28@N'] = [28, 'Q28N-HN', 1.48095, 0.14231, 10.33552, 0.691, 13193.82986, 2307.09152, 30088.0686, 13920.25654]
+        ref['39@N'] = [39, 'L39N-HN', 1.46094, 0.14514, 8.02194, 0.84649, 13193.82986, 2307.09152, 44130.18538, 18104.55064]
+        ref['40@N'] = [40, 'M40N-HN', 1.21381, 0.14035, 12.19112, 0.81418, 13193.82986, 2307.09152, 41834.90493, 17319.92156]
+        ref['41@N'] = [41, 'A41N-HN', 1.29296, 0.14286, 9.29941, 0.66246, 13193.82986, 2307.09152, 26694.8921, 13080.66782]
+        ref['43@N'] = [43, 'F43N-HN', 1.33626, 0.14352, 12.73816, 1.17386, 13193.82986, 2307.09152, 70347.63797, 26648.30524]
+        ref['44@N'] = [44, 'I44N-HN', 1.28487, 0.1462, 12.70158, 1.52079, 13193.82986, 2307.09152, 95616.20461, 35307.79817]
+        ref['45@N'] = [45, 'K45N-HN', 1.59227, 0.14591, 9.54457, 0.95596, 13193.82986, 2307.09152, 53849.7826, 21009.89973]
+        ref['49@N'] = [49, 'A49N-HN', 1.38521, 0.14148, 4.44842, 0.88647, 13193.82986, 2307.09152, 40686.65286, 18501.20774]
+        ref['52@N'] = [52, 'V52N-HN', 1.57531, 0.15042, 6.51945, 1.43418, 13193.82986, 2307.09152, 93499.92172, 33233.23039]
+        ref['53@N'] = [53, 'A53N-HN', 1.27214, 0.13823, 4.0705, 0.85485, 13193.82986, 2307.09152, 34856.18636, 17505.02393]
+
+        guess = dict()
+        guess['13@N'] = [13, 'L13N-HN', 1.0, 0.1, 8.00, 1.0, 10000.0, 2000.0, 50000.00, 20000.0]
+        guess['15@N'] = [15, 'R15N-HN', 1.0, 0.1, 8.00, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
+        guess['16@N'] = [16, 'T16N-HN', 1.0, 0.1, 17.0, 0.9, 10000.0, 2000.0, 50000.00, 20000.0]
+        guess['25@N'] = [25, 'Q25N-HN', 1.0, 0.1, 9.00, 2.0, 10000.0, 2000.0, 140000.0, 40000.0]
+        guess['26@N'] = [26, 'Q26N-HN', 1.0, 0.1, 10.0, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
+        guess['28@N'] = [28, 'Q28N-HN', 1.0, 0.1, 10.0, 0.6, 10000.0, 2000.0, 30000.00, 10000.0]
+        guess['39@N'] = [39, 'L39N-HN', 1.0, 0.1, 8.00, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
+        guess['40@N'] = [40, 'M40N-HN', 1.0, 0.1, 12.0, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
+        guess['41@N'] = [41, 'A41N-HN', 1.0, 0.1, 9.00, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
+        guess['43@N'] = [43, 'F43N-HN', 1.0, 0.1, 12.0, 1.1, 10000.0, 2000.0, 70000.00, 20000.0]
+        guess['44@N'] = [44, 'I44N-HN', 1.0, 0.1, 12.0, 1.5, 10000.0, 2000.0, 90000.00, 30000.0]
+        guess['45@N'] = [45, 'K45N-HN', 1.0, 0.1, 9.00, 0.9, 10000.0, 2000.0, 50000.00, 20000.0]
+        guess['49@N'] = [49, 'A49N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
+        guess['52@N'] = [52, 'V52N-HN', 1.0, 0.1, 6.00, 1.4, 10000.0, 2000.0, 90000.00, 30000.0]
+        guess['53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
 
         # The dispersion models.
         MODELS = ['R2eff', 'No Rex', 'DPL94']

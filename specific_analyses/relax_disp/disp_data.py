@@ -1222,13 +1222,15 @@ def loop_point(exp_type=None, frq=None, offset=None, time=None, skip_ref=True, r
             yield field
 
 
-def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
+def loop_spectrum_ids(exp_type=None, frq=None, offset=None, point=None, time=None):
     """Generator method for selectively looping over the spectrum IDs.
 
     @keyword exp_type:  The experiment type.
     @type exp_type:     str
     @keyword frq:       The spectrometer frequency.
     @type frq:          float
+    @keyword offset:    For R1rho-type data, the spin-lock offset value in ppm.
+    @type offset:       None or float
     @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
     @type point:        float
     @keyword time:      The relaxation time period.
@@ -1256,7 +1258,7 @@ def loop_spectrum_ids(exp_type=None, frq=None, point=None, time=None):
                 continue
 
             # No match.
-            if cdp.spectrometer_frq[id] != spectrometer_frq:
+            if cdp.spectrometer_frq[id] != frq:
                 continue
 
         # The dispersion point filter.
@@ -1354,7 +1356,12 @@ def loop_time(exp_type=None, frq=None, offset=None, point=None, return_indices=F
                     # The CPMG dispersion data.
                     if exp_type in EXP_TYPE_LIST_CPMG:
                         # No dispersion point data set.
-                        if not hasattr(cdp, 'cpmg_frqs') or id not in cdp.cpmg_frqs:
+                        if hasattr(cdp, 'cpmg_frqs') and cdp.cpmg_frqs[id] != point:
+                            continue
+
+                    # The R1rho data
+                    if exp_type in EXP_TYPE_R1RHO:
+                        if hasattr(cdp, 'spin_lock_nu1') and cdp.spin_lock_nu1[id] != point:
                             continue
 
                 if time != cdp.relax_times[id]:
@@ -1955,7 +1962,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                 # Loop over the relaxation time periods.
                 for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
                     # The key.
-                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
+                    keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
 
                     # Loop over each key.
                     for key in keys:
@@ -2615,42 +2622,6 @@ def return_index_from_disp_point_key(key, exp_type=None):
     # R1rho-type experiments.
     elif exp_type in EXP_TYPE_LIST_R1RHO:
         return return_index_from_disp_point(cdp.spin_lock_nu1[key], exp_type=exp_type)
-
-
-def return_intensity(spin=None, exp_type=None, frq=None, point=None, time=None, ref=False):
-    """Return the peak intensity corresponding to the given field strength and dispersion point.
-
-    The corresponding reference intensity can be returned if the ref flag is set.  This assumes that the data is of the fixed relaxation time period type.
-
-
-    @keyword spin:      The spin container object.
-    @type spin:         SpinContainer instance
-    @keyword exp_type:  The experiment type.
-    @type exp_type:     str
-    @keyword frq:       The spectrometer frequency.
-    @type frq:          float
-    @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-    @type point:        float
-    @keyword time:      The relaxation time period.
-    @type time:         float
-    @keyword ref:       A flag which if True will cause the corresponding reference intensity to be returned instead.
-    @type ref:          bool
-    """
-
-    # Checks.
-    if ref:
-        for id in loop_spectrum_ids(exp_type=exp_type, frq=frq, point=point, time=time):
-            if get_curve_type(id) == 'exponential':
-                raise RelaxError("The reference peak intensity does not exist for the variable relaxation time period experiment types.")
-
-    # The key.
-    if ref:
-        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=None, time=time)
-    else:
-        keys = find_intensity_keys(exp_type=exp_type, frq=frq, point=point, time=time)
-
-    # Return the intensity.
-    return spin.intensities[key]
 
 
 def return_key_from_di(mi=None, di=None):

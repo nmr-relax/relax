@@ -528,7 +528,7 @@ More information about the IT99 model is available from:
 
 This is the model for 2-site very-slow exchange model for time scales within range of microsecond to second time scale, where $\pA \gg \pB$, and named after \citet{Tollinger01}.
 It is selected by setting the model to `TSMFK01'.
-A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e., independent of the rate of exchange).
+A particularly interesting feature of the dispersion curves is the damped oscillations, which occur at low CPMG field strengths, and is solely a function of the chemical shift difference between the two sites (i.e.\ independent of the rate of exchange).
 
 The equation is:
 \begin{align}
@@ -879,7 +879,7 @@ The equation for the exchange process for multiple quantum CPMG-type data is
                  \right] \right\},
 \end{equation}
 
-where $T$ is the constant time interval, and the matrices $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ are differentially defined.
+where $T$ is the constant time interval, and the matrices $\mathbf{A}$, $\mathbf{B}$, $\mathbf{C}$, and $\mathbf{D}$ are dually defined.
 When $n$ is even, they are defined as 
 \begin{subequations}
 \begin{align}
@@ -2619,6 +2619,7 @@ In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect
 \example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
 
 Note that the \directory{$\sim$\ossep{}tmp\ossep{}dispersion} directory should be created before starting relax.
+If running on a system where your home directory is not defined as \directory{$\sim$\ossep{}}, MS Windows for example, the \directory{$\sim$} part will need to be replaced with some other directory.
 A different command will be used for the clustered analysis to store the log messages in a separate file.
 The two logs will be used to compare the two analysis types at the end.
 
