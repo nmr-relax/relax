@@ -2746,7 +2746,7 @@ class Relax_disp(SystemTestCase):
         guess[':53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
 
         # The dispersion models.
-        MODELS = ['R2eff', 'No Rex', 'DPL94']
+        MODELS = ['R2eff', 'DPL94']
 
         # The grid search size (the number of increments per dimension).
         GRID_INC = 4
