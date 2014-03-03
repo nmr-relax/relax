@@ -2745,43 +2745,107 @@ class Relax_disp(SystemTestCase):
         guess[':52@N'] = [52, 'V52N-HN', 1.0, 0.1, 6.00, 1.4, 10000.0, 2000.0, 90000.00, 30000.0]
         guess[':53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
 
-        # Alias spins
+        # Alias spins, and assign guess values.
         for spin, spin_id in spin_loop(return_id=True):
             if spin_id in cluster_ids:
                 print("spin_id %s in cluster ids"%(spin_id))
 
                 if spin_id == ':13@N':
                     spin13 = return_spin(spin_id=spin_id)
+                    spin13.kex = guess[spin_id][6]
+                    spin13.phi_ex = guess[spin_id][8]
                 elif spin_id == ':15@N':
                     spin15 = return_spin(spin_id=spin_id)
+                    spin15.kex = guess[spin_id][6]
+                    spin15.phi_ex = guess[spin_id][8]
                 elif spin_id == ':16@N':
-                    spin16 = return_spin(spin_id=spin_id)                
+                    spin16 = return_spin(spin_id=spin_id)
+                    spin16.kex = guess[spin_id][6]
+                    spin16.phi_ex = guess[spin_id][8]
                 elif spin_id == ':25@N':
-                    spin25 = return_spin(spin_id=spin_id)       
+                    spin25 = return_spin(spin_id=spin_id)
+                    spin25.kex = guess[spin_id][6]
+                    spin25.phi_ex = guess[spin_id][8]
                 elif spin_id == ':26@N':
-                    spin26 = return_spin(spin_id=spin_id)   
+                    spin26 = return_spin(spin_id=spin_id)
+                    spin26.kex = guess[spin_id][6]
+                    spin26.phi_ex = guess[spin_id][8]
                 elif spin_id == ':28@N':
-                    spin28 = return_spin(spin_id=spin_id)   
+                    spin28 = return_spin(spin_id=spin_id)
+                    spin28.kex = guess[spin_id][6]
+                    spin28.phi_ex = guess[spin_id][8]
                 elif spin_id == ':39@N':
-                    spin39 = return_spin(spin_id=spin_id)   
+                    spin39 = return_spin(spin_id=spin_id)
+                    spin39.kex = guess[spin_id][6]
+                    spin39.phi_ex = guess[spin_id][8]
                 elif spin_id == ':40@N':
-                    spin40 = return_spin(spin_id=spin_id)   
+                    spin40 = return_spin(spin_id=spin_id)
+                    spin40.kex = guess[spin_id][6]
+                    spin40.phi_ex = guess[spin_id][8]
                 elif spin_id == ':41@N':
-                    spin41 = return_spin(spin_id=spin_id)   
+                    spin41 = return_spin(spin_id=spin_id)
+                    spin41.kex = guess[spin_id][6]
+                    spin41.phi_ex = guess[spin_id][8]
                 elif spin_id == ':43@N':
-                    spin43 = return_spin(spin_id=spin_id)   
+                    spin43 = return_spin(spin_id=spin_id)
+                    spin43.kex = guess[spin_id][6]
+                    spin43.phi_ex = guess[spin_id][8]
                 elif spin_id == ':44@N':
-                    spin44 = return_spin(spin_id=spin_id)   
+                    spin44 = return_spin(spin_id=spin_id)
+                    spin44.kex = guess[spin_id][6]
+                    spin44.phi_ex = guess[spin_id][8]
                 elif spin_id == ':45@N':
-                    spin45 = return_spin(spin_id=spin_id)   
+                    spin45 = return_spin(spin_id=spin_id)
+                    spin45.kex = guess[spin_id][6]
+                    spin45.phi_ex = guess[spin_id][8]
                 elif spin_id == ':49@N':
-                    spin49 = return_spin(spin_id=spin_id)   
+                    spin49 = return_spin(spin_id=spin_id)
+                    spin49.kex = guess[spin_id][6]
+                    spin49.phi_ex = guess[spin_id][8]
                 elif spin_id == ':52@N':
-                    spin52 = return_spin(spin_id=spin_id)   
+                    spin52 = return_spin(spin_id=spin_id)
+                    spin52.kex = guess[spin_id][6]
+                    spin52.phi_ex = guess[spin_id][8]
                 elif spin_id == ':53@N':
-                    spin53 = return_spin(spin_id=spin_id)   
+                    spin53 = return_spin(spin_id=spin_id)
+                    spin53.kex = guess[spin_id][6]
+                    spin53.phi_ex = guess[spin_id][8]
             else:
                 print("spin_id %s NOT in cluster ids"%(spin_id))
+
+        # Check the initial setup.
+        self.assertEqual(cdp.mol[0].res[7].num, 13)
+        self.assertEqual(cdp.mol[0].res[7].spin[0].kex, guess[':13@N'][6])
+        self.assertEqual(cdp.mol[0].res[9].num, 15)
+        self.assertEqual(cdp.mol[0].res[9].spin[0].kex, guess[':15@N'][6])
+        self.assertEqual(cdp.mol[0].res[10].num, 16)
+        self.assertEqual(cdp.mol[0].res[10].spin[0].kex, guess[':16@N'][6])
+        self.assertEqual(cdp.mol[0].res[16].num, 25)
+        self.assertEqual(cdp.mol[0].res[16].spin[0].kex, guess[':25@N'][6])
+        self.assertEqual(cdp.mol[0].res[17].num, 26)
+        self.assertEqual(cdp.mol[0].res[17].spin[0].kex, guess[':26@N'][6])
+        self.assertEqual(cdp.mol[0].res[19].num, 28)
+        self.assertEqual(cdp.mol[0].res[19].spin[0].kex, guess[':28@N'][6])
+        self.assertEqual(cdp.mol[0].res[29].num, 39)
+        self.assertEqual(cdp.mol[0].res[29].spin[0].kex, guess[':39@N'][6])
+        self.assertEqual(cdp.mol[0].res[30].num, 40)
+        self.assertEqual(cdp.mol[0].res[30].spin[0].kex, guess[':40@N'][6])
+        self.assertEqual(cdp.mol[0].res[31].num, 41)
+        self.assertEqual(cdp.mol[0].res[31].spin[0].kex, guess[':41@N'][6])
+        self.assertEqual(cdp.mol[0].res[33].num, 43)
+        self.assertEqual(cdp.mol[0].res[33].spin[0].kex, guess[':43@N'][6])
+        self.assertEqual(cdp.mol[0].res[34].num, 44)
+        self.assertEqual(cdp.mol[0].res[34].spin[0].kex, guess[':44@N'][6])
+        self.assertEqual(cdp.mol[0].res[35].num, 45)
+        self.assertEqual(cdp.mol[0].res[35].spin[0].kex, guess[':45@N'][6])
+        self.assertEqual(cdp.mol[0].res[35].num, 45)
+        self.assertEqual(cdp.mol[0].res[35].spin[0].kex, guess[':45@N'][6])
+        self.assertEqual(cdp.mol[0].res[38].num, 49)
+        self.assertEqual(cdp.mol[0].res[38].spin[0].kex, guess[':49@N'][6])
+        self.assertEqual(cdp.mol[0].res[41].num, 52)
+        self.assertEqual(cdp.mol[0].res[41].spin[0].kex, guess[':52@N'][6])
+        self.assertEqual(cdp.mol[0].res[42].num, 53)
+        self.assertEqual(cdp.mol[0].res[42].spin[0].kex, guess[':53@N'][6])
 
         # The dispersion models.
         MODELS = ['R2eff', 'DPL94']
