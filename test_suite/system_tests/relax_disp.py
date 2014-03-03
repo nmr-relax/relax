@@ -2795,6 +2795,11 @@ class Relax_disp(SystemTestCase):
             else:
                 print("spin_id %s NOT in cluster ids"%(spin_id))
 
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        relax_disp.Relax_disp.opt_func_tol = 1e-15
+        relax_disp.Relax_disp.opt_max_iterations = 100000
+
         # Run the analysis.
         #relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
