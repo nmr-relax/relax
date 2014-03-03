@@ -2745,18 +2745,6 @@ class Relax_disp(SystemTestCase):
         guess[':52@N'] = [52, 'V52N-HN', 1.0, 0.1, 6.00, 1.4, 10000.0, 2000.0, 90000.00, 30000.0]
         guess[':53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
 
-        # The dispersion models.
-        MODELS = ['R2eff', 'DPL94']
-
-        # The grid search size (the number of increments per dimension).
-        GRID_INC = 4
-
-        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
-        MC_NUM = 3
-
-        # Model selection technique.
-        MODSEL = 'AIC'
-
         # Alias spins
         for spin, spin_id in spin_loop(return_id=True):
             if spin_id in cluster_ids:
@@ -2794,6 +2782,18 @@ class Relax_disp(SystemTestCase):
                     spin53 = return_spin(spin_id=spin_id)   
             else:
                 print("spin_id %s NOT in cluster ids"%(spin_id))
+
+        # The dispersion models.
+        MODELS = ['R2eff', 'DPL94']
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
 
         # Execute the auto-analysis (fast).
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
