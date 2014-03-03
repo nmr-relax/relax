@@ -2757,6 +2757,44 @@ class Relax_disp(SystemTestCase):
         # Model selection technique.
         MODSEL = 'AIC'
 
+        # Alias spins
+        for spin, spin_id in spin_loop(return_id=True):
+            if spin_id in cluster_ids:
+                print("spin_id %s in cluster ids"%(spin_id))
+
+                if spin_id == ':13@N':
+                    spin13 = return_spin(spin_id=spin_id)
+                elif spin_id == ':15@N':
+                    spin15 = return_spin(spin_id=spin_id)
+                elif spin_id == ':16@N':
+                    spin16 = return_spin(spin_id=spin_id)                
+                elif spin_id == ':25@N':
+                    spin25 = return_spin(spin_id=spin_id)       
+                elif spin_id == ':26@N':
+                    spin26 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':28@N':
+                    spin28 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':39@N':
+                    spin39 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':40@N':
+                    spin40 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':41@N':
+                    spin41 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':43@N':
+                    spin43 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':44@N':
+                    spin44 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':45@N':
+                    spin45 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':49@N':
+                    spin49 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':52@N':
+                    spin52 = return_spin(spin_id=spin_id)   
+                elif spin_id == ':53@N':
+                    spin53 = return_spin(spin_id=spin_id)   
+            else:
+                print("spin_id %s NOT in cluster ids"%(spin_id))
+
         # Run the analysis.
         #relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
