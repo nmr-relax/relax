@@ -208,7 +208,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     file_path = get_file_path(file, dir)
 
     # Run Grace.
-    system(grace_exe + " " + file_path + " &")
+    system(grace_exe + " \"" + file_path + "\" &")
 
 
 def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):
