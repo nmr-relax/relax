@@ -3002,6 +3002,9 @@ class Relax_disp(SystemTestCase):
             #self.interpreter.value.write(param='chi2', file='chi2.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
             #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', force=True, norm=False)
 
+            # Test of new parameters to write out.
+            self.interpreter.value.write(param='theta', file='theta.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+
             ## Save results as state
             #self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
             ## Save all results in all pipes in state
