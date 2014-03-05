@@ -2745,71 +2745,56 @@ class Relax_disp(SystemTestCase):
         guess[':52@N'] = [52, 'V52N-HN', 1.0, 0.1, 6.00, 1.4, 10000.0, 2000.0, 90000.00, 30000.0]
         guess[':53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
 
-        # Alias spins, and assign guess values.
+        # Assign guess values.
         for spin, spin_id in spin_loop(return_id=True):
             if spin_id in cluster_ids:
                 print("spin_id %s in cluster ids"%(spin_id))
 
                 if spin_id == ':13@N':
-                    spin13 = return_spin(spin_id=spin_id)
-                    spin13.kex = guess[spin_id][6]
-                    spin13.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':15@N':
-                    spin15 = return_spin(spin_id=spin_id)
-                    spin15.kex = guess[spin_id][6]
-                    spin15.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':16@N':
-                    spin16 = return_spin(spin_id=spin_id)
-                    spin16.kex = guess[spin_id][6]
-                    spin16.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':25@N':
-                    spin25 = return_spin(spin_id=spin_id)
-                    spin25.kex = guess[spin_id][6]
-                    spin25.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':26@N':
-                    spin26 = return_spin(spin_id=spin_id)
-                    spin26.kex = guess[spin_id][6]
-                    spin26.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':28@N':
-                    spin28 = return_spin(spin_id=spin_id)
-                    spin28.kex = guess[spin_id][6]
-                    spin28.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':39@N':
-                    spin39 = return_spin(spin_id=spin_id)
-                    spin39.kex = guess[spin_id][6]
-                    spin39.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':40@N':
-                    spin40 = return_spin(spin_id=spin_id)
-                    spin40.kex = guess[spin_id][6]
-                    spin40.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':41@N':
-                    spin41 = return_spin(spin_id=spin_id)
-                    spin41.kex = guess[spin_id][6]
-                    spin41.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':43@N':
-                    spin43 = return_spin(spin_id=spin_id)
-                    spin43.kex = guess[spin_id][6]
-                    spin43.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':44@N':
-                    spin44 = return_spin(spin_id=spin_id)
-                    spin44.kex = guess[spin_id][6]
-                    spin44.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':45@N':
-                    spin45 = return_spin(spin_id=spin_id)
-                    spin45.kex = guess[spin_id][6]
-                    spin45.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':49@N':
-                    spin49 = return_spin(spin_id=spin_id)
-                    spin49.kex = guess[spin_id][6]
-                    spin49.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':52@N':
-                    spin52 = return_spin(spin_id=spin_id)
-                    spin52.kex = guess[spin_id][6]
-                    spin52.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
                 elif spin_id == ':53@N':
-                    spin53 = return_spin(spin_id=spin_id)
-                    spin53.kex = guess[spin_id][6]
-                    spin53.phi_ex = guess[spin_id][8]
+                    spin.kex = guess[spin_id][6]
+                    spin.phi_ex = guess[spin_id][8]
             else:
                 print("spin_id %s NOT in cluster ids"%(spin_id))
 
