@@ -3004,6 +3004,7 @@ class Relax_disp(SystemTestCase):
 
             # Test of new parameters to write out.
             self.interpreter.value.write(param='theta', file='theta.out', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+            self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
 
             ## Save results as state
             #self.interpreter.results.write(file='results', dir=ds.tmpdir+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
