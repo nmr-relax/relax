@@ -25,9 +25,11 @@ from os import sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from math import atan, pi
 from pipe_control import state
+from pipe_control.mol_res_spin import get_spin_ids, return_spin
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time
+from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -674,5 +676,74 @@ class Test_disp_data(UnitTestCase):
                 self.assertEqual(time, time_list[count])
                 self.assertEqual(ti, count)
                 count += 1
+
+
+    def test_return_offset_data(self):
+        """Unit test of the return_offset_data() function for R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        state.load_state(statefile, force=True)
+
+        # Get the field count
+        field_count = cdp.spectrometer_frq_count
+
+        # Get the spin_lock_field points
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+
+        # Initialize data containers
+        all_spin_ids = get_spin_ids()
+
+        # Containers for only selected spins
+        cur_spin_ids = []
+        cur_spins = []
+        for curspin_id in all_spin_ids:
+            # Get the spin
+            curspin = return_spin(curspin_id)
+
+            # Check if is selected
+            if curspin.select == True:
+                cur_spin_ids.append(curspin_id)
+                cur_spins.append(curspin)
+
+        # Get the spectometer frequency
+        sfrq = cdp.spectrometer_frq_list[0]
+
+        # In MHz
+        yOBS = 81.050
+        # In ppm
+        yCAR = 118.078
+        centerPPM_N15 = yCAR
+
+        # Gyromagnetic ratios
+        g1H = 26.7522212 * 1e7
+        g15N = -2.7126 * 1e7
+
+        # The offset and R1 data.
+        chemical_shifts, offsets, tilt_angles = return_offset_data(spins=cur_spins, spin_ids=cur_spin_ids, field_count=field_count, fields=spin_lock_nu1)
+        
+        # Loop over the index of spins, then exp_type, frq, offset
+        print("Printing the following")    
+        print("exp_type curspin_id frq offset{ppm} offsets[ei][si][mi][oi]{rad/s} ei mi oi si di cur_spin.chemical_shift{ppm} chemical_shifts[ei][si][mi]{rad/s} spin_lock_nu1{Hz} tilt_angles[ei][si][mi][oi]{rad}")
+        for si in range(len(cur_spin_ids)):
+            curspin_id = cur_spin_ids[si]
+            cur_spin = cur_spins[si]
+            for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
+                # Loop over the dispersion points.
+                spin_lock_fields = spin_lock_nu1[ei][mi][oi]
+                for di in range(len(spin_lock_fields)):
+                    print("%-8s %-10s %11.1f %8.4f %12.5f %i  %i  %i  %i  %i %7.3f %12.5f %12.5f %12.5f"%(exp_type, curspin_id, frq, offset, offsets[ei][si][mi][oi], ei, mi, oi, si, di, cur_spin.chemical_shift, chemical_shifts[ei][si][mi], spin_lock_fields[di], tilt_angles[ei][si][mi][oi][di]))
+                    # Test chemical shift conversion
+                    self.assertEqual(chemical_shifts[ei][si][mi], cur_spin.chemical_shift * 2.0 * pi * sfrq / g1H * g15N * 1e-6)
+                    # Test the offset conversion
+                    self.assertEqual(offsets[ei][si][mi][oi], offset * 2.0 * pi * sfrq / g1H * g15N * 1e-6)
+                    # Test the tiltangle
+                    c_omega1 = spin_lock_fields[di] * 2.0 * pi
+                    c_Delta_omega = chemical_shifts[ei][si][mi] - offsets[ei][si][mi][oi]
+                    c_theta = atan(c_omega1 / c_Delta_omega)
+                    self.assertEqual(tilt_angles[ei][si][mi][oi][di], c_theta)
 
 
