@@ -605,25 +605,29 @@ class Info_box(object):
         # Init.
         text = ''
 
+        # The system.
+        system = platform.system()
+
         # Unix and GNU/Linux systems.
-        pipe = Popen('free -m', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-        free_lines = pipe.stdout.readlines()
-        if free_lines:
-            # Extract the info.
-            for line in free_lines:
-                # Split up the line.
-                row = line.split()
+        if system == 'Linux':
+            pipe = Popen('free -m', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+            free_lines = pipe.stdout.readlines()
+            if free_lines:
+                # Extract the info.
+                for line in free_lines:
+                    # Split up the line.
+                    row = line.split()
 
-                # The RAM size.
-                if row[0] == 'Mem:':
-                    text += format % ("Total RAM size: ", row[1], "Mb")
+                    # The RAM size.
+                    if row[0] == 'Mem:':
+                        text += format % ("Total RAM size: ", row[1], "Mb")
 
-                # The swap size.
-                if row[0] == 'Swap:':
-                    text += format % ("Total swap size: ", row[1], "Mb")
+                    # The swap size.
+                    if row[0] == 'Swap:':
+                        text += format % ("Total swap size: ", row[1], "Mb")
 
         # Windows systems (supported by ctypes.windll).
-        if not text and hasattr(ctypes, 'windll'):
+        if system == 'Windows' or system == 'Microsoft':
             # Initialise the memory info class.
             mem = MemoryStatusEx()
 
@@ -632,6 +636,46 @@ class Info_box(object):
 
             # The swap size.
             text += format % ("Total swap size: ", mem.ullTotalVirtual / 1024.**2, "Mb")
+
+        # Mac OS X systems.
+        if system == 'Darwin':
+            # Add the 'sysctl' path to the environment (if needed).
+            environ['PATH'] += pathsep + '/usr/sbin'
+
+            # The commands to run.
+            cmd = "sysctl -n hw.physmem"
+            cmd2 = "sysctl -n hw.memsize"
+
+            # Execute the command in a fail safe way, return the result or nothing.
+            try:
+                # Execute.
+                pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+                waitpid(pipe.pid, 0)
+
+                # Get the STDOUT data.
+                data = pipe.stdout.readlines()
+
+                # Execute.
+                pipe = Popen(cmd2, shell=True, stdout=PIPE, close_fds=False)
+                waitpid(pipe.pid, 0)
+
+                # Get the STDOUT data.
+                data2 = pipe.stdout.readlines()
+
+                # Convert the values.
+                ram = int(data[0].strip())
+                total = int(data2[0].strip())
+                swap = total - ram
+
+                # The RAM size.
+                text += format % ("Total RAM size: ", ram / 1024.**2, "Mb")
+
+                # The swap size.
+                text += format % ("Total swap size: ", swap / 1024.**2, "Mb")
+
+            # Nothing.
+            except:
+                pass
 
         # Unknown.
         if not text:
