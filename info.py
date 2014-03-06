@@ -36,11 +36,12 @@ if dep_check.ctypes_structure_module:
     from ctypes import Structure
 else:
     Structure = object
-from os import environ, waitpid
+from os import environ, pathsep, waitpid
 import platform
-PIPE, Popen = None, None
+from re import sub
+check_output, PIPE, Popen = None, None, None
 if dep_check.subprocess_module:
-    from subprocess import PIPE, Popen
+    from subprocess import check_output, PIPE, Popen
 import sys
 from textwrap import wrap
 
@@ -516,6 +517,60 @@ class Info_box(object):
         return text
 
 
+    def processor_name(self):
+        """Return a string for the processor name.
+
+        @return:    The processor name, in much more detail than platform.processor().
+        @rtype:     str
+        """
+
+        # No subprocess module.
+        if not dep_check.subprocess_module:
+            return ""
+
+        # The system.
+        system = platform.system()
+
+        # Linux systems.
+        if system == 'Linux':
+            # The command to run.
+            command = "cat /proc/cpuinfo"
+
+            # Execute the command.
+            cpuinfo = check_output(command, shell=True).strip()
+            lines = cpuinfo.splitlines()
+
+            # Loop over the lines, returning the first model name with the leading "model name  :" text stripped.
+            for line in lines:
+                if "model name" in line:
+                    # Convert the text.
+                    name = sub(".*model name.*:", "", line, 1)
+                    name = name.strip()
+
+                    # Return the name.
+                    return name
+
+        # Windows systems.
+        if system == 'Windows' or system == 'Microsoft':
+            return platform.processor()
+
+        # Mac OS X systems.
+        if system == 'Darwin':
+            # Add the 'sysctl' path to the environment (if needed).
+            environ['PATH'] += pathsep + '/usr/sbin'
+
+            # The command to run.
+            command = "sysctl -n machdep.cpu.brand_string"
+
+            # Execute the command in a fail safe way, return the result or nothing.
+            try:
+                return check_output(command).strip()
+            except:
+                return ""
+
+        # Unknown.
+        return ""
+
 
     def ram_info(self, format="    %-25s%s\n"):
         """Return a string for printing to STDOUT with info from the Python packages used by relax.
@@ -641,6 +696,7 @@ class Info_box(object):
             text = text + (format % ("Machine: ", platform.machine()))
         if hasattr(platform, 'processor'):
             text = text + (format % ("Processor: ", platform.processor()))
+        text = text + (format % ("Processor name: ", self.processor_name()))
         text = text + (format % ("Endianness: ", sys.byteorder))
         text = text + self.ram_info(format=format2)
 
