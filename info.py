@@ -39,9 +39,9 @@ else:
 from os import environ, pathsep, waitpid
 import platform
 from re import sub
-check_output, PIPE, Popen = None, None, None
+PIPE, Popen = None, None
 if dep_check.subprocess_module:
-    from subprocess import check_output, PIPE, Popen
+    from subprocess import PIPE, Popen
 import sys
 from textwrap import wrap
 
@@ -524,6 +524,10 @@ class Info_box(object):
         @rtype:     str
         """
 
+        # Python 2.3 and earlier.
+        if Popen == None:
+            return ""
+
         # No subprocess module.
         if not dep_check.subprocess_module:
             return ""
@@ -534,14 +538,17 @@ class Info_box(object):
         # Linux systems.
         if system == 'Linux':
             # The command to run.
-            command = "cat /proc/cpuinfo"
+            cmd = "cat /proc/cpuinfo"
 
             # Execute the command.
-            cpuinfo = check_output(command, shell=True).strip()
-            lines = cpuinfo.splitlines()
+            pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+            waitpid(pipe.pid, 0)
+
+            # Get the STDOUT data.
+            data = pipe.stdout.readlines()
 
             # Loop over the lines, returning the first model name with the leading "model name  :" text stripped.
-            for line in lines:
+            for line in data:
                 if "model name" in line:
                     # Convert the text.
                     name = sub(".*model name.*:", "", line, 1)
@@ -560,11 +567,21 @@ class Info_box(object):
             environ['PATH'] += pathsep + '/usr/sbin'
 
             # The command to run.
-            command = "sysctl -n machdep.cpu.brand_string"
+            cmd = "sysctl -n machdep.cpu.brand_string"
 
             # Execute the command in a fail safe way, return the result or nothing.
             try:
-                return check_output(command).strip()
+                # Execute.
+                pipe = Popen(cmd, shell=True, stdout=PIPE, close_fds=False)
+                waitpid(pipe.pid, 0)
+
+                # Get the STDOUT data.
+                data = pipe.stdout.readlines()
+
+                # Return the string.
+                return data.strip()
+
+            # Nothing.
             except:
                 return ""
 
