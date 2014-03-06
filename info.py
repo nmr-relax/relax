@@ -579,7 +579,7 @@ class Info_box(object):
                 data = pipe.stdout.readlines()
 
                 # Return the string.
-                return data.strip()
+                return data[0].strip()
 
             # Nothing.
             except:
