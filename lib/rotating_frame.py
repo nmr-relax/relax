@@ -32,6 +32,21 @@ from pipe_control.mol_res_spin import find_index, get_spin_ids, index_molecule, 
 from specific_analyses.relax_disp.disp_data import loop_exp_frq_offset, return_offset_data, return_param_key_from_data, return_spin_lock_nu1
 
 def calc_rotating_frame_params():
+    """Calculates and return dictionaries of rotating frame parameters, calculated from:
+    - The spectrometer frequency.
+    - The spin-lock or hard pulse offset.
+    - The dispersion point data (the spin-lock field strength in Hz).
+
+    The return will be dictionaries stored for each spin,
+    - spin.Domega - The average resonance offset in the rotating frame ( Domega = w_{pop_ave} - w_rf  ) [rad/s]
+    - spin.theta - Rotating frame tilt angle ( theta = arctan(w_1 / Omega) ) [rad]
+    - spin.w_eff - Effective field in rotating frame ( w_eff = sqrt( Omega^2 + w_1^2 ) ) [rad/s]
+
+    Calculations are mentioned in the U{manual<http://www.nmr-relax.com/manual/Dispersion_model_summary.html>}
+
+    The dictionary keys are generated with:
+    return_param_key_from_data() from module specific_analyses.relax_disp.disp_data.
+    """
     # Get the field count
     field_count = cdp.spectrometer_frq_count
 
