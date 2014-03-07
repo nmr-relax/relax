@@ -52,7 +52,7 @@ def generate_theta_dic():
             cur_spins.append(curspin)
 
     # The offset and R1 data.
-    chemical_shifts, offsets, tilt_angles, Delta_omega = return_offset_data(spins=cur_spins, spin_ids=cur_spin_ids, field_count=field_count, fields=spin_lock_nu1)
+    chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=cur_spins, spin_ids=cur_spin_ids, field_count=field_count, fields=spin_lock_nu1)
         
     # Loop over the index of spins, then exp_type, frq, offset
     print("Printing the following")    
