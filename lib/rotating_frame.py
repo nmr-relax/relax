@@ -31,7 +31,7 @@ from os import sep
 from pipe_control.mol_res_spin import find_index, get_spin_ids, index_molecule, index_residue, return_spin, spin_loop
 from specific_analyses.relax_disp.disp_data import loop_exp_frq_offset, return_offset_data, return_param_key_from_data, return_spin_lock_nu1
 
-def calc_tilt_angle():
+def calc_rotating_frame_params():
     # Get the field count
     field_count = cdp.spectrometer_frq_count
 
