@@ -39,6 +39,5 @@ __all__ = [
     'test_io',
     'test_mathematics',
     'test_regex',
-    'test_rotating_frame',
     'test_selection'
 ]
