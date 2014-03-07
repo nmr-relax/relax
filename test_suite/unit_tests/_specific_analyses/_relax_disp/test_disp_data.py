@@ -54,10 +54,14 @@ class Test_disp_data(UnitTestCase):
         statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         state.load_state(statefile, force=True)
 
-        curspin = return_spin(':5@N')
+        curspin_id = ':5@N'
+        curspin = return_spin(curspin_id)
 
         # Use calc_tilt_angle function
-        calc_rotating_frame_params(spin = curspin)
+        theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin = curspin, spin_id = curspin_id)
+
+        for dic_key in dic_key_list:
+            print(dic_key, theta_spin_dic[dic_key], Domega_spin_dic[dic_key], w_eff_spin_dic[dic_key])
 
 
     def test_count_relax_times_cpmg(self):
