@@ -29,7 +29,7 @@ from math import atan, pi
 from pipe_control import state
 from pipe_control.mol_res_spin import get_spin_ids, return_spin
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
+from specific_analyses.relax_disp.disp_data import calc_rotating_frame_params, count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
@@ -42,6 +42,20 @@ class Test_disp_data(UnitTestCase):
 
         # Create a dispersion data pipe.
         ds.add(pipe_name='orig', pipe_type='relax_disp')
+
+
+    def test_calc_rotating_frame_params(self):
+        """Unit test of the calc_rotating_frame_params() function for R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        state.load_state(statefile, force=True)
+
+        # Use calc_tilt_angle function
+        calc_rotating_frame_params()
 
 
     def test_count_relax_times_cpmg(self):
