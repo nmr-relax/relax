@@ -54,8 +54,10 @@ class Test_disp_data(UnitTestCase):
         statefile = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         state.load_state(statefile, force=True)
 
+        curspin = return_spin(':5@N')
+
         # Use calc_tilt_angle function
-        calc_rotating_frame_params()
+        calc_rotating_frame_params(spin = curspin)
 
 
     def test_count_relax_times_cpmg(self):
