@@ -20,7 +20,9 @@
 ###############################################################################
 
 # Module docstring.
-"""Module containing functions related to rotating frame NMR calculations."""
+"""Module containing functions related to rotating frame NMR calculations.
+Some of the calculations mentioned in the U{manual<http://www.nmr-relax.com/manual/Dispersion_model_summary.html>}
+"""
 
 # Python module imports.
 from os import sep
