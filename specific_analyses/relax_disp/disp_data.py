@@ -2686,7 +2686,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     @type field_count:      int
     @keyword fields:        The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
     @type fields:           rank-2 list of floats
-    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, rotating frame tilt angles {Ei, Si, Mi, Oi, Di} and the average resonance offset in the rotating frame {Ei, Si, Mi, Oi, Di} in rad/s.
+    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, the average resonance offset in the rotating frame {Ei, Si, Mi, Oi, Di} in rad/s and the effective field in rotating frame in rad/s.
     @rtype:                 rank-3 list of floats, rank-4 list of floats, rank-5 list of floats
     """
 
@@ -2703,25 +2703,30 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     offsets = []
     theta = []
     Domega = []
+    w_e = []
     for exp_type, ei in loop_exp(return_indices=True):
         shifts.append([])
         offsets.append([])
         theta.append([])
         Domega.append([])
+        w_e.append([])
         for si in range(spin_num):
             shifts[ei].append([])
             offsets[ei].append([])
             theta[ei].append([])
             Domega[ei].append([])
+            w_e[ei].append([])
             for frq, mi in loop_frq(return_indices=True):
                 shifts[ei][si].append(None)
                 offsets[ei][si].append([])
                 theta[ei][si].append([])
                 Domega[ei][si].append([])
+                w_e[ei][si].append([])
                 for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
                     offsets[ei][si][mi].append(None)
                     theta[ei][si][mi].append([])
                     Domega[ei][si][mi].append([])
+                    w_e[ei][si][mi].append([])
 
     # Assemble the data.
     data_flag = False
@@ -2817,6 +2822,10 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                 else:
                     theta[ei][si][mi][oi].append(atan(omega1 / Delta_omega))
 
+                # Calculate effective field in rotating frame
+                w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+                w_e[ei][si][mi][oi].append(w_eff)
+
         # Increment the spin index.
         si += 1
 
@@ -2831,7 +2840,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     #            theta[ei][si][mi] = array(theta[ei][si][mi], float64)
 
     # Return the structures.
-    return shifts, offsets, theta, Domega
+    return shifts, offsets, theta, Domega, w_e
 
 
 def return_param_key_from_data(exp_type=None, frq=0.0, offset=0.0, point=0.0):
