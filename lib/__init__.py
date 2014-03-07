@@ -46,6 +46,7 @@ __all__ = [
     'periodic_table',
     'physical_constants',
     'regex',
+    'rotating_frame',
     'selection',
     'software',
     'spectral_densities',
