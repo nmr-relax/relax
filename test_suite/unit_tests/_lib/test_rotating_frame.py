@@ -26,7 +26,7 @@
 from os import sep
 
 # relax module imports.
-from lib.rotating_frame import calc_tilt_angle
+from lib.rotating_frame import calc_rotating_frame_params
 from lib.errors import RelaxError
 from pipe_control import state
 from pipe_control.mol_res_spin import spin_loop
@@ -37,7 +37,7 @@ from status import Status; status = Status()
 class Test_rotating_frame(UnitTestCase):
     """Unit tests for the functions of the 'lib.rotating_frame' module."""
 
-    def test_calc_tilt_angle(self):
+    def test_calc_rotating_frame_params(self):
         """Unit test of the calc_tilt_angle() function for R1rho setup.
 
         This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
@@ -48,7 +48,7 @@ class Test_rotating_frame(UnitTestCase):
         state.load_state(statefile, force=True)
 
         # Use calc_tilt_angle function
-        calc_tilt_angle()
+        calc_rotating_frame_params()
 
         # Test the existence of 
         for curspin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=False):
