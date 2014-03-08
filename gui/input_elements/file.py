@@ -142,8 +142,8 @@ class File_element:
     def SetValue(self, value):
         """Set up the list of file.
 
-        @param values:  The list of values to add to the list.
-        @type values:   list of str or None
+        @param value:   The list of values to add to the list.
+        @type value:    list of str or None
         """
 
         # Set the value.
