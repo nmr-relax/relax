@@ -107,7 +107,8 @@ def compile_api_manual_html(target, source, env):
         'multi.test_implementation',
         'multi.test_implementation2',
         'sample_scripts',
-        'test_suite.system_tests.scripts'
+        'test_suite.system_tests.scripts',
+        'test_suite.shared_data'
     ]
 
     # output
