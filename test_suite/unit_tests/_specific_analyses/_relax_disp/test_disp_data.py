@@ -732,12 +732,6 @@ class Test_disp_data(UnitTestCase):
         # Get the spectometer frequency
         sfrq = cdp.spectrometer_frq_list[0]
 
-        # In MHz
-        yOBS = 81.050
-        # In ppm
-        yCAR = 118.078
-        centerPPM_N15 = yCAR
-
         # Gyromagnetic ratios
         g1H = 26.7522212 * 1e7
         g15N = -2.7126 * 1e7
