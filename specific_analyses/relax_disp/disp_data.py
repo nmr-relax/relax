@@ -181,7 +181,7 @@ def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
 
     # If the spin is not selected, return None
     if not spin.select:
-        return [None, None, None, None]
+        return None, None, None, None
 
     # Get the field count
     field_count = count_frq()
