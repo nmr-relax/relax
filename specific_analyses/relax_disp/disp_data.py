@@ -76,7 +76,7 @@ from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -3661,53 +3661,72 @@ def write_disp_curves(dir=None, force=None):
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
 
-        # Get the attached proton.
-        proton = None
-        if proton_mmq_flag:
-            proton = return_attached_protons(spin_id)[0]
+        # Define writing variables.
+        writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
 
-        # The unique file name.
-        file_name = "disp%s.out" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+        # If the model is of R1rho type, then also write as R2eff as function of theta.
+        if spin.model in MODEL_LIST_R1RHO_FULL:
+            # Add additonal looping over writing parameters.
+            writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")],
+            ['theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
 
-        # Open the file for writing.
-        file_path = get_file_path(file_name, dir)
-        file = open_write_file(file_name, dir, force)
+        # Loop over writing vars
+        for wvar in writing_vars:
+            # Get the attached proton.
+            proton = None
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
 
-        # Write a header.
-        file.write(format_head % ("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors"))
+            # The unique file name.
+            file_name = "%s%s.out" % (wvar[0], spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-        # Loop over the dispersion points.
-        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-            # Alias the correct spin.
-            current_spin = spin
-            if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
-                current_spin = proton
+            # Open the file for writing.
+            file_path = get_file_path(file_name, dir)
+            file = open_write_file(file_name, dir, force)
 
-            # The data key.
-            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+            # Write a header.
+            file.write(format_head % wvar[1])
 
-            # Format the R2eff data.
-            r2eff = "-"
-            if hasattr(current_spin, 'r2eff') and  key in current_spin.r2eff:
-                r2eff = "%.15f" % current_spin.r2eff[key]
+            # Loop over the dispersion points.
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Alias the correct spin.
+                current_spin = spin
+                if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                    current_spin = proton
 
-            # Format the R2eff back calc data.
-            r2eff_bc = "-"
-            if hasattr(current_spin, 'r2eff_bc') and key in current_spin.r2eff_bc:
-                r2eff_bc = "%.15f" % current_spin.r2eff_bc[key]
+                # The data key.
+                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
-            # Format the R2eff errors.
-            r2eff_err = "-"
-            if hasattr(current_spin, 'r2eff_err') and  key in current_spin.r2eff_err:
-                r2eff_err = "%.15f" % current_spin.r2eff_err[key]
+                # Format the R2eff data.
+                r2eff = "-"
+                if hasattr(current_spin, 'r2eff') and  key in current_spin.r2eff:
+                    r2eff = "%.15f" % current_spin.r2eff[key]
 
-            # Write out the data.
-            frq_text = "%.9f" % (frq/1e6)
-            point_text = "%.6f" % point
-            file.write(format % (repr(exp_type), frq_text, point_text, r2eff, r2eff_bc, r2eff_err))
+                # Format the R2eff back calc data.
+                r2eff_bc = "-"
+                if hasattr(current_spin, 'r2eff_bc') and key in current_spin.r2eff_bc:
+                    r2eff_bc = "%.15f" % current_spin.r2eff_bc[key]
 
-        # Close the file.
-        file.close()
+                # Format the R2eff errors.
+                r2eff_err = "-"
+                if hasattr(current_spin, 'r2eff_err') and  key in current_spin.r2eff_err:
+                    r2eff_err = "%.15f" % current_spin.r2eff_err[key]
 
-        # Add the file to the results file list.
-        add_result_file(type='text', label='Text', file=file_path)
+                # Define value to be written.
+                if wvar[0] == 'theta':
+                    theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+                    value = theta_spin_dic[key]
+                # Else use the standard dispersion point data.
+                else:
+                    value = point
+
+                # Write out the data.
+                frq_text = "%.9f" % (frq/1e6)
+                value_text = "%.6f" % value
+                file.write(format % (repr(exp_type), frq_text, value_text, r2eff, r2eff_bc, r2eff_err))
+
+            # Close the file.
+            file.close()
+
+            # Add the file to the results file list.
+            add_result_file(type='text', label='Text', file=file_path)
