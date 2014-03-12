@@ -2740,7 +2740,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     @type field_count:      int
     @keyword fields:        The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
     @type fields:           rank-2 list of floats
-    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, the average resonance offset in the rotating frame {Ei, Si, Mi, Oi, Di} in rad/s and the effective field in rotating frame in rad/s.
+    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, the average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 rank-3 list of floats, rank-4 list of floats, rank-5 list of floats
     """
 
