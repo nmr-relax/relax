@@ -1444,14 +1444,15 @@ class Relax_disp(API_base, API_common):
         value = None
         error = None
 
+        # Return the data
+        theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+
         # Return for parameter theta
         if param == "theta":
-            theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
             value = theta_spin_dic
 
         # Return for parameter theta
         elif param == "w_eff":
-            theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
             value = w_eff_spin_dic
 
         # Return the data.
