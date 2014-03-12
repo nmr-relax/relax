@@ -3874,3 +3874,84 @@ class Relax_disp(SystemTestCase):
 
         # Close files
         w_eff_file.close()
+
+
+    def test_value_write_calc_rotating_frame_params_auto_analysis(self):
+        """System test of the auto_analysis value.write function to write theta and w_eff values for an R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344.bz2'
+        self.interpreter.state.load(statefile, force=True)
+
+        # Set pipe name, bundle and type.
+        pipe_name = 'base pipe'
+        pipe_bundle = 'relax_disp'
+        pipe_type= 'relax_disp'
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Kjaergaard_et_al_2013'
+
+        # Deselect all spins
+        self.interpreter.deselect.all()
+
+        # Specify spins to be selected.
+        select_spin_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
+
+        # Reverse the selection for the spins.
+        for curspin in select_spin_ids:
+            print("Selecting spin %s"%curspin)
+            self.interpreter.deselect.reverse(spin_id=curspin)
+
+        # Read the R1 data
+        self.interpreter.relax_data.read(ri_id='R1', ri_type='R1', frq=cdp.spectrometer_frq_list[0], file='R1_fitted_values.txt', dir=data_path, mol_name_col=1, res_num_col=2, res_name_col=3, spin_num_col=4, spin_name_col=5, data_col=6, error_col=7)
+
+        # The dispersion models.
+        MODELS = ['R2eff']
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+        ## Check for file creation
+        # Set filepaths.
+        theta_filepath = ds.tmpdir+sep+MODELS[0]+sep+'theta.out'
+        w_eff_filepath = ds.tmpdir+sep+MODELS[0]+sep+'w_eff.out'
+
+        # Test the files exists.
+        self.assert_(access(theta_filepath, F_OK))
+        self.assert_(access(w_eff_filepath, F_OK))
+
+
