@@ -1431,7 +1431,7 @@ class Relax_disp(API_base, API_common):
         """
 
         # Define list of special parameters.
-        special_parameters = ['theta']
+        special_parameters = ['theta', 'w_eff']
 
         # Use api_common function for paramets not defined in special_parameters.
         if param not in special_parameters:
@@ -1448,6 +1448,11 @@ class Relax_disp(API_base, API_common):
         if param == "theta":
             theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
             value = theta_spin_dic
+
+        # Return for parameter theta
+        elif param == "w_eff":
+            theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+            value = w_eff_spin_dic
 
         # Return the data.
         return value, error
