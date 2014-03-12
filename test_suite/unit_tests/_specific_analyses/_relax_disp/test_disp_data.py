@@ -778,23 +778,24 @@ class Test_disp_data(UnitTestCase):
         state.load_state(statefile, force=True)
 
         # Set filepaths.
-        intfilepath = ds.tmpdir+sep+'int.out'
-        thetafilepath = ds.tmpdir+sep+'theta.out'
+        int_filepath = ds.tmpdir+sep+'int.out'
+        theta_filepath = ds.tmpdir+sep+'theta.out'
 
         # Write out the intensity and theta parameter file.
+        # The writing out of intensity file is to make sure the API function retains its function after modification for special parameters.
         value.write(param='intensities', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
         value.write(param='theta', file='theta.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
-        self.assert_(access(intfilepath, F_OK))
-        self.assert_(access(thetafilepath, F_OK))
+        self.assert_(access(int_filepath, F_OK))
+        self.assert_(access(theta_filepath, F_OK))
 
         # Open the files for testing.
-        intfile = open(intfilepath, 'r')
-        thetafile = open(thetafilepath, 'r')
+        int_file = open(int_filepath, 'r')
+        theta_file = open(theta_filepath, 'r')
 
         # Loop over the intensity file to test values.
-        for line in intfile:
+        for line in int_file:
             # Skip lines starting with #.
             if line[0] == "#":
                 continue
@@ -815,7 +816,7 @@ class Test_disp_data(UnitTestCase):
                 self.assert_(linesplit[5] == "58914.94")
 
         # Loop over the theta file to test values.
-        for line in thetafile:
+        for line in theta_file:
             # Skip lines starting with #.
             if line[0] == "#":
                 continue
@@ -837,4 +838,7 @@ class Test_disp_data(UnitTestCase):
             elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
                 self.assert_(linesplit[5] != "None")
 
+        # Close files
+        int_file.close()
+        theta_file.close()
 
