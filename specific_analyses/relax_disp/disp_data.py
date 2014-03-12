@@ -179,7 +179,11 @@ def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
     @rtype:             List of dict() 
     """
     # Get the field count
-    field_count = cdp.spectrometer_frq_count
+    field_count = count_frq()
+
+    # Check the experiment type
+    if not has_r1rho_exp_type():
+        raise RelaxError("The experiment type is not of R1rho type.")
 
     # Get the spin_lock_field points
     spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
