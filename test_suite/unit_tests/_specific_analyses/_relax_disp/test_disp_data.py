@@ -780,19 +780,23 @@ class Test_disp_data(UnitTestCase):
         # Set filepaths.
         int_filepath = ds.tmpdir+sep+'int.out'
         theta_filepath = ds.tmpdir+sep+'theta.out'
+        w_eff_filepath = ds.tmpdir+sep+'w_eff.out'
 
         # Write out the intensity and theta parameter file.
         # The writing out of intensity file is to make sure the API function retains its function after modification for special parameters.
         value.write(param='intensities', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
         value.write(param='theta', file='theta.out', dir=ds.tmpdir, scaling=1.0, force=True)
+        value.write(param='w_eff', file='w_eff.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
         self.assert_(access(int_filepath, F_OK))
         self.assert_(access(theta_filepath, F_OK))
+        self.assert_(access(w_eff_filepath, F_OK))
 
         # Open the files for testing.
         int_file = open(int_filepath, 'r')
         theta_file = open(theta_filepath, 'r')
+        w_eff_file = open(w_eff_filepath, 'r')
 
         # Loop over the intensity file to test values.
         for line in int_file:
@@ -838,7 +842,32 @@ class Test_disp_data(UnitTestCase):
             elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
                 self.assert_(linesplit[5] != "None")
 
+        # Loop over the w_eff file to test values.
+        for line in w_eff_file:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+            # Print lines, not including newline character.
+            print(line[:-1])
+
+            # Split the line
+            linesplit = line.split()
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
+                self.assert_(linesplit[5] != "None")
+
         # Close files
         int_file.close()
         theta_file.close()
+        w_eff_file.close()
+
 
