@@ -3727,3 +3727,150 @@ class Relax_disp(SystemTestCase):
 
             # Increment the spin index.
             spin_index += 1
+
+
+    def test_value_write_calc_rotating_frame_params_int(self):
+        """System test of the value.write function to write intensities for an R1rho setup.
+        This system test is to make sure, that modifying the API for special parameters theta and w_eff does not alter the functionality value.write.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        self.interpreter.state.load(statefile, force=True)
+
+        # Set filepaths.
+        int_filepath = ds.tmpdir+sep+'int.out'
+
+        # Write out the intensity parameter file.
+        # The writing out of intensity file is to make sure the API function retains its function after modification for special parameters.
+        self.interpreter.value.write(param='intensities', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
+
+        # Test the file exists.
+        self.assert_(access(int_filepath, F_OK))
+
+        # Open the files for testing.
+        int_file = open(int_filepath, 'r')
+
+        # Loop over the intensity file to test values.
+        for line in int_file:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+
+            # Split the line
+            linesplit = line.split()
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
+                self.assert_(linesplit[5] == "115571.4")
+            elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
+                self.assert_(linesplit[5] == "68377.52")
+            elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
+                self.assert_(linesplit[5] == "9141.689")
+            elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
+                self.assert_(linesplit[5] == "29123.77")
+            elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
+                self.assert_(linesplit[5] == "58914.94")
+
+        # Close files
+        int_file.close()
+
+
+    def test_value_write_calc_rotating_frame_params_theta(self):
+        """System test of the value.write function to write return values of theta from calc_rotating_frame_params() function for an R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        self.interpreter.state.load(statefile, force=True)
+
+        # Set filepaths.
+        theta_filepath = ds.tmpdir+sep+'theta.out'
+
+        # Write out the theta parameter file.
+        self.interpreter.value.write(param='theta', file='theta.out', dir=ds.tmpdir, scaling=1.0, force=True)
+
+        # Test the file exists.
+        self.assert_(access(theta_filepath, F_OK))
+
+        # Open the files for testing.
+        theta_file = open(theta_filepath, 'r')
+
+        # Loop over the theta file to test values.
+        for line in theta_file:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+            # Print lines, not including newline character.
+            print(line[:-1])
+
+            # Split the line
+            linesplit = line.split()
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
+                self.assert_(linesplit[5] != "None")
+
+        # Close files
+        theta_file.close()
+
+
+    def test_value_write_calc_rotating_frame_params_w_eff(self):
+        """System test of the value.write function to write return values of w_eff from calc_rotating_frame_params() function for an R1rho setup.
+
+        This uses the data of the saved state attached to U{bug #21344<https://gna.org/bugs/?21344>}.
+        """
+
+        # Load the state.
+        statefile = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
+        self.interpreter.state.load(statefile, force=True)
+
+        # Set filepaths.
+        w_eff_filepath = ds.tmpdir+sep+'w_eff.out'
+
+        # Write out the w_eff parameter file.
+        self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=ds.tmpdir, scaling=1.0, force=True)
+
+        # Test the file exists.
+        self.assert_(access(w_eff_filepath, F_OK))
+
+        # Open the files for testing.
+        w_eff_file = open(w_eff_filepath, 'r')
+
+        # Loop over the w_eff file to test values.
+        for line in w_eff_file:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+            # Print lines, not including newline character.
+            print(line[:-1])
+
+            # Split the line
+            linesplit = line.split()
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
+                self.assert_(linesplit[5] != "None")
+
+        # Close files
+        w_eff_file.close()
