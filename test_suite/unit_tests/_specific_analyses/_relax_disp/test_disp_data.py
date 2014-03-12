@@ -777,19 +777,44 @@ class Test_disp_data(UnitTestCase):
         statefile = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_21344_trunc.bz2'
         state.load_state(statefile, force=True)
 
-        # Set filepath.
+        # Set filepaths.
+        intfilepath = ds.tmpdir+sep+'int.out'
         thetafilepath = ds.tmpdir+sep+'theta.out'
 
-        # Write out the parameter file
+        # Write out the intensity and theta parameter file.
+        value.write(param='intensities', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
         value.write(param='theta', file='theta.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
+        self.assert_(access(intfilepath, F_OK))
         self.assert_(access(thetafilepath, F_OK))
 
-        # Open the file for testing.
+        # Open the files for testing.
+        intfile = open(intfilepath, 'r')
         thetafile = open(thetafilepath, 'r')
 
-        # Loop over the file to test values.
+        # Loop over the intensity file to test values.
+        for line in intfile:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+
+            # Split the line
+            linesplit = line.split()
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
+                self.assert_(linesplit[5] == "115571.4")
+            elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
+                self.assert_(linesplit[5] == "68377.52")
+            elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
+                self.assert_(linesplit[5] == "9141.689")
+            elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
+                self.assert_(linesplit[5] == "29123.77")
+            elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
+                self.assert_(linesplit[5] == "58914.94")
+
+        # Loop over the theta file to test values.
         for line in thetafile:
             # Skip lines starting with #.
             if line[0] == "#":
