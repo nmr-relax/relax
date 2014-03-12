@@ -72,7 +72,7 @@ class Relax_disp(API_base, API_common):
         self.data_init = self._data_init_spin
         self.model_type = self._model_type_local
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_value = self._return_value_general
+        self.return_value = self.return_value
         self.set_param_values = self._set_param_values_spin
 
         # Set up the spin parameters.
@@ -1407,6 +1407,38 @@ class Relax_disp(API_base, API_common):
 
     set_doc = Desc_container("Relaxation dispersion curve fitting set details")
     set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
+
+
+    def return_value(self, spin, param, sim=None, bc=False):
+        """Return the value and error corresponding to the parameter.
+
+        If sim is set to an integer, return the value of the simulation and None.
+
+
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param param:   The name of the parameter to return values for.
+        @type param:    str
+        @keyword sim:   The Monte Carlo simulation index.
+        @type sim:      None or int
+        @keyword bc:    The back-calculated data flag.  If True, then the back-calculated data will be returned rather than the actual data.
+        @type bc:       bool
+        @return:        The value and error corresponding to
+        @rtype:         tuple of length 2 of floats or None
+        """
+
+        # Define list of special parameters.
+        special_parameters = ['theta']
+
+        # Use api_common function for paramets not defined in special_parameters.
+        if param not in special_parameters:
+            returnval = self._return_value_general(spin=spin, param=param, sim=sim, bc=bc)
+            return returnval
+
+        # If parameter in special_parameters, the do the following.
+        else:
+            returnval = self._return_value_general(spin=spin, param=param, sim=sim, bc=bc)
+            return returnval
 
 
     def set_error(self, model_info, index, error):
