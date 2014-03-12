@@ -3954,4 +3954,54 @@ class Relax_disp(SystemTestCase):
         self.assert_(access(theta_filepath, F_OK))
         self.assert_(access(w_eff_filepath, F_OK))
 
+        # Open the files for testing.
+        theta_file = open(theta_filepath, 'r')
+
+        # Loop over the theta file to test values.
+        for line in theta_file:
+            # Skip lines starting with #.
+            if line[0] == "#":
+                continue
+
+            # Split the line
+            linesplit = line.split()
+
+            # Print lines, not including newline character.
+            print(linesplit[:6])
+
+            # Assume values
+            if linesplit[0] == "None" and linesplit[1] == "13" and linesplit[2] == "L":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "15" and linesplit[2] == "R":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "16" and linesplit[2] == "T":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "25" and linesplit[2] == "Q":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "26" and linesplit[2] == "Q":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "28" and linesplit[2] == "Q":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "39" and linesplit[2] == "L":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "40" and linesplit[2] == "M":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "41" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "43" and linesplit[2] == "F":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "44" and linesplit[2] == "I":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "45" and linesplit[2] == "K":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "49" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "52" and linesplit[2] == "V":
+                self.assert_(linesplit[5] != "None")
+            elif linesplit[0] == "None" and linesplit[1] == "53" and linesplit[2] == "A":
+                self.assert_(linesplit[5] != "None")
+
+        # Close files
+        theta_file.close()
+
 
