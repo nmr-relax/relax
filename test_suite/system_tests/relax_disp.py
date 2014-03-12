@@ -3764,15 +3764,15 @@ class Relax_disp(SystemTestCase):
 
             # Assume values
             if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
-                self.assert_(linesplit[5] == "115571.4")
+                self.assertEqual(linesplit[5], "115571.4")
             elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
-                self.assert_(linesplit[5] == "68377.52")
+                self.assertEqual(linesplit[5], "68377.52")
             elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
-                self.assert_(linesplit[5] == "9141.689")
+                self.assertEqual(linesplit[5], "9141.689")
             elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
-                self.assert_(linesplit[5] == "29123.77")
+                self.assertEqual(linesplit[5], "29123.77")
             elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
-                self.assert_(linesplit[5] == "58914.94")
+                self.assertEqual(linesplit[5], "58914.94")
 
         # Close files
         int_file.close()
@@ -3813,15 +3813,15 @@ class Relax_disp(SystemTestCase):
 
             # Assume values
             if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
 
         # Close files
         theta_file.close()
@@ -3862,15 +3862,15 @@ class Relax_disp(SystemTestCase):
 
             # Assume values
             if linesplit[0] == "None" and linesplit[1] == "5" and linesplit[2] == "I":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "6" and linesplit[2] == "S":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "8" and linesplit[2] == "S":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "9" and linesplit[2] == "A":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "10" and linesplit[2] == "L":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
 
         # Close files
         w_eff_file.close()
@@ -3971,35 +3971,35 @@ class Relax_disp(SystemTestCase):
 
             # Assume values
             if linesplit[0] == "None" and linesplit[1] == "13" and linesplit[2] == "L":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "15" and linesplit[2] == "R":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "16" and linesplit[2] == "T":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "25" and linesplit[2] == "Q":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "26" and linesplit[2] == "Q":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "28" and linesplit[2] == "Q":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "39" and linesplit[2] == "L":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "40" and linesplit[2] == "M":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "41" and linesplit[2] == "A":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "43" and linesplit[2] == "F":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "44" and linesplit[2] == "I":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "45" and linesplit[2] == "K":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "49" and linesplit[2] == "A":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "52" and linesplit[2] == "V":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
             elif linesplit[0] == "None" and linesplit[1] == "53" and linesplit[2] == "A":
-                self.assert_(linesplit[5] != "None")
+                self.assertNotEqual(linesplit[5], "None")
 
         # Close files
         theta_file.close()
