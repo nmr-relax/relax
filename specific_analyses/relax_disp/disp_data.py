@@ -3667,8 +3667,7 @@ def write_disp_curves(dir=None, force=None):
         # If the model is of R1rho type, then also write as R2eff as function of theta.
         if spin.model in MODEL_LIST_R1RHO_FULL:
             # Add additonal looping over writing parameters.
-            writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")],
-            ['theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
+            writing_vars.append(['disp_theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
 
         # Loop over writing vars
         for wvar in writing_vars:
@@ -3713,7 +3712,7 @@ def write_disp_curves(dir=None, force=None):
                     r2eff_err = "%.15f" % current_spin.r2eff_err[key]
 
                 # Define value to be written.
-                if wvar[0] == 'theta':
+                if wvar[0] == 'disp_theta':
                     theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
                     value = theta_spin_dic[key]
                 # Else use the standard dispersion point data.
