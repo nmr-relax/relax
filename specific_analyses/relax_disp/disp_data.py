@@ -2890,8 +2890,13 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                 Domega[ei][si][mi][oi].append(Delta_omega)
                 if Delta_omega == 0.0:
                     theta[ei][si][mi][oi].append(pi / 2.0)
-                else:
+                # Calculate the theta angle describing the tilted rotating frame relative to the laboratory.
+                # If Delta_omega is negative, there follow the symmetry of atan, that atan(-x) = - atan(x).
+                # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x))
+                elif omega1 / Delta_omega > 0 :
                     theta[ei][si][mi][oi].append(atan(omega1 / Delta_omega))
+                else:
+                    theta[ei][si][mi][oi].append(pi + atan(omega1 / Delta_omega))
 
                 # Calculate effective field in rotating frame
                 w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
