@@ -156,7 +156,7 @@ def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=Non
     return intensity
 
 
-def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
+def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0):
     """Calculates and rotating frame parameters, calculated from:
     - The spectrometer frequency.
     - The spin-lock or hard pulse offset.
@@ -173,6 +173,8 @@ def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
     @type spin:         SpinContainer instance
     @keyword spin_id:   The spin ID string.
     @type spin_id:      None or str
+    @keyword fields:    The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
+    @type fields:       rank-2 list of floats
     @keyword verbosity: A flag specifying to print calculations.
     @type verbosity:    int
     @return:            List with dict() of theta, Domega, w_eff and list of dict() keys.
@@ -195,7 +197,10 @@ def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
         raise RelaxError("The experiment type is not of R1rho type.")
 
     # Get the spin_lock_field points
-    spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+    if fields == None:
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+    else:
+        spin_lock_nu1 = fields
 
     # The offset and R1 data.
     chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1)
