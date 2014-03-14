@@ -757,7 +757,10 @@ class Test_disp_data(UnitTestCase):
                     # Test the tiltangle
                     c_omega1 = spin_lock_fields[di] * 2.0 * pi
                     c_Delta_omega = chemical_shifts[ei][si][mi] - offsets[ei][si][mi][oi]
-                    c_theta = atan(c_omega1 / c_Delta_omega)
+                    if c_omega1 / c_Delta_omega > 0:
+                        c_theta = atan(c_omega1 / c_Delta_omega)
+                    else:
+                        c_theta = pi + atan(c_omega1 / c_Delta_omega)
                     self.assertEqual(tilt_angles[ei][si][mi][oi][di], c_theta)
 
 
