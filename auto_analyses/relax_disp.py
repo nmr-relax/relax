@@ -536,7 +536,7 @@ class Relax_disp:
             self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', file='i0.agr', dir=path, force=True)
 
         # The calculation of theta and w_eff parameter in R1rho experiments.
-        if model in MODEL_LIST_R1RHO_FULL:
+        if model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type():
             self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
             self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
 

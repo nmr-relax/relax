@@ -183,6 +183,10 @@ def calc_rotating_frame_params(spin=None, spin_id=None, verbosity=0):
     if not spin.select:
         return None, None, None, None
 
+    # If the spin does not have isotope, return None
+    if not hasattr(spin, 'isotope'):
+        return None, None, None, None
+
     # Get the field count
     field_count = count_frq()
 
@@ -3665,7 +3669,7 @@ def write_disp_curves(dir=None, force=None):
         writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
 
         # If the model is of R1rho type, then also write as R2eff as function of theta.
-        if spin.model in MODEL_LIST_R1RHO_FULL:
+        if spin.model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type() and hasattr(spin, 'isotope'):
             # Add additonal looping over writing parameters.
             writing_vars.append(['disp_theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
             writing_vars.append(['disp_w_eff',("Experiment_name", "Field_strength_(MHz)", "Effective_field_(rad_s-1))", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
