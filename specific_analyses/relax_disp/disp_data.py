@@ -3672,7 +3672,7 @@ def write_disp_curves(dir=None, force=None):
         if spin.model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type() and hasattr(spin, 'isotope'):
             # Add additonal looping over writing parameters.
             writing_vars.append(['disp_theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
-            writing_vars.append(['disp_w_eff',("Experiment_name", "Field_strength_(MHz)", "Effective_field_(rad_s-1))", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
+            #writing_vars.append(['disp_w_eff',("Experiment_name", "Field_strength_(MHz)", "Effective_field_(rad_s-1))", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
 
         # Loop over writing vars
         for wvar in writing_vars:
