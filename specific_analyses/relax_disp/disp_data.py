@@ -208,7 +208,7 @@ def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0
     # Loop over the index of spins, then exp_type, frq, offset
     if verbosity:
         print("Printing the following")    
-        print("exp_type spin_id frq offset{ppm} offsets[ei][si][mi][oi]{rad/s} ei mi oi si di cur_spin.chemical_shift{ppm} chemical_shifts[ei][si][mi]{rad/s} spin_lock_nu1{Hz} tilt_angles[ei][si][mi][oi]{rad}")
+        print("exp_type spin_id frq offset{ppm} offsets[ei][si][mi][oi]{rad/s} ei mi oi si di cur_spin.chemical_shift{ppm} chemical_shifts[ei][si][mi]{rad/s} spin_lock_nu1{Hz} tilt_angles[ei][si][mi][oi]{rad} av_res_offset[ei][si][mi][oi]{rad/s}")
 
     si = 0
     theta_spin_dic = dict()
@@ -221,7 +221,7 @@ def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0
         spin_lock_fields = spin_lock_nu1[ei][mi][oi]
         for di in range(len(spin_lock_fields)):
             if verbosity:
-                print("%-8s %-10s %11.1f %8.4f %12.5f %i  %i  %i  %i  %i %7.3f %12.5f %12.5f %12.5f"%(exp_type, spin_id, frq, offset, offsets[ei][si][mi][oi], ei, mi, oi, si, di, spin.chemical_shift, chemical_shifts[ei][si][mi], spin_lock_fields[di], tilt_angles[ei][si][mi][oi][di]))
+                print("%-8s %-10s %11.1f %8.4f %12.5f %i  %i  %i  %i  %i %7.3f %12.5f %12.5f %12.5f %12.5f"%(exp_type, spin_id, frq, offset, offsets[ei][si][mi][oi], ei, mi, oi, si, di, spin.chemical_shift, chemical_shifts[ei][si][mi], spin_lock_fields[di], tilt_angles[ei][si][mi][oi][di], Delta_omega[ei][si][mi][oi][di]))
             dic_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=spin_lock_fields[di])
             dic_key_list.append(dic_key) 
             theta_spin_dic["%s"%(dic_key)] = tilt_angles[ei][si][mi][oi][di]
