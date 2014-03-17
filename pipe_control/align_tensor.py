@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,11 +35,11 @@ from warnings import warn
 from data_store.align_tensor import AlignTensorList
 from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from lib.geometry.angles import wrap_angles
 from lib.io import write_data
 from lib.warnings import RelaxWarning
 import pipe_control
 from pipe_control import pipes
-from pipe_control.angles import wrap_angles
 
 
 def align_data_exists(tensor, pipe=None):

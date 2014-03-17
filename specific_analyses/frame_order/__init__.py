@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,6 +40,7 @@ from warnings import warn
 # relax module imports.
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError, RelaxNoPCSError, RelaxNoRDCError, RelaxNoValueError, RelaxSpinTypeError
+from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
@@ -51,7 +52,6 @@ from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure import geometric

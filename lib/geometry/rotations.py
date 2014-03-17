@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,7 +27,7 @@ from numpy.linalg import norm
 from random import gauss
 
 # relax module imports.
-import pipe_control
+from lib.geometry.angles import wrap_angles
 from lib.geometry.vectors import random_unit_vector
 
 
@@ -1665,9 +1665,9 @@ def R_to_euler(R, notation, axes_rot='static', second_sol=False):
         beta = -beta
         gamma = gamma + pi
 
-    alpha = pipe_control.angles.wrap_angles(alpha, 0.0, 2.0*pi)
-    beta  = pipe_control.angles.wrap_angles(beta,  0.0, 2.0*pi)
-    gamma = pipe_control.angles.wrap_angles(gamma, 0.0, 2.0*pi)
+    alpha = wrap_angles(alpha, 0.0, 2.0*pi)
+    beta  = wrap_angles(beta,  0.0, 2.0*pi)
+    gamma = wrap_angles(gamma, 0.0, 2.0*pi)
 
     # Return the Euler angles.
     return alpha, beta, gamma

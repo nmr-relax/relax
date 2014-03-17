@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,9 +33,9 @@ import string
 from data_store.diff_tensor import DiffTensorData
 from lib.diffusion.main import tensor_eigen_system, tensor_info_table
 from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from lib.geometry.angles import fold_spherical_angles, wrap_angles
 from lib.physical_constants import element_from_isotope, number_from_isotope
 from pipe_control import pipes
-from pipe_control.angles import fold_spherical_angles, wrap_angles
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import get_molecule_names, return_spin, spin_loop
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
