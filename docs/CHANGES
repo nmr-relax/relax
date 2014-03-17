@@ -5,7 +5,7 @@ http://svn.gna.org/svn/relax/tags/3.1.7
     Features:
         * Large amounts of new infrastructure for the R1rho relaxation dispersion analysis type.
         * More hardware information printed out when using the '--info' command line option.
-        * The user function relax_disp.write_disp_curves now produces plots of R2eff verses the rotating frame tilt angle theta.
+        * The user function relax_disp.write_disp_curves now produces text files of R2eff verses the rotating frame tilt angle theta.
         * Small improvements for the relaxation dispersion GUI tutorial and citation chapter of the relax manual.
 
 
