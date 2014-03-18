@@ -2712,138 +2712,109 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(i, len(cluster_ids))
         self.assertEqual(j, 48-len(cluster_ids))
 
-        # Paper reference values
-        #             Resi	Resn	  R1	    R1err	R2	      R2err	  kEX	       kEXerr	    phi       	phierr
+        #Paper         reference values
+        #              Resi   Resn         R1_rad_s   R1err_rad_s   R2_rad_s   R2err_rad_s   kEX_rad_s      kEXerr_rad_s  phi_rad2_s2     phierr_rad2_s2    phi_ppm2         phierr_ppm2
+        # Scaling rad2_s2 to ppm2: scaling_rad2_s2 = frequency_to_ppm(frq=1/(2*pi), B0=cdp.spectrometer_frq_list[0], isotope='15N')**2 = 3.85167990165e-06
         ref = dict()
-        ref[':13@N'] = [13, 'L13N-HN', 1.32394, 0.14687, 8.16007, 1.01237, 13193.82986, 2307.09152, 58703.06446, 22413.09854]
-        ref[':15@N'] = [15, 'R15N-HN', 1.34428, 0.14056, 7.83256, 0.67559, 13193.82986, 2307.09152, 28688.33492, 13480.72253]
-        ref[':16@N'] = [16, 'T16N-HN', 1.71514, 0.13651, 17.44216, 0.98583, 13193.82986, 2307.09152, 57356.77617, 21892.44205]
-        ref[':25@N'] = [25, 'Q25N-HN', 1.82412, 0.15809, 9.09447, 2.09215, 13193.82986, 2307.09152, 143111.13431, 49535.80302]
-        ref[':26@N'] = [26, 'Q26N-HN', 1.45746, 0.14127, 10.22801, 0.67116, 13193.82986, 2307.09152, 28187.06876, 13359.01615]
-        ref[':28@N'] = [28, 'Q28N-HN', 1.48095, 0.14231, 10.33552, 0.691, 13193.82986, 2307.09152, 30088.0686, 13920.25654]
-        ref[':39@N'] = [39, 'L39N-HN', 1.46094, 0.14514, 8.02194, 0.84649, 13193.82986, 2307.09152, 44130.18538, 18104.55064]
-        ref[':40@N'] = [40, 'M40N-HN', 1.21381, 0.14035, 12.19112, 0.81418, 13193.82986, 2307.09152, 41834.90493, 17319.92156]
-        ref[':41@N'] = [41, 'A41N-HN', 1.29296, 0.14286, 9.29941, 0.66246, 13193.82986, 2307.09152, 26694.8921, 13080.66782]
-        ref[':43@N'] = [43, 'F43N-HN', 1.33626, 0.14352, 12.73816, 1.17386, 13193.82986, 2307.09152, 70347.63797, 26648.30524]
-        ref[':44@N'] = [44, 'I44N-HN', 1.28487, 0.1462, 12.70158, 1.52079, 13193.82986, 2307.09152, 95616.20461, 35307.79817]
-        ref[':45@N'] = [45, 'K45N-HN', 1.59227, 0.14591, 9.54457, 0.95596, 13193.82986, 2307.09152, 53849.7826, 21009.89973]
-        ref[':49@N'] = [49, 'A49N-HN', 1.38521, 0.14148, 4.44842, 0.88647, 13193.82986, 2307.09152, 40686.65286, 18501.20774]
-        ref[':52@N'] = [52, 'V52N-HN', 1.57531, 0.15042, 6.51945, 1.43418, 13193.82986, 2307.09152, 93499.92172, 33233.23039]
-        ref[':53@N'] = [53, 'A53N-HN', 1.27214, 0.13823, 4.0705, 0.85485, 13193.82986, 2307.09152, 34856.18636, 17505.02393]
+        ref[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
+        ref[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
+        ref[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
+        ref[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
+        ref[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
+        ref[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
+        ref[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
+        ref[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
+        ref[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
+        ref[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
+        ref[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
+        ref[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
+        ref[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
+        ref[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
+        ref[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
 
         guess = dict()
-        guess[':13@N'] = [13, 'L13N-HN', 1.0, 0.1, 8.00, 1.0, 10000.0, 2000.0, 50000.00, 20000.0]
-        guess[':15@N'] = [15, 'R15N-HN', 1.0, 0.1, 8.00, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
-        guess[':16@N'] = [16, 'T16N-HN', 1.0, 0.1, 17.0, 0.9, 10000.0, 2000.0, 50000.00, 20000.0]
-        guess[':25@N'] = [25, 'Q25N-HN', 1.0, 0.1, 9.00, 2.0, 10000.0, 2000.0, 140000.0, 40000.0]
-        guess[':26@N'] = [26, 'Q26N-HN', 1.0, 0.1, 10.0, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
-        guess[':28@N'] = [28, 'Q28N-HN', 1.0, 0.1, 10.0, 0.6, 10000.0, 2000.0, 30000.00, 10000.0]
-        guess[':39@N'] = [39, 'L39N-HN', 1.0, 0.1, 8.00, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
-        guess[':40@N'] = [40, 'M40N-HN', 1.0, 0.1, 12.0, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
-        guess[':41@N'] = [41, 'A41N-HN', 1.0, 0.1, 9.00, 0.6, 10000.0, 2000.0, 20000.00, 10000.0]
-        guess[':43@N'] = [43, 'F43N-HN', 1.0, 0.1, 12.0, 1.1, 10000.0, 2000.0, 70000.00, 20000.0]
-        guess[':44@N'] = [44, 'I44N-HN', 1.0, 0.1, 12.0, 1.5, 10000.0, 2000.0, 90000.00, 30000.0]
-        guess[':45@N'] = [45, 'K45N-HN', 1.0, 0.1, 9.00, 0.9, 10000.0, 2000.0, 50000.00, 20000.0]
-        guess[':49@N'] = [49, 'A49N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 40000.00, 10000.0]
-        guess[':52@N'] = [52, 'V52N-HN', 1.0, 0.1, 6.00, 1.4, 10000.0, 2000.0, 90000.00, 30000.0]
-        guess[':53@N'] = [53, 'A53N-HN', 1.0, 0.1, 4.00, 0.8, 10000.0, 2000.0, 30000.00, 10000.0]
+        guess[':13@N'] = [13,   'L13N-HN',   1.32394,   0.14687,      8.16007,   1.01237,      13193.82986,   2307.09152,   58703.06446,    22413.09854,      0.2261054135,    0.0863280812]
+        guess[':15@N'] = [15,   'R15N-HN',   1.34428,   0.14056,      7.83256,   0.67559,      13193.82986,   2307.09152,   28688.33492,    13480.72253,      0.110498283,     0.051923428]
+        guess[':16@N'] = [16,   'T16N-HN',   1.71514,   0.13651,      17.44216,  0.98583,      13193.82986,   2307.09152,   57356.77617,    21892.44205,      0.220919942,     0.084322679]
+        guess[':25@N'] = [25,   'Q25N-HN',   1.82412,   0.15809,      9.09447,   2.09215,      13193.82986,   2307.09152,   143111.13431,   49535.80302,      0.5512182797,    0.1907960569]
+        guess[':26@N'] = [26,   'Q26N-HN',   1.45746,   0.14127,      10.22801,  0.67116,      13193.82986,   2307.09152,   28187.06876,    13359.01615,      0.1085675662,    0.051454654]
+        guess[':28@N'] = [28,   'Q28N-HN',   1.48095,   0.14231,      10.33552,  0.691,        13193.82986,   2307.09152,   30088.0686,     13920.25654,      0.1158896091,    0.0536163723]
+        guess[':39@N'] = [39,   'L39N-HN',   1.46094,   0.14514,      8.02194,   0.84649,      13193.82986,   2307.09152,   44130.18538,    18104.55064,      0.1699753481,    0.0697329338]
+        guess[':40@N'] = [40,   'M40N-HN',   1.21381,   0.14035,      12.19112,  0.81418,      13193.82986,   2307.09152,   41834.90493,    17319.92156,      0.1611346625,    0.0667107938]
+        guess[':41@N'] = [41,   'A41N-HN',   1.29296,   0.14286,      9.29941,   0.66246,      13193.82986,   2307.09152,   26694.8921,     13080.66782,      0.1028201794,    0.0503825453]
+        guess[':43@N'] = [43,   'F43N-HN',   1.33626,   0.14352,      12.73816,  1.17386,      13193.82986,   2307.09152,   70347.63797,    26648.30524,      0.2709565833,    0.1026407417]
+        guess[':44@N'] = [44,   'I44N-HN',   1.28487,   0.1462,       12.70158,  1.52079,      13193.82986,   2307.09152,   95616.20461,    35307.79817,      0.3682830136,    0.1359943366]
+        guess[':45@N'] = [45,   'K45N-HN',   1.59227,   0.14591,      9.54457,   0.95596,      13193.82986,   2307.09152,   53849.7826,     21009.89973,      0.2074121253,    0.0809234085]
+        guess[':49@N'] = [49,   'A49N-HN',   1.38521,   0.14148,      4.44842,   0.88647,      13193.82986,   2307.09152,   40686.65286,    18501.20774,      0.1567119631,    0.07126073]
+        guess[':52@N'] = [52,   'V52N-HN',   1.57531,   0.15042,      6.51945,   1.43418,      13193.82986,   2307.09152,   93499.92172,    33233.23039,      0.3601317693,    0.1280037656]
+        guess[':53@N'] = [53,   'A53N-HN',   1.27214,   0.13823,      4.0705,    0.85485,      13193.82986,   2307.09152,   34856.18636,    17505.02393,      0.1342548725,    0.0674237488]
 
         # Assign guess values.
         for spin, spin_id in spin_loop(return_id=True):
             if spin_id in cluster_ids:
                 print("spin_id %s in cluster ids"%(spin_id))
-
-                if spin_id == ':13@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':15@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':16@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':25@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':26@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':28@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':39@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':40@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':41@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':43@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':44@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':45@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':49@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':52@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
-                elif spin_id == ':53@N':
-                    spin.kex = guess[spin_id][6]
-                    spin.phi_ex = guess[spin_id][8]
+                spin.kex = guess[spin_id][6]
+                spin.phi_ex = guess[spin_id][10]
             else:
                 print("spin_id %s NOT in cluster ids"%(spin_id))
 
         # Check the initial setup.
         self.assertEqual(cdp.mol[0].res[7].num, 13)
         self.assertEqual(cdp.mol[0].res[7].spin[0].kex, guess[':13@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'ri_data'))
+        self.assertEqual(cdp.mol[0].res[7].spin[0].ri_data['R1'], ref[':13@N'][2])
+
         self.assertEqual(cdp.mol[0].res[9].num, 15)
         self.assertEqual(cdp.mol[0].res[9].spin[0].kex, guess[':15@N'][6])
-        self.assert_(hasattr(cdp.mol[0].res[9].spin[0], 'ri_data'))
+        self.assertEqual(cdp.mol[0].res[9].spin[0].ri_data['R1'], ref[':15@N'][2])
+
         self.assertEqual(cdp.mol[0].res[10].num, 16)
         self.assertEqual(cdp.mol[0].res[10].spin[0].kex, guess[':16@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[10].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[16].num, 25)
         self.assertEqual(cdp.mol[0].res[16].spin[0].kex, guess[':25@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[16].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[17].num, 26)
         self.assertEqual(cdp.mol[0].res[17].spin[0].kex, guess[':26@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[17].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[19].num, 28)
         self.assertEqual(cdp.mol[0].res[19].spin[0].kex, guess[':28@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[19].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[29].num, 39)
         self.assertEqual(cdp.mol[0].res[29].spin[0].kex, guess[':39@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[29].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[30].num, 40)
         self.assertEqual(cdp.mol[0].res[30].spin[0].kex, guess[':40@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[30].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[31].num, 41)
         self.assertEqual(cdp.mol[0].res[31].spin[0].kex, guess[':41@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[31].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[33].num, 43)
         self.assertEqual(cdp.mol[0].res[33].spin[0].kex, guess[':43@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[33].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[34].num, 44)
         self.assertEqual(cdp.mol[0].res[34].spin[0].kex, guess[':44@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[34].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[35].num, 45)
         self.assertEqual(cdp.mol[0].res[35].spin[0].kex, guess[':45@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[35].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[38].num, 49)
         self.assertEqual(cdp.mol[0].res[38].spin[0].kex, guess[':49@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[38].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[41].num, 52)
         self.assertEqual(cdp.mol[0].res[41].spin[0].kex, guess[':52@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[41].spin[0], 'ri_data'))
+
         self.assertEqual(cdp.mol[0].res[42].num, 53)
         self.assertEqual(cdp.mol[0].res[42].spin[0].kex, guess[':53@N'][6])
         self.assert_(hasattr(cdp.mol[0].res[42].spin[0], 'ri_data'))
@@ -2867,11 +2838,30 @@ class Relax_disp(SystemTestCase):
         OPT_MAX_ITERATIONS = 1000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
-        analysis_mode = "man"
+        analysis_mode = "auto"
 
         if analysis_mode == "auto":
+            # Make all spins free
+            for curspin in cluster_ids:
+                self.interpreter.relax_disp.cluster('free spins', curspin)
+                # Shut them down
+                self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+                
+            # Select only a subset of spins for global fitting
+            #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+            #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+            self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
             # Run the analysis.
             relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+            # Check the kex value of residue 52
+            #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ref[':52@N'][6])
 
         ###########
         elif analysis_mode == "man":
@@ -3993,7 +3983,7 @@ class Relax_disp(SystemTestCase):
             "None          40         M           None        N                 1.5521741199158                   None                                           1.55564594516135                   None                                           1.51290906497298                  None                                          1.53245929150759                  None                                          1.53960430408466                  None                                          1.54541832596591                  None                                          1.19750223001929                   None                                          0.917959090226757                   None                                           1.01428385962747                   None                                          0.662779584695967                  None                                         0.584708929219264                   None                                          0.376271266885303                  None                                         0.260671619214194                   None                                          0.132914250767089                   None                                       \n",
             "None          41         A           None        N                1.68339451828261                   None                                           1.66252964414082                   None                                           1.90911961276946                  None                                          1.79959323497326                  None                                          1.75801925517113                  None                                          1.72370710837265                  None                                          1.31646868936419                   None                                           1.00647189763597                   None                                           1.09525348649914                   None                                           0.75605702767542                  None                                         0.627395557358039                   None                                          0.408481831044309                  None                                         0.269716174238842                   None                                          0.135267948387412                   None                                       \n",
             "None          42         A           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
-            "None          43         F           None        N                1.58506597154432                   None                                           1.58240542750302                   None                                           1.61517196062351                  None                                          1.60017740004898                  None                                          1.59469990835425                  None                                          1.59024353162528                  None                                          1.22633651794829                   None                                          0.939047922181951                   None                                           1.03380990731605                   None                                          0.684214484755514                  None                                         0.594884298549546                   None                                          0.383855128702894                  None                                         0.262874695048502                   None                                           0.13349447283116                   None                                       \n",
+            "None          43         F           None        N                1.58506597154432                   None                                           1.58240542750303                   None                                           1.61517196062351                  None                                          1.60017740004898                  None                                          1.59469990835425                  None                                          1.59024353162528                  None                                          1.22633651794829                   None                                          0.939047922181951                   None                                           1.03380990731605                   None                                          0.684214484755514                  None                                         0.594884298549546                   None                                          0.383855128702894                  None                                         0.262874695048502                   None                                           0.13349447283116                   None                                       \n",
             "None          44         I           None        N                1.57575471961837                   None                                           1.57483015671791                   None                                           1.58622388390755                  None                                          1.58100758841935                  None                                          1.57910319967536                  None                                          1.57755415552211                  None                                          1.21811077066835                   None                                          0.933010299763027                   None                                           1.02823520295828                   None                                           0.67802911457195                  None                                         0.591972285081647                   None                                          0.381678892926696                  None                                         0.262247347241724                   None                                          0.133329708422379                   None                                       \n",
             "None          45         K           None        N                1.77147501495754                   None                                           1.73479633022489                   None                                           2.13509660780385                  None                                          1.96751045408372                  None                                          1.89924480319914                  None                                          1.84124387452692                  None                                          1.40277881643715                   None                                           1.07361367582571                   None                                           1.15506365550891                   None                                          0.832963505534767                  None                                         0.659913187081268                   None                                          0.433751178249555                  None                                         0.276282572106685                   None                                           0.13693095791902                   None                                       \n",
             "None          46         Q           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
@@ -4007,7 +3997,8 @@ class Relax_disp(SystemTestCase):
             "None          55         Q           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
             "None          57         G           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
             "None          58         M           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
-            "None          59         Q           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n"        ]            
+            "None          59         Q           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n"
+        ]
         # Check the created theta file.
         lines = theta_file.readlines()
         for i in range(len(lines)):
@@ -4094,7 +4085,6 @@ class Relax_disp(SystemTestCase):
             "None          58         M           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n",
             "None          59         Q           None        N            None                                   None                                       None                                   None                                       None                                  None                                      None                                  None                                      None                                  None                                      None                                  None                                      None                                   None                                       None                                   None                                       None                                   None                                       None                                  None                                      None                                   None                                       None                                  None                                      None                                   None                                       None                                   None                                       \n"
         ]
-
         # Check the created w_eff file.
         lines = w_eff_file.readlines()
         for i in range(len(lines)):

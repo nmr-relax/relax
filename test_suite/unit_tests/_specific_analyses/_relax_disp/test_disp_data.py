@@ -761,7 +761,7 @@ class Test_disp_data(UnitTestCase):
                         c_theta = atan(c_omega1 / c_Delta_omega)
                     else:
                         c_theta = pi + atan(c_omega1 / c_Delta_omega)
-                    self.assertEqual(tilt_angles[ei][si][mi][oi][di], c_theta)
+                    self.assertAlmostEqual(tilt_angles[ei][si][mi][oi][di], c_theta, 15)
 
 
 

@@ -25,7 +25,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, float64, identity, zeros
+from numpy import array, float64, identity, median, zeros
 import sys
 
 # relax module imports.
@@ -123,7 +123,8 @@ def assemble_scaling_matrix(spins=None, key=None, scaling=True):
 
 
 def copy(pipe_from=None, pipe_to=None):
-    """Copy dispersion parameters from one data pipe to another, averaging values for clusters.
+    """Copy dispersion parameters from one data pipe to another, taking the median of previous values to a start value for clusters.
+    Taking the median prevent averaging extreme outliers.
 
     @param pipe_from:   The data pipe to copy the value from.  This defaults to the current data pipe.
     @type pipe_from:    str
@@ -161,23 +162,23 @@ def copy(pipe_from=None, pipe_to=None):
     for spin_ids in loop_cluster():
         # Initialise some variables.
         model = None
-        pA = 0.0
-        pB = 0.0
-        pC = 0.0
-        kex = 0.0
-        kex_AB = 0.0
-        kex_AC = 0.0
-        kex_BC = 0.0
-        k_AB = 0.0
-        kB = 0.0
-        kC = 0.0
-        tex = 0.0
+        pA = [0.0]
+        pB = [0.0]
+        pC = [0.0]
+        kex = [0.0]
+        kex_AB = [0.0]
+        kex_AC = [0.0]
+        kex_BC = [0.0]
+        k_AB = [0.0]
+        kB = [0.0]
+        kC = [0.0]
+        tex = [0.0]
         count = 0
         spins_from = []
         spins_to = []
         selected_cluster = False
 
-        # Loop over the spins, summing the parameters to be averaged.
+        # Loop over the spins, adding parameters to a list, which in the end will be used to find the median.
         for id in spin_ids:
             # Get the spins, then store them.
             spin_from = return_spin(id, pipe=pipe_from)
@@ -208,27 +209,27 @@ def copy(pipe_from=None, pipe_to=None):
 
             # Sum the source parameters.
             if 'pA' in spin_from.params:
-                pA += spin_from.pA
+                pA.append(spin_from.pA)
             if 'pB' in spin_from.params:
-                pB += spin_from.pB
+                pB.append(spin_from.pB)
             if 'pC' in spin_from.params:
-                pC += spin_from.pC
+                pC.append(spin_from.pC)
             if 'kex' in spin_from.params:
-                kex += spin_from.kex
+                kex.append(spin_from.kex)
             if 'kex_AB' in spin_from.params:
-                kex_AB += spin_from.kex_AB
+                kex_AB.append(spin_from.kex_AB)
             if 'kex_AC' in spin_from.params:
-                kex_AC += spin_from.kex_AC
+                kex_AC.append(spin_from.kex_AC)
             if 'kex_BC' in spin_from.params:
-                kex_BC += spin_from.kex_BC
+                kex_BC.append(spin_from.kex_BC)
             if 'k_AB' in spin_from.params:
-                k_AB += spin_from.k_AB
+                k_AB.append(spin_from.k_AB)
             if 'kB' in spin_from.params:
-                kB += spin_from.kB
+                kB.append(spin_from.kB)
             if 'kC' in spin_from.params:
-                kC += spin_from.kC
+                kC.append(spin_from.kC)
             if 'tex' in spin_from.params:
-                tex += spin_from.tex
+                tex.append(spin_from.tex)
 
             # Increment the spin count.
             count += 1
@@ -237,40 +238,40 @@ def copy(pipe_from=None, pipe_to=None):
         if not selected_cluster:
             continue
 
-        # Average parameters.
-        if pA != 0.0:
-            pA = pA / count
-            print("Averaged pA value:  %.15f" % pA)
-        if pB != 0.0:
-            pB = pB / count
-            print("Averaged pA value:  %.15f" % pA)
-        if pC != 0.0:
-            pC = pC / count
-            print("Averaged pC value:  %.15f" % pC)
-        if kex != 0.0:
-            kex = kex / count
-            print("Averaged kex value: %.15f" % kex)
-        if kex_AB != 0.0:
-            kex_AB = kex_AB / count
-            print("Averaged k_AB value: %.15f" % kex_AB)
-        if kex_AC != 0.0:
-            kex_AC = kex_AC / count
-            print("Averaged k_AC value: %.15f" % kex_AC)
-        if kex_BC != 0.0:
-            kex_BC = kex_BC / count
-            print("Averaged k_BC value: %.15f" % kex_BC)
-        if k_AB != 0.0:
-            k_AB = k_AB / count
-            print("Averaged k_AB value: %.15f" % k_AB)
-        if kB != 0.0:
-            kB = kB / count
-            print("Averaged kB value:  %.15f" % kB)
-        if kC != 0.0:
-            kC = kC / count
-            print("Averaged kC value:  %.15f" % kC)
-        if tex != 0.0:
-            tex = tex / count
-            print("Averaged tex value: %.15f" % tex)
+        # Take median of parameters.
+        if len(pA) > 1:
+            pA = [median(pA)]
+            print("Median pA value:  %.15f" % pA[0])
+        if len(pB) > 1:
+            pB = [median(pB)]
+            print("Median pA value:  %.15f" % pA[0])
+        if len(pC) > 1:
+            pC = [median(pC)]
+            print("Median pC value:  %.15f" % pC[0])
+        if len(kex) > 1:
+            kex = [median(kex)]
+            print("Median kex value: %.15f" % kex[0])
+        if len(kex_AB) > 1:
+            kex_AB = [median(kex_AB)]
+            print("Median k_AB value: %.15f" % kex_AB[0])
+        if len(kex_AC) > 1:
+            kex_AC = [median(kex_AC)]
+            print("Median k_AC value: %.15f" % kex_AC[0])
+        if len(kex_BC) > 1:
+            kex_BC = [median(kex_BC)]
+            print("Median k_BC value: %.15f" % kex_BC[0])
+        if len(k_AB) > 1:
+            k_AB = [median(k_AB)]
+            print("Median k_AB value: %.15f" % k_AB[0])
+        if len(kB) > 1:
+            kB = [median(kB)]
+            print("Median kB value:  %.15f" % kB[0])
+        if len(kC) > 1:
+            kC = [median(kC)]
+            print("Median kC value:  %.15f" % kC[0])
+        if len(tex) > 1:
+            tex = [median(tex)]
+            print("Median tex value: %.15f" % tex[0])
 
         # Loop over the spins, this time copying the parameters.
         for i in range(len(spin_ids)):
@@ -290,30 +291,30 @@ def copy(pipe_from=None, pipe_to=None):
             if 'r2b' in spin_from.params:
                 spin_to.r2b = deepcopy(spin_from.r2b)
 
-            # The averaged parameters.
+            # The median parameters.
             if 'pB' in spin_from.params and 'pC' not in spin_from.params:
-                spin_to.pA = pA
-                spin_to.pB = pB
-                spin_to.pC = 1.0 - pA - pB
+                spin_to.pA = pA[0]
+                spin_to.pB = pB[0]
+                spin_to.pC = 1.0 - pA[0] - pB[0]
             elif 'pA' in spin_from.params:
-                spin_to.pA = pA
-                spin_to.pB = 1.0 - pA
+                spin_to.pA = pA[0]
+                spin_to.pB = 1.0 - pA[0]
             if 'kex' in spin_from.params:
-                spin_to.kex = kex
+                spin_to.kex = kex[0]
             if 'kex_AB' in spin_from.params:
-                spin_to.kex_AB = kex_AB
+                spin_to.kex_AB = kex_AB[0]
             if 'kex_AC' in spin_from.params:
-                spin_to.kex_AC = kex_AC
+                spin_to.kex_AC = kex_AC[0]
             if 'kex_BC' in spin_from.params:
-                spin_to.kex_BC = kex_BC
+                spin_to.kex_BC = kex_BC[0]
             if 'k_AB' in spin_from.params:
-                spin_to.k_AB = k_AB
+                spin_to.k_AB = k_AB[0]
             if 'kB' in spin_from.params:
-                spin_to.kB = kB
+                spin_to.kB = kB[0]
             if 'kC' in spin_from.params:
-                spin_to.kC = kC
+                spin_to.kC = kC[0]
             if 'tex' in spin_from.params:
-                spin_to.tex = tex
+                spin_to.tex = tex[0]
 
             # All other spin specific parameters.
             for param in spin_from.params:
