@@ -46,7 +46,7 @@ from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
+from specific_analyses.relax_disp.disp_data import average_intensity, calc_rotating_frame_params, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
 from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, get_value, linear_constraints, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
@@ -72,7 +72,7 @@ class Relax_disp(API_base, API_common):
         self.data_init = self._data_init_spin
         self.model_type = self._model_type_local
         self.return_conversion_factor = self._return_no_conversion_factor
-        self.return_value = self._return_value_general
+        self.return_value = self.return_value
         self.set_param_values = self._set_param_values_spin
 
         # Set up the spin parameters.
@@ -107,6 +107,8 @@ class Relax_disp(API_base, API_common):
         self.PARAMS.add('kB', scope='spin', default=10000.0, desc='Approximate chemical exchange rate constant between sites A and B (rad.s^-1)', set='params', py_type=float, grace_string='\\qk\\sB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('kC', scope='spin', default=10000.0, desc='Approximate chemical exchange rate constant between sites A and C (rad.s^-1)', set='params', py_type=float, grace_string='\\qk\\sC\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('tex', scope='spin', default=1.0/10000.0, desc='The time of exchange (tex = 1/kex)', set='params', py_type=float, grace_string='\\q\\xt\\B\\sex\\N\\Q (s.rad\\S-1\\N)', err=True, sim=True)
+        self.PARAMS.add('theta', scope='spin', desc='Rotating frame tilt angle : ( theta = arctan(w_1 / Omega) ) (rad)', set='params', grace_string='Rotating frame tilt angle (rad)', py_type=dict, err=False, sim=False)
+        self.PARAMS.add('w_eff', scope='spin', desc='Effective field in rotating frame : ( w_eff = sqrt(Omega^2 + w_1^2) ) (rad.s^-1)', grace_string='Effective field in rotating frame (rad.s\\S-1\\N)', set='params', py_type=dict, err=False, sim=False)
         self.PARAMS.add('k_AB', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('k_BA', scope='spin', default=10000.0, desc='The exchange rate from state B to state A', set='params', py_type=float, grace_string='\\qk\\sBA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
@@ -836,6 +838,8 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Exchange rate between sites A and B (rad/s)", "'kB'", "10000.0"])
     _table.add_row(["Exchange rate between sites A and C (rad/s)", "'kC'", "10000.0"])
     _table.add_row(["Time of exchange (s/rad)", "'tex'", "1.0/10000.0"])
+    _table.add_row(["Rotating frame tilt angle", "'theta'", "0.0"])
+    _table.add_row(["Effective field in rotating frame", "'w_eff'", "0.0"])
     _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'", "10000.0"])
     _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'", "10000.0"])
     default_value_doc.add_table(_table.label)
@@ -1353,6 +1357,8 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'"])
     _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'"])
     _table.add_row(["Time of exchange (s/rad)", "'tex'"])
+    _table.add_row(["Rotating frame tilt angle", "'theta'"])
+    _table.add_row(["Effective field in rotating frame", "'w_eff'"])
     _table.add_row(["Peak intensities (series)", "'intensities'"])
     _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
     return_data_name_doc.add_table(_table.label)
@@ -1404,6 +1410,53 @@ class Relax_disp(API_base, API_common):
 
     set_doc = Desc_container("Relaxation dispersion curve fitting set details")
     set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
+
+
+    def return_value(self, spin, param, sim=None, bc=False):
+        """Return the value and error corresponding to the parameter.
+
+        If sim is set to an integer, return the value of the simulation and None.
+
+
+        @param spin:    The SpinContainer object.
+        @type spin:     SpinContainer
+        @param param:   The name of the parameter to return values for.
+        @type param:    str
+        @keyword sim:   The Monte Carlo simulation index.
+        @type sim:      None or int
+        @keyword bc:    The back-calculated data flag.  If True, then the back-calculated data will be returned rather than the actual data.
+        @type bc:       bool
+        @return:        The value and error corresponding to
+        @rtype:         tuple of length 2 of floats or None
+        """
+
+        # Define list of special parameters.
+        special_parameters = ['theta', 'w_eff']
+
+        # Use api_common function for paramets not defined in special_parameters.
+        if param not in special_parameters:
+            returnval = self._return_value_general(spin=spin, param=param, sim=sim, bc=bc)
+            return returnval
+
+        # If parameter in special_parameters, the do the following.
+
+        # Initial values.
+        value = None
+        error = None
+
+        # Return the data
+        theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+
+        # Return for parameter theta
+        if param == "theta":
+            value = theta_spin_dic
+
+        # Return for parameter theta
+        elif param == "w_eff":
+            value = w_eff_spin_dic
+
+        # Return the data.
+        return value, error
 
 
     def set_error(self, model_info, index, error):

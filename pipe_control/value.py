@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -137,7 +137,7 @@ def get_parameters():
 
     # Loop over the parameters.
     params = []
-    for name in (data_names(set='params') + data_names(set='generic')):
+    for name in (data_names(set='params') + data_names(set='generic') + data_names(set='min')):
         # Get the description.
         desc = return_data_desc(name)
 

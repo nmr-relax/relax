@@ -98,7 +98,7 @@ class Structure(SystemTestCase):
     def test_bug_21522_master_record_atom_count(self):
         """Catch U{bug #21522<https://gna.org/bugs/?21522>}, the structure.write_pdb user function creating an incorrect MASTER record.
 
-        This also triggers bug #21520<https://gna.org/bugs/?21520>}, the failure of the structure.write_pdb user function when creating the MASTER record due to too many ATOM and HETATM records being present.
+        This also triggers U{bug #21520<https://gna.org/bugs/?21520>}, the failure of the structure.write_pdb user function when creating the MASTER record due to too many ATOM and HETATM records being present.
         """
 
         # Create 2 models.

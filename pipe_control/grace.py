@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -167,7 +167,7 @@ def get_data_types():
     data.append(["Spin sequence", 'spin'])
 
     # Loop over the parameters.
-    for name in (data_names(set='params') + data_names(set='generic')):
+    for name in (data_names(set='params') + data_names(set='generic') + data_names(set='min')):
         # Get the description.
         try:
             desc = return_data_desc(name)
@@ -208,7 +208,7 @@ def view(file=None, dir=None, grace_exe='xmgrace'):
     file_path = get_file_path(file, dir)
 
     # Run Grace.
-    system(grace_exe + " " + file_path + " &")
+    system(grace_exe + " \"" + file_path + "\" &")
 
 
 def write(x_data_type='res_num', y_data_type=None, spin_id=None, plot_data='value', file=None, dir=None, force=False, norm=True):

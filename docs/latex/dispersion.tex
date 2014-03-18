@@ -2614,7 +2614,7 @@ To process this test data, two separate analyses will be performed:
   \item The second analysis will consists of clustering spins with similar kinetics and thermodynamics parameters (exchange rates and populations respectively) and optimising these clusters using a common set of exchange parameters.
 \end{itemize}
 
-In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI on a single four-core, hyper-threaded computer with the command:
+In this example, Gary Thompson's multiprocessor framework (see section~\ref{sect: Relaxation dispersion using OpenMPI} on page~\pageref{sect: Relaxation dispersion using OpenMPI}) will be used with OpenMPI\index{MPI!OpenMPI} on a single four-core, hyper-threaded computer with the command:
 
 \example{\$ mpirun -np 8 /data/relax/relax-trunk/relax --multi='mpi4py' --log $\sim$/tmp/dispersion/log\_non\_clustered --gui}
 
@@ -2622,6 +2622,14 @@ Note that the \directory{$\sim$\ossep{}tmp\ossep{}dispersion} directory should b
 If running on a system where your home directory is not defined as \directory{$\sim$\ossep{}}, MS Windows for example, the \directory{$\sim$} part will need to be replaced with some other directory.
 A different command will be used for the clustered analysis to store the log messages in a separate file.
 The two logs will be used to compare the two analysis types at the end.
+
+
+% Computation time.
+\subsection{Dispersion GUI mode -- computation time}
+
+The time required to complete these two analyses is highly dependent on the computer being used as well as how many nodes can be used for running the calculations parallelised with OpenMPI\index{MPI!OpenMPI}.
+On a large cluster with many nodes both analyses should be completed in under an hour.
+But when running the analyses without OpenMPI\index{MPI!OpenMPI} on old single core computer, the analyses could take days and even up to a week.
 
 
 % Initialisation of the data pipe.

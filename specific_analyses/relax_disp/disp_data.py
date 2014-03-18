@@ -68,7 +68,7 @@ from lib.physical_constants import g1H, return_gyromagnetic_ratio
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_spin_ids, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
@@ -76,7 +76,7 @@ from pipe_control.spectrum import add_spectrum_id, get_ids
 from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02
 from stat import S_IRWXU, S_IRGRP, S_IROTH
 from os import chmod, sep
 
@@ -154,6 +154,82 @@ def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=Non
 
     # Return the value.
     return intensity
+
+
+def calc_rotating_frame_params(spin=None, spin_id=None, fields=None, verbosity=0):
+    """Calculates and rotating frame parameters, calculated from:
+    - The spectrometer frequency.
+    - The spin-lock or hard pulse offset.
+    - The dispersion point data (the spin-lock field strength in Hz).
+
+    The return will be for each spin,
+    - Rotating frame tilt angle ( theta = arctan(w_1 / Omega) ) [rad]
+    - The average resonance offset in the rotating frame ( Domega = w_{pop_ave} - w_rf  ) [rad/s]
+    - Effective field in rotating frame ( w_eff = sqrt( Omega^2 + w_1^2 ) ) [rad/s]
+
+    Calculations are mentioned in the U{manual<http://www.nmr-relax.com/manual/Dispersion_model_summary.html>}
+
+    @keyword spin:      The spin system specific data container
+    @type spin:         SpinContainer instance
+    @keyword spin_id:   The spin ID string.
+    @type spin_id:      None or str
+    @keyword fields:    The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
+    @type fields:       rank-2 list of floats
+    @keyword verbosity: A flag specifying to print calculations.
+    @type verbosity:    int
+    @return:            List with dict() of theta, Domega, w_eff and list of dict() keys.
+    @rtype:             List of dict() 
+    """
+
+    # If the spin is not selected, return None
+    if not spin.select:
+        return None, None, None, None
+
+    # If the spin does not have isotope, return None
+    if not hasattr(spin, 'isotope'):
+        return None, None, None, None
+
+    # Get the field count
+    field_count = count_frq()
+
+    # Check the experiment type
+    if not has_r1rho_exp_type():
+        raise RelaxError("The experiment type is not of R1rho type.")
+
+    # Get the spin_lock_field points
+    if fields == None:
+        spin_lock_nu1 = return_spin_lock_nu1(ref_flag=False)
+    else:
+        spin_lock_nu1 = fields
+
+    # The offset and R1 data.
+    chemical_shifts, offsets, tilt_angles, Delta_omega, w_eff = return_offset_data(spins=[spin], spin_ids=[spin_id], field_count=field_count, fields=spin_lock_nu1)
+        
+    # Loop over the index of spins, then exp_type, frq, offset
+    if verbosity:
+        print("Printing the following")    
+        print("exp_type spin_id frq offset{ppm} offsets[ei][si][mi][oi]{rad/s} ei mi oi si di cur_spin.chemical_shift{ppm} chemical_shifts[ei][si][mi]{rad/s} spin_lock_nu1{Hz} tilt_angles[ei][si][mi][oi]{rad} av_res_offset[ei][si][mi][oi]{rad/s}")
+
+    si = 0
+    theta_spin_dic = dict()
+    Domega_spin_dic = dict()
+    w_eff_spin_dic = dict()
+    dic_key_list = []
+
+    for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
+        # Loop over the dispersion points.
+        spin_lock_fields = spin_lock_nu1[ei][mi][oi]
+        for di in range(len(spin_lock_fields)):
+            if verbosity:
+                print("%-8s %-10s %11.1f %8.4f %12.5f %i  %i  %i  %i  %i %7.3f %12.5f %12.5f %12.5f %12.5f"%(exp_type, spin_id, frq, offset, offsets[ei][si][mi][oi], ei, mi, oi, si, di, spin.chemical_shift, chemical_shifts[ei][si][mi], spin_lock_fields[di], tilt_angles[ei][si][mi][oi][di], Delta_omega[ei][si][mi][oi][di]))
+            dic_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=spin_lock_fields[di])
+            dic_key_list.append(dic_key) 
+            theta_spin_dic["%s"%(dic_key)] = tilt_angles[ei][si][mi][oi][di]
+            Domega_spin_dic["%s"%(dic_key)] = Delta_omega[ei][si][mi][oi][di]
+            w_eff_spin_dic["%s"%(dic_key)] = w_eff[ei][si][mi][oi][di]
+
+    # Return the dic and list of keys
+    return [theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list]
 
 
 def count_exp():
@@ -2686,7 +2762,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     @type field_count:      int
     @keyword fields:        The spin-lock field strengths to use instead of the user loaded values - to enable interpolation.  The dimensions are {Ei, Mi}.
     @type fields:           rank-2 list of floats
-    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, and rotating frame tilt angles {Ei, Si, Mi, Oi, Di}.
+    @return:                The numpy array structures of the chemical shifts in rad/s {Ei, Si, Mi}, spin-lock offsets in rad/s {Ei, Si, Mi, Oi}, rotating frame tilt angles {Ei, Si, Mi, Oi, Di}, the average resonance offset in the rotating frame in rad/s {Ei, Si, Mi, Oi, Di} and the effective field in rotating frame in rad/s {Ei, Si, Mi, Oi, Di}.
     @rtype:                 rank-3 list of floats, rank-4 list of floats, rank-5 list of floats
     """
 
@@ -2702,21 +2778,31 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     shifts = []
     offsets = []
     theta = []
+    Domega = []
+    w_e = []
     for exp_type, ei in loop_exp(return_indices=True):
         shifts.append([])
         offsets.append([])
         theta.append([])
+        Domega.append([])
+        w_e.append([])
         for si in range(spin_num):
             shifts[ei].append([])
             offsets[ei].append([])
             theta[ei].append([])
+            Domega[ei].append([])
+            w_e[ei].append([])
             for frq, mi in loop_frq(return_indices=True):
                 shifts[ei][si].append(None)
                 offsets[ei][si].append([])
                 theta[ei][si].append([])
+                Domega[ei][si].append([])
+                w_e[ei][si].append([])
                 for offset, oi in loop_offset(exp_type=exp_type, frq=frq, return_indices=True):
                     offsets[ei][si][mi].append(None)
                     theta[ei][si][mi].append([])
+                    Domega[ei][si][mi].append([])
+                    w_e[ei][si][mi].append([])
 
     # Assemble the data.
     data_flag = False
@@ -2806,10 +2892,20 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                 # Calculate the tilt angle.
                 omega1 = point * 2.0 * pi
                 Delta_omega = shifts[ei][si][mi] - offsets[ei][si][mi][oi]
+                Domega[ei][si][mi][oi].append(Delta_omega)
                 if Delta_omega == 0.0:
                     theta[ei][si][mi][oi].append(pi / 2.0)
-                else:
+                # Calculate the theta angle describing the tilted rotating frame relative to the laboratory.
+                # If Delta_omega is negative, there follow the symmetry of atan, that atan(-x) = - atan(x).
+                # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x))
+                elif omega1 / Delta_omega > 0 :
                     theta[ei][si][mi][oi].append(atan(omega1 / Delta_omega))
+                else:
+                    theta[ei][si][mi][oi].append(pi + atan(omega1 / Delta_omega))
+
+                # Calculate effective field in rotating frame
+                w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
+                w_e[ei][si][mi][oi].append(w_eff)
 
         # Increment the spin index.
         si += 1
@@ -2825,7 +2921,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
     #            theta[ei][si][mi] = array(theta[ei][si][mi], float64)
 
     # Return the structures.
-    return shifts, offsets, theta
+    return shifts, offsets, theta, Domega, w_e
 
 
 def return_param_key_from_data(exp_type=None, frq=0.0, offset=0.0, point=0.0):
@@ -3579,53 +3675,75 @@ def write_disp_curves(dir=None, force=None):
         if spin.model in MODEL_LIST_MMQ and spin.isotope == '1H':
             continue
 
-        # Get the attached proton.
-        proton = None
-        if proton_mmq_flag:
-            proton = return_attached_protons(spin_id)[0]
+        # Define writing variables.
+        writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
 
-        # The unique file name.
-        file_name = "disp%s.out" % spin_id.replace('#', '_').replace(':', '_').replace('@', '_')
+        # If the model is of R1rho type, then also write as R2eff as function of theta.
+        if spin.model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type() and hasattr(spin, 'isotope'):
+            # Add additonal looping over writing parameters.
+            writing_vars.append(['disp_theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
+            #writing_vars.append(['disp_w_eff',("Experiment_name", "Field_strength_(MHz)", "Effective_field_(rad_s-1))", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
 
-        # Open the file for writing.
-        file_path = get_file_path(file_name, dir)
-        file = open_write_file(file_name, dir, force)
+        # Loop over writing vars
+        for wvar in writing_vars:
+            # Get the attached proton.
+            proton = None
+            if proton_mmq_flag:
+                proton = return_attached_protons(spin_id)[0]
 
-        # Write a header.
-        file.write(format_head % ("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors"))
+            # The unique file name.
+            file_name = "%s%s.out" % (wvar[0], spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
 
-        # Loop over the dispersion points.
-        for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
-            # Alias the correct spin.
-            current_spin = spin
-            if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
-                current_spin = proton
+            # Open the file for writing.
+            file_path = get_file_path(file_name, dir)
+            file = open_write_file(file_name, dir, force)
 
-            # The data key.
-            key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+            # Write a header.
+            file.write(format_head % wvar[1])
 
-            # Format the R2eff data.
-            r2eff = "-"
-            if hasattr(current_spin, 'r2eff') and  key in current_spin.r2eff:
-                r2eff = "%.15f" % current_spin.r2eff[key]
+            # Loop over the dispersion points.
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Alias the correct spin.
+                current_spin = spin
+                if exp_type in [EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_PROTON_MQ]:
+                    current_spin = proton
 
-            # Format the R2eff back calc data.
-            r2eff_bc = "-"
-            if hasattr(current_spin, 'r2eff_bc') and key in current_spin.r2eff_bc:
-                r2eff_bc = "%.15f" % current_spin.r2eff_bc[key]
+                # The data key.
+                key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
-            # Format the R2eff errors.
-            r2eff_err = "-"
-            if hasattr(current_spin, 'r2eff_err') and  key in current_spin.r2eff_err:
-                r2eff_err = "%.15f" % current_spin.r2eff_err[key]
+                # Format the R2eff data.
+                r2eff = "-"
+                if hasattr(current_spin, 'r2eff') and  key in current_spin.r2eff:
+                    r2eff = "%.15f" % current_spin.r2eff[key]
 
-            # Write out the data.
-            frq_text = "%.9f" % (frq/1e6)
-            point_text = "%.6f" % point
-            file.write(format % (repr(exp_type), frq_text, point_text, r2eff, r2eff_bc, r2eff_err))
+                # Format the R2eff back calc data.
+                r2eff_bc = "-"
+                if hasattr(current_spin, 'r2eff_bc') and key in current_spin.r2eff_bc:
+                    r2eff_bc = "%.15f" % current_spin.r2eff_bc[key]
 
-        # Close the file.
-        file.close()
+                # Format the R2eff errors.
+                r2eff_err = "-"
+                if hasattr(current_spin, 'r2eff_err') and  key in current_spin.r2eff_err:
+                    r2eff_err = "%.15f" % current_spin.r2eff_err[key]
 
-        # Add the file to the results file list.
-        add_result_file(type='text', label='Text', file=file_path)
+                # Define value to be written.
+                if wvar[0] == 'disp_theta':
+                    theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+                    value = theta_spin_dic[key]
+                elif wvar[0] == 'disp_w_eff':
+                    theta_spin_dic, Domega_spin_dic, w_eff_spin_dic, dic_key_list = calc_rotating_frame_params(spin=spin)
+                    value = w_eff_spin_dic[key]
+                # Else use the standard dispersion point data.
+                else:
+                    value = point
+
+                # Write out the data.
+                frq_text = "%.9f" % (frq/1e6)
+                value_text = "%.6f" % value
+                file.write(format % (repr(exp_type), frq_text, value_text, r2eff, r2eff_bc, r2eff_err))
+
+            # Close the file.
+            file.close()
+
+            # Add the file to the results file list.
+            add_result_file(type='text', label='Text', file=file_path)

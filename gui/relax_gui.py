@@ -429,21 +429,6 @@ class Main(wx.Frame):
             else:
                 width = 100
 
-            # A printout.
-            text = "\n\nThank you for citing:\n"
-            text += "\n\n%srelaxGUI%s\n\n" % (ansi.relax_prompt, ansi.end)
-            for line in wrap(info.bib['Bieri11'].cite_short(), width):
-                text += line + '\n'
-            text += "\n\n\n%srelax%s\n\n" % (ansi.relax_prompt, ansi.end)
-            for line in wrap(info.bib['dAuvergneGooley08a'].cite_short(), width):
-                text += line + '\n'
-            text += '\n'
-            for line in wrap(info.bib['dAuvergneGooley08b'].cite_short(), width):
-                text += line + '\n'
-            text += '\n'
-            text += '\n'
-            sys.stdout.write(text)
-
             # Remove the Mac OS X task bar icon.
             if hasattr(self, 'taskbar_icon'):
                 self.taskbar_icon.Destroy()

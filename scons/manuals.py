@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -107,7 +107,8 @@ def compile_api_manual_html(target, source, env):
         'multi.test_implementation',
         'multi.test_implementation2',
         'sample_scripts',
-        'test_suite.system_tests.scripts'
+        'test_suite.system_tests.scripts',
+        'test_suite.shared_data'
     ]
 
     # output
