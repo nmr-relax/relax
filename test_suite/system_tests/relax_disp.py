@@ -2838,11 +2838,30 @@ class Relax_disp(SystemTestCase):
         OPT_MAX_ITERATIONS = 1000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
-        analysis_mode = "man"
+        analysis_mode = "auto"
 
         if analysis_mode == "auto":
+            # Make all spins free
+            for curspin in cluster_ids:
+                self.interpreter.relax_disp.cluster('free spins', curspin)
+                # Shut them down
+                self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+                
+            # Select only a subset of spins for global fitting
+            #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+
+            #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+
+            self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+            #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+
             # Run the analysis.
             relax_disp.Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+
+            # Check the kex value of residue 52
+            #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ref[':52@N'][6])
 
         ###########
         elif analysis_mode == "man":
