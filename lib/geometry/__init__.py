@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,6 +23,7 @@
 """The relax-lib geometry package - a library of functions for studies of geometry."""
 
 __all__ = [
+    'angles',
     'coord_transform',
     'lines',
     'pec',

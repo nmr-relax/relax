@@ -32,11 +32,11 @@ import sys
 # relax module imports.
 from lib.check_types import float16, is_float
 from lib.frame_order.format import print_frame_order_2nd_degree
+from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import cartesian_to_spherical
 from lib.geometry.rotations import axis_angle_to_R, R_to_euler_zyz
 from lib.io import open_write_file
 from lib.linear_algebra.kronecker_product import kron_prod
-from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
 from prompt.interpreter import Interpreter
