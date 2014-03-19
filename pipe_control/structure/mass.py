@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -91,7 +91,7 @@ def pipe_centre_of_mass(atom_id=None, model=None, return_mass=False, verbosity=1
         element_list.append(element)
 
     # Calculate the CoM.
-    com, mass = centre_of_mass(pos=coord, elements=element_list)
+    com, mass = centre_of_mass(pos=coord, elements=element_list, verbosity=verbosity)
 
     # Return the centre of mass.
     if return_mass:
