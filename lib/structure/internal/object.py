@@ -762,6 +762,31 @@ class Internal:
             raise RelaxError("The structural data is invalid.")
 
 
+    def _validate_records(self, lines):
+        """Make sure all PDB records are 80 char in length, padding with whitespace when needed.
+
+        All newline characters are stripped from the records as well.
+
+
+        @param lines:       All lines of the PDB file.
+        @type lines:        list of str
+        @return:            The padded PDB lines.
+        @rtype:             list of str
+        """
+
+        # Loop over the lines.
+        for i in range(len(lines)):
+            # Strip the newline character.
+            lines[i] = lines[i].rstrip('\r\n')
+
+            # Pad if needed.
+            if len(lines[i]) != 80:
+                lines[i] = "%-80s" % lines[i]
+
+        # Return the fixed lines.
+        return lines
+
+
     def _mol_type(self, mol):
         """Determine the type of molecule.
 
@@ -1805,6 +1830,9 @@ class Internal:
         # Check for empty files.
         if pdb_lines == []:
             raise RelaxError("The PDB file is empty.")
+
+        # Pre-process the lines, fixing PDB violations.
+        pdb_lines = self._validate_records(pdb_lines)
 
         # Process the different sections.
         pdb_lines = self._parse_pdb_title(pdb_lines)
