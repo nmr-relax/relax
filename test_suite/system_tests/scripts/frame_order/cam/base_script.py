@@ -54,6 +54,7 @@ class Base_script:
     AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     AXIS_THETA = None
     AXIS_PHI = None
+    AXIS_ALPHA = None
     EIGEN_ALPHA = None
     EIGEN_BETA = None
     EIGEN_GAMMA = None
