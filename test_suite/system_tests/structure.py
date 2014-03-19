@@ -134,6 +134,16 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_bug_21814_pdb_no_80_space_padding(self):
+        """Catch U{bug #21814<https://gna.org/bugs/?21814>}, the PDB reading failure when not padded to 80 spaces."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Load the file.
+        self.interpreter.structure.read_pdb('SpUreE_dimer_H_new', dir=path)
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
