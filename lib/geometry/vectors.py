@@ -23,8 +23,8 @@
 """Collection of functions for vector operations."""
 
 # Python module imports.
-from math import acos, cos, pi, sin
-from numpy import array, float64
+from math import acos, atan2, cos, pi, sin
+from numpy import array, cross, dot, float64
 from numpy.linalg import norm
 from random import uniform
 
@@ -72,3 +72,25 @@ def unit_vector_from_2point(point1, point2):
 
     # Return the unit vector.
     return vect / norm(vect)
+
+
+def vector_angle(vector1, vector2):
+    """Calculate the directional angle between two N-dimensional vectors.
+
+    The angle between vectors A and B is calculated using the formula::
+
+        theta = arctan(AxB / A.B),
+
+    where the arctan function used is atan2, AxB is the cross product between the two vectors, and A.B is the dot product.
+
+
+    @param vector1:     The first vector.
+    @type vector1:      numpy rank-1 array
+    @param vector2:     The second vector.
+    @type vector2:      numpy rank-1 array
+    @return:            The angle between -pi and pi.
+    @rtype:             float
+    """
+
+    # Calculate and return the value.
+    return atan2(cross(vector1, vector2), dot(vector1, vector2))
