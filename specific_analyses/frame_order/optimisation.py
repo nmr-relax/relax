@@ -684,8 +684,14 @@ def target_fn_setup(sim_index=None, scaling=True):
         cdp.num_int_pts = 200000
 
     # The centre of mass, for use in the rotor models.
-    com = pipe_centre_of_mass(verbosity=0)
-    com = array(com, float64)
+    com = None
+    if cdp.model in ['rotor', 'double rotor']:
+        # The centre of mass of all objects in the data pipe.
+        com = pipe_centre_of_mass(verbosity=0)
+        com = array(com, float64)
+
+        # Printout.
+        print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     if cdp.ave_pos_pivot == 'com':
