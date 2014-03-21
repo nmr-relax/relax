@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,5 +24,6 @@ __all__ = [
     'test___init_',
     'test_lines',
     'test_pec',
-    'test_rotations'
+    'test_rotations',
+    'test_vectors'
 ]
