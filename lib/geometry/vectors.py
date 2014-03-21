@@ -74,23 +74,30 @@ def unit_vector_from_2point(point1, point2):
     return vect / norm(vect)
 
 
-def vector_angle(vector1, vector2):
+def vector_angle(vector1, vector2, normal):
     """Calculate the directional angle between two N-dimensional vectors.
-
-    The angle between vectors A and B is calculated using the formula::
-
-        theta = arctan(AxB / A.B),
-
-    where the arctan function used is atan2, AxB is the cross product between the two vectors, and A.B is the dot product.
-
 
     @param vector1:     The first vector.
     @type vector1:      numpy rank-1 array
     @param vector2:     The second vector.
     @type vector2:      numpy rank-1 array
+    @param normal:      The vector defining the plane, to determine the sign.
+    @type normal:       numpy rank-1 array
     @return:            The angle between -pi and pi.
     @rtype:             float
     """
 
-    # Calculate and return the value.
-    return atan2(cross(vector1, vector2), dot(vector1, vector2))
+    # Normalise the vectors (without changing the original vectors).
+    vector1 = vector1 / norm(vector1)
+    vector2 = vector2 / norm(vector2)
+
+    # The cross product.
+    cp = cross(vector1, vector2)
+
+    # The angle.
+    angle = acos(dot(vector1, vector2))
+    if dot(cp, normal) < 0.0:
+        angle = -angle
+
+    # Return the signed angle.
+    return angle
