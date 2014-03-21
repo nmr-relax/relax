@@ -52,7 +52,7 @@ More information on the NS R1rho 2-site model can be found in the:
 import dep_check
 
 # Python module imports.
-from math import atan, cos, log, pi, sin, sqrt
+from math import atan2, cos, log, pi, sin, sqrt
 from numpy import dot
 
 # relax module imports.
@@ -115,7 +115,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         rr1rho_3d(matrix=matrix, R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
 
         # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        theta = atan(spin_lock_fields[i]/dA)
+        theta = atan2(spin_lock_fields[i], dA)
         M0[0] = sin(theta)    # The A state initial X magnetisation.
         M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
