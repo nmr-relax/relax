@@ -23,7 +23,7 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import arccos, array, cross, dot, float32, float64, transpose, zeros
+from numpy import arctan2, array, cross, dot, float32, float64, transpose, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
 
@@ -31,6 +31,7 @@ from os import F_OK, access, sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
+from lib.geometry.vectors import vector_angle
 from status import Status; status = Status()
 
 
@@ -130,12 +131,12 @@ class Base_script:
         """
 
         # The CoM-pivot unit vector.
-        com_piv = pivot - com
-        com_piv = com_piv / norm(com_piv)
+        piv_com = com - pivot
+        piv_com = piv_com / norm(piv_com)
 
         # The vector perpendicular to the CoM-pivot vector.
         z_axis = array([0, 0, 1], float64)
-        perp_vect = cross(com_piv, z_axis)
+        perp_vect = cross(piv_com, z_axis)
         perp_vect = perp_vect / norm(perp_vect)
 
         # The axis.
@@ -143,7 +144,7 @@ class Base_script:
         spherical_to_cartesian([1.0, theta, phi], axis)
 
         # The alpha angle (the angle between the perpendicular vector and the axis).
-        alpha = arccos(dot(perp_vect, axis))
+        alpha = vector_angle(perp_vect, axis, piv_com)
 
         # Return the axis alpha angle.
         return alpha
