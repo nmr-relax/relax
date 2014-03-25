@@ -780,7 +780,7 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     # Unpack the parameters.
     ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
     eigen_alpha, eigen_beta, eigen_gamma = None, None, None
-    axis_theta, axis_phi = None, None
+    axis_theta, axis_phi, axis_alpha = None, None, None
     cone_theta_x, cone_theta_y = None, None
     cone_theta = None
     cone_s1 = None
@@ -801,7 +801,7 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     elif cdp.model in ['line, torsionless', 'line, free rotor']:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
     elif cdp.model in ['rotor']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_sigma_max = param_vector
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, cone_sigma_max = param_vector
     elif cdp.model in ['free rotor']:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
         ave_pos_alpha = None
@@ -884,6 +884,8 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
             cdp.axis_theta = wrap_angles(axis_theta, 0.0, 2.0*pi)
         if axis_phi != None:
             cdp.axis_phi = wrap_angles(axis_phi, 0.0, 2.0*pi)
+        if axis_alpha != None:
+            cdp.axis_phi = wrap_angles(axis_alpha, -pi, pi)
 
         # Cone parameters.
         if cone_theta != None:
