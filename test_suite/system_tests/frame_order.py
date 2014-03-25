@@ -646,7 +646,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
-        self.check_chi2(0.081769384900455433)
+        self.check_chi2(0.24293662685639067)
 
 
     def test_cam_rotor2_pcs(self):
@@ -1271,7 +1271,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 0.96883720077954039)
+        self.assertAlmostEqual(cdp.chi2, 0.97003711776989854)
 
 
     def test_rigid_data_to_pseudo_ellipse_model(self):
