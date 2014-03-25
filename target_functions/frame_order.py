@@ -47,6 +47,7 @@ from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
+from lib.geometry.vectors import vector_angle
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
@@ -1895,12 +1896,16 @@ class Frame_order:
         else:
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params
 
-        # Generate the rotation axis from the CoM, pivot point, and alpha angle.
-        r_compiv = array(self._param_pivot, float64) - self.com
-        r_compiv = r_compiv / norm(r_compiv)
-        mu_xy = cross(r_compiv, self.z_axis)
+        # The CoM-pivot unit vector (the pivot is defined as the point on the axis closest to the CoM).
+        piv_com = self.com - array(self._param_pivot, float64)
+        piv_com = piv_com / norm(piv_com)
+
+        # The vector perpendicular to the CoM-pivot vector and in the xy plane.
+        mu_xy = cross(piv_com, self.z_axis)
         mu_xy = mu_xy / norm(mu_xy)
-        axis_angle_to_R(r_compiv, axis_alpha, self.R)
+
+        # Rotate the vector about the CoM-pivot axis by the angle alpha.
+        axis_angle_to_R(piv_com, axis_alpha, self.R)
         self.cone_axis = dot(self.R, mu_xy)
 
         # Pre-calculate the eigenframe rotation matrix.
