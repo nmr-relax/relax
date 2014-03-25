@@ -30,6 +30,7 @@ from os import F_OK, access, sep
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
 from status import Status; status = Status()
@@ -130,8 +131,15 @@ class Base_script:
         @rtype:         float
         """
 
-        # The CoM-pivot unit vector.
-        piv_com = com - pivot
+        # The axis.
+        axis = zeros(3, float64)
+        spherical_to_cartesian([1.0, theta, phi], axis)
+
+        # The closest point on the line to the CoM (shift the pivot).
+        new_piv = closest_point_ax(line_pt=pivot, axis=axis, point=com)
+
+        # The CoM-pivot unit vector (for the shifted pivot).
+        piv_com = com - new_piv
         piv_com = piv_com / norm(piv_com)
 
         # The vector perpendicular to the CoM-pivot vector.
@@ -139,12 +147,8 @@ class Base_script:
         perp_vect = cross(piv_com, z_axis)
         perp_vect = perp_vect / norm(perp_vect)
 
-        # The axis.
-        axis = zeros(3, float64)
-        spherical_to_cartesian([1.0, theta, phi], axis)
-
         # The alpha angle (the angle between the perpendicular vector and the axis).
-        alpha = vector_angle(perp_vect, axis, piv_com)
+        alpha = vector_angle(axis, perp_vect, piv_com)
 
         # Return the axis alpha angle.
         return alpha
