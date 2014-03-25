@@ -84,7 +84,7 @@ class Base_script:
 
         # Parameter conversions.
         if self.AXIS_THETA != None and self.AXIS_ALPHA == None:
-            self.AXIS_ALPHA = self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
+            self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
 
         # Alias the user function executor method.
         self._execute_uf = exec_fn
@@ -119,6 +119,9 @@ class Base_script:
     def convert_rotor(self, theta=None, phi=None, pivot=None, com=None):
         """Convert the rotor axis spherical angles to the axis alpha notation.
 
+        The pivot will be shifted to the point on the axis closest to the CoM, and the alpha angle set.
+
+
         @keyword theta: The polar spherical angle.
         @type theta:    float
         @keyword phi:   The azimuthal spherical angle.
@@ -127,19 +130,17 @@ class Base_script:
         @type pivot:    numpy rank-1 3D array
         @keyword com:   The pivot point on the rotation axis.
         @type com:      numpy rank-1 3D array
-        @return:        The axis alpha angle for the system.
-        @rtype:         float
         """
 
         # The axis.
         axis = zeros(3, float64)
         spherical_to_cartesian([1.0, theta, phi], axis)
 
-        # The closest point on the line to the CoM (shift the pivot).
-        new_piv = closest_point_ax(line_pt=pivot, axis=axis, point=com)
+        # Reset the pivot to the closest point on the line to the CoM (shift the pivot).
+        self.PIVOT = closest_point_ax(line_pt=pivot, axis=axis, point=com)
 
         # The CoM-pivot unit vector (for the shifted pivot).
-        piv_com = com - new_piv
+        piv_com = com - self.PIVOT
         piv_com = piv_com / norm(piv_com)
 
         # The vector perpendicular to the CoM-pivot vector.
@@ -147,11 +148,8 @@ class Base_script:
         perp_vect = cross(piv_com, z_axis)
         perp_vect = perp_vect / norm(perp_vect)
 
-        # The alpha angle (the angle between the perpendicular vector and the axis).
-        alpha = vector_angle(axis, perp_vect, piv_com)
-
-        # Return the axis alpha angle.
-        return alpha
+        # Set the alpha angle (the angle between the perpendicular vector and the axis).
+        self.AXIS_ALPHA = vector_angle(perp_vect, axis, piv_com)
 
 
     def optimisation(self):
