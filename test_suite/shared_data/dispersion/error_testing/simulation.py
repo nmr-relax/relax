@@ -86,7 +86,7 @@ sigma_r2eff_group = zeros(len(spin_lock), float64)
 # Calculate the theoretical errors.
 sigma_r2eff_full = []
 sigma_r2eff_red = []
-int = cdp.mol[0].res[0].spin[0].intensities
+int = cdp.mol[0].res[0].spin[0].peak_intensity
 for i in range(len(spin_lock)):
     sigma_r2eff_full.append(1.0/0.1 * sqrt((ERR/int['ref'])**2 + (ERR/int['nu_%s_ncyc7'%spin_lock[i]])**2))
     sigma_r2eff_red.append(1.0/0.1 * ERR/int['nu_%s_ncyc7'%spin_lock[i]])
@@ -99,7 +99,7 @@ for i in range(SIM_NUM):
 
     # Alias the spin and intensities.
     spin = cdp.mol[0].res[0].spin[0]
-    int = spin.intensities
+    int = spin.peak_intensity
     i0 = int['ref']
 
     # Individual dispersion point pair test.

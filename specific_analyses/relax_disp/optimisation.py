@@ -191,7 +191,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                     # Intensity.
                     elif param_name == 'i0':
                         lower.append(0.0001)
-                        upper.append(max(spins[si].intensities.values()))
+                        upper.append(max(spins[si].peak_intensity.values()))
 
         # All other models.
         else:

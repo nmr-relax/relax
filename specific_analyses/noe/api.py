@@ -51,7 +51,7 @@ class Noe(API_base, API_common):
         self.return_value = self._return_value_general
 
         # Set up the spin parameters.
-        self.PARAMS.add('intensities', scope='spin', desc='The peak intensity', py_type=dict, grace_string='Peak intensity')
+        self.PARAMS.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
 
 
@@ -99,14 +99,14 @@ class Noe(API_base, API_common):
             for id in cdp.spectrum_ids:
                 # Sat spectra.
                 if cdp.spectrum_type[id] == 'sat':
-                    sat += spin.intensities[id]
-                    sat_err2 += spin.intensity_err[id]**2
+                    sat += spin.peak_intensity[id]
+                    sat_err2 += spin.peak_intensity_err[id]**2
                     sat_count += 1
 
                 # Ref spectra.
                 if cdp.spectrum_type[id] == 'ref':
-                    ref += spin.intensities[id]
-                    ref_err2 += spin.intensity_err[id]**2
+                    ref += spin.peak_intensity[id]
+                    ref_err2 += spin.peak_intensity_err[id]**2
                     ref_count += 1
 
             # Average the values and errors (variance averaging).
@@ -148,28 +148,28 @@ class Noe(API_base, API_common):
                 continue
 
             # No intensity data.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 warn(RelaxDeselectWarning(spin_id, 'the absence of intensity data'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Check for sufficient data.
-            if not len(spin.intensities) >= 2:
+            if not len(spin.peak_intensity) >= 2:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data (less than two data points)'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # No error data.
-            if not hasattr(spin, 'intensity_err'):
+            if not hasattr(spin, 'peak_intensity_err'):
                 warn(RelaxDeselectWarning(spin_id, 'the absence of errors'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Check for sufficient errors.
-            if not len(spin.intensity_err) >= 2:
+            if not len(spin.peak_intensity_err) >= 2:
                 warn(RelaxDeselectWarning(spin_id, 'missing errors (less than two error points)'))
                 spin.select = False
                 deselect_flag = True

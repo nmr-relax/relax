@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
@@ -76,7 +76,7 @@ class Relax_disp(API_base, API_common):
         self.set_param_values = self._set_param_values_spin
 
         # Set up the spin parameters.
-        self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
         self.PARAMS.add('cpmg_frqs', scope='spin', py_type=dict, grace_string='\\qCPMG pulse train frequency (Hz)\\Q')
         self.PARAMS.add('spin_lock_nu1', scope='spin', py_type=dict, grace_string='\\qSpin-lock field strength (Hz)\\Q')
@@ -193,7 +193,7 @@ class Relax_disp(API_base, API_common):
             print("Spin '%s'." % spin_id)
 
             # Skip spins which have no data.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 continue
 
             # Initialise the data structures.
@@ -212,10 +212,10 @@ class Relax_disp(API_base, API_common):
                 # Check for missing data.
                 missing = False
                 for i in range(len(ref_keys)):
-                    if ref_keys[i] not in spin.intensities:
+                    if ref_keys[i] not in spin.peak_intensity:
                         missing = True
                 for i in range(len(int_keys)):
-                    if int_keys[i] not in spin.intensities:
+                    if int_keys[i] not in spin.peak_intensity:
                         missing = True
                 if missing:
                     continue
@@ -338,7 +338,7 @@ class Relax_disp(API_base, API_common):
         # Loop over the spins.
         for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
             # Skip spins which have no data.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 continue
 
             # Loop over each spectrometer frequency and dispersion point.
@@ -664,7 +664,7 @@ class Relax_disp(API_base, API_common):
                     continue
 
                 # Skip spins with no peak intensity data.
-                if not hasattr(spin, 'intensities'):
+                if not hasattr(spin, 'peak_intensity'):
                     continue
 
                 # Loop over each spectrometer frequency and dispersion point.
@@ -1324,7 +1324,7 @@ class Relax_disp(API_base, API_common):
             spin, exp_type, frq, offset, point = data_id
 
             # Return the data.
-            return spin.intensities
+            return spin.peak_intensity
 
         # All other models.
         else:
@@ -1359,7 +1359,7 @@ class Relax_disp(API_base, API_common):
     _table.add_row(["Time of exchange (s/rad)", "'tex'"])
     _table.add_row(["Rotating frame tilt angle", "'theta'"])
     _table.add_row(["Effective field in rotating frame", "'w_eff'"])
-    _table.add_row(["Peak intensities (series)", "'intensities'"])
+    _table.add_row(["Peak intensities (series)", "'peak_intensity'"])
     _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
     return_data_name_doc.add_table(_table.label)
 
@@ -1646,8 +1646,8 @@ class Relax_disp(API_base, API_common):
             spin, exp_type, frq, offset, point = data_id
 
             # Initialise the data structure if needed.
-            if not hasattr(spin, 'intensity_sim'):
-                spin.intensity_sim = {}
+            if not hasattr(spin, 'peak_intensity_sim'):
+                spin.peak_intensity_sim = {}
 
             # Loop over each time point.
             ti = 0
@@ -1658,15 +1658,15 @@ class Relax_disp(API_base, API_common):
                 # Loop over the intensity keys.
                 for int_key in int_keys:
                     # Test if the simulation data point already exists.
-                    if int_key in spin.intensity_sim:
+                    if int_key in spin.peak_intensity_sim:
                         raise RelaxError("Monte Carlo simulation data for the key '%s' already exists." % int_key)
 
                     # Initialise the list.
-                    spin.intensity_sim[int_key] = []
+                    spin.peak_intensity_sim[int_key] = []
 
                     # Loop over the simulations, appending the corresponding data.
                     for i in range(cdp.sim_number):
-                        spin.intensity_sim[int_key].append(sim_data[i][ti])
+                        spin.peak_intensity_sim[int_key].append(sim_data[i][ti])
 
                 # Increment the time index.
                 ti += 1

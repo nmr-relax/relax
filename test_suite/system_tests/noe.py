@@ -160,8 +160,8 @@ class Noe(SystemTestCase):
                 continue
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin.intensities['sat_ave'])
-            self.assertEqual(ref[i], spin.intensities['ref_ave'])
+            self.assertEqual(sat[i], spin.peak_intensity['sat_ave'])
+            self.assertEqual(ref[i], spin.peak_intensity['ref_ave'])
 
             # Check the NOE data.
             self.assertEqual(noe[i], spin.noe)
@@ -183,7 +183,7 @@ class Noe(SystemTestCase):
             '@    xaxis  tick minor linewidth 0.5\n',
             '@    xaxis  tick minor size 0.25\n',
             '@    xaxis  ticklabel char size 0.70\n',
-            '@    yaxis  label "Peak intensity"\n',
+            '@    yaxis  label "\\qPeak intensities\\Q"\n',
             '@    yaxis  label char size 1.00\n',
             '@    yaxis  tick major size 0.50\n',
             '@    yaxis  tick major linewidth 0.5\n',
@@ -209,22 +209,22 @@ class Noe(SystemTestCase):
             '@    s1 errorbar riser linewidth 0.5\n',
             '@    s1 legend "sat_ave"\n',
             '@target G0.S0\n',
-            '@type xy\n',
-            '4                              148614.000000000000000        \n',
-            '5                              166842.000000000000000        \n',
-            '6                              128690.000000000000000        \n',
-            '40                             99566.000000000000000         \n',
-            '40                             270047.000000000000000        \n',
-            '55                             130959.000000000000000        \n',
+            '@type xydy\n',
+            '4                              148614.000000000000000         3600.000000000000000          \n',
+            '5                              166842.000000000000000         122000.000000000000000        \n',
+            '6                              128690.000000000000000         3600.000000000000000          \n',
+            '40                             99566.000000000000000          3600.000000000000000          \n',
+            '40                             270047.000000000000000         3600.000000000000000          \n',
+            '55                             130959.000000000000000         3600.000000000000000          \n',
             '&\n',
             '@target G0.S1\n',
-            '@type xy\n',
-            '4                              5050.000000000000000          \n',
-            '5                              51643.000000000000000         \n',
-            '6                              53663.000000000000000         \n',
-            '40                             -65111.000000000000000        \n',
-            '40                             -181131.000000000000000       \n',
-            '55                             -105322.000000000000000       \n',
+            '@type xydy\n',
+            '4                              5050.000000000000000           3000.000000000000000          \n',
+            '5                              51643.000000000000000          8500.000000000000000          \n',
+            '6                              53663.000000000000000          3000.000000000000000          \n',
+            '40                             -65111.000000000000000         3000.000000000000000          \n',
+            '40                             -181131.000000000000000        3000.000000000000000          \n',
+            '55                             -105322.000000000000000        3000.000000000000000          \n',
             '&\n',
             '@with g0\n',
             '@autoscale\n'

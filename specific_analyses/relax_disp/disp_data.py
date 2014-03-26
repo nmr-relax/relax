@@ -122,29 +122,29 @@ def average_intensity(spin=None, exp_type=None, frq=None, offset=None, point=Non
         # Simulation intensity data.
         if sim_index != None:
             # Error checking.
-            if not int_keys[i] in spin.intensity_sim:
+            if not int_keys[i] in spin.peak_intensity_sim:
                 raise RelaxError("The peak intensity simulation data is missing the key '%s'." % int_keys[i])
 
             # Sum.
-            intensity += spin.intensity_sim[int_keys[i]][sim_index]
+            intensity += spin.peak_intensity_sim[int_keys[i]][sim_index]
 
         # Error intensity data.
         if error:
             # Error checking.
-            if not int_keys[i] in spin.intensity_err:
+            if not int_keys[i] in spin.peak_intensity_err:
                 raise RelaxError("The peak intensity errors are missing the key '%s'." % int_keys[i])
 
             # Sum.
-            intensity += spin.intensity_err[int_keys[i]]**2
+            intensity += spin.peak_intensity_err[int_keys[i]]**2
 
         # Normal intensity data.
         else:
             # Error checking.
-            if not int_keys[i] in spin.intensities:
+            if not int_keys[i] in spin.peak_intensity:
                 raise RelaxError("The peak intensity data is missing the key '%s'." % int_keys[i])
 
             # Sum.
-            intensity += spin.intensities[int_keys[i]]
+            intensity += spin.peak_intensity[int_keys[i]]
 
     # Average.
     if error:
@@ -2017,7 +2017,7 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     continue
 
                 # No data present.
-                if not hasattr(spin, 'intensities'):
+                if not hasattr(spin, 'peak_intensity'):
                     continue
 
                 # Get the attached proton.
@@ -2043,15 +2043,15 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
                     # Loop over each key.
                     for key in keys:
                         # No key present.
-                        if key not in current_spin.intensities:
+                        if key not in current_spin.peak_intensity:
                             continue
 
                         # Add the data.
-                        if hasattr(current_spin, 'intensity_err'):
-                            data[graph_index][-1].append([time, current_spin.intensities[key], spin.intensity_err[key]])
+                        if hasattr(current_spin, 'peak_intensity_err'):
+                            data[graph_index][-1].append([time, current_spin.peak_intensity[key], spin.peak_intensity_err[key]])
                             err = True
                         else:
-                            data[graph_index][-1].append([time, current_spin.intensities[key]])
+                            data[graph_index][-1].append([time, current_spin.peak_intensity[key]])
 
             # Increment the frq index.
             graph_index += 1
@@ -3532,7 +3532,7 @@ def spin_has_frq_data(spin=None, frq=None):
     """
 
     # Loop over the intensity data.
-    for key in spin.intensities.keys():
+    for key in spin.peak_intensity.keys():
         if key in cdp.spectrometer_frq and cdp.spectrometer_frq[key] == frq:
             return True
 

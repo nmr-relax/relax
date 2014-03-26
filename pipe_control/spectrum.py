@@ -50,7 +50,7 @@ def __errors_height_no_repl():
             continue
 
         # Skip spins missing intensity data.
-        if not hasattr(spin, 'intensities'):
+        if not hasattr(spin, 'peak_intensity'):
             continue
 
         # Test if the RMSD has been set.
@@ -58,7 +58,7 @@ def __errors_height_no_repl():
             raise RelaxError("The RMSD of the base plane noise for spin '%s' has not been set." % spin_id)
 
         # Set the error to the RMSD.
-        spin.intensity_err = spin.baseplane_rmsd
+        spin.peak_intensity_err = spin.baseplane_rmsd
 
 
 def __errors_repl(subset=None, verbosity=0):
@@ -124,14 +124,14 @@ def __errors_repl(subset=None, verbosity=0):
                 continue
 
             # Skip and deselect spins which have no data.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 spin.select = False
                 continue
 
             # Missing data.
             missing = False
             for j in range(num_spectra):
-                if not spectra[j] in spin.intensities:
+                if not spectra[j] in spin.peak_intensity:
                     missing = True
             if missing:
                 continue
@@ -139,7 +139,7 @@ def __errors_repl(subset=None, verbosity=0):
             # The peak intensities.
             values = []
             for j in range(num_spectra):
-                values.append(spin.intensities[spectra[j]])
+                values.append(spin.peak_intensity[spectra[j]])
 
             # The standard deviation.
             sd = std(values=values, dof=1)
@@ -213,7 +213,7 @@ def __errors_repl(subset=None, verbosity=0):
             continue
 
         # Set the error.
-        spin.intensity_err = cdp.sigma_I
+        spin.peak_intensity_err = cdp.sigma_I
 
 
 def __errors_volume_no_repl(subset=None):
@@ -226,7 +226,7 @@ def __errors_volume_no_repl(subset=None):
             continue
 
         # Skip spins missing intensity data.
-        if not hasattr(spin, 'intensities'):
+        if not hasattr(spin, 'peak_intensity'):
             continue
 
         # Test if the RMSD has been set.
@@ -238,8 +238,8 @@ def __errors_volume_no_repl(subset=None):
             raise RelaxError("The total number of points used in the volume integration has not been specified for spin '%s'." % spin_id)
 
         # Set the error to the RMSD multiplied by the square root of the total number of points.
-        for key in spin.intensity.keys():
-            spin.intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
+        for key in spin.peak_intensity.keys():
+            spin.peak_intensity_err[key] = spin.baseplane_rmsd[key] * sqrt(spin.N)
 
 
 def add_spectrum_id(spectrum_id=None):
@@ -360,8 +360,8 @@ def delete(spectrum_id=None):
     # Loop over the spins.
     for spin in spin_loop():
         # Intensity data.
-        if hasattr(spin, 'intensities') and spectrum_id in spin.intensities:
-            del spin.intensities[spectrum_id]
+        if hasattr(spin, 'peak_intensity') and spectrum_id in spin.peak_intensity:
+            del spin.peak_intensity[spectrum_id]
 
 
 def error_analysis(subset=None):
@@ -603,8 +603,8 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
                     continue
 
                 # Initialise.
-                if not hasattr(spin, 'intensities'):
-                    spin.intensities = {}
+                if not hasattr(spin, 'peak_intensity'):
+                    spin.peak_intensity = {}
 
                 # Intensity scaling.
                 if ncproc != None:
@@ -617,7 +617,7 @@ def read(file=None, dir=None, spectrum_id=None, dim=1, int_col=None, int_method=
                     id = spectrum_id[int_index]
                 else:
                     id = spectrum_id
-                spin.intensities[id] = intensity[int_index]
+                spin.peak_intensity[id] = intensity[int_index]
 
                 # Switch the flag.
                 data_flag = True

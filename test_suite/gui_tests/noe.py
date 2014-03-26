@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -154,8 +154,8 @@ class Noe(GuiTestCase):
             self.assertEqual(res_nums[i], res_num)
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin_cont.intensities['sat'])
-            self.assertEqual(ref[i], spin_cont.intensities['ref'])
+            self.assertEqual(sat[i], spin_cont.peak_intensity['sat'])
+            self.assertEqual(ref[i], spin_cont.peak_intensity['ref'])
 
             # Check the NOE data.
             self.assertEqual(noe[i], spin_cont.noe)

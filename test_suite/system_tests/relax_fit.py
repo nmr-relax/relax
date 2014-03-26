@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -125,9 +125,10 @@ class Relax_fit(SystemTestCase):
             lines[i] = lines[i].split()
 
         # Check some of the Grace data.
-        self.assertEqual(len(lines[index]), 2)
+        self.assertEqual(len(lines[index]), 3)
         self.assertEqual(lines[index][0], '0.004')
         self.assertEqual(lines[index][1], '487178.000000000000000')
+        self.assertEqual(lines[index][2], '20570.000000000000000')
 
 
     def test_bug_18789(self):
@@ -238,6 +239,6 @@ class Relax_fit(SystemTestCase):
                 continue
 
             # Check intensities (if they exist).
-            if hasattr(orig_spin, 'intensities'):
+            if hasattr(orig_spin, 'peak_intensity'):
                 for id in dp_new.spectrum_ids:
-                    self.assertEqual(orig_spin.intensities[id], new_spin.intensities[id])
+                    self.assertEqual(orig_spin.peak_intensity[id], new_spin.peak_intensity[id])

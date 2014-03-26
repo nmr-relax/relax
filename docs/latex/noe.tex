@@ -84,7 +84,7 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create Grace files.
-grace.write(y_data_type='intensities', file='intensities.agr', force=True)
+grace.write(y_data_type='peak_intensity', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the Grace files.
@@ -319,7 +319,7 @@ The two commands
 
 \begin{lstlisting}[firstnumber=39]
 # Create Grace files.
-grace.write(y_data_type='intensities', file='intensities.agr', force=True)
+grace.write(y_data_type='peak_intensity', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 \end{lstlisting}
 

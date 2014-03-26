@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -364,7 +364,7 @@ class API_common:
         else:
             # Is it a spectrum id?
             if hasattr(cdp, 'spectrum_ids') and param in cdp.spectrum_ids:
-                object_name = 'intensities'
+                object_name = 'intensity'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
                 object_bc = 'intensity_bc'
