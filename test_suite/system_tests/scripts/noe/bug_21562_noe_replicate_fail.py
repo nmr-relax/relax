@@ -48,6 +48,5 @@ value.write(param='noe', file=ds.tmpfile, dir=None, scaling=1.0, comment=None, b
 results.write(file='devnull', dir=None, compress_type=1, force=True)
 
 # Create grace files.
-grace.write(x_data_type='res_num', y_data_type='ref', spin_id=None, plot_data='value', file='devnull', dir=None, force=True, norm=False)
-grace.write(x_data_type='res_num', y_data_type='sat', spin_id=None, plot_data='value', file='devnull', dir=None, force=True, norm=False)
+grace.write(x_data_type='res_num', y_data_type='intensities', spin_id=None, plot_data='value', file='devnull', dir=None, force=True, norm=False)
 grace.write(x_data_type='res_num', y_data_type='noe', spin_id=None, plot_data='value', file='devnull', dir=None, force=True, norm=False)
