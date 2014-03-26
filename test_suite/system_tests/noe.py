@@ -20,8 +20,8 @@
 ###############################################################################
 
 # Python module imports.
-from os import sep
-from tempfile import mktemp
+from os import F_OK, access, sep
+from tempfile import mkdtemp, mktemp
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -41,6 +41,10 @@ class Noe(SystemTestCase):
 
         # Create a temporary file.
         ds.tmpfile = mktemp()
+
+        # Create a temporary directory for dumping files.
+        ds.tmpdir = mkdtemp()
+        self.tmpdir = ds.tmpdir
 
 
     def test_bug_21562_noe_replicate_fail(self):
@@ -134,7 +138,10 @@ class Noe(SystemTestCase):
 
 
     def test_noe_analysis(self):
-        """Test the NOE analysis."""
+        """Test the NOE analysis.
+
+        The test has been modified to also catch U{bug #21863<https://gna.org/bugs/?21863>}.
+        """
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'noe'+sep+'noe.py')
@@ -164,7 +171,7 @@ class Noe(SystemTestCase):
             i += 1
 
         # The real Grace file data.
-        data = [
+        data = [[], [], [
             '@version 50121\n',
             '@page size 842, 595\n',
             '@with g0\n',
@@ -215,13 +222,28 @@ class Noe(SystemTestCase):
             '&\n',
             '@with g0\n',
             '@autoscale\n'
-        ]
+        ]]
 
-        # Check the Grace file.
-        file = open(ds.tmpfile)
-        lines = file.readlines()
-        file.close()
-        for i in range(len(lines)):
-            print("            '%s\\n'," % lines[i][:-1].replace('"', "\\\""))
-        for i in range(len(lines)):
-            self.assertEqual(data[i], lines[i])
+        # Check the Grace files.
+        ids = ['ref', 'sat', 'noe']
+        for i in range(len(ids)):
+            # The file name.
+            file_name = "%s.agr" % ids[i]
+            print file_name
+
+            # Does the file exist?
+            self.assert_(access(ds.tmpdir+sep+file_name, F_OK))
+
+            # Open the file and extract the contents.
+            file = open(ds.tmpdir + sep + file_name)
+            lines = file.readlines()
+            file.close()
+
+            # Nothing.
+            self.assertNotEqual(lines, [])
+
+            # Check the file contents.
+            for j in range(len(lines)):
+                print("            '%s\\n'," % lines[j][:-1].replace('"', "\\\""))
+            for j in range(len(lines)):
+                self.assertEqual(data[i][j], lines[j])
