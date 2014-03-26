@@ -1423,6 +1423,8 @@ def generate_spin_id_unique(pipe_cont=None, pipe_name=None, mol=None, res=None, 
     # Get the containers if needed.
     if mol == None:
         mol = return_molecule_by_name(pipe_cont=pipe_cont, mol_name=mol_name)
+        if mol == None and len(pipe_cont.mol) == 1 and pipe_cont.mol[0].name == None:
+            mol_name = None
     if mol != None and res == None:
         if res_name != None or res_num != None:
             res = return_residue_by_info(mol=mol, res_name=res_name, res_num=res_num)
