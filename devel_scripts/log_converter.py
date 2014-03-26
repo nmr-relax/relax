@@ -58,10 +58,10 @@ for line in lines:
 
     # Whitespace.
     if len(msg):
-        if search('[a-zA-Z]$', msg[-1]):
-            msg += ' '
-        elif search('\.$', msg[-1]):
+        if search('\.$', msg[-1]):
             msg += '  '
+        else:
+            msg += ' '
 
     # Add the line (without the newline char).
     msg += line[:-1]
