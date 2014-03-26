@@ -48,6 +48,5 @@ class Noe(Noe_main, API_base, API_common):
         self.return_value = self._return_value_general
 
         # Set up the spin parameters.
-        self.PARAMS.add('ref', scope='spin', desc='The reference peak intensity', py_type=float, grace_string='Reference intensity')
-        self.PARAMS.add('sat', scope='spin', desc='The saturated peak intensity', py_type=float, grace_string='Saturated intensity')
+        self.PARAMS.add('intensities', scope='spin', desc='The peak intensity', py_type=dict, grace_string='Peak intensity')
         self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
