@@ -68,9 +68,9 @@ for i in range(len(times)):
         spin = return_spin(spin_id)
 
         # Set the error.
-        if not hasattr(spin, 'intensity_err'):
-            spin.intensity_err = {}
-        spin.intensity_err[names[i]] = float(err_lines[j][i+2])
+        if not hasattr(spin, 'peak_intensity_err'):
+            spin.peak_intensity_err = {}
+        spin.peak_intensity_err[names[i]] = float(err_lines[j][i+2])
 
 # Set the relaxation curve type.
 relax_fit.select_model('exp')

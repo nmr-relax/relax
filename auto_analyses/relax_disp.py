@@ -186,13 +186,13 @@ class Relax_disp:
         precalc = True
         for spin in spin_loop(skip_desel=True):
             # No structure.
-            if not hasattr(spin, 'intensity_err'):
+            if not hasattr(spin, 'peak_intensity_err'):
                 precalc = False
                 break
 
             # Determine if a spectrum ID is missing from the list.
             for id in cdp.spectrum_ids:
-                if id not in spin.intensity_err:
+                if id not in spin.peak_intensity_err:
                     precalc = False
                     break
 

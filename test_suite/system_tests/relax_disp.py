@@ -3735,7 +3735,7 @@ class Relax_disp(SystemTestCase):
 
         # Write out the intensity parameter file.
         # The writing out of intensity file is to make sure the API function retains its function after modification for special parameters.
-        self.interpreter.value.write(param='intensities', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
+        self.interpreter.value.write(param='peak_intensity', file='int.out', dir=ds.tmpdir, scaling=1.0, force=True)
 
         # Test the file exists.
         self.assert_(access(int_filepath, F_OK))

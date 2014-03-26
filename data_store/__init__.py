@@ -206,13 +206,36 @@ class Relax_data_store(dict):
                 for res in mol.res:
                     # Loop over the spins.
                     for spin in res.spin:
+                        # The list of objects to remove at the end.
+                        eliminate = []
+
                         # The current spin ID.
                         spin_id = pipe_control.mol_res_spin.generate_spin_id_unique(pipe_cont=dp, mol=mol, res=res, spin=spin)
+
+                        # Rename the old peak intensity data structures.
+                        if hasattr(spin, 'intensities'):
+                            spin.peak_intensity = spin.intensities
+                            eliminate.append('intensities')
+                        if hasattr(spin, 'intensity_err'):
+                            spin.peak_intensity_err = spin.intensity_err
+                            eliminate.append('intensity_err')
+                        if hasattr(spin, 'intensity_sim'):
+                            spin.peak_intensity_sim = spin.intensity_sim
+                            eliminate.append('intensity_sim')
+                        if hasattr(spin, 'sim_intensity'):
+                            spin.peak_intensity_sim = spin.sim_intensity
+                            eliminate.append('sim_intensity')
+                        if hasattr(spin, 'intensity_bc'):
+                            spin.peak_intensity_bc = spin.intensity_bc
+                            eliminate.append('intensity_bc')
 
                         # Convert proton spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
                         if hasattr(spin, 'heteronuc_type') and hasattr(spin, 'element') and spin.element == 'H':
                             # Rename the nuclear isotope.
                             spin.isotope = spin.proton_type
+
+                            # Append the old structures to be eliminated.
+                            eliminate.append('proton_type')
 
                         # Convert heteronuclear spins (the 'heteronuc_type' variable indicates a pre-interatomic container design state).
                         elif hasattr(spin, 'heteronuc_type'):
@@ -276,8 +299,10 @@ class Relax_data_store(dict):
                                 if hasattr(spin, 'rdc_bc'):
                                     interatom.rdc_bc = spin.rdc_bc
 
+                                # Append the old structures to be eliminated.
+                                eliminate += ['heteronuc_type', 'proton_type', 'attached_proton', 'r', 'r_err', 'r_sim', 'rdc', 'rdc_err', 'rdc_sim', 'rdc_bc', 'xh_vect']
+
                         # Delete the old structures.
-                        eliminate = ['heteronuc_type', 'proton_type', 'attached_proton', 'r', 'r_err', 'r_sim', 'rdc', 'rdc_err', 'rdc_sim', 'rdc_bc', 'xh_vect']
                         for name in eliminate:
                             if hasattr(spin, name):
                                 delattr(spin, name)

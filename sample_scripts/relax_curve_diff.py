@@ -1,6 +1,6 @@
 ##############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -95,10 +95,10 @@ def calc_ave_sd():
 
         # Loop over the intensities.
         index = 0
-        for i in range(len(spin.intensities)):
-            for j in range(len(spin.intensities[i])):
+        for i in range(len(spin.peak_intensity)):
+            for j in range(len(spin.peak_intensity[i])):
                 # Add the difference between the measured and fitted intensity to the diff array.
-                diff_array[index] = diff_array[index] + (spin.intensities[i][j] - spin.fit_int[i])
+                diff_array[index] = diff_array[index] + (spin.peak_intensity[i][j] - spin.fit_int[i])
 
                 # Increment the index.
                 index = index + 1
@@ -121,10 +121,10 @@ def calc_ave_sd():
 
         # Loop over the intensities.
         index = 0
-        for i in range(len(spin.intensities)):
-            for j in range(len(spin.intensities[i])):
+        for i in range(len(spin.peak_intensity)):
+            for j in range(len(spin.peak_intensity[i])):
                 # Calculate the sum of squares.
-                sd_array[index] = sd_array[index] + ((spin.intensities[i][j] - spin.fit_int[i]) - diff_array[index])**2
+                sd_array[index] = sd_array[index] + ((spin.peak_intensity[i][j] - spin.fit_int[i]) - diff_array[index])**2
 
                 # Increment the index.
                 index = index + 1
@@ -222,7 +222,7 @@ def grace_plot(ave, sd):
                 continue
 
             # Grace data point.
-            file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][0] - spin.fit_int[i])))
+            file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.peak_intensity[i][0] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")
@@ -244,8 +244,8 @@ def grace_plot(ave, sd):
                 continue
 
             # Grace data point.
-            if len(spin.intensities[i]) == 2:
-                file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.intensities[i][1] - spin.fit_int[i])))
+            if len(spin.peak_intensity[i]) == 2:
+                file.write("%-30s%-30s\n" % (repr(cdp.relax_times[i]), repr(spin.peak_intensity[i][1] - spin.fit_int[i])))
 
     # End the graph.
     file.write("&\n")

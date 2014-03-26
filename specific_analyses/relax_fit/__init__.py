@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -73,7 +73,7 @@ class Relax_fit(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_spin
 
         # Set up the spin parameters.
-        self.PARAMS.add('intensities', scope='spin', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self.PARAMS.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
         self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
         self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
         self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
@@ -158,7 +158,7 @@ class Relax_fit(API_base, API_common):
 
             # Intensity scaling.
             elif search('^i', spin.params[i]):
-                scaling_matrix[i, i] = round_to_next_order(max(spin.intensities.values()))
+                scaling_matrix[i, i] = round_to_next_order(max(spin.peak_intensity.values()))
 
         # Return the scaling matrix.
         return scaling_matrix
@@ -182,15 +182,15 @@ class Relax_fit(API_base, API_common):
         scaling_matrix = self._assemble_scaling_matrix(spin=spin, scaling=False)
 
         # The keys.
-        keys = list(spin.intensities.keys())
+        keys = list(spin.peak_intensity.keys())
 
         # The peak intensities and times.
         values = []
         errors = []
         times = []
         for key in keys:
-            values.append(spin.intensities[key])
-            errors.append(spin.intensity_err[key])
+            values.append(spin.peak_intensity[key])
+            errors.append(spin.peak_intensity_err[key])
             times.append(cdp.relax_times[key])
 
         # The scaling matrix in a diagonalised list form.
@@ -351,7 +351,7 @@ class Relax_fit(API_base, API_common):
 
                     # Defaults.
                     lower.append(0.0)
-                    upper.append(average(spin.intensities[id]))
+                    upper.append(average(spin.peak_intensity[id]))
 
         # Diagonal scaling of minimisation options.
         lower_new = []
@@ -539,7 +539,7 @@ class Relax_fit(API_base, API_common):
             return
 
         # Skip spins which have no data.
-        if not hasattr(spin, 'intensities'):
+        if not hasattr(spin, 'peak_intensity'):
             return
 
         # Test if the model is set.
@@ -654,7 +654,7 @@ class Relax_fit(API_base, API_common):
                 continue
 
             # Skip spins which have no data.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 continue
 
             # Create the initial parameter vector.
@@ -693,7 +693,7 @@ class Relax_fit(API_base, API_common):
             ######################################
 
             # The keys.
-            keys = list(spin.intensities.keys())
+            keys = list(spin.peak_intensity.keys())
 
             # The peak intensities and times.
             values = []
@@ -702,12 +702,12 @@ class Relax_fit(API_base, API_common):
             for key in keys:
                 # The values.
                 if sim_index == None:
-                    values.append(spin.intensities[key])
+                    values.append(spin.peak_intensity[key])
                 else:
-                    values.append(spin.sim_intensities[sim_index][key])
+                    values.append(spin.peak_intensity_sim[sim_index][key])
 
                 # The errors.
-                errors.append(spin.intensity_err[key])
+                errors.append(spin.peak_intensity_err[key])
 
                 # The relaxation times.
                 times.append(cdp.relax_times[key])
@@ -839,22 +839,22 @@ class Relax_fit(API_base, API_common):
                 continue
 
             # Check if data exists.
-            if not hasattr(spin, 'intensities'):
+            if not hasattr(spin, 'peak_intensity'):
                 warn(RelaxDeselectWarning(spin_id, 'missing intensity data'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Require 3 or more data points.
-            elif len(spin.intensities) < 3:
+            elif len(spin.peak_intensity) < 3:
                 warn(RelaxDeselectWarning(spin_id, 'insufficient data, 3 or more data points are required'))
                 spin.select = False
                 deselect_flag = True
                 continue
 
             # Check that the number of relaxation times is complete.
-            if len(spin.intensities) != len(cdp.relax_times):
-                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.intensities), spin_id, len(cdp.relax_times), list(spin.intensities.keys()), list(cdp.relax_times.keys())))
+            if len(spin.peak_intensity) != len(cdp.relax_times):
+                raise RelaxError("The %s peak intensity points of the spin '%s' does not match the expected number of %s (the IDs %s do not match %s)." % (len(spin.peak_intensity), spin_id, len(cdp.relax_times), list(spin.peak_intensity.keys()), list(cdp.relax_times.keys())))
 
         # Final printout.
         if verbose and not deselect_flag:
@@ -874,14 +874,14 @@ class Relax_fit(API_base, API_common):
         spin = return_spin(data_id)
 
         # Return the peak intensities.
-        return spin.intensities
+        return spin.peak_intensity
 
 
     return_data_name_doc = Desc_container("Relaxation curve fitting data type string matching patterns")
     _table = uf_tables.add_table(label="table: curve-fit data type patterns", caption="Relaxation curve fitting data type string matching patterns.")
     _table.add_headings(["Data type", "Object name"])
     _table.add_row(["Relaxation rate", "'rx'"])
-    _table.add_row(["Peak intensities (series)", "'intensities'"])
+    _table.add_row(["Peak intensities (series)", "'peak_intensity'"])
     _table.add_row(["Initial intensity", "'i0'"])
     _table.add_row(["Intensity at infinity", "'iinf'"])
     _table.add_row(["Relaxation period times (series)", "'relax_times'"])
@@ -902,7 +902,7 @@ class Relax_fit(API_base, API_common):
         spin = return_spin(data_id)
 
         # Return the error list.
-        return spin.intensity_err
+        return spin.peak_intensity_err
 
 
     def return_units(self, param):
@@ -935,4 +935,4 @@ class Relax_fit(API_base, API_common):
         spin = return_spin(data_id)
 
         # Create the data structure.
-        spin.sim_intensities = sim_data
+        spin.peak_intensity_sim = sim_data

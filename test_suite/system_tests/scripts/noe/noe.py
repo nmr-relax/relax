@@ -47,7 +47,7 @@ calc()
 value.write(param='noe', file='devnull', force=True)
 
 # Create grace files.
-grace.write(y_data_type='intensities', file='intensities.agr', dir=ds.tmpdir, force=True)
+grace.write(y_data_type='peak_intensity', file='intensities.agr', dir=ds.tmpdir, force=True)
 grace.write(y_data_type='noe', file='noe.agr', dir=ds.tmpdir, force=True)
 
 # Write the results.

@@ -129,8 +129,8 @@ class Relax_disp(GuiTestCase):
             spin = cdp.mol[0].res[i].spin[0]
 
             # The intensities.
-            self.assertEqual(spin.intensities['1_0'], data_0[i])
-            self.assertEqual(spin.intensities['0_2'], data_2[i])
+            self.assertEqual(spin.peak_intensity['1_0'], data_0[i])
+            self.assertEqual(spin.peak_intensity['0_2'], data_2[i])
 
             # The errors.
             self.assert_(hasattr(spin, 'baseplane_rmsd'))

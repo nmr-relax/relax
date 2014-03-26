@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -296,8 +296,8 @@ class Nessy_data:
                             raise RelaxError("Only one spin system per residue is supported in NESSY.")
 
                         # Store the data (if it exists).
-                        if key in spin.intensities:
-                            self.cpmg_data[mi][di_new][res_index] = str(spin.intensities[key])
+                        if key in spin.peak_intensity:
+                            self.cpmg_data[mi][di_new][res_index] = str(spin.peak_intensity[key])
 
                         # The CPMG frequency.
                         self.cpmg_frqs[mi][di_new] = str(point)

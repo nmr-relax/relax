@@ -59,7 +59,7 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create grace files.
-grace.write(y_data_type='intensities', file='intensities.agr', force=True)
+grace.write(y_data_type='peak_intensity', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the grace files.

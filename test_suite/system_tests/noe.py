@@ -160,8 +160,8 @@ class Noe(SystemTestCase):
                 continue
 
             # Check the intensity data.
-            self.assertEqual(sat[i], spin.intensities['sat_ave'])
-            self.assertEqual(ref[i], spin.intensities['ref_ave'])
+            self.assertEqual(sat[i], spin.peak_intensity['sat_ave'])
+            self.assertEqual(ref[i], spin.peak_intensity['ref_ave'])
 
             # Check the NOE data.
             self.assertEqual(noe[i], spin.noe)
@@ -183,7 +183,7 @@ class Noe(SystemTestCase):
             '@    xaxis  tick minor linewidth 0.5\n',
             '@    xaxis  tick minor size 0.25\n',
             '@    xaxis  ticklabel char size 0.70\n',
-            '@    yaxis  label "Peak intensity"\n',
+            '@    yaxis  label "\\qPeak intensities\\Q"\n',
             '@    yaxis  label char size 1.00\n',
             '@    yaxis  tick major size 0.50\n',
             '@    yaxis  tick major linewidth 0.5\n',
