@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -59,13 +59,11 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create grace files.
-grace.write(y_data_type='ref', file='ref.agr', force=True)
-grace.write(y_data_type='sat', file='sat.agr', force=True)
+grace.write(y_data_type='intensities', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the grace files.
-grace.view(file='ref.agr')
-grace.view(file='sat.agr')
+grace.view(file='intensities.agr')
 grace.view(file='noe.agr')
 
 # Write the results.

@@ -171,7 +171,64 @@ class Noe(SystemTestCase):
             i += 1
 
         # The real Grace file data.
-        data = [[], [], [
+        data = [[
+            '@version 50121\n',
+            '@page size 842, 595\n',
+            '@with g0\n',
+            '@    view 0.15, 0.15, 1.28, 0.85\n',
+            '@    xaxis  label "Residue number"\n',
+            '@    xaxis  label char size 1.00\n',
+            '@    xaxis  tick major size 0.50\n',
+            '@    xaxis  tick major linewidth 0.5\n',
+            '@    xaxis  tick minor linewidth 0.5\n',
+            '@    xaxis  tick minor size 0.25\n',
+            '@    xaxis  ticklabel char size 0.70\n',
+            '@    yaxis  label "Peak intensity"\n',
+            '@    yaxis  label char size 1.00\n',
+            '@    yaxis  tick major size 0.50\n',
+            '@    yaxis  tick major linewidth 0.5\n',
+            '@    yaxis  tick minor linewidth 0.5\n',
+            '@    yaxis  tick minor size 0.25\n',
+            '@    yaxis  ticklabel char size 0.70\n',
+            '@    legend off\n',
+            '@    legend box fill pattern 1\n',
+            '@    legend char size 1.0\n',
+            '@    frame linewidth 0.5\n',
+            '@    s0 symbol 1\n',
+            '@    s0 symbol size 0.45\n',
+            '@    s0 symbol linewidth 0.5\n',
+            '@    s0 errorbar size 0.5\n',
+            '@    s0 errorbar linewidth 0.5\n',
+            '@    s0 errorbar riser linewidth 0.5\n',
+            '@    s0 legend "ref_ave"\n',
+            '@    s1 symbol 2\n',
+            '@    s1 symbol size 0.45\n',
+            '@    s1 symbol linewidth 0.5\n',
+            '@    s1 errorbar size 0.5\n',
+            '@    s1 errorbar linewidth 0.5\n',
+            '@    s1 errorbar riser linewidth 0.5\n',
+            '@    s1 legend "sat_ave"\n',
+            '@target G0.S0\n',
+            '@type xy\n',
+            '4                              148614.000000000000000        \n',
+            '5                              166842.000000000000000        \n',
+            '6                              128690.000000000000000        \n',
+            '40                             99566.000000000000000         \n',
+            '40                             270047.000000000000000        \n',
+            '55                             130959.000000000000000        \n',
+            '&\n',
+            '@target G0.S1\n',
+            '@type xy\n',
+            '4                              5050.000000000000000          \n',
+            '5                              51643.000000000000000         \n',
+            '6                              53663.000000000000000         \n',
+            '40                             -65111.000000000000000        \n',
+            '40                             -181131.000000000000000       \n',
+            '55                             -105322.000000000000000       \n',
+            '&\n',
+            '@with g0\n',
+            '@autoscale\n'
+        ], [
             '@version 50121\n',
             '@page size 842, 595\n',
             '@with g0\n',
@@ -225,7 +282,7 @@ class Noe(SystemTestCase):
         ]]
 
         # Check the Grace files.
-        ids = ['ref', 'sat', 'noe']
+        ids = ['intensities', 'noe']
         for i in range(len(ids)):
             # The file name.
             file_name = "%s.agr" % ids[i]
