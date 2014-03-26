@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -301,6 +301,10 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         norm = []
         for gi in range(graph_num):
             norm.append(False)
+    if legend == None:
+        legend = []
+        for gi in range(graph_num):
+            legend.append(True)
     if not legend_box_fill_pattern:
         legend_box_fill_pattern = []
         for gi in range(graph_num):
