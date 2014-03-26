@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -168,7 +168,7 @@ class RelaxTestResult(TextTestResult):
         test_name = "%s.%s" % (test_name[-2], test_name[-1])
 
         # The printout.
-        self.stream.write('  %7.2f s for %s.\n' % (-self.time, test_name))
+        self.stream.write('  %7.2f s for %s\n' % (-self.time, test_name))
 
 
 
