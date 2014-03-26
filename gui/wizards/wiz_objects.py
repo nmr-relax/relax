@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -157,11 +157,16 @@ class Wiz_page(wx.Panel):
         @type event:    wx event
         """
 
+        # A bit of user feedback.
+        wx.BeginBusyCursor()
+
         # Execute.
         self.exec_status = self.on_execute()
 
         # Execution failure.
         if not self.exec_status:
+            if wx.IsBusy():
+                wx.EndBusyCursor()
             return
 
         # Finished.
@@ -169,6 +174,10 @@ class Wiz_page(wx.Panel):
 
         # Execute the on_apply() method.
         self.on_apply()
+
+        # Turn off the busy cursor if needed.
+        if wx.IsBusy():
+            wx.EndBusyCursor()
 
 
     def _build_main_section(self, sizer):
