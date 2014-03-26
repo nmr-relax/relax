@@ -84,13 +84,11 @@ calc()
 value.write(param='noe', file='noe.out', force=True)
 
 # Create Grace files.
-grace.write(y_data_type='ref', file='ref.agr', force=True)
-grace.write(y_data_type='sat', file='sat.agr', force=True)
+grace.write(y_data_type='intensities', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 
 # View the Grace files.
-grace.view(file='ref.agr')
-grace.view(file='sat.agr')
+grace.view(file='intensities.agr')
 grace.view(file='noe.agr')
 
 # Write the results.
@@ -317,32 +315,23 @@ Ap4Aase_new_3_mol1  14       ARG       200       N          -0.7524129557634996 
 Any two dimensional data set can be plotted in relax in conjunction with the program \href{http://plasma-gate.weizmann.ac.il/Grace/}{Grace}\index{software!Grace|textbf}.
 The program is also known as Xmgrace and was previously known as ACE/gr or Xmgr.
 The highly flexible relax user function \uf{grace\ufsep{}write} is capable of producing 2D plots of any x-y data sets.
-The three commands
+The two commands
 
 \begin{lstlisting}[firstnumber=41]
 # Create Grace files.
-grace.write(y_data_type='ref', file='ref.agr', force=True)
-grace.write(y_data_type='sat', file='sat.agr', force=True)
+grace.write(y_data_type='intensities', file='intensities.agr', force=True)
 grace.write(y_data_type='noe', file='noe.agr', force=True)
 \end{lstlisting}
 
-will create three separate plots of the peak intensity of the reference and saturated spectra as well as the NOE.
+will create one plot of the peak intensity of the reference and saturated spectra as different graph sets in the same plot as well as one plot for the NOE and its error.
 The x-axis in all three defaults to the residue number.
-As the x and y-axes can be any parameter the command
-
-\begin{lstlisting}[numbers=none]
-grace.write(x_data_type='ref', y_data_type='sat', file='ref_vs_sat.agr', force=True)
-\end{lstlisting}
-
-would create a plot of the reference verses the saturated intensity with one point per residue.
-Returning to the sample script three Grace data files are created \file{ref.agr}, \file{sat.agr}, and \file{noe.agr} and placed in the default directory \directory{.\ossep{}grace}.
+Returning to the sample script three Grace data files are created \file{intensities.agr} and \file{noe.agr} and placed in the default directory \directory{.\ossep{}grace}.
 These can be visualised by opening the file within Grace.
 However relax will do that for you with the commands
 
-\begin{lstlisting}[firstnumber=46]
+\begin{lstlisting}[firstnumber=45]
 # View the Grace files.
-grace.view(file='ref.agr')
-grace.view(file='sat.agr')
+grace.view(file='intensities.agr')
 grace.view(file='noe.agr')
 \end{lstlisting}
 
