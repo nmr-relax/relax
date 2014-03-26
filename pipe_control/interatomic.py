@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,7 +36,7 @@ from lib.errors import RelaxError, RelaxInteratomInconsistentError, RelaxNoInter
 from lib.io import extract_data, strip, write_data
 from lib.warnings import RelaxWarning, RelaxZeroVectorWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, return_spin, spin_loop
+from pipe_control.mol_res_spin import Selection, count_spins, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 
 
 def copy(pipe_from=None, pipe_to=None, spin_id1=None, spin_id2=None, verbose=True):
@@ -216,23 +216,52 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
     # Get the data pipe.
     dp = pipes.get_pipe(pipe)
 
-    # Loop over both spin selections.
+    # Initialise the spin ID pairs list.
     ids = []
-    for spin1, mol_name1, res_num1, res_name1, id1 in spin_loop(spin_id1, pipe=pipe, full_info=True, return_id=True):
-        for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, pipe=pipe, full_info=True, return_id=True):
-            # Directly bonded atoms.
-            if direct_bond:
-                # Different molecules.
-                if mol_name1 != mol_name2:
-                    continue
 
-                # From structural info.
-                if hasattr(dp, 'structure') and dp.structure.get_molecule(mol_name1, model=1):
-                    if not dp.structure.are_bonded(atom_id1=id1, atom_id2=id2):
+    # Use the structural data to find connected atoms.
+    if hasattr(dp, 'structure'):
+        # Loop over the atoms of the first spin selection.
+        for mol_name1, res_num1, res_name1, atom_num1, atom_name1, mol_index1, atom_index1 in dp.structure.atom_loop(atom_id=spin_id1, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
+            # Generate the first spin ID.
+            id1 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name1, res_num=res_num1, res_name=res_name1, spin_num=atom_num1, spin_name=atom_name1)
+
+            # Do the spin exist?
+            if not return_spin(id1):
+                continue
+
+            # Loop over the atoms of the second spin selection.
+            for mol_name2, res_num2, res_name2, atom_num2, atom_name2, mol_index2, atom_index2 in dp.structure.atom_loop(atom_id=spin_id2, model_num=1, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, mol_index_flag=True, index_flag=True):
+                # Directly bonded atoms.
+                if direct_bond:
+                    # Different molecules.
+                    if mol_name1 != mol_name2:
                         continue
 
-                # From the residue info.
-                else:
+                    # Skip non-bonded atom pairs.
+                    if not dp.structure.are_bonded_index(mol_index1=mol_index1, atom_index1=atom_index1, mol_index2=mol_index2, atom_index2=atom_index2):
+                        continue
+
+                # Generate the second spin ID.
+                id2 = generate_spin_id_unique(pipe_cont=dp, mol_name=mol_name2, res_num=res_num2, res_name=res_name2, spin_num=atom_num2, spin_name=atom_name2)
+
+                # Do the spin exist?
+                if not return_spin(id2):
+                    continue
+
+                # Store the IDs for the printout.
+                ids.append([id1, id2])
+
+    # No structural data present or the spin IDs are not in the structural data, so use spin loops and some basic rules.
+    if ids == []:
+        for spin1, mol_name1, res_num1, res_name1, id1 in spin_loop(spin_id1, pipe=pipe, full_info=True, return_id=True):
+            for spin2, mol_name2, res_num2, res_name2, id2 in spin_loop(spin_id2, pipe=pipe, full_info=True, return_id=True):
+                # Directly bonded atoms.
+                if direct_bond:
+                    # Different molecules.
+                    if mol_name1 != mol_name2:
+                        continue
+
                     # No element info.
                     if not hasattr(spin1, 'element'):
                         raise RelaxError("The spin '%s' does not have the element type set." % id1)
@@ -252,22 +281,8 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
                     elif pair and res_num1 == None and res_name1 != res_name2:
                         continue
 
-            # Get the interatomic data object, if it exists.
-            interatom = return_interatom(id1, id2, pipe=pipe)
-
-            # Create the container if needed.
-            if interatom == None:
-                interatom = create_interatom(spin_id1=id1, spin_id2=id2, pipe=pipe)
-
-            # Check that this has not already been set up.
-            if interatom.dipole_pair:
-                raise RelaxError("The magnetic dipole-dipole interaction already exists between the spins '%s' and '%s'." % (id1, id2))
-
-            # Set a flag indicating that a dipole-dipole interaction is present.
-            interatom.dipole_pair = True
-
-            # Store the IDs for the printout.
-            ids.append([repr(id1), repr(id2)])
+                # Store the IDs for the printout.
+                ids.append([id1, id2])
 
     # No matches, so fail!
     if not len(ids):
@@ -289,8 +304,30 @@ def define(spin_id1=None, spin_id2=None, pipe=None, direct_bond=False, verbose=T
         else:
             raise RelaxError("Unknown error.")
 
-    # Print out.
+    # Define the interaction.
+    for id1, id2 in ids:
+        # Get the interatomic data object, if it exists.
+        interatom = return_interatom(id1, id2, pipe=pipe)
+
+        # Create the container if needed.
+        if interatom == None:
+            interatom = create_interatom(spin_id1=id1, spin_id2=id2, pipe=pipe)
+
+        # Check that this has not already been set up.
+        if interatom.dipole_pair:
+            raise RelaxError("The magnetic dipole-dipole interaction already exists between the spins '%s' and '%s'." % (id1, id2))
+
+        # Set a flag indicating that a dipole-dipole interaction is present.
+        interatom.dipole_pair = True
+
+    # Printout.
     if verbose:
+        # Conversion.
+        for i in range(len(ids)):
+            ids[i][0] = repr(ids[i][0])
+            ids[i][1] = repr(ids[i][1])
+
+        # The printout.
         print("Interatomic interactions are now defined for the following spins:\n")
         write_data(out=sys.stdout, headings=["Spin_ID_1", "Spin_ID_2"], data=ids)
 
