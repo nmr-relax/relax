@@ -111,8 +111,7 @@ class NOE_calc:
         self.interpreter.results.write(file='results', dir=self.results_dir, force=True)
 
         # Create Grace plots of the data.
-        self.interpreter.grace.write(y_data_type='ref', file='ref.agr', dir=self.grace_dir, force=True)
-        self.interpreter.grace.write(y_data_type='sat', file='sat.agr', dir=self.grace_dir, force=True)
+        self.interpreter.grace.write(y_data_type='intensities', file='intensities.agr', dir=self.grace_dir, force=True)
         self.interpreter.grace.write(y_data_type='noe', file='noe.agr', dir=self.grace_dir, force=True)
 
         # Save the program state.
