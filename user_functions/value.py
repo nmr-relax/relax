@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,7 +40,7 @@ from specific_analyses.jw_mapping import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.relax_fit import Relax_fit
 from specific_analyses.n_state_model import N_state_model
-from specific_analyses.noe import Noe
+from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
