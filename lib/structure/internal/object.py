@@ -1182,18 +1182,18 @@ class Internal:
 
             # Find the first atom.
             index1 = None
-            for i in range(len(mol.atom_num)):
-                # Skip a non-matching first atom.
-                if sel_obj1.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
-                    index1 = i
-                    break
-
-            # Find the second atom.
             index2 = None
             for i in range(len(mol.atom_num)):
-                # Skip a non-matching first atom.
-                if sel_obj2.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                # Matching first atom.
+                if index1 == None and sel_obj1.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
+                    index1 = i
+
+                # Matching second atom.
+                if index2 == None and sel_obj2.contains_spin(mol.atom_num[i], mol.atom_name[i], mol.res_num[i], mol.res_name[i], mol.mol_name):
                     index2 = i
+
+                # Nothing left to do.
+                if index1 != None and index2 != None:
                     break
 
             # Connectivities exist.
@@ -1204,7 +1204,40 @@ class Internal:
                     return False
 
 
-    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, index_flag=False, ave=False):
+    def are_bonded_index(self, mol_index1=None, atom_index1=None, mol_index2=None, atom_index2=None):
+        """Determine if two atoms, given as indices, are directly bonded to each other.
+
+        @keyword mol_index1:    The molecule index of the first atom.
+        @type mol_index1:       int
+        @keyword atom_index1:   The index of the first atom.
+        @type atom_index1:      int
+        @keyword mol_index2:    The molecule index of the second atom.
+        @type mol_index2:       int
+        @keyword atom_index2:   The index of the second atom.
+        @type atom_index2:      int
+        @return:                True if the atoms are directly bonded.
+        @rtype:                 bool
+        """
+
+        # Alias the molecule.
+        mol1 = self.structural_data[0].mol[mol_index1]
+        mol2 = self.structural_data[0].mol[mol_index2]
+
+        # Build the connectivities if needed.
+        if not len(mol1.bonded[atom_index1]):
+            self._find_bonded_atoms(atom_index1, mol1, radius=2)
+        if not len(mol2.bonded[atom_index2]):
+            self._find_bonded_atoms(atom_index2, mol2, radius=2)
+
+        # Is the second atom in the bonded list of the first?
+        if atom_index2 in mol1.bonded[atom_index1]:
+            return True
+
+        # No!
+        return False
+
+
+    def atom_loop(self, atom_id=None, str_id=None, model_num=None, mol_name_flag=False, res_num_flag=False, res_name_flag=False, atom_num_flag=False, atom_name_flag=False, element_flag=False, pos_flag=False, mol_index_flag=False, index_flag=False, ave=False):
         """Generator function for looping over all atoms in the internal relax structural object.
 
         This method should be designed as a U{generator<http://www.python.org/dev/peps/pep-0255/>}.  It should loop over all atoms of the system yielding the following atomic information, if the corresponding flag is True, in tuple form:
@@ -1239,6 +1272,8 @@ class Internal:
         @type element_flag:         bool
         @keyword pos_flag:          A flag which if True will cause the atomic position to be yielded.
         @type pos_flag:             bool
+        @keyword mol_index_flag:    A flag which if True will cause the molecule index to be yielded.
+        @type mol_index_flag:       bool
         @keyword index_flag:        A flag which if True will cause the atomic index to be yielded.
         @type index_flag:           bool
         @keyword ave:               A flag which if True will result in this method returning the average atom properties across all loaded structures.
@@ -1337,6 +1372,8 @@ class Internal:
                     atomic_tuple = atomic_tuple + (element,)
                 if pos_flag:
                     atomic_tuple = atomic_tuple + (pos,)
+                if mol_index_flag:
+                    atomic_tuple += (mol_index,)
                 if index_flag:
                     atomic_tuple += (i,)
 
