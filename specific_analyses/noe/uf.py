@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,11 +19,33 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The steady-state heteronuclear NOE analysis."""
+# Module docstring.
+"""Module for all of the steady-state heteronuclear NOE specific user functions."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'uf'
-]
+# relax module imports.
+from lib.errors import RelaxError
+from pipe_control import pipes
+
+
+def spectrum_type(spectrum_type=None, spectrum_id=None):
+    """Set the spectrum type corresponding to the spectrum_id.
+
+    @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
+    @type spectrum_type:    str
+    @keyword spectrum_id:   The spectrum id string.
+    @type spectrum_id:      str
+    """
+
+    # Test if the current pipe exists
+    pipes.test()
+
+    # Test the spectrum id string.
+    if spectrum_id not in cdp.spectrum_ids:
+        raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
+
+    # Initialise or update the spectrum_type data structure as necessary.
+    if not hasattr(cdp, 'spectrum_type'):
+        cdp.spectrum_type = {}
+
+    # Set the error.
+    cdp.spectrum_type[spectrum_id] = spectrum_type

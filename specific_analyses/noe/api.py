@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,8 +19,8 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
-"""The main methods of the analysis specific API for the steady-state heteronuclear NOE calculation."""
+# Package docstring.
+"""The steady-state heteronuclear NOE API object."""
 
 # Python module imports.
 from math import sqrt
@@ -31,57 +31,28 @@ from lib.errors import RelaxError, RelaxNoSequenceError
 from lib.warnings import RelaxDeselectWarning
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-class Noe_main:
-    """Class containing functions for relaxation data."""
+class Noe(API_base, API_common):
+    """Specific analysis API class for the steady-state heternuclear NOE analysis."""
 
-    def _assign_function(self, spin=None, intensity=None, spectrum_type=None):
-        """Place the peak intensity data into the spin container.
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
 
-        The intensity data can be either that of the reference or saturated spectrum.
+        # Execute the base class __init__ method.
+        super(Noe, self).__init__()
 
-        @keyword spin:          The spin container.
-        @type spin:             SpinContainer instance
-        @keyword intensity:     The intensity value.
-        @type intensity:        float
-        @keyword spectrum_type: The type of spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
-        """
+        # Place methods into the API.
+        self.return_conversion_factor = self._return_no_conversion_factor
+        self.return_value = self._return_value_general
 
-        # Add the data.
-        if spectrum_type == 'ref':
-            spin.ref = intensity
-        elif spectrum_type == 'sat':
-            spin.sat = intensity
-        else:
-            raise RelaxError("The spectrum type '%s' is unknown." % spectrum_type)
-
-
-    def _spectrum_type(self, spectrum_type=None, spectrum_id=None):
-        """Set the spectrum type corresponding to the spectrum_id.
-
-        @keyword spectrum_type: The type of NOE spectrum, one of 'ref' or 'sat'.
-        @type spectrum_type:    str
-        @keyword spectrum_id:   The spectrum id string.
-        @type spectrum_id:      str
-        """
-
-        # Test if the current pipe exists
-        pipes.test()
-
-        # Test the spectrum id string.
-        if spectrum_id not in cdp.spectrum_ids:
-            raise RelaxError("The peak intensities corresponding to the spectrum id '%s' does not exist." % spectrum_id)
-
-        # Initialise or update the spectrum_type data structure as necessary.
-        if not hasattr(cdp, 'spectrum_type'):
-            cdp.spectrum_type = {}
-
-        # Set the error.
-        cdp.spectrum_type[spectrum_id] = spectrum_type
+        # Set up the spin parameters.
+        self.PARAMS.add('intensities', scope='spin', desc='The peak intensity', py_type=dict, grace_string='Peak intensity')
+        self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):

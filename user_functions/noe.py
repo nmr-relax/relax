@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ else:
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import noesy, spectrum
-from specific_analyses.setup import noe_obj
+from specific_analyses.noe.uf import spectrum_type
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -151,7 +151,7 @@ uf.desc[-1].add_paragraph("The spectrum type can be one of the following:")
 uf.desc[-1].add_list_element("The steady-state NOE reference spectrum.")
 uf.desc[-1].add_list_element("The steady-state NOE spectrum with proton saturation turned on.")
 uf.desc[-1].add_paragraph("Peak intensities should be loaded before this user function via the spectrum.read_intensities user function.  The intensity values will then be associated with a spectrum ID string which can be used here.")
-uf.backend = noe_obj._spectrum_type
+uf.backend = spectrum_type
 uf.menu_text = "&spectrum_type"
 uf.gui_icon = "oxygen.actions.edit-rename"
 uf.wizard_height_desc = 350
