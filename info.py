@@ -38,7 +38,7 @@ else:
     Structure = object
 from os import environ, pathsep, waitpid
 import platform
-from re import sub
+from re import search, sub
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -559,7 +559,12 @@ class Info_box(object):
 
             # Loop over the lines, returning the first model name with the leading "model name  :" text stripped.
             for line in data:
-                if "model name" in line:
+                # Decode Python 3 byte arrays.
+                if hasattr(line, 'decode'):
+                    line = line.decode()
+
+                # Find the processor name.
+                if search("model name", line):
                     # Convert the text.
                     name = sub(".*model name.*:", "", line, 1)
                     name = name.strip()
@@ -588,8 +593,14 @@ class Info_box(object):
                 # Get the STDOUT data.
                 data = pipe.stdout.readlines()
 
+                # Decode Python 3 byte arrays.
+                string = data[0]
+                if hasattr(string, 'decode'):
+                    string = string.decode()
+
+                # Find the processor name.
                 # Return the string.
-                return data[0].strip()
+                return string.strip()
 
             # Nothing.
             except:
