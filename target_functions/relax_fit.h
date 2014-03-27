@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2013 Edward d'Auvergne
+ * Copyright (C) 2006-2014 Edward d'Auvergne
  *
  * This file is part of the program relax (http://www.nmr-relax.com).
  *
@@ -35,12 +35,12 @@
 /****************************************/
 
 /* Variables sent to the setup function to be stored for later use */
-int num_params, num_times;
+static int num_params, num_times;
 
 /* Variables used for storage during the function calls of optimisation */
-double back_calc[MAXTIMES];
-double params[MAXPARAMS];
-double values[MAXTIMES];
-double sd[MAXTIMES];
-double relax_times[MAXTIMES];
-double scaling_matrix[MAXPARAMS];
+static double back_calc[MAXTIMES];
+static double params[MAXPARAMS];
+static double values[MAXTIMES];
+static double sd[MAXTIMES];
+static double relax_times[MAXTIMES];
+static double scaling_matrix[MAXPARAMS];
