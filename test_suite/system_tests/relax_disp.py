@@ -2421,6 +2421,9 @@ class Relax_disp(SystemTestCase):
         # Fixed time variable.
         ds.fixed = False
 
+        # Single spin optimisation.
+        ds.single = True
+
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_on_res_m61.py')
 
