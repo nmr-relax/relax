@@ -48,7 +48,7 @@ class Relax_disp:
     opt_func_tol = 1e-25
     opt_max_iterations = int(1e7)
 
-    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, modsel='AIC', pre_run_dir=None, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True):
+    def __init__(self, pipe_name=None, pipe_bundle=None, results_dir=None, models=[MODEL_R2EFF], grid_inc=11, mc_sim_num=500, exp_mc_sim_num=None, modsel='AIC', pre_run_dir=None, insignificance=0.0, numeric_only=False, mc_sim_all_models=False, eliminate=True):
         """Perform a full relaxation dispersion analysis for the given list of models.
 
         @keyword pipe_name:         The name of the data pipe containing all of the data for the analysis.
@@ -63,6 +63,9 @@ class Relax_disp:
         @type grid_inc:             int
         @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_sim_num:           int
+        @keyword exp_mc_sim_num:    The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
+        @type exp_mc_sim_num:       int or None
+        @type
         @keyword modsel:            The model selection technique to use in the analysis to determine which model is the best for each spin cluster.  This can currently be one of 'AIC', 'AICc', and 'BIC'.
         @type modsel:               str
         @keyword pre_run_dir:       The optional directory containing the dispersion auto-analysis results from a previous run.  The optimised parameters from these previous results will be used as the starting point for optimisation rather than performing a grid search.  This is essential for when large spin clusters are specified, as a grid search becomes prohibitively expensive with clusters of three or more spins.  At some point a RelaxError will occur because the grid search is impossibly large.  For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.
@@ -94,6 +97,7 @@ class Relax_disp:
         self.models = models
         self.grid_inc = grid_inc
         self.mc_sim_num = mc_sim_num
+        self.exp_mc_sim_num = exp_mc_sim_num
         self.modsel = modsel
         self.pre_run_dir = pre_run_dir
         self.insignificance = insignificance
@@ -375,7 +379,10 @@ class Relax_disp:
 
         # Monte Carlo simulations.
         if self.mc_sim_all_models or len(self.models) < 2 or model == 'R2eff':
-            self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
+            if model == 'R2eff' and self.exp_mc_sim_num != None:
+                self.interpreter.monte_carlo.setup(number=self.exp_mc_sim_num)
+            else:
+                self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
             self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)

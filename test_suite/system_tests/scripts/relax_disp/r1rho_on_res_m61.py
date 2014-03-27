@@ -22,6 +22,9 @@ GRID_INC = 8
 # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
 MC_NUM = 3
 
+# The number of MC sims for the exponential curves of the 'R2eff' model.
+EXP_MC_NUM = 25
+
 # Fixed relaxation time period flag.
 if not hasattr(ds, 'fixed'):
     ds.fixed = True
@@ -44,7 +47,8 @@ data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'disper
 
 # Create the sequence data.
 spin.create(res_name='Trp', res_num=1, spin_name='N')
-spin.create(res_name='Trp', res_num=2, spin_name='N')
+if not hasattr(ds, 'single') or not ds.single:
+    spin.create(res_name='Trp', res_num=2, spin_name='N')
 
 # Set the isotope information.
 spin.isotope(isotope='15N')
@@ -113,7 +117,7 @@ Relax_disp.opt_func_tol = 1e-10
 Relax_disp.opt_max_iterations = 10000
 
 # Do not change!
-Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, exp_mc_sim_num=EXP_MC_NUM)
 
 # Save the program state.
 state.save('devnull', force=True)
