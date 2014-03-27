@@ -36,7 +36,7 @@ from graphics import WIZARD_IMAGE_PATH
 from pipe_control import diffusion_tensor, pipes, value
 from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests import Consistency_tests
-from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.jw_mapping import uf as jw_mapping_uf
 from specific_analyses.model_free import Model_free
 from specific_analyses.relax_fit import Relax_fit
 from specific_analyses.n_state_model import N_state_model
@@ -92,8 +92,8 @@ uf.desc[-1].add_paragraph("If this is used to change values of previously minimi
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.set_doc)
 uf.desc.append(Model_free.return_data_name_doc)
-uf.desc.append(Jw_mapping.set_doc)
-uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(jw_mapping_uf.set_doc)
+uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(Consistency_tests.set_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Relax_fit.set_doc)
@@ -140,7 +140,7 @@ uf.desc[-1].add_paragraph("The values corresponding to the given parameter will 
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
-uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
@@ -283,8 +283,8 @@ uf.desc[-1].add_paragraph("If this is used to change values of previously minimi
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.set_doc)
 uf.desc.append(Model_free.return_data_name_doc)
-uf.desc.append(Jw_mapping.set_doc)
-uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(jw_mapping_uf.set_doc)
+uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(Consistency_tests.set_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Relax_fit.set_doc)
@@ -369,9 +369,9 @@ uf.desc.append(Model_free.default_value_doc)
 uf.desc.append(diffusion_tensor.__set_doc__)
 uf.desc.append(diffusion_tensor.__return_data_name_doc__)
 uf.desc.append(diffusion_tensor.__default_value_doc__)
-uf.desc.append(Jw_mapping.set_doc)
-uf.desc.append(Jw_mapping.return_data_name_doc)
-uf.desc.append(Jw_mapping.default_value_doc)
+uf.desc.append(jw_mapping_uf.set_doc)
+uf.desc.append(jw_mapping_uf.return_data_name_doc)
+uf.desc.append(jw_mapping_uf.default_value_doc)
 uf.desc.append(Consistency_tests.set_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Consistency_tests.default_value_doc)
@@ -478,7 +478,7 @@ uf.desc[-1].add_paragraph("The values corresponding to the given parameter will 
 uf.desc.append(regexp_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
-uf.desc.append(Jw_mapping.return_data_name_doc)
+uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(Consistency_tests.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
