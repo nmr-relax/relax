@@ -80,5 +80,8 @@ for version in PY_VER:
     # Build the C modules for the current Python version.
     execute_sh('devel_scripts/manual_c_module.py %s' % (version), log=LOG, err=LOG)
 
+    # Run the relax information printout, for testing that code path.
+    execute_sh('~/bin/python%s relax -i' % (version), log=LOG, err=LOG)
+
     # Run the test suite.
     execute_sh('~/bin/python%s relax -x' % (version), log=LOG, err=LOG)
