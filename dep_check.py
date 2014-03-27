@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -85,6 +85,13 @@ try:
     readline_module = True
 except ImportError:
     readline_module = False
+
+# matplotlib module.
+try:
+    import matplotlib
+    matplotlib_module = True
+except ImportError:
+    matplotlib_module = False
 
 # runpy module.
 try:
