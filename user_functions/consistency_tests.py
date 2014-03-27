@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2007-2008 Sebastien Morin                                     #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -26,7 +26,7 @@
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
 from pipe_control import spectrometer
-from specific_analyses.setup import consistency_tests_obj
+from specific_analyses.consistency_tests.uf import set_frq
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -58,7 +58,7 @@ uf.desc[-1].add_paragraph("This will select the relaxation data to use in the co
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_prompt("relax> consistency_tests.set_frq(600.0 * 1e6)")
 uf.desc[-1].add_prompt("relax> consistency_tests.set_frq(frq=600.0 * 1e6)")
-uf.backend = consistency_tests_obj._set_frq
+uf.backend = set_frq
 uf.menu_text = "&set_frq"
 uf.gui_icon = "relax.frq"
 uf.wizard_height_desc = 350

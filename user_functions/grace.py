@@ -34,7 +34,7 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import grace, minimise
 from prompt.doc_string import regexp_doc
-from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.consistency_tests import uf as consistency_tests_uf
 from specific_analyses.jw_mapping import uf as jw_mapping_uf
 from specific_analyses.model_free import Model_free
 from specific_analyses.noe.api import Noe
@@ -196,7 +196,7 @@ uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_disp.return_data_name_doc)
 uf.desc.append(Relax_fit.return_data_name_doc)
 uf.desc.append(jw_mapping_uf.return_data_name_doc)
-uf.desc.append(Consistency_tests.return_data_name_doc)
+uf.desc.append(consistency_tests_uf.return_data_name_doc)
 uf.desc.append(Model_free.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))

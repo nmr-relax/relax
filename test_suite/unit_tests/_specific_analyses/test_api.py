@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,10 +27,10 @@ from unittest import TestCase
 
 # relax module imports.
 from specific_analyses.api_base import API_base
-from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.consistency_tests.api import Consistency_tests
 from specific_analyses.frame_order import Frame_order
 from specific_analyses.hybrid import Hybrid
-from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.jw_mapping.api import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe.api import Noe
