@@ -401,6 +401,16 @@ class Info_box(object):
             version.append('')
             path.append('')
 
+        # matplotlib.
+        package.append('matplotlib')
+        status.append(dep_check.matplotlib_module)
+        try:
+            version.append(dep_check.matplotlib.__version__)
+            path.append(dep_check.matplotlib.__path__[0])
+        except:
+            version.append('')
+            path.append('')
+
         # mpi4py.
         package.append('mpi4py')
         status.append(dep_check.mpi4py_module)
