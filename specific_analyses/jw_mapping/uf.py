@@ -36,7 +36,7 @@ default_value_doc = Desc_container("Reduced spectral density mapping default val
 default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
 table = uf_tables.add_table(label="table: J(w) default values", caption="Reduced spectral density mapping default values.")
 table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["CSA", "'csa'", N15_CSA])
+table.add_row(["CSA", "'csa'", repr(N15_CSA)])
 default_value_doc.add_table(table.label)
 
 # Data name documentation.
