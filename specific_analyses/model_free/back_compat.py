@@ -611,6 +611,128 @@ def load_structure(spin_line, col, verbosity=1):
         return False
 
 
+def read_1_2_col_numbers(header):
+    """Determine the column indices from the header line.
+
+    @param header:      The header line.
+    @type header:       list of str
+    @return:            The column indices.
+    @rtype:             dictionary of int
+    """
+
+    # Initialise the dictionary of column indices.
+    col = {}
+
+    # Loop over the columns.
+    for i in range(len(header)):
+        # Residue info (for relax 1.2).
+        if header[i] == 'Num':
+            col['num'] = i
+        elif header[i] == 'Name':
+            col['name'] = i
+
+        # Spin information.
+        elif header[i] == 'Spin_id':
+            col['spin_id'] = i
+        elif header[i] == 'Selected':
+            col['select'] = i
+        elif header[i] == 'Data_set':
+            col['data_set'] = i
+        elif header[i] == 'Nucleus':
+            col['nucleus'] = i
+        elif header[i] == 'Model':
+            col['model'] = i
+        elif header[i] == 'Equation':
+            col['eqi'] = i
+        elif header[i] == 'Params':
+            col['params'] = i
+        elif header[i] == 'Param_set':
+            col['param_set'] = i
+
+        # Parameters.
+        elif header[i] == 'S2':
+            col['s2'] = i
+        elif header[i] == 'S2f':
+            col['s2f'] = i
+        elif header[i] == 'S2s':
+            col['s2s'] = i
+        elif search('^Local_tm', header[i]):
+            col['local_tm'] = i
+        elif search('^te', header[i]):
+            col['te'] = i
+        elif search('^tf', header[i]):
+            col['tf'] = i
+        elif search('^ts', header[i]):
+            col['ts'] = i
+        elif search('^Rex', header[i]):
+            col['rex'] = i
+        elif search('^Bond_length', header[i]):
+            col['r'] = i
+        elif search('^CSA', header[i]):
+            col['csa'] = i
+
+        # Minimisation info.
+        elif header[i] == 'Chi-squared':
+            col['chi2'] = i
+        elif header[i] == 'Iter':
+            col['iter'] = i
+        elif header[i] == 'f_count':
+            col['f_count'] = i
+        elif header[i] == 'g_count':
+            col['g_count'] = i
+        elif header[i] == 'h_count':
+            col['h_count'] = i
+        elif header[i] == 'Warning':
+            col['warn'] = i
+
+        # Diffusion tensor (for relax 1.2).
+        elif header[i] == 'Diff_type':
+            col['diff_type'] = i
+        elif header[i] == 'tm_(s)':
+            col['tm'] = i
+        elif header[i] == 'Da_(1/s)':
+            col['da'] = i
+        elif header[i] == 'theta_(deg)':
+            col['theta'] = i
+        elif header[i] == 'phi_(deg)':
+            col['phi'] = i
+        elif header[i] == 'Da_(1/s)':
+            col['da'] = i
+        elif header[i] == 'Dr_(1/s)':
+            col['dr'] = i
+        elif header[i] == 'alpha_(deg)':
+            col['alpha'] = i
+        elif header[i] == 'beta_(deg)':
+            col['beta'] = i
+        elif header[i] == 'gamma_(deg)':
+            col['gamma'] = i
+
+        # PDB and XH vector (for relax 1.2).
+        elif header[i] == 'PDB':
+            col['pdb'] = i
+        elif header[i] == 'PDB_model':
+            col['pdb_model'] = i
+        elif header[i] == 'PDB_heteronuc':
+            col['pdb_heteronuc'] = i
+        elif header[i] == 'PDB_proton':
+            col['pdb_proton'] = i
+        elif header[i] == 'XH_vector':
+            col['xh_vect'] = i
+
+        # Relaxation data (for relax 1.2).
+        elif header[i] == 'Ri_labels':
+            col['ri_labels'] = i
+        elif header[i] == 'Remap_table':
+            col['remap_table'] = i
+        elif header[i] == 'Frq_labels':
+            col['frq_labels'] = i
+        elif header[i] == 'Frequencies':
+            col['frq'] = i
+
+    # Return the column indices.
+    return col
+
+
 def read_1_2_results(file_data, verbosity=1):
     """Read the relax 1.2 model-free results file.
 
@@ -808,128 +930,6 @@ def read_1_2_results(file_data, verbosity=1):
         cdp.sim_state = False
 
 
-def read_1_2_col_numbers(header):
-    """Determine the column indices from the header line.
-
-    @param header:      The header line.
-    @type header:       list of str
-    @return:            The column indices.
-    @rtype:             dictionary of int
-    """
-
-    # Initialise the dictionary of column indices.
-    col = {}
-
-    # Loop over the columns.
-    for i in range(len(header)):
-        # Residue info (for relax 1.2).
-        if header[i] == 'Num':
-            col['num'] = i
-        elif header[i] == 'Name':
-            col['name'] = i
-
-        # Spin information.
-        elif header[i] == 'Spin_id':
-            col['spin_id'] = i
-        elif header[i] == 'Selected':
-            col['select'] = i
-        elif header[i] == 'Data_set':
-            col['data_set'] = i
-        elif header[i] == 'Nucleus':
-            col['nucleus'] = i
-        elif header[i] == 'Model':
-            col['model'] = i
-        elif header[i] == 'Equation':
-            col['eqi'] = i
-        elif header[i] == 'Params':
-            col['params'] = i
-        elif header[i] == 'Param_set':
-            col['param_set'] = i
-
-        # Parameters.
-        elif header[i] == 'S2':
-            col['s2'] = i
-        elif header[i] == 'S2f':
-            col['s2f'] = i
-        elif header[i] == 'S2s':
-            col['s2s'] = i
-        elif search('^Local_tm', header[i]):
-            col['local_tm'] = i
-        elif search('^te', header[i]):
-            col['te'] = i
-        elif search('^tf', header[i]):
-            col['tf'] = i
-        elif search('^ts', header[i]):
-            col['ts'] = i
-        elif search('^Rex', header[i]):
-            col['rex'] = i
-        elif search('^Bond_length', header[i]):
-            col['r'] = i
-        elif search('^CSA', header[i]):
-            col['csa'] = i
-
-        # Minimisation info.
-        elif header[i] == 'Chi-squared':
-            col['chi2'] = i
-        elif header[i] == 'Iter':
-            col['iter'] = i
-        elif header[i] == 'f_count':
-            col['f_count'] = i
-        elif header[i] == 'g_count':
-            col['g_count'] = i
-        elif header[i] == 'h_count':
-            col['h_count'] = i
-        elif header[i] == 'Warning':
-            col['warn'] = i
-
-        # Diffusion tensor (for relax 1.2).
-        elif header[i] == 'Diff_type':
-            col['diff_type'] = i
-        elif header[i] == 'tm_(s)':
-            col['tm'] = i
-        elif header[i] == 'Da_(1/s)':
-            col['da'] = i
-        elif header[i] == 'theta_(deg)':
-            col['theta'] = i
-        elif header[i] == 'phi_(deg)':
-            col['phi'] = i
-        elif header[i] == 'Da_(1/s)':
-            col['da'] = i
-        elif header[i] == 'Dr_(1/s)':
-            col['dr'] = i
-        elif header[i] == 'alpha_(deg)':
-            col['alpha'] = i
-        elif header[i] == 'beta_(deg)':
-            col['beta'] = i
-        elif header[i] == 'gamma_(deg)':
-            col['gamma'] = i
-
-        # PDB and XH vector (for relax 1.2).
-        elif header[i] == 'PDB':
-            col['pdb'] = i
-        elif header[i] == 'PDB_model':
-            col['pdb_model'] = i
-        elif header[i] == 'PDB_heteronuc':
-            col['pdb_heteronuc'] = i
-        elif header[i] == 'PDB_proton':
-            col['pdb_proton'] = i
-        elif header[i] == 'XH_vector':
-            col['xh_vect'] = i
-
-        # Relaxation data (for relax 1.2).
-        elif header[i] == 'Ri_labels':
-            col['ri_labels'] = i
-        elif header[i] == 'Remap_table':
-            col['remap_table'] = i
-        elif header[i] == 'Frq_labels':
-            col['frq_labels'] = i
-        elif header[i] == 'Frequencies':
-            col['frq'] = i
-
-    # Return the column indices.
-    return col
-
-
 def read_1_2_set_diff_tensor(spin_line, col, data_set, verbosity=1, sim_num=None):
     """Set up the diffusion tensor.
 
@@ -1070,6 +1070,24 @@ def read_1_2_set_diff_tensor(spin_line, col, data_set, verbosity=1, sim_num=None
         pipe_control.diffusion_tensor.init(params=diff_params, angle_units='rad', spheroid_type=spheroid_type)
 
 
+def read_columnar_results(file_data, verbosity=1):
+    """Read the columnar formatted model-free results file.
+
+    @param file_data:   The processed results file data.
+    @type file_data:    list of lists of str
+    @keyword verbosity: A variable specifying the amount of information to print.  The higher
+                        the value, the greater the verbosity.
+    @type verbosity:    int
+    """
+
+    # Determine the results file version.
+    version = determine_version(file_data, verbosity)
+
+    # Execute the version specific methods.
+    if version == '1.2':
+        read_1_2_results(file_data, verbosity)
+
+
 def set_xh_vect(spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1):
     """Set the unit vectors.
 
@@ -1103,21 +1121,3 @@ def set_xh_vect(spin_line, col, spin, spin_id1=None, spin_id2=None, verbosity=1)
 
         # Set the vector.
         interatom.vector = vector
-
-
-def read_columnar_results(file_data, verbosity=1):
-    """Read the columnar formatted model-free results file.
-
-    @param file_data:   The processed results file data.
-    @type file_data:    list of lists of str
-    @keyword verbosity: A variable specifying the amount of information to print.  The higher
-                        the value, the greater the verbosity.
-    @type verbosity:    int
-    """
-
-    # Determine the results file version.
-    version = determine_version(file_data, verbosity)
-
-    # Execute the version specific methods.
-    if version == '1.2':
-        read_1_2_results(file_data, verbosity)
