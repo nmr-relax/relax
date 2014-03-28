@@ -34,12 +34,12 @@ from re import match
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxMultiVectorError, RelaxNaNError
 from lib.float import isNaN, isInf
+from lib.optimisation import test_grid_ops
 from lib.physical_constants import return_gyromagnetic_ratio
 from multi import Memo, Result_command, Slave_command
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import return_spin, return_spin_from_index, spin_loop
-import specific_analyses
 from specific_analyses.model_free.model import determine_model_type
 from specific_analyses.model_free.parameters import assemble_param_vector, disassemble_param_vector
 from target_functions.mf import Mf
@@ -235,11 +235,8 @@ def grid_search_config(num_params, spin=None, spin_id=None, lower=None, upper=No
     @type verbosity:            int
     """
 
-    # FIXME - circular import kludge!
     # Test the grid search options.
-    api_model_free = specific_analyses.model_free.api.Model_free()
-    api_model_free.test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
-
+    test_grid_ops(lower=lower, upper=upper, inc=inc, n=num_params)
 
     # If inc is a single int, convert it into an array of that value.
     if isinstance(inc, int):

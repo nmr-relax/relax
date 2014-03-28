@@ -70,7 +70,6 @@ class Model_free(API_base, API_common):
         self.return_error = self._return_error_relax_data
         self.return_value = self._return_value_general
         self.sim_pack_data = self._sim_pack_relax_data
-        self.test_grid_ops = self._test_grid_ops_general
 
         # Initialise the macro classes.
         self._molmol_macros = Molmol()

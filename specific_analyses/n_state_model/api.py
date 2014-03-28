@@ -35,6 +35,7 @@ from warnings import warn
 import lib.arg_check
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoModelError
 from lib.float import isNaN, isInf
+from lib.optimisation import test_grid_ops
 from lib.warnings import RelaxWarning
 from pipe_control import align_tensor, pcs, rdc
 from pipe_control.align_tensor import opt_uses_tensor
@@ -63,7 +64,6 @@ class N_state_model(API_base, API_common):
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
-        self.test_grid_ops = self._test_grid_ops_general
 
         # Set up the spin parameters.
         self.PARAMS.add('csa', scope='spin', units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
@@ -312,7 +312,7 @@ class N_state_model(API_base, API_common):
             return
 
         # Test the grid search options.
-        self.test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
+        test_grid_ops(lower=lower, upper=upper, inc=inc, n=n)
 
         # If inc is a single int, convert it into an array of that value.
         if isinstance(inc, int):
