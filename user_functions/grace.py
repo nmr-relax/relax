@@ -39,7 +39,7 @@ from specific_analyses.jw_mapping import uf as jw_mapping_uf
 from specific_analyses.model_free import Model_free
 from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
-from specific_analyses.relax_fit import Relax_fit
+from specific_analyses.relax_fit import uf as relax_fit_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -194,7 +194,7 @@ uf.desc.append(regexp_doc)
 uf.desc.append(minimise.return_data_name_doc)
 uf.desc.append(Noe.return_data_name_doc)
 uf.desc.append(Relax_disp.return_data_name_doc)
-uf.desc.append(Relax_fit.return_data_name_doc)
+uf.desc.append(relax_fit_uf.return_data_name_doc)
 uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(consistency_tests_uf.return_data_name_doc)
 uf.desc.append(Model_free.return_data_name_doc)

@@ -35,7 +35,7 @@ from specific_analyses.model_free import Model_free
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
-from specific_analyses.relax_fit import Relax_fit
+from specific_analyses.relax_fit.api import Relax_fit
 
 
 class Test_api(TestCase):
