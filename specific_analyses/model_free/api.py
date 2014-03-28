@@ -25,12 +25,14 @@
 
 
 # Python module imports.
+import bmrblib
 from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split
-from numpy import array, dot, float64, zeros
+from numpy import array, dot, float64, int32, zeros
 from numpy.linalg import inv
 from re import match, search
+import string
 from types import MethodType
 from warnings import warn
 
@@ -41,9 +43,11 @@ from lib.float import isInf
 from lib.physical_constants import N15_CSA, h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
 from multi import Processor_box
-from pipe_control import diffusion_tensor, interatomic, pipes, relax_data, sequence
+from pipe_control import diffusion_tensor, interatomic, mol_res_spin, pipes, relax_data, sequence
+from pipe_control.bmrb import list_sample_conditions
+from pipe_control.exp_info import bmrb_write_citations, bmrb_write_methods, bmrb_write_software
 from pipe_control.interatomic import return_interatom_list
-from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
+from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, get_molecule_names, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, to_bmrb_model
@@ -177,7 +181,7 @@ class Model_free(API_base, API_common):
         star.read()
 
         # The sample conditions.
-        sample_conds = bmrb.list_sample_conditions(star)
+        sample_conds = list_sample_conditions(star)
         if sample_conditions and sample_conditions not in sample_conds:
             raise RelaxError("The sample conditions label '%s' does not correspond to any of the labels in the file: %s" % (sample_conditions, sample_conds))
         if not sample_conditions and len(sample_conds) > 1:
@@ -377,7 +381,7 @@ class Model_free(API_base, API_common):
         ######################################
 
         # Generate the citations saveframe.
-        exp_info.bmrb_write_citations(star)
+        bmrb_write_citations(star)
 
 
         # Create Supergroup 3 : The molecular assembly saveframes.
@@ -391,10 +395,10 @@ class Model_free(API_base, API_common):
         #################################################################
 
         # Generate the method saveframes.
-        exp_info.bmrb_write_methods(star)
+        bmrb_write_methods(star)
 
         # Generate the software saveframe.
-        software_ids, software_labels = exp_info.bmrb_write_software(star)
+        software_ids, software_labels = bmrb_write_software(star)
 
 
         # Create Supergroup 5 : The NMR parameters saveframes.
