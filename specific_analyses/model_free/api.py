@@ -51,11 +51,10 @@ from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, conv_factor_rex, determine_model_type, linear_constraints, units_rex
 from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
 from specific_analyses.model_free.pymol import Pymol
-from specific_analyses.model_free.results import Results
 from target_functions.mf import Mf
 
 
-class Model_free(Results, API_base, API_common):
+class Model_free(API_base, API_common):
     """Parent class containing all the model-free specific functions."""
 
     def __init__(self):
