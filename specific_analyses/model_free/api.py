@@ -32,6 +32,7 @@ from specific_analyses.model_free.bmrb import Bmrb
 from specific_analyses.model_free.main import Model_free_main
 from specific_analyses.model_free.mf_minimise import Mf_minimise
 from specific_analyses.model_free.molmol import Molmol
+from specific_analyses.model_free.parameters import conv_factor_rex, units_rex
 from specific_analyses.model_free.pymol import Pymol
 from specific_analyses.model_free.results import Results
 
@@ -88,7 +89,7 @@ class Model_free(Model_free_main, Mf_minimise, Results, Bmrb, API_base, API_comm
         self.PARAMS.add('te', scope='spin', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps', err=True, sim=True)
         self.PARAMS.add('tf', scope='spin', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps', err=True, sim=True)
         self.PARAMS.add('ts', scope='spin', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps', err=True, sim=True)
-        self.PARAMS.add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, set='params', conv_factor=self._conv_factor_rex, units=self._units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
+        self.PARAMS.add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, set='params', conv_factor=conv_factor_rex, units=units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
         self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set='params', conv_factor=1e-6, grace_string='\\qCSA\\Q', err=True, sim=True)
 
         # Add the minimisation data.

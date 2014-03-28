@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,6 +41,7 @@ from pipe_control.diffusion_tensor import diff_data_exists
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, return_spin_from_index, spin_loop
 from specific_analyses.model_free.multi_processor_commands import MF_grid_command, MF_memo, MF_minimise_command
+from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_vector, assemble_scaling_matrix, determine_model_type, disassemble_param_vector
 from target_functions.mf import Mf
 
 
@@ -51,246 +52,6 @@ class Data_container:
 
 class Mf_minimise:
     """Class containing functions specific to model-free optimisation."""
-
-    def _disassemble_param_vector(self, model_type, param_vector=None, spin=None, spin_id=None, sim_index=None):
-        """Disassemble the model-free parameter vector.
-
-        @param model_type:      The model-free model type.  This must be one of 'mf', 'local_tm',
-                                'diff', or 'all'.
-        @type model_type:       str
-        @keyword param_vector:  The model-free parameter vector.
-        @type param_vector:     numpy array
-        @keyword spin:          The spin data container.  If this argument is supplied, then the spin_id
-                                argument will be ignored.
-        @type spin:             SpinContainer instance
-        @keyword spin_id:       The spin identification string.
-        @type spin_id:          str
-        @keyword sim_index:     The optional MC simulation index.
-        @type sim_index:        int
-        """
-
-        # Initialise.
-        param_index = 0
-
-        # Diffusion tensor parameters of the Monte Carlo simulations.
-        if sim_index != None and (model_type == 'diff' or model_type == 'all'):
-            # Spherical diffusion.
-            if cdp.diff_tensor.type == 'sphere':
-                # Sim values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
-
-                # Parameter index.
-                param_index = param_index + 1
-
-            # Spheroidal diffusion.
-            elif cdp.diff_tensor.type == 'spheroid':
-                # Sim values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='Da', value=param_vector[1], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='theta', value=param_vector[2], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='phi', value=param_vector[3], category='sim', sim_index=sim_index)
-                diffusion_tensor.fold_angles(sim_index=sim_index)
-
-                # Parameter index.
-                param_index = param_index + 4
-
-            # Ellipsoidal diffusion.
-            elif cdp.diff_tensor.type == 'ellipsoid':
-                # Sim values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='Da', value=param_vector[1], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='Dr', value=param_vector[2], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='alpha', value=param_vector[3], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='beta', value=param_vector[4], category='sim', sim_index=sim_index)
-                cdp.diff_tensor.set(param='gamma', value=param_vector[5], category='sim', sim_index=sim_index)
-                diffusion_tensor.fold_angles(sim_index=sim_index)
-
-                # Parameter index.
-                param_index = param_index + 6
-
-        # Diffusion tensor parameters.
-        elif model_type == 'diff' or model_type == 'all':
-            # Spherical diffusion.
-            if cdp.diff_tensor.type == 'sphere':
-                # Values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0])
-
-                # Parameter index.
-                param_index = param_index + 1
-
-            # Spheroidal diffusion.
-            elif cdp.diff_tensor.type == 'spheroid':
-                # Values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0])
-                cdp.diff_tensor.set(param='Da', value=param_vector[1])
-                cdp.diff_tensor.set(param='theta', value=param_vector[2])
-                cdp.diff_tensor.set(param='phi', value=param_vector[3])
-                diffusion_tensor.fold_angles()
-
-                # Parameter index.
-                param_index = param_index + 4
-
-            # Ellipsoidal diffusion.
-            elif cdp.diff_tensor.type == 'ellipsoid':
-                # Values.
-                cdp.diff_tensor.set(param='tm', value=param_vector[0])
-                cdp.diff_tensor.set(param='Da', value=param_vector[1])
-                cdp.diff_tensor.set(param='Dr', value=param_vector[2])
-                cdp.diff_tensor.set(param='alpha', value=param_vector[3])
-                cdp.diff_tensor.set(param='beta', value=param_vector[4])
-                cdp.diff_tensor.set(param='gamma', value=param_vector[5])
-                diffusion_tensor.fold_angles()
-
-                # Parameter index.
-                param_index = param_index + 6
-
-        # Model-free parameters.
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Loop over the model-free parameters.
-                for j in range(len(spin.params)):
-                    # Local tm.
-                    if spin.params[j] == 'local_tm':
-                        if sim_index == None:
-                            spin.local_tm = param_vector[param_index]
-                        else:
-                            spin.local_tm_sim[sim_index] = param_vector[param_index]
-
-                    # S2.
-                    elif spin.params[j] == 's2':
-                        if sim_index == None:
-                            spin.s2 = param_vector[param_index]
-                        else:
-                            spin.s2_sim[sim_index] = param_vector[param_index]
-
-                    # S2f.
-                    elif spin.params[j] == 's2f':
-                        if sim_index == None:
-                            spin.s2f = param_vector[param_index]
-                        else:
-                            spin.s2f_sim[sim_index] = param_vector[param_index]
-
-                    # S2s.
-                    elif spin.params[j] == 's2s':
-                        if sim_index == None:
-                            spin.s2s = param_vector[param_index]
-                        else:
-                            spin.s2s_sim[sim_index] = param_vector[param_index]
-
-                    # te.
-                    elif spin.params[j] == 'te':
-                        if sim_index == None:
-                            spin.te = param_vector[param_index]
-                        else:
-                            spin.te_sim[sim_index] = param_vector[param_index]
-
-                    # tf.
-                    elif spin.params[j] == 'tf':
-                        if sim_index == None:
-                            spin.tf = param_vector[param_index]
-                        else:
-                            spin.tf_sim[sim_index] = param_vector[param_index]
-
-                    # ts.
-                    elif spin.params[j] == 'ts':
-                        if sim_index == None:
-                            spin.ts = param_vector[param_index]
-                        else:
-                            spin.ts_sim[sim_index] = param_vector[param_index]
-
-                    # Rex.
-                    elif spin.params[j] == 'rex':
-                        if sim_index == None:
-                            spin.rex = param_vector[param_index]
-                        else:
-                            spin.rex_sim[sim_index] = param_vector[param_index]
-
-                    # r.
-                    elif spin.params[j] == 'r':
-                        if sim_index == None:
-                            spin.r = param_vector[param_index]
-                        else:
-                            spin.r_sim[sim_index] = param_vector[param_index]
-
-                    # CSA.
-                    elif spin.params[j] == 'csa':
-                        if sim_index == None:
-                            spin.csa = param_vector[param_index]
-                        else:
-                            spin.csa_sim[sim_index] = param_vector[param_index]
-
-                    # Unknown parameter.
-                    else:
-                        raise RelaxError("Unknown parameter.")
-
-                    # Increment the parameter index.
-                    param_index = param_index + 1
-
-        # Calculate all order parameters after unpacking the vector.
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected residues.
-                if not spin.select:
-                    continue
-
-                # Normal values.
-                if sim_index == None:
-                    # S2.
-                    if 's2' not in spin.params and 's2f' in spin.params and 's2s' in spin.params:
-                        spin.s2 = spin.s2f * spin.s2s
-
-                    # S2f.
-                    if 's2f' not in spin.params and 's2' in spin.params and 's2s' in spin.params:
-                        if spin.s2s == 0.0:
-                            spin.s2f = 1e99
-                        else:
-                            spin.s2f = spin.s2 / spin.s2s
-
-                    # S2s.
-                    if 's2s' not in spin.params and 's2' in spin.params and 's2f' in spin.params:
-                        if spin.s2f == 0.0:
-                            spin.s2s = 1e99
-                        else:
-                            spin.s2s = spin.s2 / spin.s2f
-
-                # Simulation values.
-                else:
-                    # S2.
-                    if 's2' not in spin.params and 's2f' in spin.params and 's2s' in spin.params:
-                        spin.s2_sim[sim_index] = spin.s2f_sim[sim_index] * spin.s2s_sim[sim_index]
-
-                    # S2f.
-                    if 's2f' not in spin.params and 's2' in spin.params and 's2s' in spin.params:
-                        if spin.s2s_sim[sim_index] == 0.0:
-                            spin.s2f_sim[sim_index] = 1e99
-                        else:
-                            spin.s2f_sim[sim_index] = spin.s2_sim[sim_index] / spin.s2s_sim[sim_index]
-
-                    # S2s.
-                    if 's2s' not in spin.params and 's2' in spin.params and 's2f' in spin.params:
-                        if spin.s2f_sim[sim_index] == 0.0:
-                            spin.s2s_sim[sim_index] = 1e99
-                        else:
-                            spin.s2s_sim[sim_index] = spin.s2_sim[sim_index] / spin.s2f_sim[sim_index]
-
 
     def _disassemble_result(self, param_vector=None, func=None, iter=None, fc=None, gc=None, hc=None, warning=None, spin=None, sim_index=None, model_type=None, scaling=None, scaling_matrix=None):
         """Disassemble the optimisation results.
@@ -368,7 +129,7 @@ class Mf_minimise:
                 print("Storing the optimisation results%s, the optimised chi-squared value is lower than the current value (%s < %s)." % (spin_text, func, chi2))
 
         # Disassemble the parameter vector.
-        self._disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
+        disassemble_param_vector(model_type, param_vector=param_vector, spin=spin, sim_index=sim_index)
 
         # Monte Carlo minimisation statistics.
         if sim_index != None:
@@ -496,7 +257,7 @@ class Mf_minimise:
             upper = []
 
             # Determine the model type.
-            model_type = self._determine_model_type()
+            model_type = determine_model_type()
 
             # Minimisation options for diffusion tensor parameters.
             if model_type == 'diff' or model_type == 'all':
@@ -1168,7 +929,7 @@ class Mf_minimise:
 
             # Repackage the parameter values for minimising just the diffusion tensor parameters.
             if data_store.model_type == 'diff':
-                data_store.param_values.append(self._assemble_param_vector(model_type='mf'))
+                data_store.param_values.append(assemble_param_vector(model_type='mf'))
 
         # Convert to numpy arrays.
         for k in range(len(data_store.ri_data)):
@@ -1312,7 +1073,7 @@ class Mf_minimise:
             raise RelaxNoSequenceError
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Test if diffusion tensor data exists.
         if model_type != 'local_tm' and not diff_data_exists():
@@ -1337,7 +1098,7 @@ class Mf_minimise:
                 raise RelaxSpinTypeError
 
             # Test if the model-free parameter values exist.
-            unset_param = self._are_mf_params_set(spin)
+            unset_param = are_mf_params_set(spin)
             if unset_param != None:
                 raise RelaxNoValueError(unset_param)
 
@@ -1391,7 +1152,7 @@ class Mf_minimise:
                     raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, id, ri_id))
 
             # Create the initial parameter vector.
-            param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
+            param_vector = assemble_param_vector(spin=spin, sim_index=sim_index)
 
             # The relaxation data optimisation structures.
             data = self._relax_data_opt_structs(spin, sim_index=sim_index)
@@ -1444,7 +1205,7 @@ class Mf_minimise:
             num_params = [len(spin.params)]
 
             # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
-            param_values = [self._assemble_param_vector(model_type='mf')]
+            param_values = [assemble_param_vector(model_type='mf')]
 
             # Package the diffusion tensor parameters.
             if model_type == 'local_tm':
@@ -1604,7 +1365,7 @@ class Mf_minimise:
         opt_params.verbosity = verbosity
 
         # Determine the model type.
-        data_store.model_type = self._determine_model_type()
+        data_store.model_type = determine_model_type()
         if not data_store.model_type:
             return
 
@@ -1645,7 +1406,7 @@ class Mf_minimise:
         if data_store.model_type == 'diff':
             # Loop over the sequence.
             for spin in spin_loop():
-                unset_param = self._are_mf_params_set(spin)
+                unset_param = are_mf_params_set(spin)
                 if unset_param != None:
                     raise RelaxNoValueError(unset_param)
 
@@ -1745,20 +1506,20 @@ class Mf_minimise:
             # Parameter vector and diagonal scaling.
             if min_algor == 'back_calc':
                 # Create the initial parameter vector.
-                opt_params.param_vector = self._assemble_param_vector(spin=spin, model_type=data_store.model_type)
+                opt_params.param_vector = assemble_param_vector(spin=spin, model_type=data_store.model_type)
 
                 # Diagonal scaling.
                 data_store.scaling_matrix = None
 
             else:
                 # Create the initial parameter vector.
-                opt_params.param_vector = self._assemble_param_vector(spin=spin, sim_index=sim_index)
+                opt_params.param_vector = assemble_param_vector(spin=spin, sim_index=sim_index)
 
                 # The number of parameters.
                 num_params = len(opt_params.param_vector)
 
                 # Diagonal scaling.
-                data_store.scaling_matrix = self._assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
+                data_store.scaling_matrix = assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
                 if len(data_store.scaling_matrix):
                     opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
 

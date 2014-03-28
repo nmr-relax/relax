@@ -31,6 +31,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 import specific_analyses
 from specific_analyses.model_free.api import Model_free
+from specific_analyses.model_free.parameters import model_map
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
@@ -374,7 +375,7 @@ def select_model(model=None, spin_id=None):
         raise RelaxNoSequenceError
 
     # Obtain the model info.
-    equation, params = api_model_free._model_map(model)
+    equation, params = model_map(model)
 
     # Set up the model.
     model_setup(model, equation, params, spin_id)
