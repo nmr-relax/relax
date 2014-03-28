@@ -190,10 +190,10 @@ class Jw_mapping(API_base, API_common):
                 r = interatoms[i].r
 
             # Initialise the function to calculate.
-            self.jw = Mapping(frq=cdp.jw_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
+            jw = Mapping(frq=cdp.jw_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
 
             # Calculate the spectral density values.
-            j0, jwx, jwh = self.jw.func(r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
+            j0, jwx, jwh = jw.func(r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Reduced spectral density values.
             if sim_index == None:

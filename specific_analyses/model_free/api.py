@@ -1449,7 +1449,7 @@ class Model_free(API_base, API_common):
 
             # Initialise the function to minimise (for back-calculation and LM minimisation).
             if min_algor == 'back_calc' or match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
-                self.mf = Mf(init_params=opt_params.param_vector, model_type=data_store.model_type, diff_type=data_store.diff_type, diff_params=data_store.diff_params, scaling_matrix=data_store.scaling_matrix, num_spins=data_store.num_spins, equations=data_store.equations, param_types=data_store.param_types, param_values=data_store.param_values, relax_data=data_store.ri_data, errors=data_store.ri_data_err, bond_length=data_store.r, csa=data_store.csa, num_frq=data_store.num_frq, frq=data_store.frq, num_ri=data_store.num_ri, remap_table=data_store.remap_table, noe_r1_table=data_store.noe_r1_table, ri_labels=data_store.ri_types, gx=data_store.gx, gh=data_store.gh, h_bar=data_store.h_bar, mu0=data_store.mu0, num_params=data_store.num_params, vectors=data_store.xh_unit_vectors)
+                mf = Mf(init_params=opt_params.param_vector, model_type=data_store.model_type, diff_type=data_store.diff_type, diff_params=data_store.diff_params, scaling_matrix=data_store.scaling_matrix, num_spins=data_store.num_spins, equations=data_store.equations, param_types=data_store.param_types, param_values=data_store.param_values, relax_data=data_store.ri_data, errors=data_store.ri_data_err, bond_length=data_store.r, csa=data_store.csa, num_frq=data_store.num_frq, frq=data_store.frq, num_ri=data_store.num_ri, remap_table=data_store.remap_table, noe_r1_table=data_store.noe_r1_table, ri_labels=data_store.ri_types, gx=data_store.gx, gh=data_store.gh, h_bar=data_store.h_bar, mu0=data_store.mu0, num_params=data_store.num_params, vectors=data_store.xh_unit_vectors)
 
             # Levenberg-Marquardt minimisation.
             if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
@@ -1465,11 +1465,11 @@ class Model_free(API_base, API_common):
                     lm_error[index:index+len(ri_data_err[k])] = ri_data_err[k]
                     index = index + len(ri_data_err[k])
 
-                opt_params.min_options = opt_params.min_options + (self.mf.lm_dri, lm_error)
+                opt_params.min_options = opt_params.min_options + (mf.lm_dri, lm_error)
 
             # Back-calculation.
             if min_algor == 'back_calc':
-                return self.mf.calc_ri()
+                return mf.calc_ri()
 
             # Parallelised grid search for the diffusion parameter space.
             if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff':
