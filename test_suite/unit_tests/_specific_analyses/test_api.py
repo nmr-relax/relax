@@ -94,6 +94,10 @@ class Test_api(TestCase):
             if search('^_', name):
                 continue
 
+            # Skip the singleton instance.
+            if name == 'instance':
+                continue
+
             # Get the object in the two classes.
             obj_base = getattr(base, name)
             obj = getattr(analysis_obj, name)
@@ -134,6 +138,10 @@ class Test_api(TestCase):
         for name in dir(analysis_obj):
             # Skip anything starting with '_'.
             if search('^_', name):
+                continue
+
+            # Skip the singleton instance.
+            if name == 'instance':
                 continue
 
             # Get the object in the derived class.
