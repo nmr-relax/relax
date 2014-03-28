@@ -40,7 +40,8 @@ from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import return_spin, return_spin_from_index, spin_loop
 import specific_analyses
-from specific_analyses.model_free.parameters import assemble_param_vector, determine_model_type, disassemble_param_vector
+from specific_analyses.model_free.model import determine_model_type
+from specific_analyses.model_free.parameters import assemble_param_vector, disassemble_param_vector
 from target_functions.mf import Mf
 
 

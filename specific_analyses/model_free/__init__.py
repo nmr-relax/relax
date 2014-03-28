@@ -30,6 +30,7 @@ __all__ = [
     'bmrb',
     'data',
     'macro_base',
+    'model',
     'molmol',
     'optimisation',
     'parameters',

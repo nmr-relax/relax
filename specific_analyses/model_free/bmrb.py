@@ -28,6 +28,7 @@ from math import pi
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control import bmrb, mol_res_spin
+from specific_analyses.model_free.model import model_map
 
 
 def from_bmrb_model(name=None):
