@@ -524,19 +524,6 @@ class API_base(object):
         raise RelaxImplementError('pymol_macro')
 
 
-    def read_columnar_results(self, file_data, verbosity=1):
-        """Read the columnar formatted results file.
-
-        @param file_data:   The processed results file data.
-        @type file_data:    list of lists of str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        """
-
-        # Not implemented.
-        raise RelaxImplementError('read_columnar_results')
-
-
     def return_conversion_factor(self, param):
         """Return the conversion factor.
 

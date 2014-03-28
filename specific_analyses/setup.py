@@ -178,10 +178,6 @@ def get_specific_fn(eqi, function_type=None, raise_error=True):
         if eqi == 'pymol_macro':
             function = inst.pymol_macro
 
-        # Read results file function (Columnar format).
-        if eqi == 'read_columnar_results':
-            function = inst.read_columnar_results
-
         # Read results file function (XML format).
         #if eqi == 'read_xml_results':
         #    function = inst.read_xml_results
