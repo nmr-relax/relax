@@ -28,6 +28,7 @@ __all__ = [
     'api',
     'back_compat',
     'bmrb',
+    'data',
     'macro_base',
     'molmol',
     'optimisation',

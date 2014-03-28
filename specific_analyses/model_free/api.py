@@ -47,6 +47,7 @@ from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, fin
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, to_bmrb_model
+from specific_analyses.model_free.data import compare_objects
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, conv_factor_rex, determine_model_type, linear_constraints, units_rex
 from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
@@ -619,47 +620,6 @@ class Model_free(API_base, API_common):
                 spin.chi2 = chi2
 
 
-    def _compare_objects(self, object_from, object_to, pipe_from, pipe_to):
-        """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
-
-        @param object_from: The first object.
-        @type object_from:  any object
-        @param object_to:   The second object.
-        @type object_to:    any object
-        @param pipe_from:   The name of the data pipe containing the first object.
-        @type pipe_from:    str
-        @param pipe_to:     The name of the data pipe containing the second object.
-        @type pipe_to:      str
-        """
-
-        # Loop over the modifiable objects.
-        for data_name in dir(object_from):
-            # Skip special objects (starting with _, or in the original class and base class namespaces).
-            if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
-                continue
-
-            # Skip some more special objects.
-            if data_name in ['structural_data']:
-                continue
-
-            # Get the original object.
-            data_from = None
-            if hasattr(object_from, data_name):
-                data_from = getattr(object_from, data_name)
-
-            # Get the target object.
-            if data_from and not hasattr(object_to, data_name):
-                raise RelaxError("The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
-            elif data_from:
-                data_to = getattr(object_to, data_name)
-            else:
-                continue
-
-            # The data must match!
-            if data_from != data_to:
-                raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
-
-
     def create_mc_data(self, data_id=None):
         """Create the Monte Carlo Ri data.
 
@@ -913,7 +873,7 @@ class Model_free(API_base, API_common):
             # Otherwise compare the objects inside the container.
             else:
                 # Modifiable object checks.
-                self._compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
+                compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
@@ -936,7 +896,7 @@ class Model_free(API_base, API_common):
                     # Loop over the models.
                     for mol_index in range(len(model_from.mol)):
                         # Modifiable object checks.
-                        self._compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
+                        compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
 
         # No sequence data, so skip the rest.
         if dp_from.mol.is_empty():
