@@ -41,6 +41,9 @@ from target_functions.consistency_tests import Consistency
 class Consistency_tests(API_base, API_common):
     """Class containing functions specific to consistency testing."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 

@@ -63,6 +63,9 @@ from target_functions.mf import Mf
 class Model_free(API_base, API_common):
     """Parent class containing all the model-free specific functions."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 

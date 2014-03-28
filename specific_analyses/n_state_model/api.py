@@ -52,6 +52,9 @@ from target_functions.potential import quad_pot
 class N_state_model(API_base, API_common):
     """Class containing functions for the N-state model."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
