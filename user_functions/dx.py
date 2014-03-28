@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ from lib.software.opendx.execute import run
 from pipe_control import diffusion_tensor
 from pipe_control.opendx import map
 from prompt.doc_string import regexp_doc
-from specific_analyses.model_free import Model_free
+from specific_analyses.model_free.api import Model_free
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
