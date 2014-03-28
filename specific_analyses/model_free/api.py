@@ -28,7 +28,7 @@
 from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split
-from numpy import array, dot, float64, identity, zeros
+from numpy import array, dot, float64, zeros
 from numpy.linalg import inv
 from re import match, search
 from types import MethodType
@@ -36,7 +36,7 @@ from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_num_list, is_str_list
-from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
+from lib.errors import RelaxError, RelaxFault, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.float import isInf
 from lib.physical_constants import N15_CSA, h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
