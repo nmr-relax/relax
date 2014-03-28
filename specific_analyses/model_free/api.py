@@ -46,7 +46,7 @@ from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.model_free.bmrb import Bmrb
+from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, to_bmrb_model
 from specific_analyses.model_free.molmol import Molmol
 from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, conv_factor_rex, determine_model_type, linear_constraints, units_rex
 from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
@@ -55,7 +55,7 @@ from specific_analyses.model_free.results import Results
 from target_functions.mf import Mf
 
 
-class Model_free(Results, Bmrb, API_base, API_common):
+class Model_free(Results, API_base, API_common):
     """Parent class containing all the model-free specific functions."""
 
     def __init__(self):
@@ -193,10 +193,10 @@ class Model_free(Results, Bmrb, API_base, API_common):
         relax_data.bmrb_read(star, sample_conditions=sample_conditions)
 
         # Read the model-free data saveframes.
-        self._sf_model_free_read(star, sample_conditions=sample_conditions)
+        sf_model_free_read(star, sample_conditions=sample_conditions)
 
         # Read the CSA data saveframes.
-        self._sf_csa_read(star)
+        sf_csa_read(star)
 
 
     def bmrb_write(self, file_path, version=None):
@@ -362,7 +362,7 @@ class Model_free(Results, Bmrb, API_base, API_common):
             chi2_list.append(spin.chi2)
 
             # Model-free model.
-            model_list.append(self._to_bmrb_model(spin.model))
+            model_list.append(to_bmrb_model(spin.model))
 
         # Convert the molecule names into the entity IDs.
         entity_ids = zeros(len(mol_name_list), int32)
