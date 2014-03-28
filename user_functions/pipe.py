@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,9 +25,13 @@
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import pipes
-from specific_analyses.setup import hybrid_obj
+from specific_analyses.api import return_api
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+
+
+# The hybrid API object.
+hybrid_obj = return_api('hybrid')
 
 
 # The user function class.

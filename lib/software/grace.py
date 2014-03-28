@@ -29,7 +29,7 @@ from math import ceil, sqrt
 # relax module imports.
 import pipe_control
 from pipe_control import pipes
-import specific_analyses
+from specific_analyses.api import return_api
 
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.
@@ -362,9 +362,12 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
                 # Flag for making labels.
                 analysis_spec = True
 
+                # The specific analysis API object.
+                api = return_api()
+
                 # Specific value and error, conversion factor, and units returning functions.
-                return_units = specific_analyses.setup.get_specific_fn('return_units', pipes.get_type())
-                return_grace_string = specific_analyses.setup.get_specific_fn('return_grace_string', pipes.get_type())
+                return_units = api.return_units
+                return_grace_string = api.return_grace_string
 
                 # Test if the axis data type is a minimisation statistic.
                 if data_type[i] and data_type[i] != 'spin' and pipe_control.minimise.return_data_name(data_type[i]):

@@ -5,7 +5,7 @@ from os import sep
 
 # relax imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.setup import n_state_model_obj
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
@@ -98,7 +98,8 @@ if ds.model == 'population':
 self._execute_uf('bfgs', constraints=True, max_iter=5, uf_name='minimise')
 
 # Calculate the AIC value.
-k, n, chi2 = n_state_model_obj.model_statistics()
+api = return_api('N-state')
+k, n, chi2 = api.model_statistics()
 ds[ds.current_pipe].aic = chi2 + 2.0*k
 
 # Write out a results file.

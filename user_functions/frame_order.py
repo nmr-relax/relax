@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,9 +31,13 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from specific_analyses.setup import frame_order_obj
+from specific_analyses.api import return_api
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+
+
+# The frame order API object.
+frame_order_obj = return_api('frame order')
 
 
 # The user function class.

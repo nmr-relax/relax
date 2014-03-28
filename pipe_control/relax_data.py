@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -39,7 +39,7 @@ from pipe_control import bmrb, pipes, value
 from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import Selection, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_molecule_names, return_spin, return_spin_from_selection, spin_index_loop, spin_loop
 from pipe_control.spectrometer import copy_frequencies, delete_frequencies, frequency_checks, loop_frequencies, set_frequency
-import specific_analyses
+from specific_analyses.api import return_api
 
 
 # The relaxation data types supported.
@@ -91,8 +91,8 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
         cdp.ri_type[ri_id] = ri_type
         set_frequency(id=ri_id, frq=frq)
 
-    # Specific Ri back calculate function setup.
-    back_calculate = specific_analyses.setup.get_specific_fn('back_calc_ri', pipes.get_type())
+    # The specific analysis API object.
+    api = return_api()
 
     # The IDs to loop over.
     if ri_id == None:
@@ -127,7 +127,7 @@ def back_calc(ri_id=None, ri_type=None, frq=None):
 
         # Back-calculate the relaxation value.
         for ri_id in ri_ids:
-            spin.ri_data_bc[ri_id] = back_calculate(spin_index=spin_index, ri_id=ri_id, ri_type=ri_types[ri_id], frq=frqs[ri_id])
+            spin.ri_data_bc[ri_id] = api.back_calc_ri(spin_index=spin_index, ri_id=ri_id, ri_type=ri_types[ri_id], frq=frqs[ri_id])
 
 
 def bmrb_read(star, sample_conditions=None):

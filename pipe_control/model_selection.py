@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,7 +31,7 @@ from lib.io import write_data
 from lib.model_selection import aic, aicc, bic
 import pipe_control.pipes
 from pipe_control.pipes import get_type, has_pipe, pipe_names, switch
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.api import return_api
 
 
 def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
@@ -99,22 +99,26 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
         # Loop over the data pipes.
         for i in range(len(pipes)):
             for j in range(len(pipes[i])):
-                # Specific functions.
-                model_loop[pipes[i][j]] = get_specific_fn('model_loop', get_type(pipes[i][j]))
-                model_type[pipes[i][j]] = get_specific_fn('model_type', get_type(pipes[i][j]))
-                duplicate_data[pipes[i][j]] = get_specific_fn('duplicate_data', get_type(pipes[i][j]))
-                model_statistics[pipes[i][j]] = get_specific_fn('model_stats', get_type(pipes[i][j]))
-                skip_function[pipes[i][j]] = get_specific_fn('skip_function', get_type(pipes[i][j]))
+                # The specific analysis API object.
+                api = return_api(pipe_name=pipes[i][j])
+
+                # Store the specific functions.
+                model_loop[pipes[i][j]] = api.model_loop
+                model_type[pipes[i][j]] = api.model_type
+                duplicate_data[pipes[i][j]] = api.duplicate_data
+                model_statistics[pipes[i][j]] = api.model_statistics
+                skip_function[pipes[i][j]] = api.skip_function
 
         # The model loop should be the same for all data pipes!
         for i in range(len(pipes)):
             for j in range(len(pipes[i])):
                 if model_loop[pipes[0][j]] != model_loop[pipes[i][j]]:
                     raise RelaxError("The models for each data pipes should be the same.")
-        model_loop = model_loop[pipes[0][0]]
 
-        # The model description.
-        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+        # Alias some function from the specific API of the first data pipe.
+        api = return_api(pipe_name=pipes[0][0])
+        model_loop = api.model_loop
+        model_desc = api.model_desc
 
         # Global vs. local models.
         global_flag = False
@@ -127,17 +131,20 @@ def select(method=None, modsel_pipe=None, bundle=None, pipes=None):
     else:
         # Loop over the data pipes.
         for i in range(len(pipes)):
-            # Specific functions.
-            model_loop[pipes[i]] = get_specific_fn('model_loop', get_type(pipes[i]))
-            model_type[pipes[i]] = get_specific_fn('model_type', get_type(pipes[i]))
-            duplicate_data[pipes[i]] = get_specific_fn('duplicate_data', get_type(pipes[i]))
-            model_statistics[pipes[i]] = get_specific_fn('model_stats', get_type(pipes[i]))
-            skip_function[pipes[i]] = get_specific_fn('skip_function', get_type(pipes[i]))
+            # The specific analysis API object.
+            api = return_api()
 
-        model_loop = model_loop[pipes[0]]
+            # Store the specific functions.
+            model_loop[pipes[i]] = api.model_loop
+            model_type[pipes[i]] = api.model_type
+            duplicate_data[pipes[i]] = api.duplicate_data
+            model_statistics[pipes[i]] = api.model_statistics
+            skip_function[pipes[i]] = api.skip_function
 
-        # The model description.
-        model_desc = get_specific_fn('model_desc', get_type(pipes[0]))
+        # Alias some function from the specific API of the first data pipe.
+        api = return_api(pipe_name=pipes[0])
+        model_loop = api.model_loop
+        model_desc = api.model_desc
 
         # Global vs. local models.
         global_flag = False

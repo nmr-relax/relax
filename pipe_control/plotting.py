@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ The numerical graph data handled in these functions consists of a 4 dimensional 
 from lib.errors import RelaxError
 from pipe_control import minimise
 from pipe_control.mol_res_spin import spin_loop
-import specific_analyses
+from specific_analyses.api import return_api
 
 
 def assemble_data(spin_id=None, x_data_name=None, y_data_name=None, plot_data=None):
@@ -616,9 +616,8 @@ def get_functions(data_name=None):
 
     # Analysis specific value returning functions.
     else:
-        return_value = specific_analyses.setup.get_specific_fn('return_value')
-        return_conversion_factor = specific_analyses.setup.get_specific_fn('return_conversion_factor')
-        return return_value, return_conversion_factor
+        api = return_api()
+        return api.return_value, api.return_conversion_factor
 
 
 def get_data_type(data_name=None):
@@ -640,5 +639,5 @@ def get_data_type(data_name=None):
 
     # Analysis specific value returning functions.
     else:
-        data_type = specific_analyses.setup.get_specific_fn('data_type')
-        return data_type(data_name)
+        api = return_api()
+        return api.data_type(data_name)

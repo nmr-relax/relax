@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,7 +36,7 @@ from pipe_control import exp_info
 from pipe_control.mol_res_spin import create_spin, generate_spin_id, metadata_cleanup, return_spin, set_spin_element, set_spin_isotope
 from pipe_control.pipes import cdp_name
 from pipe_control.result_files import add_result_file
-import specific_analyses
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 from version import version_full
 
@@ -217,11 +217,9 @@ def read(file=None, dir=None, version=None, sample_conditions=None):
     if not access(file_path, F_OK):
         raise RelaxFileError(file_path)
 
-    # Specific results reading function.
-    read_function = specific_analyses.setup.get_specific_fn('bmrb_read', ds[pipe_name].pipe_type)
-
     # Read the results.
-    read_function(file_path, version=version, sample_conditions=sample_conditions)
+    api = return_api(pipe_name=pipe_name)
+    api.bmrb_read(file_path, version=version, sample_conditions=sample_conditions)
 
 
 def write(file=None, dir=None, version='3.1', force=False):
@@ -269,9 +267,6 @@ def write(file=None, dir=None, version='3.1', force=False):
         # Create the directories.
         mkdir_nofail(dir, verbosity=0)
 
-    # Specific results writing function.
-    write_function = specific_analyses.setup.get_specific_fn('bmrb_write', ds[pipe_name].pipe_type)
-
     # Get the info box.
     info = Info_box()
 
@@ -287,7 +282,8 @@ def write(file=None, dir=None, version='3.1', force=False):
     exp_info.software(name=exp_info.SOFTWARE['relax'].name, version=version_full(), vendor_name=exp_info.SOFTWARE['relax'].authors, url=exp_info.SOFTWARE['relax'].url, cite_ids=['relax_ref1', 'relax_ref2'], tasks=exp_info.SOFTWARE['relax'].tasks)
 
     # Execute the specific BMRB writing code.
-    write_function(file, version=version)
+    api = return_api(pipe_name=pipe_name)
+    api.bmrb_write(file, version=version)
 
     # Add the file to the results file list.
     if isinstance(file, str):
