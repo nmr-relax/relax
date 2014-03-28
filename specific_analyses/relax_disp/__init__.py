@@ -34,5 +34,6 @@ __all__ = [
     'optimisation',
     'parameters',
     'sherekhan',
+    'uf',
     'variables'
 ]

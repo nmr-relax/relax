@@ -37,13 +37,11 @@ from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin
 from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.checks import check_c_modules, check_exp_type, check_model_type, check_pipe_type
-from specific_analyses.relax_disp.disp_data import average_intensity, calc_rotating_frame_params, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.checks import check_model_type
+from specific_analyses.relax_disp.disp_data import average_intensity, calc_rotating_frame_params, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
 from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ
 
 
 class Relax_disp(API_base, API_common):
@@ -103,254 +101,6 @@ class Relax_disp(API_base, API_common):
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
-
-
-    def _cluster(self, cluster_id=None, spin_id=None):
-        """Define spin clustering.
-
-        @keyword cluster_id:    The cluster ID string.
-        @type cluster_id:       str
-        @keyword spin_id:       The spin ID string for the spin or group of spins to add to the cluster.
-        @type spin_id:          str
-        """
-
-        # Initialise.
-        if not hasattr(cdp, 'clustering'):
-            # Create the dictionary.
-            cdp.clustering = {}
-            cdp.clustering['free spins'] = []
-
-            # Add all spin IDs to the cluster.
-            for spin, id in spin_loop(return_id=True):
-                cdp.clustering['free spins'].append(id)
-
-        # Add the key.
-        if cluster_id not in cdp.clustering:
-            cdp.clustering[cluster_id] = []
-
-        # Loop over the spins to add to the cluster.
-        for spin, id in spin_loop(selection=spin_id, return_id=True):
-            # First remove the ID from all clusters.
-            for key in cdp.clustering.keys():
-                if id in cdp.clustering[key]:
-                    cdp.clustering[key].pop(cdp.clustering[key].index(id))
-
-            # Then add the ID to the cluster.
-            cdp.clustering[cluster_id].append(id)
-
-        # Clean up - delete any empty clusters (except the free spins).
-        clean = []
-        for key in cdp.clustering.keys():
-            if key == 'free spins':
-                continue
-            if cdp.clustering[key] == []:
-                clean.append(key)
-        for key in clean:
-            cdp.clustering.pop(key)
-
-
-    def _cluster_ids(self):
-        """Return the current list of cluster ID strings.
-
-        @return:    The list of cluster IDs.
-        @rtype:     list of str
-        """
-
-        # Initialise.
-        ids = ['free spins']
-
-        # Add the defined IDs.
-        if hasattr(cdp, 'clustering'):
-            for key in list(cdp.clustering.keys()):
-                if key not in ids:
-                    ids.append(key)
-
-        # Return the IDs.
-        return ids
-
-
-    def _model_setup(self, model, params):
-        """Update various model specific data structures.
-
-        @param model:   The relaxation dispersion curve type.
-        @type model:    str
-        @param params:  A list consisting of the model parameters.
-        @type params:   list of str
-        """
-
-        # The model group.
-        if model == MODEL_R2EFF:
-            cdp.model_type = 'R2eff'
-        else:
-            cdp.model_type = 'disp'
-
-        # Loop over the sequence.
-        for spin in spin_loop(skip_desel=True):
-            # The model and parameter names.
-            spin.model = model
-            spin.params = params
-
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-
-    def _select_model(self, model=MODEL_R2EFF):
-        """Set up the model for the relaxation dispersion analysis.
-
-        @keyword model: The relaxation dispersion analysis type.
-        @type model:    str
-        """
-
-        # Data checks.
-        pipes.test()
-        check_pipe_type()
-        check_mol_res_spin_data()
-        check_exp_type()
-        if model == MODEL_R2EFF:
-            check_c_modules()
-
-        # The curve type.
-        curve_type = get_curve_type()
-
-        # R2eff/R1rho model.
-        if model == MODEL_R2EFF:
-            print("R2eff/R1rho value and error determination.")
-            if curve_type == 'exponential':
-                params = ['r2eff', 'i0']
-            else:
-                params = ['r2eff']
-
-        # The model for no chemical exchange relaxation.
-        elif model == MODEL_NOREX:
-            print("The model for no chemical exchange relaxation.")
-            params = ['r2']
-
-        # LM63 model.
-        elif model == MODEL_LM63:
-            print("The Luz and Meiboom (1963) 2-site fast exchange model.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # LM63 3-site model.
-        elif model == MODEL_LM63_3SITE:
-            print("The Luz and Meiboom (1963) 3-site fast exchange model.")
-            params = ['r2', 'phi_ex_B', 'phi_ex_C', 'kB', 'kC']
-
-        # Full CR72 model.
-        elif model == MODEL_CR72_FULL:
-            print("The full Carver and Richards (1972) 2-site model for all time scales.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced CR72 model.
-        elif model == MODEL_CR72:
-            print("The reduced Carver and Richards (1972) 2-site model for all time scales, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # IT99 model.
-        elif model == MODEL_IT99:
-            print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
-            params = ['r2', 'pA', 'dw', 'tex']
-
-        # TSMFK01 model.
-        elif model == MODEL_TSMFK01:
-            print("The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
-            params = ['r2a', 'dw', 'k_AB']
-
-        # Full NS CPMG 2-site 3D model.
-        elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced NS CPMG 2-site 3D model.
-        elif model == MODEL_NS_CPMG_2SITE_3D:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # NS CPMG 2-site expanded model.
-        elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
-            print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # Full NS CPMG 2-site star model.
-        elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced NS CPMG 2-site star model.
-        elif model == MODEL_NS_CPMG_2SITE_STAR:
-            print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # M61 model.
-        elif model == MODEL_M61:
-            print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # M61 skew model.
-        elif model == MODEL_M61B:
-            print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # DPL94 model.
-        elif model == MODEL_DPL94:
-            print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # TP02 model.
-        elif model == MODEL_TP02:
-            print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # TAP03 model.
-        elif model == MODEL_TAP03:
-            print("The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # MP05 model.
-        elif model == MODEL_MP05:
-            print("The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # Reduced NS R1rho 2-site model.
-        elif model == MODEL_NS_R1RHO_2SITE:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # NS R1rho CPMG 3-site model.
-        elif model == MODEL_NS_R1RHO_3SITE:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC', 'kex_AC']
-
-        # NS R1rho CPMG 3-site linearised model.
-        elif model == MODEL_NS_R1RHO_3SITE_LINEAR:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors linearised with kAC = kCA = 0 whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC']
-
-        # MMQ CR72 model.
-        elif model == MODEL_MMQ_CR72:
-            print("The Carver and Richards (1972) 2-site model for all time scales expanded for MMQ CPMG data by Korzhnev et al., 2004.")
-            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
-
-        # NS MQ CPMG 2-site model.
-        elif model == MODEL_NS_MMQ_2SITE:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
-
-        # NS MMQ CPMG 3-site model.
-        elif model == MODEL_NS_MMQ_3SITE:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC', 'kex_AC']
-
-        # NS MMQ CPMG 3-site linearised model.
-        elif model == MODEL_NS_MMQ_3SITE_LINEAR:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG data linearised with kAC = kCA = 0 whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '%s' must be one of %s." % (model, MODEL_LIST_FULL))
-
-        # Set up the model.
-        self._model_setup(model, params)
 
 
     def base_data_loop(self):
@@ -516,41 +266,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the MC data.
         return values
-
-
-    default_value_doc = Desc_container("Relaxation dispersion default values")
-    _table = uf_tables.add_table(label="table: dispersion default values", caption="Relaxation dispersion default values.")
-    _table.add_headings(["Data type", "Object name", "Value"])
-    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'", "15.0"])
-    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'", "15.0"])
-    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'", "15.0"])
-    _table.add_row(["Population of state A", "'pA'", "0.5"])
-    _table.add_row(["Population of state B", "'pB'", "0.5"])
-    _table.add_row(["Population of state C", "'pC'", "0.5"])
-    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'", "5.0"])
-    _table.add_row(["The pA.pB.dw**2 parameter of state B (ppm^2)", "'phi_ex_B'", "5.0"])
-    _table.add_row(["The pA.pB.dw**2 parameter of state C (ppm^2)", "'phi_ex_C'", "5.0"])
-    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'", "1.0"])
-    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'", "0.0"])
-    _table.add_row(["Chemical shift difference between states A and B for 3-site exchange (ppm)", "'dw_AB'", "0.0"])
-    _table.add_row(["Chemical shift difference between states A and C for 3-site exchange (ppm)", "'dw_AC'", "0.0"])
-    _table.add_row(["Chemical shift difference between states B and C for 3-site exchange (ppm)", "'dw_BC'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and B (ppm)", "'dwH'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and B for 3-site exchange (ppm)", "'dwH_AB'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and C for 3-site exchange (ppm)", "'dwH_AC'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states B and C for 3-site exchange (ppm)", "'dwH_BC'", "0.0"])
-    _table.add_row(["Exchange rate (rad/s)", "'kex'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and B for 3-site exchange (rad/s)", "'kex_AB'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and C for 3-site exchange (rad/s)", "'kex_AC'", "10000.0"])
-    _table.add_row(["Exchange rate between sites B and C for 3-site exchange (rad/s)", "'kex_BC'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and B (rad/s)", "'kB'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and C (rad/s)", "'kC'", "10000.0"])
-    _table.add_row(["Time of exchange (s/rad)", "'tex'", "1.0/10000.0"])
-    _table.add_row(["Rotating frame tilt angle", "'theta'", "0.0"])
-    _table.add_row(["Effective field in rotating frame", "'w_eff'", "0.0"])
-    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'", "10000.0"])
-    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'", "10000.0"])
-    default_value_doc.add_table(_table.label)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -1039,39 +754,6 @@ class Relax_disp(API_base, API_common):
             raise RelaxImplementError
 
 
-    return_data_name_doc =  Desc_container("Relaxation dispersion curve fitting data type string matching patterns")
-    _table = uf_tables.add_table(label="table: dispersion curve-fit data type patterns", caption="Relaxation dispersion curve fitting data type string matching patterns.")
-    _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'"])
-    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'"])
-    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'"])
-    _table.add_row(["Population of state A", "'pA'"])
-    _table.add_row(["Population of state B", "'pB'"])
-    _table.add_row(["Population of state C", "'pC'"])
-    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'"])
-    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'"])
-    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
-    _table.add_row(["Chemical shift difference between states A and B for 3-site exchange (ppm)", "'dw_AB'"])
-    _table.add_row(["Chemical shift difference between states A and C for 3-site exchange (ppm)", "'dw_AC'"])
-    _table.add_row(["Chemical shift difference between states B and C for 3-site exchange (ppm)", "'dw_BC'"])
-    _table.add_row(["Proton chemical shift difference between states A and B (ppm)", "'dwH'"])
-    _table.add_row(["Proton chemical shift difference between states A and B for 3-site exchange (ppm)", "'dwH_AB'"])
-    _table.add_row(["Proton chemical shift difference between states A and C for 3-site exchange (ppm)", "'dwH_AC'"])
-    _table.add_row(["Proton chemical shift difference between states B and C for 3-site exchange (ppm)", "'dwH_BC'"])
-    _table.add_row(["Exchange rate (rad/s)", "'kex'"])
-    _table.add_row(["Exchange rate between sites A and B for 3-site exchange (rad/s)", "'kex_AB'"])
-    _table.add_row(["Exchange rate between sites A and C for 3-site exchange (rad/s)", "'kex_AC'"])
-    _table.add_row(["Exchange rate between sites B and C for 3-site exchange (rad/s)", "'kex_BC'"])
-    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'"])
-    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'"])
-    _table.add_row(["Time of exchange (s/rad)", "'tex'"])
-    _table.add_row(["Rotating frame tilt angle", "'theta'"])
-    _table.add_row(["Effective field in rotating frame", "'w_eff'"])
-    _table.add_row(["Peak intensities (series)", "'peak_intensity'"])
-    _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
-    return_data_name_doc.add_table(_table.label)
-
-
     def return_error(self, data_id=None):
         """Return the standard deviation data structure.
 
@@ -1114,10 +796,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the error list.
         return errors
-
-
-    set_doc = Desc_container("Relaxation dispersion curve fitting set details")
-    set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
     def return_value(self, spin, param, sim=None, bc=False):

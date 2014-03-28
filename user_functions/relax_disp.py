@@ -43,7 +43,7 @@ from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
-from specific_analyses.setup import relax_disp_obj
+from specific_analyses.relax_disp import uf as relax_disp_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -131,7 +131,7 @@ uf.add_keyarg(
     desc_short = "cluster ID",
     desc = "The cluster identification string.",
     wiz_element_type = 'combo',
-    wiz_combo_iter = relax_disp_obj._cluster_ids
+    wiz_combo_iter = relax_disp_uf.cluster_ids
 )
 uf.add_keyarg(
     name = "spin_id",
@@ -152,7 +152,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To add the spins ':1@N' and ':3@N' to a new cluster called 'cluster', type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.cluster('cluster', ':1,3@N')")
 uf.desc[-1].add_prompt("relax> relax_disp.cluster(cluster_id='cluster', spin_id=':1,3@N')")
-uf.backend = relax_disp_obj._cluster
+uf.backend = relax_disp_uf.cluster
 uf.menu_text = "c&luster"
 uf.gui_icon = "relax.cluster"
 uf.wizard_height_desc = 500
@@ -899,7 +899,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick the 2-site fast exchange model for all selected spins, type one of:")
 uf.desc[-1].add_prompt("relax> relax_disp.select_model('%s')" % MODEL_LM63)
 uf.desc[-1].add_prompt("relax> relax_disp.select_model(model='%s')" % MODEL_LM63)
-uf.backend = relax_disp_obj._select_model
+uf.backend = relax_disp_uf.select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 500
