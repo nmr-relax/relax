@@ -24,7 +24,7 @@
 
 # relax module imports.
 from pipe_control import spectrometer
-from specific_analyses.setup import jw_mapping_obj
+from specific_analyses.jw_mapping.uf import set_frq
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -56,7 +56,7 @@ uf.desc[-1].add_paragraph("This will select the relaxation data to use in the re
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_prompt("relax> jw_mapping.set_frq(600.0 * 1e6)")
 uf.desc[-1].add_prompt("relax> jw_mapping.set_frq(frq=600.0 * 1e6)")
-uf.backend = jw_mapping_obj._set_frq
+uf.backend = set_frq
 uf.menu_text = "&set_frq"
 uf.gui_icon = "relax.frq"
 uf.wizard_height_desc = 350

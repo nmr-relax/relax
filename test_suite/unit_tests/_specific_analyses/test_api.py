@@ -27,15 +27,15 @@ from unittest import TestCase
 
 # relax module imports.
 from specific_analyses.api_base import API_base
-from specific_analyses.consistency_tests import Consistency_tests
+from specific_analyses.consistency_tests.api import Consistency_tests
 from specific_analyses.frame_order.api import Frame_order
 from specific_analyses.hybrid import Hybrid
-from specific_analyses.jw_mapping import Jw_mapping
+from specific_analyses.jw_mapping.api import Jw_mapping
 from specific_analyses.model_free import Model_free
 from specific_analyses.n_state_model import N_state_model
 from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
-from specific_analyses.relax_fit import Relax_fit
+from specific_analyses.relax_fit.api import Relax_fit
 
 
 class Test_api(TestCase):

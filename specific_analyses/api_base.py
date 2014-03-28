@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,14 +32,6 @@ class API_base(object):
 
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
-
-    # Empty documentation strings.
-    default_value_doc = ""
-    eliminate_doc = ""
-    return_data_name_doc = ""
-    set_doc = ""
-    write_doc = ""
-
 
     def __init__(self):
         """Set up the specific objects."""
