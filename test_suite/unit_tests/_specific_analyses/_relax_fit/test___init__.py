@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,13 +19,21 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The R1 and R2 exponential relaxation curve fitting analysis."""
+# Python module imports.
+from os import sep
+import sys
 
-# The available modules.
-__all__ = [
-    'api',
-    'optimisation',
-    'parameters',
-    'uf'
-]
+# relax module imports.
+from test_suite.unit_tests.package_checking import PackageTestCase
+from specific_analyses import relax_fit
+
+
+class Test___init__(PackageTestCase):
+    """Unit tests for the specific_analyses.relax_fit package."""
+
+    def setUp(self):
+        """Set up for the package checking."""
+
+        self.package = relax_fit
+        self.package_name = 'specific_analyses.relax_fit'
+        self.package_path = sys.path[0] + sep + 'specific_analyses' + sep + 'relax_fit'

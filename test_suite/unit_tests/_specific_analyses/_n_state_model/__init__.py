@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,13 +19,5 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The R1 and R2 exponential relaxation curve fitting analysis."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'optimisation',
-    'parameters',
-    'uf'
-]
+__all__ = ['']

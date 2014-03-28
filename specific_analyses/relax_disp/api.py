@@ -26,37 +26,22 @@
 
 # Python module imports.
 from copy import deepcopy
-from minfx.generic import generic_minimise
-from minfx.grid import grid
-from numpy import dot
-from numpy.linalg import inv
-from re import match, search
-import sys
+from re import search
 from types import MethodType
 
 # relax module imports.
-from dep_check import C_module_exp_fn
-from lib.dispersion.two_point import calc_two_point_r2eff, calc_two_point_r2eff_err
 from lib.errors import RelaxError, RelaxImplementError
-from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.relax_disp.checks import check_c_modules, check_disp_points, check_exp_type, check_exp_type_fixed_time, check_model_type, check_pipe_type, check_spectra_id_setup
-from specific_analyses.relax_disp.disp_data import average_intensity, calc_rotating_frame_params, find_intensity_keys, get_curve_type, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_frq, loop_time, pack_back_calc_r2eff, return_cpmg_frqs, return_index_from_disp_point, return_index_from_exp_type, return_index_from_frq, return_offset_data, return_param_key_from_data, return_r1_data, return_r2eff_arrays, return_spin_lock_nu1, spin_ids_to_containers
-from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_r2eff, grid_search_setup
-from specific_analyses.relax_disp.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, get_param_names, get_value, linear_constraints, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_MMQ, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
-from target_functions.relax_disp import Dispersion
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
-
-# C modules.
-if C_module_exp_fn:
-    from target_functions.relax_fit import setup, func, dfunc, d2func, back_calc_I
+from specific_analyses.relax_disp.checks import check_model_type
+from specific_analyses.relax_disp.disp_data import average_intensity, calc_rotating_frame_params, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
+from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ
 
 
 class Relax_disp(API_base, API_common):
@@ -116,533 +101,6 @@ class Relax_disp(API_base, API_common):
 
         # Add the minimisation data.
         self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
-
-
-    def _back_calc_peak_intensities(self, spin=None, exp_type=None, frq=None, offset=None, point=None):
-        """Back-calculation of peak intensity for the given relaxation time.
-
-        @keyword spin:      The specific spin data container.
-        @type spin:         SpinContainer instance
-        @keyword exp_type:  The experiment type.
-        @type exp_type:     str
-        @keyword frq:       The spectrometer frequency.
-        @type frq:          float
-        @keyword offset:    For R1rho-type data, the spin-lock offset value in ppm.
-        @type offset:       None or float
-        @keyword point:     The dispersion point data (either the spin-lock field strength in Hz or the nu_CPMG frequency in Hz).
-        @type point:        float
-        @return:            The back-calculated peak intensities for the given exponential curve.
-        @rtype:             numpy rank-1 float array
-        """
-
-        # Check.
-        if not has_exponential_exp_type():
-            raise RelaxError("Back-calculation is not allowed for the fixed time experiment types.")
-
-        # The key.
-        param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-        # Create the initial parameter vector.
-        param_vector = assemble_param_vector(spins=[spin], key=param_key)
-
-        # Create a scaling matrix.
-        scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=False)
-
-        # The peak intensities and times.
-        values = []
-        errors = []
-        times = []
-        for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-            # The data.
-            values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time))
-            errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
-            times.append(time)
-
-        # The scaling matrix in a diagonalised list form.
-        scaling_list = []
-        for i in range(len(scaling_matrix)):
-            scaling_list.append(scaling_matrix[i, i])
-
-        # Initialise the relaxation fit functions.
-        setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
-
-        # Make a single function call.  This will cause back calculation and the data will be stored in the C module.
-        func(param_vector)
-
-        # Get the data back.
-        results = back_calc_I()
-
-        # Return the correct peak height.
-        return results
-
-
-    def _calculate_r2eff(self):
-        """Calculate the R2eff values for fixed relaxation time period data."""
-
-        # Data checks.
-        check_exp_type()
-        check_disp_points()
-        check_exp_type_fixed_time()
-
-        # Printouts.
-        print("Calculating the R2eff/R1rho values for fixed relaxation time period data.")
-
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Spin ID printout.
-            print("Spin '%s'." % spin_id)
-
-            # Skip spins which have no data.
-            if not hasattr(spin, 'peak_intensity'):
-                continue
-
-            # Initialise the data structures.
-            if not hasattr(spin, 'r2eff'):
-                spin.r2eff = {}
-            if not hasattr(spin, 'r2eff_err'):
-                spin.r2eff_err = {}
-
-            # Loop over all the data.
-            for exp_type, frq, offset, point, time in loop_exp_frq_offset_point_time():
-                # The three keys.
-                ref_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=None, time=time)
-                int_keys = find_intensity_keys(exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-                # Check for missing data.
-                missing = False
-                for i in range(len(ref_keys)):
-                    if ref_keys[i] not in spin.peak_intensity:
-                        missing = True
-                for i in range(len(int_keys)):
-                    if int_keys[i] not in spin.peak_intensity:
-                        missing = True
-                if missing:
-                    continue
-
-                # Average the reference intensity data and errors.
-                ref_intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=None, time=time)
-                ref_intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=None, time=time, error=True)
-
-                # Average the intensity data and errors.
-                intensity = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time)
-                intensity_err = average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True)
-
-                # Calculate the R2eff value.
-                spin.r2eff[param_key] = calc_two_point_r2eff(relax_time=time, I_ref=ref_intensity, I=intensity)
-
-                # Calculate the R2eff error.
-                spin.r2eff_err[param_key] = calc_two_point_r2eff_err(relax_time=time, I_ref=ref_intensity, I=intensity, I_ref_err=ref_intensity_err, I_err=intensity_err)
-
-
-    def _cluster(self, cluster_id=None, spin_id=None):
-        """Define spin clustering.
-
-        @keyword cluster_id:    The cluster ID string.
-        @type cluster_id:       str
-        @keyword spin_id:       The spin ID string for the spin or group of spins to add to the cluster.
-        @type spin_id:          str
-        """
-
-        # Initialise.
-        if not hasattr(cdp, 'clustering'):
-            # Create the dictionary.
-            cdp.clustering = {}
-            cdp.clustering['free spins'] = []
-
-            # Add all spin IDs to the cluster.
-            for spin, id in spin_loop(return_id=True):
-                cdp.clustering['free spins'].append(id)
-
-        # Add the key.
-        if cluster_id not in cdp.clustering:
-            cdp.clustering[cluster_id] = []
-
-        # Loop over the spins to add to the cluster.
-        for spin, id in spin_loop(selection=spin_id, return_id=True):
-            # First remove the ID from all clusters.
-            for key in cdp.clustering.keys():
-                if id in cdp.clustering[key]:
-                    cdp.clustering[key].pop(cdp.clustering[key].index(id))
-
-            # Then add the ID to the cluster.
-            cdp.clustering[cluster_id].append(id)
-
-        # Clean up - delete any empty clusters (except the free spins).
-        clean = []
-        for key in cdp.clustering.keys():
-            if key == 'free spins':
-                continue
-            if cdp.clustering[key] == []:
-                clean.append(key)
-        for key in clean:
-            cdp.clustering.pop(key)
-
-
-    def _cluster_ids(self):
-        """Return the current list of cluster ID strings.
-
-        @return:    The list of cluster IDs.
-        @rtype:     list of str
-        """
-
-        # Initialise.
-        ids = ['free spins']
-
-        # Add the defined IDs.
-        if hasattr(cdp, 'clustering'):
-            for key in list(cdp.clustering.keys()):
-                if key not in ids:
-                    ids.append(key)
-
-        # Return the IDs.
-        return ids
-
-
-    def _minimise_r2eff(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
-        """Optimise the R2eff model by fitting the 2-parameter exponential curves.
-
-        This mimics the R1 and R2 relax_fit analysis.
-
-
-        @keyword min_algor:         The minimisation algorithm to use.
-        @type min_algor:            str
-        @keyword min_options:       An array of options to be used by the minimisation algorithm.
-        @type min_options:          array of str
-        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
-        @type func_tol:             None or float
-        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.  Setting this to None turns of the check.
-        @type grad_tol:             None or float
-        @keyword max_iterations:    The maximum number of iterations for the algorithm.
-        @type max_iterations:       int
-        @keyword constraints:       If True, constraints are used during optimisation.
-        @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
-        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:            int
-        @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
-        @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search. The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
-        """
-
-        # Check that the C modules have been compiled.
-        if not C_module_exp_fn:
-            raise RelaxError("Relaxation curve fitting is not available.  Try compiling the C modules on your platform.")
-
-        # Loop over the spins.
-        for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-            # Skip spins which have no data.
-            if not hasattr(spin, 'peak_intensity'):
-                continue
-
-            # Loop over each spectrometer frequency and dispersion point.
-            for exp_type, frq, offset, point in loop_exp_frq_offset_point():
-                # The parameter key.
-                param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
-
-                # The initial parameter vector.
-                param_vector = assemble_param_vector(spins=[spin], key=param_key, sim_index=sim_index)
-
-                # Diagonal scaling.
-                scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_key, scaling=scaling)
-                if len(scaling_matrix):
-                    param_vector = dot(inv(scaling_matrix), param_vector)
-
-                # Get the grid search minimisation options.
-                lower_new, upper_new = None, None
-                if match('^[Gg]rid', min_algor):
-                    grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], spin_ids=[spin_id], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
-
-                # Linear constraints.
-                A, b = None, None
-                if constraints:
-                    A, b = linear_constraints(spins=[spin], scaling_matrix=scaling_matrix)
-
-                # Print out.
-                if verbosity >= 1:
-                    # Individual spin section.
-                    top = 2
-                    if verbosity >= 2:
-                        top += 2
-                    text = "Fitting to spin %s, frequency %s and dispersion point %s" % (spin_id, frq, point)
-                    subsection(file=sys.stdout, text=text, prespace=top)
-
-                    # Grid search printout.
-                    if match('^[Gg]rid', min_algor):
-                        print("Unconstrained grid search size: %s (constraints may decrease this size).\n" % grid_size)
-
-                # The peak intensities, errors and times.
-                values = []
-                errors = []
-                times = []
-                for time in loop_time(exp_type=exp_type, frq=frq, offset=offset, point=point):
-                    values.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, sim_index=sim_index))
-                    errors.append(average_intensity(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point, time=time, error=True))
-                    times.append(time)
-
-                # The scaling matrix in a diagonalised list form.
-                scaling_list = []
-                for i in range(len(scaling_matrix)):
-                    scaling_list.append(scaling_matrix[i, i])
-
-                # Initialise the function to minimise.
-                setup(num_params=len(param_vector), num_times=len(times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
-
-                # Grid search.
-                if search('^[Gg]rid', min_algor):
-                    results = grid(func=func, args=(), num_incs=inc_new, lower=lower_new, upper=upper_new, A=A, b=b, verbosity=verbosity)
-
-                    # Unpack the results.
-                    param_vector, chi2, iter_count, warning = results
-                    f_count = iter_count
-                    g_count = 0.0
-                    h_count = 0.0
-
-                # Minimisation.
-                else:
-                    results = generic_minimise(func=func, dfunc=dfunc, d2func=d2func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
-
-                    # Unpack the results.
-                    if results == None:
-                        return
-                    param_vector, chi2, iter_count, f_count, g_count, h_count, warning = results
-
-                # Scaling.
-                if scaling:
-                    param_vector = dot(scaling_matrix, param_vector)
-
-                # Disassemble the parameter vector.
-                disassemble_param_vector(param_vector=param_vector, spins=[spin], key=param_key, sim_index=sim_index)
-
-                # Monte Carlo minimisation statistics.
-                if sim_index != None:
-                    # Chi-squared statistic.
-                    spin.chi2_sim[sim_index] = chi2
-
-                    # Iterations.
-                    spin.iter_sim[sim_index] = iter_count
-
-                    # Function evaluations.
-                    spin.f_count_sim[sim_index] = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count_sim[sim_index] = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count_sim[sim_index] = h_count
-
-                    # Warning.
-                    spin.warning_sim[sim_index] = warning
-
-                # Normal statistics.
-                else:
-                    # Chi-squared statistic.
-                    spin.chi2 = chi2
-
-                    # Iterations.
-                    spin.iter = iter_count
-
-                    # Function evaluations.
-                    spin.f_count = f_count
-
-                    # Gradient evaluations.
-                    spin.g_count = g_count
-
-                    # Hessian evaluations.
-                    spin.h_count = h_count
-
-                    # Warning.
-                    spin.warning = warning
-
-
-    def _model_setup(self, model, params):
-        """Update various model specific data structures.
-
-        @param model:   The relaxation dispersion curve type.
-        @type model:    str
-        @param params:  A list consisting of the model parameters.
-        @type params:   list of str
-        """
-
-        # The model group.
-        if model == MODEL_R2EFF:
-            cdp.model_type = 'R2eff'
-        else:
-            cdp.model_type = 'disp'
-
-        # Loop over the sequence.
-        for spin in spin_loop(skip_desel=True):
-            # The model and parameter names.
-            spin.model = model
-            spin.params = params
-
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-
-    def _select_model(self, model=MODEL_R2EFF):
-        """Set up the model for the relaxation dispersion analysis.
-
-        @keyword model: The relaxation dispersion analysis type.
-        @type model:    str
-        """
-
-        # Data checks.
-        pipes.test()
-        check_pipe_type()
-        check_mol_res_spin_data()
-        check_exp_type()
-        if model == MODEL_R2EFF:
-            check_c_modules()
-
-        # The curve type.
-        curve_type = get_curve_type()
-
-        # R2eff/R1rho model.
-        if model == MODEL_R2EFF:
-            print("R2eff/R1rho value and error determination.")
-            if curve_type == 'exponential':
-                params = ['r2eff', 'i0']
-            else:
-                params = ['r2eff']
-
-        # The model for no chemical exchange relaxation.
-        elif model == MODEL_NOREX:
-            print("The model for no chemical exchange relaxation.")
-            params = ['r2']
-
-        # LM63 model.
-        elif model == MODEL_LM63:
-            print("The Luz and Meiboom (1963) 2-site fast exchange model.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # LM63 3-site model.
-        elif model == MODEL_LM63_3SITE:
-            print("The Luz and Meiboom (1963) 3-site fast exchange model.")
-            params = ['r2', 'phi_ex_B', 'phi_ex_C', 'kB', 'kC']
-
-        # Full CR72 model.
-        elif model == MODEL_CR72_FULL:
-            print("The full Carver and Richards (1972) 2-site model for all time scales.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced CR72 model.
-        elif model == MODEL_CR72:
-            print("The reduced Carver and Richards (1972) 2-site model for all time scales, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # IT99 model.
-        elif model == MODEL_IT99:
-            print("The Ishima and Torchia (1999) CPMG 2-site model for all time scales with pA >> pB.")
-            params = ['r2', 'pA', 'dw', 'tex']
-
-        # TSMFK01 model.
-        elif model == MODEL_TSMFK01:
-            print("The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.")
-            params = ['r2a', 'dw', 'k_AB']
-
-        # Full NS CPMG 2-site 3D model.
-        elif model == MODEL_NS_CPMG_2SITE_3D_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced NS CPMG 2-site 3D model.
-        elif model == MODEL_NS_CPMG_2SITE_3D:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # NS CPMG 2-site expanded model.
-        elif model == MODEL_NS_CPMG_2SITE_EXPANDED:
-            print("The numerical solution for the 2-site Bloch-McConnell equations for CPMG data expanded using Maple by Nikolai Skrynnikov.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # Full NS CPMG 2-site star model.
-        elif model == MODEL_NS_CPMG_2SITE_STAR_FULL:
-            print("The full numerical solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices.")
-            params = ['r2a', 'r2b', 'pA', 'dw', 'kex']
-
-        # Reduced NS CPMG 2-site star model.
-        elif model == MODEL_NS_CPMG_2SITE_STAR:
-            print("The numerical reduced solution for the 2-site Bloch-McConnell equations for CPMG data using complex conjugate matrices, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # M61 model.
-        elif model == MODEL_M61:
-            print("The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # M61 skew model.
-        elif model == MODEL_M61B:
-            print("The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # DPL94 model.
-        elif model == MODEL_DPL94:
-            print("The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.")
-            params = ['r2', 'phi_ex', 'kex']
-
-        # TP02 model.
-        elif model == MODEL_TP02:
-            print("The Trott and Palmer (2002) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # TAP03 model.
-        elif model == MODEL_TAP03:
-            print("The Trott, Abergel and Palmer (2003) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # MP05 model.
-        elif model == MODEL_MP05:
-            print("The Miloushev and Palmer (2005) off-resonance 2-site model for R1rho-type experiments.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # Reduced NS R1rho 2-site model.
-        elif model == MODEL_NS_R1RHO_2SITE:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'kex']
-
-        # NS R1rho CPMG 3-site model.
-        elif model == MODEL_NS_R1RHO_3SITE:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC', 'kex_AC']
-
-        # NS R1rho CPMG 3-site linearised model.
-        elif model == MODEL_NS_R1RHO_3SITE_LINEAR:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for R1rho data using 3D magnetisation vectors linearised with kAC = kCA = 0 whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'kex_AB', 'pB', 'dw_BC', 'kex_BC']
-
-        # MMQ CR72 model.
-        elif model == MODEL_MMQ_CR72:
-            print("The Carver and Richards (1972) 2-site model for all time scales expanded for MMQ CPMG data by Korzhnev et al., 2004.")
-            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
-
-        # NS MQ CPMG 2-site model.
-        elif model == MODEL_NS_MMQ_2SITE:
-            print("The reduced numerical solution for the 2-site Bloch-McConnell equations for MQ CPMG data using 3D magnetisation vectors, whereby the simplification R20A = R20B is assumed.")
-            params = ['r2', 'pA', 'dw', 'dwH', 'kex']
-
-        # NS MMQ CPMG 3-site model.
-        elif model == MODEL_NS_MMQ_3SITE:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG data whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC', 'kex_AC']
-
-        # NS MMQ CPMG 3-site linearised model.
-        elif model == MODEL_NS_MMQ_3SITE_LINEAR:
-            print("The numerical solution for the 3-site Bloch-McConnell equations for MMQ CPMG data linearised with kAC = kCA = 0 whereby the simplification R20A = R20B = R20C is assumed.")
-            params = ['r2', 'pA', 'dw_AB', 'dwH_AB', 'kex_AB', 'pB', 'dw_BC', 'dwH_BC', 'kex_BC']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '%s' must be one of %s." % (model, MODEL_LIST_FULL))
-
-        # Set up the model.
-        self._model_setup(model, params)
 
 
     def base_data_loop(self):
@@ -717,7 +175,7 @@ class Relax_disp(API_base, API_common):
 
         # Special exponential curve-fitting for the 'R2eff' model.
         if cdp.model_type == 'R2eff':
-            self._calculate_r2eff()
+            calculate_r2eff()
 
         # Calculate the chi-squared value.
         else:
@@ -768,7 +226,7 @@ class Relax_disp(API_base, API_common):
             spin, exp_type, frq, offset, point = data_id
 
             # Back calculate the peak intensities.
-            values = self._back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point)
+            values = back_calc_peak_intensities(spin=spin, exp_type=exp_type, frq=frq, offset=offset, point=point)
 
         # All other models (with R2eff/R1rho base data).
         else:
@@ -808,41 +266,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the MC data.
         return values
-
-
-    default_value_doc = Desc_container("Relaxation dispersion default values")
-    _table = uf_tables.add_table(label="table: dispersion default values", caption="Relaxation dispersion default values.")
-    _table.add_headings(["Data type", "Object name", "Value"])
-    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'", "15.0"])
-    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'", "15.0"])
-    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'", "15.0"])
-    _table.add_row(["Population of state A", "'pA'", "0.5"])
-    _table.add_row(["Population of state B", "'pB'", "0.5"])
-    _table.add_row(["Population of state C", "'pC'", "0.5"])
-    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'", "5.0"])
-    _table.add_row(["The pA.pB.dw**2 parameter of state B (ppm^2)", "'phi_ex_B'", "5.0"])
-    _table.add_row(["The pA.pB.dw**2 parameter of state C (ppm^2)", "'phi_ex_C'", "5.0"])
-    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'", "1.0"])
-    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'", "0.0"])
-    _table.add_row(["Chemical shift difference between states A and B for 3-site exchange (ppm)", "'dw_AB'", "0.0"])
-    _table.add_row(["Chemical shift difference between states A and C for 3-site exchange (ppm)", "'dw_AC'", "0.0"])
-    _table.add_row(["Chemical shift difference between states B and C for 3-site exchange (ppm)", "'dw_BC'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and B (ppm)", "'dwH'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and B for 3-site exchange (ppm)", "'dwH_AB'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states A and C for 3-site exchange (ppm)", "'dwH_AC'", "0.0"])
-    _table.add_row(["Proton chemical shift difference between states B and C for 3-site exchange (ppm)", "'dwH_BC'", "0.0"])
-    _table.add_row(["Exchange rate (rad/s)", "'kex'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and B for 3-site exchange (rad/s)", "'kex_AB'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and C for 3-site exchange (rad/s)", "'kex_AC'", "10000.0"])
-    _table.add_row(["Exchange rate between sites B and C for 3-site exchange (rad/s)", "'kex_BC'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and B (rad/s)", "'kB'", "10000.0"])
-    _table.add_row(["Exchange rate between sites A and C (rad/s)", "'kC'", "10000.0"])
-    _table.add_row(["Time of exchange (s/rad)", "'tex'", "1.0/10000.0"])
-    _table.add_row(["Rotating frame tilt angle", "'theta'", "0.0"])
-    _table.add_row(["Effective field in rotating frame", "'w_eff'", "0.0"])
-    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'", "10000.0"])
-    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'", "10000.0"])
-    default_value_doc.add_table(_table.label)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -1144,7 +567,7 @@ class Relax_disp(API_base, API_common):
                 raise RelaxError("The R2eff model with the fixed time period dispersion experiments cannot be optimised.")
 
             # Optimisation.
-            self._minimise_r2eff(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index, lower=lower, upper=upper, inc=inc)
+            minimise_r2eff(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iterations, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index, lower=lower, upper=upper, inc=inc)
 
             # Exit the method.
             return
@@ -1331,39 +754,6 @@ class Relax_disp(API_base, API_common):
             raise RelaxImplementError
 
 
-    return_data_name_doc =  Desc_container("Relaxation dispersion curve fitting data type string matching patterns")
-    _table = uf_tables.add_table(label="table: dispersion curve-fit data type patterns", caption="Relaxation dispersion curve fitting data type string matching patterns.")
-    _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Transversal relaxation rate (rad/s)", "'r2'"])
-    _table.add_row(["Transversal relaxation rate for state A (rad/s)", "'r2a'"])
-    _table.add_row(["Transversal relaxation rate for state B (rad/s)", "'r2b'"])
-    _table.add_row(["Population of state A", "'pA'"])
-    _table.add_row(["Population of state B", "'pB'"])
-    _table.add_row(["Population of state C", "'pC'"])
-    _table.add_row(["The pA.pB.dw**2 parameter (ppm^2)", "'phi_ex'"])
-    _table.add_row(["The pA.dw**2 parameter (ppm^2)", "'padw2'"])
-    _table.add_row(["Chemical shift difference between states A and B (ppm)", "'dw'"])
-    _table.add_row(["Chemical shift difference between states A and B for 3-site exchange (ppm)", "'dw_AB'"])
-    _table.add_row(["Chemical shift difference between states A and C for 3-site exchange (ppm)", "'dw_AC'"])
-    _table.add_row(["Chemical shift difference between states B and C for 3-site exchange (ppm)", "'dw_BC'"])
-    _table.add_row(["Proton chemical shift difference between states A and B (ppm)", "'dwH'"])
-    _table.add_row(["Proton chemical shift difference between states A and B for 3-site exchange (ppm)", "'dwH_AB'"])
-    _table.add_row(["Proton chemical shift difference between states A and C for 3-site exchange (ppm)", "'dwH_AC'"])
-    _table.add_row(["Proton chemical shift difference between states B and C for 3-site exchange (ppm)", "'dwH_BC'"])
-    _table.add_row(["Exchange rate (rad/s)", "'kex'"])
-    _table.add_row(["Exchange rate between sites A and B for 3-site exchange (rad/s)", "'kex_AB'"])
-    _table.add_row(["Exchange rate between sites A and C for 3-site exchange (rad/s)", "'kex_AC'"])
-    _table.add_row(["Exchange rate between sites B and C for 3-site exchange (rad/s)", "'kex_BC'"])
-    _table.add_row(["Exchange rate from state A to state B (rad/s)", "'k_AB'"])
-    _table.add_row(["Exchange rate from state B to state A (rad/s)", "'k_BA'"])
-    _table.add_row(["Time of exchange (s/rad)", "'tex'"])
-    _table.add_row(["Rotating frame tilt angle", "'theta'"])
-    _table.add_row(["Effective field in rotating frame", "'w_eff'"])
-    _table.add_row(["Peak intensities (series)", "'peak_intensity'"])
-    _table.add_row(["CPMG pulse train frequency (series, Hz)", "'cpmg_frqs'"])
-    return_data_name_doc.add_table(_table.label)
-
-
     def return_error(self, data_id=None):
         """Return the standard deviation data structure.
 
@@ -1406,10 +796,6 @@ class Relax_disp(API_base, API_common):
 
         # Return the error list.
         return errors
-
-
-    set_doc = Desc_container("Relaxation dispersion curve fitting set details")
-    set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
 
 
     def return_value(self, spin, param, sim=None, bc=False):
