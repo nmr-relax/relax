@@ -24,5 +24,6 @@
 
 # The available modules.
 __all__ = [
-    'api'
+    'api',
+    'uf'
 ]

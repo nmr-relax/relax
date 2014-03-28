@@ -26,5 +26,7 @@
 __all__ = [
     'api',
     'data',
-    'parameters'
+    'optimisation',
+    'parameters',
+    'uf'
 ]

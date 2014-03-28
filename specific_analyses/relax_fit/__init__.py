@@ -25,5 +25,7 @@
 # The available modules.
 __all__ = [
     'api',
+    'optimisation',
+    'parameters',
     'uf'
 ]
