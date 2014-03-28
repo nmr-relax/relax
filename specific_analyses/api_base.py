@@ -33,11 +33,26 @@ class API_base(object):
     All the methods here are prototype methods.  To identify that the method is not available for certain analysis types, if called a RelaxImplementError is raised if called.
     """
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Set up the specific objects."""
 
         # Class variables.
         self.PARAMS = Param_list()
+
+
+    def __new__(self, *args, **kargs):
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            # Create a new instance.
+            self.instance = object.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
