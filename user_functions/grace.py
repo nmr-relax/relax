@@ -36,7 +36,7 @@ from pipe_control import grace, minimise
 from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests import uf as consistency_tests_uf
 from specific_analyses.jw_mapping import uf as jw_mapping_uf
-from specific_analyses.model_free import Model_free
+from specific_analyses.model_free import uf as model_free_uf
 from specific_analyses.noe import uf as noe_uf
 from specific_analyses.relax_disp import uf as relax_disp_uf
 from specific_analyses.relax_fit import uf as relax_fit_uf
@@ -197,7 +197,7 @@ uf.desc.append(relax_disp_uf.return_data_name_doc)
 uf.desc.append(relax_fit_uf.return_data_name_doc)
 uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(consistency_tests_uf.return_data_name_doc)
-uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(model_free_uf.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To write the NOE values for all spins to the Grace file 'noe.agr', type one of:")

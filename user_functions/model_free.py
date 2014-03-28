@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,7 +28,7 @@ from os import sep
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
 from lib.text.gui import csa, local_tm, r, rex, s2, s2f, s2s, te, tf, ts
-from specific_analyses.setup import model_free_obj
+from specific_analyses.model_free.uf import create_model, delete, remove_tm, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -145,7 +145,7 @@ uf.desc[-1].add_prompt("relax> model_free.create_model(model='m1', params=['s2']
 uf.desc[-1].add_paragraph("The following commands will create the model-free model 'large_model' which is based on the extended model-free equation and contains the seven parameters 's2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'.")
 uf.desc[-1].add_prompt("relax> model_free.create_model('large_model', 'mf_ext', ['s2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'])")
 uf.desc[-1].add_prompt("relax> model_free.create_model(model='large_model', params=['s2f', 'tf', 's2', 'ts', 'rex', 'csa', 'r'], equation='mf_ext')")
-uf.backend = model_free_obj._create_model
+uf.backend = create_model
 uf.menu_text = "&create_model"
 uf.gui_icon = "oxygen.actions.list-add-relax-blue"
 uf.wizard_height_desc = 450
@@ -166,7 +166,7 @@ uf.desc[-1].add_paragraph("This will delete all of the model-free data - paramet
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To delete all model-free data, type:")
 uf.desc[-1].add_prompt("relax> model_free.delete()")
-uf.backend = model_free_obj._delete
+uf.backend = delete
 uf.menu_text = "&delete"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_size = (600, 300)
@@ -194,7 +194,7 @@ uf.desc[-1].add_paragraph("If no spin identification string is given, then the f
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following command will remove the parameter 'tm':")
 uf.desc[-1].add_prompt("relax> model_free.remove_tm()")
-uf.backend = model_free_obj._remove_tm
+uf.backend = remove_tm
 uf.menu_text = "&remove_tm"
 uf.gui_icon = "oxygen.actions.list-remove"
 uf.wizard_height_desc = 300
@@ -504,7 +504,7 @@ uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To pick model 'm1' for all selected spins, type:")
 uf.desc[-1].add_prompt("relax> model_free.select_model('m1')")
 uf.desc[-1].add_prompt("relax> model_free.select_model(model='m1')")
-uf.backend = model_free_obj._select_model
+uf.backend = select_model
 uf.menu_text = "&select_model"
 uf.gui_icon = "oxygen.actions.list-add"
 uf.wizard_height_desc = 450

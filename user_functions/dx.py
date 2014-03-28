@@ -35,7 +35,7 @@ from lib.software.opendx.execute import run
 from pipe_control import diffusion_tensor
 from pipe_control.opendx import map
 from prompt.doc_string import regexp_doc
-from specific_analyses.model_free.api import Model_free
+from specific_analyses.model_free import uf as model_free_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -203,7 +203,7 @@ uf.desc[-1].add_table(table.label)
 # Additional.
 uf.desc.append(regexp_doc)
 uf.desc.append(diffusion_tensor.__return_data_name_doc__)
-uf.desc.append(Model_free.return_data_name_doc)
+uf.desc.append(model_free_uf.return_data_name_doc)
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("The following commands will generate a map of the extended model-free space for model 'm5' consisting of the parameters {S2, S2f, ts}.  Files will be output into the directory 'dx' and will be prefixed by 'map'.  In this case, the system is a protein and residue number 6 will be mapped.")

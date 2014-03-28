@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,7 @@ import pipe_control
 from pipe_control.interatomic import define, return_interatom, return_interatom_list
 from pipe_control.mol_res_spin import create_spin, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.spectrometer import set_frequency
+from specific_analyses import model_free
 
 
 
@@ -219,7 +220,7 @@ class Results:
                     params[i] = params[i].lower()
 
             # Set up the model-free model.
-            self._model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
+            model_free.uf.model_setup(model=model, equation=equation, params=params, spin_id=spin_id)
 
         # The model type.
         model_type = spin_line[col['param_set']]
