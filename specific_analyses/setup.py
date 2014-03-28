@@ -30,7 +30,7 @@ from specific_analyses.frame_order import Frame_order
 from specific_analyses.hybrid import Hybrid
 from specific_analyses.jw_mapping.api import Jw_mapping
 from specific_analyses.model_free import Model_free
-from specific_analyses.n_state_model import N_state_model
+from specific_analyses.n_state_model.api import N_state_model
 from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
 from specific_analyses.relax_fit.api import Relax_fit

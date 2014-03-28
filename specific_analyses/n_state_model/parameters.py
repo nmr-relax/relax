@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Package docstring.
-"""Module for handling the parameters of the N-state model or structural ensemble analysis."""
+"""The N-state model or structural ensemble analysis parameter handling."""
 
 # Python module imports.
 from numpy import array, float64, identity, zeros

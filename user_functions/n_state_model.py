@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -31,8 +31,8 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
+from specific_analyses.n_state_model import uf as n_state_model_uf
 from specific_analyses.n_state_model.parameters import elim_no_prob, number_of_states, ref_domain, select_model
-from specific_analyses.setup import n_state_model_obj
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -77,7 +77,7 @@ uf.desc[-1].add_paragraph("To perform an analysis where the pivot is at the orig
 uf.desc[-1].add_prompt("relax> n_state_model.CoM(centre=[0, 0, 1])")
 uf.desc[-1].add_prompt("relax> n_state_model.CoM(centre=[0.0, 0.0, 1.0])")
 uf.desc[-1].add_prompt("relax> n_state_model.CoM(pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])")
-uf.backend = n_state_model_obj._CoM
+uf.backend = n_state_model_uf.CoM
 uf.menu_text = "Co&M"
 uf.wizard_height_desc = 350
 uf.wizard_size = (800, 600)
@@ -146,7 +146,7 @@ uf.desc[-1].add_list_element("'diff on cone'")
 uf.desc[-1].add_paragraph("The model can be selected by setting the cone type to one of these values.  The cone is represented as an isotropic cone with its axis parallel to the average pivot-CoM vector, the vertex placed at the pivot point of the domain motions, and the length of the edge of the cone equal to the pivot-CoM distance multiplied by the scaling factor.  The resultant PDB file can subsequently read into any molecular viewer.")
 uf.desc[-1].add_paragraph("There are four different types of residue within the PDB.  The pivot point is represented as as a single carbon atom of the residue 'PIV'.  The cone consists of numerous H atoms of the residue 'CON'.  The average pivot-CoM vector is presented as the residue 'AVE' with one carbon atom positioned at the pivot and the other at the head of the vector (after scaling by the scaling factor).  Finally, if Monte Carlo have been performed, there will be multiple 'MCC' residues representing the cone for each simulation, and multiple 'MCA' residues representing the varying average pivot-CoM vector for each simulation.")
 uf.desc[-1].add_paragraph("To create the diffusion in a cone PDB representation, a uniform distribution of vectors on a sphere is generated using spherical coordinates with the polar angle defined from the average pivot-CoM vector.  By incrementing the polar angle using an arccos distribution, a radial array of vectors representing latitude are created while incrementing the azimuthal angle evenly creates the longitudinal vectors.  These are all placed into the PDB file as H atoms and are all connected using PDB CONECT records.  Each H atom is connected to its two neighbours on the both the longitude and latitude.  This creates a geometric PDB object with longitudinal and latitudinal lines representing the filled cone.")
-uf.backend = n_state_model_obj._cone_pdb
+uf.backend = n_state_model_uf.cone_pdb
 uf.menu_text = "&cone_pdb"
 uf.wizard_height_desc = 480
 uf.wizard_size = (1000, 750)

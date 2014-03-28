@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,23 +20,15 @@
 ###############################################################################
 
 # Package docstring.
-"""Module for handling base data of the N-state model or structural ensemble analysis."""
+"""The N-state model or structural ensemble analysis base data handling."""
 
 # Python module imports.
-from math import pi, sqrt
 from numpy.linalg import norm
-from warnings import warn
 
 # relax module imports.
-from lib.check_types import is_float
-from lib.errors import RelaxError, RelaxNoValueError, RelaxSpinTypeError
-from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
-from lib.warnings import RelaxWarning
-from pipe_control import align_tensor
-from pipe_control.interatomic import interatomic_loop, return_interatom
-from pipe_control.pcs import opt_uses_pcs
-from pipe_control.rdc import opt_uses_rdc
-from pipe_control.mol_res_spin import is_pseudoatom, return_spin, spin_loop
+from lib.errors import RelaxError
+from pipe_control.interatomic import interatomic_loop
+from pipe_control.mol_res_spin import return_spin, spin_loop
 
 
 def base_data_types():
