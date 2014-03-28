@@ -32,7 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError, RelaxFileEmptyError
 from lib.io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from pipe_control import pipes
-from specific_analyses.model_free.results import read_columnar_results
+from specific_analyses.model_free.back_compat import read_columnar_results
 
 
 def determine_format(file):

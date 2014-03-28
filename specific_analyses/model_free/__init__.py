@@ -26,12 +26,12 @@
 # The available modules.
 __all__ = [
     'api',
+    'back_compat',
     'bmrb',
     'macro_base',
     'molmol',
     'optimisation',
     'parameters',
     'pymol',
-    'results',
     'uf'
 ]
