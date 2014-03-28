@@ -47,6 +47,9 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_
 class Relax_disp(API_base, API_common):
     """Class containing functions for relaxation dispersion curve fitting."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 

@@ -48,6 +48,9 @@ if C_module_exp_fn:
 class Relax_fit(API_base, API_common):
     """Class containing functions for relaxation curve fitting."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 

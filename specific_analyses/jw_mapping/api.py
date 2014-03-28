@@ -40,6 +40,9 @@ from target_functions.jw_mapping import Mapping
 class Jw_mapping(API_base, API_common):
     """Class containing functions specific to reduced spectral density mapping."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 

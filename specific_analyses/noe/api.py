@@ -38,6 +38,9 @@ from specific_analyses.api_common import API_common
 class Noe(API_base, API_common):
     """Specific analysis API class for the steady-state heternuclear NOE analysis."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
