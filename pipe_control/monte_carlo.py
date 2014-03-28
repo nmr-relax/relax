@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ from random import gauss
 from lib import statistics
 from lib.errors import RelaxError
 from pipe_control import pipes
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.api import return_api
 
 
 def create_data(method=None):
@@ -52,30 +52,25 @@ def create_data(method=None):
     if method not in valid_methods:
         raise RelaxError("The simulation creation method " + repr(method) + " is not valid.")
 
-    # Specific Monte Carlo data creation, data return, and error return function setup.
-    base_data_loop = get_specific_fn('base_data_loop', cdp.pipe_type)
-    if method == 'back_calc':
-        create_mc_data = get_specific_fn('create_mc_data', cdp.pipe_type)
-    return_data = get_specific_fn('return_data', cdp.pipe_type)
-    return_error = get_specific_fn('return_error', cdp.pipe_type)
-    pack_sim_data = get_specific_fn('pack_sim_data', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Loop over the models.
-    for data_index in base_data_loop():
+    for data_index in api.base_data_loop():
         # Create the Monte Carlo data.
         if method == 'back_calc':
-            data = create_mc_data(data_index)
+            data = api.create_mc_data(data_index)
 
         # Get the original data.
         else:
-            data = return_data(data_index)
+            data = api.return_data(data_index)
 
         # No data, so skip.
         if data == None:
             continue
 
         # Get the errors.
-        error = return_error(data_index)
+        error = api.return_error(data_index)
 
         # List type data.
         if isinstance(data, list) or isinstance(data, ndarray):
@@ -110,7 +105,7 @@ def create_data(method=None):
                     random[j][id] = gauss(data[id], error[id])
 
         # Pack the simulation data.
-        pack_sim_data(data_index, random)
+        api.sim_pack_data(data_index, random)
 
 
 def error_analysis():
@@ -137,22 +132,19 @@ def error_analysis():
     if not hasattr(cdp, 'sim_state'):
         raise RelaxError("Monte Carlo simulations have not been set up.")
 
-    # Model loop, return simulation chi2 array, return selected simulation array, return simulation parameter array, and set error functions.
-    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
-    return_selected_sim = get_specific_fn('return_selected_sim', cdp.pipe_type)
-    return_sim_param = get_specific_fn('return_sim_param', cdp.pipe_type)
-    set_error = get_specific_fn('set_error', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Loop over the models.
-    for model_info in model_loop():
+    for model_info in api.model_loop():
         # Get the selected simulation array.
-        select_sim = return_selected_sim(model_info)
+        select_sim = api.sim_return_selected(model_info)
 
         # Loop over the parameters.
         index = 0
         while True:
             # Get the array of simulation parameters for the index.
-            param_array = return_sim_param(model_info, index)
+            param_array = api.sim_return_param(model_info, index)
 
             # Break (no more parameters).
             if param_array == None:
@@ -197,7 +189,7 @@ def error_analysis():
                 sd = None
 
             # Set the parameter error.
-            set_error(model_info, index, sd)
+            api.set_error(model_info, index, sd)
 
             # Increment the parameter index.
             index = index + 1
@@ -216,11 +208,11 @@ def initial_values():
     if not hasattr(cdp, 'sim_state'):
         raise RelaxError("Monte Carlo simulations have not been set up.")
 
-    # Specific initial Monte Carlo parameter value function setup.
-    init_sim_values = get_specific_fn('init_sim_values', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Set the initial parameter values.
-    init_sim_values()
+    api.sim_init_values()
 
 
 def off():
@@ -262,10 +254,8 @@ def select_all_sims(number=None, all_select_sim=None):
     @type all_select_sim:       list of lists of bool
     """
 
-    # Model loop and set the selected simulation array functions.
-    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
-    set_selected_sim = get_specific_fn('set_selected_sim', cdp.pipe_type)
-    skip_function = get_specific_fn('skip_function', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Create the selected simulation array with all simulations selected.
     if all_select_sim == None:
@@ -273,9 +263,9 @@ def select_all_sims(number=None, all_select_sim=None):
 
     # Loop over the models.
     i = 0
-    for model_info in model_loop():
+    for model_info in api.model_loop():
         # Skip function.
-        if skip_function(model_info):
+        if api.skip_function(model_info):
             continue
 
         # Set up the selected simulation array.
@@ -283,7 +273,7 @@ def select_all_sims(number=None, all_select_sim=None):
             select_sim = all_select_sim[i]
 
         # Set the selected simulation array.
-        set_selected_sim(model_info, select_sim)
+        api.set_selected_sim(model_info, select_sim)
 
         # Model index.
         i += 1

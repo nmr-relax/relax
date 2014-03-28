@@ -56,7 +56,7 @@ from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
@@ -792,7 +792,8 @@ class Auto_model_free(Base_analysis):
         """
 
         # Get the default value.
-        val = get_specific_fn('default_value')('csa')
+        api = return_api()
+        val = api.default_value('csa')
 
         # Call the user function.
         uf_store['value.set'](val=val, param='csa', spin_id='@N*')

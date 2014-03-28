@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,8 +36,11 @@ from random import uniform
 
 # relax imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.setup import n_state_model_obj
+from specific_analyses.api import return_api
 
+
+# The specific analysis API object.
+api = return_api()
 
 # Loop over random positions.
 for rand_index in range(200):
@@ -79,7 +82,7 @@ for rand_index in range(200):
     minimise('bfgs', constraints=True)
 
     # Calculate the AIC value.
-    k, n, chi2 = n_state_model_obj.model_statistics()
+    k, n, chi2 = api.model_statistics()
     ds[ds.current_pipe].aic = chi2 + 2.0*k
 
     # Write out a results file.

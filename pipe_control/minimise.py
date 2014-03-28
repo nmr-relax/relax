@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,7 +30,7 @@ from lib.errors import RelaxError
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
-import specific_analyses
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
@@ -47,12 +47,11 @@ def calc(verbosity=1):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Specific calculate function setup.
-    calculate = specific_analyses.setup.get_specific_fn('calculate', cdp.pipe_type)
-    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Deselect spins lacking data:
-    overfit_deselect()
+    api.overfit_deselect()
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
@@ -69,7 +68,7 @@ def calc(verbosity=1):
                 status.mc_number = i
 
             # Calculation.
-            calculate(verbosity=verbosity-1, sim_index=i)
+            api.calculate(verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -83,7 +82,7 @@ def calc(verbosity=1):
 
     # Minimisation.
     else:
-        calculate(verbosity=verbosity)
+        api.calculate(verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
@@ -113,12 +112,11 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Specific grid search function.
-    grid_search = specific_analyses.setup.get_specific_fn('grid_search', cdp.pipe_type)
-    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Deselect spins lacking data:
-    overfit_deselect()
+    api.overfit_deselect()
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
@@ -135,7 +133,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 status.mc_number = i
 
             # Optimisation.
-            grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+            api.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -149,7 +147,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
 
     # Grid search.
     else:
-        grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+        api.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
@@ -190,8 +188,8 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
         min_options = [min_algor]
 
         # Determine the constraint algorithm to use.
-        fn = specific_analyses.setup.get_specific_fn('constraint_algorithm', cdp.pipe_type)
-        min_algor = fn()
+        api = return_api()
+        min_algor = api.constraint_algorithm()
     else:
         min_options = []
     if line_search != None:
@@ -202,12 +200,11 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
         min_options.append(hessian_type)
     min_options = tuple(min_options)
 
-    # Specific minimisation function.
-    minimise = specific_analyses.setup.get_specific_fn('minimise', cdp.pipe_type)
-    overfit_deselect = specific_analyses.setup.get_specific_fn('overfit_deselect', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Deselect spins lacking data:
-    overfit_deselect()
+    api.overfit_deselect()
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
@@ -215,7 +212,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Single Monte Carlo simulation.
     if sim_index != None:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
+        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
@@ -227,7 +224,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
                 status.mc_number = i
 
             # Optimisation.
-            minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+            api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -241,7 +238,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Standard minimisation.
     else:
-        minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
+        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()

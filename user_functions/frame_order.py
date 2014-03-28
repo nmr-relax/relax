@@ -31,9 +31,14 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
+from specific_analyses.api import return_api
 from specific_analyses.frame_order.user_functions import average_position, num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+
+
+# The frame order API object.
+frame_order_obj = return_api('frame order')
 
 
 # The user function class.

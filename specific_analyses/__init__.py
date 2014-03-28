@@ -20,20 +20,21 @@
 ###############################################################################
 
 # Package docstring.
-"""Package of analysis specific code."""
+"""Package for the specific analysis API."""
 
 # The available modules.
-__all__ = [ 'api_base',
-            'api_common',
-            'api_objects',
-            'consistency_tests',
-            'frame_order',
-            'hybrid',
-            'jw_mapping',
-            'model_free',
-            'n_state_model',
-            'noe',
-            'relax_disp',
-            'relax_fit',
-            'setup'
+__all__ = [
+    'api',
+    'api_base',
+    'api_common',
+    'api_objects',
+    'consistency_tests',
+    'frame_order',
+    'hybrid',
+    'jw_mapping',
+    'model_free',
+    'n_state_model',
+    'noe',
+    'relax_disp',
+    'relax_fit'
 ]

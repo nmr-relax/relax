@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,8 +35,11 @@ from re import search
 
 # relax imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
-from specific_analyses.setup import n_state_model_obj
+from specific_analyses.api import return_api
 
+
+# The specific analysis API object.
+api = return_api()
 
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
@@ -131,7 +134,7 @@ n_state_model.select_model(model='fixed')
 minimise('newton')
 
 # Calculate the AIC value.
-k, n, chi2 = n_state_model_obj.model_statistics()
+k, n, chi2 = api.model_statistics()
 ds[ds.current_pipe].aic = chi2 + 2.0*k
 
 # Write out a results file.
@@ -152,7 +155,7 @@ for j in range(NUM_STR):
 minimise('bfgs', constraints=True)
 
 # Calculate the AIC value.
-k, n, chi2 = n_state_model_obj.model_statistics()
+k, n, chi2 = api.model_statistics()
 ds[ds.current_pipe].aic = chi2 + 2.0*k
 
 # Write out a results file.

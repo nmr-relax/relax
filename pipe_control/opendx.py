@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,7 +34,7 @@ from lib.software.opendx.files import write_config, write_general, write_point, 
 from pipe_control import diffusion_tensor
 from pipe_control import pipes
 from pipe_control import value
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.api import return_api
 
 
 def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
@@ -113,17 +113,20 @@ class Map:
         self.point_file = point_file
         self.remap = remap
 
-        # Specific function setup.
-        self.calculate = get_specific_fn('calculate', cdp.pipe_type)
-        self.model_stats = get_specific_fn('model_stats', cdp.pipe_type)
-        self.return_data_name = get_specific_fn('return_data_name', cdp.pipe_type)
+        # The specific analysis API object.
+        api = return_api()
+
+        # Alias the specific functions.
+        self.calculate = api.calculate
+        self.model_statistics = api.model_statistics
+        self.return_data_name = api.return_data_name
         self.map_bounds = []
         self.return_conversion_factor = []
         self.return_units = []
         for i in range(self.n):
-            self.map_bounds.append(get_specific_fn('map_bounds', cdp.pipe_type))
-            self.return_conversion_factor.append(get_specific_fn('return_conversion_factor', cdp.pipe_type))
-            self.return_units.append(get_specific_fn('return_units', cdp.pipe_type))
+            self.map_bounds.append(api.map_bounds)
+            self.return_conversion_factor.append(api.return_conversion_factor)
+            self.return_units.append(api.return_units)
 
         # Diffusion tensor parameter flag.
         self.diff_params = zeros(self.n)
@@ -296,9 +299,9 @@ class Map:
 
                     # Get the minimisation statistics for the model.
                     if self.spin_id:
-                        k, n, chi2 = self.model_stats(spin_id=self.spin_id)
+                        k, n, chi2 = self.model_statistics(spin_id=self.spin_id)
                     else:
-                        k, n, chi2 = self.model_stats(model_info=0)
+                        k, n, chi2 = self.model_statistics(model_info=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if chi2 > 1e20:

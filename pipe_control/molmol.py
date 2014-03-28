@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -38,7 +38,7 @@ from lib.io import get_file_path, open_read_file, open_write_file, test_binary
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control import pipes
 from pipe_control.result_files import add_result_file
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
@@ -224,11 +224,9 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     @rtype:                 list of str
     """
 
-    # Specific Molmol macro creation function.
-    macro = get_specific_fn('molmol_macro', cdp.pipe_type)
-
-    # Get the macro.
-    commands = macro(data_type, style, colour_start, colour_end, colour_list)
+    # Get the specific macro.
+    api = return_api()
+    commands = api.molmol_macro(data_type, style, colour_start, colour_end, colour_list)
 
     # Return the macro commands.
     return commands

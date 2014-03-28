@@ -33,7 +33,7 @@ from lib.io import get_file_path, open_write_file, read_spin_data, write_spin_da
 from pipe_control import minimise, pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id_unique, spin_loop
 from pipe_control.result_files import add_result_file
-import specific_analyses
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
@@ -67,13 +67,13 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     if not exists_mol_res_spin_data(pipe_to):
         raise RelaxNoSequenceError(pipe_to)
 
-    # Specific value and error returning function.
-    return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type(pipe_from))
+    # The specific analysis API object.
+    api = return_api(pipe_name=pipe_from)
 
     # Test if the data exists for pipe_to.
     for spin in spin_loop(pipe=pipe_to):
         # Get the value and error for pipe_to.
-        value, error = return_value(spin, param)
+        value, error = api.return_value(spin, param)
 
         # Data exists.
         if value != None or error != None:
@@ -85,7 +85,7 @@ def copy(pipe_from=None, pipe_to=None, param=None):
     # Copy the values.
     for spin, spin_id in spin_loop(pipe=pipe_from, return_id=True):
         # Get the value and error from pipe_from.
-        value, error = return_value(spin, param)
+        value, error = api.return_value(spin, param)
 
         # Set the values of pipe_to.
         if value != None:
@@ -131,15 +131,18 @@ def get_parameters():
     if cdp == None:
         return []
 
-    # Get the specific functions.
-    data_names = specific_analyses.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
-    return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
+    # The specific analysis API object.
+    api = return_api()
+
+    # Return an empty list if the required functions are absent.
+    if not hasattr(api, 'data_names') or not hasattr(api, 'return_data_desc'):
+        return []
 
     # Loop over the parameters.
     params = []
-    for name in (data_names(set='params') + data_names(set='generic') + data_names(set='min')):
+    for name in (api.data_names(set='params') + api.data_names(set='generic') + api.data_names(set='min')):
         # Get the description.
-        desc = return_data_desc(name)
+        desc = api.return_data_desc(name)
 
         # No description.
         if not desc:
@@ -171,8 +174,8 @@ def partition_params(val, param):
     @rtype:         tuple of 4 lists
     """
 
-    # Specific functions.
-    is_spin_param = specific_analyses.setup.get_specific_fn('is_spin_param', pipes.get_type())
+    # The specific analysis API object.
+    api = return_api()
 
     # Initialise.
     spin_params = []
@@ -183,7 +186,7 @@ def partition_params(val, param):
     # Single parameter.
     if isinstance(param, str):
         # Spin specific parameter.
-        if is_spin_param(param):
+        if api.is_spin_param(param):
             params = spin_params
             values = spin_values
 
@@ -214,7 +217,7 @@ def partition_params(val, param):
         # Loop over all parameters.
         for i in range(len(param)):
             # Spin specific parameter.
-            if is_spin_param(param[i]):
+            if api.is_spin_param(param[i]):
                 params = spin_params
                 values = spin_values
 
@@ -295,8 +298,9 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         # Minimisation statistic flag.
         min_stat = False
 
-        # Specific v
-        return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type())
+        # Alias specific analysis API object method.
+        api = return_api()
+        return_value = api.return_value
 
         # Specific set function.                                                           
         set_fn = set
@@ -381,11 +385,8 @@ def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, 
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Specific functions.
-    default_value = specific_analyses.setup.get_specific_fn('default_value', pipes.get_type())
-    get_param_names = specific_analyses.setup.get_specific_fn('get_param_names', pipes.get_type())
-    return_data_name = specific_analyses.setup.get_specific_fn('return_data_name', pipes.get_type())
-    set_param_values = specific_analyses.setup.get_specific_fn('set_param_values', pipes.get_type())
+    # The specific analysis API object.
+    api = return_api()
 
     # Convert numpy arrays to lists, if necessary.
     if isinstance(val, ndarray):
@@ -403,7 +404,7 @@ def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, 
 
     # Get the parameter list if needed.
     if param == None:
-        param = get_param_names()
+        param = api.get_param_names()
 
     # Convert the param to a list if needed.
     if not isinstance(param, list):
@@ -418,14 +419,14 @@ def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, 
         # Loop over the parameters, getting the default values.
         val = []
         for i in range(len(param)):
-            val.append(default_value(return_data_name(param[i])))
+            val.append(api.default_value(api.return_data_name(param[i])))
 
             # Check that there is a default.
             if val[-1] == None:
                 raise RelaxParamSetError(param[i])
 
     # Set the parameter values.
-    set_param_values(param=param, value=val, spin_id=spin_id, error=error, force=force)
+    api.set_param_values(param=param, value=val, spin_id=spin_id, error=error, force=force)
 
     # Reset all minimisation statistics.
     if reset:
@@ -499,11 +500,14 @@ def write_data(param=None, file=None, scaling=1.0, bc=False, return_value=None, 
     @type comment:              str
     """
 
+    # The specific analysis API object.
+    api = return_api()
+
     # Get the value and error returning function parameter description function if required.
     if not return_value:
-        return_value = specific_analyses.setup.get_specific_fn('return_value', pipes.get_type())
+        return_value = api.return_value
     if not return_data_desc:
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipes.get_type())
+        return_data_desc = api.return_data_desc
 
     # Format string.
     format = "%-30s%-30s"

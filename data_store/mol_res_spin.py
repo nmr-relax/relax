@@ -316,9 +316,8 @@ class SpinList(list):
         @type pipe_type:    str
         """
 
-        # Get the specific functions.
-        data_names = specific_analyses.setup.get_specific_fn('data_names', pipe_type, raise_error=False)
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', pipe_type, raise_error=False)
+        # The specific analysis API object.
+        api = specific_analyses.api.return_api(analysis_type=pipe_type)
 
         # Loop over the spins.
         for i in range(len(self)):
@@ -334,10 +333,10 @@ class SpinList(list):
             # Get the spin specific object names and loop over them to get their descriptions.
             object_info = []
             try:
-                for name in data_names(error_names=True, sim_names=True):
+                for name in api.data_names(error_names=True, sim_names=True):
                     # Get the description.
-                    if return_data_desc:
-                        desc = return_data_desc(name)
+                    if hasattr(api, 'return_data_desc'):
+                        desc = api.return_data_desc(name)
                     else:
                         desc = None
 

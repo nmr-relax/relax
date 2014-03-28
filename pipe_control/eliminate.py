@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,8 +25,7 @@
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control import pipes
-from specific_analyses.setup import get_specific_fn
-
+from specific_analyses.api import return_api
 
 
 def eliminate(function=None, args=None):
@@ -46,12 +45,8 @@ def eliminate(function=None, args=None):
     # Test if the current data pipe exists.
     pipes.test()
 
-    # Specific eliminate, parameter names, parameter values, number of instances, and deselect function setup.
-    eliminate = get_specific_fn('eliminate', cdp.pipe_type)
-    model_loop = get_specific_fn('model_loop', cdp.pipe_type)
-    get_param_names = get_specific_fn('get_param_names', cdp.pipe_type)
-    get_param_values = get_specific_fn('get_param_values', cdp.pipe_type)
-    deselect = get_specific_fn('deselect', cdp.pipe_type)
+    # The specific analysis API object.
+    api = return_api()
 
     # Determine if simulations are active.
     if hasattr(cdp, 'sim_state') and cdp.sim_state == True:
@@ -61,14 +56,14 @@ def eliminate(function=None, args=None):
 
 
     # Get the number of instances and loop over them.
-    for model_info in model_loop():
+    for model_info in api.model_loop():
         # Model elimination.
         ####################
 
         if not sim_state:
             # Get the parameter names and values.
-            names = get_param_names(model_info)
-            values = get_param_values(model_info)
+            names = api.get_param_names(model_info)
+            values = api.get_param_values(model_info)
 
             # No data.
             if names == None or values == None:
@@ -82,12 +77,12 @@ def eliminate(function=None, args=None):
             flag = False
             for j in range(len(names)):
                 # Eliminate function.
-                if eliminate(names[j], values[j], model_info, args):
+                if api.eliminate(names[j], values[j], model_info, args):
                     flag = True
 
             # Deselect.
             if flag:
-                deselect(model_info)
+                api.deselect(model_info)
 
 
         # Simulation elimination.
@@ -97,8 +92,8 @@ def eliminate(function=None, args=None):
             # Loop over the simulations.
             for j in range(cdp.sim_number):
                 # Get the parameter names and values.
-                names = get_param_names(model_info)
-                values = get_param_values(model_info, sim_index=j)
+                names = api.get_param_names(model_info)
+                values = api.get_param_values(model_info, sim_index=j)
 
                 # No data.
                 if names == None or values == None:
@@ -112,9 +107,9 @@ def eliminate(function=None, args=None):
                 flag = False
                 for k in range(len(names)):
                     # Eliminate function.
-                    if eliminate(names[k], values[k], model_info, args, sim=j):
+                    if api.eliminate(names[k], values[k], model_info, args, sim=j):
                         flag = True
 
                 # Deselect.
                 if flag:
-                    deselect(model_info, sim_index=j)
+                    api.deselect(model_info, sim_index=j)

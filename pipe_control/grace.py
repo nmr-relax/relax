@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import count_molecules, count_residues, count_spi
 from pipe_control import pipes
 from pipe_control.result_files import add_result_file
 from pipe_control.plotting import assemble_data
-import specific_analyses
+from specific_analyses.api import return_api
 from status import Status; status = Status()
 
 
@@ -66,9 +66,8 @@ def axis_setup(data_type=None, norm=True):
             # Flag for making labels.
             analysis_spec = True
 
-            # Specific value and error, conversion factor, and units returning functions.
-            return_units = specific_analyses.setup.get_specific_fn('return_units', pipes.get_type())
-            return_grace_string = specific_analyses.setup.get_specific_fn('return_grace_string', pipes.get_type())
+            # The specific analysis API object.
+            api = return_api()
 
             # Test if the axis data type is a minimisation statistic.
             if data_type[i] and data_type[i] != 'res_num' and pipe_control.minimise.return_data_name(data_type[i]):
@@ -100,10 +99,10 @@ def axis_setup(data_type=None, norm=True):
             # Label.
             if analysis_spec and not axis_labels[i]:
                 # Get the units.
-                units = return_units(data_type[i])
+                units = api.return_units(data_type[i])
 
                 # Set the label.
-                axis_labels[i] = return_grace_string(data_type[i])
+                axis_labels[i] = api.return_grace_string(data_type[i])
 
                 # Add units.
                 if units:
@@ -152,25 +151,25 @@ def get_data_types():
     @rtype:     list of list of str
     """
 
-    # Get the specific functions (return an empty list if a RelaxError occurs).
-    try:
-        data_names = specific_analyses.setup.get_specific_fn('data_names', cdp.pipe_type, raise_error=False)
-        return_data_desc = specific_analyses.setup.get_specific_fn('return_data_desc', cdp.pipe_type, raise_error=False)
-    except:
+    # The specific analysis API object.
+    api = return_api()
+
+    # Return an empty list if the required functions are absent.
+    if not hasattr(api, 'data_names') or not hasattr(api, 'return_data_desc'):
         return []
 
     # The data names, if they exist.
-    names = data_names(set='params')
+    names = api.data_names(set='params')
 
     # Initialise the list and then add the sequence data.
     data = []
     data.append(["Spin sequence", 'spin'])
 
     # Loop over the parameters.
-    for name in (data_names(set='params') + data_names(set='generic') + data_names(set='min')):
+    for name in (api.data_names(set='params') + api.data_names(set='generic') + api.data_names(set='min')):
         # Get the description.
         try:
-            desc = return_data_desc(name)
+            desc = api.return_data_desc(name)
         except:
             return []
 
