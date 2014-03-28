@@ -29,7 +29,7 @@ from specific_analyses.consistency_tests.api import Consistency_tests
 from specific_analyses.frame_order.api import Frame_order
 from specific_analyses.hybrid import Hybrid
 from specific_analyses.jw_mapping.api import Jw_mapping
-from specific_analyses.model_free import Model_free
+from specific_analyses.model_free.api import Model_free
 from specific_analyses.n_state_model.api import N_state_model
 from specific_analyses.noe.api import Noe
 from specific_analyses.relax_disp.api import Relax_disp
@@ -177,10 +177,6 @@ def get_specific_fn(eqi, function_type=None, raise_error=True):
         # Pymol macro creation.
         if eqi == 'pymol_macro':
             function = inst.pymol_macro
-
-        # Read results file function (Columnar format).
-        if eqi == 'read_columnar_results':
-            function = inst.read_columnar_results
 
         # Read results file function (XML format).
         #if eqi == 'read_xml_results':

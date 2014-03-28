@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2007 Gary S Thompson (https://gna.org/users/varioustoxins)    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,458 +21,105 @@
 ###############################################################################
 
 # Module docstring.
-"""The main methods of the specific API for model-free analysis."""
+"""The Lipari-Szabo model-free analysis API object."""
+
 
 # Python module imports.
+import bmrblib
 from copy import deepcopy
 from math import pi
-from numpy import float64, array, identity, zeros
+from minfx.grid import grid_split
+from numpy import array, dot, float64, int32, zeros
+from numpy.linalg import inv
 from re import match, search
+import string
 from types import MethodType
 from warnings import warn
 
 # relax module imports.
-import lib.arg_check
-from lib.errors import RelaxError, RelaxFault, RelaxFuncSetupError, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError, RelaxTensorError
+from lib.arg_check import is_num_list, is_str_list
+from lib.errors import RelaxError, RelaxFault, RelaxNoModelError, RelaxNoSequenceError, RelaxNoTensorError
 from lib.float import isInf
+from lib.physical_constants import N15_CSA, h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning, RelaxWarning
-from pipe_control import diffusion_tensor, interatomic, pipes, sequence
-from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, return_spin, return_spin_from_index, return_spin_indices, spin_loop
-import specific_analyses
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
-
-
-
-class Model_free_main:
-    """Class containing functions specific to model-free analysis."""
-
-    default_value_doc = Desc_container("Model-free default values")
-    _table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
-    _table.add_headings(["Data type", "Object name", "Value"])
-    _table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
-    _table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
-    _table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
-    _table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
-    _table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
-    _table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-    _table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-    default_value_doc.add_table(_table.label)
-
-    return_data_name_doc = Desc_container("Model-free data type string matching patterns")
-    _table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
-    _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Local tm", "'local_tm'"])
-    _table.add_row(["Order parameter S2", "'s2'"])
-    _table.add_row(["Order parameter S2f", "'s2f'"])
-    _table.add_row(["Order parameter S2s", "'s2s'"])
-    _table.add_row(["Correlation time te", "'te'"])
-    _table.add_row(["Correlation time tf", "'tf'"])
-    _table.add_row(["Correlation time ts", "'ts'"])
-    _table.add_row(["Chemical exchange", "'rex'"])
-    _table.add_row(["CSA", "'csa'"])
-    return_data_name_doc.add_table(_table.label)
-
-    set_doc = Desc_container("Model-free set details")
-    set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
-    set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
-    set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
-    set_doc.add_paragraph("where:")
-    set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
-    set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
-    set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
-
-    write_doc = Desc_container("Model-free parameter writing details")
-    write_doc.add_paragraph("For the model-free theory, it is assumed that Rex values are scaled quadratically with field strength.  The values will seem quite small as they will be written out as a field strength independent value.  Hence please use the following formula to convert the value to that expected for a given magnetic field strength:")
-    write_doc.add_verbatim("    Rex = value * (2.0 * pi * frequency) ** 2")
-    write_doc.add_paragraph("The frequency is that of the proton in Hertz.")
-
-
-    def _are_mf_params_set(self, spin):
-        """Test if the model-free parameter values are set.
-
-        @param spin:    The spin container object.
-        @type spin:     SpinContainer instance
-        @return:        The name of the first parameter in the parameter list in which the
-                        corresponding parameter value is None.  If all parameters are set, then None
-                        is returned.
-        @rtype:         str or None
-        """
-
-        # Deselected residue.
-        if spin.select == 0:
-            return
-
-        # Loop over the model-free parameters.
-        for j in range(len(spin.params)):
-            # Local tm.
-            if spin.params[j] == 'local_tm' and spin.local_tm == None:
-                return spin.params[j]
-
-            # S2.
-            elif spin.params[j] == 's2' and spin.s2 == None:
-                return spin.params[j]
-
-            # S2f.
-            elif spin.params[j] == 's2f' and spin.s2f == None:
-                return spin.params[j]
-
-            # S2s.
-            elif spin.params[j] == 's2s' and spin.s2s == None:
-                return spin.params[j]
-
-            # te.
-            elif spin.params[j] == 'te' and spin.te == None:
-                return spin.params[j]
-
-            # tf.
-            elif spin.params[j] == 'tf' and spin.tf == None:
-                return spin.params[j]
-
-            # ts.
-            elif spin.params[j] == 'ts' and spin.ts == None:
-                return spin.params[j]
-
-            # Rex.
-            elif spin.params[j] == 'rex' and spin.rex == None:
-                return spin.params[j]
-
-            # r.
-            elif spin.params[j] == 'r' and spin.r == None:
-                return spin.params[j]
-
-            # CSA.
-            elif spin.params[j] == 'csa' and spin.csa == None:
-                return spin.params[j]
-
-
-    def _assemble_param_names(self, model_type, spin_id=None):
-        """Function for assembling a list of all the model parameter names.
-
-        @param model_type:  The model-free model type.  This must be one of 'mf', 'local_tm',
-                            'diff', or 'all'.
-        @type model_type:   str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
-        @return:            A list containing all the parameters of the model-free model.
-        @rtype:             list of str
-        """
-
-        # Initialise.
-        param_names = []
-
-        # Diffusion tensor parameters.
-        if model_type == 'diff' or model_type == 'all':
-            # Spherical diffusion.
-            if cdp.diff_tensor.type == 'sphere':
-                param_names.append('tm')
-
-            # Spheroidal diffusion.
-            elif cdp.diff_tensor.type == 'spheroid':
-                param_names.append('tm')
-                param_names.append('Da')
-                param_names.append('theta')
-                param_names.append('phi')
-
-            # Ellipsoidal diffusion.
-            elif cdp.diff_tensor.type == 'ellipsoid':
-                param_names.append('tm')
-                param_names.append('Da')
-                param_names.append('Dr')
-                param_names.append('alpha')
-                param_names.append('beta')
-                param_names.append('gamma')
-
-        # Model-free parameters (spin specific parameters).
-        if model_type != 'diff':
-            # Loop over the spins.
-            for spin in spin_loop(spin_id):
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Add the spin specific model-free parameters.
-                param_names = param_names + spin.params
-
-        # Return the parameter names.
-        return param_names
-
-
-    def _assemble_param_vector(self, spin=None, spin_id=None, sim_index=None, model_type=None):
-        """Assemble the model-free parameter vector (as numpy array).
-
-        If the spin argument is supplied, then the spin_id argument will be ignored.
-
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword spin_id:       The spin identification string.
-        @type spin_id:          str
-        @keyword sim_index:     The optional MC simulation index.
-        @type sim_index:        int
-        @keyword model_type:    The optional model type, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type model_type:       str or None
-        @return:                An array of the parameter values of the model-free model.
-        @rtype:                 numpy array
-        """
-
-        # Initialise.
-        param_vector = []
-
-        # Determine the model type.
-        if not model_type:
-            model_type = self._determine_model_type()
-
-        # Diffusion tensor parameters.
-        if model_type == 'diff' or model_type == 'all':
-            # Normal parameters.
-            if sim_index == None:
-                # Spherical diffusion.
-                if cdp.diff_tensor.type == 'sphere':
-                    param_vector.append(cdp.diff_tensor.tm)
-
-                # Spheroidal diffusion.
-                elif cdp.diff_tensor.type == 'spheroid':
-                    param_vector.append(cdp.diff_tensor.tm)
-                    param_vector.append(cdp.diff_tensor.Da)
-                    param_vector.append(cdp.diff_tensor.theta)
-                    param_vector.append(cdp.diff_tensor.phi)
-
-                # Ellipsoidal diffusion.
-                elif cdp.diff_tensor.type == 'ellipsoid':
-                    param_vector.append(cdp.diff_tensor.tm)
-                    param_vector.append(cdp.diff_tensor.Da)
-                    param_vector.append(cdp.diff_tensor.Dr)
-                    param_vector.append(cdp.diff_tensor.alpha)
-                    param_vector.append(cdp.diff_tensor.beta)
-                    param_vector.append(cdp.diff_tensor.gamma)
-
-            # Monte Carlo diffusion tensor parameters.
-            else:
-                # Spherical diffusion.
-                if cdp.diff_tensor.type == 'sphere':
-                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
-
-                # Spheroidal diffusion.
-                elif cdp.diff_tensor.type == 'spheroid':
-                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.Da_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.theta_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.phi_sim[sim_index])
-
-                # Ellipsoidal diffusion.
-                elif cdp.diff_tensor.type == 'ellipsoid':
-                    param_vector.append(cdp.diff_tensor.tm_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.Da_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.Dr_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.alpha_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.beta_sim[sim_index])
-                    param_vector.append(cdp.diff_tensor.gamma_sim[sim_index])
-
-        # Model-free parameters (spin specific parameters).
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Skip spins with no parameters.
-                if not hasattr(spin, 'params'):
-                    continue
-
-                # Loop over the model-free parameters.
-                for i in range(len(spin.params)):
-                    # local tm.
-                    if spin.params[i] == 'local_tm':
-                        if sim_index == None:
-                            param_vector.append(spin.local_tm)
-                        else:
-                            param_vector.append(spin.local_tm_sim[sim_index])
-
-                    # S2.
-                    elif spin.params[i] == 's2':
-                        if sim_index == None:
-                            param_vector.append(spin.s2)
-                        else:
-                            param_vector.append(spin.s2_sim[sim_index])
-
-                    # S2f.
-                    elif spin.params[i] == 's2f':
-                        if sim_index == None:
-                            param_vector.append(spin.s2f)
-                        else:
-                            param_vector.append(spin.s2f_sim[sim_index])
-
-                    # S2s.
-                    elif spin.params[i] == 's2s':
-                        if sim_index == None:
-                            param_vector.append(spin.s2s)
-                        else:
-                            param_vector.append(spin.s2s_sim[sim_index])
-
-                    # te.
-                    elif spin.params[i] == 'te':
-                        if sim_index == None:
-                            param_vector.append(spin.te)
-                        else:
-                            param_vector.append(spin.te_sim[sim_index])
-
-                    # tf.
-                    elif spin.params[i] == 'tf':
-                        if sim_index == None:
-                            param_vector.append(spin.tf)
-                        else:
-                            param_vector.append(spin.tf_sim[sim_index])
-
-                    # ts.
-                    elif spin.params[i] == 'ts':
-                        if sim_index == None:
-                            param_vector.append(spin.ts)
-                        else:
-                            param_vector.append(spin.ts_sim[sim_index])
-
-                    # Rex.
-                    elif spin.params[i] == 'rex':
-                        if sim_index == None:
-                            param_vector.append(spin.rex)
-                        else:
-                            param_vector.append(spin.rex_sim[sim_index])
-
-                    # r.
-                    elif spin.params[i] == 'r':
-                        if sim_index == None:
-                            param_vector.append(spin.r)
-                        else:
-                            param_vector.append(spin.r_sim[sim_index])
-
-                    # CSA.
-                    elif spin.params[i] == 'csa':
-                        if sim_index == None:
-                            param_vector.append(spin.csa)
-                        else:
-                            param_vector.append(spin.csa_sim[sim_index])
-
-                    # Unknown parameter.
-                    else:
-                        raise RelaxError("Unknown parameter.")
-
-        # Replace all instances of None with 0.0 to allow the list to be converted to a numpy array.
-        for i in range(len(param_vector)):
-            if param_vector[i] == None:
-                param_vector[i] = 0.0
-
-        # Return a numpy array.
-        return array(param_vector, float64)
-
-
-    def _assemble_scaling_matrix(self, num_params, model_type=None, spin=None, spin_id=None, scaling=True):
-        """Create and return the scaling matrix.
-
-        If the spin argument is supplied, then the spin_id argument will be ignored.
-
-        @param num_params:      The number of parameters in the model.
-        @type num_params:       int
-        @keyword model_type:    The model type, one of 'all', 'diff', 'mf', or 'local_tm'.
-        @type model_type:       str
-        @keyword spin:          The spin data container.
-        @type spin:             SpinContainer instance
-        @keyword spin_id:       The spin identification string.
-        @type spin_id:          str
-        @return:                The diagonal and square scaling matrix.
-        @rtype:                 numpy diagonal matrix
-        """
-
-        # Initialise.
-        if num_params == 0:
-            scaling_matrix = zeros((0, 0), float64)
-        else:
-            scaling_matrix = identity(num_params, float64)
-        i = 0
-
-        # No diagonal scaling, so return the identity matrix.
-        if not scaling:
-            return scaling_matrix
-
-        # tm, te, tf, and ts (must all be the same for diagonal scaling!).
-        ti_scaling = 1e-12
-
-        # Diffusion tensor parameters.
-        if model_type == 'diff' or model_type == 'all':
-            # Spherical diffusion.
-            if cdp.diff_tensor.type == 'sphere':
-                # tm.
-                scaling_matrix[i, i] = ti_scaling
-
-                # Increment i.
-                i = i + 1
-
-            # Spheroidal diffusion.
-            elif cdp.diff_tensor.type == 'spheroid':
-                # tm, Da, theta, phi
-                scaling_matrix[i, i] = ti_scaling
-                scaling_matrix[i+1, i+1] = 1e7
-                scaling_matrix[i+2, i+2] = 1.0
-                scaling_matrix[i+3, i+3] = 1.0
-
-                # Increment i.
-                i = i + 4
-
-            # Ellipsoidal diffusion.
-            elif cdp.diff_tensor.type == 'ellipsoid':
-                # tm, Da, Dr, alpha, beta, gamma.
-                scaling_matrix[i, i] = ti_scaling
-                scaling_matrix[i+1, i+1] = 1e7
-                scaling_matrix[i+2, i+2] = 1.0
-                scaling_matrix[i+3, i+3] = 1.0
-                scaling_matrix[i+4, i+4] = 1.0
-                scaling_matrix[i+5, i+5] = 1.0
-
-                # Increment i.
-                i = i + 6
-
-        # Model-free parameters.
-        if model_type != 'diff':
-            # The loop.
-            if spin:
-                loop = [spin]
-            else:
-                loop = spin_loop(spin_id)
-
-            # Loop over the spins.
-            for spin in loop:
-                # Skip deselected spins.
-                if not spin.select:
-                    continue
-
-                # Loop over the model-free parameters.
-                for k in range(len(spin.params)):
-                    # Local tm, te, tf, and ts (must all be the same for diagonal scaling!).
-                    if spin.params[k] == 'local_tm' or search('^t', spin.params[k]):
-                        scaling_matrix[i, i] = ti_scaling
-
-                    # Rex.
-                    elif spin.params[k] == 'rex':
-                        scaling_matrix[i, i] = 1.0 / (2.0 * pi * cdp.spectrometer_frq[cdp.ri_ids[0]]) ** 2
-
-                    # Interatomic distances.
-                    elif spin.params[k] == 'r':
-                        scaling_matrix[i, i] = 1e-10
-
-                    # CSA.
-                    elif spin.params[k] == 'csa':
-                        scaling_matrix[i, i] = 1e-4
-
-                    # Increment i.
-                    i = i + 1
-
-        # Return the scaling matrix.
-        return scaling_matrix
+from multi import Processor_box
+from pipe_control import diffusion_tensor, interatomic, mol_res_spin, pipes, relax_data, sequence
+from pipe_control.bmrb import list_sample_conditions
+from pipe_control.exp_info import bmrb_write_citations, bmrb_write_methods, bmrb_write_software
+from pipe_control.interatomic import return_interatom_list
+from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, find_index, get_molecule_names, return_spin, return_spin_from_index, return_spin_indices, spin_loop
+from specific_analyses.api_base import API_base
+from specific_analyses.api_common import API_common
+from specific_analyses.model_free.bmrb import sf_csa_read, sf_model_free_read, to_bmrb_model
+from specific_analyses.model_free.data import compare_objects
+from specific_analyses.model_free.molmol import Molmol
+from specific_analyses.model_free.model import determine_model_type
+from specific_analyses.model_free.parameters import are_mf_params_set, assemble_param_names, assemble_param_vector, assemble_scaling_matrix, conv_factor_rex, linear_constraints, units_rex
+from specific_analyses.model_free.optimisation import MF_grid_command, MF_memo, MF_minimise_command, grid_search_config, minimise_data_setup, relax_data_opt_structs, reset_min_stats
+from specific_analyses.model_free.pymol import Pymol
+from target_functions.mf import Mf
+
+
+class Model_free(API_base, API_common):
+    """Parent class containing all the model-free specific functions."""
+
+    def __init__(self):
+        """Initialise the class by placing API_common methods into the API."""
+
+        # Execute the base class __init__ method.
+        super(Model_free, self).__init__()
+
+        # Place methods into the API.
+        self.base_data_loop = self._base_data_loop_spin
+        self.return_error = self._return_error_relax_data
+        self.return_value = self._return_value_general
+        self.sim_pack_data = self._sim_pack_relax_data
+
+        # Initialise the macro classes.
+        self._molmol_macros = Molmol()
+        self._pymol_macros = Pymol()
+
+        # Alias the macro creation methods.
+        self.pymol_macro = self._pymol_macros.create_macro
+        self.molmol_macro = self._molmol_macros.create_macro
+
+        # Set up the global parameters.
+        self.PARAMS.add('tm', scope='global', default=diffusion_tensor.default_value('tm'), conv_factor=1e-9, grace_string='\\xt\\f{}\\sm', units='ns', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Diso', scope='global', default=diffusion_tensor.default_value('Diso'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dx', scope='global', default=diffusion_tensor.default_value('Dx'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dy', scope='global', default=diffusion_tensor.default_value('Dy'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dz', scope='global', default=diffusion_tensor.default_value('Dz'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dpar', scope='global', default=diffusion_tensor.default_value('Dpar'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dper', scope='global', default=diffusion_tensor.default_value('Dper'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Da', scope='global', default=diffusion_tensor.default_value('Da'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dratio', scope='global', default=diffusion_tensor.default_value('Dratio'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('Dr', scope='global', default=diffusion_tensor.default_value('Dr'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('alpha', scope='global', default=diffusion_tensor.default_value('alpha'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('beta', scope='global', default=diffusion_tensor.default_value('beta'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('gamma', scope='global', default=diffusion_tensor.default_value('gamma'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('theta', scope='global', default=diffusion_tensor.default_value('theta'), py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('phi', scope='global', default=diffusion_tensor.default_value('phi'), py_type=float, set='params', err=True, sim=True)
+
+        # Set up the spin parameters.
+        self.PARAMS.add('model', scope='spin', desc='The model', py_type=str)
+        self.PARAMS.add('equation', scope='spin', desc='The model equation', py_type=str)
+        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
+        self.PARAMS.add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, set='params', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('s2f', scope='spin', default=0.8, desc='S2f, the faster motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\sf\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('s2s', scope='spin', default=0.8, desc='S2s, the slower motion model-free generalised order parameter', py_type=float, set='params', grace_string='\\qS\\ss\\N\\h{-0.2}\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
+        self.PARAMS.add('local_tm', scope='spin', default=10.0 * 1e-9, desc='The spin specific global correlation time (seconds)', py_type=float, set='params', grace_string='\\xt\\f{}\\sm', units='ns', err=True, sim=True)
+        self.PARAMS.add('te', scope='spin', default=100.0 * 1e-12, desc='Single motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\se', units='ps', err=True, sim=True)
+        self.PARAMS.add('tf', scope='spin', default=10.0 * 1e-12, desc='Faster motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\sf', units='ps', err=True, sim=True)
+        self.PARAMS.add('ts', scope='spin', default=1000.0 * 1e-12, desc='Slower motion effective internal correlation time (seconds)', py_type=float, set='params', conv_factor=1e-12, grace_string='\\xt\\f{}\\ss', units='ps', err=True, sim=True)
+        self.PARAMS.add('rex', scope='spin', default=0.0, desc='Chemical exchange relaxation (sigma_ex = Rex / omega**2)', py_type=float, set='params', conv_factor=conv_factor_rex, units=units_rex, grace_string='\\qR\\sex\\Q', err=True, sim=True)
+        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set='params', conv_factor=1e-6, grace_string='\\qCSA\\Q', err=True, sim=True)
+
+        # Add the minimisation data.
+        self.PARAMS.add_min_data(min_stats_global=True, min_stats_spin=True)
+
+        # Add the relaxation data parameters.
+        self.PARAMS.add('ri_data', scope='spin', desc=relax_data.return_data_desc('ri_data'), py_type=dict, err=False, sim=True)
+        self.PARAMS.add('ri_data_err', scope='spin', desc=relax_data.return_data_desc('ri_data_err'), py_type=dict, err=False, sim=False)
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
@@ -515,733 +163,465 @@ class Model_free_main:
         return value
 
 
-    def _compare_objects(self, object_from, object_to, pipe_from, pipe_to):
-        """Compare the contents of the two objects and raise RelaxErrors if they are not the same.
+    def bmrb_read(self, file_path, version=None, sample_conditions=None):
+        """Read the model-free results from a BMRB NMR-STAR v3.1 formatted file.
 
-        @param object_from: The first object.
-        @type object_from:  any object
-        @param object_to:   The second object.
-        @type object_to:    any object
-        @param pipe_from:   The name of the data pipe containing the first object.
-        @type pipe_from:    str
-        @param pipe_to:     The name of the data pipe containing the second object.
-        @type pipe_to:      str
+        @param file_path:           The full file path.
+        @type file_path:            str
+        @keyword version:           The BMRB version to force the reading.
+        @type version:              None or str
+        @keyword sample_conditions: The sample condition label to read.  Only one sample condition can be read per data pipe.
+        @type sample_conditions:    None or str
         """
 
-        # Loop over the modifiable objects.
-        for data_name in dir(object_from):
-            # Skip special objects (starting with _, or in the original class and base class namespaces).
-            if search('^_', data_name) or data_name in list(object_from.__class__.__dict__.keys()) or (hasattr(object_from.__class__, '__bases__') and len(object_from.__class__.__bases__) and data_name in list(object_from.__class__.__bases__[0].__dict__.keys())):
+        # Initialise the NMR-STAR data object.
+        star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
+
+        # Read the contents of the STAR formatted file.
+        star.read()
+
+        # The sample conditions.
+        sample_conds = list_sample_conditions(star)
+        if sample_conditions and sample_conditions not in sample_conds:
+            raise RelaxError("The sample conditions label '%s' does not correspond to any of the labels in the file: %s" % (sample_conditions, sample_conds))
+        if not sample_conditions and len(sample_conds) > 1:
+            raise RelaxError("Only one of the sample conditions in %s can be loaded per relax data pipe." % sample_conds)
+
+        # The diffusion tensor.
+        diffusion_tensor.bmrb_read(star)
+
+        # Generate the molecule and residue containers from the entity records.
+        mol_res_spin.bmrb_read(star)
+
+        # Read the relaxation data saveframes.
+        relax_data.bmrb_read(star, sample_conditions=sample_conditions)
+
+        # Read the model-free data saveframes.
+        sf_model_free_read(star, sample_conditions=sample_conditions)
+
+        # Read the CSA data saveframes.
+        sf_csa_read(star)
+
+
+    def bmrb_write(self, file_path, version=None):
+        """Write the model-free results to a BMRB NMR-STAR v3.1 formatted file.
+
+        @param file_path:   The full file path.
+        @type file_path:    str
+        @keyword version:   The BMRB NMR-STAR dictionary format to output to.
+        @type version:      str
+        """
+
+        # Alias the current data pipe.
+        cdp = pipes.get_pipe()
+
+        # Initialise the NMR-STAR data object.
+        star = bmrblib.create_nmr_star('relax_model_free_results', file_path, version)
+
+        # Global minimisation stats.
+        global_chi2 = None
+        if hasattr(cdp, 'chi2'):
+            global_chi2 = cdp.chi2
+
+        # Rex frq.
+        rex_frq = cdp.spectrometer_frq[cdp.ri_ids[0]]
+
+        # Initialise the spin specific data lists.
+        mol_name_list = []
+        res_num_list = []
+        res_name_list = []
+        atom_name_list = []
+
+        csa_list = []
+        r_list = []
+        isotope_list = []
+        element_list = []
+
+        local_tm_list = []
+        s2_list = []
+        s2f_list = []
+        s2s_list = []
+        te_list = []
+        tf_list = []
+        ts_list = []
+        rex_list = []
+
+        local_tm_err_list = []
+        s2_err_list = []
+        s2f_err_list = []
+        s2s_err_list = []
+        te_err_list = []
+        tf_err_list = []
+        ts_err_list = []
+        rex_err_list = []
+
+        chi2_list = []
+        model_list = []
+
+        # Store the spin specific data in lists for later use.
+        for spin, mol_name, res_num, res_name, spin_id in spin_loop(full_info=True, return_id=True):
+            # Skip the protons.
+            if spin.name == 'H' or (hasattr(spin, 'element') and spin.element == 'H'):
+                warn(RelaxWarning("Skipping the proton spin '%s'." % spin_id))
                 continue
 
-            # Skip some more special objects.
-            if data_name in ['structural_data']:
-                continue
+            # Check the data for None (not allowed in BMRB!).
+            if res_num == None:
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be numbered." % spin_id)
+            if res_name == None:
+                raise RelaxError("For the BMRB, the residue of spin '%s' must be named." % spin_id)
+            if spin.name == None:
+                raise RelaxError("For the BMRB, the spin '%s' must be named." % spin_id)
+            if not hasattr(spin, 'isotope') or spin.isotope == None:
+                raise RelaxError("For the BMRB, the spin isotope type of '%s' must be specified." % spin_id)
+            if not hasattr(spin, 'element') or spin.element == None:
+                raise RelaxError("For the BMRB, the spin element type of '%s' must be specified.  Please use the spin user function for setting the element type." % spin_id)
 
-            # Get the original object.
-            data_from = None
-            if hasattr(object_from, data_name):
-                data_from = getattr(object_from, data_name)
+            # The molecule/residue/spin info.
+            mol_name_list.append(mol_name)
+            res_num_list.append(res_num)
+            res_name_list.append(res_name)
+            atom_name_list.append(spin.name)
 
-            # Get the target object.
-            if data_from and not hasattr(object_to, data_name):
-                raise RelaxError("The structural object " + repr(data_name) + " of the " + repr(pipe_from) + " data pipe is not located in the " + repr(pipe_to) + " data pipe.")
-            elif data_from:
-                data_to = getattr(object_to, data_name)
+            # CSA values.
+            if hasattr(spin, 'csa'):
+                csa_list.append(spin.csa * 1e6)    # In ppm.
             else:
-                continue
-
-            # The data must match!
-            if data_from != data_to:
-                raise RelaxError("The object " + repr(data_name) + " is not consistent between the pipes " + repr(pipe_from) + " and " + repr(pipe_to) + ".")
-
-
-    def _conv_factor_rex(self):
-        """Calculate and return the Rex conversion factor.
-
-        @return:    The Rex conversion factor.
-        @rtype:     float
-        """
-
-        # No frequency info.
-        if not hasattr(cdp, 'spectrometer_frq'):
-            raise RelaxError("No spectrometer frequency information is present in the current data pipe.")
-
-        # The 1st spectrometer frequency.
-        if hasattr(cdp, 'ri_ids'):
-            frq = cdp.spectrometer_frq[cdp.ri_ids[0]]
-
-        # Take the highest frequency, if all else fails.
-        else:
-            frqs = sorted(cdp.spectrometer_frq.values())
-            frq = frqs[-1]
-
-        # The factor.
-        return 1.0 / (2.0 * pi * frq)**2
-
-
-    def _create_model(self, model=None, equation=None, params=None, spin_id=None):
-        """Function for creating a custom model-free model.
-
-        @param model:       The name of the model.
-        @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the original model-free equations with parameters {s2, te}; 'mf_ext' for the extended model-free equations with parameters {s2f, tf, s2, ts}; and 'mf_ext2' for the extended model-free equations with parameters {s2f, tf, s2s, ts}.
-        @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter names includes those for the equation type as well as chemical exchange 'rex', the bond length 'r', and the chemical shift anisotropy 'csa'.
-        @type params:       list of str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Check the validity of the model-free equation type.
-        valid_types = ['mf_orig', 'mf_ext', 'mf_ext2']
-        if not equation in valid_types:
-            raise RelaxError("The model-free equation type argument " + repr(equation) + " is invalid and should be one of " + repr(valid_types) + ".")
-
-        # Check the validity of the parameter array.
-        s2, te, s2f, tf, s2s, ts, rex, csa, r = 0, 0, 0, 0, 0, 0, 0, 0, 0
-        for i in range(len(params)):
-            # Invalid parameter flag.
-            invalid_param = 0
-
-            # S2.
-            if params[i] == 's2':
-                # Does the array contain more than one instance of S2.
-                if s2:
-                    invalid_param = 1
-                s2 = 1
-
-                # Does the array contain S2s.
-                s2s_flag = 0
-                for j in range(len(params)):
-                    if params[j] == 's2s':
-                        s2s_flag = 1
-                if s2s_flag:
-                    invalid_param = 1
-
-            # te.
-            elif params[i] == 'te':
-                # Does the array contain more than one instance of te and has the extended model-free formula been selected.
-                if equation == 'mf_ext' or te:
-                    invalid_param = 1
-                te = 1
-
-                # Does the array contain the parameter S2.
-                s2_flag = 0
-                for j in range(len(params)):
-                    if params[j] == 's2':
-                        s2_flag = 1
-                if not s2_flag:
-                    invalid_param = 1
-
-            # S2f.
-            elif params[i] == 's2f':
-                # Does the array contain more than one instance of S2f and has the original model-free formula been selected.
-                if equation == 'mf_orig' or s2f:
-                    invalid_param = 1
-                s2f = 1
-
-            # S2s.
-            elif params[i] == 's2s':
-                # Does the array contain more than one instance of S2s and has the original model-free formula been selected.
-                if equation == 'mf_orig' or s2s:
-                    invalid_param = 1
-                s2s = 1
-
-            # tf.
-            elif params[i] == 'tf':
-                # Does the array contain more than one instance of tf and has the original model-free formula been selected.
-                if equation == 'mf_orig' or tf:
-                    invalid_param = 1
-                tf = 1
-
-                # Does the array contain the parameter S2f.
-                s2f_flag = 0
-                for j in range(len(params)):
-                    if params[j] == 's2f':
-                        s2f_flag = 1
-                if not s2f_flag:
-                    invalid_param = 1
-
-            # ts.
-            elif params[i] == 'ts':
-                # Does the array contain more than one instance of ts and has the original model-free formula been selected.
-                if equation == 'mf_orig' or ts:
-                    invalid_param = 1
-                ts = 1
-
-                # Does the array contain the parameter S2 or S2s.
-                flag = 0
-                for j in range(len(params)):
-                    if params[j] == 's2' or params[j] == 's2f':
-                        flag = 1
-                if not flag:
-                    invalid_param = 1
-
-            # Rex.
-            elif params[i] == 'rex':
-                if rex:
-                    invalid_param = 1
-                rex = 1
+                csa_list.append(None)
 
             # Interatomic distances.
-            elif params[i] == 'r':
-                if r:
-                    invalid_param = 1
-                r = 1
-
-            # CSA.
-            elif params[i] == 'csa':
-                if csa:
-                    invalid_param = 1
-                csa = 1
-
-            # Unknown parameter.
-            else:
-                raise RelaxError("The parameter " + params[i] + " is not supported.")
-
-            # The invalid parameter flag is set.
-            if invalid_param:
-                raise RelaxError("The parameter array " + repr(params) + " contains an invalid combination of parameters.")
-
-        # Set up the model.
-        self._model_setup(model, equation, params, spin_id)
-
-
-    def _delete(self):
-        """Delete all the model-free data."""
-
-        # Test if the current pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is set to 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_analyses.setup.get_string(function_type))
-
-        # Test if the sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
-
-        # Get all data structure names.
-        names = self.data_names(scope='spin')
-
-        # Loop over the spins.
-        for spin in spin_loop():
-            # Loop through the data structure names.
-            for name in names:
-                # Skip the data structure if it does not exist.
-                if not hasattr(spin, name):
+            interatoms = return_interatom_list(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
                     continue
 
-                # Delete the data.
-                delattr(spin, name)
+                # Add the interatomic distance.
+                if hasattr(interatoms[i], 'r'):
+                    r_list.append(interatoms[i].r)
+                else:
+                    r_list.append(None)
+
+                # Stop adding.
+                break
+
+            # The nuclear isotope.
+            if hasattr(spin, 'isotope'):
+                isotope_list.append(int(spin.isotope.strip(string.ascii_letters)))
+            else:
+                isotope_list.append(None)
+
+            # The element.
+            if hasattr(spin, 'element'):
+                element_list.append(spin.element)
+            else:
+                element_list.append(None)
+
+            # Diffusion tensor.
+            if hasattr(spin, 'local_tm'):
+                local_tm_list.append(spin.local_tm)
+            else:
+                local_tm_list.append(None)
+            if hasattr(spin, 'local_tm_err'):
+                local_tm_err_list.append(spin.local_tm_err)
+            else:
+                local_tm_err_list.append(None)
+
+            # Model-free parameter values.
+            s2_list.append(spin.s2)
+            s2f_list.append(spin.s2f)
+            s2s_list.append(spin.s2s)
+            te_list.append(spin.te)
+            tf_list.append(spin.tf)
+            ts_list.append(spin.ts)
+            if spin.rex == None:
+                rex_list.append(None)
+            else:
+                rex_list.append(spin.rex / (2.0*pi*rex_frq**2))
+
+            # Model-free parameter errors.
+            params = ['s2', 's2f', 's2s', 'te', 'tf', 'ts', 'rex']
+            for param in params:
+                # The error list.
+                err_list = locals()[param+'_err_list']
+
+                # Append the error.
+                if hasattr(spin, param+'_err'):
+                    # The value.
+                    val = getattr(spin, param+'_err')
+
+                    # Scaling.
+                    if param == 'rex' and val != None:
+                        val = val / (2.0*pi*rex_frq**2)
+
+                    # Append.
+                    err_list.append(val)
+
+                # Or None.
+                else:
+                    err_list.append(None)
 
 
-    def _determine_model_type(self):
-        """Determine the global model type.
+            # Opt stats.
+            chi2_list.append(spin.chi2)
 
-        @return:    The name of the model type, which will be one of 'all', 'diff', 'mf', or 'local_tm'.  If all parameters are fixed (and no spins selected), None is returned.
-        @rtype:     str or None
+            # Model-free model.
+            model_list.append(to_bmrb_model(spin.model))
+
+        # Convert the molecule names into the entity IDs.
+        entity_ids = zeros(len(mol_name_list), int32)
+        mol_names = get_molecule_names()
+        for i in range(len(mol_name_list)):
+            for j in range(len(mol_names)):
+                if mol_name_list[i] == mol_names[j]:
+                    entity_ids[i] = j+1
+
+
+        # Create Supergroup 2 : The citations.
+        ######################################
+
+        # Generate the citations saveframe.
+        bmrb_write_citations(star)
+
+
+        # Create Supergroup 3 : The molecular assembly saveframes.
+        ##########################################################
+
+        # Generate the entity saveframe.
+        mol_res_spin.bmrb_write_entity(star)
+
+
+        # Create Supergroup 4:  The experimental descriptions saveframes.
+        #################################################################
+
+        # Generate the method saveframes.
+        bmrb_write_methods(star)
+
+        # Generate the software saveframe.
+        software_ids, software_labels = bmrb_write_software(star)
+
+
+        # Create Supergroup 5 : The NMR parameters saveframes.
+        ######################################################
+
+        # Generate the CSA saveframe.
+        star.chem_shift_anisotropy.add(entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, csa=csa_list)
+
+
+        # Create Supergroup 6 : The kinetic data saveframes.
+        ####################################################
+
+        # Generate the relaxation data saveframes.
+        relax_data.bmrb_write(star)
+
+
+        # Create Supergroup 7 : The thermodynamics saveframes.
+        ######################################################
+
+        # Get the relax software id.
+        for i in range(len(software_ids)):
+            if software_labels[i] == 'relax':
+                software_id = software_ids[i]
+
+        # Generate the model-free data saveframe.
+        star.model_free.add(global_chi2=global_chi2, software_ids=[software_id], software_labels=['relax'], entity_ids=entity_ids, res_nums=res_num_list, res_names=res_name_list, atom_names=atom_name_list, atom_types=element_list, isotope=isotope_list, bond_length=r_list, local_tc=local_tm_list, s2=s2_list, s2f=s2f_list, s2s=s2s_list, te=te_list, tf=tf_list, ts=ts_list, rex=rex_list, local_tc_err=local_tm_err_list, s2_err=s2_err_list, s2f_err=s2f_err_list, s2s_err=s2s_err_list, te_err=te_err_list, tf_err=tf_err_list, ts_err=ts_err_list, rex_err=rex_err_list, rex_frq=rex_frq, chi2=chi2_list, model_fit=model_list)
+
+
+        # Create Supergroup 8 : The structure determination saveframes.
+        ###############################################################
+
+        # Generate the diffusion tensor saveframes.
+        diffusion_tensor.bmrb_write(star)
+
+
+        # Write the contents to the STAR formatted file.
+        star.write()
+
+
+    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+        """Calculation of the model-free chi-squared value.
+
+        @keyword spin_id:   The spin identification string.
+        @type spin_id:      str
+        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:    int
+        @keyword sim_index: The optional MC simulation index.
+        @type sim_index:    int
         """
 
         # Test if sequence data is loaded.
         if not exists_mol_res_spin_data():
             raise RelaxNoSequenceError
 
-        # If there is a local tm, fail if not all residues have a local tm parameter.
-        local_tm = False
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
+        # Determine the model type.
+        model_type = determine_model_type()
 
-            # No params.
-            if not hasattr(spin, 'params') or not spin.params:
-                continue
-
-            # Local tm.
-            if not local_tm and 'local_tm' in spin.params:
-                local_tm = True
-
-            # Inconsistencies.
-            elif local_tm and not 'local_tm' in spin.params:
-                raise RelaxError("All spins must either have a local tm parameter or not.")
-
-        # Check if any model-free parameters are allowed to vary.
-        mf_all_fixed = True
-        mf_all_deselected = True
-        for spin in spin_loop():
-            # Skip deselected spins.
-            if not spin.select:
-                continue
-
-            # At least one spin is selected.
-            mf_all_deselected = False
-
-            # Test the fixed flag.
-            if not hasattr(spin, 'fixed'):
-                mf_all_fixed = False
-                break
-            if not spin.fixed:
-                mf_all_fixed = False
-                break
-
-        # No spins selected?!?
-        if mf_all_deselected:
-            # All parameters fixed!
-            if not hasattr(cdp, 'diff_tensor') or cdp.diff_tensor.fixed:
-                return None
-
-            return 'diff'
-
-        # Local tm.
-        if local_tm:
-            return 'local_tm'
-
-        # Test if the diffusion tensor data is loaded.
-        if not diffusion_tensor.diff_data_exists():
-            # Catch when the local tm value is set but not in the parameter list.
-            for spin in spin_loop():
-                if hasattr(spin, 'local_tm') and spin.local_tm != None and not 'local_tm' in spin.params:
-                    raise RelaxError("The local tm value is set but not located in the model parameter list.")
-
-            # Normal error.
+        # Test if diffusion tensor data exists.
+        if model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
             raise RelaxNoTensorError('diffusion')
 
-        # 'diff' model type.
-        if mf_all_fixed:
-            # All parameters fixed!
-            if cdp.diff_tensor.fixed:
-                return None
-
-            return 'diff'
-
-        # 'mf' model type.
-        if cdp.diff_tensor.fixed:
-            return 'mf'
-
-        # 'all' model type.
-        else:
-            return 'all'
-
-
-    def _model_map(self, model):
-        """Return the equation name and parameter list corresponding to the given model.
-
-        @param model:   The model-free model.
-        @type model:    str
-        @return:        The equation type (either 'mf_orig' or 'mf_ext') and the model-free parameter list corresponding to the model.
-        @rtype:         str, list
-        """
-
-        # Block 1.
-        if model == 'm0':
-            equation = 'mf_orig'
-            params = []
-        elif model == 'm1':
-            equation = 'mf_orig'
-            params = ['s2']
-        elif model == 'm2':
-            equation = 'mf_orig'
-            params = ['s2', 'te']
-        elif model == 'm3':
-            equation = 'mf_orig'
-            params = ['s2', 'rex']
-        elif model == 'm4':
-            equation = 'mf_orig'
-            params = ['s2', 'te', 'rex']
-        elif model == 'm5':
-            equation = 'mf_ext'
-            params = ['s2f', 's2', 'ts']
-        elif model == 'm6':
-            equation = 'mf_ext'
-            params = ['s2f', 'tf', 's2', 'ts']
-        elif model == 'm7':
-            equation = 'mf_ext'
-            params = ['s2f', 's2', 'ts', 'rex']
-        elif model == 'm8':
-            equation = 'mf_ext'
-            params = ['s2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'm9':
-            equation = 'mf_orig'
-            params = ['rex']
-
-        # Block 2.
-        elif model == 'm10':
-            equation = 'mf_orig'
-            params = ['csa']
-        elif model == 'm11':
-            equation = 'mf_orig'
-            params = ['csa', 's2']
-        elif model == 'm12':
-            equation = 'mf_orig'
-            params = ['csa', 's2', 'te']
-        elif model == 'm13':
-            equation = 'mf_orig'
-            params = ['csa', 's2', 'rex']
-        elif model == 'm14':
-            equation = 'mf_orig'
-            params = ['csa', 's2', 'te', 'rex']
-        elif model == 'm15':
-            equation = 'mf_ext'
-            params = ['csa', 's2f', 's2', 'ts']
-        elif model == 'm16':
-            equation = 'mf_ext'
-            params = ['csa', 's2f', 'tf', 's2', 'ts']
-        elif model == 'm17':
-            equation = 'mf_ext'
-            params = ['csa', 's2f', 's2', 'ts', 'rex']
-        elif model == 'm18':
-            equation = 'mf_ext'
-            params = ['csa', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'm19':
-            equation = 'mf_orig'
-            params = ['csa', 'rex']
-
-        # Block 3.
-        elif model == 'm20':
-            equation = 'mf_orig'
-            params = ['r']
-        elif model == 'm21':
-            equation = 'mf_orig'
-            params = ['r', 's2']
-        elif model == 'm22':
-            equation = 'mf_orig'
-            params = ['r', 's2', 'te']
-        elif model == 'm23':
-            equation = 'mf_orig'
-            params = ['r', 's2', 'rex']
-        elif model == 'm24':
-            equation = 'mf_orig'
-            params = ['r', 's2', 'te', 'rex']
-        elif model == 'm25':
-            equation = 'mf_ext'
-            params = ['r', 's2f', 's2', 'ts']
-        elif model == 'm26':
-            equation = 'mf_ext'
-            params = ['r', 's2f', 'tf', 's2', 'ts']
-        elif model == 'm27':
-            equation = 'mf_ext'
-            params = ['r', 's2f', 's2', 'ts', 'rex']
-        elif model == 'm28':
-            equation = 'mf_ext'
-            params = ['r', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'm29':
-            equation = 'mf_orig'
-            params = ['r', 'rex']
-
-        # Block 4.
-        elif model == 'm30':
-            equation = 'mf_orig'
-            params = ['r', 'csa']
-        elif model == 'm31':
-            equation = 'mf_orig'
-            params = ['r', 'csa', 's2']
-        elif model == 'm32':
-            equation = 'mf_orig'
-            params = ['r', 'csa', 's2', 'te']
-        elif model == 'm33':
-            equation = 'mf_orig'
-            params = ['r', 'csa', 's2', 'rex']
-        elif model == 'm34':
-            equation = 'mf_orig'
-            params = ['r', 'csa', 's2', 'te', 'rex']
-        elif model == 'm35':
-            equation = 'mf_ext'
-            params = ['r', 'csa', 's2f', 's2', 'ts']
-        elif model == 'm36':
-            equation = 'mf_ext'
-            params = ['r', 'csa', 's2f', 'tf', 's2', 'ts']
-        elif model == 'm37':
-            equation = 'mf_ext'
-            params = ['r', 'csa', 's2f', 's2', 'ts', 'rex']
-        elif model == 'm38':
-            equation = 'mf_ext'
-            params = ['r', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'm39':
-            equation = 'mf_orig'
-            params = ['r', 'csa', 'rex']
-
-
-        # Preset models with local correlation time.
-        ############################################
-
-        # Block 1.
-        elif model == 'tm0':
-            equation = 'mf_orig'
-            params = ['local_tm']
-        elif model == 'tm1':
-            equation = 'mf_orig'
-            params = ['local_tm', 's2']
-        elif model == 'tm2':
-            equation = 'mf_orig'
-            params = ['local_tm', 's2', 'te']
-        elif model == 'tm3':
-            equation = 'mf_orig'
-            params = ['local_tm', 's2', 'rex']
-        elif model == 'tm4':
-            equation = 'mf_orig'
-            params = ['local_tm', 's2', 'te', 'rex']
-        elif model == 'tm5':
-            equation = 'mf_ext'
-            params = ['local_tm', 's2f', 's2', 'ts']
-        elif model == 'tm6':
-            equation = 'mf_ext'
-            params = ['local_tm', 's2f', 'tf', 's2', 'ts']
-        elif model == 'tm7':
-            equation = 'mf_ext'
-            params = ['local_tm', 's2f', 's2', 'ts', 'rex']
-        elif model == 'tm8':
-            equation = 'mf_ext'
-            params = ['local_tm', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'tm9':
-            equation = 'mf_orig'
-            params = ['local_tm', 'rex']
-
-        # Block 2.
-        elif model == 'tm10':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa']
-        elif model == 'tm11':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa', 's2']
-        elif model == 'tm12':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa', 's2', 'te']
-        elif model == 'tm13':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa', 's2', 'rex']
-        elif model == 'tm14':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa', 's2', 'te', 'rex']
-        elif model == 'tm15':
-            equation = 'mf_ext'
-            params = ['local_tm', 'csa', 's2f', 's2', 'ts']
-        elif model == 'tm16':
-            equation = 'mf_ext'
-            params = ['local_tm', 'csa', 's2f', 'tf', 's2', 'ts']
-        elif model == 'tm17':
-            equation = 'mf_ext'
-            params = ['local_tm', 'csa', 's2f', 's2', 'ts', 'rex']
-        elif model == 'tm18':
-            equation = 'mf_ext'
-            params = ['local_tm', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'tm19':
-            equation = 'mf_orig'
-            params = ['local_tm', 'csa', 'rex']
-
-        # Block 3.
-        elif model == 'tm20':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r']
-        elif model == 'tm21':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 's2']
-        elif model == 'tm22':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 's2', 'te']
-        elif model == 'tm23':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 's2', 'rex']
-        elif model == 'tm24':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 's2', 'te', 'rex']
-        elif model == 'tm25':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 's2f', 's2', 'ts']
-        elif model == 'tm26':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 's2f', 'tf', 's2', 'ts']
-        elif model == 'tm27':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 's2f', 's2', 'ts', 'rex']
-        elif model == 'tm28':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'tm29':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'rex']
-
-        # Block 4.
-        elif model == 'tm30':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa']
-        elif model == 'tm31':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa', 's2']
-        elif model == 'tm32':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa', 's2', 'te']
-        elif model == 'tm33':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa', 's2', 'rex']
-        elif model == 'tm34':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa', 's2', 'te', 'rex']
-        elif model == 'tm35':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'csa', 's2f', 's2', 'ts']
-        elif model == 'tm36':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'csa', 's2f', 'tf', 's2', 'ts']
-        elif model == 'tm37':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'csa', 's2f', 's2', 'ts', 'rex']
-        elif model == 'tm38':
-            equation = 'mf_ext'
-            params = ['local_tm', 'r', 'csa', 's2f', 'tf', 's2', 'ts', 'rex']
-        elif model == 'tm39':
-            equation = 'mf_orig'
-            params = ['local_tm', 'r', 'csa', 'rex']
-
-        # Invalid model.
-        else:
-            raise RelaxError("The model '%s' is invalid." % model)
-
-        # Return the values.
-        return equation, params
-
-
-    def _model_setup(self, model=None, equation=None, params=None, spin_id=None):
-        """Function for updating various data structures depending on the model selected.
-
-        @param model:       The name of the model.
-        @type model:        str
-        @param equation:    The equation type to use.  The 3 allowed types are:  'mf_orig' for the original model-free equations with parameters {s2, te}; 'mf_ext' for the extended model-free equations with parameters {s2f, tf, s2, ts}; and 'mf_ext2' for the extended model-free equations with parameters {s2f, tf, s2s, ts}.
-        @type equation:     str
-        @param params:      A list of the parameters to include in the model.  The allowed parameter names includes those for the equation type as well as chemical exchange 'rex', the bond length 'r', and the chemical shift anisotropy 'csa'.
-        @type params:       list of str
-        @param spin_id:     The spin identification string.
-        @type spin_id:      str
-        """
-
-        # Test that no diffusion tensor exists if local tm is a parameter in the model.
-        if params:
-            for param in params:
-                if param == 'local_tm' and hasattr(pipes.get_pipe(), 'diff_tensor'):
-                    raise RelaxTensorError('diffusion')
-
-        # Loop over the sequence.
-        for spin in spin_loop(spin_id):
-            # Initialise the data structures (if needed).
-            self.data_init(spin)
-
-            # Model-free model, equation, and parameter types.
-            spin.model = model
-            spin.equation = equation
-            spin.params = params
-
-
-    def _remove_tm(self, spin_id=None):
-        """Remove local tm from the set of model-free parameters for the given spins.
-
-        @param spin_id: The spin identification string.
-        @type spin_id:  str or None
-        """
-
-        # Test if the current data pipe exists.
-        pipes.test()
-
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
-
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+        # Test if the PDB file has been loaded.
+        if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(cdp, 'structure'):
+            raise RelaxNoPdbError
 
         # Loop over the spins.
-        for spin in spin_loop(spin_id):
+        for spin, id in spin_loop(spin_id, return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Test if a local tm parameter exists.
-            if not hasattr(spin, 'params') or not 'local_tm' in spin.params:
+            # Test if the model-free model has been setup.
+            if not spin.model:
+                raise RelaxNoModelError
+
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
+                raise RelaxSpinTypeError
+
+            # Test if the model-free parameter values exist.
+            unset_param = are_mf_params_set(spin)
+            if unset_param != None:
+                raise RelaxNoValueError(unset_param)
+
+            # Test if the CSA value has been set.
+            if not hasattr(spin, 'csa') or spin.csa == None:
+                raise RelaxNoValueError("CSA")
+
+            # Test the interatomic data.
+            interatoms = return_interatom_list(spin_id)
+            for interatom in interatoms:
+                # No relaxation mechanism.
+                if not interatom.dipole_pair:
+                    continue
+
+                # Test if unit vectors exist.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and not hasattr(interatom, 'vector'):
+                    raise RelaxNoVectorsError
+
+                # Test if multiple unit vectors exist.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere' and hasattr(interatom, 'vector') and is_num_list(interatom.vector[0], raise_error=False):
+                    raise RelaxMultiVectorError
+
+                # The interacting spin.
+                if spin_id != interatom.spin_id1:
+                    spin_id2 = interatom.spin_id1
+                else:
+                    spin_id2 = interatom.spin_id2
+                spin2 = return_spin(spin_id2)
+
+                # Test if the nuclear isotope type has been set.
+                if not hasattr(spin2, 'isotope'):
+                    raise RelaxSpinTypeError
+
+                # Test if the interatomic distance has been set.
+                if not hasattr(interatom, 'r') or interatom.r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=spin_id, spin_id2=spin_id2)
+
+            # Skip spins where there is no data or errors.
+            if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
                 continue
 
-            # Remove tm.
-            spin.params.remove('local_tm')
+            # Make sure that the errors are strictly positive numbers.
+            for ri_id in cdp.ri_ids:
+                # Alias.
+                err = spin.ri_data_err[ri_id]
 
-            # Model name.
-            if match('^tm', spin.model):
-                spin.model = spin.model[1:]
+                # Checks.
+                if err != None and err == 0.0:
+                    raise RelaxError("Zero error for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (id, ri_id))
+                elif err != None and err < 0.0:
+                    raise RelaxError("Negative error of %s for spin '%s' for the relaxation data ID '%s', minimisation not possible." % (err, id, ri_id))
 
-            # Delete the local tm variable.
-            del spin.local_tm
+            # Create the initial parameter vector.
+            param_vector = assemble_param_vector(spin=spin, sim_index=sim_index)
 
-            # Set all the minimisation stats to None.
-            spin.chi2 = None
-            spin.iter = None
-            spin.f_count = None
-            spin.g_count = None
-            spin.h_count = None
-            spin.warning = None
+            # The relaxation data optimisation structures.
+            data = relax_data_opt_structs(spin, sim_index=sim_index)
 
-        # Set the global minimisation stats to None.
-        cdp.chi2 = None
-        cdp.iter = None
-        cdp.f_count = None
-        cdp.g_count = None
-        cdp.h_count = None
-        cdp.warning = None
+            # The spin data.
+            ri_data = [array(data[0])]
+            ri_data_err = [array(data[1])]
+            num_frq = [data[2]]
+            num_ri = [data[3]]
+            ri_labels = [data[4]]
+            frq = [data[5]]
+            remap_table = [data[6]]
+            noe_r1_table = [data[7]]
+            gx = [return_gyromagnetic_ratio(spin.isotope)]
+            if sim_index == None:
+                csa = [spin.csa]
+            else:
+                csa = [spin.csa_sim[sim_index]]
 
+            # The interatomic data.
+            interatoms = return_interatom_list(spin_id)
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
 
-    def _select_model(self, model=None, spin_id=None):
-        """Function for the selection of a preset model-free model.
+                # The surrounding spins.
+                if spin_id != interatoms[i].spin_id1:
+                    spin_id2 = interatoms[i].spin_id1
+                else:
+                    spin_id2 = interatoms[i].spin_id2
+                spin2 = return_spin(spin_id2)
 
-        @param model:   The name of the model.
-        @type model:    str
-        @param spin_id: The spin identification string.
-        @type spin_id:  str
-        """
+                # The data.
+                if sim_index == None:
+                    r = [interatoms[i].r]
+                else:
+                    r = [interatoms[i].r_sim[sim_index]]
 
-        # Test if the current data pipe exists.
-        pipes.test()
+                # Vectors.
+                if model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+                    xh_unit_vectors = [interatoms[i].vector]
+                else:
+                    xh_unit_vectors = [None]
 
-        # Test if the pipe type is 'mf'.
-        function_type = pipes.get_type()
-        if function_type != 'mf':
-            raise RelaxFuncSetupError(specific_analyses.get_string(function_type))
+                # Gyromagnetic ratios.
+                gh = [return_gyromagnetic_ratio(spin2.isotope)]
 
-        # Test if sequence data is loaded.
-        if not exists_mol_res_spin_data():
-            raise RelaxNoSequenceError
+            # Count the number of model-free parameters for the residue index.
+            num_params = [len(spin.params)]
 
-        # Obtain the model info.
-        equation, params = self._model_map(model)
+            # Repackage the parameter values as a local model (ignore if the diffusion tensor is not fixed).
+            param_values = [assemble_param_vector(model_type='mf')]
 
-        # Set up the model.
-        self._model_setup(model, equation, params, spin_id)
+            # Package the diffusion tensor parameters.
+            if model_type == 'local_tm':
+                diff_params = [spin.local_tm]
+                diff_type = 'sphere'
+            else:
+                # Diff type.
+                diff_type = cdp.diff_tensor.type
 
+                # Spherical diffusion.
+                if diff_type == 'sphere':
+                    diff_params = [cdp.diff_tensor.tm]
 
-    def _units_rex(self):
-        """Return the units for the Rex parameter.
+                # Spheroidal diffusion.
+                elif diff_type == 'spheroid':
+                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.theta, cdp.diff_tensor.phi]
 
-        @return:    The field strength dependent Rex units.
-        @rtype:     str
-        """
+                # Ellipsoidal diffusion.
+                elif diff_type == 'ellipsoid':
+                    diff_params = [cdp.diff_tensor.tm, cdp.diff_tensor.Da, cdp.diff_tensor.Dr, cdp.diff_tensor.alpha, cdp.diff_tensor.beta, cdp.diff_tensor.gamma]
 
-        # No frequency info.
-        if not hasattr(cdp, 'frq_labels') or len(cdp.frq_labels) == 0:
-            return ''
+            # Initialise the model-free function.
+            mf = Mf(init_params=param_vector, model_type='mf', diff_type=diff_type, diff_params=diff_params, num_spins=1, equations=[spin.equation], param_types=[spin.params], param_values=param_values, relax_data=ri_data, errors=ri_data_err, bond_length=r, csa=csa, num_frq=num_frq, frq=frq, num_ri=num_ri, remap_table=remap_table, noe_r1_table=noe_r1_table, ri_labels=ri_labels, gx=gx, gh=gh, h_bar=h_bar, mu0=mu0, num_params=num_params, vectors=xh_unit_vectors)
 
-        # The units.
-        return cdp.frq_labels[0] + ' MHz'
+            # Chi-squared calculation.
+            try:
+                chi2 = mf.func(param_vector)
+            except OverflowError:
+                chi2 = 1e200
+
+            # Global chi-squared value.
+            if model_type == 'all' or model_type == 'diff':
+                cdp.chi2 = cdp.chi2 + chi2
+            else:
+                spin.chi2 = chi2
 
 
     def create_mc_data(self, data_id=None):
@@ -1379,7 +759,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Local models.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1497,7 +877,7 @@ class Model_free_main:
             # Otherwise compare the objects inside the container.
             else:
                 # Modifiable object checks.
-                self._compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
+                compare_objects(dp_from.structure, dp_to.structure, pipe_from, pipe_to)
 
                 # Tests for the model and molecule containers.
                 if len(dp_from.structure.structural_data) != len(dp_from.structure.structural_data):
@@ -1520,7 +900,7 @@ class Model_free_main:
                     # Loop over the models.
                     for mol_index in range(len(model_from.mol)):
                         # Modifiable object checks.
-                        self._compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
+                        compare_objects(model_from.mol[mol_index], model_to.mol[mol_index], pipe_from, pipe_to)
 
         # No sequence data, so skip the rest.
         if dp_from.mol.is_empty():
@@ -1536,7 +916,7 @@ class Model_free_main:
 
         # Determine the model type of the original data pipe.
         pipes.switch(pipe_from)
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Sequence specific data.
         spin, spin_id = return_spin_from_index(model_info, pipe=pipe_from, return_spin_id=True)
@@ -1582,18 +962,6 @@ class Model_free_main:
             dp_to.mol = deepcopy(dp_from.mol)
 
 
-    eliminate_doc = []
-    eliminate_doc.append(Desc_container("Local tm model elimination rule"))
-    eliminate_doc[-1].add_paragraph("The local tm, in some cases, may exceed the value expected for a global correlation time. Generally the tm value will be stuck at the upper limit defined for the parameter.  These models are eliminated using the rule:")
-    eliminate_doc[-1].add_verbatim("    tm >= c")
-    eliminate_doc[-1].add_paragraph("The default value of c is 50 ns, although this can be overridden by supplying the value (in seconds) as the first element of the args tuple.")
-    eliminate_doc.append(Desc_container("Internal correlation times {te, tf, ts} model elimination rules"))
-    eliminate_doc[-1].add_paragraph("These parameters may experience the same problem as the local tm in that the model fails and the parameter value is stuck at the upper limit.  These parameters are constrained using the formula (te, tf, ts <= 2tm).  These failed models are eliminated using the rule:")
-    eliminate_doc[-1].add_verbatim("    te, tf, ts >= c . tm.")
-    eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.")
-    eliminate_doc.append(Desc_container("Arguments"))
-    eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
-
     def eliminate(self, name, value, model_info, args, sim=None):
         """Model-free model elimination, parameter by parameter.
 
@@ -1620,7 +988,7 @@ class Model_free_main:
             c1, c2 = args
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Can't handle this one yet!
         if model_type != 'mf' and model_type != 'local_tm':
@@ -1669,7 +1037,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Get the spin ids.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1679,7 +1047,7 @@ class Model_free_main:
             spin_id = None
 
         # Assemble and return the parameter names.
-        return self._assemble_param_names(model_type, spin_id=spin_id)
+        return assemble_param_names(model_type, spin_id=spin_id)
 
 
     def get_param_values(self, model_info=None, sim_index=None):
@@ -1704,7 +1072,7 @@ class Model_free_main:
                 raise RelaxNoModelError
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Set the spin container (to None if the model is global).
         if model_type == 'mf' or model_type == 'local_tm':
@@ -1713,7 +1081,35 @@ class Model_free_main:
             spin = None
 
         # Assemble the parameter values and return them.
-        return self._assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
+        return assemble_param_vector(spin=spin, sim_index=sim_index, model_type=model_type)
+
+
+    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+        """The model-free grid search function.
+
+        @keyword lower:         The lower bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type lower:            array of numbers
+        @keyword upper:         The upper bounds of the grid search which must be equal to the
+                                number of parameters in the model.
+        @type upper:            array of numbers
+        @keyword inc:           The increments for each dimension of the space for the grid search.
+                                The number of elements in the array must equal to the number of
+                                parameters in the model.
+        @type inc:              array of int
+        @keyword constraints:   If True, constraints are applied during the grid search (eliminating
+                                parts of the grid).  If False, no constraints are used.
+        @type constraints:      bool
+        @keyword verbosity:     A flag specifying the amount of information to print.  The higher
+                                the value, the greater the verbosity.
+        @type verbosity:        int
+        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None,
+                                the normal model is optimised.
+        @type sim_index:        int
+        """
+
+        # Minimisation.
+        self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
     def is_spin_param(self, name):
@@ -1772,6 +1168,351 @@ class Model_free_main:
             return [-100 * 1e-6, -300 * 1e-6]
 
 
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+        """Model-free minimisation function.
+
+        Three categories of models exist for which the approach to minimisation is different.  These
+        are:
+
+        Single spin optimisations:  The 'mf' and 'local_tm' model types which are the
+        model-free parameters for single spins, optionally with a local tm parameter.  These
+        models have no global parameters.
+
+        Diffusion tensor optimisations:  The 'diff' diffusion tensor model type.  No spin
+        specific parameters exist.
+
+        Optimisation of everything:  The 'all' model type consisting of all model-free and all
+        diffusion tensor parameters.
+
+
+        @keyword min_algor:         The minimisation algorithm to use.
+        @type min_algor:            str
+        @keyword min_options:       An array of options to be used by the minimisation algorithm.
+        @type min_options:          array of str
+        @keyword func_tol:          The function tolerance which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type func_tol:             None or float
+        @keyword grad_tol:          The gradient tolerance which, when reached, terminates optimisation.
+                                    Setting this to None turns of the check.
+        @type grad_tol:             None or float
+        @keyword max_iterations:    The maximum number of iterations for the algorithm.
+        @type max_iterations:       int
+        @keyword constraints:       If True, constraints are used during optimisation.
+        @type constraints:          bool
+        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow
+                                    the problem to be better conditioned.
+        @type scaling:              bool
+        @keyword verbosity:         The amount of information to print.  The higher the value, the
+                                    greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to optimise.  This should be None if
+                                    normal optimisation is desired.
+        @type sim_index:            None or int
+        @keyword lower:             The lower bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type lower:                array of numbers
+        @keyword upper:             The upper bounds of the grid search which must be equal to the
+                                    number of parameters in the model.  This optional argument is only
+                                    used when doing a grid search.
+        @type upper:                array of numbers
+        @keyword inc:               The increments for each dimension of the space for the grid search.
+                                    The number of elements in the array must equal to the number of
+                                    parameters in the model.  This argument is only used when doing a
+                                    grid search.
+        @type inc:                  array of int
+        """
+
+        # Test if sequence data is loaded.
+        if not exists_mol_res_spin_data():
+            raise RelaxNoSequenceError
+
+        # Test if the model-free model has been setup, and that the nuclear isotope types have been set.
+        for spin in spin_loop():
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # Not setup.
+            if not spin.model:
+                raise RelaxNoModelError
+
+            # Test if the nuclear isotope type has been set.
+            if not hasattr(spin, 'isotope'):
+                raise RelaxSpinTypeError
+
+        # Reset the minimisation statistics.
+        if sim_index == None and min_algor != 'back_calc':
+            reset_min_stats()
+
+        # Containers for the model-free data and optimisation parameters.
+        data_store = Data_container()
+        opt_params = Data_container()
+
+        # Add the imported parameters.
+        data_store.h_bar = h_bar
+        data_store.mu0 = mu0
+        opt_params.min_algor = min_algor
+        opt_params.min_options = min_options
+        opt_params.func_tol = func_tol
+        opt_params.grad_tol = grad_tol
+        opt_params.max_iterations = max_iterations
+
+        # Add the keyword args.
+        opt_params.verbosity = verbosity
+
+        # Determine the model type.
+        data_store.model_type = determine_model_type()
+        if not data_store.model_type:
+            return
+
+        # Model type for the back-calculate function.
+        if min_algor == 'back_calc' and data_store.model_type != 'local_tm':
+            data_store.model_type = 'mf'
+
+        # Test if diffusion tensor data exists.
+        if data_store.model_type != 'local_tm' and not diffusion_tensor.diff_data_exists():
+            raise RelaxNoTensorError('diffusion')
+
+        # Tests for the PDB file and unit vectors.
+        if data_store.model_type != 'local_tm' and cdp.diff_tensor.type != 'sphere':
+            # Test if the structure file has been loaded.
+            if not hasattr(cdp, 'structure'):
+                raise RelaxNoPdbError
+
+            # Test if unit vectors exist.
+            for spin, spin_id in spin_loop(return_id=True):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Get the interatomic data container.
+                interatoms = return_interatom_list(spin_id)
+
+                # Unit vectors.
+                for i in range(len(interatoms)):
+                    # No relaxation mechanism.
+                    if not interatoms[i].dipole_pair:
+                        continue
+
+                    # Check for the vectors.
+                    if not hasattr(interatoms[i], 'vector'):
+                        raise RelaxNoVectorsError
+
+        # Test if the model-free parameter values are set for minimising diffusion tensor parameters by themselves.
+        if data_store.model_type == 'diff':
+            # Loop over the sequence.
+            for spin in spin_loop():
+                unset_param = are_mf_params_set(spin)
+                if unset_param != None:
+                    raise RelaxNoValueError(unset_param)
+
+        # Print out.
+        if verbosity >= 1:
+            if data_store.model_type == 'mf':
+                print("Only the model-free parameters for single spins will be used.")
+            elif data_store.model_type == 'local_mf':
+                print("Only a local tm value together with the model-free parameters for single spins will be used.")
+            elif data_store.model_type == 'diff':
+                print("Only diffusion tensor parameters will be used.")
+            elif data_store.model_type == 'all':
+                print("The diffusion tensor parameters together with the model-free parameters for all spins will be used.")
+
+        # Test if the CSA and interatomic distances have been set.
+        for spin, spin_id in spin_loop(return_id=True):
+            # Skip deselected spins.
+            if not spin.select:
+                continue
+
+            # CSA value.
+            if not hasattr(spin, 'csa') or spin.csa == None:
+                raise RelaxNoValueError("CSA")
+
+            # Get the interatomic data container.
+            interatoms = return_interatom_list(spin_id)
+
+            # Interatomic distances.
+            count = 0
+            for i in range(len(interatoms)):
+                # No relaxation mechanism.
+                if not interatoms[i].dipole_pair:
+                    continue
+
+                # Check for the distances.
+                if not hasattr(interatoms[i], 'r') or interatoms[i].r == None:
+                    raise RelaxNoValueError("interatomic distance", spin_id=interatoms[i].spin_id1, spin_id2=interatoms[i].spin_id2)
+
+                # Count the number of interactions.
+                count += 1
+            
+            # Too many interactions.
+            if count > 1:
+                raise RelaxError("The spin '%s' has %s dipolar relaxation interactions defined, but only a maximum of one is currently supported." % (spin_id, count))
+
+        # Number of spins, minimisation instances, and data sets for each model type.
+        if data_store.model_type == 'mf' or data_store.model_type == 'local_tm':
+            num_instances = count_spins(skip_desel=False)
+            num_data_sets = 1
+            data_store.num_spins = 1
+        elif data_store.model_type == 'diff' or data_store.model_type == 'all':
+            num_instances = 1
+            num_data_sets = count_spins(skip_desel=False)
+            data_store.num_spins = count_spins()
+
+        # Number of spins, minimisation instances, and data sets for the back-calculate function.
+        if min_algor == 'back_calc':
+            num_instances = 1
+            num_data_sets = 0
+            data_store.num_spins = 1
+
+        # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
+        processor_box = Processor_box() 
+        processor = processor_box.processor
+
+        # Loop over the minimisation instances.
+        #######################################
+
+        for i in range(num_instances):
+            # Get the spin container if required.
+            if data_store.model_type == 'diff' or data_store.model_type == 'all':
+                spin_index = None
+                spin, data_store.spin_id = None, None
+            elif min_algor == 'back_calc':
+                spin_index = opt_params.min_options[0]
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
+            else:
+                spin_index = i
+                spin, data_store.spin_id = return_spin_from_index(global_index=spin_index, return_spin_id=True)
+
+            # Individual spin stuff.
+            if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm') and not min_algor == 'back_calc':
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # Skip spins missing relaxation data or errors.
+                if not hasattr(spin, 'ri_data') or not hasattr(spin, 'ri_data_err'):
+                    continue
+
+            # Skip spins missing the dipolar interaction.
+            if spin and (data_store.model_type == 'mf' or data_store.model_type == 'local_tm'):
+                interatoms = return_interatom_list(data_store.spin_id)
+                if not len(interatoms):
+                    continue
+
+            # Parameter vector and diagonal scaling.
+            if min_algor == 'back_calc':
+                # Create the initial parameter vector.
+                opt_params.param_vector = assemble_param_vector(spin=spin, model_type=data_store.model_type)
+
+                # Diagonal scaling.
+                data_store.scaling_matrix = None
+
+            else:
+                # Create the initial parameter vector.
+                opt_params.param_vector = assemble_param_vector(spin=spin, sim_index=sim_index)
+
+                # The number of parameters.
+                num_params = len(opt_params.param_vector)
+
+                # Diagonal scaling.
+                data_store.scaling_matrix = assemble_scaling_matrix(num_params, model_type=data_store.model_type, spin=spin, scaling=scaling)
+                if len(data_store.scaling_matrix):
+                    opt_params.param_vector = dot(inv(data_store.scaling_matrix), opt_params.param_vector)
+
+            # Configure the grid search.
+            opt_params.inc, opt_params.lower, opt_params.upper = None, None, None
+            if match('^[Gg]rid', min_algor):
+                opt_params.inc, opt_params.lower, opt_params.upper = grid_search_config(num_params, spin=spin, lower=lower, upper=upper, inc=inc, scaling_matrix=data_store.scaling_matrix)
+
+            # Scaling of values for the set function.
+            if match('^[Ss]et', min_algor):
+                opt_params.min_options = dot(inv(data_store.scaling_matrix), opt_params.min_options)
+
+            # Linear constraints.
+            if constraints:
+                opt_params.A, opt_params.b = linear_constraints(num_params, model_type=data_store.model_type, spin=spin, scaling_matrix=data_store.scaling_matrix)
+            else:
+                opt_params.A, opt_params.b = None, None
+
+            # Get the data for minimisation.
+            minimise_data_setup(data_store, min_algor, num_data_sets, opt_params.min_options, spin=spin, sim_index=sim_index)
+
+            # Setup the minimisation algorithm when constraints are present.
+            if constraints and not match('^[Gg]rid', min_algor):
+                algor = opt_params.min_options[0]
+            else:
+                algor = min_algor
+
+            # Initialise the function to minimise (for back-calculation and LM minimisation).
+            if min_algor == 'back_calc' or match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+                self.mf = Mf(init_params=opt_params.param_vector, model_type=data_store.model_type, diff_type=data_store.diff_type, diff_params=data_store.diff_params, scaling_matrix=data_store.scaling_matrix, num_spins=data_store.num_spins, equations=data_store.equations, param_types=data_store.param_types, param_values=data_store.param_values, relax_data=data_store.ri_data, errors=data_store.ri_data_err, bond_length=data_store.r, csa=data_store.csa, num_frq=data_store.num_frq, frq=data_store.frq, num_ri=data_store.num_ri, remap_table=data_store.remap_table, noe_r1_table=data_store.noe_r1_table, ri_labels=data_store.ri_types, gx=data_store.gx, gh=data_store.gh, h_bar=data_store.h_bar, mu0=data_store.mu0, num_params=data_store.num_params, vectors=data_store.xh_unit_vectors)
+
+            # Levenberg-Marquardt minimisation.
+            if match('[Ll][Mm]$', algor) or match('[Ll]evenburg-[Mm]arquardt$', algor):
+                # Total number of ri.
+                number_ri = 0
+                for k in range(len(ri_data_err)):
+                    number_ri = number_ri + len(ri_data_err[k])
+
+                # Reconstruct the error data structure.
+                lm_error = zeros(number_ri, float64)
+                index = 0
+                for k in range(len(ri_data_err)):
+                    lm_error[index:index+len(ri_data_err[k])] = ri_data_err[k]
+                    index = index + len(ri_data_err[k])
+
+                opt_params.min_options = opt_params.min_options + (self.mf.lm_dri, lm_error)
+
+            # Back-calculation.
+            if min_algor == 'back_calc':
+                return self.mf.calc_ri()
+
+            # Parallelised grid search for the diffusion parameter space.
+            if match('^[Gg]rid', min_algor) and data_store.model_type == 'diff':
+                # Print out.
+                print("Parallelised diffusion tensor grid search.")
+
+                # Loop over each grid subdivision.
+                for subdivision in grid_split(divisions=processor.processor_size(), lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc):
+                    # Set the points.
+                    opt_params.subdivision = subdivision
+
+                    # Grid search initialisation.
+                    command = MF_grid_command()
+
+                    # Pass in the data and optimisation parameters.
+                    command.store_data(deepcopy(data_store), deepcopy(opt_params))
+
+                    # Set up the model-free memo and add it to the processor queue.
+                    memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+                    processor.add_to_queue(command, memo)
+
+                # Execute the queued elements.
+                processor.run_queue()
+
+                # Exit this method.
+                return
+
+            # Normal grid search (command initialisation).
+            if search('^[Gg]rid', min_algor):
+                command = MF_grid_command()
+
+            # Minimisation of all other model types (command initialisation).
+            else:
+                command = MF_minimise_command()
+
+            # Pass in the data and optimisation parameters.
+            command.store_data(deepcopy(data_store), deepcopy(opt_params))
+
+            # Set up the model-free memo and add it to the processor queue.
+            memo = MF_memo(model_free=self, model_type=data_store.model_type, spin=spin, sim_index=sim_index, scaling=scaling, scaling_matrix=data_store.scaling_matrix)
+            processor.add_to_queue(command, memo)
+
+        # Execute the queued elements.
+        processor.run_queue()
+
+
     def model_desc(self, model_info):
         """Return a description of the model.
 
@@ -1782,7 +1523,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Global models.
         if model_type == 'all':
@@ -1812,7 +1553,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Global model.
         if model_type == 'all' or model_type == 'diff':
@@ -1855,7 +1596,7 @@ class Model_free_main:
             raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Determine if local or global statistics will be returned.
         if global_stats == None:
@@ -1881,7 +1622,7 @@ class Model_free_main:
                 return None, None, None
 
             # Count the number of parameters.
-            param_vector = self._assemble_param_vector(spin=spin)
+            param_vector = assemble_param_vector(spin=spin)
             k = len(param_vector)
 
             # Count the number of data points.
@@ -1893,7 +1634,7 @@ class Model_free_main:
         # Global stats.
         elif global_stats:
             # Count the number of parameters.
-            param_vector = self._assemble_param_vector()
+            param_vector = assemble_param_vector()
             k = len(param_vector)
 
             # Count the number of data points.
@@ -1932,7 +1673,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Global models.
         if model_type in ['all', 'diff']:
@@ -1957,7 +1698,7 @@ class Model_free_main:
             return 0
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Sequence specific data.
         if model_type == 'mf' or model_type == 'local_tm':
@@ -2112,7 +1853,7 @@ class Model_free_main:
         inc = 0
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params', scope='spin')
@@ -2223,7 +1964,7 @@ class Model_free_main:
         """
 
         # Checks.
-        lib.arg_check.is_str_list(param, 'parameter name')
+        is_str_list(param, 'parameter name')
 
         # Separate out the diffusion tensor parameters from the model-free parameters.
         diff_params = []
@@ -2277,7 +2018,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Global model.
         if model_type == 'all' or model_type == 'diff':
@@ -2323,7 +2064,7 @@ class Model_free_main:
         """Initialise the Monte Carlo parameter values."""
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params', scope='spin')
@@ -2474,7 +2215,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
@@ -2504,7 +2245,7 @@ class Model_free_main:
         inc = 0
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Get the parameter object names.
         param_names = self.data_names(set='params', scope='spin')
@@ -2609,7 +2350,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Single instance.
         if model_type == 'all' or model_type == 'diff':
@@ -2638,7 +2379,7 @@ class Model_free_main:
         """
 
         # Determine the model type.
-        model_type = self._determine_model_type()
+        model_type = determine_model_type()
 
         # Sequence specific data.
         if (model_type == 'mf' or model_type == 'local_tm') and not return_spin_from_index(model_info).select:
@@ -2646,3 +2387,8 @@ class Model_free_main:
 
         # Don't skip.
         return False
+
+
+
+class Data_container:
+    """Empty class to be used for data storage."""

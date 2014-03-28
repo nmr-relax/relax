@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -32,7 +32,7 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError, RelaxFileEmptyError
 from lib.io import extract_data, get_file_path, open_read_file, open_write_file, strip
 from pipe_control import pipes
-from specific_analyses.setup import get_specific_fn
+from specific_analyses.model_free.back_compat import read_columnar_results
 
 
 def determine_format(file):
@@ -95,10 +95,8 @@ def read(file='results', dir=None):
     if format == 'xml':
         ds.from_xml(file, dir=dirname(file_path), pipe_to=pipes.cdp_name())
 
-    # Columnar results.
+    # Columnar results (for backwards compatibility with ancient relax results model-free files).
     elif format == 'columnar':
-        read_function = get_specific_fn('read_columnar_results', pipes.get_type(), raise_error=False)
-
         # Extract the data from the file.
         file_data = extract_data(file=file)
 
@@ -110,7 +108,7 @@ def read(file='results', dir=None):
             raise RelaxFileEmptyError
 
         # Read the results.
-        read_function(file_data)
+        read_columnar_results(file_data)
 
     # Unknown results file.
     else:

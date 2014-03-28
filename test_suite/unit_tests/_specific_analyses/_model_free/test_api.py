@@ -26,16 +26,16 @@ from os import sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control import pipes, results, structure
 from lib.errors import RelaxError
-from specific_analyses.model_free import main
+from specific_analyses.model_free.api import Model_free
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_main(UnitTestCase):
-    """Unit tests for the class methods of specific_analyses.model_free.main.Model_free_main."""
+class Test_api(UnitTestCase):
+    """Unit tests for the class methods of specific_analyses.model_free.api.Model_free."""
 
     # Instantiate the class.
-    inst = main.Model_free_main()
+    inst = Model_free()
 
 
     def setUp(self):

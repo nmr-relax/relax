@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -43,7 +43,7 @@ from lib.physical_constants import return_gyromagnetic_ratio
 from pipe_control import diffusion_tensor, pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.setup import model_free_obj
+from specific_analyses.model_free.model import determine_model_type
 
 
 def __deselect_spins():
@@ -664,7 +664,7 @@ def extract(dir, spin_id=None):
         raise RelaxFileError('Modelfree4', dir + sep+'mfout')
 
     # Determine the parameter set.
-    model_type = model_free_obj._determine_model_type()
+    model_type = determine_model_type()
 
     # Open the file.
     mfout_file = open(dir + sep+'mfout', 'r')

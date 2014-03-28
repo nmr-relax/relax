@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ else:
 import colour
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import molmol
-from specific_analyses.model_free.molmol import Molmol
+from specific_analyses.model_free.uf import classic_style_doc
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -150,7 +150,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows spin specific values to be mapped to a structure through Molmol macros.  Currently only the 'classic' style, which is described below, is available.")
 uf.desc.append(colour._linear_gradient_doc)
-uf.desc.append(Molmol.classic_style_doc)
+uf.desc.append(classic_style_doc)
 uf.desc.append(colour.__molmol_colours_doc__)
 uf.desc.append(colour.__x11_colours_doc__)
 # Prompt examples.
@@ -295,7 +295,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This allows residues specific values to be mapped to a structure through the creation of a Molmol '*.mac' macro which can be executed in Molmol by clicking on 'File, Macro, Execute User...'.  Currently only the 'classic' style, which is described below, is available.")
 uf.desc.append(colour._linear_gradient_doc)
-uf.desc.append(Molmol.classic_style_doc)
+uf.desc.append(classic_style_doc)
 uf.desc.append(colour.__molmol_colours_doc__)
 uf.desc.append(colour.__x11_colours_doc__)
 # Prompt examples.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2005-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2005-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -40,7 +40,7 @@ from pipe_control import angles, diffusion_tensor, pipes, value
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, first_residue_num, last_residue_num, residue_loop, return_spin, spin_loop
 from pipe_control.spectrometer import loop_frequencies
-from specific_analyses.setup import model_free_obj
+from specific_analyses.model_free.model import determine_model_type
 
 
 def __deselect_spins():
@@ -89,7 +89,7 @@ def create(algor='LM', dir=None, force=False):
         raise RelaxNoSequenceError
 
     # Determine the parameter set.
-    model_type = model_free_obj._determine_model_type()
+    model_type = determine_model_type()
 
     # Test if diffusion tensor data for the data_pipe exists.
     if model_type != 'local_tm' and not hasattr(cdp, 'diff_tensor'):

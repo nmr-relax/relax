@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,20 +20,37 @@
 ###############################################################################
 
 # Module docstring.
-"""The Lipari-Szabo model-free analysis."""
+"""Auxiliary functions for optimisation."""
 
 
-# The available modules.
-__all__ = [
-    'api',
-    'back_compat',
-    'bmrb',
-    'data',
-    'macro_base',
-    'model',
-    'molmol',
-    'optimisation',
-    'parameters',
-    'pymol',
-    'uf'
-]
+# relax module imports.
+from lib.errors import RelaxLenError
+
+
+def test_grid_ops(lower=None, upper=None, inc=None, n=None):
+    """Test that the grid search options are reasonable.
+
+    @param lower:   The lower bounds of the grid search which must be equal to the number of parameters in the model.
+    @type lower:    array of numbers
+    @param upper:   The upper bounds of the grid search which must be equal to the number of parameters in the model.
+    @type upper:    array of numbers
+    @param inc:     The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+    @type inc:      array of int
+    @param n:       The number of parameters in the model.
+    @type n:        int
+    """
+
+    # Lower bounds test.
+    if lower != None:
+        if len(lower) != n:
+            raise RelaxLenError('lower bounds', n)
+
+    # Upper bounds.
+    if upper != None:
+        if len(upper) != n:
+            raise RelaxLenError('upper bounds', n)
+
+    # Increment.
+    if isinstance(inc, list):
+        if len(inc) != n:
+            raise RelaxLenError('increment', n)
