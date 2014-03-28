@@ -28,10 +28,10 @@ __all__ = [
     'api',
     'bmrb',
     'macro_base',
-    'main',
-    'mf_minimise',
     'molmol',
-    'multi_processor_commands',
+    'optimisation',
+    'parameters',
     'pymol',
-    'results'
+    'results',
+    'uf'
 ]
