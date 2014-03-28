@@ -40,7 +40,7 @@ from specific_analyses.jw_mapping import uf as jw_mapping_uf
 from specific_analyses.model_free import Model_free
 from specific_analyses.relax_fit import uf as relax_fit_uf
 from specific_analyses.n_state_model import N_state_model
-from specific_analyses.noe.api import Noe
+from specific_analyses.noe import uf as noe_uf
 from specific_analyses.relax_disp.api import Relax_disp
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
@@ -142,7 +142,7 @@ uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
 uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(consistency_tests_uf.return_data_name_doc)
-uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(noe_uf.return_data_name_doc)
 uf.desc.append(relax_fit_uf.return_data_name_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
 uf.desc.append(Relax_disp.return_data_name_doc)
@@ -480,7 +480,7 @@ uf.desc.append(Model_free.return_data_name_doc)
 uf.desc.append(Model_free.write_doc)
 uf.desc.append(jw_mapping_uf.return_data_name_doc)
 uf.desc.append(consistency_tests_uf.return_data_name_doc)
-uf.desc.append(Noe.return_data_name_doc)
+uf.desc.append(noe_uf.return_data_name_doc)
 uf.desc.append(relax_fit_uf.return_data_name_doc)
 uf.desc.append(N_state_model.return_data_name_doc)
 uf.desc.append(Relax_disp.return_data_name_doc)

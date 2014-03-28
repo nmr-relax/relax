@@ -33,8 +33,6 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 class Noe(API_base, API_common):
@@ -185,15 +183,6 @@ class Noe(API_base, API_common):
         # Catch complete failures - i.e. no spins are selected.
         if all_desel:
             raise RelaxError("All spins have been deselected.")
-
-
-    return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
-    _table = uf_tables.add_table(label="table: NOE data type patterns", caption="NOE data type string matching patterns.")
-    _table.add_headings(["Data type", "Object name"])
-    _table.add_row(["Reference intensity", "'ref'"])
-    _table.add_row(["Saturated intensity", "'sat'"])
-    _table.add_row(["NOE", "'noe'"])
-    return_data_name_doc.add_table(_table.label)
 
 
     def return_units(self, param):
