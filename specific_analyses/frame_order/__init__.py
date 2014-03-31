@@ -29,5 +29,5 @@ __all__ = [
     'data',
     'optimisation',
     'parameters',
-    'user_functions'
+    'uf'
 ]
