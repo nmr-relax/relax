@@ -201,10 +201,10 @@ class Consistency_tests(API_base, API_common):
                 r = interatoms[i].r
 
             # Initialise the function to calculate.
-            self.ct = Consistency(frq=cdp.ct_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
+            ct = Consistency(frq=cdp.ct_frq, gx=gx, gh=gh, mu0=mu0, h_bar=h_bar)
 
             # Calculate the consistency tests values.
-            j0, f_eta, f_r2 = self.ct.func(orientation=spin.orientation, tc=spin.tc, r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
+            j0, f_eta, f_r2 = ct.func(orientation=spin.orientation, tc=spin.tc, r=r, csa=spin.csa, r1=r1, r2=r2, noe=noe)
 
             # Consistency tests values.
             if sim_index == None:
