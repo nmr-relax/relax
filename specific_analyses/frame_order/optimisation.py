@@ -39,7 +39,7 @@ from lib.warnings import RelaxWarning
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.checks import check_rdcs
+from specific_analyses.frame_order.checks import check_ave_domain_setup, check_rdcs
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop, translation_fixed
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix
 from target_functions import frame_order
@@ -620,8 +620,7 @@ def target_fn_setup(sim_index=None, scaling=True):
     """
 
     # Check for the average domain displacement information.
-    if not hasattr(cdp, 'ave_pos_pivot') or not hasattr(cdp, 'ave_pos_translation'):
-        raise RelaxError("The mechanics of the displacement to the average domain position have not been set up.")
+    check_ave_domain_setup()
 
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index)
