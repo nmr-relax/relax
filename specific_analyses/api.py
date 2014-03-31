@@ -101,7 +101,7 @@ def return_api(analysis_type=None, pipe_name=None):
 
     # The Frame Order theories.
     elif analysis_type == 'frame order':
-        from specific_analyses.frame_order import Frame_order
+        from specific_analyses.frame_order.api import Frame_order
         obj = Frame_order()
 
     # Hybrid models.
