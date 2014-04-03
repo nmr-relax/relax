@@ -31,7 +31,7 @@ import sys
 # relax module imports.
 from lib.arg_check import is_float_array
 from lib.errors import RelaxError
-from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.frame_order.rotor_axis import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.order import order_parameters
@@ -181,17 +181,16 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         else:
             rotor_angle = cdp.cone_sigma_max
 
-        # Generate the rotor axis.
-        if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor']:
-            axis = zeros(3, float64)
-            spherical_to_cartesian([1.0, cdp.axis_theta, cdp.axis_phi], axis)
-        else:
-            axes = zeros((3, 3), float64)
-            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, axes)
-            axis = axes[:, 2]
-
         # Get the CoM of the entire molecule to use as the centre of the rotor.
         com = pipe_centre_of_mass(verbosity=0)
+
+        # Generate the rotor axis.
+        if cdp.model in ['rotor']:
+            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=cdp.pivot, point=com)
+        elif cdp.model in ['free rotor', 'iso cone', 'iso cone, free rotor']:
+            axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
+        else:
+            axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
 
         # Add the rotor object to the structure as a new molecule.
         rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=cdp.pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
@@ -228,8 +227,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         print("\nGenerating the z-axis system.")
 
         # The axis.
-        axis = zeros(3, float64)
-        spherical_to_cartesian([1.0, getattr(cdp, 'axis_theta'), getattr(cdp, 'axis_phi')], axis)
+        axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
         print(("Central axis: %s." % axis))
 
         # Rotations and inversions.
@@ -245,7 +243,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
             # Fill the structure.
             for i in range(cdp.sim_number):
-                spherical_to_cartesian([1.0, getattr(cdp, 'axis_theta_sim')[i], getattr(cdp, 'axis_phi_sim')[i]], axis_sim[i])
+                axis_sim[i] = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[i], phi=cdp.axis_phi_sim[i])
 
             # Inversion.
             axis_sim_pos = axis_sim

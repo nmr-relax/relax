@@ -39,7 +39,7 @@ from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.checks import check_rdcs
+from specific_analyses.frame_order.checks import check_ave_domain_setup, check_rdcs
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop, translation_fixed
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix
 from target_functions import frame_order
@@ -610,18 +610,19 @@ def store_bc_data(target_fn):
             rdc_index += 1
 
 
-def target_fn_setup(sim_index=None, scaling=True):
+def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     """Initialise the target function for optimisation or direct calculation.
 
     @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:        None or int
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
     @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
     @type scaling:          bool
     """
 
     # Check for the average domain displacement information.
-    if not hasattr(cdp, 'ave_pos_pivot') or not hasattr(cdp, 'ave_pos_translation'):
-        raise RelaxError("The mechanics of the displacement to the average domain position have not been set up.")
+    check_ave_domain_setup()
 
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index)
@@ -684,8 +685,15 @@ def target_fn_setup(sim_index=None, scaling=True):
         cdp.num_int_pts = 200000
 
     # The centre of mass, for use in the rotor models.
-    com = pipe_centre_of_mass(verbosity=0)
-    com = array(com, float64)
+    com = None
+    if cdp.model in ['rotor', 'double rotor']:
+        # The centre of mass of all objects in the data pipe.
+        com = pipe_centre_of_mass(verbosity=0)
+        com = array(com, float64)
+
+        # Printout.
+        if verbosity:
+            print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     if cdp.ave_pos_pivot == 'com':
@@ -774,7 +782,7 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     # Unpack the parameters.
     ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
     eigen_alpha, eigen_beta, eigen_gamma = None, None, None
-    axis_theta, axis_phi = None, None
+    axis_theta, axis_phi, axis_alpha = None, None, None
     cone_theta_x, cone_theta_y = None, None
     cone_theta = None
     cone_s1 = None
@@ -795,7 +803,7 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     elif cdp.model in ['line, torsionless', 'line, free rotor']:
         ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
     elif cdp.model in ['rotor']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_sigma_max = param_vector
+        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, cone_sigma_max = param_vector
     elif cdp.model in ['free rotor']:
         ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
         ave_pos_alpha = None
@@ -878,6 +886,8 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
             cdp.axis_theta = wrap_angles(axis_theta, 0.0, 2.0*pi)
         if axis_phi != None:
             cdp.axis_phi = wrap_angles(axis_phi, 0.0, 2.0*pi)
+        if axis_alpha != None:
+            cdp.axis_phi = wrap_angles(axis_alpha, -pi, pi)
 
         # Cone parameters.
         if cone_theta != None:

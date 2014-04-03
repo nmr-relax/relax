@@ -23,12 +23,16 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import array, float32, float64, transpose, zeros
+from numpy import arctan2, array, cross, dot, float32, float64, transpose, zeros
+from numpy.linalg import norm
 from os import F_OK, access, sep
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
+from lib.geometry.vectors import vector_angle
 from status import Status; status = Status()
 
 
@@ -54,6 +58,7 @@ class Base_script:
     AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
     AXIS_THETA = None
     AXIS_PHI = None
+    AXIS_ALPHA = None
     EIGEN_ALPHA = None
     EIGEN_BETA = None
     EIGEN_GAMMA = None
@@ -70,9 +75,16 @@ class Base_script:
     PIVOT = array([ 37.254, 0.5, 16.7465], float32)
     PIVOT2 = None
 
+    # The CoM - for use in the rotor models.
+    COM = array([44.737253525507697, -1.1684805963699558, 14.072436716990133], float32)
+
 
     def __init__(self, exec_fn):
         """Execute the frame order analysis."""
+
+        # Parameter conversions.
+        if self.MODEL in ['rotor', 'free rotor']:
+            self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
 
         # Alias the user function executor method.
         self._execute_uf = exec_fn
@@ -102,6 +114,42 @@ class Base_script:
 
         # Save the state.
         self._execute_uf(uf_name='state.save', state='devnull', force=True)
+
+
+    def convert_rotor(self, theta=None, phi=None, pivot=None, com=None):
+        """Convert the rotor axis spherical angles to the axis alpha notation.
+
+        The pivot will be shifted to the point on the axis closest to the CoM, and the alpha angle set.
+
+
+        @keyword theta: The polar spherical angle.
+        @type theta:    float
+        @keyword phi:   The azimuthal spherical angle.
+        @type phi:      float
+        @keyword pivot: The pivot point on the rotation axis.
+        @type pivot:    numpy rank-1 3D array
+        @keyword com:   The pivot point on the rotation axis.
+        @type com:      numpy rank-1 3D array
+        """
+
+        # The axis.
+        axis = zeros(3, float64)
+        spherical_to_cartesian([1.0, theta, phi], axis)
+
+        # Reset the pivot to the closest point on the line to the CoM (shift the pivot).
+        self.PIVOT = closest_point_ax(line_pt=pivot, axis=axis, point=com)
+
+        # The CoM-pivot unit vector (for the shifted pivot).
+        piv_com = com - self.PIVOT
+        piv_com = piv_com / norm(piv_com)
+
+        # The vector perpendicular to the CoM-pivot vector.
+        z_axis = array([0, 0, 1], float64)
+        perp_vect = cross(piv_com, z_axis)
+        perp_vect = perp_vect / norm(perp_vect)
+
+        # Set the alpha angle (the angle between the perpendicular vector and the axis).
+        self.AXIS_ALPHA = vector_angle(perp_vect, axis, piv_com)
 
 
     def optimisation(self):
