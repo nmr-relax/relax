@@ -31,7 +31,7 @@ class Generate(Main):
         self.build_axes = self.build_axes_alt
 
 
-    def rotation(self, i):
+    def rotation(self, i, motion_index=0):
         """Set up the rotation for state i."""
 
         # Loop until a valid rotation matrix is found.

@@ -24,13 +24,13 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, float64, transpose, zeros
+from numpy import array, cross, dot, eye, float16, float64, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
 
 # relax module imports.
-from lib.check_types import float16, is_float
+from lib.check_types import is_float
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import cartesian_to_spherical
@@ -44,118 +44,122 @@ from status import Status; status = Status()
 
 
 class Main:
-# The pivot and CoM for the CaM system.
-PIVOT = array([ 37.254, 0.5, 16.7465])
-COM = array([ 26.83678091, -12.37906417,  28.34154128])
-
-# The number of rotation modes.
-MODES = 1
-
-# The number of states for each rotation mode.
-N = 100
-
-# The tilt angles.
-TILT_ANGLE = 0
-INC = 0
-
-# The PDB distribution flag.
-DIST_PDB = False
-
-def run(self, save_path=None):
-    """Generate the distribution and alignment data.
+    # The pivot and CoM for the CaM system.
+    PIVOT = array([ 37.254, 0.5, 16.7465])
+    COM = array([ 26.83678091, -12.37906417,  28.34154128])
     
-    @keyword save_path: The path to place the files into.  If set to None, then the current path will be used.
-    @type save_path:    None or str
-    """
+    # The number of rotation modes.
+    MODES = 1
+    
+    # The number of states for each rotation mode.
+    N = 100
+    
+    # The tilt angles.
+    TILT_ANGLE = 0
+    INC = 0
+    
+    # The PDB distribution flag.
+    DIST_PDB = False
 
-    # The paths to the files.
-    self.path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep
-    self.save_path = save_path
-    if self.save_path == None:
-        self.save_path = getcwd()
+    # The rotations file.
+    ROT_FILE = True
 
-    # Load the interpreter.
-    self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
-    self.interpreter.populate_self()
-    self.interpreter.on(verbose=False)
+    # The state file.
+    SAVE_STATE = True
 
-    # Build the axis system.
-    self.build_axes()
-    self.print_axis_system()
-    self.axes_to_pdb()
+    def run(self, save_path=None):
+        """Generate the distribution and alignment data.
+        
+        @keyword save_path: The path to place the files into.  If set to None, then the current path will be used.
+        @type save_path:    None or str
+        """
 
-    # Create the distribution.
-    self._multi_system()
-    self._create_distribution()
+        # The paths to the files.
+        self.path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'+sep
+        self.save_path = save_path
+        if self.save_path == None:
+            self.save_path = getcwd()
+    
+        # Load the interpreter.
+        self.interpreter = Interpreter(show_script=False, raise_relax_error=True)
+        self.interpreter.populate_self()
+        self.interpreter.on(verbose=False)
+    
+        # Build the axis system.
+        self.build_axes()
+        self.print_axis_system()
+        self.axes_to_pdb()
+    
+        # Create the distribution.
+        self._multi_system()
+        self._create_distribution()
+    
+        # Back-calculate the RDCs and PCSs.
+        self._back_calc()
 
-    # Back-calculate the RDCs and PCSs.
-    self._back_calc()
-
-    # Save a state file for debugging.
-    self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
+        # Save a state file for debugging.
+        if self.SAVE_STATE:
+            self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
 
 
-def _back_calc(self):
-    """Calculate the RDCs and PCSs expected for the structural distribution."""
+    def _back_calc(self):
+        """Calculate the RDCs and PCSs expected for the structural distribution."""
+    
+        # Load the tensors.
+        self.interpreter.script(self.path+'tensors.py')
+    
+        # Set up the model.
+        self.interpreter.n_state_model.select_model(model='fixed')
+        self.interpreter.n_state_model.number_of_states(self.N)
+    
+        # Set the paramagnetic centre.
+        self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
+    
+        # Loop over the alignments.
+        tensors = ['dy', 'tb', 'tm', 'er']
+        for i in range(len(tensors)):
+            # The tag.
+            tag = tensors[i]
+    
+            # The temperature and field strength.
+            self.interpreter.spectrometer.temperature(id=tag, temp=303)
+            self.interpreter.spectrometer.frequency(id=tag, frq=900e6)
+    
+            # Back-calculate the data.
+            self.interpreter.rdc.back_calc(tag)
+            self.interpreter.pcs.back_calc(tag)
+    
+            # Set 1 Hz and 0.1 ppm errors on all data.
+            for spin in spin_loop():
+                # Init.
+                if not hasattr(spin, 'rdc_err'):
+                    spin.rdc_err = {}
+                if not hasattr(spin, 'pcs_err'):
+                    spin.pcs_err = {}
+    
+                # Set the errors.
+                spin.rdc_err[tag] = 1.0
+                spin.pcs_err[tag] = 0.1
+    
+            # Write the data.
+            self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
+            self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
 
-    # Load the tensors.
-    self.interpreter.script(self.path+'tensors.py')
 
-    # Set up the model.
-    self.interpreter.n_state_model.select_model(model='fixed')
-    self.interpreter.n_state_model.number_of_states(self.N)
-
-    # Set the paramagnetic centre.
-    self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
-
-    # Loop over the alignments.
-    tensors = ['dy', 'tb', 'tm', 'er']
-    for i in range(len(tensors)):
-        # The tag.
-        tag = tensors[i]
-
-        # The temperature and field strength.
-        self.interpreter.spectrometer.temperature(id=tag, temp=303)
-        self.interpreter.spectrometer.frequency(id=tag, frq=900e6)
-
-        # Back-calculate the data.
-        self.interpreter.rdc.back_calc(tag)
-        self.interpreter.pcs.back_calc(tag)
-
-        # Set 1 Hz and 0.1 ppm errors on all data.
+    def _backup_pos(self):
+        """Back up the positional data prior to the rotations."""
+    
+        # Store and then reinitalise the atomic position.
         for spin in spin_loop():
-            # Init.
-            if not hasattr(spin, 'rdc_err'):
-                spin.rdc_err = {}
-            if not hasattr(spin, 'pcs_err'):
-                spin.pcs_err = {}
-
-            # Set the errors.
-            spin.rdc_err[tag] = 1.0
-            spin.pcs_err[tag] = 0.1
-
-        # Write the data.
-        self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
-        self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
-
-    # Store the state.
-    self.interpreter.state.save('back_calc', dir=self.save_path, force=True)
-
-
-def _backup_pos(self):
-    """Back up the positional data prior to the rotations."""
-
-    # Store and then reinitalise the atomic position.
-    for spin in spin_loop():
-        if hasattr(spin, 'pos'):
-            spin.orig_pos = array(spin.pos, float16)
-                spin.pos = zeros((self.N**self.MODES, 3), float16)
-
-        # Store and then reinitalise the bond vector.
-        for interatom in interatomic_loop():
-            if hasattr(interatom, 'vector'):
-                interatom.orig_vect = array(interatom.vector, float16)
-                interatom.vector = zeros((self.N**self.MODES, 3), float16)
+            if hasattr(spin, 'pos'):
+                spin.orig_pos = array(spin.pos, float16)
+                    spin.pos = zeros((self.N**self.MODES, 3), float16)
+    
+            # Store and then reinitalise the bond vector.
+            for interatom in interatomic_loop():
+                if hasattr(interatom, 'vector'):
+                    interatom.orig_vect = array(interatom.vector, float16)
+                    interatom.vector = zeros((self.N**self.MODES, 3), float16)
 
 
     def _create_distribution(self):
@@ -186,17 +190,15 @@ def _backup_pos(self):
         self.daeg = zeros((9, 9), float64)
 
         # Open the output files.
-        rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
+        if self.ROT_FILE:
+            rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
 
         # Load N copies of the original C-domain.
-        if self.DIST_PDB:
-            # Loop over each position.
-            for global_index, mode_indices in self._state_loop():
-                # Load the structure for the PDB distribution.
-                self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=global_index+1)
+        for global_index, mode_indices in self._state_loop():
+            self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=global_index+1)
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -205,6 +207,9 @@ def _backup_pos(self):
         for global_index, mode_indices in self._state_loop():
             # The progress meter.
             self._progress(global_index)
+
+            # Total rotation matrix (for construction of the frame order matrix).
+            total_R = eye(3)
 
             # Loop over each motional mode.
             for motion_index in range(self.MODES):
@@ -222,25 +227,29 @@ def _backup_pos(self):
                         interatom.vector[global_index] = dot(self.R, interatom.orig_vect)
 
                 # Decompose the rotation into Euler angles and store them.
-                a, b, g = R_to_euler_zyz(self.R)
-                rot_file.write('%10.7f %10.7f %10.7f\n' % (a, b, g))
-
-                # The frame order matrix component.
-                self.daeg += kron_prod(self.R, self.R)
+                if self.ROT_FILE:
+                    a, b, g = R_to_euler_zyz(self.R)
+                    rot_file.write('Mode %i:  %10.7f %10.7f %10.7f\n' % (motion_index, a, b, g))
 
                 # Rotate the structure for the PDB distribution.
                 if self.DIST_PDB:
                     self.interpreter.structure.rotate(R=self.R, origin=self.PIVOT[motion_index], model=global_index+1)
 
+                # Contribution to the total rotation.
+                total_R = dot(self.R, total_R)
+
+            # The frame order matrix component.
+            self.daeg += kron_prod(total_R, total_R)
+
         # Print out.
         sys.stdout.write('\n\n')
 
         # Frame order matrix averaging.
-        self.daeg = self.daeg / self.N
+        self.daeg = self.daeg / self.N**self.MODES
 
         # Write out the frame order matrix.
         file = open(self.save_path+sep+'frame_order_matrix', 'w')
-        print_frame_order_2nd_degree(self.daeg, file=file)
+        print_frame_order_2nd_degree(self.daeg, file=file, places=8)
 
         # Write out the PDB distribution.
         self.interpreter.on()
