@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,21 +24,17 @@
 
 # relax module imports.
 from base_script import Base_script
-from lib.geometry.rotations import reverse_euler_zyz
 from lib.order.order_parameters import iso_cone_theta_to_S
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
-    directory = 'iso_cone_free_rotor'
-    model = 'iso cone, free rotor'
-    ave_pos_alpha, ave_pos_beta, ave_pos_gamma = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
-    axis_theta = 0.96007997859534299767
-    axis_phi = 4.03227550621962294031
-    cone_s1 = iso_cone_theta_to_S(1.0)
-    cone = True
-    num_int_pts = 50
+    DIRECTORY = 'iso_cone_free_rotor'
+    MODEL = 'iso cone, free rotor'
+    AXIS_THETA = 0.96007997859534299767
+    AXIS_PHI = 4.03227550621962294031
+    CONE_S1 = iso_cone_theta_to_S(1.0)
 
 
 # Execute the analysis.
