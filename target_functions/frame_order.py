@@ -334,6 +334,9 @@ class Frame_order:
             elif model == 'free rotor':
                 self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
                 self.func = self.func_free_rotor_qrint
+            elif model == 'double rotor':
+                self.create_sobol_data(n=self.num_int_pts, dims=['sigma', 'sigma2'])
+                self.func = self.func_double_rotor
 
         # The target function aliases (Scipy numerical integration).
         else:
@@ -380,6 +383,7 @@ class Frame_order:
 
         # The rotation to the Frame Order eigenframe.
         self.R_eigen = zeros((3, 3), float64)
+        self.R_eigen_2 = zeros((3, 3), float64)
         self.R_ave = zeros((3, 3), float64)
         self.Ri_prime = zeros((3, 3), float64)
         self.tensor_3D = zeros((3, 3), float64)
@@ -388,8 +392,101 @@ class Frame_order:
         self.cone_axis = zeros(3, float64)
         self.z_axis = array([0, 0, 1], float64)
 
+        # The rotor axes.
+        self.rotor_axis = zeros(3, float64)
+        self.rotor_axis_2 = zeros(3, float64)
+
         # Initialise the Frame Order matrices.
         self.frame_order_2nd = zeros((9, 9), float64)
+
+
+    def func_double_rotor(self, params):
+        """Target function for the optimisation of the double rotor frame order model.
+
+        This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
+
+
+        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma, theta, phi, sigma_max}.
+        @type params:   list of float
+        @return:        The chi-squared or SSE value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameters.
+        if self.translation_opt and self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._param_pivot_2 = params[3:6]
+            self._translation_vector = params[6:9]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[9:]
+        elif self.translation_opt:
+            self._translation_vector = params[:3]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[3:]
+        elif self.pivot_opt:
+            self._param_pivot = params[:3]
+            self._param_pivot_2 = params[3:6]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[6:]
+        else:
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params
+
+        # Generate both rotation axes from the spherical angles.
+        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.rotor_axis)
+        spherical_to_cartesian([1.0, axis_theta_2, axis_phi_2], self.rotor_axis_2)
+
+        # Pre-calculate the eigenframe rotation matrix.
+        two_vect_to_R(self.z_axis, self.rotor_axis, self.R_eigen)
+        two_vect_to_R(self.z_axis, self.rotor_axis_2, self.R_eigen_2)
+
+        # Combine the rotations.
+        R_eigen_full = dot(self.R_eigen_2, self.R_eigen)
+
+        # The Kronecker product of the eigenframe rotation.
+        Rx2_eigen = kron_prod(R_eigen_full, R_eigen_full)
+
+        # Generate the 2nd degree Frame Order super matrix.
+        frame_order_2nd = compile_2nd_matrix_double_rotor(self.frame_order_2nd, Rx2_eigen, sigma_max, sigma_max_2)
+
+        # The average frame rotation matrix (and reduce and rotate the tensors).
+        self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
+
+        # Pre-transpose matrices for faster calculations.
+        RT_eigen = transpose(R_eigen_full)
+        RT_ave = transpose(self.R_ave)
+
+        # Pre-calculate all the necessary vectors.
+        if self.pcs_flag:
+            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+
+        # Initial chi-squared (or SSE) value.
+        chi2_sum = 0.0
+
+        # Loop over each alignment.
+        for align_index in range(self.num_align):
+            # RDCs.
+            if self.rdc_flag[align_index]:
+                # Loop over the RDCs.
+                for j in range(self.num_interatom):
+                    # The back calculated RDC.
+                    if not self.missing_rdc[align_index, j]:
+                        self.rdc_theta[align_index, j] = rdc_tensor(self.dip_const[j], self.rdc_vect[j], self.A_3D_bc[align_index])
+
+                # Calculate and sum the single alignment chi-squared value (for the RDC).
+                chi2_sum = chi2_sum + chi2(self.rdc[align_index], self.rdc_theta[align_index], self.rdc_error[align_index])
+
+        # PCS via numerical integration.
+        if self.pcs_flag_sum:
+            # Numerical integration of the PCSs.
+            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=R_eigen_full, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs, error_flag=False)
+
+            # Calculate and sum the single alignment chi-squared value (for the PCS).
+            for align_index in range(self.num_align):
+                chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
+
+        # Return the chi-squared value.
+        return chi2_sum
 
 
     def func_free_rotor(self, params):
@@ -1904,7 +2001,7 @@ class Frame_order:
                     self.sobol_angles[i, j] = 2.0 * pi * point[j]
 
                 # The torsion angle - the angle of rotation about the z' axis.
-                if dims[j] in ['sigma']:
+                if dims[j] in ['sigma', 'sigma2']:
                     self.sobol_angles[i, j] = 2.0 * pi * (point[j] - 0.5)
 
 
