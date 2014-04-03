@@ -6,8 +6,6 @@ from numpy.linalg import norm
 
 # relax module imports.
 from lib.geometry.vectors import unit_vector_from_2point
-from lib.io import open_write_file
-from lib.structure.internal.object import Internal
 from lib.structure.represent.rotor import rotor_pdb
 
 
@@ -25,24 +23,16 @@ inter_com = unit_vector_from_2point(COM_N, COM_C)
 N_piv = unit_vector_from_2point(COM_N, PIV)
 
 # First perpendicular rotation axis.
-perp_axis1 = cross(inter_com, N_piv)
-perp_axis1 = perp_axis1 / norm(perp_axis1)
+axis1 = cross(inter_com, N_piv)
+axis1 = axis1 / norm(axis1)
 
 # Second perpendicular rotation axis.
-perp_axis2 = cross(inter_com, perp_axis1)
-perp_axis2 = perp_axis2 / norm(perp_axis2)
+axis2 = cross(inter_com, axis1)
+axis2 = axis2 / norm(axis2)
 
 # The 3D positions 10 Angstrom away.
-pos1 = perp_axis1 * 10.0 + COM_N 
-pos2 = perp_axis2 * 10.0 + COM_C 
-
-# Rotate the axes along the CoM-CoM axis (by shifting the position 1 and 0.5 Angstrom).
-pos1 += 1.0 * inter_com
-pos2 -= 0.5 * inter_com
-
-# New unit vectors for the axes.
-axis1 = unit_vector_from_2point(COM_N, pos1)
-axis2 = unit_vector_from_2point(COM_C, pos2)
+pos1 = axis1 * 10.0 + COM_N 
+pos2 = axis2 * 10.0 + COM_C 
 
 # A storage data pipe.
 pipe.create('system', 'N-state')
@@ -67,5 +57,5 @@ state.save('system', force=True)
 print("\n")
 print("N-domain COM: %s" % COM_N)
 print("C-domain COM: %s" % COM_C)
-print("Axis 1:       %s" % axis1)
-print("Axis 2:       %s" % axis2)
+print("Axis 1:       %s" % repr(axis1))
+print("Axis 2:       %s" % repr(axis2))
