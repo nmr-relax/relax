@@ -42,7 +42,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_rdcs
 from specific_analyses.frame_order.data import base_data_types, domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, param_num, update_model
 
 
 class Frame_order(API_base, API_common):
