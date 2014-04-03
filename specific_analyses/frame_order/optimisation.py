@@ -32,10 +32,10 @@ from warnings import warn
 # relax module imports.
 from lib.float import isNaN, isInf
 from lib.errors import RelaxError, RelaxInfError, RelaxNaNError, RelaxNoPCSError, RelaxNoRDCError
+from lib.geometry.angles import wrap_angles
 from lib.order import order_parameters
 from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ratio
 from lib.warnings import RelaxWarning
-from pipe_control.angles import wrap_angles
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.structure.mass import pipe_centre_of_mass
