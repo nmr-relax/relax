@@ -28,7 +28,7 @@ from unittest import TestCase
 # relax module imports.
 from specific_analyses.api_base import API_base
 from specific_analyses.consistency_tests.api import Consistency_tests
-from specific_analyses.frame_order import Frame_order
+from specific_analyses.frame_order.api import Frame_order
 from specific_analyses.hybrid import Hybrid
 from specific_analyses.jw_mapping.api import Jw_mapping
 from specific_analyses.model_free.api import Model_free
