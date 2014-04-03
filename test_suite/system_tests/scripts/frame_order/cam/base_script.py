@@ -83,7 +83,7 @@ class Base_script:
         """Execute the frame order analysis."""
 
         # Parameter conversions.
-        if self.AXIS_THETA != None and self.AXIS_ALPHA == None:
+        if self.MODEL in ['rotor', 'free rotor']:
             self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
 
         # Alias the user function executor method.
