@@ -290,7 +290,8 @@ uf.add_keyarg(
         "Isotropic cone",
         "Free rotor pseudo-ellipse",
         "Torsionless pseudo-ellipse",
-        "Pseudo-ellipse"
+        "Pseudo-ellipse",
+        "Double rotor"
     ],
     wiz_combo_data = [
         "free rotor",
@@ -304,7 +305,8 @@ uf.add_keyarg(
         "iso cone",
         "pseudo-ellipse, free rotor",
         "pseudo-ellipse, torsionless",
-        "pseudo-ellipse"
+        "pseudo-ellipse",
+        "double rotor"
     ],
     wiz_read_only = True,
 )
@@ -327,6 +329,7 @@ uf.desc[-1].add_item_list_element("'line, free rotor'", "The line cone model wit
 uf.desc[-1].add_item_list_element("'rotor'", "The only motion is a rotation about the cone axis restricted by the torsion angle cone_sigma_max.")
 uf.desc[-1].add_item_list_element("'rigid'", "No domain motions.")
 uf.desc[-1].add_item_list_element("'free rotor'", "The only motion is free rotation about the cone axis.")
+uf.desc[-1].add_item_list_element("'double rotor'", "Restricted motions about two independent rotor axes.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To select the isotropic cone model, type:")
