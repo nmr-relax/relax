@@ -86,7 +86,7 @@ def assemble_param_vector(sim_index=None):
             param_vect.append(cdp.eigen_gamma)
 
         # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'double rotor']:
+        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
             param_vect.append(cdp.axis_theta)
             param_vect.append(cdp.axis_phi)
 
@@ -94,6 +94,10 @@ def assemble_param_vector(sim_index=None):
         if cdp.model in ['double rotor']:
             param_vect.append(cdp.axis_theta_2)
             param_vect.append(cdp.axis_phi_2)
+
+        # Frame order eigenframe - the rotor axis alpha angle.
+        if cdp.model in ['rotor']:
+            param_vect.append(cdp.axis_alpha)
 
         # Cone parameters - pseudo-elliptic cone parameters.
         if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
@@ -138,7 +142,7 @@ def assemble_param_vector(sim_index=None):
             param_vect.append(cdp.eigen_gamma_sim[sim_index])
 
         # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'double rotor']:
+        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
             param_vect.append(cdp.axis_theta_sim[sim_index])
             param_vect.append(cdp.axis_phi_sim[sim_index])
 
@@ -146,6 +150,10 @@ def assemble_param_vector(sim_index=None):
         if cdp.model in ['double rotor']:
             param_vect.append(cdp.axis_theta_sim_2[sim_index])
             param_vect.append(cdp.axis_phi_sim_2[sim_index])
+
+        # Frame order eigenframe - the rotor axis alpha angle.
+        if cdp.model in ['rotor']:
+            param_vect.append(cdp.axis_alpha_sim[sim_index])
 
         # Cone parameters - pseudo-elliptic cone parameters.
         if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
@@ -232,12 +240,16 @@ def param_num():
         num += 3
 
     # Frame order eigenframe - the isotropic cone axis.
-    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'double rotor']:
+    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
         num += 2
 
     # Frame order eigenframe - the second rotation axis.
     if cdp.model in ['double rotor']:
         num += 2
+
+    # Frame order eigenframe - the rotor axis alpha angle.
+    if cdp.model in ['rotor']:
+        num += 1
 
     # Cone parameters - pseudo-elliptic cone parameters.
     if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
@@ -296,7 +308,7 @@ def update_model():
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor', 'double rotor']:
+    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
 
@@ -304,6 +316,10 @@ def update_model():
     if cdp.model in ['double rotor']:
         cdp.params.append('axis_theta_2')
         cdp.params.append('axis_phi_2')
+
+    # Frame order eigenframe - the rotor axis alpha angle.
+    if cdp.model in ['rotor']:
+        cdp.params.append('axis_alpha')
 
     # Cone parameters - pseudo-elliptic cone parameters.
     if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:

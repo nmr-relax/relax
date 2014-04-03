@@ -71,6 +71,7 @@ class Frame_order(API_base, API_common):
         self.PARAMS.add('eigen_gamma', scope='global', units='rad', desc='The Eigenframe gamma Euler angle', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('axis_theta', scope='global', units='rad', desc='The cone axis polar angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('axis_phi', scope='global', units='rad', desc='The cone axis azimuthal angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
+        self.PARAMS.add('axis_alpha', scope='global', units='rad', desc='The rotor axis alpha angle (the rotation angle out of the xy plane)', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('cone_theta_x', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the x-axis', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('cone_theta_y', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the y-axis', py_type=float, set='params', err=True, sim=True)
         self.PARAMS.add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
@@ -420,7 +421,7 @@ class Frame_order(API_base, API_common):
                 upper = 5
 
             # Linear angle grid from 0 to one inc before 2pi.
-            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
+            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi', 'axis_alpha']:
                 lower = 0.0
                 upper = 2*pi * (1.0 - 1.0/incs[i])
 
@@ -544,6 +545,10 @@ class Frame_order(API_base, API_common):
 
         # Axis spherical coordinate phi.
         if param == 'axis_phi':
+            return [0.0, 2*pi]
+
+        # Axis alpha angle.
+        if param == 'axis_alpha':
             return [0.0, 2*pi]
 
         # Cone angle.

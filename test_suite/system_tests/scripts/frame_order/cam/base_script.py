@@ -58,6 +58,7 @@ class Base_script:
     EIGEN_BETA = None
     EIGEN_GAMMA = None
     CONE_THETA = None
+    CONE_S1 = None
     CONE_THETA_X = None
     CONE_THETA_Y = None
     CONE_SIGMA_MAX = None
@@ -107,36 +108,38 @@ class Base_script:
         """Optimise the frame order model."""
 
         # Set the number of numerical integration points.
-        if hasattr(self, 'NUM_INT_PTS'):
+        if self.NUM_INT_PTS != None:
             self._execute_uf(uf_name='frame_order.num_int_pts', num=self.NUM_INT_PTS)
 
         # Check the minimum.
         if self.MODEL not in ['free rotor', 'iso cone, free rotor']:
-            if hasattr(self, 'AVE_POS_ALPHA') and self.AVE_POS_ALPHA != None:
+            if self.AVE_POS_ALPHA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_ALPHA, param='ave_pos_alpha')
-            if hasattr(self, 'AVE_POS_BETA') and self.AVE_POS_BETA != None:
+            if self.AVE_POS_BETA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_BETA, param='ave_pos_beta')
-            if hasattr(self, 'AVE_POS_GAMMA') and self.AVE_POS_GAMMA != None:
+            if self.AVE_POS_GAMMA != None:
                 self._execute_uf(uf_name='value.set', val=self.AVE_POS_GAMMA, param='ave_pos_gamma')
-        if hasattr(self, 'EIGEN_ALPHA') and self.EIGEN_ALPHA != None:
+        if self.EIGEN_ALPHA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_ALPHA, param='eigen_alpha')
-        if hasattr(self, 'EIGEN_BETA') and self.EIGEN_BETA != None:
+        if self.EIGEN_BETA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_BETA, param='eigen_beta')
-        if hasattr(self, 'EIGEN_GAMMA') and self.EIGEN_GAMMA != None:
+        if self.EIGEN_GAMMA != None:
             self._execute_uf(uf_name='value.set', val=self.EIGEN_GAMMA, param='eigen_gamma')
-        if hasattr(self, 'AXIS_THETA') and self.AXIS_THETA != None:
+        if self.AXIS_THETA != None:
             self._execute_uf(uf_name='value.set', val=self.AXIS_THETA, param='axis_theta')
-        if hasattr(self, 'AXIS_PHI') and self.AXIS_PHI != None:
+        if self.AXIS_PHI != None:
             self._execute_uf(uf_name='value.set', val=self.AXIS_PHI, param='axis_phi')
-        if hasattr(self, 'CONE_THETA_X') and self.CONE_THETA_X != None:
+        if self.AXIS_ALPHA != None:
+            self._execute_uf(uf_name='value.set', val=self.AXIS_ALPHA, param='axis_alpha')
+        if self.CONE_THETA_X != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA_X, param='cone_theta_x')
-        if hasattr(self, 'CONE_THETA_Y') and self.CONE_THETA_Y != None:
+        if self.CONE_THETA_Y != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA_Y, param='cone_theta_y')
-        if hasattr(self, 'CONE_THETA') and self.CONE_THETA != None:
+        if self.CONE_THETA != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_THETA, param='cone_theta')
-        if hasattr(self, 'CONE_S1') and self.CONE_S1 != None:
+        if self.CONE_S1 != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_S1, param='cone_s1')
-        if hasattr(self, 'CONE_SIGMA_MAX') and self.CONE_SIGMA_MAX != None:
+        if self.CONE_SIGMA_MAX != None:
             self._execute_uf(uf_name='value.set', val=self.CONE_SIGMA_MAX, param='cone_sigma_max')
         self._execute_uf(uf_name='calc')
         print("\nchi2: %s" % cdp.chi2)

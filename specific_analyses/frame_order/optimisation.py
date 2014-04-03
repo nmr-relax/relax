@@ -669,6 +669,11 @@ def target_fn_setup(sim_index=None, scaling=True):
     if hasattr(cdp, 'pivot'):
         pivot = cdp.pivot
 
+    # The second pivot.
+    pivot2 = None
+    if hasattr(cdp, 'pivot2'):
+        pivot2 = cdp.pivot2
+
     # Pivot optimisation.
     pivot_opt = True
     if pivot_fixed():
@@ -678,14 +683,18 @@ def target_fn_setup(sim_index=None, scaling=True):
     if not hasattr(cdp, 'num_int_pts'):
         cdp.num_int_pts = 200000
 
+    # The centre of mass, for use in the rotor models.
+    com = pipe_centre_of_mass(verbosity=0)
+    com = array(com, float64)
+
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     if cdp.ave_pos_pivot == 'com':
-        com = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+        ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
         ave_pos_piv_sync = False
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     if cdp.ave_pos_pivot == 'motional':
-        com = pivot
+        ave_pos_pivot = pivot
         ave_pos_piv_sync = True
 
     # Print outs.
@@ -704,7 +713,7 @@ def target_fn_setup(sim_index=None, scaling=True):
         sys.stdout.write("Base data: %s\n" % repr(base_data))
 
     # Set up the optimisation function.
-    target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, ave_pos_pivot=com, ave_pos_piv_sync=ave_pos_piv_sync, translation_opt=translation_opt, pivot=pivot, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
+    target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, ave_pos_piv_sync=ave_pos_piv_sync, translation_opt=translation_opt, pivot=pivot, pivot2=pivot2, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
     # Return the data.
     return target, param_vector, data_types, scaling_matrix
