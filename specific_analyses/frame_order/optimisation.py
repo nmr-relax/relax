@@ -610,11 +610,13 @@ def store_bc_data(target_fn):
             rdc_index += 1
 
 
-def target_fn_setup(sim_index=None, scaling=True):
+def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     """Initialise the target function for optimisation or direct calculation.
 
     @param sim_index:       The index of the simulation to optimise.  This should be None if normal optimisation is desired.
     @type sim_index:        None or int
+    @keyword verbosity:     The amount of information to print.  The higher the value, the greater the verbosity.
+    @type verbosity:        int
     @param scaling:         If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
     @type scaling:          bool
     """
@@ -690,7 +692,8 @@ def target_fn_setup(sim_index=None, scaling=True):
         com = array(com, float64)
 
         # Printout.
-        print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
+        if verbosity:
+            print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     if cdp.ave_pos_pivot == 'com':

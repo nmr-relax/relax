@@ -141,7 +141,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index)
+        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = model.func(param_vector)
@@ -589,7 +589,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, scaling=scaling)
+        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
 
         # Constraints not implemented yet.
         if constraints:
