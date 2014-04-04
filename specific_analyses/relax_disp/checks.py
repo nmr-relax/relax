@@ -110,7 +110,7 @@ def check_exp_type_fixed_time():
         exp_type = cdp.exp_type[id]
         frq = cdp.spectrometer_frq[id]
 
-        if specific_analyses.relax_disp.disp_data.count_relax_times(exp_type = exp_type, frq = frq, ei = cdp.exp_type_list.index(cdp.exp_type[id])) > 1:
+        if specific_analyses.relax_disp.data.count_relax_times(exp_type = exp_type, frq = frq, ei = cdp.exp_type_list.index(cdp.exp_type[id])) > 1:
             raise RelaxError("The experiment '%s' is not of the fixed relaxation time period data type." % exp_type)
 
 

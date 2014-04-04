@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -38,7 +38,7 @@ from gui.string_conv import gui_to_str
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_page, Wiz_window
 from pipe_control.mol_res_spin import are_spins_named
-from specific_analyses.relax_disp.disp_data import has_cpmg_exp_type, has_r1rho_exp_type
+from specific_analyses.relax_disp.data import has_cpmg_exp_type, has_r1rho_exp_type
 from status import Status; status = Status()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()

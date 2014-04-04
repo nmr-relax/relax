@@ -6,7 +6,7 @@ $ rm -f relax_state_sq.log; ../../../../../relax --tee relax_state_sq.log relax_
 """
 
 # relax module imports.
-from specific_analyses.relax_disp.disp_data import return_param_key_from_data
+from specific_analyses.relax_disp.data import return_param_key_from_data
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
 
 

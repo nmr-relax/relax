@@ -7,7 +7,7 @@ from os import sep
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import spin_loop
-from specific_analyses.relax_disp.disp_data import loop_exp_frq_point, return_param_key_from_data
+from specific_analyses.relax_disp.data import loop_exp_frq_point, return_param_key_from_data
 from status import Status; status = Status()
 
 

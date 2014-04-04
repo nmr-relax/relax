@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2009-2011 Michael Bieri                                       #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,7 +35,7 @@ from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from pipe_control.spectrum import replicated_flags, replicated_ids
 from status import Status; status = Status()
-from specific_analyses.relax_disp.disp_data import is_cpmg_exp_type, is_r1rho_exp_type
+from specific_analyses.relax_disp.data import is_cpmg_exp_type, is_r1rho_exp_type
 from user_functions.data import Uf_info; uf_info = Uf_info()
 
 

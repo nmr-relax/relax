@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -41,7 +41,7 @@ from lib.physical_constants import g1H
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.disp_data import loop_exp_frq_offset_point, return_param_key_from_data
+from specific_analyses.relax_disp.data import loop_exp_frq_offset_point, return_param_key_from_data
 
 
 def cpmgfit_execute(dir=None, binary='cpmgfit', force=False):

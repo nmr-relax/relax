@@ -27,7 +27,7 @@ from os import sep
 
 # relax module imports.
 from pipe_control.mol_res_spin import find_index, get_spin_ids, index_molecule, index_residue, return_spin, spin_loop
-from specific_analyses.relax_disp.disp_data import loop_exp_frq_offset, return_offset_data, return_param_key_from_data, return_spin_lock_nu1
+from specific_analyses.relax_disp.data import loop_exp_frq_offset, return_offset_data, return_param_key_from_data, return_spin_lock_nu1
 
 def generate_theta_dic():
     # Get the field count

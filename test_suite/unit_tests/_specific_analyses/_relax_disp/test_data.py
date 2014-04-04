@@ -29,13 +29,13 @@ from math import atan, pi
 from pipe_control import state
 from pipe_control.mol_res_spin import get_spin_ids, return_spin
 from specific_analyses.relax_disp.checks import get_times
-from specific_analyses.relax_disp.disp_data import calc_rotating_frame_params, count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
+from specific_analyses.relax_disp.data import calc_rotating_frame_params, count_relax_times, find_intensity_keys, get_curve_type, has_exponential_exp_type, loop_exp_frq, loop_exp_frq_offset, loop_exp_frq_offset_point, loop_exp_frq_offset_point_time, loop_time, return_offset_data, return_spin_lock_nu1
 from status import Status; status = Status()
 from test_suite.unit_tests.base_classes import UnitTestCase
 
 
-class Test_disp_data(UnitTestCase):
-    """Unit tests for the functions of the specific_analyses.relax_disp.disp_data module."""
+class Test_data(UnitTestCase):
+    """Unit tests for the functions of the specific_analyses.relax_disp.data module."""
 
     def setUp(self):
         """Setup some structures for the unit tests."""

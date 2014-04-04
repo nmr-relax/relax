@@ -29,7 +29,7 @@ __all__ = [
     'catia',
     'checks',
     'cpmgfit',
-    'disp_data',
+    'data',
     'nessy',
     'optimisation',
     'parameters',

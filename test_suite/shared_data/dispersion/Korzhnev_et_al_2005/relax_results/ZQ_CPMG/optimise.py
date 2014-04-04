@@ -6,7 +6,7 @@ $ rm -f optimise.log; ../../../../../../relax --tee optimise.log optimise.py
 """
 
 # relax module imports.
-from specific_analyses.relax_disp.disp_data import generate_r20_key
+from specific_analyses.relax_disp.data import generate_r20_key
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ
 
 
