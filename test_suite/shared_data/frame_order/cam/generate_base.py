@@ -153,13 +153,13 @@ class Main:
         for spin in spin_loop():
             if hasattr(spin, 'pos'):
                 spin.orig_pos = array(spin.pos, float16)
-                    spin.pos = zeros((self.N**self.MODES, 3), float16)
+                spin.pos = zeros((self.N**self.MODES, 3), float16)
     
-            # Store and then reinitalise the bond vector.
-            for interatom in interatomic_loop():
-                if hasattr(interatom, 'vector'):
-                    interatom.orig_vect = array(interatom.vector, float16)
-                    interatom.vector = zeros((self.N**self.MODES, 3), float16)
+        # Store and then reinitalise the bond vector.
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'vector'):
+                interatom.orig_vect = array(interatom.vector, float16)
+                interatom.vector = zeros((self.N**self.MODES, 3), float16)
 
 
     def _create_distribution(self):
