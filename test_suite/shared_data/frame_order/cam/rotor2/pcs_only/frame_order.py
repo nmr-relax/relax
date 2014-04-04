@@ -1,34 +1,12 @@
 # Script for optimising the free rotor frame order test model of CaM.
 
 # Python module imports.
-from numpy import array, float64, transpose, zeros
-
-# relax module imports.
-from lib.geometry.rotations import euler_to_R_zyz
+from numpy import array
 
 
 class Analysis:
     def __init__(self):
         """Execute the frame order analysis."""
-
-        # Optimise.
-        self.optimisation()
-
-        # Load the original structure.
-        self.original_structure()
-
-        # Domain transformation.
-        self.transform()
-
-        # Display in pymol.
-        self.pymol_display()
-
-        # Save the state.
-        state.save('frame_order', force=True)
-
-
-    def optimisation(self):
-        """Optimise the frame order model."""
 
         # Create the data pipe.
         pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -37,26 +15,25 @@ class Analysis:
         structure.read_pdb('1J7O_1st_NH.pdb', dir='../..', set_mol_name='N-dom')
         structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..', set_mol_name='C-dom')
 
-        # Load the spins.
-        structure.load_spins('@N')
-        structure.load_spins('@H')
+        # Set up the 15N and 1H spins.
+        structure.load_spins(spin_id='@N', ave_pos=False)
+        structure.load_spins(spin_id='@H', ave_pos=False)
+        spin.isotope(isotope='15N', spin_id='@N')
+        spin.isotope(isotope='1H', spin_id='@H')
 
-        # Load the NH vectors.
-        structure.vectors(spin_id='@N', attached='H', ave=False)
-
-        # Set the values needed to calculate the dipolar constant.
-        value.set(1.041 * 1e-10, 'bond_length', spin_id="@N")
-        value.set('15N', 'heteronucleus', spin_id="@N")
-        value.set('1H', 'proton', spin_id="@N")
+        # Define the magnetic dipole-dipole relaxation interaction.
+        interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+        interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+        interatom.unit_vectors()
 
         # Loop over the alignments.
         ln = ['dy', 'tb', 'tm', 'er']
         for i in range(len(ln)):
-            ## Load the RDCs.
-            #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir='..', res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            # Load the RDCs.
+            #rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], dir='..', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
             # The PCS.
-            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir='..', res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+            pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], dir='..', mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
             # The temperature and field strength.
             spectrometer.temperature(id=ln[i], temp=303)
@@ -67,14 +44,15 @@ class Analysis:
 
         # Define the domains.
         domain(id='N', spin_id=":1-78")
-        domain(id='C', spin_id=":80-144")
+        domain(id='C', spin_id=":80-148")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
         red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+        ids = ['dy', 'tb', 'tm', 'er']
         for i in range(len(full)):
             # Initialise the reduced tensor.
-            align_tensor.init(tensor=red[i], params=(0, 0, 0, 0, 0))
+            align_tensor.init(tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
 
             # Set the domain info.
             align_tensor.set_domain(tensor=full[i], domain='N')
@@ -86,15 +64,22 @@ class Analysis:
         # Select the model.
         frame_order.select_model('rotor')
 
+        # Set up the mechanics of the displacement to the average domain position.
+        frame_order.average_position(pivot='motional', translation=False)
+
         # Set the reference domain.
         frame_order.ref_domain('N')
 
         # Set the initial pivot point.
         pivot = array([ 37.254, 0.5, 16.7465])
-        frame_order.pivot(pivot)
+        frame_order.pivot(pivot, fix=True)
 
         # Set the paramagnetic centre.
         paramag.centre(pos=[35.934, 12.194, -4.206])
+
+        # The optimisation settings.
+        frame_order.num_int_pts(num=50)
+        frame_order.quad_int(flag=False)
 
         # Check the minimum.
         cdp.ave_pos_alpha = 1.2017352840543052
@@ -104,7 +89,7 @@ class Analysis:
         cdp.axis_phi = 0.89069389677025046
         cdp.cone_sigma_max = 0.52757207875029488
         calc()
-        print cdp.chi2
+        print("\nchi2: %s" % repr(cdp.chi2))
 
         # Optimise.
         #grid_search(inc=5)
@@ -119,64 +104,17 @@ class Analysis:
         #monte_carlo.error_analysis()
 
 
-    def original_structure(self):
-        """Load the original structure into a dedicated data pipe."""
-
-        # Create a special data pipe for the original rigid body position.
-        pipe.create(pipe_name='orig pos', pipe_type='frame order')
-
-        # Load the structure.
-        structure.read_pdb('1J7P_1st_NH.pdb', dir='../..')
-
-
-    def pymol_display(self):
-        """Display the results in PyMOL."""
-
-        # Switch back to the main data pipe.
-        pipe.switch('frame order')
-
-        # Load the PDBs of the 2 domains.
-        structure.read_pdb('1J7O_1st_NH.pdb', dir='../..')
-        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..')
-
-        # Create the cone PDB file.
-        frame_order.cone_pdb(file='cone.pdb', force=True)
-
-        # Set the domains.
-        frame_order.domain_to_pdb(domain='N', pdb='1J7O_1st_NH.pdb')
-        frame_order.domain_to_pdb(domain='C', pdb='1J7P_1st_NH_rot.pdb')
+        # Create the PDB representation.
+        frame_order.pdb_model(force=True)
 
         # PyMOL.
         pymol.view()
         pymol.command('show spheres')
-        pymol.cone_pdb('cone.pdb')
+        pymol.cone_pdb('frame_order.pdb')
 
+        # Save the state.
+        state.save('frame_order', force=True)
 
-    def transform(self):
-        """Transform the domain to the average position."""
-
-        # Switch back to the main data pipe.
-        pipe.switch('frame order')
-
-        # The rotation matrix.
-        R = zeros((3, 3), float64)
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-        print("Rotation matrix:\n%s\n" % R)
-        R = transpose(R)
-        print("Inverted rotation:\n%s\n" % R)
-        pivot = cdp.pivot
-
-        # Create a special data pipe for the average rigid body position.
-        pipe.create(pipe_name='ave pos', pipe_type='frame order')
-
-        # Load the structure.
-        structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='../..')
-
-        # Rotate all atoms.
-        structure.rotate(R=R, origin=pivot)
-
-        # Write out the new PDB.
-        structure.write_pdb('ave_pos', force=True)
 
 
 # Execute the analysis.
