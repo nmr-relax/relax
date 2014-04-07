@@ -308,7 +308,7 @@ def update_model():
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
+    if cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
 
@@ -327,9 +327,9 @@ def update_model():
         cdp.params.append('cone_theta_y')
 
     # Cone parameters - single isotropic angle or order parameter.
-    elif cdp.model in ['iso cone', 'iso cone, torsionless']:
+    if cdp.model in ['iso cone', 'iso cone, torsionless']:
         cdp.params.append('cone_theta')
-    elif cdp.model in ['iso cone, free rotor']:
+    if cdp.model in ['iso cone, free rotor']:
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
