@@ -421,9 +421,14 @@ class Frame_order(API_base, API_common):
                 upper = 5
 
             # Linear angle grid from 0 to one inc before 2pi.
-            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi', 'axis_alpha']:
+            if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
                 lower = 0.0
                 upper = 2*pi * (1.0 - 1.0/incs[i])
+
+            # Linear angle grid from -pi to one inc before pi.
+            if cdp.params[i] in ['axis_alpha']:
+                lower = -pi
+                upper = pi * (1.0 - 1.0/incs[i])
 
             # Arccos grid from 0 to pi.
             if cdp.params[i] in ['ave_pos_beta', 'eigen_beta', 'axis_theta']:
