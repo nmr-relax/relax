@@ -179,7 +179,8 @@ uf.add_keyarg(
     py_type = "num_list",
     dim = 3,
     desc_short = "pivot point",
-    desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates)."
+    desc = "The pivot point for the motion (e.g. the position between the 2 domains in PDB coordinates).",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "order",
@@ -201,14 +202,17 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will set the pivot points for the two domain system within the PDB coordinate system.  This is required for interpreting PCS data as well as for the generation of cone or other PDB representations of the domain motions.")
+uf.desc[-1].add_paragraph("This user function can also be used to change the optimisation status of an already set pivot point.  By simply providing the fixed flag and not the pivot point values, the pivot can be changed to be either fixed during optimisation or that it will be optimised.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the pivot point, type one of:")
 uf.desc[-1].add_prompt("relax> frame_order.pivot([12.067, 14.313, -3.2675])")
 uf.desc[-1].add_prompt("relax> frame_order.pivot(pivot=[12.067, 14.313, -3.2675])")
+uf.desc[-1].add_paragraph("To change an already set and fixed pivot point so that it can now be optimised, type:")
+uf.desc[-1].add_prompt("relax> frame_order.pivot(fix=False)")
 uf.backend = pivot
 uf.menu_text = "&pivot"
-uf.wizard_size = (900, 500)
+uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'frame_order.png'
 
 

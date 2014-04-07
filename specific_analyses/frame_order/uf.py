@@ -408,6 +408,13 @@ def pivot(pivot=None, order=1, fix=False):
     # Test if the current data pipe exists.
     pipes.test()
 
+    # Store the fixed flag.
+    cdp.pivot_fixed = fix
+
+    # No pivot given, so quit.
+    if pivot == None:
+        return
+
     # Convert the pivot to a numpy array.
     pivot = array(pivot, float64)
 
@@ -423,9 +430,6 @@ def pivot(pivot=None, order=1, fix=False):
 
         # Store the variable.
         setattr(cdp, name, pivot)
-
-    # Store the fixed flag.
-    cdp.pivot_fixed = fix
 
 
 def quad_int(flag=False):
