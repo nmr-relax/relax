@@ -761,7 +761,7 @@ class Frame_order(API_base, API_common):
             return 'rad'
 
         # Eigenframe angles.
-        if param in ['eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi']:
+        if param in ['eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'axis_alpha']:
             return 'rad'
 
         # Cone angles.
