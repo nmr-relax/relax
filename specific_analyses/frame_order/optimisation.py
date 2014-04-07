@@ -837,6 +837,8 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
             cdp.axis_theta_sim[sim_index] = wrap_angles(axis_theta, cdp.axis_theta-pi, cdp.axis_theta+pi)
         if axis_phi != None:
             cdp.axis_phi_sim[sim_index] = wrap_angles(axis_phi, cdp.axis_phi-pi, cdp.axis_phi+pi)
+        if axis_alpha != None:
+            cdp.axis_alpha_sim[sim_index] = wrap_angles(axis_alpha, cdp.axis_alpha-pi, cdp.axis_alpha+pi)
 
         # Cone parameters.
         if cone_theta != None:
@@ -887,7 +889,7 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
         if axis_phi != None:
             cdp.axis_phi = wrap_angles(axis_phi, 0.0, 2.0*pi)
         if axis_alpha != None:
-            cdp.axis_phi = wrap_angles(axis_alpha, -pi, pi)
+            cdp.axis_alpha = wrap_angles(axis_alpha, -pi, pi)
 
         # Cone parameters.
         if cone_theta != None:
