@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxImplementError
-from specific_analyses.api_objects import Param_list
+from specific_analyses.parameter_object import Param_list
 
 
 class API_base(object):
