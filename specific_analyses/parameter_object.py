@@ -66,6 +66,18 @@ class Param_list:
             self.add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
 
 
+    def __new__(self, *args, **kargs):
+        """Replacement function for implementing the singleton design pattern."""
+
+        # First initialisation.
+        if self.instance is None:
+            # Create a new instance.
+            self.instance = object.__new__(self, *args, **kargs)
+
+        # Already initialised, so return the instance.
+        return self.instance
+
+
     def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
