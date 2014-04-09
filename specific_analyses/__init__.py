@@ -27,7 +27,6 @@ __all__ = [
     'api',
     'api_base',
     'api_common',
-    'api_objects',
     'consistency_tests',
     'frame_order',
     'hybrid',
@@ -35,6 +34,7 @@ __all__ = [
     'model_free',
     'n_state_model',
     'noe',
+    'parameter_object',
     'relax_disp',
     'relax_fit'
 ]
