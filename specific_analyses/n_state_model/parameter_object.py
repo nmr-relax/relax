@@ -19,15 +19,27 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The N-state model or structural ensemble analysis."""
+# Module docstring.
+"""The module for the N-state model parameter list object."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'data',
-    'optimisation',
-    'parameter_object',
-    'parameters',
-    'uf'
-]
+# relax module imports.
+from specific_analyses.parameter_object import Param_list
+
+
+class N_state_params(Param_list):
+    """The N-state model parameter list singleton."""
+
+    # Class variable for storing the class instance (for the singleton design pattern).
+    _instance = None
+
+    def __init__(self):
+        """Define all the parameters of the analysis."""
+
+        # Execute the base class __init__() method.
+        Param_list.__init__(self)
+
+        # Add the base data.
+        self.add_csa()
+
+        # Add the minimisation data.
+        self.add_min_data(min_stats_global=False, min_stats_spin=True)

@@ -19,15 +19,27 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The N-state model or structural ensemble analysis."""
+# Module docstring.
+"""The module for the steady-state heteronuclear NOE parameter list object."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'data',
-    'optimisation',
-    'parameter_object',
-    'parameters',
-    'uf'
-]
+# relax module imports.
+from specific_analyses.parameter_object import Param_list
+
+
+class Noe_params(Param_list):
+    """The steady-state heteronuclear NOE parameter list singleton."""
+
+    # Class variable for storing the class instance (for the singleton design pattern).
+    _instance = None
+
+    def __init__(self):
+        """Define all the parameters of the analysis."""
+
+        # Execute the base class __init__ method.
+        Param_list.__init__(self)
+
+        # Add the base data.
+        self.add_peak_intensity()
+
+        # Add the single model parameter.
+        self.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)

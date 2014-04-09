@@ -129,6 +129,28 @@ class Param_list:
             self._grace_string[name] = name
 
 
+    def add_csa(self, default=None, set='generic', err=False, sim=False):
+        """Add the CSA parameter 'csa'.
+
+        This is the equivalent of calling:
+
+            add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy value (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
+
+
+        @keyword default:       The default CSA value.
+        @type default:          float
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @type set:              str
+        @keyword err:           A flag which if True indicates that the 'csa_err' error data structure can exist.
+        @type err:              bool
+        @keyword sim:           A flag which if True indicates that the 'csa_sim' Monte Carlo simulation data structure can exist.
+        @type sim:              bool
+        """
+
+        # Add the CSA structure.
+        self.add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
+
+
     def add_min_data(self, min_stats_global=False, min_stats_spin=False):
         """Add minimisation specific objects.
 
@@ -173,7 +195,7 @@ class Param_list:
             self.add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 
-    def add_model_info(self, scope='spin'):
+    def add_model_info(self, scope='spin', model_flag=True, equation_flag=False):
         """Add model specific objects 'model' and 'params'.
 
         This is the equivalent of calling:
@@ -184,11 +206,20 @@ class Param_list:
 
         @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.  Alternatively the value 'both' indicates that there are both global and specific versions of this parameter.
         @type scope:            str
+        @keyword model_flag:    A flag which if True will cause the 'model' structure to be added.
+        @type model_flag:       bool
         """
 
-        # Add the model variables.
+        # Add the model structure.
+        if model_flag:
+            self.add('model', scope=scope, desc='The model name', py_type=str)
+
+        # The equation information.
+        if equation_flag:
+            self.add('equation', scope=scope, desc='The model equation', py_type=str)
+
+        # Add the parameter name list structure.
         self.add('params', scope=scope, desc='The parameters of the model', py_type=list)
-        self.add('model', scope=scope, desc='The model name', py_type=str)
 
 
     def add_peak_intensity(self):

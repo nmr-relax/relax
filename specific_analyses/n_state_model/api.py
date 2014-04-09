@@ -45,6 +45,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, num_data_points
 from specific_analyses.n_state_model.optimisation import minimise_bc_data, target_fn_setup
+from specific_analyses.n_state_model.parameter_object import N_state_params
 from specific_analyses.n_state_model.parameters import disassemble_param_vector, linear_constraints, param_model_index, param_num
 from target_functions.potential import quad_pot
 
@@ -68,11 +69,8 @@ class N_state_model(API_base, API_common):
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
 
-        # Set up the spin parameters.
-        self.PARAMS.add('csa', scope='spin', units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-
-        # Add the minimisation data.
-        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = N_state_params()
 
 
     def base_data_loop(self):

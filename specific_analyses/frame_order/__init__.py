@@ -28,6 +28,7 @@ __all__ = [
     'checks',
     'data',
     'optimisation',
+    'parameter_object',
     'parameters',
     'uf'
 ]

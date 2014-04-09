@@ -25,5 +25,6 @@
 # The available modules.
 __all__ = [
     'api',
+    'parameter_object',
     'uf'
 ]

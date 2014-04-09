@@ -38,6 +38,7 @@ from pipe_control.mol_res_spin import exists_mol_res_spin_data, generate_spin_id
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_fit.optimisation import back_calc, d2func_wrapper, dfunc_wrapper, func_wrapper, grid_search_setup
+from specific_analyses.relax_fit.parameter_object import Relax_fit_params
 from specific_analyses.relax_fit.parameters import assemble_param_vector, assemble_scaling_matrix, disassemble_param_vector, linear_constraints
 
 # C modules.
@@ -69,16 +70,8 @@ class Relax_fit(API_base, API_common):
         self.sim_return_param = self._sim_return_param_spin
         self.sim_return_selected = self._sim_return_selected_spin
 
-        # Set up the spin parameters.
-        self.PARAMS.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
-        self.PARAMS.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
-        self.PARAMS.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
-        self.PARAMS.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self.PARAMS.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
-        self.PARAMS.add('params', scope='spin', desc='The model parameters', py_type=list)
-
-        # Add the minimisation data.
-        self.PARAMS.add_min_data(min_stats_global=False, min_stats_spin=True)
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = Relax_fit_params()
 
 
     def create_mc_data(self, data_id=None):

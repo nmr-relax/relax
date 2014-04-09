@@ -20,22 +20,22 @@
 ###############################################################################
 
 # Module docstring.
-"""The module for the relaxation dispersion analysis parameter list object."""
+"""The module for the relaxation dispersion parameter list object."""
 
 # relax module imports.
 from specific_analyses.parameter_object import Param_list
 
 
 class Relax_disp_params(Param_list):
-    """The relaxation dispersion analysis parameter list singleton."""
+    """The relaxation dispersion parameter list singleton."""
 
-    # Class variable for storing the class instance (for the singleton).
+    # Class variable for storing the class instance (for the singleton design pattern).
     _instance = None
 
     def __init__(self):
         """Define all the parameters of the analysis."""
 
-        # Execute the base class __init__() method.
+        # Execute the base class __init__ method.
         Param_list.__init__(self)
 
         # Add the base data for the 'R2eff' model.
@@ -45,6 +45,9 @@ class Relax_disp_params(Param_list):
         self.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
         self.add('cpmg_frqs', scope='spin', py_type=dict, grace_string='\\qCPMG pulse train frequency (Hz)\\Q')
         self.add('spin_lock_nu1', scope='spin', py_type=dict, grace_string='\\qSpin-lock field strength (Hz)\\Q')
+
+        # Add the model variables.
+        self.add_model_info()
 
         # Add the parameters of the 'R2eff' model.
         self.add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
@@ -80,9 +83,6 @@ class Relax_disp_params(Param_list):
         self.add('w_eff', scope='spin', desc='Effective field in rotating frame : ( w_eff = sqrt(Omega^2 + w_1^2) ) (rad.s^-1)', grace_string='Effective field in rotating frame (rad.s\\S-1\\N)', set='params', py_type=dict, err=False, sim=False)
         self.add('k_AB', scope='spin', default=10000.0, desc='The exchange rate from state A to state B', set='params', py_type=float, grace_string='\\qk\\sAB\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self.add('k_BA', scope='spin', default=10000.0, desc='The exchange rate from state B to state A', set='params', py_type=float, grace_string='\\qk\\sBA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-
-        # Add the model variables.
-        self.add_model_info()
 
         # Add the minimisation data.
         self.add_min_data(min_stats_global=False, min_stats_spin=True)

@@ -33,6 +33,7 @@ from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.noe.parameter_object import Noe_params
 
 
 class Noe(API_base, API_common):
@@ -51,9 +52,8 @@ class Noe(API_base, API_common):
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
 
-        # Set up the spin parameters.
-        self.PARAMS.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
-        self.PARAMS.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = Noe_params()
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):

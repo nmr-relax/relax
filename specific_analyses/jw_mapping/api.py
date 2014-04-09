@@ -28,12 +28,13 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from lib.float import isInf
-from lib.physical_constants import N15_CSA, h_bar, mu0, return_gyromagnetic_ratio
+from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params
 from target_functions.jw_mapping import Mapping
 
 
@@ -60,11 +61,8 @@ class Jw_mapping(API_base, API_common):
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
 
-        # Set up the spin parameters.
-        self.PARAMS.add('j0', scope='spin', string='J(0)', desc='Spectral density value at 0 MHz', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
-        self.PARAMS.add('jwx', scope='spin', string='J(wX)', desc='Spectral density value at the frequency of the heteronucleus', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sX\\N)\\Q', err=True, sim=True)
-        self.PARAMS.add('jwh', scope='spin', string='J(wH)', desc='Spectral density value at the frequency of the proton', py_type=float, set='params', grace_string='\\qJ(\\xw\\f{}\\sH\\N)\\Q', err=True, sim=True)
-        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = Jw_mapping_params()
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):

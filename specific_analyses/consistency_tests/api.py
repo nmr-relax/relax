@@ -35,6 +35,7 @@ from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params
 from target_functions.consistency_tests import Consistency
 
 
@@ -61,13 +62,8 @@ class Consistency_tests(API_base, API_common):
         self.set_selected_sim = self._set_selected_sim_spin
         self.sim_pack_data = self._sim_pack_relax_data
 
-        # Set up the spin parameters.
-        self.PARAMS.add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, grace_string='\\qJ(0)\\Q', err=True, sim=True)
-        self.PARAMS.add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
-        self.PARAMS.add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\sR2\\Q', err=True, sim=True)
-        self.PARAMS.add('csa', scope='spin', default=N15_CSA, units='ppm', desc='CSA value', py_type=float, grace_string='\\qCSA\\Q')
-        self.PARAMS.add('orientation', scope='spin', default=15.7, units='degrees', desc="Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor", py_type=float, grace_string='\\q\\xq\\Q')
-        self.PARAMS.add('tc', scope='spin', default=13 * 1e-9, units='ns', desc="Correlation time", py_type=float, grace_string='\\q\\xt\\f{}c\\Q')
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = Consistency_tests_params()
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):

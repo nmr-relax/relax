@@ -20,12 +20,32 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The consistency testing analysis of multi-field relaxation data."""
+# Module docstring.
+"""The module for the consistency testing parameter list object."""
 
-# The available modules.
-__all__ = [
-    'api',
-    'parameter_object',
-    'uf'
-]
+# relax module imports.
+from lib.physical_constants import N15_CSA
+from specific_analyses.parameter_object import Param_list
+
+
+class Consistency_tests_params(Param_list):
+    """The consistency testing parameter list singleton."""
+
+    # Class variable for storing the class instance (for the singleton design pattern).
+    _instance = None
+
+    def __init__(self):
+        """Define all the parameters of the analysis."""
+
+        # Execute the base class __init__ method.
+        Param_list.__init__(self)
+
+        # Add the base information for the analysis.
+        self.add_csa(default=N15_CSA)
+        self.add('orientation', scope='spin', default=15.7, units='degrees', desc="Angle between the 15N-1H vector and the principal axis of the 15N chemical shift tensor", py_type=float, grace_string='\\q\\xq\\Q')
+        self.add('tc', scope='spin', default=13 * 1e-9, units='ns', desc="Correlation time", py_type=float, grace_string='\\q\\xt\\f{}c\\Q')
+
+        # Add the model parameters.
+        self.add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, grace_string='\\qJ(0)\\Q', err=True, sim=True)
+        self.add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
+        self.add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, grace_string='\\qF\\sR2\\Q', err=True, sim=True)

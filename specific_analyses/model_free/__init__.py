@@ -33,6 +33,7 @@ __all__ = [
     'model',
     'molmol',
     'optimisation',
+    'parameter_object',
     'parameters',
     'pymol',
     'uf'
