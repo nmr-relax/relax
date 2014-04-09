@@ -48,6 +48,9 @@ from specific_analyses.frame_order.parameters import assemble_param_vector, asse
 class Frame_order(API_base, API_common):
     """Class containing the specific methods of the Frame Order theories."""
 
+    # Class variable for storing the class instance (for the singleton design pattern).
+    instance = None
+
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
