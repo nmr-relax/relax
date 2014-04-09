@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,7 +20,10 @@
 ###############################################################################
 
 # Module docstring.
-"""A module of special objects used within the analysis specific API."""
+"""The parameter list object base class for the specific analyses.
+
+This provides a uniform interface for defining and handling parameters - either optimised or fixed - of the specific analyses.
+"""
 
 # Python module imports.
 from re import search
