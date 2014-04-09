@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Module docstring.
+# Package docstring.
 """The Lipari-Szabo model-free analysis."""
 
 

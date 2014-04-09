@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """The R1 and R2 exponential relaxation curve fitting API object."""
 
 # Python module imports.

@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """The steady-state heteronuclear NOE API object."""
 
 # Python module imports.

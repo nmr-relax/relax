@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """The reduced spectral density mapping API object."""
 
 # Python module imports.

@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """Module for all of the reduced spectral density mapping specific user functions."""
 
 # relax module imports.

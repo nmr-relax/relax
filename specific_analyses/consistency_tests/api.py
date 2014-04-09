@@ -20,7 +20,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """The consistency testing analysis API object."""
 
 # Python module imports.

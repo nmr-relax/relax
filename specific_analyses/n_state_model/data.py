@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
+# Module docstring.
 """The N-state model or structural ensemble analysis base data handling."""
 
 # Python module imports.
