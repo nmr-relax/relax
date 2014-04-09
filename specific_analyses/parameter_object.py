@@ -173,6 +173,36 @@ class Param_list:
             self.add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 
+    def add_model_info(self, scope='spin'):
+        """Add model specific objects 'model' and 'params'.
+
+        This is the equivalent of calling:
+
+            add('params', scope=scope, desc='The parameters of the model', py_type=list)
+            add('model', scope=scope, desc='The model', py_type=str)
+
+
+        @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.  Alternatively the value 'both' indicates that there are both global and specific versions of this parameter.
+        @type scope:            str
+        """
+
+        # Add the model variables.
+        self.add('params', scope=scope, desc='The parameters of the model', py_type=list)
+        self.add('model', scope=scope, desc='The model name', py_type=str)
+
+
+    def add_peak_intensity(self):
+        """Add the peak intensity structure 'peak_intensity'.
+
+        This is the equivalent of calling:
+
+            add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        """
+
+        # Add the peak intensity structure.
+        self.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+
+
     def base_loop(self, set=None, scope=None):
         """An iterator method for looping over all the base parameters.
 

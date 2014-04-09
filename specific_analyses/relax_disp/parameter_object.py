@@ -39,7 +39,7 @@ class Relax_disp_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data for the 'R2eff' model.
-        self.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self.add_peak_intensity()
 
         # Add the base information for the dispersion analysis.
         self.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
@@ -82,8 +82,7 @@ class Relax_disp_params(Param_list):
         self.add('k_BA', scope='spin', default=10000.0, desc='The exchange rate from state B to state A', set='params', py_type=float, grace_string='\\qk\\sBA\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
 
         # Add the model variables.
-        self.add('params', scope='spin', desc='The model parameters', py_type=list)
-        self.add('model', scope='spin', desc='The dispersion model', py_type=str)
+        self.add_model_info()
 
         # Add the minimisation data.
         self.add_min_data(min_stats_global=False, min_stats_spin=True)
