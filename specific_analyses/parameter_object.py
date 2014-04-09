@@ -132,9 +132,21 @@ class Param_list:
     def add_min_data(self, min_stats_global=False, min_stats_spin=False):
         """Add minimisation specific objects.
 
-        @keyword min_stats_global:  A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list of global parameters.
+        This is the equivalent of calling the add() method as:
+
+            add('chi2', desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
+            add('iter', desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
+            add('f_count', desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
+            add('g_count', desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
+            add('h_count', desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
+            add('warning', desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
+
+        The parameter scope is defined by the keyword arguments.
+
+
+        @keyword min_stats_global:  A flag which if True will cause the parameters to be global.
         @type min_stats_global:     bool
-        @keyword min_stats_spin:    A flag which if True will include the parameters 'chi2', 'iter', 'f_count', 'g_count', 'h_count', 'warning' in the list of spin parameters.
+        @keyword min_stats_spin:    A flag which if True will cause the parameters to be spin specific.
         @type min_stats_spin:       bool
         """
 
