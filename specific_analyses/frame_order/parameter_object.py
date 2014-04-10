@@ -42,9 +42,9 @@ class Frame_order_params(Param_list):
         self.add_model_info()
 
         # Add the parameters of all models.
-        self.add('ave_pos_x', scope='global', units='rad', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
-        self.add('ave_pos_y', scope='global', units='rad', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
-        self.add('ave_pos_z', scope='global', units='rad', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
+        self.add('ave_pos_x', scope='global', units='Angstrom', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
+        self.add('ave_pos_y', scope='global', units='Angstrom', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
+        self.add('ave_pos_z', scope='global', units='Angstrom', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
         self.add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
         self.add('ave_pos_beta', scope='global', units='rad', desc='The average position beta Euler angle', py_type=float, set='params', err=True, sim=True)
         self.add('ave_pos_gamma', scope='global', units='rad', desc='The average position gamma Euler angle', py_type=float, set='params', err=True, sim=True)
