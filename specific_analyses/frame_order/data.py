@@ -34,8 +34,6 @@ def base_data_types():
     The base data types can include::
         - 'rdc', residual dipolar couplings.
         - 'pcs', pseudo-contact shifts.
-        - 'noesy', NOE restraints.
-        - 'tensor', alignment tensors.
 
     @return:    A list of all the base data types.
     @rtype:     list of str
@@ -56,13 +54,9 @@ def base_data_types():
             list.append('pcs')
             break
 
-    # Alignment tensor search.
-    if not ('rdc' in list or 'pcs' in list) and hasattr(cdp, 'align_tensors'):
-        list.append('tensor')
-
     # No data is present.
     if not list:
-        raise RelaxError("Neither RDCs, PCSs nor alignment tensor data is present.")
+        raise RelaxError("Neither RDCs nor PCSs are present.")
 
     # Return the list.
     return list

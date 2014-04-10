@@ -40,7 +40,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.frame_order.data import base_data_types, domain_moving
+from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, param_num, update_model
@@ -118,7 +118,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
+        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity)
 
         # Make a single function call.  This will cause back calculation and the data will be stored in the class instance.
         chi2 = model.func(param_vector)
@@ -566,7 +566,7 @@ class Frame_order(API_base, API_common):
         """
 
         # Set up the target function for direct calculation.
-        model, param_vector, data_types, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
+        model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
 
         # Constraints not implemented yet.
         if constraints:

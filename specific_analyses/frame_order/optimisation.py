@@ -721,7 +721,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     target = frame_order.Frame_order(model=cdp.model, init_params=param_vector, full_tensors=full_tensors, full_in_ref_frame=full_in_ref_frame, rdcs=rdcs, rdc_errors=rdc_err, rdc_weights=rdc_weight, rdc_vect=rdc_vect, dip_const=rdc_const, pcs=pcs, pcs_errors=pcs_err, pcs_weights=pcs_weight, atomic_pos=atomic_pos, temp=temp, frq=frq, paramag_centre=paramag_centre, scaling_matrix=scaling_matrix, com=com, ave_pos_pivot=ave_pos_pivot, ave_pos_piv_sync=ave_pos_piv_sync, translation_opt=translation_opt, pivot=pivot, pivot2=pivot2, pivot_opt=pivot_opt, num_int_pts=cdp.num_int_pts, quad_int=cdp.quad_int)
 
     # Return the data.
-    return target, param_vector, data_types, scaling_matrix
+    return target, param_vector, scaling_matrix
 
 
 def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=None):
