@@ -58,6 +58,7 @@ class Frame_order(API_base, API_common):
         # Place methods into the API.
         self.deselect = self._deselect_global
         self.is_spin_param = self._is_spin_param_false
+        self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -574,21 +575,6 @@ class Frame_order(API_base, API_common):
         """
 
         return ""
-
-
-    def model_loop(self):
-        """Dummy generator method.
-
-        In this case only a single model per spin system is assumed.  Hence the yielded data is the
-        spin container object.
-
-
-        @return:    Information about the model which for this analysis is the spin container.
-        @rtype:     SpinContainer instance
-        """
-
-        # Don't return anything, just loop once.
-        yield None
 
 
     def model_statistics(self, model_info=None, spin_id=None, global_stats=None):
