@@ -38,8 +38,9 @@ from lib.physical_constants import dipolar_constant, g1H, return_gyromagnetic_ra
 from lib.warnings import RelaxWarning
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.rdc import check_rdcs
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.checks import check_ave_domain_setup, check_rdcs
+from specific_analyses.frame_order.checks import check_ave_domain_setup
 from specific_analyses.frame_order.data import base_data_types, domain_moving, pivot_fixed, tensor_loop, translation_fixed
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix
 from target_functions import frame_order
@@ -281,13 +282,13 @@ def minimise_setup_rdcs(sim_index=None):
 
     # The unit vectors and RDC constants.
     for interatom in interatomic_loop(selection1=domain_moving()):
+        # RDC checks.
+        if not check_rdcs(interatom):
+            continue
+
         # Get the spins.
         spin1 = return_spin(interatom.spin_id1)
         spin2 = return_spin(interatom.spin_id2)
-
-        # RDC checks.
-        if not check_rdcs(interatom, spin1, spin2):
-            continue
 
         # A single unit vector.
         if interatom.vector.shape == (3,):
@@ -591,12 +592,8 @@ def store_bc_data(target_fn):
         # Interatomic data container loop.
         rdc_index = 0
         for interatom in interatomic_loop(domain_moving()):
-            # Get the spins.
-            spin1 = return_spin(interatom.spin_id1)
-            spin2 = return_spin(interatom.spin_id2)
-
             # RDC checks.
-            if not check_rdcs(interatom, spin1, spin2):
+            if not check_rdcs(interatom):
                 continue
 
             # Initialise the data structure.

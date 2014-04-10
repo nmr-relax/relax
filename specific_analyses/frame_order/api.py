@@ -37,9 +37,9 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop
+from pipe_control.rdc import check_rdcs
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
-from specific_analyses.frame_order.checks import check_rdcs
 from specific_analyses.frame_order.data import base_data_types, domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
@@ -81,12 +81,8 @@ class Frame_order(API_base, API_common):
 
         # Loop over the interatomic data containers for the moving domain (for the RDC data).
         for interatom in interatomic_loop(selection1=domain_moving()):
-            # Get the spins.
-            spin1 = return_spin(interatom.spin_id1)
-            spin2 = return_spin(interatom.spin_id2)
-
             # RDC checks.
-            if not check_rdcs(interatom, spin1, spin2):
+            if not check_rdcs(interatom):
                 continue
 
             # Loop over the alignment IDs.
