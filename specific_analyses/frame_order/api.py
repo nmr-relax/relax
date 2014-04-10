@@ -668,30 +668,6 @@ class Frame_order(API_base, API_common):
         return mc_errors
 
 
-    def return_units(self, param):
-        """Return a string representing the parameters units.
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @return:        The parameter units string.
-        @rtype:         str
-        """
-
-        # Average domain position.
-        if param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
-            return 'Angstrom'
-        if param in ['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma']:
-            return 'rad'
-
-        # Eigenframe angles.
-        if param in ['eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'axis_alpha']:
-            return 'rad'
-
-        # Cone angles.
-        if param in ['cone_theta_x', 'cone_theta_y', 'cone_sigma_max', 'cone_theta']:
-            return 'rad'
-
-
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
