@@ -42,6 +42,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.checks import check_rdcs
 from specific_analyses.frame_order.data import base_data_types, domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
+from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, param_num, update_model
 
 
@@ -62,28 +63,8 @@ class Frame_order(API_base, API_common):
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
 
-        # Set up the global parameters.
-        self.PARAMS.add('ave_pos_x', scope='global', units='rad', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('ave_pos_y', scope='global', units='rad', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('ave_pos_z', scope='global', units='rad', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('ave_pos_alpha', scope='global', units='rad', desc='The average position alpha Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('ave_pos_beta', scope='global', units='rad', desc='The average position beta Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('ave_pos_gamma', scope='global', units='rad', desc='The average position gamma Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('eigen_alpha', scope='global', units='rad', desc='The Eigenframe alpha Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('eigen_beta', scope='global', units='rad', desc='The Eigenframe beta Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('eigen_gamma', scope='global', units='rad', desc='The Eigenframe gamma Euler angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('axis_theta', scope='global', units='rad', desc='The cone axis polar angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('axis_phi', scope='global', units='rad', desc='The cone axis azimuthal angle (for the isotropic cone model)', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('axis_alpha', scope='global', units='rad', desc='The rotor axis alpha angle (the rotation angle out of the xy plane)', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('cone_theta_x', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the x-axis', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('cone_theta_y', scope='global', units='rad', desc='The pseudo-ellipse cone opening half-angle for the y-axis', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('cone_s1', scope='global', units='', desc='The isotropic cone order parameter', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
-        self.PARAMS.add('params', scope='global', desc='The model parameters', py_type=list)
-
-        # Add minimisation structures.
-        self.PARAMS.add_min_data(min_stats_global=True)
+        # Place a copy of the parameter list object in the instance namespace.
+        self.PARAMS = Frame_order_params()
 
 
     def base_data_loop(self):
