@@ -183,15 +183,3 @@ class Noe(API_base, API_common):
         # Catch complete failures - i.e. no spins are selected.
         if all_desel:
             raise RelaxError("All spins have been deselected.")
-
-
-    def return_units(self, param):
-        """Dummy function which returns None as the stats have no units.
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @return:        Nothing.
-        @rtype:         None
-        """
-
-        return None

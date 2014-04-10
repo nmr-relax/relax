@@ -436,19 +436,6 @@ class Relax_fit(API_base, API_common):
         return spin.peak_intensity_err
 
 
-    def return_units(self, param):
-        """Dummy method which returns None as the stats have no units.
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @return:        Nothing.
-        @rtype:         None
-        """
-
-        # Unitless.
-        return None
-
-
     def sim_pack_data(self, data_id, sim_data):
         """Pack the Monte Carlo simulation data.
 

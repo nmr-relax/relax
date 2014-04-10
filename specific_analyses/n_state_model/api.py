@@ -803,24 +803,6 @@ class N_state_model(API_base, API_common):
             return "Back-calculated RDC"
 
 
-    def return_units(self, param):
-        """Return a string representing the parameters units.
-
-        @param param:   The name of the parameter to return the units string for.
-        @type param:    str
-        @return:        The parameter units string.
-        @rtype:         str
-        """
-
-        # PCSs.
-        if param == 'pcs' or param == 'pcs_bc':
-            return 'ppm'
-
-        # RDCs.
-        if param == 'rdc' or param == 'rdc_bc':
-            return 'Hz'
-
-
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
