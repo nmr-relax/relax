@@ -331,6 +331,7 @@ uf.add_keyarg(
 uf.add_keyarg(
     name = "index",
     py_type = "int",
+    default = 0,
     min = 0,
     max = 10000000,
     desc_short = "index for list-type parameters",
