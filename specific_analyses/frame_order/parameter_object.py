@@ -41,6 +41,9 @@ class Frame_order_params(Param_list):
         # Add the model variables.
         self.add_model_info()
 
+        # Add the base data.
+        self.add_align_data()
+
         # Add the parameters of all models.
         self.add('ave_pos_x', scope='global', units='Angstrom', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
         self.add('ave_pos_y', scope='global', units='Angstrom', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)

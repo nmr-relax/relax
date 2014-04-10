@@ -39,6 +39,7 @@ class N_state_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data.
+        self.add_align_data()
         self.add_csa()
 
         # Add the minimisation data.

@@ -141,6 +141,20 @@ class Param_list:
             self._grace_string[name] = name
 
 
+    def add_align_data(self):
+        """Add the PCS and RDC data.
+
+        This is the equivalent of calling:
+
+            add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
+            add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
+        """
+
+        # Add the data.
+        self.add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
+        self.add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
+
+
     def add_csa(self, default=None, set='generic', err=False, sim=False):
         """Add the CSA parameter 'csa'.
 
