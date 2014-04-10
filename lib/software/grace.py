@@ -25,6 +25,7 @@
 
 # Python module imports.
 from math import ceil, sqrt
+from re import search
 
 # relax module imports.
 import pipe_control
@@ -398,11 +399,18 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
             else:
                 # Label.
                 if analysis_spec and (not axis_labels or not axis_labels[gi][i]):
+                    # Strip out the '_err' and '_bc' from the data type to allow the error and back-calculated structures to be used.
+                    data_type_i = data_type[i]
+                    if search('_err$', data_type_i):
+                        data_type_i = data_type_i[:-4]
+                    elif search('_bc$', data_type_i):
+                        data_type_i = data_type_i[:-3]
+
                     # Get the units.
-                    units = return_units(data_type[i])
+                    units = return_units(data_type_i)
 
                     # Set the label.
-                    axis_labels[gi][i] = return_grace_string(data_type[i])
+                    axis_labels[gi][i] = return_grace_string(data_type_i)
 
                     # Add units.
                     if units:
