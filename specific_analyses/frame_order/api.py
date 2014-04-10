@@ -633,30 +633,28 @@ class Frame_order(API_base, API_common):
 
         @keyword model_info:    Unused.
         @type model_info:       None
-        @keyword spin_id:       The spin identification string (unused).
+        @keyword spin_id:       Unused.
         @type spin_id:          None
         @keyword global_stats:  Unused.
         @type global_stats:     None
-        @return:                The optimisation statistics, in tuple format, of the number of
-                                parameters (k), the number of data points (n), and the chi-squared
-                                value (chi2).
+        @return:                The optimisation statistics, in tuple format, of the number of parameters (k), the number of data points (n), and the chi-squared value (chi2).
         @rtype:                 tuple of (int, int, float)
         """
 
         # Count the number of parameters.
-        param_vector = assemble_param_vector()
-        k = len(param_vector)
+        k = len(cdp.params)
 
-        # The number of data points.
-        n = len(cdp.align_tensors.reduction)
+        # The number of data points (RDCs + PCSs).
+        n = 0
+        for data in self.base_data_loop():
+            n += 1
 
-        # The chi2 value.
+        # Check for the chi2 value.
         if not hasattr(cdp, 'chi2'):
             raise RelaxError("Statistics are not available, most likely because the model has not been optimised.")
-        chi2 = cdp.chi2
 
         # Return the data.
-        return k, n, chi2
+        return k, n, cdp.chi2
 
 
     def model_type(self):
