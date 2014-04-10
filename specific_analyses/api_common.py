@@ -120,6 +120,24 @@ class API_common:
             setattr(data_cont, name, value)
 
 
+    def _deselect_global(self, model_info, sim_index=None):
+        """Common method for deselecting a global model.
+
+        @param model_info:      The model index from model_loop().  This is ignored.
+        @type model_info:       int
+        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
+        @type sim_index:        None or int
+        """
+
+        # The simulation structure.
+        if sim_index != None:
+            cdp.select_sim[sim_index] = False
+
+        # The model.
+        else:
+            cdp.select = False
+
+
     def _eliminate_false(self, name, value, model_info, args, sim=None):
         """Dummy method for model elimination.
 

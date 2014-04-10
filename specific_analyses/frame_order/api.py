@@ -56,6 +56,7 @@ class Frame_order(API_base, API_common):
         """Initialise the class by placing API_common methods into the API."""
 
         # Place methods into the API.
+        self.deselect = self._deselect_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -186,19 +187,6 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return mc_data
-
-
-    def deselect(self, model_info, sim_index=None):
-        """Deselect models or simulations.
-
-        @param model_info:      The model index from model_loop().  This is zero for the global models or equal to the global spin index (which covers the molecule, residue, and spin indices).
-        @type model_info:       int
-        @keyword sim_index:     The optional Monte Carlo simulation index.  If None, then models will be deselected, otherwise the given simulation will.
-        @type sim_index:        None or int
-        """
-
-        # Set the deselection flag.
-        cdp.select = False
 
 
     def duplicate_data(self, pipe_from=None, pipe_to=None, model_info=None, global_stats=False, verbose=True):
