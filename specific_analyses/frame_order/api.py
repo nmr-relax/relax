@@ -57,6 +57,7 @@ class Frame_order(API_base, API_common):
 
         # Place methods into the API.
         self.deselect = self._deselect_global
+        self.is_spin_param = self._is_spin_param_false
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -370,15 +371,10 @@ class Frame_order(API_base, API_common):
             end_point = True
 
             # The pivot point.
-            if cdp.params[i] == 'pivot_x':
-                lower = cdp.pivot_x - 10.0
-                upper = cdp.pivot_x + 10.0
-            elif cdp.params[i] == 'pivot_y':
-                lower = cdp.pivot_y - 10.0
-                upper = cdp.pivot_y + 10.0
-            elif cdp.params[i] == 'pivot_z':
-                lower = cdp.pivot_z - 10.0
-                upper = cdp.pivot_z + 10.0
+            if cdp.params[i] in ['pivot_x', 'pivot_y', 'pivot_z']:
+                val = getattr(cdp, cdp.params[i])
+                lower = val - 10.0
+                upper = val + 10.0
 
             # Average domain position translation (in a +/- 5 Angstrom box).
             if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
@@ -472,19 +468,6 @@ class Frame_order(API_base, API_common):
 
         # Minimisation.
         self.minimise(min_algor='grid', min_options=pts, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
-
-
-    def is_spin_param(self, name):
-        """State that the parameter is not spin specific.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        False.
-        @rtype:         bool
-        """
-
-        # Not spin specific!
-        return False
 
 
     def map_bounds(self, param, spin_id=None):

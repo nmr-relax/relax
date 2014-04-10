@@ -194,10 +194,25 @@ class API_common:
         return False
 
 
-    def _is_spin_param_true(self, name):
-        """Dummy method stating that the parameter is spin specific.
+    def _is_spin_param_false(self, name):
+        """Common method stating that the parameter is not spin specific.
 
-        This method always returns true, hence all parameters will be considered residents of a SpinContainer object unless this method is overwritten.
+        This method always returns False, hence all parameters will be considered global.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        False
+        @rtype:         bool
+        """
+
+        # Return the default of False.
+        return False
+
+
+    def _is_spin_param_true(self, name):
+        """Common method stating that the parameter is spin specific.
+
+        This method always returns true, hence all parameters will be considered residents of a SpinContainer object.
 
         @param name:    The name of the parameter.
         @type name:     str
