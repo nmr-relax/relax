@@ -62,7 +62,6 @@ class N_state_model(API_base, API_common):
         # Place methods into the API.
         self.model_loop = self._model_loop_single_global
         self.overfit_deselect = self._overfit_deselect_dummy
-        self.return_conversion_factor = self._return_no_conversion_factor
         self.set_selected_sim = self._set_selected_sim_global
         self.sim_return_selected = self._sim_return_selected_global
 
@@ -255,31 +254,6 @@ class N_state_model(API_base, API_common):
 
         # Return the data.
         return mc_data
-
-
-    def default_value(self, param):
-        """The default N-state model parameter values.
-
-        @param param:   The N-state model parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Split the parameter into its base name and index.
-        name = self.return_data_name(param)
-        index = param_model_index(param)
-
-        # The number of states as a float.
-        N = float(cdp.N)
-
-        # Probability.
-        if name == 'probs':
-            return 1.0 / N
-
-        # Euler angles.
-        elif name == 'alpha' or name == 'beta' or name == 'gamma':
-            return (float(index)+1) * pi / (N+1.0)
 
 
     def grid_search(self, lower=None, upper=None, inc=None, constraints=False, verbosity=0, sim_index=None):
@@ -671,48 +645,6 @@ class N_state_model(API_base, API_common):
         return data
 
 
-    def return_data_name(self, param):
-        """Return a unique identifying string for the N-state model parameter.
-
-        @param param:   The N-state model parameter.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # Probability.
-        if search('^p[0-9]*$', param):
-            return 'probs'
-
-        # Alpha Euler angle.
-        if search('^alpha', param):
-            return 'alpha'
-
-        # Beta Euler angle.
-        if search('^beta', param):
-            return 'beta'
-
-        # Gamma Euler angle.
-        if search('^gamma', param):
-            return 'gamma'
-
-        # Bond length.
-        if search('^r$', param) or search('[Bb]ond[ -_][Ll]ength', param):
-            return 'r'
-
-        # Heteronucleus type.
-        if param == 'heteronuc_type':
-            return 'heteronuc_type'
-
-        # Proton type.
-        if param == 'proton_type':
-            return 'proton_type'
-
-        # Paramagnetic centre.
-        if search('^paramag_[xyz]$', param):
-            return param
-
-
     def return_error(self, data_id=None):
         """Create and return the spin specific Monte Carlo Ri error structure.
 
@@ -775,34 +707,6 @@ class N_state_model(API_base, API_common):
         return mc_errors
 
 
-    def return_grace_string(self, param):
-        """Return the Grace string representation of the parameter.
-
-        This is used for axis labelling.
-
-        @param param:   The specific analysis parameter.
-        @type param:    str
-        @return:        The Grace string representation of the parameter.
-        @rtype:         str
-        """
-
-        # The measured PCS.
-        if param == 'pcs':
-            return "Measured PCS"
-
-        # The back-calculated PCS.
-        if param == 'pcs_bc':
-            return "Back-calculated PCS"
-
-        # The measured RDC.
-        if param == 'rdc':
-            return "Measured RDC"
-
-        # The back-calculated RDC.
-        if param == 'rdc_bc':
-            return "Back-calculated RDC"
-
-
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
@@ -831,13 +735,15 @@ class N_state_model(API_base, API_common):
             return getattr(tensor, names[param_index]+'_err')
 
 
-    def set_param_values(self, param=None, value=None, spin_id=None, error=False, force=True):
+    def set_param_values(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
         """Set the N-state model parameter values.
 
         @keyword param:     The parameter name list.
         @type param:        list of str
         @keyword value:     The parameter value list.
         @type value:        list
+        @keyword index:     The index for parameters which are of the list-type (probs, alpha, beta, and gamma).  This is ignored for all other types.
+        @type index:        None or int
         @keyword spin_id:   The spin identification string (unused).
         @type spin_id:      None
         @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
@@ -854,6 +760,8 @@ class N_state_model(API_base, API_common):
         for i in range(len(param)):
             # Get the object's name.
             obj_name = self.return_data_name(param[i])
+            print param
+            print obj_name
 
             # Is the parameter is valid?
             if not obj_name:
@@ -865,29 +773,8 @@ class N_state_model(API_base, API_common):
 
             # Set the indexed parameter.
             if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
-                # The index.
-                index = param_model_index(param[i])
-
-                # Set.
                 obj = getattr(cdp, obj_name)
                 obj[index] = value[i]
-
-            # The paramagnetic centre.
-            if search('^paramag_[xyz]$', obj_name):
-                # Init.
-                if not hasattr(cdp, 'paramagnetic_centre'):
-                    cdp.paramagnetic_centre = zeros(3, float64)
-
-                # Set the coordinate.
-                if obj_name == 'paramag_x':
-                    index = 0
-                elif obj_name == 'paramag_y':
-                    index = 1
-                else:
-                    index = 2
-
-                # Set the value in Angstrom.
-                cdp.paramagnetic_centre[index] = value[i]
 
             # Set the spin parameters.
             else:
