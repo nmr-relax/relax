@@ -658,45 +658,6 @@ class Model_free(API_base, API_common):
                 setattr(data_cont, name, init_data)
 
 
-    def data_type(self, param=None):
-        """Return the type of data, as a string, that the parameter should be.
-
-        @keyword param:     The parameter name.
-        @type param:        list of str
-        @return:            The type of the parameter, as a string.  I.e. 'int', 'float', 'str', 'bool', 'list of str', 'dict of bool', etc.
-        @rtype:             str
-        """
-
-        # A dictionary of all the types.
-        types = {
-            'select':           bool,
-            'fixed':            bool,
-            'nucleus':          str,
-            'model':            str,
-            'equation':         str,
-            'params':           [str],
-            's2':               float,
-            's2f':              float,
-            's2s':              float,
-            'local_tm':         float,
-            'te':               float,
-            'tf':               float,
-            'ts':               float,
-            'rex':              float,
-            'csa':              float,
-            'chi2':             float,
-            'iter':             int,
-            'f_count':          int,
-            'g_count':          int,
-            'h_count':          int,
-            'warning':          str
-        }
-
-        # Return the type, if in the list.
-        if param in types:
-            return types[param]
-
-
     def default_value(self, param):
         """The default model-free parameter values.
 
