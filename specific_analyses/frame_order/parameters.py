@@ -61,11 +61,9 @@ def assemble_param_vector(sim_index=None):
     return array(param_vect, float64)
 
 
-def assemble_scaling_matrix(data_types=None, scaling=True):
+def assemble_scaling_matrix(scaling=True):
     """Create and return the scaling matrix.
 
-    @keyword data_types:    The base data types used in the optimisation.  This list can contain the elements 'rdc', 'pcs' or 'tensor'.
-    @type data_types:       list of str
     @keyword scaling:       If False, then the identity matrix will be returned.
     @type scaling:          bool
     @return:                The square and diagonal scaling matrix.

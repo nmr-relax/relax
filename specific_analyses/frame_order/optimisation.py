@@ -630,7 +630,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     # Diagonal scaling.
     scaling_matrix = None
     if len(param_vector):
-        scaling_matrix = assemble_scaling_matrix(data_types=data_types, scaling=scaling)
+        scaling_matrix = assemble_scaling_matrix(scaling=scaling)
         param_vector = dot(inv(scaling_matrix), param_vector)
 
     # Get the data structures for optimisation using the tensors as base data sets.

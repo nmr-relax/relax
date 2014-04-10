@@ -351,7 +351,7 @@ class Frame_order(API_base, API_common):
             raise RelaxNoModelError('Frame Order')
 
         # Parameter scaling.
-        scaling_matrix = assemble_scaling_matrix(data_types=base_data_types(), scaling=True)
+        scaling_matrix = assemble_scaling_matrix(scaling=True)
 
         # The number of parameters.
         n = param_num()
