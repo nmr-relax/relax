@@ -54,9 +54,6 @@ class Relax_disp(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
-        # Execute the base class __init__ method.
-        super(Relax_disp, self).__init__()
-
         # Place methods into the API.
         self.data_init = self._data_init_spin
         self.model_type = self._model_type_local

@@ -55,9 +55,6 @@ class Frame_order(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
-        # Execute the base class __init__ method.
-        super(Frame_order, self).__init__()
-
         # Place methods into the API.
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor

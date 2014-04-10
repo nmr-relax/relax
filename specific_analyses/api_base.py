@@ -36,13 +36,6 @@ class API_base(object):
     # Class variable for storing the class instance (for the singleton design pattern).
     instance = None
 
-    def __init__(self):
-        """Set up the specific objects."""
-
-        # Class variables.
-        self.PARAMS = Param_list()
-
-
     def __new__(self, *args, **kargs):
         """Replacement function for implementing the singleton design pattern."""
 

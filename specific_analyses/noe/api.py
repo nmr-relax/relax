@@ -45,9 +45,6 @@ class Noe(API_base, API_common):
     def __init__(self):
         """Initialise the class by placing API_common methods into the API."""
 
-        # Execute the base class __init__ method.
-        super(Noe, self).__init__()
-
         # Place methods into the API.
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
