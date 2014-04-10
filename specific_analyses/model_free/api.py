@@ -85,7 +85,7 @@ class Model_free(API_base, API_common):
         self.molmol_macro = self._molmol_macros.create_macro
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Model_free_params()
+        self._PARAMS = Model_free_params()
 
 
     def back_calc_ri(self, spin_index=None, ri_id=None, ri_type=None, frq=None):
@@ -636,7 +636,7 @@ class Model_free(API_base, API_common):
         """
 
         # Loop over the data structure names.
-        for name in self.PARAMS.loop(scope='spin'):
+        for name in self._PARAMS.loop(scope='spin'):
             # Blacklisted data structures.
             if name in ['ri_data', 'ri_data_bc', 'ri_data_err']:
                 continue
@@ -648,7 +648,7 @@ class Model_free(API_base, API_common):
 
             # Set everything else initially to None or False.
             init_data = None
-            if self.PARAMS.get_type(name) == bool:
+            if self._PARAMS.get_type(name) == bool:
                 init_data = False
                 if name == 'select':
                     init_data = True
@@ -712,7 +712,7 @@ class Model_free(API_base, API_common):
             return diff_val
 
         # Model-free parameter.
-        return self.PARAMS.get_default(param)
+        return self._PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):

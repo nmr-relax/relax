@@ -182,7 +182,7 @@ class API_base(object):
         names = []
 
         # Loop over the parameters.
-        for name in self.PARAMS.loop(set=set, scope=scope, error_names=error_names, sim_names=sim_names):
+        for name in self._PARAMS.loop(set=set, scope=scope, error_names=error_names, sim_names=sim_names):
             names.append(name)
 
         # Return the names.
@@ -201,7 +201,7 @@ class API_base(object):
         """
 
         # Return the type.
-        return self.PARAMS.get_type(param)
+        return self._PARAMS.get_type(param)
 
 
     def default_value(self, param):
@@ -217,7 +217,7 @@ class API_base(object):
         """
 
         # Return the value.
-        return self.PARAMS.get_default(param)
+        return self._PARAMS.get_default(param)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -527,7 +527,7 @@ class API_base(object):
         """
 
         # Return the factor.
-        return self.PARAMS.get_conv_factor(param)
+        return self._PARAMS.get_conv_factor(param)
 
 
     def return_data(self, data_id=None):
@@ -556,7 +556,7 @@ class API_base(object):
         """
 
         # Return the description.
-        return self.PARAMS.get_desc(name)
+        return self._PARAMS.get_desc(name)
 
 
     def return_data_name(self, param):
@@ -569,7 +569,7 @@ class API_base(object):
         """
 
         # No parameter.
-        if not self.PARAMS.contains(param):
+        if not self._PARAMS.contains(param):
             return None
 
         # Return the name.
@@ -602,7 +602,7 @@ class API_base(object):
         """
 
         # The string.
-        return self.PARAMS.get_grace_string(param)
+        return self._PARAMS.get_grace_string(param)
 
 
     def return_units(self, param):
@@ -615,7 +615,7 @@ class API_base(object):
         """
 
         # Return the name.
-        return self.PARAMS.get_units(param)
+        return self._PARAMS.get_units(param)
 
 
     def return_value(self, spin, param, sim=None, bc=False):

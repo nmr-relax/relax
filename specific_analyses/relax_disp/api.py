@@ -62,7 +62,7 @@ class Relax_disp(API_base, API_common):
         self.set_param_values = self._set_param_values_spin
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Relax_disp_params()
+        self._PARAMS = Relax_disp_params()
 
 
     def base_data_loop(self):

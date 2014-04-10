@@ -67,7 +67,7 @@ class N_state_model(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_global
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = N_state_params()
+        self._PARAMS = N_state_params()
 
 
     def base_data_loop(self):

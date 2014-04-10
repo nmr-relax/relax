@@ -60,7 +60,7 @@ class Consistency_tests(API_base, API_common):
         self.sim_pack_data = self._sim_pack_relax_data
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Consistency_tests_params()
+        self._PARAMS = Consistency_tests_params()
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):

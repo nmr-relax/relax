@@ -62,7 +62,7 @@ class Frame_order(API_base, API_common):
         self.set_param_values = self._set_param_values_global
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Frame_order_params()
+        self._PARAMS = Frame_order_params()
 
 
     def base_data_loop(self):

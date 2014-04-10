@@ -98,7 +98,7 @@ class API_common:
         """
 
         # Loop over the parameters.
-        for name in self.PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
+        for name in self._PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
             # Not a parameter of the model.
             if name not in data_cont.params:
                 continue
@@ -108,7 +108,7 @@ class API_common:
                 continue
 
             # The default value.
-            param_type = self.PARAMS.get_type(name)
+            param_type = self._PARAMS.get_type(name)
             if param_type == dict:
                 value = {}
             elif param_type == list:
@@ -541,7 +541,7 @@ class API_common:
         # Loop over the parameters.
         for i in range(len(param)):
             # Is the parameter is valid?
-            if not self.PARAMS.contains(param[i]):
+            if not self._PARAMS.contains(param[i]):
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Spin loop.

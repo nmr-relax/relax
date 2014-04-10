@@ -68,7 +68,7 @@ class Relax_fit(API_base, API_common):
         self.sim_return_selected = self._sim_return_selected_spin
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Relax_fit_params()
+        self._PARAMS = Relax_fit_params()
 
 
     def create_mc_data(self, data_id=None):

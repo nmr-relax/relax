@@ -50,7 +50,7 @@ class Noe(API_base, API_common):
         self.return_value = self._return_value_general
 
         # Place a copy of the parameter list object in the instance namespace.
-        self.PARAMS = Noe_params()
+        self._PARAMS = Noe_params()
 
 
     def calculate(self, spin_id=None, verbosity=1, sim_index=None):
