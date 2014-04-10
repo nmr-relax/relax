@@ -1875,13 +1875,15 @@ class Model_free(API_base, API_common):
                 inc = inc + 1
 
 
-    def set_param_values(self, param=None, value=None, spin_id=None, error=False, force=True):
+    def set_param_values(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
         """Set the model-free parameter values.
 
         @keyword param:     The parameter name list.
         @type param:        list of str
         @keyword value:     The parameter value list.
         @type value:        list
+        @keyword index:     The index for parameters which are of the list-type.  This is unused.
+        @type index:        None or int
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
         @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.

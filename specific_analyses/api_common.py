@@ -494,13 +494,15 @@ class API_common:
             inc = inc + 1
 
 
-    def _set_param_values_global(self, param=None, value=None, spin_id=None, error=False, force=True):
+    def _set_param_values_global(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
         """Set the global parameter values in the top layer of the data pipe.
 
         @keyword param:     The parameter name list.
         @type param:        list of str
         @keyword value:     The parameter value list.
         @type value:        list
+        @keyword index:     The index for parameters which are of the list-type.  This is unused.
+        @type index:        None or int
         @keyword spin_id:   The spin identification string (unused).
         @type spin_id:      None
         @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
@@ -534,13 +536,15 @@ class API_common:
             setattr(cdp, obj_name, value[i])
 
 
-    def _set_param_values_spin(self, param=None, value=None, spin_id=None, error=False, force=True):
+    def _set_param_values_spin(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
         """Set the spin specific parameter values.
 
         @keyword param:     The parameter name list.
         @type param:        list of str
         @keyword value:     The parameter value list.
         @type value:        list
+        @keyword index:     The index for parameters which are of the list-type.  This is unused.
+        @type index:        None or int
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
         @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.

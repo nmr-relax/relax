@@ -358,13 +358,15 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
         minimise.reset_min_stats()
 
 
-def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, reset=True):
+def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, force=True, reset=True):
     """Set global or spin specific data values.
 
     @keyword val:       The parameter values.
     @type val:          None or list
     @keyword param:     The parameter names.
     @type param:        None, str, or list of str
+    @keyword index:     The index for parameters which are of the list-type.  This is ignored for all other types.
+    @type index:        None or int
     @keyword pipe:      The data pipe the values should be placed in.
     @type pipe:         None or str
     @keyword spin_id:   The spin identification string.
@@ -426,7 +428,7 @@ def set(val=None, param=None, pipe=None, spin_id=None, error=False, force=True, 
                 raise RelaxParamSetError(param[i])
 
     # Set the parameter values.
-    api.set_param_values(param=param, value=val, spin_id=spin_id, error=error, force=force)
+    api.set_param_values(param=param, value=val, index=index, spin_id=spin_id, error=error, force=force)
 
     # Reset all minimisation statistics.
     if reset:

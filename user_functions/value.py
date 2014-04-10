@@ -329,6 +329,14 @@ uf.add_keyarg(
     can_be_none = True
 )
 uf.add_keyarg(
+    name = "index",
+    py_type = "int",
+    min = 0,
+    max = 10000000,
+    desc_short = "index for list-type parameters",
+    desc = "The list index for when the parameter is a list of values.  This is ignored in all other cases."
+)
+uf.add_keyarg(
     name = "spin_id",
     py_type = "str",
     arg_type = "spin ID",
@@ -410,7 +418,7 @@ uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'],
 uf.desc[-1].add_prompt("relax> value.set(val=[0.56, 13e-12], param=['s2', 'te'], spin_id=':126@Ca')")
 uf.backend = value.set
 uf.menu_text = "&set"
-uf.wizard_height_desc = 480
+uf.wizard_height_desc = 440
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
