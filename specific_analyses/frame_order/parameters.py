@@ -59,8 +59,9 @@ def assemble_param_vector(sim_index=None):
 
     # Pivot point.
     if not pivot_fixed():
-        for i in range(3):
-            param_vect.append(cdp.pivot[i])
+        param_vect.append(cdp.pivot_x)
+        param_vect.append(cdp.pivot_y)
+        param_vect.append(cdp.pivot_z)
 
     # Normal values.
     if sim_index == None:

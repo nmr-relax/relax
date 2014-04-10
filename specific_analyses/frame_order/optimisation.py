@@ -667,13 +667,13 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
 
     # The fixed pivot point.
     pivot = None
-    if hasattr(cdp, 'pivot'):
-        pivot = cdp.pivot
+    if hasattr(cdp, 'pivot_x'):
+        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
 
     # The second pivot.
     pivot2 = None
-    if hasattr(cdp, 'pivot2'):
-        pivot2 = cdp.pivot2
+    if hasattr(cdp, 'pivot_x_2'):
+        pivot2 = array([cdp.pivot_x_2, cdp.pivot_y_2, cdp.pivot_z_2])
 
     # Pivot optimisation.
     pivot_opt = True
@@ -764,7 +764,9 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     # Pivot point.
     if not pivot_fixed():
         # Store the pivot.
-        cdp.pivot = param_vector[:3]
+        cdp.pivot_x = param_vector[0]
+        cdp.pivot_y = param_vector[1]
+        cdp.pivot_z = param_vector[2]
 
         # Then remove it from the params.
         param_vector = param_vector[3:]

@@ -107,7 +107,7 @@ def pdb_ave_pos(file=None, dir=None, force=False):
     if cdp.ave_pos_pivot == 'com':
         origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
     else:
-        origin = cdp.pivot
+        origin = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
     structure.rotate(R=R, origin=origin, atom_id=domain_moving())
 
     # Then translate the moving domain.
@@ -173,6 +173,9 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     if neg_cone:
         model_neg = structure.add_model(model=2)
 
+    # The pivot point.
+    pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
+
     # The rotor object.
     if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse']:
         # The rotor angle.
@@ -186,14 +189,14 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
         # Generate the rotor axis.
         if cdp.model in ['rotor']:
-            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=cdp.pivot, point=com)
+            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
         elif cdp.model in ['free rotor', 'iso cone', 'iso cone, free rotor']:
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
         else:
             axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
 
         # Add the rotor object to the structure as a new molecule.
-        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=cdp.pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
+        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
 
     # FIXME:  Temporary write out and exit.
     print("\nGenerating the PDB file.")
@@ -215,7 +218,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     ##################
 
     # Add the pivot point.
-    structure.add_atom(mol_name=cdp.model, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=cdp.pivot, element='C')
+    structure.add_atom(mol_name=cdp.model, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=pivot, element='C')
 
 
     # The axes.
@@ -251,11 +254,11 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
-        res_num = geometric.generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+        res_num = geometric.generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
 
         # The negative.
         if neg_cone:
-            res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+            res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
 
     # The full axis system.
     else:
@@ -300,9 +303,9 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
                 axis_sim_neg = axes_sim_neg[:,:, j]
 
             # The vectors.
-            res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=cdp.pivot, scale=size)
+            res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
             if neg_cone:
-                res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=cdp.pivot, scale=size)
+                res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
 
 
     # The cone object.
@@ -337,11 +340,11 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
             cone = Iso_cone(cone_theta)
 
         # Create the positive and negative cones.
-        geometric.create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=cdp.pivot, R=R_pos, inc=inc, distribution='regular', axis_flag=False)
+        geometric.create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=pivot, R=R_pos, inc=inc, distribution='regular', axis_flag=False)
 
         # The negative.
         if neg_cone:
-            geometric.create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=cdp.pivot, R=R_neg, inc=inc, distribution='regular', axis_flag=False)
+            geometric.create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=pivot, R=R_neg, inc=inc, distribution='regular', axis_flag=False)
 
 
     # Create the PDB file.
@@ -421,15 +424,21 @@ def pivot(pivot=None, order=1, fix=False):
     # Check the pivot validity.
     is_float_array(pivot, name='pivot point', size=3)
 
-    # Store the pivot point. and fixed flag.
+    # Store the pivot point and fixed flag.
     if order == 1:
-        cdp.pivot = pivot
+        cdp.pivot_x = pivot[0]
+        cdp.pivot_y = pivot[1]
+        cdp.pivot_z = pivot[2]
     else:
-        # The variable name.
-        name = 'pivot%i' % order
+        # The variable names.
+        name_x = 'pivot_x_%i' % order
+        name_y = 'pivot_y_%i' % order
+        name_z = 'pivot_z_%i' % order
 
-        # Store the variable.
-        setattr(cdp, name, pivot)
+        # Store the variables.
+        setattr(cdp, name_x, pivot[0])
+        setattr(cdp, name_y, pivot[1])
+        setattr(cdp, name_z, pivot[2])
 
 
 def quad_int(flag=False):

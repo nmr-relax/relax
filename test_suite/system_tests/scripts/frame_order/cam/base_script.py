@@ -351,7 +351,7 @@ class Base_script:
         print("Rotation matrix:\n%s\n" % R)
         R = transpose(R)
         print("Inverted rotation:\n%s\n" % R)
-        pivot = cdp.pivot
+        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
 
         # Delete the data pipe (if a loaded state has been used).
         if self.LOAD_STATE:

@@ -409,14 +409,14 @@ class Frame_order(API_base, API_common):
 
             # The pivot point.
             if cdp.params[i] == 'pivot_x':
-                lower = cdp.pivot[0] - 10.0
-                upper = cdp.pivot[0] + 10.0
+                lower = cdp.pivot_x - 10.0
+                upper = cdp.pivot_x + 10.0
             elif cdp.params[i] == 'pivot_y':
-                lower = cdp.pivot[1] - 10.0
-                upper = cdp.pivot[1] + 10.0
+                lower = cdp.pivot_y - 10.0
+                upper = cdp.pivot_y + 10.0
             elif cdp.params[i] == 'pivot_z':
-                lower = cdp.pivot[2] - 10.0
-                upper = cdp.pivot[2] + 10.0
+                lower = cdp.pivot_z - 10.0
+                upper = cdp.pivot_z + 10.0
 
             # Average domain position translation (in a +/- 5 Angstrom box).
             if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
@@ -493,13 +493,8 @@ class Frame_order(API_base, API_common):
             for j in range(n):
                 # Fixed parameter.
                 if grid[j] == None:
-                    # Get the current parameter value (pivot, assuming the pivot point is always at the start of the parameter array).
-                    if cdp.params[j] in ['pivot_x', 'pivot_y', 'pivot_z']:
-                        pts[i, j] = cdp.pivot[j] / scaling_matrix[j, j]
-
-                    # Get the current parameter value (normal parameter).
-                    else:
-                        pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
+                    # Get the current parameter value.
+                    pts[i, j] = getattr(cdp, cdp.params[j]) / scaling_matrix[j, j]
 
                 # Add the point coordinate.
                 else:
