@@ -68,7 +68,7 @@ class Frame_order(API_base, API_common):
 
 
     def base_data_loop(self):
-        """Generator method for looping over the base data - alignment tensors, RDCs, PCSs.
+        """Generator method for looping over the base data - RDCs and PCSs.
 
         This loop yields the following:
 
@@ -134,7 +134,7 @@ class Frame_order(API_base, API_common):
 
 
     def create_mc_data(self, data_id=None):
-        """Create the Monte Carlo data by back calculating the reduced tensor data.
+        """Create the Monte Carlo data by back calculating the RDCs or PCSs.
 
         @keyword data_id:   The data set as yielded by the base_data_loop() generator method.
         @type data_id:      list of str
@@ -670,11 +670,11 @@ class Frame_order(API_base, API_common):
 
 
     def return_error(self, data_id):
-        """Return the alignment tensor error structure.
+        """Return the RDC or PCS error structure.
 
         @param data_id:     The data set as yielded by the base_data_loop() generator method.
         @type data_id:      list of str
-        @return:            The array of tensor error values.
+        @return:            The array of RDC or PCS error values.
         @rtype:             list of float
         """
 
