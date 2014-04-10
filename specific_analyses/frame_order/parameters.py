@@ -23,26 +23,10 @@
 """Module for handling the frame order model parameters."""
 
 # Python module imports.
-from math import pi
-from numpy import array, float64, identity, ones, zeros
+from numpy import array, float64, identity
 
 # relax module imports.
-from specific_analyses.frame_order.data import base_data_types, pivot_fixed, translation_fixed
-
-
-def assemble_limit_arrays():
-    """Assemble and return the limit vectors.
-
-    @return:    The lower and upper limit vectors.
-    @rtype:     numpy rank-1 array, numpy rank-1 array
-    """
-
-    # Init.
-    lower = zeros(len(cdp.params), float64)
-    upper = 2.0*pi * ones(len(cdp.params), float64)
-
-    # Return the arrays.
-    return lower, upper
+from specific_analyses.frame_order.data import pivot_fixed, translation_fixed
 
 
 def assemble_param_vector(sim_index=None):
