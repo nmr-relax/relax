@@ -22,12 +22,8 @@
 # Module docstring.
 """Module for checks for the frame order analysis."""
 
-# Python module imports.
-from warnings import warn
-
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoValueError, RelaxSpinTypeError
-from lib.warnings import RelaxWarning
+from lib.errors import RelaxError
 
 
 def check_ave_domain_setup():
