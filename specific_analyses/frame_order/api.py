@@ -59,6 +59,7 @@ class Frame_order(API_base, API_common):
         self.deselect = self._deselect_global
         self.is_spin_param = self._is_spin_param_false
         self.model_loop = self._model_loop_single_global
+        self.model_type = self._model_type_global
         self.overfit_deselect = self._overfit_deselect_dummy
         self.return_conversion_factor = self._return_no_conversion_factor
         self.set_param_values = self._set_param_values_global
@@ -609,16 +610,6 @@ class Frame_order(API_base, API_common):
 
         # Return the data.
         return k, n, cdp.chi2
-
-
-    def model_type(self):
-        """Return the type of the model, either being 'local' or 'global'.
-
-        @return:            The model type, one of 'local' or 'global'.
-        @rtype:             str
-        """
-
-        return 'global'
 
 
     def return_error(self, data_id):
