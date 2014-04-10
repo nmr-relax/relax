@@ -92,7 +92,7 @@ self._execute_uf(uf_name='n_state_model.select_model', model=ds.model)
 # Set to equal probabilities.
 if ds.model == 'population':
     for j in range(NUM_STR):
-        self._execute_uf(1.0/NUM_STR, 'p'+repr(j), uf_name='value.set')
+        self._execute_uf(uf_name='value.set', val=1.0/NUM_STR, param='probs', index=j)
 
 # Minimisation.
 self._execute_uf('bfgs', constraints=True, max_iter=5, uf_name='minimise')

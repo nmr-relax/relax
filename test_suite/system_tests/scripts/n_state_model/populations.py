@@ -88,9 +88,9 @@ self._execute_uf(uf_name='paramag.centre', pos=[ -14.845,    0.969,    0.265])
 self._execute_uf(uf_name='n_state_model.select_model', model='population')
 
 # Set pc to the exact values.
-self._execute_uf(uf_name='value.set', val=0.3, param='p0')
-self._execute_uf(uf_name='value.set', val=0.1, param='p2')
-self._execute_uf(uf_name='value.set', val=0.6, param='p1')
+self._execute_uf(uf_name='value.set', val=0.3, param='probs', index=0)
+self._execute_uf(uf_name='value.set', val=0.1, param='probs', index=2)
+self._execute_uf(uf_name='value.set', val=0.6, param='probs', index=1)
 
 # Set the tensors.
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[0], params=( 1.42219822168827662867e-04, -1.44543001566521341940e-04, -7.07796211648713973798e-04, -6.01619494082773244303e-04,  2.02008007072950861996e-04), align_id=align_list[0], param_types=2)
@@ -109,7 +109,7 @@ if abs(cdp.chi2) > 1e-15:
 ###########################
 
 # Change a probability
-self._execute_uf(uf_name='value.set', val=0.6005, param='p1')
+self._execute_uf(uf_name='value.set', val=0.6005, param='probs', index=1)
 
 # Minimisation.
 self._execute_uf(uf_name='minimise', min_algor='bfgs', max_iter=500)
