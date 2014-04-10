@@ -761,99 +761,39 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     if scaling:
         param_vector = dot(scaling_matrix, param_vector)
 
-    # Pivot point.
-    if not pivot_fixed():
-        # Store the pivot.
-        cdp.pivot_x = param_vector[0]
-        cdp.pivot_y = param_vector[1]
-        cdp.pivot_z = param_vector[2]
-
-        # Then remove it from the params.
-        param_vector = param_vector[3:]
-
-    # Average domain position translation.
-    ave_pos_x, ave_pos_y, ave_pos_z = None, None, None
-    if not translation_fixed():
-        ave_pos_x = param_vector[0]
-        ave_pos_y = param_vector[1]
-        ave_pos_z = param_vector[2]
-
-        # Remove the parameters from the array.
-        param_vector = param_vector[3:]
-
-    # Unpack the parameters.
-    ave_pos_alpha, ave_pos_beta, ave_pos_gamma = None, None, None
-    eigen_alpha, eigen_beta, eigen_gamma = None, None, None
-    axis_theta, axis_phi, axis_alpha = None, None, None
-    cone_theta_x, cone_theta_y = None, None
-    cone_theta = None
-    cone_s1 = None
-    cone_sigma_max = None
-    if cdp.model == 'pseudo-ellipse':
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = param_vector
-    elif cdp.model in ['pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = param_vector
-    elif cdp.model == 'iso cone':
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, cone_sigma_max = param_vector
-    elif cdp.model in ['iso cone, torsionless']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = param_vector
-    elif cdp.model in ['iso cone, free rotor']:
-        ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = param_vector
-        ave_pos_alpha = None
-    elif cdp.model == 'line':
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
-    elif cdp.model in ['line, torsionless', 'line, free rotor']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_sigma_max = param_vector
-    elif cdp.model in ['rotor']:
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, cone_sigma_max = param_vector
-    elif cdp.model in ['free rotor']:
-        ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = param_vector
-        ave_pos_alpha = None
-    elif cdp.model == 'rigid':
-        ave_pos_alpha, ave_pos_beta, ave_pos_gamma = param_vector
+    # The parameters to wrap.
+    wrap = [
+        'ave_pos_alpha',
+        'ave_pos_beta',
+        'ave_pos_gamma',
+        'eigen_alpha',
+        'eigen_beta',
+        'eigen_gamma',
+        'axis_theta',
+        'axis_phi'
+    ]
 
     # Monte Carlo simulation data structures.
     if sim_index != None:
-        # Average position parameters.
-        if ave_pos_x != None:
-            cdp.ave_pos_x_sim[sim_index] = ave_pos_x
-        if ave_pos_y != None:
-            cdp.ave_pos_y_sim[sim_index] = ave_pos_y
-        if ave_pos_z != None:
-            cdp.ave_pos_z_sim[sim_index] = ave_pos_z
-        if ave_pos_alpha != None:
-            cdp.ave_pos_alpha_sim[sim_index] = wrap_angles(ave_pos_alpha, cdp.ave_pos_alpha-pi, cdp.ave_pos_alpha+pi)
-        if ave_pos_beta != None:
-            cdp.ave_pos_beta_sim[sim_index] = wrap_angles(ave_pos_beta, cdp.ave_pos_beta-pi, cdp.ave_pos_beta+pi)
-        if ave_pos_gamma != None:
-            cdp.ave_pos_gamma_sim[sim_index] = wrap_angles(ave_pos_gamma, cdp.ave_pos_gamma-pi, cdp.ave_pos_gamma+pi)
+        # Loop over the parameters.
+        for i in range(len(cdp.params)):
+            # Angle wrapping around the real value.
+            if cdp.params[i] in wrap or cdp.params[i] == 'axis_alpha':
+                val = getattr(cdp, cdp.params[i])
+                param_vector[i] = wrap_angles(param_vector[i], val-pi, val+pi)
 
-        # Eigenframe parameters.
-        if eigen_alpha != None:
-            cdp.eigen_alpha_sim[sim_index] = wrap_angles(eigen_alpha, cdp.eigen_alpha-pi, cdp.eigen_alpha+pi)
-        if eigen_beta != None:
-            cdp.eigen_beta_sim[sim_index] =  wrap_angles(eigen_beta, cdp.eigen_beta-pi, cdp.eigen_beta+pi)
-        if eigen_gamma != None:
-            cdp.eigen_gamma_sim[sim_index] = wrap_angles(eigen_gamma, cdp.eigen_gamma-pi, cdp.eigen_gamma+pi)
-        if axis_theta != None:
-            cdp.axis_theta_sim[sim_index] = wrap_angles(axis_theta, cdp.axis_theta-pi, cdp.axis_theta+pi)
-        if axis_phi != None:
-            cdp.axis_phi_sim[sim_index] = wrap_angles(axis_phi, cdp.axis_phi-pi, cdp.axis_phi+pi)
-        if axis_alpha != None:
-            cdp.axis_alpha_sim[sim_index] = wrap_angles(axis_alpha, cdp.axis_alpha-pi, cdp.axis_alpha+pi)
+            # FIXME: Implement linear constraints via the log-barrier algorithm, then delete this.
+            # Handle negative values of the cone_sigma_max parameter.
+            if cdp.params[i] == 'cone_sigma_max':
+                param_vector[i] = abs(param_vector[i])
 
-        # Cone parameters.
-        if cone_theta != None:
-            cdp.cone_theta_sim[sim_index] = cone_theta
-        if cone_s1 != None:
-            cdp.cone_s1_sim[sim_index] = cone_s1
-            cdp.cone_theta_sim[sim_index] = order_parameters.iso_cone_S_to_theta(cone_s1)
-        if cone_theta_x != None:
-            cdp.cone_theta_x_sim[sim_index] = cone_theta_x
-        if cone_theta_y != None:
-            cdp.cone_theta_y_sim[sim_index] = cone_theta_y
-        if cone_sigma_max != None:
-            cdp.cone_sigma_max_sim[sim_index] = abs(cone_sigma_max)
+            # Store the value.
+            obj = getattr(cdp, cdp.params[i]+'_sim')
+            obj[sim_index] = param_vector[i]
+
+            # Order parameter to angle conversion.
+            if cdp.params[i] == 'cone_s1':
+                cdp.cone_theta_sim[sim_index] = order_parameters.iso_cone_S_to_theta(param_vector[i])
 
         # Optimisation stats.
         cdp.chi2_sim[sim_index] = func
@@ -865,46 +805,25 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
 
     # Normal data structures.
     else:
-        # Average position parameters.
-        if ave_pos_x != None:
-            cdp.ave_pos_x = ave_pos_x
-        if ave_pos_y != None:
-            cdp.ave_pos_y = ave_pos_y
-        if ave_pos_z != None:
-            cdp.ave_pos_z = ave_pos_z
-        if ave_pos_alpha != None:
-            cdp.ave_pos_alpha = wrap_angles(ave_pos_alpha, 0.0, 2.0*pi)
-        if ave_pos_beta != None:
-            cdp.ave_pos_beta = wrap_angles(ave_pos_beta, 0.0, 2.0*pi)
-        if ave_pos_gamma != None:
-            cdp.ave_pos_gamma = wrap_angles(ave_pos_gamma, 0.0, 2.0*pi)
+        # Loop over the parameters.
+        for i in range(len(cdp.params)):
+            # Angle wrapping.
+            if cdp.params[i] in wrap:
+                param_vector[i] = wrap_angles(param_vector[i], 0.0, 2.0*pi)
+            if cdp.params[i] == 'axis_alpha':
+                param_vector[i] = wrap_angles(param_vector[i], -pi, pi)
 
-        # Eigenframe parameters.
-        if eigen_alpha != None:
-            cdp.eigen_alpha = wrap_angles(eigen_alpha, 0.0, 2.0*pi)
-        if eigen_beta != None:
-            cdp.eigen_beta =  wrap_angles(eigen_beta,  0.0, 2.0*pi)
-        if eigen_gamma != None:
-            cdp.eigen_gamma = wrap_angles(eigen_gamma, 0.0, 2.0*pi)
-        if axis_theta != None:
-            cdp.axis_theta = wrap_angles(axis_theta, 0.0, 2.0*pi)
-        if axis_phi != None:
-            cdp.axis_phi = wrap_angles(axis_phi, 0.0, 2.0*pi)
-        if axis_alpha != None:
-            cdp.axis_alpha = wrap_angles(axis_alpha, -pi, pi)
+            # FIXME: Implement linear constraints via the log-barrier algorithm, then delete this.
+            # Handle negative values of the cone_sigma_max parameter.
+            if cdp.params[i] == 'cone_sigma_max':
+                param_vector[i] = abs(param_vector[i])
 
-        # Cone parameters.
-        if cone_theta != None:
-            cdp.cone_theta = cone_theta
-        if cone_s1 != None:
-            cdp.cone_s1 = cone_s1
-            cdp.cone_theta = order_parameters.iso_cone_S_to_theta(cone_s1)
-        if cone_theta_x != None:
-            cdp.cone_theta_x = cone_theta_x
-        if cone_theta_y != None:
-            cdp.cone_theta_y = cone_theta_y
-        if cone_sigma_max != None:
-            cdp.cone_sigma_max = abs(cone_sigma_max)
+            # Store the value.
+            setattr(cdp, cdp.params[i], param_vector[i])
+
+            # Order parameter to angle conversion.
+            if cdp.params[i] == 'cone_s1':
+                cdp.cone_theta = order_parameters.iso_cone_S_to_theta(param_vector[i])
 
         # Optimisation stats.
         cdp.chi2 = func
