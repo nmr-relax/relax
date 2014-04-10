@@ -45,31 +45,27 @@ from user_functions.objects import Desc_container
 default_value_doc = Desc_container("N-state model default values")
 table = uf_tables.add_table(label="table: N-state default values", caption="N-state model default values.")
 table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["Probabilities", "'p0', 'p1', 'p2', ..., 'pN'", "1/N"])
-table.add_row(["Euler angle alpha", "'alpha0', 'alpha1', ...", "(c+1) * pi / (N+1)"])
-table.add_row(["Euler angle beta", "'beta0', 'beta1', ...", "(c+1) * pi / (N+1)"])
-table.add_row(["Euler angle gamma", "'gamma0', 'gamma1', ...", "(c+1) * pi / (N+1)"])
+table.add_row(["Probabilities", "'probs'", "0.0"])
+table.add_row(["Euler angle alpha", "'alpha'", "0.0"])
+table.add_row(["Euler angle beta", "'beta'", "0.0"])
+table.add_row(["Euler angle gamma", "'gamma'", "0.0"])
 default_value_doc.add_table(table.label)
-default_value_doc.add_paragraph("In this table, N is the total number of states and c is the index of a given state ranging from 0 to N-1.  The default probabilities are all set to be equal whereas the angles are given a range of values so that no 2 states are equal at the start of optimisation.")
 default_value_doc.add_paragraph("Note that setting the probability for state N will do nothing as it is equal to one minus all the other probabilities.")
 
 # Data name documentation.
 return_data_name_doc = Desc_container("N-state model data type string matching patterns")
 table = uf_tables.add_table(label="table: N-state data type patterns", caption="N-state model data type string matching patterns.")
-table.add_headings(["Data type", "Object name", "Patterns"])
-table.add_row(["Probabilities", "'probs'", "'p0', 'p1', 'p2', ..., 'pN'"])
-table.add_row(["Euler angle alpha", "'alpha'", "'alpha0', 'alpha1', ..."])
-table.add_row(["Euler angle beta", "'beta'", "'beta0', 'beta1', ..."])
-table.add_row(["Euler angle gamma", "'gamma'", "'gamma0', 'gamma1', ..."])
-table.add_row(["Bond length", "'r'", "'^r$' or '[Bb]ond[ -_][Ll]ength'"])
-table.add_row(["Heteronucleus type", "'heteronuc_type'", "'^[Hh]eteronucleus$'"])
-table.add_row(["Proton type", "'proton_type'", "'^[Pp]roton$'"])
+table.add_headings(["Data type", "Object name", "List-type"])
+table.add_row(["Probabilities", "'probs'", "yes"])
+table.add_row(["Euler angle alpha", "'alpha'", "yes"])
+table.add_row(["Euler angle beta", "'beta'", "yes"])
+table.add_row(["Euler angle gamma", "'gamma'", "yes"])
+table.add_row(["Bond length", "'r'", "no"])
 return_data_name_doc.add_table(table.label)
-return_data_name_doc.add_paragraph("The objects corresponding to the object names are lists (or arrays) with each element corrsponding to each state.")
 
 # Value setting documentation.
 set_doc = Desc_container("N-state model set details")
-set_doc.add_paragraph("Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states. To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be added to the end of the parameter name.  So the Euler angle gamma of the third state is specified using the string 'gamma2'.")
+set_doc.add_paragraph("Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states.  To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be given as the index argument.  So the Euler angle gamma of the third state is specified using the parameter name 'gamma' and index of 2.")
 
 
 def CoM(pivot_point=None, centre=None):
