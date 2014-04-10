@@ -3352,7 +3352,7 @@ class Value_base_class(UnitTestCase):
         pipes.switch('n_state')
 
         # Set the parameter.
-        self.value_fns.set(param='alpha2', val=pi)
+        self.value_fns.set(param='alpha', val=pi, index=2)
 
         # Test the parameter.
         self.assertEqual(cdp.alpha[0], 0.0)
