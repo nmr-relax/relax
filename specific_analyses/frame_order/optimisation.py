@@ -624,7 +624,7 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     # Assemble the parameter vector.
     param_vector = assemble_param_vector(sim_index=sim_index)
 
-    # Determine if alignment tensors or RDCs are to be used.
+    # Determine the base data types (RDCs and/or PCSs).
     data_types = base_data_types()
 
     # Diagonal scaling.
