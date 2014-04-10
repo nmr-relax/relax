@@ -111,63 +111,11 @@ def param_num():
     @rtype:     int
     """
 
-    # Init.
-    num = 0
-
-    # Update the model if needed.
+    # Update the model, just in case.
     update_model()
 
-    # Determine the data type.
-    data_types = base_data_types()
-
-    # Average domain position translation.
-    if not translation_fixed():
-        num += 3
-
-    # The pivot point.
-    if not pivot_fixed():
-        num += 3
-
-    # Average domain position parameters.
-    if cdp.model in ['free rotor', 'iso cone, free rotor']:
-        num += 2
-    else:
-        num += 3
-
-    # Frame order eigenframe - the full frame.
-    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-        num += 3
-
-    # Frame order eigenframe - the isotropic cone axis.
-    elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
-        num += 2
-
-    # Frame order eigenframe - the second rotation axis.
-    if cdp.model in ['double rotor']:
-        num += 2
-
-    # Frame order eigenframe - the rotor axis alpha angle.
-    if cdp.model in ['rotor']:
-        num += 1
-
-    # Cone parameters - pseudo-elliptic cone parameters.
-    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-        num += 2
-
-    # Cone parameters - single isotropic angle or order parameter.
-    elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
-        num += 1
-
-    # Cone parameters - torsion angle.
-    if cdp.model in ['double rotor', 'rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-        num += 1
-
-    # Cone parameters - 2nd torsion angle.
-    if cdp.model in ['double rotor']:
-        num += 1
-
-    # Return the number.
-    return num
+    # Simple parameter list count.
+    return len(cdp.params)
 
 
 def update_model():
