@@ -57,123 +57,21 @@ def assemble_param_vector(sim_index=None):
     # Initialise.
     param_vect = []
 
-    # Pivot point.
-    if not pivot_fixed():
-        param_vect.append(cdp.pivot_x)
-        param_vect.append(cdp.pivot_y)
-        param_vect.append(cdp.pivot_z)
+    # Parameter name extension.
+    ext = ''
+    if sim_index != None:
+        ext = '_sim'
 
-    # Normal values.
-    if sim_index == None:
-        # Average position translation.
-        if not translation_fixed():
-            param_vect.append(cdp.ave_pos_x)
-            param_vect.append(cdp.ave_pos_y)
-            param_vect.append(cdp.ave_pos_z)
+    # Loop over all model parameters.
+    for param_name in cdp.params:
+        # Get the object.
+        obj = getattr(cdp, param_name+ext)
 
-        # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-        if cdp.model in ['free rotor', 'iso cone, free rotor']:
-            param_vect.append(cdp.ave_pos_beta)
-            param_vect.append(cdp.ave_pos_gamma)
+        # Add it to the parameter vector.
+        if sim_index == None:
+            param_vect.append(obj)
         else:
-            param_vect.append(cdp.ave_pos_alpha)
-            param_vect.append(cdp.ave_pos_beta)
-            param_vect.append(cdp.ave_pos_gamma)
-
-        # Frame order eigenframe - the full frame.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            param_vect.append(cdp.eigen_alpha)
-            param_vect.append(cdp.eigen_beta)
-            param_vect.append(cdp.eigen_gamma)
-
-        # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
-            param_vect.append(cdp.axis_theta)
-            param_vect.append(cdp.axis_phi)
-
-        # Frame order eigenframe - the second rotation axis.
-        if cdp.model in ['double rotor']:
-            param_vect.append(cdp.axis_theta_2)
-            param_vect.append(cdp.axis_phi_2)
-
-        # Frame order eigenframe - the rotor axis alpha angle.
-        if cdp.model in ['rotor']:
-            param_vect.append(cdp.axis_alpha)
-
-        # Cone parameters - pseudo-elliptic cone parameters.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            param_vect.append(cdp.cone_theta_x)
-            param_vect.append(cdp.cone_theta_y)
-
-        # Cone parameters - single isotropic angle or order parameter.
-        elif cdp.model in ['iso cone', 'iso cone, torsionless']:
-            param_vect.append(cdp.cone_theta)
-        elif cdp.model in ['iso cone, free rotor']:
-            param_vect.append(cdp.cone_s1)
-
-        # Cone parameters - torsion angle.
-        if cdp.model in ['double rotor', 'rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-            param_vect.append(cdp.cone_sigma_max)
-
-        # Cone parameters - 2nd torsion angle.
-        if cdp.model in ['double rotor']:
-            param_vect.append(cdp.cone_sigma_max_2)
-
-    # Simulation values.
-    else:
-        # Average position translation.
-        if not translation_fixed():
-            param_vect.append(cdp.ave_pos_x_sim[sim_index])
-            param_vect.append(cdp.ave_pos_y_sim[sim_index])
-            param_vect.append(cdp.ave_pos_z_sim[sim_index])
-
-        # Initialise the parameter array using the tensor rotation Euler angles (average domain position).
-        if cdp.model in ['free rotor', 'iso cone, free rotor']:
-            param_vect.append(cdp.ave_pos_beta_sim[sim_index])
-            param_vect.append(cdp.ave_pos_gamma_sim[sim_index])
-        else:
-            param_vect.append(cdp.ave_pos_alpha_sim[sim_index])
-            param_vect.append(cdp.ave_pos_beta_sim[sim_index])
-            param_vect.append(cdp.ave_pos_gamma_sim[sim_index])
-
-        # Frame order eigenframe - the full frame.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            param_vect.append(cdp.eigen_alpha_sim[sim_index])
-            param_vect.append(cdp.eigen_beta_sim[sim_index])
-            param_vect.append(cdp.eigen_gamma_sim[sim_index])
-
-        # Frame order eigenframe - the isotropic cone axis.
-        elif cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'double rotor']:
-            param_vect.append(cdp.axis_theta_sim[sim_index])
-            param_vect.append(cdp.axis_phi_sim[sim_index])
-
-        # Frame order eigenframe - the second rotation axis.
-        if cdp.model in ['double rotor']:
-            param_vect.append(cdp.axis_theta_sim_2[sim_index])
-            param_vect.append(cdp.axis_phi_sim_2[sim_index])
-
-        # Frame order eigenframe - the rotor axis alpha angle.
-        if cdp.model in ['rotor']:
-            param_vect.append(cdp.axis_alpha_sim[sim_index])
-
-        # Cone parameters - pseudo-elliptic cone parameters.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            param_vect.append(cdp.cone_theta_x_sim[sim_index])
-            param_vect.append(cdp.cone_theta_y_sim[sim_index])
-
-        # Cone parameters - single isotropic angle or order parameter.
-        elif cdp.model in ['iso cone', 'iso cone, torsionless']:
-            param_vect.append(cdp.cone_theta_sim[sim_index])
-        elif cdp.model in ['iso cone, free rotor']:
-            param_vect.append(cdp.cone_s1_sim[sim_index])
-
-        # Cone parameters - torsion angle.
-        if cdp.model in ['double rotor', 'rotor', 'line', 'iso cone', 'pseudo-ellipse']:
-            param_vect.append(cdp.cone_sigma_max_sim[sim_index])
-
-        # Cone parameters - 2nd torsion angle.
-        if cdp.model in ['double rotor']:
-            param_vect.append(cdp.cone_sigma_max_sim_2[sim_index])
+            param_vect.append(obj[sim_index])
 
     # Return as a numpy array.
     return array(param_vect, float64)
