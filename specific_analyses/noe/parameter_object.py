@@ -39,7 +39,7 @@ class Noe_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data.
-        self.add_peak_intensity()
+        self._add_peak_intensity()
 
         # Add the single model parameter.
-        self.add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)
+        self._add('noe', scope='spin', desc='The NOE', py_type=float, grace_string='\\qNOE\\Q', err=True, sim=True)

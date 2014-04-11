@@ -39,18 +39,18 @@ class Relax_fit_params(Param_list):
         Param_list.__init__(self)
 
         # Add the base data.
-        self.add_peak_intensity()
+        self._add_peak_intensity()
 
         # Add the base information for the analysis.
-        self.add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
+        self._add('relax_times', scope='spin', py_type=dict, grace_string='\\qRelaxation time period (s)\\Q')
 
         # Add the model variables.
-        self.add_model_info(model_flag=False)
+        self._add_model_info(model_flag=False)
 
         # Add the model parameters.
-        self.add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
-        self.add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self.add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
+        self._add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
+        self._add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
+        self._add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
 
         # Add the minimisation data.
-        self.add_min_data(min_stats_global=False, min_stats_spin=True)
+        self._add_min_data(min_stats_global=False, min_stats_spin=True)

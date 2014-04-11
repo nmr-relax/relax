@@ -62,8 +62,8 @@ class Param_list:
 
         # Add some spin specific objects.
         if self.spin_data:
-            self.add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
-            self.add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
+            self._add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
+            self._add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
 
 
     def __new__(self, *args, **kargs):
@@ -78,7 +78,7 @@ class Param_list:
         return self.instance
 
 
-    def add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -141,27 +141,16 @@ class Param_list:
             self._grace_string[name] = name
 
 
-    def add_align_data(self):
-        """Add the PCS and RDC data.
-
-        This is the equivalent of calling:
-
-            add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
-            add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
-        """
+    def _add_align_data(self):
+        """Add the PCS and RDC data."""
 
         # Add the data.
-        self.add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
-        self.add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
+        self._add('pcs', scope='spin', grace_string='Pseudo-contact shift', units='ppm', desc='The pseudo-contact shift (PCS)', py_type=float)
+        self._add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
 
 
-    def add_csa(self, default=None, set='generic', err=False, sim=False):
+    def _add_csa(self, default=None, set='generic', err=False, sim=False):
         """Add the CSA parameter 'csa'.
-
-        This is the equivalent of calling:
-
-            add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy value (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
-
 
         @keyword default:       The default CSA value.
         @type default:          float
@@ -174,20 +163,11 @@ class Param_list:
         """
 
         # Add the CSA structure.
-        self.add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
+        self._add('csa', scope='spin', default=default, units='ppm', desc='Chemical shift anisotropy (unitless)', py_type=float, set=set, conv_factor=1e-6, grace_string='\\qCSA\\Q', err=err, sim=sim)
 
 
-    def add_min_data(self, min_stats_global=False, min_stats_spin=False):
+    def _add_min_data(self, min_stats_global=False, min_stats_spin=False):
         """Add minimisation specific objects.
-
-        This is the equivalent of calling the add() method as:
-
-            add('chi2', desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
-            add('iter', desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
-            add('f_count', desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
-            add('g_count', desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
-            add('h_count', desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
-            add('warning', desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
         The parameter scope is defined by the keyword arguments.
 
@@ -213,22 +193,16 @@ class Param_list:
                 scope = 'spin'
 
             # The minimisation parameters.
-            self.add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
-            self.add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
-            self.add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
-            self.add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
-            self.add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
-            self.add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
+            self._add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
+            self._add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
+            self._add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
+            self._add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
+            self._add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
+            self._add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 
-    def add_model_info(self, scope='spin', model_flag=True, equation_flag=False):
+    def _add_model_info(self, scope='spin', model_flag=True, equation_flag=False):
         """Add model specific objects 'model' and 'params'.
-
-        This is the equivalent of calling:
-
-            add('params', scope=scope, desc='The parameters of the model', py_type=list)
-            add('model', scope=scope, desc='The model', py_type=str)
-
 
         @keyword scope:         The parameter scope.  This can be set to 'global' for parameters located within the global scope of the current data pipe.  Or set to 'spin' for spin specific parameters.  Alternatively the value 'both' indicates that there are both global and specific versions of this parameter.
         @type scope:            str
@@ -238,26 +212,21 @@ class Param_list:
 
         # Add the model structure.
         if model_flag:
-            self.add('model', scope=scope, desc='The model name', py_type=str)
+            self._add('model', scope=scope, desc='The model name', py_type=str)
 
         # The equation information.
         if equation_flag:
-            self.add('equation', scope=scope, desc='The model equation', py_type=str)
+            self._add('equation', scope=scope, desc='The model equation', py_type=str)
 
         # Add the parameter name list structure.
-        self.add('params', scope=scope, desc='The parameters of the model', py_type=list)
+        self._add('params', scope=scope, desc='The parameters of the model', py_type=list)
 
 
-    def add_peak_intensity(self):
-        """Add the peak intensity structure 'peak_intensity'.
-
-        This is the equivalent of calling:
-
-            add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
-        """
+    def _add_peak_intensity(self):
+        """Add the peak intensity structure 'peak_intensity'."""
 
         # Add the peak intensity structure.
-        self.add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+        self._add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
 
 
     def base_loop(self, set=None, scope=None):
