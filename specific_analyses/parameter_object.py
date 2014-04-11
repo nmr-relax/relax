@@ -593,11 +593,13 @@ class Param_list:
         return text.split("'")[1]
 
 
-    def uf_doc(self, default=True, type=False):
+    def uf_doc(self, default=False, units=False, type=False):
         """"Create the parameter documentation for the user function docstrings.
 
         @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
         @type default:      bool
+        @keyword units:     A flag which if True will cause the units to be included in the table.
+        @type units:        bool
         @keyword type:      A flag which if True will cause the parameter type to be included in the table.
         @type type:         bool
         """
@@ -612,6 +614,8 @@ class Param_list:
         headings = ["Name", "Description"]
         if default:
             headings.append("Default")
+        if units:
+            headings.append("Units")
         if type:
             headings.append("Type")
         table.add_headings(headings)
@@ -624,6 +628,8 @@ class Param_list:
                 row.append(self.description(param))
                 if default:
                     row.append("%s" % self.default_value(param))
+                if units:
+                    row.append("%s" % self.units(param))
                 if type:
                     row.append("%s" % self.type_string(param))
                 table.add_row(row)
