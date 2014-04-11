@@ -40,14 +40,13 @@ class N_state_params(Param_list):
 
         # Add the base data.
         self._add_align_data()
-        self._add_csa()
 
         # Add up the model parameters.
         self._add('probs', scope='global', default=0.0, desc='The probabilities of each state', py_type=list, set='params', err=True, sim=True)
         self._add('alpha', scope='global', units='rad', default=0.0, desc='The alpha Euler angles (for the rotation of each state)', py_type=list, set='params', err=True, sim=True)
         self._add('beta', scope='global', units='rad', default=0.0, desc='The beta Euler angles (for the rotation of each state)', py_type=list, set='params', err=True, sim=True)
         self._add('gamma', scope='global', units='rad', default=0.0, desc='The gamma Euler angles (for the rotation of each state)', py_type=list, set='params', err=True, sim=True)
-        self._add('paramagnetic_centre', scope='global', units='Angstrom', desc='The paramagnetic centre', py_type=float, set='params', err=True, sim=True)
+        self._add('paramagnetic_centre', scope='global', units='Angstrom', desc='The paramagnetic centre', py_type=list, set='params', err=True, sim=True)
 
         # Add the minimisation data.
         self._add_min_data(min_stats_global=False, min_stats_spin=True)
