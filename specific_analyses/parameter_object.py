@@ -183,7 +183,7 @@ class Param_list:
         self._add('Dx', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the x-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
         self._add('Dy', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the y-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
         self._add('Dz', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Eigenvalue associated with the z-axis of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
-        self._add('Dpar', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient parallel to the major axis of  the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
+        self._add('Dpar', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient parallel to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
         self._add('Dper', scope='global', default=1.666 * 1e7, units='1e6 1/s', desc='Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
         self._add('Da', scope='global', default=0.0, units='1e6 1/s', desc='Anisotropic component of the diffusion tensor', py_type=float, set='params', conv_factor=1e6, err=True, sim=True)
         self._add('Dr', scope='global', default=0.0, desc='Rhombic component of the diffusion tensor', py_type=float, set='params', err=True, sim=True)
