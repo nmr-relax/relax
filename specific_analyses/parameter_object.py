@@ -79,7 +79,7 @@ class Param_list:
         return self.instance
 
 
-    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='generic', conv_factor=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -96,7 +96,7 @@ class Param_list:
         @type desc:             None or str
         @keyword py_type:       The Python type that this parameter should be.
         @type py_type:          Python type object
-        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword conv_factor:   The factor of conversion between different parameter units.
         @type conv_factor:      None, float or func
@@ -113,7 +113,7 @@ class Param_list:
             raise RelaxError("The parameter scope must be set.")
         if py_type == None:
             raise RelaxError("The parameter type must be set.")
-        allowed_sets = ['all', 'generic', 'params', 'min']
+        allowed_sets = ['all', 'fixed', 'params', 'min']
         if set not in allowed_sets:
             raise RelaxError("The parameter set '%s' must be one of %s." % (set, allowed_sets))
 
@@ -150,12 +150,12 @@ class Param_list:
         self._add('rdc', scope='spin', grace_string='Residual dipolar coupling', units='Hz', desc='The residual dipolar coupling (RDC)', py_type=float)
 
 
-    def _add_csa(self, default=None, set='generic', err=False, sim=False):
+    def _add_csa(self, default=None, set='fixed', err=False, sim=False):
         """Add the CSA parameter 'csa'.
 
         @keyword default:       The default CSA value.
         @type default:          float
-        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword err:           A flag which if True indicates that the 'csa_err' error data structure can exist.
         @type err:              bool
@@ -254,7 +254,7 @@ class Param_list:
     def base_loop(self, set=None, scope=None):
         """An iterator method for looping over all the base parameters.
 
-        @keyword set:   The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @keyword set:   The set of object names.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
         @type set:      str
         @keyword scope: The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
         @type scope:    str or None
@@ -265,7 +265,7 @@ class Param_list:
         # Loop over the parameters.
         for name in self._names:
             # Skip the parameter if the set does not match.
-            if set == 'generic' and self._set[name] != 'generic':
+            if set == 'fixed' and self._set[name] != 'fixed':
                 continue
             if set == 'params' and self._set[name] != 'params':
                 continue
@@ -339,7 +339,7 @@ class Param_list:
     def data_names(self, set='all', scope=None, error_names=False, sim_names=False):
         """Return a list of names of data structures.
 
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword scope:         The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
         @type scope:            str or None
@@ -449,7 +449,7 @@ class Param_list:
     def loop(self, set=None, scope=None, error_names=False, sim_names=False):
         """An iterator method for looping over all the parameters.
 
-        @keyword set:           The set of object names to return.  This can be set to 'all' for all names, to 'generic' for generic object names, 'params' for analysis specific parameter names, or to 'min' for minimisation specific object names.
+        @keyword set:           The set of object names.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
         @type set:              str
         @keyword scope:         The scope of the parameter to return.  If not set, then all will be returned.  If set to 'global' or 'spin', then only the parameters within that scope will be returned.
         @type scope:            str or None
