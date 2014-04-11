@@ -178,15 +178,8 @@ class API_base(object):
         @rtype:                 list of str
         """
 
-        # Initialise.
-        names = []
-
-        # Loop over the parameters.
-        for name in self._PARAMS.loop(set=set, scope=scope, error_names=error_names, sim_names=sim_names):
-            names.append(name)
-
         # Return the names.
-        return names
+        return self._PARAMS.data_names(set=set, scope=scope, error_names=error_names, sim_names=sim_names)
 
 
     def data_type(self, param=None):
