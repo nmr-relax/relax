@@ -127,19 +127,6 @@ class Map:
             self.return_conversion_factor.append(api.return_conversion_factor)
             self.return_units.append(api.return_units)
 
-        # Diffusion tensor parameter flag.
-        self.diff_params = zeros(self.n)
-
-        # Get the parameter names.
-        self.get_param_names()
-
-        # Specific function setup (for diffusion tensor parameters).
-        for i in range(self.n):
-            if self.diff_params[i]:
-                self.map_bounds[i] = diffusion_tensor.map_bounds
-                self.return_conversion_factor[i] = diffusion_tensor.return_conversion_factor
-                self.return_units[i] = diffusion_tensor.return_units
-
         # Points.
         if point != None:
             self.point = array(point, float64)
@@ -151,7 +138,7 @@ class Map:
         self.bounds = zeros((self.n, 2), float64)
         for i in range(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds[i](self.param_names[i], self.spin_id)
+            bounds = self.map_bounds[i](self.params[i], self.spin_id)
 
             # No bounds found.
             if not bounds:
@@ -219,37 +206,6 @@ class Map:
         """Function for creating a date string."""
 
         self.date = asctime(localtime())
-
-
-    def get_param_names(self):
-        """Function for retrieving the parameter names."""
-
-        # Initialise.
-        self.param_names = []
-
-        # Loop over the parameters.
-        for i in range(self.n):
-            # Alias the parameter name.
-            name = self.params[i]
-
-            # Diffusion tensor parameter.
-            if pipes.get_type() == 'mf':
-                # The diffusion tensor parameter name.
-                diff_name = diffusion_tensor.return_data_name(self.params[i])
-
-                # Replace the model-free parameter with the diffusion tensor parameter if it exists.
-                if diff_name:
-                    name = diff_name
-
-                    # Set the flag indicating if there are diffusion tensor parameters.
-                    self.diff_params[i] = 1
-
-            # Bad parameter name.
-            if not name:
-                raise RelaxUnknownParamError(self.params[i])
-
-            # Append the parameter name.
-            self.param_names.append(name)
 
 
     def map_3D_text(self, map_file):
@@ -338,10 +294,10 @@ class Map:
         # Loop over the parameters
         for i in range(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor[i](self.param_names[i])
+            factor = self.return_conversion_factor[i](self.params[i])
 
             # Parameter units.
-            units = self.return_units[i](self.param_names[i])
+            units = self.return_units[i](self.params[i])
 
             # Labels.
             if units:

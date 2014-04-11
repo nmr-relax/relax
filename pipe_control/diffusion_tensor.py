@@ -316,35 +316,6 @@ def data_names():
     return names
 
 
-def default_value(param):
-    """Return the default values for the diffusion tensor parameters.
-
-    @param param:   The name of the parameter.
-    @type param:    str
-    @return:        The default value.
-    @rtype:         float
-    """
-
-    # tm.
-    if param == 'tm':
-        return 10.0 * 1e-9
-
-    # Diso, Dx, Dy, Dz, Dpar, Dper.
-    elif param == 'Diso' or param == 'Dx' or param == 'Dy' or param == 'Dz' or param == 'Dpar' or param == 'Dper':
-        return 1.666 * 1e7
-
-    # Da, Dr.
-    elif param == 'Da' or param == 'Dr':
-        return 0.0
-
-    # Dratio.
-    elif param == 'Dratio':
-        return 1.0
-
-    # All angles.
-    elif param == 'alpha' or param == 'beta' or param == 'gamma' or param == 'theta' or param == 'phi':
-        return 0.0
-
 # User function documentation.
 __default_value_doc__ = Desc_container("Diffusion tensor parameter default values")
 table = uf_tables.add_table(label="table: diff default values", caption="Diffusion tensor parameter default values.")
@@ -846,111 +817,6 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-def return_conversion_factor(param):
-    """Function for returning the factor of conversion between different parameter units.
-
-    For example, the internal representation of tm is in seconds, whereas the external
-    representation is in nanoseconds, therefore this function will return 1e-9 for tm.
-
-
-    @param param:       The name of the parameter to return the conversion factor for.
-    @type param:        str
-    @return:            The conversion factor.
-    @rtype:             float
-    """
-
-    # Get the object name.
-    object_name = return_data_name(param)
-
-    # tm (nanoseconds).
-    if object_name == 'tm':
-        return 1e-9
-
-    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    if object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-        return 1e6
-
-    # Angles.
-    if object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
-        return (2.0*pi) / 360.0
-
-    # No conversion factor.
-    return 1.0
-
-
-def return_data_name(name):
-    """Return the parameter name.
-
-    @param name:    The name of the parameter to return the name of.
-    @type name:     str
-    @return:        The parameter name.
-    @rtype:         str
-    """
-
-    # Enforce that the name must be a string.
-    if not isinstance(name, str):
-        raise RelaxStrError('name', name)
-
-    # Local tm.
-    if search('^tm$', name):
-        return 'tm'
-
-    # Diso.
-    if search('[Dd]iso', name):
-        return 'Diso'
-
-    # Da.
-    if search('[Dd]a', name):
-        return 'Da'
-
-    # Dr.
-    if search('[Dd]r$', name):
-        return 'Dr'
-
-    # Dx.
-    if search('[Dd]x', name):
-        return 'Dx'
-
-    # Dy.
-    if search('[Dd]y', name):
-        return 'Dy'
-
-    # Dz.
-    if search('[Dd]z', name):
-        return 'Dz'
-
-    # Dpar.
-    if search('[Dd]par', name):
-        return 'Dpar'
-
-    # Dper.
-    if search('[Dd]per', name):
-        return 'Dper'
-
-    # Dratio.
-    if search('[Dd]ratio', name):
-        return 'Dratio'
-
-    # alpha.
-    if search('^a$', name) or search('alpha', name):
-        return 'alpha'
-
-    # beta.
-    if search('^b$', name) or search('beta', name):
-        return 'beta'
-
-    # gamma.
-    if search('^g$', name) or search('gamma', name):
-        return 'gamma'
-
-    # theta.
-    if search('theta', name):
-        return 'theta'
-
-    # phi.
-    if search('phi', name):
-        return 'phi'
-
 # User function documentation.
 __return_data_name_doc__ = Desc_container("Diffusion tensor parameter string matching patterns")
 table = uf_tables.add_table(label="table: diff data type patterns", caption="Diffusion tensor parameter string matching patterns.")
@@ -971,36 +837,6 @@ table.add_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma"
 table.add_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
 table.add_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
 __return_data_name_doc__.add_table(table.label)
-
-
-def return_units(param):
-    """Function for returning a string representing the parameters units.
-
-    For example, the internal representation of tm is in seconds, whereas the external
-    representation is in nanoseconds, therefore this function will return the string
-    'nanoseconds' for tm.
-
-
-    @param param:       The name of the parameter to return the units for.
-    @type param:        str
-    @return:            The parameter units string.
-    @rtype:             str
-    """
-
-    # Get the object name.
-    object_name = return_data_name(param)
-
-    # tm (nanoseconds).
-    if object_name == 'tm':
-        return 'ns'
-
-    # Diso, Da, Dx, Dy, Dz, Dpar, Dper.
-    if object_name in ['Diso', 'Da', 'Dx', 'Dy', 'Dz', 'Dpar', 'Dper']:
-        return '1e6 1/s'
-
-    # Angles.
-    if object_name in ['theta', 'phi', 'alpha', 'beta', 'gamma']:
-        return 'deg'
 
 
 def set(value=None, param=None):
@@ -1026,9 +862,6 @@ def set(value=None, param=None):
 
     # Loop over the parameters.
     for i in range(len(param)):
-        # Get the object name.
-        param[i] = return_data_name(param[i])
-
         # Unknown parameter.
         if not param[i]:
             raise RelaxUnknownParamError("diffusion tensor", param[i])

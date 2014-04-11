@@ -335,8 +335,8 @@ class API_base(object):
         @rtype:         bool
         """
 
-        # Not implemented.
-        raise RelaxImplementError('is_spin_param')
+        # Return the result.
+        return self._PARAMS.is_spin_param(name)
 
 
     def map_bounds(self, param, spin_id=None):

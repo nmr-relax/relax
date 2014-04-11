@@ -658,24 +658,6 @@ class Model_free(API_base, API_common):
                 setattr(data_cont, name, init_data)
 
 
-    def default_value(self, param):
-        """The default model-free parameter values.
-
-        @param param:   The model-free parameter.
-        @type param:    str
-        @return:        The default value.
-        @rtype:         float
-        """
-
-        # Diffusion tensor parameter.
-        diff_val = diffusion_tensor.default_value(param)
-        if diff_val != None:
-            return diff_val
-
-        # Model-free parameter.
-        return self._PARAMS.default_value(param)
-
-
     def deselect(self, model_info, sim_index=None):
         """Deselect models or simulations.
 
@@ -1039,27 +1021,6 @@ class Model_free(API_base, API_common):
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
 
 
-    def is_spin_param(self, name):
-        """Determine whether the given parameter is spin specific.
-
-        Unless a diffusion parameter is encountered, this method will return true.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        If the parameter is a diffusion parameter, False I returned.  Otherwise True
-                        is returned.
-        @rtype:         bool
-        """
-
-        # Catch a diffusion parameter.
-        if diffusion_tensor.return_data_name(name):
-            return False
-
-        # All the rest:
-        else:
-            return True
-
-
     def map_bounds(self, param, spin_id=None):
         """Create bounds for the OpenDX mapping function.
 
@@ -1070,6 +1031,10 @@ class Model_free(API_base, API_common):
         @return:            The upper and lower bounds of the parameter.
         @rtype:             list of float
         """
+
+        # Diffusion tensor bounds.
+        if self._PARAMS.scope(param) == 'global':
+            return diffusion_tensor.map_bounds(param)
 
         # Get the spin.
         spin = return_spin(spin_id)
@@ -1902,8 +1867,7 @@ class Model_free(API_base, API_common):
         mf_vals = []
         for i in range(len(param)):
             # Diffusion tensor parameter.
-            diff_obj = diffusion_tensor.return_data_name(param[i])
-            if diff_obj:
+            if self._PARAMS.scope(param[i]) == 'global':
                 if error:
                     diff_params.append(param[i] + '_err')
                 else:

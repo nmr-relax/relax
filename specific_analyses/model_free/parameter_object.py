@@ -24,7 +24,7 @@
 
 # relax module imports.
 from lib.physical_constants import N15_CSA
-from pipe_control import diffusion_tensor, relax_data
+from pipe_control import relax_data
 from specific_analyses.parameter_object import Param_list
 from specific_analyses.model_free.parameters import conv_factor_rex, units_rex
 
@@ -49,21 +49,7 @@ class Model_free_params(Param_list):
         self._add_model_info(equation_flag=True)
 
         # Add up the global model parameters.
-        self._add('tm', scope='global', default=diffusion_tensor.default_value('tm'), conv_factor=1e-9, grace_string='\\xt\\f{}\\sm', units='ns', py_type=float, set='params', err=True, sim=True)
-        self._add('Diso', scope='global', default=diffusion_tensor.default_value('Diso'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dx', scope='global', default=diffusion_tensor.default_value('Dx'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dy', scope='global', default=diffusion_tensor.default_value('Dy'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dz', scope='global', default=diffusion_tensor.default_value('Dz'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dpar', scope='global', default=diffusion_tensor.default_value('Dpar'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dper', scope='global', default=diffusion_tensor.default_value('Dper'), py_type=float, set='params', err=True, sim=True)
-        self._add('Da', scope='global', default=diffusion_tensor.default_value('Da'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dratio', scope='global', default=diffusion_tensor.default_value('Dratio'), py_type=float, set='params', err=True, sim=True)
-        self._add('Dr', scope='global', default=diffusion_tensor.default_value('Dr'), py_type=float, set='params', err=True, sim=True)
-        self._add('alpha', scope='global', default=diffusion_tensor.default_value('alpha'), py_type=float, set='params', err=True, sim=True)
-        self._add('beta', scope='global', default=diffusion_tensor.default_value('beta'), py_type=float, set='params', err=True, sim=True)
-        self._add('gamma', scope='global', default=diffusion_tensor.default_value('gamma'), py_type=float, set='params', err=True, sim=True)
-        self._add('theta', scope='global', default=diffusion_tensor.default_value('theta'), py_type=float, set='params', err=True, sim=True)
-        self._add('phi', scope='global', default=diffusion_tensor.default_value('phi'), py_type=float, set='params', err=True, sim=True)
+        self._add_diffusion_params()
 
         # Add up the spin model parameters.
         self._add('s2', scope='spin', default=0.8, desc='S2, the model-free generalised order parameter (S2 = S2f.S2s)', py_type=float, set='params', grace_string='\\qS\\v{0.4}\\z{0.71}2\\Q', err=True, sim=True)
