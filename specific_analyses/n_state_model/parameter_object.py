@@ -50,3 +50,7 @@ class N_state_params(Param_list):
 
         # Add the minimisation data.
         self._add_min_data(min_stats_global=False, min_stats_spin=True)
+
+        # Set up the user function documentation.
+        self._set_uf_title("N-state model parameters")
+        self._set_uf_table(label="table: N-state parameters", caption="N-state model parameters.")

@@ -65,3 +65,7 @@ class Frame_order_params(Param_list):
 
         # Add minimisation structures.
         self._add_min_data(min_stats_global=True)
+
+        # Set up the user function documentation.
+        self._set_uf_title("Frame order parameters")
+        self._set_uf_table(label="table: frame order parameters", caption="Frame order parameters.")
