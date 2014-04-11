@@ -69,11 +69,6 @@ def axis_setup(data_type=None, norm=True):
             # The specific analysis API object.
             api = return_api()
 
-            # Test if the axis data type is a minimisation statistic.
-            if data_type[i] and data_type[i] != 'res_num' and pipe_control.minimise.return_data_name(data_type[i]):
-                return_units = pipe_control.minimise.return_units
-                return_grace_string = pipe_control.minimise.return_grace_string
-
         # Some axis default values for spin data.
         if data_type[i] == 'res_num':
             # Residue only data.

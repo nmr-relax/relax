@@ -193,11 +193,11 @@ class Param_list:
                 scope = 'spin'
 
             # The minimisation parameters.
-            self._add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', err=False, sim=True)
-            self._add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', err=False, sim=True)
-            self._add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', err=False, sim=True)
-            self._add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', err=False, sim=True)
-            self._add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', err=False, sim=True)
+            self._add('chi2', scope=scope, desc='Chi-squared value', py_type=float, set='min', grace_string='\\xc\\S2', err=False, sim=True)
+            self._add('iter', scope=scope, desc='Optimisation iterations', py_type=int, set='min', grace_string='Iteration count', err=False, sim=True)
+            self._add('f_count', scope=scope, desc='Number of function calls', py_type=int, set='min', grace_string='Function call count', err=False, sim=True)
+            self._add('g_count', scope=scope, desc='Number of gradient calls', py_type=int, set='min', grace_string='Gradient call count', err=False, sim=True)
+            self._add('h_count', scope=scope, desc='Number of Hessian calls', py_type=int, set='min', grace_string='Hessian call count', err=False, sim=True)
             self._add('warning', scope=scope, desc='Optimisation warning', py_type=str, set='min', err=False, sim=True)
 
 

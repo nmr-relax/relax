@@ -372,54 +372,6 @@ def return_data_name(name):
         return 'h_count'
 
 
-def return_grace_string(stat_type):
-    """Function for returning the Grace string representing the data type for axis labelling.
-
-    @param stat_type:   The name of the statistic to return the Grace string for.
-    @type stat_type:    str
-    @return:            The Grace string.
-    @rtype:             str
-    """
-
-    # Get the object name.
-    object_name = return_data_name(stat_type)
-
-    # Chi-squared.
-    if object_name == 'chi2':
-        grace_string = '\\xc\\S2'
-
-    # Iteration count.
-    elif object_name == 'iter':
-        grace_string = 'Iteration count'
-
-    # Function call count.
-    elif object_name == 'f_count':
-        grace_string = 'Function call count'
-
-    # Gradient call count.
-    elif object_name == 'g_count':
-        grace_string = 'Gradient call count'
-
-    # Hessian call count.
-    elif object_name == 'h_count':
-        grace_string = 'Hessian call count'
-
-    # Return the Grace string.
-    return grace_string
-
-
-def return_units(stat_type):
-    """Dummy function which returns None as the stats have no units.
-
-    @param stat_type:   The name of the statistic.  This is unused!
-    @type stat_type:    str
-    @return:            Nothing.
-    @rtype:             None
-    """
-
-    return None
-
-
 def return_value(spin=None, stat_type=None, sim=None):
     """Function for returning the minimisation statistic corresponding to 'stat_type'.
 

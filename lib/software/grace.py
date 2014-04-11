@@ -366,15 +366,6 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
                 # The specific analysis API object.
                 api = return_api()
 
-                # Specific value and error, conversion factor, and units returning functions.
-                return_units = api.return_units
-                return_grace_string = api.return_grace_string
-
-                # Test if the axis data type is a minimisation statistic.
-                if data_type[i] and data_type[i] != 'spin' and pipe_control.minimise.return_data_name(data_type[i]):
-                    return_units = pipe_control.minimise.return_units
-                    return_grace_string = pipe_control.minimise.return_grace_string
-
             # Some axis default values for spin data.
             if data_type[i] == 'spin':
                 # Residue only data.
@@ -407,10 +398,10 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
                         data_type_i = data_type_i[:-3]
 
                     # Get the units.
-                    units = return_units(data_type_i)
+                    units = api.return_units(data_type_i)
 
                     # Set the label.
-                    axis_labels[gi][i] = return_grace_string(data_type_i)
+                    axis_labels[gi][i] = api.return_grace_string(data_type_i)
 
                     # Add units.
                     if units:
