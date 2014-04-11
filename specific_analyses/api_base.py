@@ -194,7 +194,7 @@ class API_base(object):
         """
 
         # Return the type.
-        return self._PARAMS.get_type(param)
+        return self._PARAMS.type(param)
 
 
     def default_value(self, param):
@@ -210,7 +210,7 @@ class API_base(object):
         """
 
         # Return the value.
-        return self._PARAMS.get_default(param)
+        return self._PARAMS.default_value(param)
 
 
     def deselect(self, model_info, sim_index=None):
@@ -520,7 +520,7 @@ class API_base(object):
         """
 
         # Return the factor.
-        return self._PARAMS.get_conv_factor(param)
+        return self._PARAMS.conversion_factor(param)
 
 
     def return_data(self, data_id=None):
@@ -549,7 +549,7 @@ class API_base(object):
         """
 
         # Return the description.
-        return self._PARAMS.get_desc(name)
+        return self._PARAMS.description(name)
 
 
     def return_data_name(self, param):
@@ -595,7 +595,7 @@ class API_base(object):
         """
 
         # The string.
-        return self._PARAMS.get_grace_string(param)
+        return self._PARAMS.grace_string(param)
 
 
     def return_units(self, param):
@@ -608,7 +608,7 @@ class API_base(object):
         """
 
         # Return the name.
-        return self._PARAMS.get_units(param)
+        return self._PARAMS.units(param)
 
 
     def return_value(self, spin, param, sim=None, bc=False):

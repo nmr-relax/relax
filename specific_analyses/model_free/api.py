@@ -648,7 +648,7 @@ class Model_free(API_base, API_common):
 
             # Set everything else initially to None or False.
             init_data = None
-            if self._PARAMS.get_type(name) == bool:
+            if self._PARAMS.type(name) == bool:
                 init_data = False
                 if name == 'select':
                     init_data = True
@@ -673,7 +673,7 @@ class Model_free(API_base, API_common):
             return diff_val
 
         # Model-free parameter.
-        return self._PARAMS.get_default(param)
+        return self._PARAMS.default_value(param)
 
 
     def deselect(self, model_info, sim_index=None):

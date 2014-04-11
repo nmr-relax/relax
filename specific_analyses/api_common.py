@@ -108,7 +108,7 @@ class API_common:
                 continue
 
             # The default value.
-            param_type = self._PARAMS.get_type(name)
+            param_type = self._PARAMS.type(name)
             if param_type == dict:
                 value = {}
             elif param_type == list:

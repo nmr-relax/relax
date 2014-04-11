@@ -321,6 +321,30 @@ class Param_list:
         return False
 
 
+    def conversion_factor(self, name):
+        """Return the conversion factor.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The conversion factor.
+        @rtype:         float
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # No factor.
+        if self._conv_factor[name] == None:
+            return 1.0
+
+        # Function.
+        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
+            return self._conv_factor[name]()
+
+        # Value.
+        return self._conv_factor[name]
+
+
     def data_names(self, set='all', scope=None, error_names=False, sim_names=False):
         """Return a list of names of data structures.
 
@@ -347,31 +371,7 @@ class Param_list:
         return names
 
 
-    def get_conv_factor(self, name):
-        """Return the conversion factor.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The conversion factor.
-        @rtype:         float
-        """
-
-        # Parameter check.
-        self.check_param(name)
-
-        # No factor.
-        if self._conv_factor[name] == None:
-            return 1.0
-
-        # Function.
-        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
-            return self._conv_factor[name]()
-
-        # Value.
-        return self._conv_factor[name]
-
-
-    def get_default(self, name):
+    def default_value(self, name):
         """Return the default value of the parameter.
 
         @param name:    The name of the parameter.
@@ -387,7 +387,7 @@ class Param_list:
         return self._defaults[name]
 
 
-    def get_desc(self, name):
+    def description(self, name):
         """Return the description of the parameter.
 
         @param name:    The name of the parameter.
@@ -407,7 +407,7 @@ class Param_list:
         return self._desc[name]
 
 
-    def get_err(self, name):
+    def error_flag(self, name):
         """Return the error flag for the parameter.
 
         @param name:    The name of the parameter.
@@ -423,7 +423,7 @@ class Param_list:
         return self._err[name]
 
 
-    def get_grace_string(self, name):
+    def grace_string(self, name):
         """Return the Grace string for the parameter.
 
         @param name:    The name of the parameter.
@@ -437,74 +437,6 @@ class Param_list:
 
         # Return the value.
         return self._grace_string[name]
-
-
-    def get_set(self, name):
-        """Return the parameter set that the parameter belongs to.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The parameter set.
-        @rtype:         str
-        """
-
-        # Parameter check.
-        self.check_param(name)
-
-        # Return the type.
-        return self._set[name]
-
-
-    def get_sim(self, name):
-        """Return the Monte Carlo simulation flag for the parameter.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The Monte Carlo simulation flag for the parameter.
-        @rtype:         bool
-        """
-
-        # Parameter check.
-        self.check_param(name)
-
-        # Return the type.
-        return self._sim[name]
-
-
-    def get_type(self, name):
-        """Return the Python type for the parameter.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The Python type.
-        @rtype:         Python type object
-        """
-
-        # Parameter check.
-        self.check_param(name)
-
-        # Return the Python type.
-        return self._py_types[name]
-
-
-    def get_units(self, name):
-        """Return the units string for the parameter.
-
-        @param name:    The name of the parameter.
-        @type name:     str
-        @return:        The units string.
-        @rtype:         str
-        """
-
-        # Parameter check.
-        self.check_param(name)
-
-        # Function.
-        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
-            return self._units[name]()
-
-        # Return the value.
-        return self._units[name]
 
 
     def loop(self, set=None, scope=None, error_names=False, sim_names=False):
@@ -529,11 +461,79 @@ class Param_list:
         # Error names.
         if error_names:
             for name in self.base_loop(set=set):
-                if self.get_err(name):
+                if self.error_flag(name):
                     yield name + '_err'
 
         # Sim names.
         if sim_names:
             for name in self.base_loop(set=set):
-                if self.get_sim(name):
+                if self.simulation_flag(name):
                     yield name + '_sim'
+
+
+    def set(self, name):
+        """Return the parameter set that the parameter belongs to.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The parameter set.
+        @rtype:         str
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Return the type.
+        return self._set[name]
+
+
+    def simulation_flag(self, name):
+        """Return the Monte Carlo simulation flag for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Monte Carlo simulation flag for the parameter.
+        @rtype:         bool
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Return the type.
+        return self._sim[name]
+
+
+    def type(self, name):
+        """Return the Python type for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Python type.
+        @rtype:         Python type object
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Return the Python type.
+        return self._py_types[name]
+
+
+    def units(self, name):
+        """Return the units string for the parameter.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The units string.
+        @rtype:         str
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Function.
+        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
+            return self._units[name]()
+
+        # Return the value.
+        return self._units[name]
