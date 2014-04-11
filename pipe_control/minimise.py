@@ -183,12 +183,14 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     # Test if the current data pipe exists.
     pipes.test()
 
+    # The specific analysis API object.
+    api = return_api()
+
     # Re-package the minimisation algorithm, options, and constraints for the generic_minimise() calls within the specific code.
     if constraints:
         min_options = [min_algor]
 
         # Determine the constraint algorithm to use.
-        api = return_api()
         min_algor = api.constraint_algorithm()
     else:
         min_options = []
@@ -199,9 +201,6 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
     if hessian_type != None:
         min_options.append(hessian_type)
     min_options = tuple(min_options)
-
-    # The specific analysis API object.
-    api = return_api()
 
     # Deselect spins lacking data:
     api.overfit_deselect()
