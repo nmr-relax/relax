@@ -580,7 +580,7 @@ class Param_list:
         return text.split("'")[1]
 
 
-    def uf_doc(self, label=None, caption=None, scope=None, default=False, units=False, type=False):
+    def uf_doc(self, label=None, caption=None, scope='spin', default=False, units=False, type=False):
         """"Create the parameter documentation for the user function docstrings.
 
         @keyword label:     The label of the table.  This is used to identify replicated tables, and is also used in the table referencing in the LaTeX compilation of the user manual.  If this label is already used, the corresponding pre-constructed documentation object will be returned.
