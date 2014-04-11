@@ -157,60 +157,6 @@ def copy(tensor_from=None, pipe_from=None, tensor_to=None, pipe_to=None):
         dp_to.align_ids.append(align_id)
 
 
-def data_names():
-    """Function for returning a list of names of data structures associated with the sequence."""
-
-    names = [ 'align_params' ]
-
-    return names
-
-
-def default_value(param):
-    """Return the default values for the alignment tensor parameters.
-
-    @param param:   The name of the parameter.
-    @type param:    str
-    @return:        The default value, which for all parameters is set to zero.
-    @rtype:         float
-    """
-
-    # Return 0.0.
-    return 0.0
-
-# User function documentation.
-__default_value_prompt_doc__ = """
-    Alignment tensor parameter default values
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ________________________________________________________________________
-    |                        |                    |                        |
-    | Data type              | Object name        | Value                  |
-    |________________________|____________________|________________________|
-    |                        |                    |                        |
-    | Axx                    | 'Axx'              | 0.0                    |
-    |                        |                    |                        |
-    | Ayy                    | 'Ayy'              | 0.0                    |
-    |                        |                    |                        |
-    | Azz                    | 'Azz'              | 0.0                    |
-    |                        |                    |                        |
-    | Axxyy                  | 'Axxyy'            | 0.0                    |
-    |                        |                    |                        |
-    | Axy                    | 'Axy'              | 0.0                    |
-    |                        |                    |                        |
-    | Axz                    | 'Axz'              | 0.0                    |
-    |                        |                    |                        |
-    | Ayz                    | 'Ayz'              | 0.0                    |
-    |                        |                    |                        |
-    | alpha                  | 'alpha'            | 0.0                    |
-    |                        |                    |                        |
-    | beta                   | 'beta'             | 0.0                    |
-    |                        |                    |                        |
-    | gamma                  | 'gamma'            | 0.0                    |
-    |________________________|____________________|________________________|
-
-"""
-
-
 def delete(tensor=None):
     """Function for deleting alignment tensor data.
 
@@ -943,92 +889,6 @@ def init(tensor=None, align_id=None, params=None, scale=1.0, angle_units='deg', 
         tensor_obj.set(param='align_id', value=align_id)
 
 
-def map_bounds(param):
-    """The function for creating bounds for the mapping function."""
-
-    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
-    if param in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
-        return [-50, 50]
-
-    # alpha.
-    elif param == 'alpha':
-        return [0, 2*pi]
-
-    # beta.
-    elif param == 'beta':
-        return [0, pi]
-
-    # gamma.
-    elif param == 'gamma':
-        return [0, 2*pi]
-
-
-def map_labels(index, params, bounds, swap, inc):
-    """Function for creating labels, tick locations, and tick values for an OpenDX map.
-
-    @param index:   The index (which isn't used here?!?).
-    @type index:    int
-    @param params:  The list of parameter names.
-    @type params:   list of str
-    @param bounds:  The bounds of the map.
-    @type bounds:   list of lists (of a float and bin)
-    @param swap:    An array for switching axes around.
-    @type swap:     list of int
-    @param inc:     The number of increments of one dimension in the map.
-    @type inc:      list of int
-    """
-
-    # Initialise.
-    labels = "{"
-    tick_locations = []
-    tick_values = []
-    n = len(params)
-    axis_incs = 5
-    loc_inc = inc / axis_incs
-
-    # Increment over the model parameters.
-    for i in range(n):
-        # Parameter conversion factors.
-        factor = return_conversion_factor(params[swap[i]])
-
-        # Parameter units.
-        units = return_units(params[swap[i]])
-
-        # Labels.
-        if units:
-            labels = labels + "\"" + params[swap[i]] + " (" + units + ")\""
-        else:
-            labels = labels + "\"" + params[swap[i]] + "\""
-
-        # Tick values.
-        vals = bounds[swap[i], 0] / factor
-        val_inc = (bounds[swap[i], 1] - bounds[swap[i], 0]) / (axis_incs * factor)
-
-        if i < n - 1:
-            labels = labels + " "
-        else:
-            labels = labels + "}"
-
-        # Tick locations.
-        string = "{"
-        val = 0.0
-        for j in range(axis_incs + 1):
-            string = string + " " + repr(val)
-            val = val + loc_inc
-        string = string + " }"
-        tick_locations.append(string)
-
-        # Tick values.
-        string = "{"
-        for j in range(axis_incs + 1):
-            string = string + "\"" + "%.2f" % vals + "\" "
-            vals = vals + val_inc
-        string = string + "}"
-        tick_values.append(string)
-
-    return labels, tick_locations, tick_values
-
-
 def matrix_angles(basis_set=0, tensors=None):
     """Function for calculating the 5D angles between the alignment tensors.
 
@@ -1256,204 +1116,6 @@ def reduction(full_tensor=None, red_tensor=None):
     cdp.align_tensors.reduction.append([index_full, index_red])
 
 
-def return_conversion_factor(param):
-    """Function for returning the factor of conversion between different parameter units.
-
-    @param param:   The parameter name.
-    @type param:    str
-    @return:        The conversion factor.
-    @rtype:         float
-    """
-
-    # Get the object name.
-    object_name = return_data_name(param)
-
-    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
-    if object_name in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
-        return 1.0
-
-    # Angles.
-    elif object_name in ['alpha', 'beta', 'gamma']:
-        return (2.0*pi) / 360.0
-
-    # No conversion factor.
-    else:
-        return 1.0
-
-
-def return_data_name(name):
-    """Return the parameter name.
-
-    @param name:    The name of the parameter to return the name of.
-    @type name:     str
-    @return:        The parameter name.
-    @rtype:         str
-    """
-
-    # Enforce that the name must be a string.
-    if not isinstance(name, str):
-        raise RelaxStrError('name', name)
-
-    # Sxx.
-    if search('^[Ss]xx$', name):
-        return 'Sxx'
-
-    # Syy.
-    if search('^[Ss]yy$', name):
-        return 'Syy'
-
-    # Szz.
-    if search('^[Ss]zz$', name):
-        return 'Szz'
-
-    # Sxy.
-    if search('^[Ss]xy$', name):
-        return 'Sxy'
-
-    # Sxz.
-    if search('^[Ss]xz$', name):
-        return 'Sxz'
-
-    # Syz.
-    if search('^[Ss]yz$', name):
-        return 'Syz'
-
-    # Sxx-yy.
-    if search('^[Ss]xxyy$', name):
-        return 'Sxxyy'
-
-    # Axx.
-    if search('^[Aa]xx$', name):
-        return 'Axx'
-
-    # Ayy.
-    if search('^[Aa]yy$', name):
-        return 'Ayy'
-
-    # Azz.
-    if search('^[Aa]zz$', name):
-        return 'Azz'
-
-    # Axy.
-    if search('^[Aa]xy$', name):
-        return 'Axy'
-
-    # Axz.
-    if search('^[Aa]xz$', name):
-        return 'Axz'
-
-    # Ayz.
-    if search('^[Aa]yz$', name):
-        return 'Ayz'
-
-    # Axx-yy.
-    if search('^[Aa]xxyy$', name):
-        return 'Axxyy'
-
-    # Pxx.
-    if search('^[Pp]xx$', name):
-        return 'Pxx'
-
-    # Pyy.
-    if search('^[Pp]yy$', name):
-        return 'Pyy'
-
-    # Pzz.
-    if search('^[Pp]zz$', name):
-        return 'Pzz'
-
-    # Pxy.
-    if search('^[Pp]xy$', name):
-        return 'Pxy'
-
-    # Pxz.
-    if search('^[Pp]xz$', name):
-        return 'Pxz'
-
-    # Pyz.
-    if search('^[Pp]yz$', name):
-        return 'Pyz'
-
-    # Pxx-yy.
-    if search('^[Pp]xxyy$', name):
-        return 'Pxxyy'
-
-    # alpha.
-    if search('^a$', name) or search('alpha', name):
-        return 'alpha'
-
-    # beta.
-    if search('^b$', name) or search('beta', name):
-        return 'beta'
-
-    # gamma.
-    if search('^g$', name) or search('gamma', name):
-        return 'gamma'
-
-    # No parameter?
-    raise RelaxUnknownParamError(name)
-
-# User function documentation.
-__return_data_name_prompt_doc__ = """
-    Alignment tensor parameter string matching patterns
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    ____________________________________________________________________________________________
-    |                                                        |              |                  |
-    | Data type                                              | Object name  | Patterns         |
-    |________________________________________________________|______________|__________________|
-    |                                                        |              |                  |
-    | The xx component of the Saupe order matrix - Sxx       | 'Sxx'        | '^[Sa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the Saupe order matrix - Syy       | 'Syy'        | '^[Sa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the Saupe order matrix - Szz       | 'Szz'        | '^[Sa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the Saupe order matrix - Sxy       | 'Sxy'        | '^[Sa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the Saupe order matrix - Sxz       | 'Sxz'        | '^[Sa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the Saupe order matrix - Syz       | 'Syz'        | '^[Sa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the Saupe order matrix - Sxx-yy | 'Sxxyy'      | '^[Sa]xxyy$'     |
-    |                                                        |              |                  |
-    | The xx component of the alignment tensor - Axx         | 'Axx'        | '^[Aa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the alignment tensor - Ayy         | 'Ayy'        | '^[Aa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the alignment tensor - Azz         | 'Azz'        | '^[Aa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the alignment tensor - Axy         | 'Axy'        | '^[Aa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the alignment tensor - Axz         | 'Axz'        | '^[Aa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the alignment tensor - Ayz         | 'Ayz'        | '^[Aa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the alignment tensor - Axx-yy   | 'Axxyy'      | '^[Aa]xxyy$'     |
-    |                                                        |              |                  |
-    | The xx component of the probability matrix - Pxx       | 'Pxx'        | '^[Pa]xx$'       |
-    |                                                        |              |                  |
-    | The yy component of the probability matrix - Pyy       | 'Pyy'        | '^[Pa]yy$'       |
-    |                                                        |              |                  |
-    | The zz component of the probability matrix - Pzz       | 'Pzz'        | '^[Pa]zz$'       |
-    |                                                        |              |                  |
-    | The xy component of the probability matrix - Pxy       | 'Pxy'        | '^[Pa]xy$'       |
-    |                                                        |              |                  |
-    | The xz component of the probability matrix - Pxz       | 'Pxz'        | '^[Pa]xz$'       |
-    |                                                        |              |                  |
-    | The yz component of the probability matrix - Pyz       | 'Pyz'        | '^[Pa]yz$'       |
-    |                                                        |              |                  |
-    | The xx-yy component of the probability matrix - Pxx-yy | 'Pxxyy'      | '^[Pa]xxyy$'     |
-    |                                                        |              |                  |
-    | The first Euler angle of the alignment tensor - alpha  | 'alpha'      | '^a$' or 'alpha' |
-    |                                                        |              |                  |
-    | The second Euler angle of the alignment tensor - beta  | 'beta'       | '^b$' or 'beta'  |
-    |                                                        |              |                  |
-    | The third Euler angle of the alignment tensor - gamma  | 'gamma'      | '^g$' or 'gamma' |
-    |________________________________________________________|______________|__________________|
-"""
-
-
 def return_tensor(index, skip_fixed=True):
     """Return the tensor container for the given index, skipping fixed tensors if required.
 
@@ -1485,27 +1147,6 @@ def return_tensor(index, skip_fixed=True):
     return False
 
 
-def return_units(param):
-    """Function for returning a string representing the parameters units.
-
-    @param param:   The parameter name.
-    @type param:    str
-    @return:        The string representation of the units.
-    @rtype:         str
-    """
-
-    # Get the object name.
-    object_name = return_data_name(param)
-
-    # {Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz}.
-    if object_name in ['Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz']:
-        return 'Hz'
-
-    # Angles.
-    elif object_name in ['alpha', 'beta', 'gamma']:
-        return 'deg'
-
-
 def set(tensor=None, value=None, param=None, errors=False):
     """Set the tensor.
 
@@ -1528,16 +1169,13 @@ def set(tensor=None, value=None, param=None, errors=False):
 
     # Loop over the parameters.
     for i in range(len(param)):
-        # Get the object name.
-        param[i] = return_data_name(param[i])
-
         # Unknown parameter.
         if param[i] == None:
             raise RelaxUnknownParamError("alignment tensor", 'None')
 
         # Default value.
         if value[i] == None:
-            value[i] = default_value(object_names[i])
+            value[i] = 0.0
 
         # Geometric parameter.
         if param[i] in ['Sxx', 'Syy', 'Szz', 'Sxxyy', 'Sxy', 'Sxz', 'Syz', 'Axx', 'Ayy', 'Azz', 'Axxyy', 'Axy', 'Axz', 'Ayz', 'Pxx', 'Pyy', 'Pzz', 'Pxxyy', 'Pxy', 'Pxz', 'Pyz']:
@@ -1911,35 +1549,6 @@ def set(tensor=None, value=None, param=None, errors=False):
 
     if orient_params:
         fold_angles()
-
-# User function documentation.
-__set_prompt_doc__ = """
-    Alignment tensor set details
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    If the alignment tensor has not been setup, use the more powerful function
-    'alignment_tensor.init' to initialise the tensor parameters.
-
-    The alignment tensor parameters can only be set when the data pipe corresponds to model-free
-    analysis.  The units of the parameters are:
-
-        Unitless for Sxx, Syy, Szz, Sxxyy, Sxy, Sxz, Syz.
-        Unitless for Axx, Ayy, Azz, Axxyy, Axy, Axz, Ayz.
-        Unitless for Pxx, Pyy, Pzz, Pxxyy, Pxy, Pxz, Pyz.
-        Radians for all angles (alpha, beta, gamma).
-
-    If a single geometric parameter is supplied, it must be one of Bxx, Byy, Bxy, Bxz, Byz, where B
-    is one of S, A, or P.  For the parameters Bzz and Bxxyy, it is not possible to determine how to
-    use the currently set values together with the supplied value to calculate the new internal
-    parameters.  When supplying multiple geometric parameters, the set must belong to one of
-
-        {Sxx, Syy, Sxy, Sxz, Syz},
-        {Szz, Sxxyy, Sxy, Sxz, Syz}.
-        {Axx, Ayy, Axy, Axz, Ayz},
-        {Azz, Axxyy, Axy, Axz, Ayz}.
-        {Pxx, Pyy, Pxy, Pxz, Pyz},
-        {Pzz, Pxxyy, Pxy, Pxz, Pyz}.
-"""
 
 
 def set_align_id(tensor=None, align_id=None):
