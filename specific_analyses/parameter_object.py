@@ -70,8 +70,9 @@ class Param_list:
 
         # Default user function documentation.
         self._uf_title = "Parameters"
-        self._uf_table_label = "table: parameters"
         self._uf_table_caption = "Parameters"
+        self._uf_docs = {}
+        self._uf_captions = {}
 
 
     def __new__(self, *args, **kargs):
@@ -256,20 +257,6 @@ class Param_list:
 
         # Add the peak intensity structure.
         self._add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
-
-
-    def _set_uf_table(self, label=None, caption=None):
-        """Set the title for the user function documentation.
-
-        @keyword label:     The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
-        @type label:        str
-        @keyword caption:   The caption for the table.
-        @type caption:      str
-        """
-
-        # Store the text.
-        self._uf_table_label = label
-        self._uf_table_caption = caption
 
 
     def _set_uf_title(self, title):
@@ -593,9 +580,15 @@ class Param_list:
         return text.split("'")[1]
 
 
-    def uf_doc(self, default=False, units=False, type=False):
+    def uf_doc(self, label=None, caption=None, scope=None, default=False, units=False, type=False):
         """"Create the parameter documentation for the user function docstrings.
 
+        @keyword label:     The label of the table.  This is used to identify replicated tables, and is also used in the table referencing in the LaTeX compilation of the user manual.  If this label is already used, the corresponding pre-constructed documentation object will be returned.
+        @type label:        str
+        @keyword caption:   The caption for the table.
+        @type caption:      str
+        @keyword scope:     The parameter scope to restrict the table to.  If not given, then all parameters of the 'params' and 'fixed' sets will be added.
+        @type scope:        str or None
         @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
         @type default:      bool
         @keyword units:     A flag which if True will cause the units to be included in the table.
@@ -604,11 +597,27 @@ class Param_list:
         @type type:         bool
         """
 
+        # Sanity check.
+        if label == None:
+            raise RelaxError("The table identifying label must be supplied.")
+
+        # The documentation is already set up.
+        if label in self._uf_docs:
+            # Check that the captions are consistent.
+            if self._uf_captions[label] != caption:
+                raise RelaxError("The new caption '%s' does not match the old '%s'." % (caption, self._uf_captions[label]))
+
+            # Return the existing documentation object.
+            return self._uf_docs[label]
+
         # Initialise the documentation object.
-        doc = Desc_container(self._uf_title)
+        self._uf_docs[label] = Desc_container(self._uf_title)
+
+        # Store the caption for checking purposes.
+        self._uf_captions[label] = caption
 
         # The parameter table.
-        table = uf_tables.add_table(label=self._uf_table_label, caption=self._uf_table_caption)
+        table = uf_tables.add_table(label=label, caption=caption)
 
         # Add the headings.
         headings = ["Name", "Description"]
@@ -623,6 +632,10 @@ class Param_list:
         # Add each parameter, first of the parameter set, then the 'generic' set.
         for set in ['params', 'fixed']:
             for param in self.loop(set=set):
+                # Limit the scope.
+                if scope and self.scope(param) != scope:
+                    continue
+
                 row = []
                 row.append(param)
                 row.append(self.description(param))
@@ -635,10 +648,10 @@ class Param_list:
                 table.add_row(row)
 
         # Add the table to the documentation object.
-        doc.add_table(table.label)
+        self._uf_docs[label].add_table(table.label)
 
         # Return the documentation object.
-        return doc
+        return self._uf_docs[label]
 
 
     def units(self, name):

@@ -68,4 +68,3 @@ class Frame_order_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Frame order parameters")
-        self._set_uf_table(label="table: frame order parameters", caption="Frame order parameters.")

@@ -53,4 +53,3 @@ class N_state_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("N-state model parameters")
-        self._set_uf_table(label="table: N-state parameters", caption="N-state model parameters.")

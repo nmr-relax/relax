@@ -49,3 +49,6 @@ class Consistency_tests_params(Param_list):
         self._add('j0', scope='spin', desc='Spectral density value at 0 MHz (from Farrow et al. (1995) JBNMR, 6: 153-162)', py_type=float, set='params', grace_string='\\qJ(0)\\Q', err=True, sim=True)
         self._add('f_eta', scope='spin', desc='Eta-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, set='params', grace_string='\\qF\\s\\xh\\Q', err=True, sim=True)
         self._add('f_r2', scope='spin', desc='R2-test (from Fushman et al. (1998) JACS, 120: 10947-10952)', py_type=float, set='params', grace_string='\\qF\\sR2\\Q', err=True, sim=True)
+
+        # Set up the user function documentation.
+        self._set_uf_title("Consistency testing parameters")

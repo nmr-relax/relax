@@ -89,4 +89,3 @@ class Relax_disp_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Relaxation dispersion parameters")
-        self._set_uf_table(label="table: dispersion parameters", caption="Relaxation dispersion parameters.")

@@ -49,4 +49,3 @@ class Jw_mapping_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Reduced spectral density mapping parameters")
-        self._set_uf_table(label="table: J(w) parameters", caption="Reduced spectral density mapping parameters.")
