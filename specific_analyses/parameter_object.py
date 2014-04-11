@@ -32,6 +32,8 @@ from types import FunctionType, MethodType
 
 # relax module imports.
 from lib.errors import RelaxError
+from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+from user_functions.objects import Desc_container
 
 
 class Param_list:
@@ -65,6 +67,11 @@ class Param_list:
         if self.spin_data:
             self._add('select', scope='spin', desc='The spin selection flag', py_type=bool, sim=True)
             self._add('fixed', scope='spin', desc='The fixed flag', py_type=bool)
+
+        # Default user function documentation.
+        self._uf_title = "Parameters"
+        self._uf_table_label = "table: parameters"
+        self._uf_table_caption = "Parameters"
 
 
     def __new__(self, *args, **kargs):
@@ -249,6 +256,31 @@ class Param_list:
 
         # Add the peak intensity structure.
         self._add('peak_intensity', scope='spin', desc='The peak intensities', py_type=dict, grace_string='\\qPeak intensities\\Q')
+
+
+    def _set_uf_table(self, label=None, caption=None):
+        """Set the title for the user function documentation.
+
+        @keyword label:     The unique label of the table.  This is used to identify tables, and is also used in the table referencing in the LaTeX compilation of the user manual.
+        @type label:        str
+        @keyword caption:   The caption for the table.
+        @type caption:      str
+        """
+
+        # Store the text.
+        self._uf_table_label = label
+        self._uf_table_caption = caption
+
+
+    def _set_uf_title(self, title):
+        """Set the title for the user function documentation.
+
+        @param title:   The title to use in the user function docstrings.
+        @type title:    str
+        """
+
+        # Store the text.
+        self._uf_title = title
 
 
     def base_loop(self, set=None, scope=None):
@@ -540,6 +572,67 @@ class Param_list:
 
         # Return the Python type.
         return self._py_types[name]
+
+
+    def type_string(self, name):
+        """Return the Python type for the parameter as a string representation.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The Python type.
+        @rtype:         Python type object
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # The text representation.
+        text = repr(self._py_types[name])
+
+        # Return only the part in quotes.
+        return text.split("'")[1]
+
+
+    def uf_doc(self, default=True, type=False):
+        """"Create the parameter documentation for the user function docstrings.
+
+        @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
+        @type default:      bool
+        @keyword type:      A flag which if True will cause the parameter type to be included in the table.
+        @type type:         bool
+        """
+
+        # Initialise the documentation object.
+        doc = Desc_container(self._uf_title)
+
+        # The parameter table.
+        table = uf_tables.add_table(label=self._uf_table_label, caption=self._uf_table_caption)
+
+        # Add the headings.
+        headings = ["Name", "Description"]
+        if default:
+            headings.append("Default")
+        if type:
+            headings.append("Type")
+        table.add_headings(headings)
+
+        # Add each parameter, first of the parameter set, then the 'generic' set.
+        for set in ['params', 'fixed']:
+            for param in self.loop(set=set):
+                row = []
+                row.append(param)
+                row.append(self.description(param))
+                if default:
+                    row.append("%s" % self.default_value(param))
+                if type:
+                    row.append("%s" % self.type_string(param))
+                table.add_row(row)
+
+        # Add the table to the documentation object.
+        doc.add_table(table.label)
+
+        # Return the documentation object.
+        return doc
 
 
     def units(self, name):
