@@ -28,7 +28,6 @@ The numerical graph data handled in these functions consists of a 4 dimensional 
 
 # relax module imports.
 from lib.errors import RelaxError
-from pipe_control import minimise
 from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.api import return_api
 
@@ -610,10 +609,6 @@ def get_functions(data_name=None):
     if data_name in ['res_num', 'spin_num']:
         return None, None
 
-    # A minimisation statistic.
-    if minimise.return_data_name(data_name):
-        return minimise.return_value, minimise.return_conversion_factor
-
     # Analysis specific value returning functions.
     else:
         api = return_api()
@@ -633,11 +628,6 @@ def get_data_type(data_name=None):
     if data_name in ['res_num', 'spin_num']:
         return int
 
-    # A minimisation statistic.
-    if minimise.return_data_name(data_name):
-        return int
-
     # Analysis specific value returning functions.
-    else:
-        api = return_api()
-        return api.data_type(data_name)
+    api = return_api()
+    return api.data_type(data_name)

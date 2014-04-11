@@ -383,21 +383,18 @@ class API_common:
         # Initialise.
         index = None
 
-        # Get the object name.
-        object_name = self.return_data_name(param)
-
         # The error, simulation and back calculated names.
-        if object_name:
-            object_error = object_name + '_err'
-            object_sim = object_name + '_sim'
-            object_bc = object_name + '_bc'
+        if param:
+            object_error = param + '_err'
+            object_sim = param + '_sim'
+            object_bc = param + '_bc'
             key = None
 
         # The data type does not exist.
         else:
             # Is it a spectrum id?
             if hasattr(cdp, 'spectrum_ids') and param in cdp.spectrum_ids:
-                object_name = 'intensity'
+                param = 'intensity'
                 object_error = 'intensity_err'
                 object_sim = 'intensity_sim'
                 object_bc = 'intensity_bc'
@@ -413,23 +410,23 @@ class API_common:
 
         # Switch to back calculated data.
         if bc:
-            object_name = object_bc
+            param = object_bc
 
         # Value or sim value?
         if sim != None:
-            object_name = object_sim
+            param = object_sim
 
         # The spin value.
-        if hasattr(spin, object_name):
-            value = getattr(spin, object_name)
+        if hasattr(spin, param):
+            value = getattr(spin, param)
 
         # The spin error.
         if hasattr(spin, object_error):
             error = getattr(spin, object_error)
 
         # The global value.
-        elif hasattr(cdp, object_name):
-            value = getattr(cdp, object_name)
+        elif hasattr(cdp, param):
+            value = getattr(cdp, param)
 
             # The error.
             if hasattr(cdp, object_error):
@@ -517,23 +514,20 @@ class API_common:
 
         # Loop over the parameters.
         for i in range(len(param)):
-            # Get the object's name.
-            obj_name = self.return_data_name(param[i])
-
             # Is the parameter is valid?
-            if not obj_name:
+            if not param[i]:
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Error object.
             if error:
-                obj_name += '_err'
+                param[i] += '_err'
 
             # Is the parameter already set.
-            if not force and hasattr(cdp, obj_name) and getattr(cdp, obj_name) != None:
+            if not force and hasattr(cdp, param[i]) and getattr(cdp, param[i]) != None:
                 raise RelaxError("The parameter '%s' already exists, set the force flag to True to overwrite." % param[i])
 
             # Set the parameter.
-            setattr(cdp, obj_name, value[i])
+            setattr(cdp, param[i], value[i])
 
 
     def _set_param_values_spin(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):

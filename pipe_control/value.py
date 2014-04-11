@@ -282,19 +282,6 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
     if not exists_mol_res_spin_data():
         raise RelaxNoSequenceError
 
-    # Minimisation parameter.
-    if minimise.return_data_name(param):
-        # Minimisation statistic flag.
-        min_stat = True
-
-        # Specific value and error returning function.
-        return_value = minimise.return_value
-
-        # Specific set function.
-        set_fn = minimise.set
-
-    # Normal parameter.
-    else:
         # Minimisation statistic flag.
         min_stat = False
 
@@ -354,7 +341,7 @@ def read(param=None, scaling=1.0, file=None, dir=None, file_data=None, spin_id_c
     write_spin_data(file=sys.stdout, mol_names=mol_names, res_nums=res_nums, res_names=res_names, spin_nums=spin_nums, spin_names=spin_names, data=values, data_name=param, error=errors, error_name='%s_error'%param)
 
     # Reset the minimisation statistics.
-    if not min_stat:
+    if api.set(param) == 'min':
         minimise.reset_min_stats()
 
 
@@ -421,7 +408,7 @@ def set(val=None, param=None, index=None, pipe=None, spin_id=None, error=False, 
         # Loop over the parameters, getting the default values.
         val = []
         for i in range(len(param)):
-            val.append(api.default_value(api.return_data_name(param[i])))
+            val.append(api.default_value(param[i]))
 
             # Check that there is a default.
             if val[-1] == None:

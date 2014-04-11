@@ -758,28 +758,23 @@ class N_state_model(API_base, API_common):
 
         # Loop over the parameters.
         for i in range(len(param)):
-            # Get the object's name.
-            obj_name = self.return_data_name(param[i])
-            print param
-            print obj_name
-
             # Is the parameter is valid?
-            if not obj_name:
+            if not param[i]:
                 raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
 
             # Error object.
             if error:
-                obj_name += '_err'
+                param[i] += '_err'
 
             # Set the indexed parameter.
-            if obj_name in ['probs', 'alpha', 'beta', 'gamma']:
-                obj = getattr(cdp, obj_name)
+            if param[i] in ['probs', 'alpha', 'beta', 'gamma']:
+                obj = getattr(cdp, param[i])
                 obj[index] = value[i]
 
             # Set the spin parameters.
             else:
                 for spin in spin_loop(spin_id):
-                    setattr(spin, obj_name, value[i])
+                    setattr(spin, param[i], value[i])
 
 
     def sim_init_values(self):

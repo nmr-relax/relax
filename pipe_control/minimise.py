@@ -319,18 +319,6 @@ def reset_min_stats(data_pipe=None, spin=None):
             spin.warning = None
 
 
-def return_conversion_factor(stat_type):
-    """Dummy function for returning 1.0.
-
-    @param stat_type:   The name of the statistic.  This is unused!
-    @type stat_type:    str
-    @return:            A conversion factor of 1.0.
-    @rtype:             float
-    """
-
-    return 1.0
-
-
 return_data_name_doc = Desc_container("Minimisation statistic data type string matching patterns")
 table = uf_tables.add_table(label="table: min data type patterns", caption="Minimisation statistic data type string matching patterns.")
 table.add_headings(["Data type", "Object name", "Patterns"])
@@ -340,93 +328,6 @@ table.add_row(["Function call count", "'f_count'", "'^[Ff].*[ -_][Cc]ount'"])
 table.add_row(["Gradient call count", "'g_count'", "'^[Gg].*[ -_][Cc]ount'"])
 table.add_row(["Hessian call count", "'h_count'", "'^[Hh].*[ -_][Cc]ount'"])
 return_data_name_doc.add_table(table.label)
-
-def return_data_name(name):
-    """Return a unique identifying string for the minimisation parameter.
-
-    @param name:    The minimisation parameter.
-    @type name:     str
-    @return:        The unique parameter identifying string.
-    @rtype:         str
-    """
-
-    # Chi-squared.
-    if search('^[Cc]hi2$', name) or search('^[Cc]hi[-_ ][Ss]quare', name):
-        return 'chi2'
-
-    # Iteration count.
-    if search('^[Ii]ter', name):
-        return 'iter'
-
-    # Function call count.
-    if search('^[Ff].*[ -_][Cc]ount', name):
-        return 'f_count'
-
-    # Gradient call count.
-    if search('^[Gg].*[ -_][Cc]ount', name):
-        return 'g_count'
-
-    # Hessian call count.
-    if search('^[Hh].*[ -_][Cc]ount', name):
-        return 'h_count'
-
-
-def return_value(spin=None, stat_type=None, sim=None):
-    """Function for returning the minimisation statistic corresponding to 'stat_type'.
-
-    @param spin:        The spin data container if spin specific data is to be reset.
-    @type spin:         SpinContainer
-    @param stat_type:   The name of the statistic to return the value for.
-    @type stat_type:    str
-    @param sim:         The index of the simulation to return the value for.  If None, then the
-                        normal value is returned.
-    @type sim:          None or int
-    """
-
-    # Get the object name.
-    object_name = return_data_name(stat_type)
-
-    # The statistic type does not exist.
-    if not object_name:
-        raise RelaxError("The statistic type " + repr(stat_type) + " does not exist.")
-
-    # The simulation object name.
-    object_sim = object_name + '_sim'
-
-    # Get the global statistic.
-    if spin == None:
-        # Get the statistic.
-        if sim == None:
-            if hasattr(cdp, object_name):
-                stat = getattr(cdp, object_name)
-            else:
-                stat = None
-
-        # Get the simulation statistic.
-        else:
-            if hasattr(cdp, object_sim):
-                stat = getattr(cdp, object_sim)[sim]
-            else:
-                stat = None
-
-    # Residue specific statistic.
-    else:
-        # Get the statistic.
-        if sim == None:
-            if hasattr(spin, object_name):
-                stat = getattr(spin, object_name)
-            else:
-                stat = None
-
-        # Get the simulation statistic.
-        else:
-            if hasattr(spin, object_sim):
-                stat = getattr(spin, object_sim)[sim]
-            else:
-                stat = None
-
-    # Return the statistic (together with None to indicate that there are no errors associated with the statistic).
-    return stat, None
 
 
 set_doc = """
@@ -449,29 +350,26 @@ def set(val=None, error=None, param=None, scaling=None, spin_id=None):
     @type spin_id:      str
     """
 
-    # Get the parameter name.
-    param_name = return_data_name(param)
-
     # Global minimisation stats.
     if spin_id == None:
         # Chi-squared.
-        if param_name == 'chi2':
+        if param == 'chi2':
             cdp.chi2 = val
 
         # Iteration count.
-        elif param_name == 'iter':
+        elif param == 'iter':
             cdp.iter = val
 
         # Function call count.
-        elif param_name == 'f_count':
+        elif param == 'f_count':
             cdp.f_count = val
 
         # Gradient call count.
-        elif param_name == 'g_count':
+        elif param == 'g_count':
             cdp.g_count = val
 
         # Hessian call count.
-        elif param_name == 'h_count':
+        elif param == 'h_count':
             cdp.h_count = val
 
     # Residue specific minimisation.
@@ -480,21 +378,21 @@ def set(val=None, error=None, param=None, scaling=None, spin_id=None):
         spin = return_spin(spin_id)
 
         # Chi-squared.
-        if param_name == 'chi2':
+        if param == 'chi2':
             spin.chi2 = val
 
         # Iteration count.
-        elif param_name == 'iter':
+        elif param == 'iter':
             spin.iter = val
 
         # Function call count.
-        elif param_name == 'f_count':
+        elif param == 'f_count':
             spin.f_count = val
 
         # Gradient call count.
-        elif param_name == 'g_count':
+        elif param == 'g_count':
             spin.g_count = val
 
         # Hessian call count.
-        elif param_name == 'h_count':
+        elif param == 'h_count':
             spin.h_count = val

@@ -1921,20 +1921,17 @@ class Model_free(API_base, API_common):
 
         # Set the model-free parameters.
         for i in range(len(mf_params)):
-            # The object name.
-            obj_name = self.return_data_name(mf_params[i])
-
             # Check if it is a model-free parameter.
-            if obj_name not in self.data_names(set='params', scope='spin') and obj_name not in self.data_names(set='generic', scope='spin'):
+            if mf_params[i] not in self.data_names(set='params', scope='spin') and mf_params[i] not in self.data_names(set='generic', scope='spin'):
                 raise RelaxError("The parameter '%s' is unknown.  It should be one of %s or %s" % (mf_params[i], self.data_names(set='params', scope='spin'), self.data_names(set='generic', scope='spin')))
 
             # The error object name.
             if error:
-                obj_name += '_err'
+                mf_params[i] += '_err'
 
             # Set the parameter.
             for spin in spin_loop(spin_id):
-                setattr(spin, obj_name, mf_vals[i])
+                setattr(spin, mf_params[i], mf_vals[i])
 
 
     def set_selected_sim(self, model_info, select_sim):

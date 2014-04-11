@@ -119,7 +119,6 @@ class Map:
         # Alias the specific functions.
         self.calculate = api.calculate
         self.model_statistics = api.model_statistics
-        self.return_data_name = api.return_data_name
         self.map_bounds = []
         self.return_conversion_factor = []
         self.return_units = []
@@ -230,8 +229,8 @@ class Map:
 
         # Loop over the parameters.
         for i in range(self.n):
-            # Get the parameter name.
-            name = self.return_data_name(self.params[i])
+            # Alias the parameter name.
+            name = self.params[i]
 
             # Diffusion tensor parameter.
             if pipes.get_type() == 'mf':

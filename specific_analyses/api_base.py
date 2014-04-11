@@ -552,23 +552,6 @@ class API_base(object):
         return self._PARAMS.description(name)
 
 
-    def return_data_name(self, param):
-        """Return a unique identifying string for the given parameter.
-
-        @param param:   The parameter name.
-        @type param:    str
-        @return:        The unique parameter identifying string.
-        @rtype:         str
-        """
-
-        # No parameter.
-        if not self._PARAMS.contains(param):
-            return None
-
-        # Return the name.
-        return param
-
-
     def return_error(self, data_id=None):
         """Return the error points corresponding to the data points used in optimisation.
 
