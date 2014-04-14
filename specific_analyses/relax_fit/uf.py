@@ -34,11 +34,6 @@ from user_functions.objects import Desc_container
 api_relax_fit = Relax_fit()
 
 
-# Value setting documentation.
-set_doc = Desc_container("Relaxation curve fitting set details")
-set_doc.add_paragraph("Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.")
-
-
 def model_setup(model, params):
     """Update various model specific data structures.
 
