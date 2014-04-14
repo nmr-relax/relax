@@ -155,7 +155,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 # The value.read user function.
 uf = uf_info.add_uf('value.read')
-uf.title = "Read spin specific data values from a file."
+uf.title = "Read spin specific parameter values from a file."
 uf.title_short = "Reading values from file."
 uf.add_keyarg(
     name = "param",
@@ -275,7 +275,6 @@ uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameter value s
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameter value setting"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameter value setting"))
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameter value setting"))
-uf.desc.append(n_state_params.uf_doc(label="table: N-state parameter value setting"))
 uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameter value setting"))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
