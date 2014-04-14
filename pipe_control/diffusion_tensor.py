@@ -316,28 +316,6 @@ def data_names():
     return names
 
 
-# User function documentation.
-__default_value_doc__ = Desc_container("Diffusion tensor parameter default values")
-table = uf_tables.add_table(label="table: diff default values", caption="Diffusion tensor parameter default values.")
-table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["tm", "'tm'", "10 * 1e-9"])
-table.add_row(["Diso", "'Diso'", "1.666 * 1e7"])
-table.add_row(["Da", "'Da'", "0.0"])
-table.add_row(["Dr", "'Dr'", "0.0"])
-table.add_row(["Dx", "'Dx'", "1.666 * 1e7"])
-table.add_row(["Dy", "'Dy'", "1.666 * 1e7"])
-table.add_row(["Dz", "'Dz'", "1.666 * 1e7"])
-table.add_row(["Dpar", "'Dpar'", "1.666 * 1e7"])
-table.add_row(["Dper", "'Dper'", "1.666 * 1e7"])
-table.add_row(["Dratio", "'Dratio'", "1.0"])
-table.add_row(["alpha", "'alpha'", "0.0"])
-table.add_row(["beta", "'beta'", "0.0"])
-table.add_row(["gamma", "'gamma'", "0.0"])
-table.add_row(["theta", "'theta'", "0.0"])
-table.add_row(["phi", "'phi'", "0.0"])
-__default_value_doc__.add_table(table.label)
-
-
 def delete():
     """Function for deleting diffusion tensor data."""
 
@@ -1224,26 +1202,6 @@ def set(value=None, param=None):
 
     if orient_params:
         fold_angles()
-
-# User function documentation.
-__set_doc__ = Desc_container("Diffusion tensor set details")
-__set_doc__.add_paragraph("If the diffusion tensor has not been setup, use the more powerful function 'diffusion_tensor.init' to initialise the tensor parameters.  This function cannot be used to initialise a diffusion tensor.")
-__set_doc__.add_paragraph("The units of the parameters are:")
-__set_doc__.add_list_element("Inverse seconds for tm.")
-__set_doc__.add_list_element("Seconds for Diso, Da, Dx, Dy, Dz, Dpar, Dper.")
-__set_doc__.add_list_element("Unitless for Dratio and Dr.")
-__set_doc__.add_list_element("Radians for all angles (alpha, beta, gamma, theta, phi).")
-__set_doc__.add_paragraph("When setting a diffusion tensor parameter, the residue number has no effect.  As the internal parameters of spherical diffusion are {tm}, spheroidal diffusion are {tm, Da, theta, phi}, and ellipsoidal diffusion are {tm, Da, Dr, alpha, beta, gamma}, supplying geometric parameters must be done in the following way.  If a single geometric parameter is supplied, it must be one of tm, Diso, Da, Dr, or Dratio.  For the parameters Dpar, Dper, Dx, Dy, and Dx, it is not possible to determine how to use the currently set values together with the supplied value to calculate the new internal parameters.  For spheroidal diffusion, when supplying multiple geometric parameters, the set must belong to one of")
-__set_doc__.add_list_element("{tm, Da},")
-__set_doc__.add_list_element("{Diso, Da},")
-__set_doc__.add_list_element("{tm, Dratio},")
-__set_doc__.add_list_element("{Dpar, Dper},")
-__set_doc__.add_list_element("{Diso, Dratio},")
-__set_doc__.add_paragraph("where either theta, phi, or both orientational parameters can be additionally supplied.  For ellipsoidal diffusion, again when supplying multiple geometric parameters, the set must belong to one of")
-__set_doc__.add_list_element("{tm, Da, Dr},")
-__set_doc__.add_list_element("{Diso, Da, Dr},")
-__set_doc__.add_list_element("{Dx, Dy, Dz},")
-__set_doc__.add_paragraph("where any number of the orientational parameters, alpha, beta, or gamma can be additionally supplied.")
 
 
 def sphere(params=None, time_scale=None, param_types=None):
