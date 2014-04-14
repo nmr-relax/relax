@@ -817,28 +817,6 @@ def map_labels(index, params, bounds, swap, inc):
     return labels, tick_locations, tick_values
 
 
-# User function documentation.
-__return_data_name_doc__ = Desc_container("Diffusion tensor parameter string matching patterns")
-table = uf_tables.add_table(label="table: diff data type patterns", caption="Diffusion tensor parameter string matching patterns.")
-table.add_headings(["Data type", "Object name", "Patterns"])
-table.add_row(["Global correlation time - tm", "'tm'", "'^tm$'"])
-table.add_row(["Isotropic component of the diffusion tensor - Diso", "'Diso'", "'[Dd]iso'"])
-table.add_row(["Anisotropic component of the diffusion tensor - Da", "'Da'", "'[Dd]a'"])
-table.add_row(["Rhombic component of the diffusion tensor - Dr", "'Dr'", "'[Dd]r$'"])
-table.add_row(["Eigenvalue associated with the x-axis of the diffusion tensor - Dx", "'Dx'", "'[Dd]x'"])
-table.add_row(["Eigenvalue associated with the y-axis of the diffusion tensor - Dy", "'Dy'", "'[Dd]y'"])
-table.add_row(["Eigenvalue associated with the z-axis of the diffusion tensor - Dz", "'Dz'", "'[Dd]z'"])
-table.add_row(["Diffusion coefficient parallel to the major axis of  the spheroid diffusion tensor - Dpar", "'Dpar'", "'[Dd]par'"])
-table.add_row(["Diffusion coefficient perpendicular to the major axis of the spheroid diffusion tensor - Dper", "'Dper'", "'[Dd]per'"])
-table.add_row(["Ratio of the parallel and perpendicular components of the spheroid diffusion tensor - Dratio", "'Dratio'", "'[Dd]ratio'"])
-table.add_row(["The first Euler angle of the ellipsoid diffusion tensor - alpha", "'alpha'", "'^a$' or 'alpha'"])
-table.add_row(["The second Euler angle of the ellipsoid diffusion tensor - beta", "'beta'", "'^b$' or 'beta'"])
-table.add_row(["The third Euler angle of the ellipsoid diffusion tensor - gamma", "'gamma'", "'^g$' or 'gamma'"])
-table.add_row(["The polar angle defining the major axis of the spheroid diffusion tensor - theta", "'theta'", "'theta'"])
-table.add_row(["The azimuthal angle defining the major axis of the spheroid diffusion tensor - phi", "'phi'", "'phi'"])
-__return_data_name_doc__.add_table(table.label)
-
-
 def set(value=None, param=None):
     """Set the diffusion tensor parameters.
 
