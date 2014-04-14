@@ -33,21 +33,14 @@ else:
 
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
-from pipe_control import diffusion_tensor, pipes, value
+from pipe_control import pipes, value
 from prompt.doc_string import regexp_doc
-from specific_analyses.consistency_tests import uf as consistency_tests_uf
 from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
-from specific_analyses.jw_mapping import uf as jw_mapping_uf
 from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
-from specific_analyses.model_free import uf as model_free_uf
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
-from specific_analyses.n_state_model import uf as n_state_model_uf
 from specific_analyses.n_state_model.parameter_object import N_state_params; n_state_params = N_state_params()
-from specific_analyses.noe import uf as noe_uf
 from specific_analyses.noe.parameter_object import Noe_params; noe_params = Noe_params()
-from specific_analyses.relax_disp import uf as relax_disp_uf
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params; relax_disp_params = Relax_disp_params()
-from specific_analyses.relax_fit import uf as relax_fit_uf
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params; relax_fit_params = Relax_fit_params()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
