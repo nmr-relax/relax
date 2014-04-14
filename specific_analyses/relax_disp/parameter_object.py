@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2009 Sebastien Morin                                          #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -92,6 +93,10 @@ class Relax_disp_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Relaxation dispersion parameters")
-        self._uf_param_table(label="table: dispersion parameters", caption="Relaxation dispersion parameters.")
+        self._uf_param_table(label="table: dispersion parameters", caption="Relaxation dispersion parameters.", type=True)
         self._uf_param_table(label="table: dispersion parameters and min stats", caption="Relaxation dispersion parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
-        self._uf_param_table(label="table: dispersion parameter value setting", caption="Relaxation dispersion parameter value setting.", default=True)
+        self._uf_param_table(label="table: dispersion parameter value setting", caption="Relaxation dispersion parameter value setting.", default=True, type=True)
+
+        # Value setting documentation.
+        for doc in self._uf_doc_loop(["table: dispersion parameters", "table: dispersion parameter value setting"]):
+            doc.add_paragraph("Any of the relaxation dispersion parameters which are of the 'float' type can be set.  Note that setting values for parameters which are not part of the model will have no effect.")

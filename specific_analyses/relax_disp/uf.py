@@ -40,11 +40,6 @@ from user_functions.objects import Desc_container
 api_relax_disp = Relax_disp()
 
 
-# Value setting documentation.
-set_doc = Desc_container("Relaxation dispersion curve fitting set details")
-set_doc.add_paragraph("Only three parameters can be set for either the slow- or the fast-exchange regime. For the slow-exchange regime, these parameters include the transversal relaxation rate for state A (R2A), the exchange rate from state A to state (k_AB) and the chemical shift difference between states A and B (dw). For the fast-exchange regime, these include the transversal relaxation rate (R2), the chemical exchange contribution to R2 (Rex) and the exchange rate (kex). Setting parameters for a non selected model has no effect.")
-
-
 def cluster(cluster_id=None, spin_id=None):
     """Define spin clustering.
 
