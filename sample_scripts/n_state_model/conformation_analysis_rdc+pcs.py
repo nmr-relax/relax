@@ -149,7 +149,7 @@ n_state_model.select_model(model='population')
 
 # Set to equal probabilities.
 for j in range(NUM_STR):
-    value.set(1.0/NUM_STR, 'p'+`j`)
+    value.set(1.0/NUM_STR, 'probs', index=j)
 
 # Minimisation.
 minimise('bfgs', constraints=True)

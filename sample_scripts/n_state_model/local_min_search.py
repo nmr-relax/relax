@@ -68,7 +68,7 @@ for rand_index in range(200):
 
     # Set the random probabilities.
     for j in range(cdp.N):
-        value.set(probs[j], 'p'+`j`)
+        value.set(probs[j], 'probs', index=j)
 
     # Reset the tensors.
     #for i in range(len(cdp.align_tensors)):

@@ -124,10 +124,10 @@ print("%-16s [%12.8f, %12.8f, %12.8f, %12.8f, %12.8f]" % ("alpha", cdp.alpha[0],
 print("%-16s [%12.8f, %12.8f, %12.8f, %12.8f, %12.8f]" % ("beta", cdp.beta[0], cdp.beta[1], cdp.beta[2], cdp.beta[3], cdp.beta[4]))
 print("%-16s [%12.8f, %12.8f, %12.8f, %12.8f, %12.8f]" % ("gamma", cdp.gamma[0], cdp.gamma[1], cdp.gamma[2], cdp.gamma[3], cdp.gamma[4]))
 print("\n\n")
-print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], ['p0', 'p1', 'p2', 'p3', 'p4'])" % (cdp.probs[0], cdp.probs[1], cdp.probs[2], cdp.probs[3], cdp.probs[4]))
-print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], ['alpha0', 'alpha1', 'alpha2', 'alpha3', 'alpha4'])" % (cdp.alpha[0], cdp.alpha[1], cdp.alpha[2], cdp.alpha[3], cdp.alpha[4]))
-print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], ['beta0', 'beta1', 'beta2', 'beta3', 'beta4'])" % (cdp.beta[0], cdp.beta[1], cdp.beta[2], cdp.beta[3], cdp.beta[4]))
-print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], ['gamma0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])" % (cdp.gamma[0], cdp.gamma[1], cdp.gamma[2], cdp.gamma[3], cdp.gamma[4]))
+print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], 'probs', ['p0', 'p1', 'p2', 'p3', 'p4'], index=[0, 1, 2, 3, 4])" % (cdp.probs[0], cdp.probs[1], cdp.probs[2], cdp.probs[3], cdp.probs[4]))
+print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], 'alpha', index=[0, 1, 2, 3, 4])" % (cdp.alpha[0], cdp.alpha[1], cdp.alpha[2], cdp.alpha[3], cdp.alpha[4]))
+print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], 'beta', index=[0, 1, 2, 3, 4])" % (cdp.beta[0], cdp.beta[1], cdp.beta[2], cdp.beta[3], cdp.beta[4]))
+print("value.set([%12.8f, %12.8f, %12.8f, %12.8f, %12.8f], 'gamma', index=[0, 1, 2, 3, 4])" % (cdp.gamma[0], cdp.gamma[1], cdp.gamma[2], cdp.gamma[3], cdp.gamma[4]))
 print("# fk: %s" % cdp.chi2)
 
 # Pivot point.
