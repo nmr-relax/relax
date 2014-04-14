@@ -275,15 +275,17 @@ class Param_list(object):
         self._uf_title = title
 
 
-    def _uf_param_table(self, label=None, caption=None, scope='spin', default=False, units=False, type=False):
+    def _uf_param_table(self, label=None, caption=None, scope='spin', sets=['params', 'fixed'], default=False, units=False, type=False):
         """"Create the parameter documentation for the user function docstrings.
 
         @keyword label:     The label of the table.  This is used to identify replicated tables, and is also used in the table referencing in the LaTeX compilation of the user manual.  If this label is already used, the corresponding pre-constructed documentation object will be returned.
         @type label:        str
         @keyword caption:   The caption for the table.
         @type caption:      str
-        @keyword scope:     The parameter scope to restrict the table to.  If not given, then all parameters of the 'params' and 'fixed' sets will be added.
+        @keyword scope:     The parameter scope to restrict the table to, defaulting to 'spin'.
         @type scope:        str or None
+        @keyword sets:      The parameter sets to restrict the table to.  If not given, then all parameters of the 'params' and 'fixed' sets will be added.  This can be set to 'all' for all names, to 'fixed' for parameter of the model which are permanently fixed, to 'params' for parameter of the model which are optimised or calculated, or to 'min' for minimisation specific object names.
+        @type sets:         list of str
         @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
         @type default:      bool
         @keyword units:     A flag which if True will cause the units to be included in the table.
@@ -317,7 +319,7 @@ class Param_list(object):
         table.add_headings(headings)
 
         # Add each parameter, first of the parameter set, then the 'generic' set.
-        for set in ['params', 'fixed']:
+        for set in sets:
             for param in self.loop(set=set):
                 # Limit the scope.
                 if scope and self.scope(param) != scope:
