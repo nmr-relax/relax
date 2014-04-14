@@ -41,11 +41,6 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-# Value setting documentation.
-set_doc = Desc_container("N-state model set details")
-set_doc.add_paragraph("Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states.  To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be given as the index argument.  So the Euler angle gamma of the third state is specified using the parameter name 'gamma' and index of 2.")
-
-
 def CoM(pivot_point=None, centre=None):
     """Centre of mass analysis.
 
