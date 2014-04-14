@@ -54,3 +54,7 @@ class Jw_mapping_params(Param_list):
         self._set_uf_title("Reduced spectral density mapping parameters")
         self._uf_param_table(label="table: J(w) parameters", caption="Reduced spectral density mapping parameters.")
         self._uf_param_table(label="table: J(w) parameter value setting", caption="Reduced spectral density mapping parameter value setting.", default=True)
+
+        # Value setting documentation.
+        for doc in self._uf_doc_loop(["table: J(w) parameters", "table: J(w) parameter value setting"]):
+            doc.add_paragraph("In reduced spectral density mapping, the CSA value must be set prior to the calculation of spectral density values.")

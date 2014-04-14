@@ -98,7 +98,6 @@ uf.desc[-1].add_paragraph("If this is used to change values of previously minimi
 # Prompt examples.
 uf.desc.append(regexp_doc)
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters"))
-uf.desc.append(jw_mapping_uf.set_doc)
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
 uf.desc.append(consistency_tests_uf.set_doc)
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameters"))
@@ -288,7 +287,6 @@ uf.desc[-1].add_paragraph("The spin system can be identified in the file using t
 uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
 uf.desc.append(regexp_doc)
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters"))
-uf.desc.append(jw_mapping_uf.set_doc)
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
 uf.desc.append(consistency_tests_uf.set_doc)
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameters"))
@@ -379,7 +377,6 @@ uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be appli
 uf.desc.append(regexp_doc)
 uf.desc.append(diffusion_tensor.__set_doc__)
 uf.desc.append(model_free_params.uf_doc(label="table: mf parameter value setting"))
-uf.desc.append(jw_mapping_uf.set_doc)
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameter value setting"))
 uf.desc.append(consistency_tests_uf.set_doc)
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameter value setting"))
