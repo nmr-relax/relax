@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011 Edward d'Auvergne                                        #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -103,10 +103,10 @@ align_tensor.matrix_angles(basis_set=1, tensors=n_tensor_list)
 n_state_model.model(N=5, ref='C')
 
 # Set the initial parameter values to the actual values (the grid search is impossibly large).
-value.set([  0.26685287,   0.07816268,   0.19105772,   0.23598687,   0.22793986], ['p0', 'p1', 'p2', 'p3', 'p4'])
-value.set([ -0.43017117,   3.19650016,  -0.61738298,   0.80737988,   1.66687706], ['alpha0', 'alpha1', 'alpha2', 'alpha3', 'alpha4'])
-value.set([  3.80965887,   0.68001535,   1.87238680,   1.48347412,   4.34470497], ['beta0', 'beta1', 'beta2', 'beta3', 'beta4'])
-value.set([  0.43465176,   2.59328881,  -5.45779788,  -3.09774689,   0.86388922], ['gamma0', 'gamma1', 'gamma2', 'gamma3', 'gamma4'])
+value.set([  0.26685287,   0.07816268,   0.19105772,   0.23598687,   0.22793986], 'probs', index=[0, 1, 2, 3, 4])
+value.set([ -0.43017117,   3.19650016,  -0.61738298,   0.80737988,   1.66687706], 'alpha', index=[0, 1, 2, 3, 4])
+value.set([  3.80965887,   0.68001535,   1.87238680,   1.48347412,   4.34470497], 'beta', index=[0, 1, 2, 3, 4])
+value.set([  0.43465176,   2.59328881,  -5.45779788,  -3.09774689,   0.86388922], 'gamma', index=[0, 1, 2, 3, 4])
 
 # Load the PDB file.
 structure.read_pdb('1J7O.pdb', model=2)
