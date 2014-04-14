@@ -57,8 +57,9 @@ class N_state_params(Param_list):
         # Set up the user function documentation.
         self._set_uf_title("N-state model parameters")
         self._uf_param_table(label="table: N-state parameters", caption="N-state model parameters.", scope='global', type=True)
-        self._uf_param_table(label="table: N-state parameter value setting", caption="N-state model parameter value setting.", scope='global', default=True, type=True)
+        self._uf_param_table(label="table: N-state parameter value setting", caption="N-state model parameters.", scope='global', type=True)
+        self._uf_param_table(label="table: N-state parameter value setting with defaults", caption="N-state model parameter value setting.", scope='global', default=True, type=True)
 
         # Value setting documentation.
-        for doc in self._uf_doc_loop(["table: N-state parameters", "table: N-state parameter value setting"]):
+        for doc in self._uf_doc_loop(["table: N-state parameter value setting", "table: N-state parameter value setting with defaults"]):
             doc.add_paragraph("Setting parameters for the N-state model is a little different from the other type of analyses as each state has a set of parameters with the same names as the other states.  To set the parameters for a specific state c (ranging from 0 for the first to N-1 for the last, the number c should be given as the index argument.  So the Euler angle gamma of the third state is specified using the parameter name 'gamma' and index of 2.")

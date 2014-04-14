@@ -62,4 +62,5 @@ class Relax_fit_params(Param_list):
         self._set_uf_title("Relaxation curve fitting parameters")
         self._uf_param_table(label="table: curve-fit parameters", caption="Relaxation curve fitting parameters.")
         self._uf_param_table(label="table: curve-fit parameters and min stats", caption="Relaxation curve fitting parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
-        self._uf_param_table(label="table: curve-fit parameter value setting", caption="Relaxation curve fitting parameter value setting.", default=True)
+        self._uf_param_table(label="table: curve-fit parameter value setting", caption="Relaxation curve fitting parameters.")
+        self._uf_param_table(label="table: curve-fit parameter value setting with defaults", caption="Relaxation curve fitting parameter value setting.", default=True)
