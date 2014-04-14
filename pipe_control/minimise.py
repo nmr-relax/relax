@@ -319,24 +319,6 @@ def reset_min_stats(data_pipe=None, spin=None):
             spin.warning = None
 
 
-return_data_name_doc = Desc_container("Minimisation statistic data type string matching patterns")
-table = uf_tables.add_table(label="table: min data type patterns", caption="Minimisation statistic data type string matching patterns.")
-table.add_headings(["Data type", "Object name", "Patterns"])
-table.add_row(["Chi-squared statistic", "'chi2'", "'^[Cc]hi2$' or '^[Cc]hi[-_ ][Ss]quare'"])
-table.add_row(["Iteration count", "'iter'", "'^[Ii]ter'"])
-table.add_row(["Function call count", "'f_count'", "'^[Ff].*[ -_][Cc]ount'"])
-table.add_row(["Gradient call count", "'g_count'", "'^[Gg].*[ -_][Cc]ount'"])
-table.add_row(["Hessian call count", "'h_count'", "'^[Hh].*[ -_][Cc]ount'"])
-return_data_name_doc.add_table(table.label)
-
-
-set_doc = """
-        Minimisation statistic set details
-        ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        This shouldn't really be executed by a user.
-"""
-
 def set(val=None, error=None, param=None, scaling=None, spin_id=None):
     """Set global or spin specific minimisation parameters.
 
