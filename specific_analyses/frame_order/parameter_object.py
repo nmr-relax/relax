@@ -71,3 +71,5 @@ class Frame_order_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Frame order parameters")
+        self._uf_param_table(label="table: frame order parameters", caption="Frame order parameters.", scope='global')
+        self._uf_param_table(label="table: frame order parameter value setting", caption="Frame order parameter value setting.", scope='global', default=True)
