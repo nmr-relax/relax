@@ -35,6 +35,7 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import pipes, value
 from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
+from specific_analyses.frame_order.parameter_object import Frame_order_params; frame_order_params = Frame_order_params()
 from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
 from specific_analyses.n_state_model.parameter_object import N_state_params; n_state_params = N_state_params()
@@ -55,7 +56,7 @@ uf_class.gui_icon = "relax.value"
 
 # The value.copy user function.
 uf = uf_info.add_uf('value.copy')
-uf.title = "Copy spin specific data values from one data pipe to another."
+uf.title = "Copy parameters from one data pipe to another."
 uf.title_short = "Value copying."
 uf.add_keyarg(
     name = "pipe_from",
@@ -94,6 +95,7 @@ uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameter value setti
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameter value setting"))
 uf.desc.append(n_state_params.uf_doc(label="table: N-state parameter value setting"))
 uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameter value setting"))
+uf.desc.append(frame_order_params.uf_doc(label="table: frame order parameters"))
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
 uf.desc[-1].add_prompt("relax> value.copy('m1', 'm2', 'csa')")
