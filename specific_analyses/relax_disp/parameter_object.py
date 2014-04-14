@@ -93,4 +93,5 @@ class Relax_disp_params(Param_list):
         # Set up the user function documentation.
         self._set_uf_title("Relaxation dispersion parameters")
         self._uf_param_table(label="table: dispersion parameters", caption="Relaxation dispersion parameters.")
+        self._uf_param_table(label="table: dispersion parameters and min stats", caption="Relaxation dispersion parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
         self._uf_param_table(label="table: dispersion parameter value setting", caption="Relaxation dispersion parameter value setting.", default=True)

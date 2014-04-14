@@ -71,5 +71,6 @@ class Model_free_params(Param_list):
         # Set up the user function documentation.
         self._set_uf_title("Model-free parameters")
         self._uf_param_table(label="table: model-free parameters", caption="Model-free parameters.")
+        self._uf_param_table(label="table: model-free parameters and min stats", caption="Model-free parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
         self._uf_param_table(label="table: all model-free parameters", caption="Model-free parameters.", scope=None)
         self._uf_param_table(label="table: mf parameter value setting", caption="Model-free parameter value setting.", default=True)
