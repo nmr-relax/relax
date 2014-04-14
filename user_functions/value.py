@@ -292,7 +292,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 # The value.set user function.
 uf = uf_info.add_uf('value.set')
-uf.title = "Set spin specific data values."
+uf.title = "Set parameter values."
 uf.title_short = "Value setting."
 uf.add_keyarg(
     name = "val",
@@ -337,7 +337,7 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset to None.")
+uf.desc[-1].add_paragraph("If this function is used to change values of previously minimised results, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
 uf.desc[-1].add_paragraph("The value can be None, a single value, or an array of values while the parameter can be None, a string, or array of strings.  The choice of which combination determines the behaviour of this function.  The following table describes what occurs in each instance.  In these columns, 'None' corresponds to None, '1' corresponds to either a single value or single string, and 'n' corresponds to either an array of values or an array of strings.")
 table = uf_tables.add_table(label="table: value.set combinations", caption="The value and parameter combination options for the value.set user function.", caption_short="The value and parameter combinations for the value.set user function.")
 table.add_headings(["Value", "Param", "Description"])
@@ -352,14 +352,15 @@ table.add_row(["1", "n", "Each parameter matching the strings will be set to the
 table.add_row(["n", "n", "Each parameter matching the strings will be set to the corresponding number.  Both arrays must be of equal length."])
 uf.desc[-1].add_table(table.label)
 # Spin identification.
-uf.desc.append(Desc_container("Spin identification"))
-uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.")
+uf.desc.append(Desc_container("Spin ID string"))
+uf.desc[-1].add_paragraph("For spin-specific parameters, the spin ID string can be used to restrict the value setting to a specific spin system or group of spins.  It has no effect for global parameters such as in the N-state model and frame order analyses.")
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameter value setting with defaults"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameter value setting with defaults"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameter value setting with defaults"))
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameter value setting with defaults"))
 uf.desc.append(n_state_params.uf_doc(label="table: N-state parameter value setting with defaults"))
 uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameter value setting with defaults"))
+uf.desc.append(frame_order_params.uf_doc(label="table: frame order parameters"))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To set the parameter values for the current data pipe to the default values, for all spins, type:")
