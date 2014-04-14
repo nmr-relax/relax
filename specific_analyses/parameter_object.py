@@ -72,7 +72,6 @@ class Param_list(object):
         self._uf_title = "Parameters"
         self._uf_table_caption = "Parameters"
         self._uf_docs = {}
-        self._uf_captions = {}
 
         # Set the initialised flag.
         self._initialised = True
@@ -274,6 +273,72 @@ class Param_list(object):
 
         # Store the text.
         self._uf_title = title
+
+
+    def _uf_param_table(self, label=None, caption=None, scope='spin', default=False, units=False, type=False):
+        """"Create the parameter documentation for the user function docstrings.
+
+        @keyword label:     The label of the table.  This is used to identify replicated tables, and is also used in the table referencing in the LaTeX compilation of the user manual.  If this label is already used, the corresponding pre-constructed documentation object will be returned.
+        @type label:        str
+        @keyword caption:   The caption for the table.
+        @type caption:      str
+        @keyword scope:     The parameter scope to restrict the table to.  If not given, then all parameters of the 'params' and 'fixed' sets will be added.
+        @type scope:        str or None
+        @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
+        @type default:      bool
+        @keyword units:     A flag which if True will cause the units to be included in the table.
+        @type units:        bool
+        @keyword type:      A flag which if True will cause the parameter type to be included in the table.
+        @type type:         bool
+        @return:            The parameter documentation.
+        @rtype:             Desc_container instance
+        """
+
+        # Sanity checks.
+        if label == None:
+            raise RelaxError("The table identifying label must be supplied.")
+        if label in self._uf_docs:
+            raise RelaxError("The table identifying label '%s' already exists." % label)
+
+        # Initialise the documentation object.
+        self._uf_docs[label] = Desc_container(self._uf_title)
+
+        # The parameter table.
+        table = uf_tables.add_table(label=label, caption=caption)
+
+        # Add the headings.
+        headings = ["Name", "Description"]
+        if default:
+            headings.append("Default")
+        if units:
+            headings.append("Units")
+        if type:
+            headings.append("Type")
+        table.add_headings(headings)
+
+        # Add each parameter, first of the parameter set, then the 'generic' set.
+        for set in ['params', 'fixed']:
+            for param in self.loop(set=set):
+                # Limit the scope.
+                if scope and self.scope(param) != scope:
+                    continue
+
+                row = []
+                row.append(param)
+                row.append(self.description(param))
+                if default:
+                    row.append("%s" % self.default_value(param))
+                if units:
+                    row.append("%s" % self.units(param))
+                if type:
+                    row.append("%s" % self.type_string(param))
+                table.add_row(row)
+
+        # Add the table to the documentation object.
+        self._uf_docs[label].add_table(table.label)
+
+        # Return the documentation object so that additional text can be added after the table.
+        return self._uf_docs[label]
 
 
     def base_loop(self, set=None, scope=None):
@@ -589,74 +654,19 @@ class Param_list(object):
     def uf_doc(self, label=None, caption=None, scope='spin', default=False, units=False, type=False):
         """"Create the parameter documentation for the user function docstrings.
 
-        @keyword label:     The label of the table.  This is used to identify replicated tables, and is also used in the table referencing in the LaTeX compilation of the user manual.  If this label is already used, the corresponding pre-constructed documentation object will be returned.
+        @keyword label:     The label of the table to return.
         @type label:        str
-        @keyword caption:   The caption for the table.
-        @type caption:      str
-        @keyword scope:     The parameter scope to restrict the table to.  If not given, then all parameters of the 'params' and 'fixed' sets will be added.
-        @type scope:        str or None
-        @keyword default:   A flag which if True will cause the default parameter value to be included in the table.
-        @type default:      bool
-        @keyword units:     A flag which if True will cause the units to be included in the table.
-        @type units:        bool
-        @keyword type:      A flag which if True will cause the parameter type to be included in the table.
-        @type type:         bool
+        @return:            The parameter documentation.
+        @rtype:             Desc_container instance
         """
 
         # Sanity check.
         if label == None:
             raise RelaxError("The table identifying label must be supplied.")
+        if label not in self._uf_docs:
+            raise RelaxError("The table identifying label '%s' does not exist." % label)
 
-        # The documentation is already set up.
-        if label in self._uf_docs:
-            # Check that the captions are consistent.
-            if self._uf_captions[label] != caption:
-                raise RelaxError("The new caption '%s' does not match the old '%s'." % (caption, self._uf_captions[label]))
-
-            # Return the existing documentation object.
-            return self._uf_docs[label]
-
-        # Initialise the documentation object.
-        self._uf_docs[label] = Desc_container(self._uf_title)
-
-        # Store the caption for checking purposes.
-        self._uf_captions[label] = caption
-
-        # The parameter table.
-        table = uf_tables.add_table(label=label, caption=caption)
-
-        # Add the headings.
-        headings = ["Name", "Description"]
-        if default:
-            headings.append("Default")
-        if units:
-            headings.append("Units")
-        if type:
-            headings.append("Type")
-        table.add_headings(headings)
-
-        # Add each parameter, first of the parameter set, then the 'generic' set.
-        for set in ['params', 'fixed']:
-            for param in self.loop(set=set):
-                # Limit the scope.
-                if scope and self.scope(param) != scope:
-                    continue
-
-                row = []
-                row.append(param)
-                row.append(self.description(param))
-                if default:
-                    row.append("%s" % self.default_value(param))
-                if units:
-                    row.append("%s" % self.units(param))
-                if type:
-                    row.append("%s" % self.type_string(param))
-                table.add_row(row)
-
-        # Add the table to the documentation object.
-        self._uf_docs[label].add_table(table.label)
-
-        # Return the documentation object.
+        # Return the documentation.
         return self._uf_docs[label]
 
 

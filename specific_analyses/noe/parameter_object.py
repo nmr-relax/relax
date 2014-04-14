@@ -49,3 +49,4 @@ class Noe_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Steady-state NOE parameters")
+        self._uf_param_table(label="table: NOE parameters", caption="Steady-state NOE parameters.")

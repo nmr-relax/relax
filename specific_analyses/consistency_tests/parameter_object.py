@@ -55,3 +55,5 @@ class Consistency_tests_params(Param_list):
 
         # Set up the user function documentation.
         self._set_uf_title("Consistency testing parameters")
+        self._uf_param_table(label="table: consistency testing parameters", caption="Consistency testing parameters.")
+        self._uf_param_table(label="table: consistency testing parameter value setting", caption="Consistency testing parameter value setting.", default=True)
