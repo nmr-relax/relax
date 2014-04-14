@@ -35,6 +35,9 @@ class Frame_order_params(Param_list):
     def __init__(self):
         """Define all the parameters of the analysis."""
 
+        # The object is already initialised.
+        if self._initialised: return
+
         # Execute the base class __init__ method.
         Param_list.__init__(self)
 

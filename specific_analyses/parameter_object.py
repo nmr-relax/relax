@@ -36,7 +36,7 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-class Param_list:
+class Param_list(object):
     """A special object for handling global and spin parameters."""
 
     def __init__(self, spin_data=True):
@@ -74,17 +74,23 @@ class Param_list:
         self._uf_docs = {}
         self._uf_captions = {}
 
+        # Set the initialised flag.
+        self._initialised = True
 
-    def __new__(self, *args, **kargs):
+
+    def __new__(cls, *args, **kargs):
         """Replacement function for implementing the singleton design pattern."""
 
         # First initialisation.
-        if self.instance is None:
+        if cls._instance is None:
             # Create a new instance.
-            self.instance = object.__new__(self, *args, **kargs)
+            cls._instance = object.__new__(cls, *args, **kargs)
+
+            # Add an initialisation flag.
+            cls._instance._initialised = False
 
         # Already initialised, so return the instance.
-        return self.instance
+        return cls._instance
 
 
     def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grace_string=None, err=False, sim=False):
