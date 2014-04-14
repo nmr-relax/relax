@@ -343,6 +343,24 @@ class Param_list(object):
         return self._uf_docs[label]
 
 
+    def _uf_doc_loop(self, tables=None):
+        """Generator method for looping over and yielding the user function parameter documentation.
+
+        @keyword tables:    The list of tables to loop over.  If None, then all tables will be yielded.
+        @type tables:       list of str or None
+        @return:            The user function documentation for each table.
+        @rtype:             Desc_container instance
+        """
+
+        # No tables supplied.
+        if tables == None:
+            tables = self._uf_docs.keys()
+
+        # Loop over the tables, yielding the documentation objects.
+        for table in tables:
+            yield self._uf_docs[table]
+
+
     def base_loop(self, set=None, scope=None):
         """An iterator method for looping over all the base parameters.
 
