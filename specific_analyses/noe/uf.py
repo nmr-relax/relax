@@ -29,16 +29,6 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-# Default value documentation.
-return_data_name_doc = Desc_container("NOE calculation data type string matching patterns")
-table = uf_tables.add_table(label="table: NOE data type patterns", caption="NOE data type string matching patterns.")
-table.add_headings(["Data type", "Object name"])
-table.add_row(["Reference intensity", "'ref'"])
-table.add_row(["Saturated intensity", "'sat'"])
-table.add_row(["NOE", "'noe'"])
-return_data_name_doc.add_table(table.label)
-
-
 def spectrum_type(spectrum_type=None, spectrum_id=None):
     """Set the spectrum type corresponding to the spectrum_id.
 

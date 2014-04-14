@@ -32,34 +32,6 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-# Default value documentation.
-default_value_doc = Desc_container("Consistency testing default values")
-default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
-table = uf_tables.add_table(label="table: consistency testing default values", caption="Consistency testing default values.")
-table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["Bond length", "'r'", repr(NH_BOND_LENGTH)])
-table.add_row(["CSA", "'csa'", repr(N15_CSA)])
-table.add_row(["Heteronucleus type", "'heteronuc_type'", "'15N'"])
-table.add_row(["Angle theta", "'proton_type'", "'1H'"])
-table.add_row(["Proton type", "'orientation'", "15.7"])
-table.add_row(["Correlation time", "'tc'", "13 * 1e-9"])
-default_value_doc.add_table(table.label)
-
-# Data name documentation.
-return_data_name_doc = Desc_container("Consistency testing data type string matching patterns")
-table = uf_tables.add_table(label="table: Consistency testing data types", caption="Consistency testing data type string matching patterns.")
-table.add_headings(["Data type", "Object name"])
-table.add_row(["J(0)", "'j0'"])
-table.add_row(["F_eta", "'f_eta'"])
-table.add_row(["F_R2", "'f_r2'"])
-table.add_row(["Bond length", "'r'"])
-table.add_row(["CSA", "'csa'"])
-table.add_row(["Heteronucleus type", "'heteronuc_type'"])
-table.add_row(["Proton type", "'proton_type'"])
-table.add_row(["Angle theta", "'orientation'"])
-table.add_row(["Correlation time", "'tc'"])
-return_data_name_doc.add_table(table.label)
-
 # Value setting documentation.
 set_doc = Desc_container("Consistency testing set details")
 set_doc.add_paragraph("In consistency testing, only four values can be set, the bond length, CSA, angle Theta ('orientation') and correlation time values. These must be set prior to the calculation of consistency functions.")

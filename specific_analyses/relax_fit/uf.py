@@ -34,27 +34,6 @@ from user_functions.objects import Desc_container
 api_relax_fit = Relax_fit()
 
 
-# Default value documentation.
-default_value_doc = Desc_container("Relaxation curve fitting default values")
-default_value_doc.add_paragraph("These values are completely arbitrary as peak heights (or volumes) are extremely variable and the Rx value is a compensation for both the R1 and R2 values.")
-table = uf_tables.add_table(label="table: curve-fit default values", caption="Relaxation curve fitting default values.")
-table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["Relaxation rate", "'rx'", "8.0"])
-table.add_row(["Initial intensity", "'i0'", "10000.0"])
-table.add_row(["Intensity at infinity", "'iinf'", "0.0"])
-default_value_doc.add_table(table.label)
-
-# Data name documentation.
-return_data_name_doc = Desc_container("Relaxation curve fitting data type string matching patterns")
-table = uf_tables.add_table(label="table: curve-fit data type patterns", caption="Relaxation curve fitting data type string matching patterns.")
-table.add_headings(["Data type", "Object name"])
-table.add_row(["Relaxation rate", "'rx'"])
-table.add_row(["Peak intensities (series)", "'peak_intensity'"])
-table.add_row(["Initial intensity", "'i0'"])
-table.add_row(["Intensity at infinity", "'iinf'"])
-table.add_row(["Relaxation period times (series)", "'relax_times'"])
-return_data_name_doc.add_table(table.label)
-
 # Value setting documentation.
 set_doc = Desc_container("Relaxation curve fitting set details")
 set_doc.add_paragraph("Only three parameters can be set, the relaxation rate (Rx), the initial intensity (I0), and the intensity at infinity (Iinf).  Setting the parameter Iinf has no effect if the chosen model is that of the exponential curve which decays to zero.")

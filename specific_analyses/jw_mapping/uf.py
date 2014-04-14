@@ -31,24 +31,6 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-# Default value documentation.
-default_value_doc = Desc_container("Reduced spectral density mapping default values")
-default_value_doc.add_paragraph("These default values are found in the file 'physical_constants.py'.")
-table = uf_tables.add_table(label="table: J(w) default values", caption="Reduced spectral density mapping default values.")
-table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["CSA", "'csa'", repr(N15_CSA)])
-default_value_doc.add_table(table.label)
-
-# Data name documentation.
-return_data_name_doc = Desc_container("Reduced spectral density mapping data type string matching patterns")
-table = uf_tables.add_table(label="table: J(w) data types", caption="Reduced spectral density mapping data type string matching patterns.")
-table.add_headings(["Data type", "Object name"])
-table.add_row(["J(0)", "'j0'"])
-table.add_row(["J(wX)", "'jwx'"])
-table.add_row(["J(wH)", "'jwh'"])
-table.add_row(["CSA", "'csa'"])
-return_data_name_doc.add_table(table.label)
-
 # Value setting documentation.
 set_doc = Desc_container("Reduced spectral density mapping set details")
 set_doc.add_paragraph("In reduced spectral density mapping, three values must be set prior to the calculation of spectral density values:  the bond length, CSA, and heteronucleus type.")

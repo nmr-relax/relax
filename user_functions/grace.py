@@ -34,12 +34,12 @@ else:
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import grace, minimise
 from prompt.doc_string import regexp_doc
-from specific_analyses.consistency_tests import uf as consistency_tests_uf
-from specific_analyses.jw_mapping import uf as jw_mapping_uf
-from specific_analyses.model_free import uf as model_free_uf
-from specific_analyses.noe import uf as noe_uf
-from specific_analyses.relax_disp import uf as relax_disp_uf
-from specific_analyses.relax_fit import uf as relax_fit_uf
+from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
+from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
+from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
+from specific_analyses.noe.parameter_object import Noe_params; noe_params = Noe_params()
+from specific_analyses.relax_disp.parameter_object import Relax_disp_params; relax_disp_params = Relax_disp_params()
+from specific_analyses.relax_fit.parameter_object import Relax_fit_params; relax_fit_params = Relax_fit_params()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -192,12 +192,12 @@ uf.desc[-1].add_item_list_element("'sims'", "Plot the simulation values.")
 uf.desc[-1].add_paragraph("Normalisation is only allowed for series type data, for example the R2 exponential curves, and will be ignored for all other data types.  If the norm flag is set to True then the y-value of the first point of the series will be set to 1.  This normalisation is useful for highlighting errors in the data sets.")
 uf.desc.append(regexp_doc)
 uf.desc.append(minimise.return_data_name_doc)
-uf.desc.append(noe_uf.return_data_name_doc)
-uf.desc.append(relax_disp_uf.return_data_name_doc)
-uf.desc.append(relax_fit_uf.return_data_name_doc)
-uf.desc.append(jw_mapping_uf.return_data_name_doc)
-uf.desc.append(consistency_tests_uf.return_data_name_doc)
-uf.desc.append(model_free_uf.return_data_name_doc)
+uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters"))
+uf.desc.append(noe_params.uf_doc(label="table: NOE parameters"))
+uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters"))
+uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
+uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameters"))
+uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameters"))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To write the NOE values for all spins to the Grace file 'noe.agr', type one of:")

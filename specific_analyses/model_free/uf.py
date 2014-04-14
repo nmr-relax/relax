@@ -60,19 +60,6 @@ table.add_row(["Timescale of slow motions", "'time_slow'", "Model independent di
 table.add_row(["Chemical exchange", "'rex'", "The chemical exchange, Rex.  Residues which experience no chemical exchange are coloured white.  The default colour gradient starts at 'yellow' and finishes at 'red'."])
 classic_style_doc.add_table(table.label)
 
-# Default value documentation.
-default_value_doc = Desc_container("Model-free default values")
-table = uf_tables.add_table(label="table: mf default values", caption="Model-free default values.")
-table.add_headings(["Data type", "Object name", "Value"])
-table.add_row(["Local tm", "'local_tm'", "10 * 1e-9"])
-table.add_row(["Order parameters S2, S2f, and S2s", "'s2', 's2f', 's2s'", "0.8"])
-table.add_row(["Correlation time te", "'te'", "100 * 1e-12"])
-table.add_row(["Correlation time tf", "'tf'", "10 * 1e-12"])
-table.add_row(["Correlation time ts", "'ts'", "1000 * 1e-12"])
-table.add_row(["Chemical exchange relaxation", "'rex'", "0.0"])
-table.add_row(["CSA", "'csa'", "-172 * 1e-6"])
-default_value_doc.add_table(table.label)
-
 # Model elimination documentation.
 eliminate_doc = []
 eliminate_doc.append(Desc_container("Local tm model elimination rule"))
@@ -85,21 +72,6 @@ eliminate_doc[-1].add_verbatim("    te, tf, ts >= c . tm.")
 eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of round-off errors and the constraint algorithm, setting c to 2 will result in no models being eliminated as the minimised parameters will always be less than 2tm.  The value can be changed by supplying the value as the second element of the tuple.")
 eliminate_doc.append(Desc_container("Arguments"))
 eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
-
-# Data name documentation.
-return_data_name_doc = Desc_container("Model-free data type string matching patterns")
-table = uf_tables.add_table(label="table: mf data type patterns", caption="Model-free data type string matching patterns.")
-table.add_headings(["Data type", "Object name"])
-table.add_row(["Local tm", "'local_tm'"])
-table.add_row(["Order parameter S2", "'s2'"])
-table.add_row(["Order parameter S2f", "'s2f'"])
-table.add_row(["Order parameter S2s", "'s2s'"])
-table.add_row(["Correlation time te", "'te'"])
-table.add_row(["Correlation time tf", "'tf'"])
-table.add_row(["Correlation time ts", "'ts'"])
-table.add_row(["Chemical exchange", "'rex'"])
-table.add_row(["CSA", "'csa'"])
-return_data_name_doc.add_table(table.label)
 
 # Parameter setting documentation.
 set_doc = Desc_container("Model-free set details")
