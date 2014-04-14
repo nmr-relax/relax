@@ -57,3 +57,7 @@ class Consistency_tests_params(Param_list):
         self._set_uf_title("Consistency testing parameters")
         self._uf_param_table(label="table: consistency testing parameters", caption="Consistency testing parameters.")
         self._uf_param_table(label="table: consistency testing parameter value setting", caption="Consistency testing parameter value setting.", default=True)
+
+        # Value setting documentation.
+        for doc in self._uf_doc_loop(["table: consistency testing parameters", "table: consistency testing parameter value setting"]):
+            doc.add_paragraph("In consistency testing, the CSA value, angle Theta ('orientation') and global correlation time must be set prior to the calculation of consistency functions.")

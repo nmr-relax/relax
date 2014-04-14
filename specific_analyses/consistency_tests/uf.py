@@ -32,11 +32,6 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
 
 
-# Value setting documentation.
-set_doc = Desc_container("Consistency testing set details")
-set_doc.add_paragraph("In consistency testing, only four values can be set, the bond length, CSA, angle Theta ('orientation') and correlation time values. These must be set prior to the calculation of consistency functions.")
-
-
 def set_frq(frq=None):
     """Function for selecting which relaxation data to use in the consistency tests."""
 
