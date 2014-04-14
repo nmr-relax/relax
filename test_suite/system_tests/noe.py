@@ -60,7 +60,7 @@ class Noe(SystemTestCase):
 
         # How the file should look like.
         data = [
-            "# Parameter description:  The NOE.\n",
+            "# Parameter description:  The steady-state NOE value.\n",
             "#\n",
             "# mol_name       res_num    res_name    spin_num    spin_name    value                   error                   \n",
             "2AT7_fmf_mol1    12         PHE         150         N               0.803029108487728      0.0199040298831904    \n",
@@ -117,7 +117,7 @@ class Noe(SystemTestCase):
 
         # How the file should look like.
         data = [
-            "# Parameter description:  The NOE.\n",
+            "# Parameter description:  The steady-state NOE value.\n",
             "#\n",
             "# mol_name    res_num    res_name    spin_num    spin_name    value                   error                   \n",
             "XYZ_mol1      120        GLY         1865        N               0.520373965716017       0.208104738641507    \n",
