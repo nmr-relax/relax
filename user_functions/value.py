@@ -394,7 +394,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 # The value.write user function.
 uf = uf_info.add_uf('value.write')
-uf.title = "Write spin specific data values to a file."
+uf.title = "Write spin specific parameter values to a file."
 uf.title_short = "Value writing."
 uf.add_keyarg(
     name = "param",
