@@ -49,7 +49,7 @@ from user_functions.objects import Desc_container
 
 # The user function class.
 uf_class = uf_info.add_class('value')
-uf_class.title = "Class for setting data values."
+uf_class.title = "Class for setting parameter values."
 uf_class.menu_text = "&value"
 uf_class.gui_icon = "relax.value"
 
