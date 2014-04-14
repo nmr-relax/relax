@@ -71,6 +71,7 @@ class Model_free_params(Param_list):
         # Set up the user function documentation.
         self._set_uf_title("Model-free parameters")
         self._uf_param_table(label="table: model-free parameters", caption="Model-free parameters.")
+        self._uf_param_table(label="table: model-free parameter writing", caption="Model-free parameters.")
         self._uf_param_table(label="table: model-free parameters and min stats", caption="Model-free parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
         self._uf_param_table(label="table: all model-free parameters", caption="Model-free parameters.", scope=None)
         self._uf_param_table(label="table: mf parameter value setting", caption="Model-free parameter value setting.", default=True)
@@ -83,3 +84,9 @@ class Model_free_params(Param_list):
             doc.add_paragraph("where:")
             doc.add_list_element("rex is the chemical exchange value for the current frequency.")
             doc.add_list_element("frequency is the proton frequency corresponding to the data.")
+
+        # Parameter writing documentation.
+        for doc in self._uf_doc_loop(["table: model-free parameter writing"]):
+            doc.add_paragraph("For model-free theory it is assumed that Rex values are scaled quadratically with field strength.  The values will be very small as they will be written out as a field strength independent value.  Hence use the following formula to convert the value to that expected for a given magnetic field strength:")
+            doc.add_verbatim("    Rex = value * (2.0 * pi * frequency) ** 2")
+            doc.add_paragraph("The frequency is that of the proton in Hertz.")

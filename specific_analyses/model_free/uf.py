@@ -73,12 +73,6 @@ eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of roun
 eliminate_doc.append(Desc_container("Arguments"))
 eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
 
-# Parameter writing documentation.
-write_doc = Desc_container("Model-free parameter writing details")
-write_doc.add_paragraph("For the model-free theory, it is assumed that Rex values are scaled quadratically with field strength.  The values will seem quite small as they will be written out as a field strength independent value.  Hence please use the following formula to convert the value to that expected for a given magnetic field strength:")
-write_doc.add_verbatim("    Rex = value * (2.0 * pi * frequency) ** 2")
-write_doc.add_paragraph("The frequency is that of the proton in Hertz.")
-
 
 def create_model(model=None, equation=None, params=None, spin_id=None):
     """Function for creating a custom model-free model.
