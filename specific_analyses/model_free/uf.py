@@ -73,16 +73,6 @@ eliminate_doc[-1].add_paragraph("The default value of c is 1.5.  Because of roun
 eliminate_doc.append(Desc_container("Arguments"))
 eliminate_doc[-1].add_paragraph("The 'args' argument must be a tuple of length 2, the elements of which must be numbers.  For example, to eliminate models which have a local tm value greater than 25 ns and models with internal correlation times greater than 1.5 times tm, set 'args' to (25 * 1e-9, 1.5).")
 
-# Parameter setting documentation.
-set_doc = Desc_container("Model-free set details")
-set_doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen, for example if S2f values and S2s values are set but the run corresponds to model-free model 'm4' then, because these data values are not parameters of the model, they will have no effect.")
-set_doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to get the correct value:")
-set_doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
-set_doc.add_paragraph("where:")
-set_doc.add_list_element("rex is the chemical exchange value for the current frequency.")
-set_doc.add_list_element("pi is in the namespace of relax, ie just type 'pi'.")
-set_doc.add_list_element("frequency is the proton frequency corresponding to the data.")
-
 # Parameter writing documentation.
 write_doc = Desc_container("Model-free parameter writing details")
 write_doc.add_paragraph("For the model-free theory, it is assumed that Rex values are scaled quadratically with field strength.  The values will seem quite small as they will be written out as a field strength independent value.  Hence please use the following formula to convert the value to that expected for a given magnetic field strength:")

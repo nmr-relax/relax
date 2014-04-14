@@ -74,3 +74,12 @@ class Model_free_params(Param_list):
         self._uf_param_table(label="table: model-free parameters and min stats", caption="Model-free parameters and minimisation statistics.", sets=['params', 'fixed', 'min'])
         self._uf_param_table(label="table: all model-free parameters", caption="Model-free parameters.", scope=None)
         self._uf_param_table(label="table: mf parameter value setting", caption="Model-free parameter value setting.", default=True)
+
+        # Parameter setting documentation.
+        for doc in self._uf_doc_loop(["table: model-free parameters", "table: mf parameter value setting"]):
+            doc.add_paragraph("Setting a parameter value may have no effect depending on which model-free model is chosen.  For example if S2f values and S2s values are set but the data pipe corresponds to the model-free model 'm4' then because these data values are not parameters of the model they will have no effect.")
+            doc.add_paragraph("Note that the Rex values are scaled quadratically with field strength and should be supplied as a field strength independent value.  Use the following formula to obtain the correct value:")
+            doc.add_verbatim("    value = rex / (2.0 * pi * frequency) ** 2")
+            doc.add_paragraph("where:")
+            doc.add_list_element("rex is the chemical exchange value for the current frequency.")
+            doc.add_list_element("frequency is the proton frequency corresponding to the data.")
