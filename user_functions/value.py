@@ -34,7 +34,6 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import pipes, value
-from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
 from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
@@ -89,7 +88,6 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
 # Prompt examples.
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
@@ -131,7 +129,6 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be displayed.  The scaling argument can be used to scale the parameter values.  This can be useful for example in the case of the model-free Rex parameter to obtain the spectrometer dependent value from the omega_ex field strength independent internal value.  Or to scale correlation times from seconds down to nanosecond or picosecond timescales.")
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters"))
 uf.desc.append(noe_params.uf_doc(label="table: NOE parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameter writing"))
@@ -273,7 +270,6 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The spin system can be identified in the file using two different formats.  The first is the spin ID string column which can include the molecule name, the residue name and number, and the spin name and number.  Alternatively the molecule name, residue number, residue name, spin number and/or spin name columns can be supplied allowing this information to be in separate columns.  Note that the numbering of columns starts at one.  The spin ID string can be used to restrict the reading to certain spin types, for example only 15N spins when only residue information is in the file.")
 uf.desc[-1].add_paragraph("If this is used to change values of previously minimised parameters, then the minimisation statistics (chi-squared value, iteration count, function count, gradient count, and Hessian count) will be reset.")
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
@@ -358,7 +354,6 @@ uf.desc[-1].add_table(table.label)
 # Spin identification.
 uf.desc.append(Desc_container("Spin identification"))
 uf.desc[-1].add_paragraph("If the spin ID is left unset, then this will be applied to all spins.  If the data is global non-spin specific data, such as diffusion tensor parameters, supplying the spin identifier will terminate the program with an error.")
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameter value setting"))
 uf.desc.append(model_free_params.uf_doc(label="table: mf parameter value setting"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameter value setting"))
@@ -456,7 +451,6 @@ uf.add_keyarg(
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The values corresponding to the given parameter will be written to file.  The scaling argument can be used to scale the parameter values.  This can be useful for example in the case of the model-free Rex parameter to obtain the spectrometer dependent value from the omega_ex field strength independent internal value.  Or to scale correlation times from seconds down to nanosecond or picosecond timescales.")
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters"))
 uf.desc.append(noe_params.uf_doc(label="table: NOE parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameter writing"))

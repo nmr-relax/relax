@@ -33,7 +33,6 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from pipe_control import grace
-from prompt.doc_string import regexp_doc
 from specific_analyses.consistency_tests.parameter_object import Consistency_tests_params; consistency_test_params = Consistency_tests_params()
 from specific_analyses.jw_mapping.parameter_object import Jw_mapping_params; jw_mapping_params = Jw_mapping_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
@@ -190,7 +189,6 @@ uf.desc[-1].add_item_list_element("'value'", "Plot values (with errors if they e
 uf.desc[-1].add_item_list_element("'error'", "Plot errors.")
 uf.desc[-1].add_item_list_element("'sims'", "Plot the simulation values.")
 uf.desc[-1].add_paragraph("Normalisation is only allowed for series type data, for example the R2 exponential curves, and will be ignored for all other data types.  If the norm flag is set to True then the y-value of the first point of the series will be set to 1.  This normalisation is useful for highlighting errors in the data sets.")
-uf.desc.append(regexp_doc)
 uf.desc.append(relax_fit_params.uf_doc(label="table: curve-fit parameters and min stats"))
 uf.desc.append(noe_params.uf_doc(label="table: NOE parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameters and min stats"))

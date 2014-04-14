@@ -34,7 +34,6 @@ from graphics import WIZARD_IMAGE_PATH
 from lib.software.opendx.execute import run
 from pipe_control import diffusion_tensor
 from pipe_control.opendx import map
-from prompt.doc_string import regexp_doc
 from specific_analyses.frame_order.parameter_object import Frame_order_params; frame_order_params = Frame_order_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()
 from specific_analyses.n_state_model.parameter_object import N_state_params; n_state_params = N_state_params()
@@ -204,7 +203,6 @@ table.add_headings(["Surface type", "Name"])
 table.add_row(["3D isosurface", "'Iso3D'"])
 uf.desc[-1].add_table(table.label)
 # Additional.
-uf.desc.append(regexp_doc)
 uf.desc.append(model_free_params.uf_doc(label="table: all model-free parameters"))
 uf.desc.append(n_state_params.uf_doc(label="table: N-state parameters"))
 uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameters"))
