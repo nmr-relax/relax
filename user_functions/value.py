@@ -109,7 +109,7 @@ uf.wizard_image = WIZARD_IMAGE_PATH + 'value' + sep + 'value.png'
 
 # The value.display user function.
 uf = uf_info.add_uf('value.display')
-uf.title = "Display spin specific data values."
+uf.title = "Display spin specific parameter values."
 uf.title_short = "Display values."
 uf.display = True
 uf.add_keyarg(
@@ -136,7 +136,6 @@ uf.desc.append(noe_params.uf_doc(label="table: NOE parameters"))
 uf.desc.append(model_free_params.uf_doc(label="table: model-free parameter writing"))
 uf.desc.append(jw_mapping_params.uf_doc(label="table: J(w) parameters"))
 uf.desc.append(consistency_test_params.uf_doc(label="table: consistency testing parameters"))
-uf.desc.append(n_state_params.uf_doc(label="table: N-state parameters"))
 uf.desc.append(relax_disp_params.uf_doc(label="table: dispersion parameters"))
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
