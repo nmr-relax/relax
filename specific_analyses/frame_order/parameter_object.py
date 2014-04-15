@@ -48,6 +48,9 @@ class Frame_order_params(Param_list):
         self._add_align_data()
 
         # Add the parameters of all models.
+        self._add('pivot_x', scope='global', units='Angstrom', desc='The pivot point position x coordinate', py_type=float, set='params', err=True, sim=True)
+        self._add('pivot_y', scope='global', units='Angstrom', desc='The pivot point position y coordinate', py_type=float, set='params', err=True, sim=True)
+        self._add('pivot_z', scope='global', units='Angstrom', desc='The pivot point position z coordinate', py_type=float, set='params', err=True, sim=True)
         self._add('ave_pos_x', scope='global', units='Angstrom', desc='The average position x translation', py_type=float, set='params', err=True, sim=True)
         self._add('ave_pos_y', scope='global', units='Angstrom', desc='The average position y translation', py_type=float, set='params', err=True, sim=True)
         self._add('ave_pos_z', scope='global', units='Angstrom', desc='The average position z translation', py_type=float, set='params', err=True, sim=True)
