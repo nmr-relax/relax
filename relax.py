@@ -307,10 +307,10 @@ class Relax:
         # Recognised command line options for debugging.
         group = OptionGroup(parser, 'Debugging options')
         group.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
-        group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
-        group.add_option('-r', '--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
-        group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
         group.add_option('--error-state', action='store_true', dest='error_state', default=0, help='save a pickled state file when a RelaxError occurs')
+        group.add_option('--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
+        group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
+        group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
         parser.add_option_group(group)
 
         # Parse the options.
