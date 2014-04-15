@@ -315,21 +315,18 @@ class Relax:
         # Parse the options.
         (options, args) = parser.parse_args()
 
-        # Debugging flag (and numpy warning to error conversion).
+        # Debugging options:  Debugging flag, escalate flag, traceback flag, and numpy warning to error conversion.
         if options.debug:
             status.debug = True
-        if options.numpy_raise:
-            numpy.seterr(all='raise')
-
-        # escalate flag.
+            lib.warnings.TRACEBACK = True
         if options.escalate:
             lib.warnings.ESCALATE = True
             lib.errors.ESCALATE = True
-
-        # Traceback flag.
         if options.traceback:
             status.traceback = True
             lib.warnings.TRACEBACK = True
+        if options.numpy_raise:
+            numpy.seterr(all='raise')
 
         # Script prompt interactive inspection flag.
         if options.prompt:
