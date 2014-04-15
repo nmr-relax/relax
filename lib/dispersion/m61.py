@@ -63,9 +63,6 @@ More information on the M61 model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61>}.
 """
 
-# Python module imports.
-from math import pi
-
 
 def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.

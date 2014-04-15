@@ -60,7 +60,7 @@ More information on the MP05 model can be found in the:
 """
 
 # Python module imports.
-from math import atan2, cos, pi, sin
+from math import atan2, sin
 
 
 def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):

@@ -55,9 +55,6 @@ More information on the NS CPMG 2-site star full model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_star_full>}.
 """
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
 from math import log
 from numpy import add, complex, conj, dot

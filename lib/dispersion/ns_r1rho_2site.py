@@ -48,11 +48,8 @@ More information on the NS R1rho 2-site model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_R1rho_2-site>}.
 """
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
-from math import atan2, cos, log, pi, sin, sqrt
+from math import atan2, cos, log, sin
 from numpy import dot
 
 # relax module imports.

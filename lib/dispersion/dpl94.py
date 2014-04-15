@@ -63,7 +63,7 @@ More information on the DPL94 model can be found in the:
 """
 
 # Python module imports.
-from math import cos, pi, sin
+from math import cos, sin
 
 
 def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None, num_points=None):

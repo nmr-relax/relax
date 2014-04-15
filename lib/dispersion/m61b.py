@@ -59,9 +59,6 @@ More information on the M61 skew model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61_skew>}.
 """
 
-# Python module imports.
-from math import pi
-
 
 def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=None, back_calc=None, num_points=None):
     """Calculate the R1rho values for the M61 skew model.

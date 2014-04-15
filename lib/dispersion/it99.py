@@ -73,7 +73,7 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from math import pi, sqrt
+from math import sqrt
 
 
 def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):

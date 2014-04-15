@@ -234,12 +234,9 @@ More information on the NS CPMG 2-site expanded model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#NS_CPMG_2-site_expanded>}.
 """
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
 from math import log
-from numpy import add, conj, dot, exp, power, real, sqrt
+from numpy import exp, power, sqrt
 
 # relax module imports.
 from lib.float import isNaN
