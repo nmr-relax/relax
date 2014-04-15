@@ -33,9 +33,12 @@ except ImportError:
 from re import match
 import sys
 import time
+try:
+    import cPickle as pickle
+except:
+    import pickle
 
 # relax module imports.
-from compat import pickle
 from lib import ansi
 
 
