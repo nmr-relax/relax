@@ -310,6 +310,7 @@ class Relax:
         group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
         group.add_option('-r', '--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
         group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
+        group.add_option('--error-state', action='store_true', dest='error_state', default=0, help='save a pickled state file when a RelaxError occurs')
         parser.add_option_group(group)
 
         # Parse the options.
@@ -321,12 +322,13 @@ class Relax:
             lib.warnings.TRACEBACK = True
         if options.escalate:
             lib.warnings.ESCALATE = True
-            lib.errors.ESCALATE = True
         if options.traceback:
             status.traceback = True
             lib.warnings.TRACEBACK = True
         if options.numpy_raise:
             numpy.seterr(all='raise')
+        if options.error_state:
+            lib.errors.SAVE_ERROR_STATE = True
 
         # Script prompt interactive inspection flag.
         if options.prompt:

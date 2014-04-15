@@ -40,7 +40,7 @@ from lib import ansi
 
 
 # Module variables for changing the behaviour of the warning system.
-ESCALATE = False    # If True, warnings will be converted into errors.
+SAVE_ERROR_STATE = False    # If True, then a pickled state file will be saved when a RelaxError occurs.
 
 # Text variables.
 BIN = 'a binary number (0 or 1)'
@@ -136,7 +136,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if the escalate flag is turned on.
-        if ESCALATE:
+        if SAVE_ERROR_STATE:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
