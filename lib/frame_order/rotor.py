@@ -180,6 +180,9 @@ def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref
     # Calculate the PCS and error.
     for i in range(len(pcs_theta)):
         for j in range(len(pcs_theta[i])):
+            if num == 0:
+                continue
+
             # The average PCS.
             pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
 
