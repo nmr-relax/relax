@@ -27,10 +27,13 @@ This includes IO redirection, automatic loading and writing of compressed files 
 compression), reading and writing of files, processing of the contents of files, etc.
 """
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
+try:
+    import bz2
+except ImportError:
+    bz2 = None
+    message = sys.exc_info()[1]
+    bz2_module_message = message.args[0]
 from os import devnull
 from os import F_OK, X_OK, access, altsep, getenv, makedirs, pathsep, remove, sep
 from os.path import expanduser, basename, splitext, isfile
@@ -439,12 +442,12 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
     # Bzip2 compression.
     if compress_type == 1 and not search('.bz2$', file_path):
         # Bz2 module exists.
-        if dep_check.bz2_module:
+        if bz2:
             file_path = file_path + '.bz2'
 
         # Switch to gzip compression.
         else:
-            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + dep_check.bz2_module_message + "."))
+            warn(RelaxWarning("Cannot use Bzip2 compression, using gzip compression instead.  " + bz2_module_message + "."))
             compress_type = 2
 
     # Gzip compression.
