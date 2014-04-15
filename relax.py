@@ -308,6 +308,7 @@ class Relax:
         group = OptionGroup(parser, 'Debugging options')
         group.add_option('-d', '--debug', action='store_true', dest='debug', default=0, help='enable debugging output')
         group.add_option('-e', '--escalate', action='store_true', dest='escalate', default=0, help='escalate all warnings to errors')
+        group.add_option('-r', '--traceback', action='store_true', dest='traceback', default=0, help='show stack tracebacks on all RelaxErrors and RelaxWarnings')
         group.add_option('--numpy-raise', action='store_true', dest='numpy_raise', default=0, help='convert numpy warnings to errors')
         parser.add_option_group(group)
 
@@ -324,6 +325,11 @@ class Relax:
         if options.escalate:
             lib.warnings.ESCALATE = True
             lib.errors.ESCALATE = True
+
+        # Traceback flag.
+        if options.traceback:
+            status.traceback = True
+            lib.warnings.TRACEBACK = True
 
         # Script prompt interactive inspection flag.
         if options.prompt:

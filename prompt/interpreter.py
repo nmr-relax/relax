@@ -500,7 +500,7 @@ def interact_script(self, intro=None, local={}, script_file=None, show_script=Tr
         # Nice output for the user.
         else:
             # Print the scary traceback normally hidden from the user.
-            if status.debug:
+            if status.debug or status.traceback:
                 self.showtraceback()
 
             # Print the RelaxError message line.
