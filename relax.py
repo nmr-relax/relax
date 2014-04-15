@@ -322,7 +322,8 @@ class Relax:
 
         # escalate flag.
         if options.escalate:
-            status.escalate = True
+            lib.warnings.ESCALATE = True
+            lib.errors.ESCALATE = True
 
         # Script prompt interactive inspection flag.
         if options.prompt:

@@ -52,7 +52,6 @@ class Status(object):
 
             # Initialise some variables.
             self._instance.debug = False
-            self._instance.escalate = False
             self._instance.prompt = False
             self._instance.test_mode = False
             self._instance.uf_intro = False

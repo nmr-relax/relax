@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -30,7 +30,10 @@ import warnings
 
 # relax module imports.
 from lib import ansi
-from status import Status; status = Status()
+
+
+# Module variables for changing the behaviour of the warning system.
+ESCALATE = False    # If True, warnings will be converted into errors.
 
 
 # The warning formatting function.
@@ -41,7 +44,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in escalate mode.
-    if status.escalate:
+    if ESCALATE:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
@@ -78,7 +81,7 @@ def setup():
     warnings.formatwarning = format
 
     # Set warning filters.
-    if status.escalate:
+    if ESCALATE:
         warnings.filterwarnings('error', category=BaseWarning)
     else:
         warnings.filterwarnings('always', category=BaseWarning)

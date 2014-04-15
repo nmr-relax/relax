@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -38,6 +38,9 @@ import time
 from compat import pickle
 from lib import ansi
 
+
+# Module variables for changing the behaviour of the warning system.
+ESCALATE = False    # If True, warnings will be converted into errors.
 
 # Text variables.
 BIN = 'a binary number (0 or 1)'
@@ -133,8 +136,7 @@ class BaseError(Exception):
         """Modify the behaviour of the error system."""
 
         # Save the state if the escalate flag is turned on.
-        from status import Status; status = Status()
-        if status.escalate:
+        if ESCALATE:
             save_state()
 
         # Modify the error message to include 'RelaxError' at the start (using coloured text if a TTY).
