@@ -87,10 +87,10 @@ def save_state():
 
     # Open the file for writing.
     if bz2:
-        sys.stderr.write("\n\nStoring the relax state in the file '%s.bz2'.\n\n\n" % file_name)
+        sys.stderr.write("\nStoring the relax state in the file '%s.bz2'.\n\n" % file_name)
         file = BZ2File(file_name+'.bz2', 'w')
     else:
-        sys.stderr.write("\n\nStoring the relax state in the file '%s'.\n\n\n" % file_name)
+        sys.stderr.write("\nStoring the relax state in the file '%s'.\n\n" % file_name)
         file = open(file_name, 'w')
 
     # Pickle the data class and write it to file
