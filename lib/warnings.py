@@ -34,6 +34,7 @@ from lib import ansi
 
 # Module variables for changing the behaviour of the warning system.
 ESCALATE = False    # If True, warnings will be converted into errors.
+TRACEBACK = False    # If True, a traceback will be printed out with the warnings.
 
 
 # The warning formatting function.
@@ -44,7 +45,7 @@ def format(message, category, filename, lineno, line=None):
     message = "RelaxWarning: %s\n" % message
 
     # Print stack-trace in escalate mode.
-    if ESCALATE:
+    if TRACEBACK:
         tb = ""
         for frame in inspect.stack()[4:]:
             file = frame[1]
