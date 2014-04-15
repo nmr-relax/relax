@@ -43,7 +43,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
-from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, param_num, update_model
+from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints, param_num, update_model
 
 
 class Frame_order(API_base, API_common):
@@ -132,6 +132,17 @@ class Frame_order(API_base, API_common):
 
         # Printout.
         print("Chi2:  %s" % chi2)
+
+
+    def constraint_algorithm(self):
+        """Return the 'Log barrier' optimisation constraint algorithm.
+
+        @return:    The 'Log barrier' constraint algorithm.
+        @rtype:     str
+        """
+
+        # The log barrier algorithm, as required by minfx.
+        return 'Log barrier'
 
 
     def create_mc_data(self, data_id=None):
@@ -538,18 +549,10 @@ class Frame_order(API_base, API_common):
         # Set up the target function for direct calculation.
         model, param_vector, scaling_matrix = target_fn_setup(sim_index=sim_index, verbosity=verbosity, scaling=scaling)
 
-        # Constraints not implemented yet.
+        # Linear constraints.
+        A, b = None, None
         if constraints:
-            # Turn the constraints off.
-            constraints = False
-
-            # Remove the method of multipliers arg.
-            if not search('^[Gg]rid', min_algor):
-                min_algor = min_options[0]
-                min_options = min_options[1:]
-
-            # Throw a warning.
-            warn(RelaxWarning("Constraints are as of yet not implemented - turning this option off."))
+            A, b = linear_constraints(scaling_matrix=scaling_matrix)
 
         # Grid search.
         if search('^[Gg]rid', min_algor):
@@ -557,7 +560,7 @@ class Frame_order(API_base, API_common):
 
         # Minimisation.
         else:
-            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, full_output=True, print_flag=verbosity)
+            results = generic_minimise(func=model.func, args=(), x0=param_vector, min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, maxiter=max_iterations, A=A, b=b, full_output=True, print_flag=verbosity)
 
         # Unpack the results.
         unpack_opt_results(results, scaling, scaling_matrix, sim_index)

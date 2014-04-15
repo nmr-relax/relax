@@ -23,7 +23,8 @@
 """Module for handling the frame order model parameters."""
 
 # Python module imports.
-from numpy import array, float64, identity
+from math import pi
+from numpy import array, float64, identity, zeros
 
 # relax module imports.
 from specific_analyses.frame_order.data import pivot_fixed, translation_fixed
@@ -84,6 +85,106 @@ def assemble_scaling_matrix(scaling=True):
 
     # Return the matrix.
     return scaling_matrix
+
+
+def linear_constraints(scaling_matrix=None):
+    """Create the linear constraint matrices A and b.
+
+    Standard notation
+    =================
+
+    The parameter constraints for the motional amplitude parameters are::
+
+        0 <= theta <= pi,
+        0 <= theta_x <= pi,
+        0 <= theta_y <= pi,
+        -0.125 <= S <= 1,
+        0 <= sigma_max <= pi,
+
+    The pivot point parameter, domain position parameters, and eigenframe parameters are unconstrained.
+
+
+    Matrix notation
+    ===============
+
+    In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
+
+        | 1  0  0  0  0 |                        |   0    |
+        |               |                        |        |
+        |-1  0  0  0  0 |                        |  -pi   |
+        |               |                        |        |
+        | 0  1  0  0  0 |                        |   0    |
+        |               |     |   theta   |      |        |
+        | 0 -1  0  0  0 |     |           |      |  -pi   |
+        |               |     |  theta_x  |      |        |
+        | 0  0  1  0  0 |     |           |      |   0    |
+        |               |  .  |  theta_y  |  >=  |        |
+        | 0  0 -1  0  0 |     |           |      |  -pi   |
+        |               |     |    S      |      |        |
+        | 0  0  0  1  0 |     |           |      | -0.125 |
+        |               |     | sigma_max |      |        |
+        | 0  0  0 -1  0 |                        |  -1    |
+        |               |                        |        |
+        | 0  0  0  0  1 |                        |   0    |
+        |               |                        |        |
+        | 0  0  0  0 -1 |                        |  -pi   |
+
+
+    @keyword scaling_matrix:    The diagonal, square scaling matrix.
+    @type scaling_matrix:       numpy rank-2 square matrix
+    @return:                    The matrices A and b.
+    @rtype:                     numpy rank-2 NxM array, numpy rank-1 N array
+    """
+
+    # Initialisation (0..j..m).
+    A = []
+    b = []
+    n = param_num()
+    zero_array = zeros(n, float64)
+    i = 0
+    j = 0
+
+    # Loop over the parameters of the model.
+    for i in range(n):
+        # The cone opening angles and sigma_max.
+        if cdp.params[i] in ['cone_theta', 'cone_theta_x', 'cone_theta_y', 'cone_sigma_max']:
+            # 0 <= theta <= pi.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(0.0)
+            b.append(-pi / scaling_matrix[i, i])
+            j = j + 2
+
+            # The pseudo-ellipse restriction (theta_x >= theta_y).
+            if cdp.params[i] == 'cone_theta_x':
+                for m in range(n):
+                    if cdp.params[m] == 'cone_theta_y':
+                        A.append(zero_array * 0.0)
+                        A[j][i] = 1.0
+                        A[j][m] = -1.0
+                        b.append(0.0)
+                        j = j + 1
+
+
+        # The order parameter.
+        if cdp.params[i] == 'cone_s1':
+            # -0.125 <= S <= 1.
+            A.append(zero_array * 0.0)
+            A.append(zero_array * 0.0)
+            A[j][i] = 1.0
+            A[j+1][i] = -1.0
+            b.append(-0.125 / scaling_matrix[i, i])
+            b.append(-1 / scaling_matrix[i, i])
+            j = j + 2
+
+    # Convert to numpy data structures.
+    A = array(A, float64)
+    b = array(b, float64)
+
+    # Return the constraint objects.
+    return A, b
 
 
 def param_num():
