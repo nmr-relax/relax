@@ -26,6 +26,8 @@ from __future__ import absolute_import
 
 # Python module imports.
 import inspect
+import sys
+import traceback
 import warnings
 
 # relax module imports.
@@ -39,28 +41,10 @@ TRACEBACK = False    # If True, a traceback will be printed out with the warning
 
 # The warning formatting function.
 def format(message, category, filename, lineno, line=None):
-    """ Replacement for warnings.formatwarning to customise output format."""
+    """Replacement for warnings.formatwarning to customise output format."""
 
     # Add the text 'RelaxWarning: ' to the start of the warning message.
     message = "RelaxWarning: %s\n" % message
-
-    # Print stack-trace in escalate mode.
-    if TRACEBACK:
-        tb = ""
-        for frame in inspect.stack()[4:]:
-            file = frame[1]
-            lineNo = frame[2]
-            func = frame[3]
-            tb_frame = '  File "%s", line %i, in %s\n' % (file, lineNo, func)
-            try:
-                context = frame[4][frame[5]]
-            except TypeError:
-                pass
-            else:
-                tb_frame = '%s    %s\n' % (tb_frame, context.strip())
-            tb = tb_frame + tb
-        tb = "Traceback (most recent call last):\n%s" % tb
-        message = tb + message
 
     # Text colouring
     if ansi.enable_control_chars(stream=2):
@@ -75,11 +59,46 @@ def format(message, category, filename, lineno, line=None):
     return message
 
 
+def showwarning_tb(message, category, filename, lineno, file=None, line=None):
+    """Replacement for warnings.showwarning to show tracebacks."""
+
+    # Set up the output file if needed.
+    if file is None:
+        file = sys.stderr
+
+    # Print the stack traceback.
+    tb = ""
+    for frame in inspect.stack()[1:]:
+        file_name = frame[1]
+        lineNo = frame[2]
+        func = frame[3]
+        tb_frame = '  File "%s", line %i, in %s\n' % (file_name, lineNo, func)
+        try:
+            context = frame[4][frame[5]]
+        except TypeError:
+            pass
+        else:
+            tb_frame = '%s    %s\n' % (tb_frame, context.strip())
+        tb = tb_frame + tb
+    tb = "Traceback (most recent call last):\n%s" % tb
+    file.write(tb)
+
+    # Replicating the failsafe mode of the base Python warnings function here.
+    try:
+        file.write(format(message, category, filename, lineno, line))
+    except IOError:
+        pass
+
+
 def setup():
     """Set up the warning system."""
 
     # Format warning messages.
     warnings.formatwarning = format
+
+    # Tracebacks.
+    if TRACEBACK:
+        warnings.showwarning = showwarning_tb
 
     # Set warning filters.
     if ESCALATE:
