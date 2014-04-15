@@ -556,6 +556,8 @@ def linear_constraints(spins=None, scaling_matrix=None):
     @type spins:                list of SpinContainer instances
     @keyword scaling_matrix:    The diagonal, square scaling matrix.
     @type scaling_matrix:       numpy diagonal matrix
+    @return:                    The matrices A and b.
+    @rtype:                     numpy rank-2 NxM array, numpy rank-1 N array
     """
 
     # Initialisation (0..j..m).
