@@ -414,8 +414,10 @@ def pivot(pivot=None, order=1, fix=False):
     # Store the fixed flag.
     cdp.pivot_fixed = fix
 
-    # No pivot given, so quit.
+    # No pivot given, so update the model if needed and quit.
     if pivot == None:
+        if hasattr(cdp, 'model'):
+            update_model()
         return
 
     # Convert the pivot to a numpy array.
@@ -439,6 +441,10 @@ def pivot(pivot=None, order=1, fix=False):
         setattr(cdp, name_x, pivot[0])
         setattr(cdp, name_y, pivot[1])
         setattr(cdp, name_z, pivot[2])
+
+    # Update the model.
+    if hasattr(cdp, 'model'):
+        update_model()
 
 
 def quad_int(flag=False):
