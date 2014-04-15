@@ -165,8 +165,7 @@ def linear_constraints(spin=None, scaling_matrix=None):
     Matrix notation
     ===============
 
-    In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter
-    values, and b is a vector of scalars, these inequality constraints are::
+    In the notation A.x >= b, where A is an matrix of coefficients, x is an array of parameter values, and b is a vector of scalars, these inequality constraints are::
 
         | 1  0  0 |     |  Rx  |      |    0    |
         |         |     |      |      |         |
