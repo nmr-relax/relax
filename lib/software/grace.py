@@ -28,7 +28,6 @@ from math import ceil, sqrt
 from re import search
 
 # relax module imports.
-import pipe_control
 from pipe_control import pipes
 from specific_analyses.api import return_api
 

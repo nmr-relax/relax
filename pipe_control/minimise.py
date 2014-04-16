@@ -22,18 +22,13 @@
 # Module docstring.
 """Module for model minimisation/optimisation."""
 
-# Python module imports.
-from re import search
-
 # relax module imports.
-from lib.errors import RelaxError
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
 from specific_analyses.api import return_api
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 def calc(verbosity=1):

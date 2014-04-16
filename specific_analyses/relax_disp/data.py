@@ -51,7 +51,7 @@ The data structures used in this module consist of many different index types wh
 """
 
 # Python module imports.
-from math import atan2, floor, pi, sqrt
+from math import atan2, pi, sqrt
 from numpy import array, float64, int32, ones, zeros
 from os.path import expanduser
 from random import gauss
@@ -69,12 +69,12 @@ from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
-from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, find_index, generate_spin_id_unique, get_spin_ids, return_spin, spin_loop
+from pipe_control.mol_res_spin import check_mol_res_spin_data, exists_mol_res_spin_data, generate_spin_id_unique, return_spin, spin_loop
 from pipe_control.result_files import add_result_file
 from pipe_control.selection import desel_spin
 from pipe_control.sequence import return_attached_protons
-from pipe_control.spectrum import add_spectrum_id, get_ids
-from pipe_control.spectrometer import check_frequency, get_frequency, set_frequency
+from pipe_control.spectrum import add_spectrum_id
+from pipe_control.spectrometer import check_frequency, get_frequency
 import specific_analyses
 from specific_analyses.relax_disp.checks import check_exp_type, check_mixed_curve_types
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_DESC_CPMG_DQ, EXP_TYPE_DESC_CPMG_MQ, EXP_TYPE_DESC_CPMG_PROTON_MQ, EXP_TYPE_DESC_CPMG_PROTON_SQ, EXP_TYPE_DESC_CPMG_SQ, EXP_TYPE_DESC_CPMG_ZQ, EXP_TYPE_DESC_R1RHO, EXP_TYPE_LIST, EXP_TYPE_LIST_CPMG, EXP_TYPE_LIST_R1RHO, EXP_TYPE_R1RHO, MODEL_DPL94, MODEL_LIST_MMQ, MODEL_LIST_NUMERIC_CPMG, MODEL_LIST_R1RHO_FULL, MODEL_MP05, MODEL_NS_R1RHO_2SITE, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02

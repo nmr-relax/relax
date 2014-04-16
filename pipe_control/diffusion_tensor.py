@@ -26,20 +26,17 @@
 from copy import deepcopy
 from math import cos, pi, sin
 from numpy import float64, int32, zeros
-from re import search
 import string
 
 # relax module imports.
 from data_store.diff_tensor import DiffTensorData
 from lib.diffusion.main import tensor_eigen_system, tensor_info_table
-from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from lib.errors import RelaxError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.geometry.angles import fold_spherical_angles, wrap_angles
 from lib.physical_constants import element_from_isotope, number_from_isotope
 from pipe_control import pipes
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import get_molecule_names, return_spin, spin_loop
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 def bmrb_read(star):

@@ -30,7 +30,7 @@ from lib.errors import RelaxError, RelaxPipeError
 from lib.io import write_data
 from lib.model_selection import aic, aicc, bic
 import pipe_control.pipes
-from pipe_control.pipes import get_type, has_pipe, pipe_names, switch
+from pipe_control.pipes import has_pipe, pipe_names, switch
 from specific_analyses.api import return_api
 
 

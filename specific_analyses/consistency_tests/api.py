@@ -29,7 +29,7 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoValueError, RelaxSpinTypeError
 from lib.float import isInf
-from lib.physical_constants import N15_CSA, h_bar, mu0, return_gyromagnetic_ratio
+from lib.physical_constants import h_bar, mu0, return_gyromagnetic_ratio
 from lib.warnings import RelaxDeselectWarning
 from pipe_control.interatomic import return_interatom_list
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop

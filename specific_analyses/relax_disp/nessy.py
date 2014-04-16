@@ -33,7 +33,7 @@ from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.spectrometer import get_frequencies
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
-from specific_analyses.relax_disp.data import find_intensity_keys, loop_exp_frq_offset, loop_exp_frq_point_time, loop_point, return_index_from_disp_point, return_index_from_frq
+from specific_analyses.relax_disp.data import find_intensity_keys, loop_exp_frq_offset, loop_exp_frq_point_time, loop_point
 
 
 def nessy_input(file='save.NESSY', dir=None, spin_id=None, force=False):

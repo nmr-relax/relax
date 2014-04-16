@@ -134,7 +134,8 @@ select.spin(":70-71", change_all=True)
 ################################################
 
 # Do not change!
-#Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
+if False:
+    Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
 
 
 # The 'R2eff' model.

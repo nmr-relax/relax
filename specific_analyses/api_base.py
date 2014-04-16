@@ -23,8 +23,7 @@
 """The module defining the analysis specific API."""
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxImplementError
-from specific_analyses.parameter_object import Param_list
+from lib.errors import RelaxImplementError
 
 
 class API_base(object):

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -21,9 +21,6 @@
 
 """Script for performing a full relaxation dispersion analysis using off-resonance R1rho-type data."""
 
-
-# Python module imports.
-from os import sep
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp

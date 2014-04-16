@@ -29,11 +29,9 @@ from minfx.generic import generic_minimise
 from minfx.grid import grid_point_array
 from numpy import float64, zeros
 from re import search
-from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoModelError
-from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop, return_interatom
 from pipe_control.mol_res_spin import return_spin, spin_loop

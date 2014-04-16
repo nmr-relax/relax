@@ -25,8 +25,6 @@
 # relax module imports.
 from lib.errors import RelaxError
 from pipe_control import pipes
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 def spectrum_type(spectrum_type=None, spectrum_id=None):

@@ -25,11 +25,8 @@
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFuncSetupError
-from lib.physical_constants import N15_CSA, NH_BOND_LENGTH
 from pipe_control import pipes
 import specific_analyses
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 def set_frq(frq=None):

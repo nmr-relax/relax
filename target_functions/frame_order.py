@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, pi, sqrt
-from numpy import array, cross, dot, float32, float64, ones, transpose, uint8, zeros
+from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
@@ -47,8 +47,7 @@ from lib.frame_order.pseudo_ellipse_torsionless import compile_2nd_matrix_pseudo
 from lib.frame_order.rotor import compile_2nd_matrix_rotor, pcs_numeric_int_rotor, pcs_numeric_int_rotor_qrint
 from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import axis_angle_to_R, euler_to_R_zyz, two_vect_to_R
-from lib.geometry.vectors import vector_angle
+from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant

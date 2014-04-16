@@ -51,7 +51,7 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.wiz_objects import Wiz_window
 from lib.physical_constants import NH_BOND_LENGTH
 from lib.errors import RelaxError
-from lib.text.gui import local_tm, rex, s2, s2f, s2s, te, tf, tm, ts
+from lib.text.gui import local_tm, rex, s2, s2f, te, tf, tm, ts
 from lib.text.string import LIST, PARAGRAPH, SECTION, SUBSECTION, TITLE
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin, spin_loop

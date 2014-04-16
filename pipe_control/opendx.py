@@ -28,11 +28,9 @@ from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxUnknownParamError
+from lib.errors import RelaxError
 from lib.io import open_write_file
 from lib.software.opendx.files import write_config, write_general, write_point, write_program
-from pipe_control import diffusion_tensor
-from pipe_control import pipes
 from pipe_control import value
 from specific_analyses.api import return_api
 

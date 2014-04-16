@@ -28,13 +28,11 @@ from os import F_OK, access, getcwd, sep
 import platform
 from re import search
 import sys
-from textwrap import wrap
 from time import sleep
 import webbrowser
 import wx
 
 # relax module imports.
-from lib import ansi
 from data_store import Relax_data_store; ds = Relax_data_store()
 from data_store.gui import Gui
 from graphics import IMAGE_PATH, fetch_icon
@@ -45,7 +43,7 @@ from gui.controller import Controller
 from gui.export_bmrb import Export_bmrb_window
 from gui.filedialog import RelaxFileDialog
 from gui.fonts import font
-from gui.icons import Relax_task_bar_icon, relax_icons
+from gui.icons import relax_icons
 from gui.interpreter import Interpreter
 from gui.menu import Menu
 from gui.message import error_message, Question

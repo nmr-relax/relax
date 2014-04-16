@@ -41,7 +41,7 @@ from gui.components.spectrum import Spectra_list
 from gui.filedialog import RelaxDirDialog
 from gui.fonts import font
 from gui.message import error_message, Missing_data
-from gui.string_conv import float_to_gui, gui_to_bool, gui_to_float, gui_to_int, gui_to_str, str_to_gui
+from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 from gui.wizards.peak_intensity import Peak_intensity_wizard
 from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1, r1rho, r1rho_prime, r2, r2a, r2b, r2eff

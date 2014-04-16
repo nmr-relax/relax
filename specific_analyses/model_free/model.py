@@ -22,11 +22,6 @@
 # Module docstring.
 """The model-free analysis parameter functions."""
 
-# Python module imports.
-from math import pi
-from numpy import array, float64, identity, int8, zeros
-from re import match, search
-
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
 from pipe_control import diffusion_tensor

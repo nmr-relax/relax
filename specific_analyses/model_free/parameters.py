@@ -28,9 +28,9 @@ from numpy import array, float64, identity, int8, zeros
 from re import match, search
 
 # relax module imports.
-from lib.errors import RelaxError, RelaxNoSequenceError, RelaxNoTensorError
+from lib.errors import RelaxError
 from pipe_control import diffusion_tensor
-from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
+from pipe_control.mol_res_spin import spin_loop
 from specific_analyses.model_free.model import determine_model_type
 
 

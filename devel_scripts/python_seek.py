@@ -28,7 +28,7 @@ This requires access to a shell and the locate, grep, and other programs.
 
 
 # Python module imports.
-from os import X_OK, access, readlink, system
+from os import X_OK, access, readlink
 from os.path import abspath, dirname, isabs, isfile, islink, join
 from subprocess import PIPE, Popen
 import sys

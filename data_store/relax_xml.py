@@ -22,7 +22,7 @@
 # Module docstring.
 """Module containing generic functions for creation and parsing of XML representations of Python objects."""
 
-# Python module imports.
+# Python module imports (note that some of these are needed for the eval() function call).
 import numpy
 from numpy import set_printoptions, array, inf, nan, ndarray, zeros
 from re import search

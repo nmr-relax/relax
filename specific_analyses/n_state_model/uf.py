@@ -37,8 +37,6 @@ from lib.structure.internal.object import Internal
 from pipe_control import pipes
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
-from user_functions.data import Uf_tables; uf_tables = Uf_tables()
-from user_functions.objects import Desc_container
 
 
 def CoM(pivot_point=None, centre=None):

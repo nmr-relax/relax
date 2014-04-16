@@ -27,14 +27,13 @@ from copy import deepcopy
 from math import pi, sqrt
 from numpy import arccos, dot, float64, linalg, zeros
 from numpy.linalg import norm
-from re import search
 import sys
 from warnings import warn
 
 # relax module imports.
 from data_store.align_tensor import AlignTensorList
 from lib.alignment.alignment_tensor import calc_chi_tensor, kappa
-from lib.errors import RelaxError, RelaxNoTensorError, RelaxStrError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
+from lib.errors import RelaxError, RelaxNoTensorError, RelaxTensorError, RelaxUnknownParamCombError, RelaxUnknownParamError
 from lib.geometry.angles import wrap_angles
 from lib.io import write_data
 from lib.warnings import RelaxWarning

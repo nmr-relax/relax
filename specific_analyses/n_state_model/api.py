@@ -46,7 +46,7 @@ from specific_analyses.api_common import API_common
 from specific_analyses.n_state_model.data import base_data_types, calc_ave_dist, num_data_points
 from specific_analyses.n_state_model.optimisation import minimise_bc_data, target_fn_setup
 from specific_analyses.n_state_model.parameter_object import N_state_params
-from specific_analyses.n_state_model.parameters import disassemble_param_vector, linear_constraints, param_model_index, param_num
+from specific_analyses.n_state_model.parameters import disassemble_param_vector, linear_constraints, param_num
 from target_functions.potential import quad_pot
 
 

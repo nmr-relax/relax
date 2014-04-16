@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 """Module for the calculation of the matrix exponential."""
 
 # Python module imports.
-from numpy import array, diag, dot, exp, iscomplex
+from numpy import array, diag, dot, exp
 from numpy.linalg import eig, inv
 
 # relax module imports.

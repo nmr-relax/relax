@@ -29,7 +29,6 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.io import open_write_file, strip
 from lib.warnings import RelaxWarning
 
 

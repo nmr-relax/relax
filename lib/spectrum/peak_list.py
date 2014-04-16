@@ -26,17 +26,15 @@
 
 
 # Python module imports.
-import sys
 from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.io import extract_data, strip, write_data
+from lib.io import extract_data, strip
 from lib.sequence import read_spin_data
 from lib.spectrum import nmrpipe, nmrview, sparky, xeasy
 from lib.spectrum.objects import Peak_list
-from lib.warnings import RelaxWarning, RelaxNoSpinWarning
-from pipe_control.mol_res_spin import generate_spin_id_unique, return_spin
+from lib.warnings import RelaxWarning
 
 
 def autodetect_format(file_data):

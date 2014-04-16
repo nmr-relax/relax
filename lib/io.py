@@ -43,9 +43,9 @@ from sys import stdin, stdout, stderr
 from warnings import warn
 
 # relax module imports.
-from lib.check_types import is_filetype, is_float
+from lib.check_types import is_filetype
 from lib.compat import bz2_open, gz_open
-from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxInvalidSeqError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
+from lib.errors import RelaxError, RelaxFileError, RelaxFileOverwriteError, RelaxMissingBinaryError, RelaxNoInPathError, RelaxNonExecError
 from lib.warnings import RelaxWarning
 
 
