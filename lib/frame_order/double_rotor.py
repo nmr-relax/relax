@@ -22,9 +22,6 @@
 # Module docstring.
 """Module for the double rotor frame order model."""
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
 from math import cos, pi, sin, sqrt
 from numpy import dot, inner, sinc, transpose

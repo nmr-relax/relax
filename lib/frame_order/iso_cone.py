@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,14 +22,13 @@
 # Module docstring.
 """Module for the handling of Frame Order."""
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
 from math import cos, pi, sqrt
 from numpy import sinc
-if dep_check.scipy_module:
+try:
     from scipy.integrate import tplquad
+except ImportError:
+    pass
 
 # relax module imports.
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full, pcs_pivot_motion_full_qrint, rotate_daeg
