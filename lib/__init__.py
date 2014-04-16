@@ -56,5 +56,6 @@ __all__ = [
     'statistics',
     'structure',
     'text',
-    'warnings'
+    'warnings',
+    'xml'
 ]

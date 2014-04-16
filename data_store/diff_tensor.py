@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,10 +30,10 @@ from numpy import array, float64, dot, identity, transpose, zeros
 
 # relax module imports.
 from data_store.data_classes import Element
-from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import two_vect_to_R
 from lib.errors import RelaxError
+from lib.xml import fill_object_contents, xml_to_object
 
 
 def calc_Diso(tm):

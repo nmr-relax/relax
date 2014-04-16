@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,9 +23,9 @@
 """The objects representing displacement information in the internal structural object."""
 
 # relax module import.
-from data_store.relax_xml import object_to_xml, xml_to_object
 from lib.structure.superimpose import kabsch
 from lib.structure.internal.models import ModelContainer
+from lib.xml import object_to_xml, xml_to_object
 
 
 class Displacements:

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,10 +29,10 @@ from numpy.linalg import det, eig, eigvals
 
 # relax module imports.
 from data_store.data_classes import Element
-from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.float import nan
 from lib.geometry.rotations import R_to_euler_zyz
 from lib.errors import RelaxError
+from lib.xml import fill_object_contents, xml_to_object
 
 
 def calc_A(Axx, Ayy, Azz, Axy, Axz, Ayz):

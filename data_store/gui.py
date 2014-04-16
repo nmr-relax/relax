@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2010-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2010-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,7 +24,7 @@
 
 # relax module imports.
 from data_store.data_classes import Element, RelaxListType
-from data_store.relax_xml import xml_to_object
+from lib.xml import xml_to_object
 
 
 class Gui(Element):

@@ -32,7 +32,6 @@ from re import search
 from warnings import warn
 
 # relax module imports.
-from data_store.relax_xml import object_to_xml, xml_to_object
 from lib import regex
 from lib.check_types import is_float
 from lib.errors import RelaxError, RelaxNoneIntError, RelaxNoPdbError
@@ -43,6 +42,7 @@ from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.warnings import RelaxWarning
+from lib.xml import object_to_xml, xml_to_object
 
 
 # Module variables.

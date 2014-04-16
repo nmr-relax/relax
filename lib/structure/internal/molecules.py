@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -28,11 +28,11 @@ from string import digits
 from warnings import warn
 
 # relax module import.
-from data_store.relax_xml import fill_object_contents, xml_to_object
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
 from lib.periodic_table import periodic_table
 from lib.structure import pdb_read
 from lib.warnings import RelaxWarning
+from lib.xml import fill_object_contents, xml_to_object
 
 
 class MolContainer:

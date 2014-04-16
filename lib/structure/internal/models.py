@@ -26,9 +26,9 @@
 from re import match
 
 # relax module import.
-from data_store.relax_xml import fill_object_contents
 from lib.errors import RelaxError, RelaxFromXMLNotEmptyError
 from lib.structure.internal.molecules import MolList
+from lib.xml import fill_object_contents
 
 
 class ModelList(list):

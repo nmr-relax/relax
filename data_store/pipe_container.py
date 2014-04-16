@@ -32,9 +32,9 @@ from data_store.exp_info import ExpInfo
 from data_store.interatomic import InteratomList
 from data_store.mol_res_spin import MoleculeList
 from data_store.prototype import Prototype
-from data_store.relax_xml import fill_object_contents, node_value_to_python, xml_to_object
 from lib.errors import RelaxFromXMLNotEmptyError
 from lib.structure.internal.object import Internal
+from lib.xml import fill_object_contents, node_value_to_python, xml_to_object
 
 
 class PipeContainer(Prototype):
