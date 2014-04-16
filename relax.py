@@ -292,15 +292,15 @@ class Relax:
         # Recognised command line options for IO redirection.
         group = OptionGroup(parser, 'IO redirection options')
         group.add_option('-l', '--log', action='store', type='string', dest='log', help='log relax output to the file LOG_FILE', metavar='LOG_FILE')
-        group.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to stdout and the file LOG_FILE', metavar='LOG_FILE')
+        group.add_option('-t', '--tee', action='store', type='string', dest='tee', help='tee relax output to both stdout and the file LOG_FILE', metavar='LOG_FILE')
         parser.add_option_group(group)
 
         # Recognised command line options for the test suite.
         group = OptionGroup(parser, 'Test suite options')
-        group.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the relax test suite')
-        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the relax system/functional tests (part of the test suite)')
-        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the relax unit tests (part of the test suite)')
-        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the relax GUI tests (part of the test suite)')
+        group.add_option('-x', '--test-suite', action='store_true', dest='test_suite', default=0, help='execute the full relax test suite')
+        group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests')
+        group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests')
+        group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
         group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
         parser.add_option_group(group)
 
