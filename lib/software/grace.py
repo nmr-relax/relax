@@ -27,10 +27,6 @@
 from math import ceil, sqrt
 from re import search
 
-# relax module imports.
-from pipe_control import pipes
-from specific_analyses.api import return_api
-
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.
 
@@ -356,15 +352,6 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
         # Axis specific settings.
         axes = ['x', 'y']
         for i in range(2):
-            # Analysis specific methods for making labels.
-            analysis_spec = False
-            if pipes.cdp_name():
-                # Flag for making labels.
-                analysis_spec = True
-
-                # The specific analysis API object.
-                api = return_api()
-
             # Some axis default values for spin data.
             if data_type[i] == 'spin':
                 # Residue only data.
@@ -383,32 +370,7 @@ def write_xy_header(file=None, paper_size='A4', title=None, subtitle=None, view=
                 if seq_type[i] == 'mixed':
                     # X-axis label.
                     if not axis_labels[gi][i]:
-                        axis_labels[gi][i] = "Spin identification string"
-
-            # Some axis default values for other data types.
-            else:
-                # Label.
-                if analysis_spec and (not axis_labels or not axis_labels[gi][i]):
-                    # Strip out the '_err' and '_bc' from the data type to allow the error and back-calculated structures to be used.
-                    data_type_i = data_type[i]
-                    if search('_err$', data_type_i):
-                        data_type_i = data_type_i[:-4]
-                    elif search('_bc$', data_type_i):
-                        data_type_i = data_type_i[:-3]
-
-                    # Get the units.
-                    units = api.return_units(data_type_i)
-
-                    # Set the label.
-                    axis_labels[gi][i] = api.return_grace_string(data_type_i)
-
-                    # Add units.
-                    if units:
-                        axis_labels[gi][i] = axis_labels[gi][i] + "\\N (" + units + ")"
-
-                    # Normalised data.
-                    if norm and norm[gi] and axes[i] == 'y':
-                        axis_labels[gi][i] = axis_labels[gi][i] + " \\N\\q(normalised)\\Q"
+                        axis_labels[gi][i] = "Spin ID string"
 
             # Write out the data.
             if axis_labels[gi][i]:
