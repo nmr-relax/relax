@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,12 +30,12 @@ from unittest import TestCase
 import wx
 
 # relax module imports.
-from compat import queue
 from data_store import Relax_data_store; ds = Relax_data_store()
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from lib.compat import queue
+from lib.errors import RelaxError
 from pipe_control.reset import reset
 from prompt.interpreter import exec_script
-from lib.errors import RelaxError
 from status import Status; status = Status()
 from test_suite.clean_up import deletion
 from user_functions.data import Uf_info; uf_info = Uf_info()

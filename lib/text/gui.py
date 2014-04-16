@@ -26,7 +26,7 @@ Some of these text elements are operating system dependent due to the incomplete
 """
 
 # relax module imports.
-from compat import SYSTEM, u
+from lib.compat import SYSTEM, u
 
 # OS Flags.
 win = False

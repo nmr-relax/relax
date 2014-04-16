@@ -34,7 +34,7 @@
 """The main module for relax execution."""
 
 # Set up the Python 2 and 3 work-arounds.
-import compat
+import lib.compat
 
 # Dependency checks.
 import dep_check

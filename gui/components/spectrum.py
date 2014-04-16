@@ -28,11 +28,11 @@ import wx
 import wx.lib.buttons
 
 # relax module imports.
-from compat import u
 from graphics import fetch_icon
 from gui.components.base_list import Base_list
 from gui.string_conv import float_to_gui, gui_to_str, str_to_gui
 from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
+from lib.compat import u
 from pipe_control.spectrum import replicated_flags, replicated_ids
 from status import Status; status = Status()
 from specific_analyses.relax_disp.data import is_cpmg_exp_type, is_r1rho_exp_type

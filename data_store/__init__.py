@@ -30,11 +30,11 @@ from time import asctime
 import xml.dom.minidom
 
 # relax module imports.
-from compat import builtins
 from data_store.gui import Gui
 from data_store.pipe_container import PipeContainer
 from data_store.relax_xml import fill_object_contents, xml_to_object
 import pipe_control
+from lib.compat import builtins
 from lib.errors import RelaxError, RelaxPipeError, RelaxNoPipeError
 from status import Status; status = Status()
 import version

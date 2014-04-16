@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -30,8 +30,8 @@ from traceback import print_exc
 import wx
 
 # relax module imports.
-from compat import Queue
 from gui.errors import gui_raise
+from lib.compat import Queue
 from lib.errors import AllRelaxErrors
 from prompt import interpreter
 from status import Status; status = Status()

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -26,9 +26,9 @@
 import sys
 
 # relax module imports.
-from compat import builtins
 from data_store import Relax_data_store; ds = Relax_data_store()
 from dep_check import C_module_exp_fn, scipy_module
+from lib.compat import builtins
 from lib.errors import RelaxError, RelaxNoPipeError, RelaxPipeError
 from lib.io import write_data
 from status import Status; status = Status()

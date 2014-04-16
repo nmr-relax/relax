@@ -28,8 +28,8 @@ if dep_check.wx_module:
     import wx
 
 # relax module imports.
-from compat import StringIO
-from compat import TextTestResult
+from lib.compat import StringIO
+from lib.compat import TextTestResult
 from status import Status; status = Status()
 
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,22 +29,30 @@ except ImportError:
     print("The platform module cannot be imported.  For Python <= 2.2, try copying the platform.py file from http://hg.python.org/cpython/file/2.3/Lib/platform.py into your lib/pythonX.X/ directory.")
     raise
 
-# Dependency check module.
-import dep_check
-
 # Python module imports.
-if dep_check.bz2_module:
+try:
     import bz2
     from bz2 import BZ2File
-else:
+    bz2_module = True
+except ImportError:
     BZ2File = object
-if dep_check.gzip_module:
+    bz2_module = False
+    message = sys.exc_info()[1]
+    bz2_module_message = message.args[0]
+try:
     import gzip
-else:
+    gzip_module = True
+except ImportError:
     gzip = object
+    gzip_module = False
+    message = sys.exc_info()[1]
+    gzip_module_message = message.args[0]
 from copy import deepcopy
-if dep_check.io_module:
+try:
     import io
+    io_module = True
+except ImportError:
+    io_module = False
 import os
 import platform
 import sys
@@ -85,7 +93,7 @@ else:
 # The StringIO class.
 if PY_VERSION == 2:
     from cStringIO import StringIO
-elif dep_check.io_module:
+elif io_module:
     from io import StringIO
 else:
     StringIO = None
@@ -119,9 +127,9 @@ def bz2_open(file, mode='r'):
         raise RelaxError("The mode '%s' must be one or 'r' or 'w'." % mode)
 
     # Check if the bz2 module exists.
-    if not dep_check.bz2_module:
+    if not bz2_module:
         if mode == 'r':
-            raise RelaxError("Cannot open the file %s, try uncompressing first.  %s." % (file, dep_check.bz2_module_message))
+            raise RelaxError("Cannot open the file %s, try uncompressing first.  %s." % (file, bz2_module_message))
         else:
             raise RelaxError("Cannot create bzip2 file %s, the bz2 Python module cannot be found." % file)
 
@@ -173,9 +181,9 @@ def gz_open(file, mode='r'):
         raise RelaxError("The mode '%s' must be one or 'r' or 'w'." % mode)
 
     # Check if the bz2 module exists.
-    if not dep_check.gzip_module:
+    if not gzip_module:
         if mode == 'r':
-            raise RelaxError("Cannot open the file %s, try uncompressing first.  %s." % (file, dep_check.gzip_module_message))
+            raise RelaxError("Cannot open the file %s, try uncompressing first.  %s." % (file, gzip_module_message))
         else:
             raise RelaxError("Cannot create gzipped file %s, the bz2 Python module cannot be found." % file)
 
