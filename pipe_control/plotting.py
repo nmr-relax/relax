@@ -147,6 +147,10 @@ def assemble_data_seq_series(spin_id=None, x_data_name=None, y_data_name=None, p
         else:
             val, err = fetch_1D_data(plot_data=plot_data, data_name=x_data_name, spin=spin, res_num=res_num)
 
+        # No data.
+        if val == None:
+            continue
+
         # The keys.
         if series_type == dict:
             keys = list(val.keys())
