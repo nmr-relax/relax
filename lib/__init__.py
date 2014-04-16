@@ -49,6 +49,7 @@ __all__ = [
     'physical_constants',
     'regex',
     'selection',
+    'sequence',
     'software',
     'spectral_densities',
     'spectrum',
