@@ -34,6 +34,7 @@ from lib.errors import RelaxError
 
 # relax software verification test module imports.
 from test_suite.relax_test_loader import RelaxTestLoader as TestLoader
+from test_suite.verification_tests.library import Library
 
 
 __all__ = [
@@ -90,7 +91,7 @@ class Verification_test_runner:
 
         # All tests.
         if not tests:
-            pass
+            suite_array.append(TestLoader().loadTestsFromTestCase(Library))
 
         # Group all tests together.
         full_suite = TestSuite(suite_array)
