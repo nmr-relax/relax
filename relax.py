@@ -254,6 +254,15 @@ class Relax:
             runner = Test_suite_runner(self.tests, timing=self.test_timings)
             runner.run_gui_tests()
 
+        # Execute the relax verification tests.
+        elif self.mode == 'verification tests':
+            # Only import the module in the test modes (to improve program start up speeds).
+            from test_suite.test_suite_runner import Test_suite_runner
+
+            # Run the tests.
+            runner = Test_suite_runner(self.tests, timing=self.test_timings)
+            runner.run_verification_tests()
+
         # Test mode.
         elif self.mode == 'test':
             self.test_mode()
@@ -301,6 +310,7 @@ class Relax:
         group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests')
         group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests')
         group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
+        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the relax software verification tests')
         group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
         parser.add_option_group(group)
 
@@ -365,7 +375,7 @@ class Relax:
             self.tee_file = None
 
         # Test suite mode, therefore the args are the tests to run and not a script file.
-        if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+        if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
             # Store the arguments.
             self.tests = args
 
@@ -410,7 +420,7 @@ class Relax:
             self.mode = 'info'
 
         # Run the relax tests.
-        elif options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+        elif options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
             # Exclusive modes.
             if options.test:
                 parser.error("executing the relax test suite and running relax in test mode are mutually exclusive")
@@ -426,6 +436,8 @@ class Relax:
                 self.mode = 'unit tests'
             elif options.gui_tests:
                 self.mode = 'GUI tests'
+            elif options.verification_tests:
+                self.mode = 'verification tests'
 
             # Set the status flag.
             status.test_mode = True
@@ -437,7 +449,7 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
                 parser.error("the relax test mode and executing the test suite are mutually exclusive")
             elif options.licence:
                 parser.error("the relax modes test and licence are mutually exclusive")
@@ -452,7 +464,7 @@ class Relax:
                 parser.error("a script should not be supplied in test mode")
 
             # Exclusive modes.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
                 parser.error("the relax licence mode and executing the test suite are mutually exclusive")
             elif options.test:
                 parser.error("the relax modes licence and test are mutually exclusive")
@@ -463,7 +475,7 @@ class Relax:
         # GUI.
         elif options.gui:
             # Exclusive models.
-            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests:
+            if options.test_suite or options.system_tests or options.unit_tests or options.gui_tests or options.verification_tests:
                 parser.error("the relax GUI mode and testing modes are mutually exclusive")
             elif options.licence:
                 parser.error("the relax GUI mode and licence mode are mutually exclusive")

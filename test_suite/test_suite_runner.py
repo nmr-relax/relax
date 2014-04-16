@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2012 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,6 +36,7 @@ if dep_check.wx_module:
     from test_suite.gui_tests import GUI_test_runner
 from test_suite.system_tests import System_test_runner
 from test_suite.unit_tests.unit_test_runner import Unit_test_runner
+from test_suite.verification_tests import Verification_test_runner
 
 # relax module imports.
 if dep_check.wx_module:
@@ -55,7 +56,7 @@ class Test_suite_runner:
         - GUI tests.
     """
 
-    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui'], timing=False):
+    def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False):
         """Store the list of tests to preform.
 
         The test list should be something like ['N_state_model.test_stereochem_analysis'].  The first part is the imported test case class, the second is the specific test.
@@ -65,7 +66,7 @@ class Test_suite_runner:
         @type tests:            list of str
         @keyword from_gui:      A flag which indicates if the tests are being run from the GUI or not.
         @type from_gui:         bool
-        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui', 'verification'] for all tests.
         @type categories:       list of str
         @keyword timing:        A flag which if True will enable timing of individual tests.
         @type timing:           bool
@@ -100,6 +101,10 @@ class Test_suite_runner:
         # Execute the GUI tests.
         if 'gui' in self.categories:
             self.run_gui_tests(summary=False)
+
+        # Execute the GUI tests.
+        if 'verification' in self.categories:
+            self.run_verification_tests(summary=False)
 
         # Print out a summary of the test suite.
         self.summary()
@@ -187,6 +192,25 @@ class Test_suite_runner:
             self.summary()
 
 
+    def run_verification_tests(self, summary=True):
+        """Execute the software verification tests.
+
+        @keyword summary:   A flag which if True will cause a summary to be printed.
+        @type summary:      bool
+        """
+
+        # Print a header.
+        title(file=sys.stdout, text='Verification tests')
+
+        # Run the tests.
+        verification_runner = Verification_test_runner()
+        self.verification_result = verification_runner.run(self.tests, runner=self.runner)
+
+        # Print out a summary of the test suite.
+        if summary:
+            self.summary()
+
+
     def summary(self):
         """Print out a summary of the relax test suite."""
 
@@ -211,12 +235,16 @@ class Test_suite_runner:
         if hasattr(self, 'gui_result'):
             summary_line("GUI tests", self.gui_result)
 
+        # Verification test summary.
+        if hasattr(self, 'verification_result'):
+            summary_line("Verification tests", self.verification_result)
+
         # Synopsis.
-        if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result'):
+        if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result') and hasattr(self, 'verification_result'):
             if self.gui_result == "skip":
-                status = self.system_result and self.unit_result
+                status = self.system_result and self.unit_result and self.verification_result
             else:
-                status = self.system_result and self.unit_result and self.gui_result
+                status = self.system_result and self.unit_result and self.gui_result and self.verification_result
             summary_line("Synopsis", status)
 
         # End.
@@ -230,6 +258,7 @@ class Test_suite_runner:
         system_count = {}
         unit_count = {}
         gui_count = {}
+        verification_count = {}
         for i in range(len(status.skipped_tests)):
             # Alias.
             test = status.skipped_tests[i]
@@ -243,6 +272,7 @@ class Test_suite_runner:
                 system_count[test[1]] = 0
                 unit_count[test[1]] = 0
                 gui_count[test[1]] = 0
+                verification_count[test[1]] = 0
 
             # A system test.
             if test[2] == 'system':
@@ -255,6 +285,10 @@ class Test_suite_runner:
             # A GUI test.
             if test[2] == 'gui':
                 gui_count[test[1]] += 1
+
+            # A verification test.
+            if test[2] == 'verification':
+                verification_count[test[1]] += 1
 
         # The missing modules.
         missing_modules = sorted(system_count.keys())
@@ -282,6 +316,8 @@ class Test_suite_runner:
             header = "%s %20s" % (header, "Unit test count")
         if len(gui_count):
             header = "%s %20s" % (header, "GUI test count")
+        if len(verification_count):
+            header = "%s %20s" % (header, "Verification test count")
         print('-'*len(header))
         print(header)
         print('-'*len(header))
@@ -295,8 +331,9 @@ class Test_suite_runner:
                 text = "%s %20s" % (text, unit_count[module])
             if len(gui_count):
                 text = "%s %20s" % (text, gui_count[module])
+            if len(verification_count):
+                text = "%s %20s" % (text, verification_count[module])
             print(text)
-
 
         # End the table.
         print('-'*len(header))

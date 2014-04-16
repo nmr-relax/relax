@@ -23,9 +23,12 @@
 """The relax test-suite."""
 
 
-__all__ = ['formatting',
-           'relax_test_runner',
-           'shared_data',
-           'system_tests',
-           'test_suite_runner',
-           'unit_tests']
+__all__ = [
+    'formatting',
+    'relax_test_runner',
+    'shared_data',
+    'system_tests',
+    'test_suite_runner',
+    'unit_tests',
+    'verificiation_tests'
+]
