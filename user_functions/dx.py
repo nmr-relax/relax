@@ -32,7 +32,6 @@ else:
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from lib.software.opendx.execute import run
-from pipe_control import diffusion_tensor
 from pipe_control.opendx import map
 from specific_analyses.frame_order.parameter_object import Frame_order_params; frame_order_params = Frame_order_params()
 from specific_analyses.model_free.parameter_object import Model_free_params; model_free_params = Model_free_params()

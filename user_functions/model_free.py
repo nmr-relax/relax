@@ -27,7 +27,7 @@ from os import sep
 
 # relax module imports.
 from graphics import ANALYSIS_IMAGE_PATH
-from lib.text.gui import csa, local_tm, r, rex, s2, s2f, s2s, te, tf, ts
+from lib.text.gui import csa, local_tm, r, rex, s2, s2f, te, tf, ts
 from specific_analyses.model_free.uf import create_model, delete, remove_tm, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container

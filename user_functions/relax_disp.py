@@ -32,7 +32,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, padw2, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
