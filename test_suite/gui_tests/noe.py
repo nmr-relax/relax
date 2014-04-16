@@ -26,7 +26,7 @@ import wx
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from gui.interpreter import Interpreter; interpreter = Interpreter()
-from gui.string_conv import int_to_gui, str_to_gui
+from gui.string_conv import str_to_gui
 from pipe_control.mol_res_spin import spin_loop
 from pipe_control.pipes import cdp_name
 from status import Status; status = Status()

@@ -21,7 +21,6 @@
 
 # relax module imports.
 from pipe_control import align_tensor
-from lib.errors import RelaxStrError, RelaxUnknownParamError
 from test_suite.unit_tests.align_tensor_testing_base import Align_tensor_base_class
 
 

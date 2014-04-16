@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,9 +24,6 @@
 This is here to test the ./sample_scripts/relax_disp/R1rho_analysis.py sample script.  The differences between the two files should be minimal.
 """
 
-
-# Python module imports.
-from os import sep
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp

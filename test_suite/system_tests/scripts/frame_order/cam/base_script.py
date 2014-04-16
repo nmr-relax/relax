@@ -23,7 +23,7 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import arctan2, array, cross, dot, float32, float64, transpose, zeros
+from numpy import array, cross, float32, float64, transpose, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
 

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2008-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2008-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
@@ -28,7 +28,6 @@ from os import listdir, sep
 from tempfile import mkdtemp
 
 # relax module imports.
-from auto_analyses import stereochem_analysis
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.align_tensor import calc_chi_tensor

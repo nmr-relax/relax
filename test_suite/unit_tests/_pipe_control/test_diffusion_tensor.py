@@ -24,7 +24,6 @@ from unittest import TestCase
 
 # relax module imports.
 from pipe_control import diffusion_tensor
-from lib.errors import RelaxStrError
 from test_suite.unit_tests.diffusion_tensor_testing_base import Diffusion_tensor_base_class
 
 
