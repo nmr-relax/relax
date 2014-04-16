@@ -11,4 +11,4 @@ intensities = []
 for i in range(len(times)):
     intensities.append(i0 * exp(-rx*times[i]))
 
-print intensities
+print(intensities)
