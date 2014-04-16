@@ -286,7 +286,6 @@ class Noe(SystemTestCase):
         for i in range(len(ids)):
             # The file name.
             file_name = "%s.agr" % ids[i]
-            print file_name
 
             # Does the file exist?
             self.assert_(access(ds.tmpdir+sep+file_name, F_OK))
