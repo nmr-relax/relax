@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,7 +25,7 @@ from numpy import array, dot, eye, float64, zeros
 
 # relax module imports.
 from lib.geometry.rotations import two_vect_to_R
-from pipe_control.structure.geometric import angles_uniform, get_proton_name
+from lib.structure.geometric import angles_uniform, get_proton_name
 
 
 def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, distribution='uniform', debug=False):

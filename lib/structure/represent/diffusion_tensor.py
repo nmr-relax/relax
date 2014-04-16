@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 from numpy import array, dot, float64, transpose
 
 # relax module imports.
-from pipe_control.structure.geometric import generate_vector_dist, generate_vector_residues
+from lib.structure.geometric import generate_vector_dist, generate_vector_residues
 
 
 def diffusion_tensor(mol=None, tensor=None, tensor_diag=None, diff_type=None, rotation=None, axes=None, sim_axes=None, com=None, scale=1.8e-6):

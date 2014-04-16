@@ -32,10 +32,10 @@ from lib.errors import RelaxError
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.structure.cones import Iso_cone
-from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from lib.structure.internal.object import Internal
+from lib.structure.geometric import generate_vector_dist, generate_vector_residues
+from lib.structure.represent.cone import cone_edge, stitch_cone_to_edge
 from pipe_control import pipes
-from pipe_control.structure import geometric
 from pipe_control.structure.mass import centre_of_mass
 
 
@@ -186,7 +186,7 @@ def cone_pdb(cone_type=None, scale=1.0, file=None, dir=None, force=False):
     sim_vectors = None
     if hasattr(cdp, 'ave_pivot_CoM_sim'):
         sim_vectors = cdp.ave_pivot_CoM_sim
-    res_num = geometric.generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
+    res_num = generate_vector_residues(mol=mol, vector=cdp.ave_pivot_CoM, atom_name='Ave', res_name_vect='AVE', sim_vectors=sim_vectors, res_num=2, origin=cdp.pivot_point, scale=scale)
 
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
@@ -197,7 +197,7 @@ def cone_pdb(cone_type=None, scale=1.0, file=None, dir=None, force=False):
     if cone_type == 'diff in cone':
         print("\nGenerating the cone cap.")
         cone_start_atom = mol.atom_num[-1]+1
-        geometric.generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
         stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
 
     # Create the PDB file.
