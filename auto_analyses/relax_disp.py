@@ -546,22 +546,22 @@ class Relax_disp:
             self.interpreter.value.write(param='theta', file='theta.out', dir=path, force=True)
             self.interpreter.value.write(param='w_eff', file='w_eff.out', dir=path, force=True)
 
-        ## The R20 parameter.
-        #if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-        #    self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
-        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
+        # The R20 parameter.
+        if has_cpmg_exp_type() and model in [None, MODEL_LM63, MODEL_CR72, MODEL_IT99, MODEL_M61, MODEL_DPL94, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
+            self.interpreter.value.write(param='r2', file='r20.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r20.agr', dir=path, force=True)
 
-        ## The R20A and R20B parameters.
-        #if has_cpmg_exp_type() and model in [None, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-        #    self.interpreter.value.write(param='r2a', file='r20a.out', dir=path, force=True)
-        #    self.interpreter.value.write(param='r2b', file='r20b.out', dir=path, force=True)
-        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
-        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
+        # The R20A and R20B parameters.
+        if has_cpmg_exp_type() and model in [None, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+            self.interpreter.value.write(param='r2a', file='r20a.out', dir=path, force=True)
+            self.interpreter.value.write(param='r2b', file='r20b.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2a', file='r20a.agr', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2b', file='r20b.agr', dir=path, force=True)
 
-        ## The R1rho parameter.
-        #if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO:
-        #    self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
-        #    self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
+        # The R1rho0 parameter.
+        if has_r1rho_exp_type() and model in [None] + MODEL_LIST_R1RHO:
+            self.interpreter.value.write(param='r2', file='r1rho0.out', dir=path, force=True)
+            self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2', file='r1rho0.agr', dir=path, force=True)
 
         # The pA, pB, and pC parameters.
         if model in [None, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_M61B, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_MMQ_2SITE, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TP02, MODEL_TAP03, MODEL_MP05, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
