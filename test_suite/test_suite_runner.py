@@ -200,7 +200,7 @@ class Test_suite_runner:
         """
 
         # Print a header.
-        title(file=sys.stdout, text='Verification tests')
+        title(file=sys.stdout, text='Software verification tests')
 
         # Run the tests.
         verification_runner = Verification_test_runner()
@@ -237,7 +237,7 @@ class Test_suite_runner:
 
         # Verification test summary.
         if hasattr(self, 'verification_result'):
-            summary_line("Verification tests", self.verification_result)
+            summary_line("Software verification tests", self.verification_result)
 
         # Synopsis.
         if hasattr(self, 'system_result') and hasattr(self, 'unit_result') and hasattr(self, 'gui_result') and hasattr(self, 'verification_result'):
