@@ -30,7 +30,8 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxFileError, RelaxNoPdbError, RelaxNoSequenceError
-from lib.io import get_file_path, open_write_file, write_data, write_spin_data
+from lib.io import get_file_path, open_write_file, write_data
+from lib.sequence import write_spin_data
 from lib.structure.internal.displacements import Displacements
 from lib.structure.internal.object import Internal
 from lib.structure.represent.diffusion_tensor import diffusion_tensor

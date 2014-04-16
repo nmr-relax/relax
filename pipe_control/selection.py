@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,8 +27,8 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoDomainError, RelaxNoSequenceError
-from lib.io import read_spin_data
 from lib.selection import Selection, spin_id_to_data_list
+from lib.sequence import read_spin_data
 from lib.warnings import RelaxNoSpinWarning
 from pipe_control import pipes
 from pipe_control.interatomic import interatomic_loop

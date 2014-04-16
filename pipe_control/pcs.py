@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,8 +35,9 @@ from warnings import warn
 from lib.alignment.pcs import ave_pcs_tensor, pcs_tensor
 from lib.errors import RelaxError, RelaxNoAlignError, RelaxNoPdbError, RelaxNoPCSError, RelaxNoSequenceError
 from lib.geometry.vectors import random_unit_vector
-from lib.io import open_write_file, read_spin_data, write_spin_data
+from lib.io import open_write_file
 from lib.physical_constants import g1H, pcs_constant
+from lib.sequence import read_spin_data, write_spin_data
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import grace, pipes
 from pipe_control.align_tensor import get_tensor_index, get_tensor_object, opt_uses_align_data, opt_uses_tensor

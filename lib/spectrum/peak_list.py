@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2008 Sebastien Morin                                          #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
@@ -31,7 +31,8 @@ from warnings import warn
 
 # relax module imports.
 from lib.errors import RelaxError
-from lib.io import extract_data, read_spin_data, strip, write_data
+from lib.io import extract_data, strip, write_data
+from lib.sequence import read_spin_data
 from lib.spectrum import nmrpipe, nmrview, sparky, xeasy
 from lib.spectrum.objects import Peak_list
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning

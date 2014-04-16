@@ -62,9 +62,10 @@ from warnings import warn
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSpectraError, RelaxNoSpinError, RelaxSpinTypeError
 from lib.float import isNaN
-from lib.io import extract_data, get_file_path, open_write_file, read_spin_data, strip, write_data, write_spin_data
+from lib.io import extract_data, get_file_path, open_write_file, strip, write_data
 from lib.nmr import frequency_to_ppm, frequency_to_rad_per_s
 from lib.physical_constants import g1H, return_gyromagnetic_ratio
+from lib.sequence import read_spin_data, write_spin_data
 from lib.software.grace import write_xy_data, write_xy_header, script_grace2images
 from lib.warnings import RelaxWarning, RelaxNoSpinWarning
 from pipe_control import pipes
