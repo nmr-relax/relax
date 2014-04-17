@@ -53,6 +53,7 @@ MOD_ALL_LIST = [
     'Scientific',
     'numpy',
     'scipy',
+    'matplotlib',
     'wx',
     'mpi4py',
     'epydoc'
@@ -95,6 +96,8 @@ class Python_info:
                 self.version_numpy(file)
             if 'scipy' in self.module_list:
                 self.version_scipy(file)
+            if 'matplotlib' in self.module_list:
+                self.version_matplotlib(file)
             if 'wx' in self.module_list:
                 self.version_wx(file)
             if 'mpi4py' in self.module_list:
@@ -250,6 +253,23 @@ class Python_info:
 
         # Execute and print the version
         self.execute(label="epydoc:", file=file, commands=commands)
+
+
+    def version_matplotlib(self, file=None):
+        """Determine and print out the matplotlib module version info."""
+
+        # The commands.
+        commands = [
+            "try:\n",
+            "    import matplotlib\n",
+            "    version = matplotlib.__version__\n",
+            "except:\n",
+            "    version = '-'\n",
+            "print(version)\n",
+        ]
+
+        # Execute and print the version
+        self.execute(label="matplotlib:", file=file, commands=commands)
 
 
     def version_minfx(self, file=None):
