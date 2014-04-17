@@ -54,10 +54,11 @@ PY_VER = [
     '2.5',
     '2.6',
     '2.7',
-    #'3.0',
+    #'3.0',   # Non-functional Python series.
     '3.1',
     '3.2',
-    '3.3'
+    '3.3',
+    '3.4'
 ]
 
 # The log file.

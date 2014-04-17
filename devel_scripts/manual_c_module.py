@@ -19,6 +19,8 @@ if target == '3.2':
     include = '%s/include/python3.2m/' % path
 elif target == '3.3':
     include = '%s/include/python3.3m/' % path
+elif target == '3.4':
+    include = '%s/include/python3.4m/' % path
 
 # Python 3.2 installed in the home directory.
 cmd.append("gcc -o target_functions/c_chi2.os -c -I%s -fPIC target_functions/c_chi2.c" % include)
