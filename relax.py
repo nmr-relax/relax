@@ -482,7 +482,13 @@ class Relax:
 
             # Missing wx module.
             if not dep_check.wx_module:
-                parser.error("To use the GUI, the wx python module must be installed.")
+                # Not installed.
+                if dep_check.wx_module_message == "No module named 'wx'":
+                    parser.error("To use the GUI, the wxPython module must be installed.")
+
+                # Broken.
+                else:
+                    parser.error("The wxPython installation is broken:\n%s." % dep_check.wx_module_message)
 
             # Set the mode.
             self.mode = 'gui'

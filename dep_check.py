@@ -71,6 +71,8 @@ try:
     wx_module = True
 except ImportError:
     wx_module = False
+    message = sys.exc_info()[1]
+    wx_module_message = message.args[0]
 
 # epydoc module.
 try:
