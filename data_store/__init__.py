@@ -337,8 +337,9 @@ class Relax_data_store(dict):
                     if frq not in dp.spectrometer_frq_list:
                         dp.spectrometer_frq_list.append(frq)
 
-                # And finally count the elements.
+                # And finally count the elements and sort the list.
                 dp.spectrometer_frq_count = len(dp.spectrometer_frq_list)
+                dp.spectrometer_frq_list.sort()
 
 
     def add(self, pipe_name, pipe_type, bundle=None, switch=True):
