@@ -310,7 +310,7 @@ class Relax:
         group.add_option('-s', '--system-tests', action='store_true', dest='system_tests', default=0, help='execute the system/functional tests')
         group.add_option('-u', '--unit-tests', action='store_true', dest='unit_tests', default=0, help='execute the unit tests')
         group.add_option('--gui-tests', action='store_true', dest='gui_tests', default=0, help='execute the GUI tests')
-        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the relax software verification tests')
+        group.add_option('--verification-tests', action='store_true', dest='verification_tests', default=0, help='execute the software verification tests')
         group.add_option('--time', action='store_true', dest='tt', default=0, help='enable the timing of individual tests in the test suite')
         parser.add_option_group(group)
 
