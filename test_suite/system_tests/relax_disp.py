@@ -3561,6 +3561,80 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_sod1wt_t25_bug_21954_order_error_analysis(self):
+        """Error analysis of SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
+
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        'SOD1-WT' CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
+        Data is for experiment at 25 degree Celcius.
+
+        bug #21954 U{https://gna.org/bugs/index.php?21954}: Order of spectrum.error_analysis is important.
+        """
+
+        # Base data setup.
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        pipe_name_r2eff = "%s_R2eff"%(pipe_name)
+        select_spin_index = range(0,1)
+        self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
+
+        # Loop over spectrum ID, and sort them
+        spectrum_ids_A = []
+        spectrum_ids_B = []
+        for spectrum_id in cdp.spectrum_ids:
+            if "A" in spectrum_id:
+                spectrum_ids_A.append(spectrum_id)
+            elif "B" in spectrum_id:
+                spectrum_ids_B.append(spectrum_id)
+
+        # Loop over spin, first reset the error.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            for id_A in spectrum_ids_A:
+                spin.peak_intensity_err[id_A] = None
+            for id_B in spectrum_ids_B:
+                spin.peak_intensity_err[id_B] = None
+
+        # Perform error analysis
+        self.interpreter.spectrum.error_analysis(subset=spectrum_ids_A)
+        self.interpreter.spectrum.error_analysis(subset=spectrum_ids_B)
+
+        # Hold errors
+        Errors_A_B = []
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
+            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
+            Errors_A_B.append([A_err, B_err])
+            # Reset errors
+            for id_A in spectrum_ids_A:
+                spin.peak_intensity_err[id_A] = None
+            for id_B in spectrum_ids_B:
+                spin.peak_intensity_err[id_B] = None
+
+        # Perform error analysis
+        self.interpreter.spectrum.error_analysis(subset=spectrum_ids_B)
+        self.interpreter.spectrum.error_analysis(subset=spectrum_ids_A)
+
+        # Hold errors
+        Errors_B_A = []
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
+            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
+            Errors_B_A.append([A_err, B_err])
+            # Reset errors
+            for id_A in spectrum_ids_A:
+                spin.peak_intensity_err[id_A] = None
+            for id_B in spectrum_ids_B:
+                spin.peak_intensity_err[id_B] = None
+
+        for i in range(len(Errors_A_B)):
+            Error_A_B = Errors_A_B[i]
+            Error_B_A = Errors_B_A[i]
+            self.assertAlmostEqual(Error_A_B[0], Error_B_A[0], 4)
+            self.assertAlmostEqual(Error_A_B[1], Error_B_A[1], 4)
+
+
     def test_sod1wt_t25_to_cr72(self):
         """Optimisation of SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
 
