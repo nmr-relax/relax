@@ -3438,6 +3438,184 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
+    def test_sod1wt_t25_to_cr72(self):
+        """Optimisation of SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
+
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        'SOD1-WT' CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
+        Data is for experiment at 25 degree Celcius.
+        """
+
+        # Create the data pipe and load the base data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'sod1wt_t25'
+
+        # Set experiment settings. sfrq, time_T2, ncyc
+        Exps = [
+        ["600MHz", "Z_A", 599.8908617*1E6, 0.06, [28, 0, 4, 32, 60, 2, 10, 16, 8, 20, 50, 18, 40, 6, 12, 0, 24], ["Z_A1", "Z_A15"] ],
+        ["500MHz", "Z_B", 499.862139*1E6, 0.04, [20, 0, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28, 0], ["Z_B1", "Z_B18"] ] ]
+
+        # Generate r20 keu
+        r20_key_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=Exps[0][2])
+        r20_key_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=Exps[1][2])
+
+        # Create base pipe
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+
+        # Loop throug experiments
+        id_lists = []
+        for folder, key, sfrq, time_T2, ncycs, rep_ncyss in Exps:
+            # Read spins
+            self.interpreter.spectrum.read_spins(file="128_FT.ser", dir=data_path+sep+folder)
+            self.interpreter.spectrum.read_spins(file="128_FT.ser", dir=data_path+sep+folder)
+
+            # Make spectrum id list
+            id_list = list(key+str(i) for i in range(len(ncycs)))
+            id_lists.append(id_list)
+
+            # Read intensities
+            self.interpreter.spectrum.read_intensities(file="128_FT.ser", dir=data_path+sep+folder, int_method='height', spectrum_id=id_list, int_col=list(xrange(len(id_list))) )
+
+            # Loop over experiments
+            for i in range(len(ncycs)):
+                ncyc = ncycs[i]
+                vcpmg = ncyc/time_T2
+
+                # Test if spectrum is a reference
+                if float(vcpmg) == 0.0:
+                    vcpmg = None
+                else:
+                    vcpmg = round(float(vcpmg),3)
+
+                # Set current id
+                current_id = id_list[i]
+
+                # Set the current experiment type.
+                self.interpreter.relax_disp.exp_type(spectrum_id=current_id, exp_type='SQ CPMG')
+
+                # Set the NMR field strength of the spectrum.
+                self.interpreter.spectrometer.frequency(id=current_id, frq=sfrq, units='Hz')
+
+                # Relaxation dispersion CPMG constant time delay T (in s).
+                self.interpreter.relax_disp.relax_time(spectrum_id=current_id, time=time_T2)
+
+                # Set the relaxation dispersion CPMG frequencies.
+                self.interpreter.relax_disp.cpmg_frq(spectrum_id=current_id, cpmg_frq=vcpmg)
+
+        # Define replicated
+        self.interpreter.spectrum.replicated(spectrum_ids=Exps[0][5])
+        self.interpreter.spectrum.replicated(spectrum_ids=Exps[1][5])
+
+        # Perform error analysis
+        #self.interpreter.spectrum.error_analysis(subset=id_lists[0])
+        self.interpreter.spectrum.error_analysis(subset=id_lists[1])
+        self.interpreter.spectrum.error_analysis(subset=id_lists[0])
+
+        # Define isotope
+        self.interpreter.spin.isotope(isotope='15N')
+
+        #############
+
+        # Define the 64 residues which was used for Global fitting
+        glob_assn = ["G10N-H", "D11N-H", "Q15N-H", "G16N-H", "G37N-H", "G41N-H", "L42N-H", "H43N-H", "H46N-H", "V47N-H", "E49N-H", 
+        "E50N-H", "E51N-H", "N53N-H", "T54N-H", "G56N-H", "C57N-H", "T58N-H", "G61N-H", "H63aN-H", "F64aN-H", "N65aN-H", 
+        "L67N-H", "S68N-H", "K70N-H", "G72N-H", "G73N-H", "K75N-H", "E78N-H", "R79N-H", "H80N-H", "V81N-H", "G82N-H", 
+        "G85N-H", "N86N-H", "V87N-H", "S102N-H", "V103N-H", "I104N-H", "S105N-H", "A111N-H", "I112N-H", "R115N-H", 
+        "V118N-H", "E121N-H", "A123N-H", "L126N-H", "G127N-H", "K128N-H", "G129N-H", "G130N-H", "N131N-H", "E133N-H", 
+        "S134N-H", "T135N-H", "T137N-H", "G138N-H", "N139N-H", "A140N-H", "G141N-H", "S142N-H", "R143N-H", "C146N-H", "G147N-H"]
+
+        # Test number of global
+        self.assertEqual(64, len(glob_assn ))
+
+        ## Turn assignments into relax spin ids.
+        # Define regular expression search
+        r = re.compile("([a-zA-Z]+)([0-9]+)([a-zA-Z]+)")
+
+        # Create list to hold regular expression search
+        relax_glob_ids = []
+
+        # Loop over assignments
+        for assn in glob_assn:
+            # Make match for the regular search
+            m = r.match(assn)
+            # Convert to relax spin string
+            relax_string = ":%s@%s"%(m.group(2),m.group(3))
+
+            # Save the relax spin string and the regular search
+            relax_glob_ids.append([m.group(0), m.group(1), m.group(2), m.group(3), relax_string])
+
+        ############# Deselect all spins, and select few spins
+
+        ## Deselect all spins, and select a few for analysis
+        self.interpreter.deselect.all()            
+
+        # Select few spins
+        for i in range(1):
+            self.interpreter.select.spin(spin_id=relax_glob_ids[i][4], change_all=False)
+
+        ##############
+
+        # Prepare for R2eff calculation
+        pipe_name_r2eff = "%s_R2eff"%(pipe_name)
+        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_r2eff)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_r2eff)
+
+        # Select model for points calculation
+        MODEL = "R2eff"
+        self.interpreter.relax_disp.select_model(model=MODEL)
+        # Calculate R2eff values
+        self.interpreter.calc(verbosity=1)
+
+        # Save disp grap to temp
+        #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True)
+
+        ## Now prepare for MODEL calculation
+        MODEL = "CR72"
+
+        # Change pipe
+        pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
+        self.interpreter.pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
+
+        # Then select model
+        self.interpreter.relax_disp.select_model(model=MODEL)
+
+        GRID_INCS = [3, 5]
+        #GRID_INCS = [3, 5, 7, 9, 11, 13, 19, 21]
+        GRID_RESULTS = []
+        for GRID_INC in GRID_INCS:
+            # Measure time
+            start = time.time()
+
+            # Set initial value
+            for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                spin.kex = 2200.
+
+            # Perform Grid Search
+            self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+            # Stop time
+            done = time.time()
+            elapsed = done - start
+
+            # Print info out
+            for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+                GRID_RESULTS.append([GRID_INC, spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600], mol_name, resi, resn, spin_id, elapsed])
+                # Resetting back to nothing
+                spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600] = None, None, None, None, None
+
+        for GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed in GRID_RESULTS:
+            print("########################## GRID INC %s ##########################"%GRID)
+            print("GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed")
+            print(GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed)
+
+        #self.assertAlmostEqual(spin.pA, 0.99)
+        #self.assertAlmostEqual(spin.kex, 2200)
+
+
     def test_sprangers_data_to_mmq_cr72(self, model=None):
         """Test the 'MMQ CR72' model fitting against Remco Sprangers' ClpP data.
 
