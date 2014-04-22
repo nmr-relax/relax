@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,7 +23,7 @@
 
 
 # Python module imports.
-from os import sep
+from os import pardir, sep
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
@@ -65,7 +65,7 @@ INSIGNIFICANCE = 1.0
 #######################
 
 # The path to the data files.
-DATA_PATH = '../../test_suite/shared_data/dispersion/Hansen'
+DATA_PATH = pardir+sep+pardir+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 
 # Create the data pipe.
 pipe_name = 'base pipe'
