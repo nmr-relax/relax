@@ -908,11 +908,11 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin70.dw, 5.5907147782533, 3)
         self.assertAlmostEqual(spin70.kex/10000, 1828.31716745568/10000, 3)
         self.assertAlmostEqual(spin70.chi2, 55.2887487843661, 3)
-        self.assertAlmostEqual(spin71.r2[r20_key1], 4.92979173044978, 3)
-        self.assertAlmostEqual(spin71.pA, 0.528883026272818, 3)
-        self.assertAlmostEqual(spin71.dw, 0.488914314879541, 3)
-        self.assertAlmostEqual(spin71.kex/10000, 2568.1215115528/10000, 3)
-        self.assertAlmostEqual(spin71.chi2, 4.01287787463568, 3)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 4.98140950171523, 3)
+        self.assertAlmostEqual(spin71.pA, 0.996611720993305, 3)
+        self.assertAlmostEqual(spin71.dw, 4.346521584302, 3)
+        self.assertAlmostEqual(spin71.kex/10000, 1936.08058304917/10000, 3)
+        self.assertAlmostEqual(spin71.chi2, 3.85636864711598, 3)
 
 
     def test_hansen_cpmg_data_to_cr72(self):
