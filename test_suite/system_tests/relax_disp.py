@@ -3509,9 +3509,9 @@ class Relax_disp(SystemTestCase):
         self.interpreter.spectrum.replicated(spectrum_ids=Exps[1][5])
 
         # Perform error analysis
-        #self.interpreter.spectrum.error_analysis(subset=id_lists[0])
-        self.interpreter.spectrum.error_analysis(subset=id_lists[1])
         self.interpreter.spectrum.error_analysis(subset=id_lists[0])
+        self.interpreter.spectrum.error_analysis(subset=id_lists[1])
+        #self.interpreter.spectrum.error_analysis(subset=id_lists[0])
 
         # Define isotope
         self.interpreter.spin.isotope(isotope='15N')
@@ -3552,7 +3552,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.deselect.all()            
 
         # Select few spins
-        for i in range(0,3):
+        for i in range(0,2):
             self.interpreter.select.spin(spin_id=relax_glob_ids[i][4], change_all=False)
 
         ##############
@@ -3567,9 +3567,6 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model=MODEL)
         # Calculate R2eff values
         self.interpreter.calc(verbosity=1)
-
-        # Save disp grap to temp
-        #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True)
 
         ## Now prepare for MODEL calculation
         MODEL = "CR72"
@@ -3586,7 +3583,12 @@ class Relax_disp(SystemTestCase):
         GRID_INCS = [7]
         #GRID_INCS = [3, 5, 7, 9, 11, 13, 19, 21]
 
-        for GRID_INC in GRID_INCS:
+        # Store grid and minimisations results
+        grid_results = []
+        mini_results = []
+
+        for i in range(len(GRID_INCS)):
+            GRID_INC = GRID_INCS[i]
             # Perform Grid Search
             self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
@@ -3595,11 +3597,39 @@ class Relax_disp(SystemTestCase):
                 # Print info
                 print("INC=%i r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(GRID_INC, spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn))
 
-                # Make tests
-                self.assert_(spin.pA > 0.5)
+                # Store grid results
+                grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn])
 
                 # Resetting back to nothing
-                spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600] = None, None, None, None, None
+                if i != len(GRID_INCS)-1:
+                    print("Resetting values")
+                    spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600] = None, None, None, None, None
+
+        ## Now do minimisation
+        self.interpreter.minimise(min_algor='simplex', func_tol=1e-10, max_iter=100000, constraints=True, scaling=True, verbosity=1)
+
+        ## Now test values
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Print info
+            print("r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn))
+
+            # Store minimisation results
+            mini_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn])
+
+        # Make tests
+        for i in range(len(grid_results)):
+            # Get values
+            g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_spin_id, m_resi, m_resn = mini_results[i]
+
+            print("GRID r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_spin_id, g_resi, g_resn))
+            print("MIN  r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_spin_id, m_resi, m_resn))
+
+            # Make tests
+            self.assert_(m_kex > 1000.)
+
+        # Save disp graph to temp
+        #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True)
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
