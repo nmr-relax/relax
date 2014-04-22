@@ -110,7 +110,7 @@ chemical_shift.read(file='ref_500MHz.list', dir=data_path)
 
 # Run faster.
 Relax_disp.opt_func_tol = 1e-10
-Relax_disp.opt_max_iterations = 2000
+Relax_disp.opt_max_iterations = 2500
 
 # Do not change!
 Relax_disp(pipe_name=pipe_name, pipe_bundle=pipe_bundle, results_dir=ds.tmpdir, models=ds.models, grid_inc=GRID_INC, mc_sim_num=MC_NUM)
