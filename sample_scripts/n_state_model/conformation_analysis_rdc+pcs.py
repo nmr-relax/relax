@@ -30,7 +30,7 @@ This should be used in combination with the local_min_search.py sample script.
 
 
 # Python imports.
-from os import getcwd, listdir
+from os import getcwd, listdir, pardir, sep
 from re import search
 
 # relax imports.
@@ -83,13 +83,13 @@ align_list = ['Dy', 'Tb', 'Tm', 'Er', 'Yb', 'Eu']
 # Load the RDCs and PCSs.
 for i in range(len(align_list)):
     # The RDC.
-    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
-    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir='../../../align_data', spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
+    rdc.read(align_id=align_list[i], file='rdc_Series1_G.txt', dir=pardir+sep+pardir+sep+pardir+sep+'align_data', spin_id1_col=1, spin_id2_col=2, data_col=i+3, error_col=None)
+    rdc.read(align_id=align_list[i], file='rdc_err_measured.txt', dir=pardir+sep+pardir+sep+pardir+sep+'align_data', spin_id1_col=1, spin_id2_col=2, data_col=None, error_col=i+3)
     rdc.display(align_id=align_list[i])
 
     # The PCS.
-    pcs.read(align_id=align_list[i], file='pcs_Series1_G.txt', dir='../../../align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+2, error_col=None)
-    pcs.read(align_id=align_list[i], file='pcs_err_measured+rcsa.txt', dir='../../../align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+2)
+    pcs.read(align_id=align_list[i], file='pcs_Series1_G.txt', dir=pardir+sep+pardir+sep+pardir+sep+'align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=i+2, error_col=None)
+    pcs.read(align_id=align_list[i], file='pcs_err_measured+rcsa.txt', dir=pardir+sep+pardir+sep+pardir+sep+'align_data', mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=1, data_col=None, error_col=i+2)
     pcs.display(align_id=align_list[i])
 
     # The weights.
@@ -112,7 +112,7 @@ pipe.create('tag', 'N-state')
 # Load all the tag structures.
 NUM_TAG = 1000
 for i in range(NUM_TAG):
-    structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir='../../../structures/tag_1000/080704_MCMM4_aligned-forEd1000', set_model_num=i+1, set_mol_name='tag')
+    structure.read_pdb(file='LactoseMCMM4_'+`i+1`, dir=pardir+sep+pardir+sep+pardir+sep+'structures'+sep+'tag_1000'+sep+'080704_MCMM4_aligned-forEd1000', set_model_num=i+1, set_mol_name='tag')
 
 # Load the lanthanide atoms.
 structure.load_spins(spin_id=':4@C1', ave_pos=False)

@@ -22,6 +22,9 @@
 """Script for performing a full relaxation dispersion analysis using off-resonance R1rho-type data."""
 
 
+# Python module imports.
+from os import pardir, sep
+
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 
@@ -62,7 +65,7 @@ INSIGNIFICANCE = 1.0
 #######################
 
 # The path to the data files.
-DATA_PATH = '../../test_suite/shared_data/dispersion/r1rho_off_res_tp02'
+DATA_PATH = pardir+sep+pardir+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'r1rho_off_res_tp02'
 
 # Create the data pipe.
 pipe_name = 'base pipe'
