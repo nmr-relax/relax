@@ -6,9 +6,9 @@ lock_powers = [35.0, 39.0, 41.0, 43.0, 46.0, 48.0]
 ncycs = [0, 4, 10, 14, 20, 40]
 
 # Load the experiments settings file.
-expfile = open('exp_parameters_sort.txt','r')
+expfile = open('exp_parameters_sort.txt', 'r')
 expfileslines = expfile.readlines()
-fpipe = open('pipe_names_rx.txt','w')
+fpipe = open('pipe_names_rx.txt', 'w')
 
 for spin_lock in spin_locks:
     for lock_power in lock_powers:
@@ -44,7 +44,7 @@ for spin_lock in spin_locks:
                 #print spin_lock, deltadof2, lock_power, dpwr2slock
                 if deltadof2 == spin_lock and dpwr2slock == lock_power:
                     # Load the peak intensities (first the backbone NH, then the tryptophan indole NH).
-                    spectrum.read_intensities(file=FNAME, dir=os.path.join(os.getcwd(),"peak_lists"), spectrum_id=sp_id, int_method='height')
+                    spectrum.read_intensities(file=FNAME, dir=os.path.join(os.getcwd(), "peak_lists"), spectrum_id=sp_id, int_method='height')
 
                     # Set the relaxation times.
                     relax_fit.relax_time(time=time_sl, spectrum_id=sp_id)

@@ -10,7 +10,7 @@ spin_lock_field_strengths_Hz = {'35': 431.0, '39': 651.2, '41': 800.5, '43': 984
 ncycs = [0, 4, 10, 14, 20, 40]
 
 # Load the experiments settings file.
-expfile = open('exp_parameters_sort.txt','r')
+expfile = open('exp_parameters_sort.txt', 'r')
 expfileslines = expfile.readlines()[:NR_exp]
 expfile.close()
 
@@ -23,7 +23,7 @@ centerPPM_N15 = yCAR
 #gyro1H = 26.7522212E7
 #gyro15N = 2.7126E7
 
-writefile = open('omega_rf_ppm.txt','w')
+writefile = open('omega_rf_ppm.txt', 'w')
 
 for i in range(len(expfileslines)):
     line=expfileslines[i]
@@ -54,7 +54,7 @@ for i in range(len(expfileslines)):
         sp_id = "%s_%s_%s_%s"%(I, deltadof2, dpwr2slock, ncyc)
 
         # Load the peak intensities.
-        spectrum.read_intensities(file=FNAME, dir=os.path.join(os.getcwd(),"peak_lists"), spectrum_id=sp_id, int_method='height')
+        spectrum.read_intensities(file=FNAME, dir=os.path.join(os.getcwd(), "peak_lists"), spectrum_id=sp_id, int_method='height')
 
         # Set the peak intensity errors, as defined as the baseplane RMSD.
         spectrum.baseplane_rmsd(error=1.33e+03, spectrum_id=sp_id)

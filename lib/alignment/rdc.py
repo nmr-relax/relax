@@ -287,7 +287,7 @@ def ave_rdc_tensor_pseudoatom(dj, vect, N, A, weights=None):
 
     # Loop over the pseudo-atoms, calculating the average RDC for the structural ensemble.
     for d in range(M):
-        val += ave_rdc_tensor(dj[d], vect[:, d, :], N, A, weights)
+        val += ave_rdc_tensor(dj[d], vect[:, d,:], N, A, weights)
 
     # Average.
     val = val / M
@@ -346,7 +346,7 @@ def ave_rdc_tensor_pseudoatom_dDij_dAmn(dj, vect, N, dAi_dAmn, weights=None):
 
     # Loop over the pseudo-atoms, calculating the average RDC for the structural ensemble.
     for d in range(M):
-        grad += ave_rdc_tensor_dDij_dAmn(dj[d], vect[:, d, :], N, dAi_dAmn, weights)
+        grad += ave_rdc_tensor_dDij_dAmn(dj[d], vect[:, d,:], N, dAi_dAmn, weights)
 
     # Average.
     grad = grad / M

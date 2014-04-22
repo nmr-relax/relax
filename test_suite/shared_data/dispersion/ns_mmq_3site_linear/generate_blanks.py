@@ -27,7 +27,7 @@ for file_root, Q, nuc, time, max_frq in data:
 
         # Loop over nu until the max is reached.
         i = 0
-        while 1:
+        while True:
             # The CPMG frequency.
             frq = nu*(i+1)
 

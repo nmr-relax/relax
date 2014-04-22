@@ -2902,7 +2902,7 @@ def return_offset_data(spins=None, spin_ids=None, field_count=None, fields=None)
                 # Then it should be: theta = pi + atan(-x) = pi - atan(x) = pi - abs(atan( +/- x)).
                 # This is taken care of with the atan2(y, x) function, which return atan(y / x), in radians, and the result is between -pi and pi.
                 else:
-                    theta[ei][si][mi][oi].append(atan2(omega1 , Delta_omega))
+                    theta[ei][si][mi][oi].append(atan2(omega1, Delta_omega))
 
                 # Calculate effective field in rotating frame
                 w_eff = sqrt( Delta_omega*Delta_omega + omega1*omega1 )
@@ -3677,12 +3677,12 @@ def write_disp_curves(dir=None, force=None):
             continue
 
         # Define writing variables.
-        writing_vars = [['disp',("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
+        writing_vars = [['disp', ("Experiment_name", "Field_strength_(MHz)", "Disp_point_(Hz)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")]]
 
         # If the model is of R1rho type, then also write as R2eff as function of theta.
         if spin.model in MODEL_LIST_R1RHO_FULL and has_r1rho_exp_type() and hasattr(spin, 'isotope'):
             # Add additonal looping over writing parameters.
-            writing_vars.append(['disp_theta',("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
+            writing_vars.append(['disp_theta', ("Experiment_name", "Field_strength_(MHz)", "Tilt_angle_(rad)", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
             #writing_vars.append(['disp_w_eff',("Experiment_name", "Field_strength_(MHz)", "Effective_field_(rad_s-1))", "R2eff_(measured)", "R2eff_(back_calc)", "R2eff_errors")])
 
         # Loop over writing vars

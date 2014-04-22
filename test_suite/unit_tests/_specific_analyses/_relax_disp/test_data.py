@@ -515,7 +515,7 @@ class Test_data(UnitTestCase):
             self.assertEqual(oi, indices[frq_index][2])
 
             # Check the dispersion point info.
-            self.assertAlmostEqual(point, data[frq_index][3][disp_index],2)
+            self.assertAlmostEqual(point, data[frq_index][3][disp_index], 2)
             self.assertEqual(di, indices[frq_index][3][disp_index])
 
             # Increment the data index.
@@ -538,8 +538,8 @@ class Test_data(UnitTestCase):
 
         # Original data (exp_type, frq, offset, point).
         data = [
-            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0],0.04],
-            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0],0.06]
+            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0], 0.04],
+            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0], 0.06]
         ]
 
         # Original indices (ei, mi, oi).
@@ -574,7 +574,7 @@ class Test_data(UnitTestCase):
             self.assertEqual(oi, indices[frq_index][2])
 
             # Check the dispersion point info.
-            self.assertAlmostEqual(point, data[frq_index][3][disp_index],2)
+            self.assertAlmostEqual(point, data[frq_index][3][disp_index], 2)
             self.assertEqual(di, indices[frq_index][3][disp_index])
 
             # Check the time point info.
@@ -600,8 +600,7 @@ class Test_data(UnitTestCase):
         ncyc_1 = [20, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28]
         sfrq_1 = 499.86214*1E6
         time_T2_1 = 0.04
-        cpmg_1 = [ncyc/time_T2_1 for ncyc in ncyc_1]
-        cpmg_1.sort()
+        cpmg_1 = sorted([ncyc/time_T2_1 for ncyc in ncyc_1])
 
         ncyc_2 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 24, 14, 22]
         sfrq_2 = 599.8908587*1E6
@@ -617,11 +616,11 @@ class Test_data(UnitTestCase):
             if frq == sfrq_1:
                 i += 1
                 self.assertEqual(time, time_T2_1)
-                self.assertAlmostEqual(point, cpmg_1[i],3)
+                self.assertAlmostEqual(point, cpmg_1[i], 3)
             if frq == sfrq_2:
                 j += 1
                 self.assertEqual(time, time_T2_2)
-                self.assertAlmostEqual(point, cpmg_2[j],3)
+                self.assertAlmostEqual(point, cpmg_2[j], 3)
 
 
     def test_loop_time_cpmg(self):
@@ -636,8 +635,8 @@ class Test_data(UnitTestCase):
 
         # Original data (exp_type, frq, offset, point).
         data = [
-            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0],0.04],
-            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0],0.06]
+            ['SQ CPMG', 499862140.0, 0, [50.0, 100.0, 150.0, 200.0, 250.0, 300.0, 350.0, 400.0, 450.0, 500.0, 550.0, 600.0, 650.0, 700.0, 800.0, 900.0, 1000.0], 0.04],
+            ['SQ CPMG', 599890858.69999993, 0, [33.3333, 66.666, 100.0, 133.333, 166.666, 200.0, 233.333, 266.666, 300.0, 333.333, 366.666, 400.0, 466.666, 533.333, 666.666, 866.666, 1000.0], 0.06]
         ]
 
         # Original indices (ei, mi, oi, ti).

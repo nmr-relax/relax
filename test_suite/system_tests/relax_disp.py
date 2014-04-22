@@ -2414,7 +2414,7 @@ class Relax_disp(SystemTestCase):
                 if float(vcpmg) == 0.0:
                     vcpmg = None
                 else:
-                    vcpmg = round(float(vcpmg),3)
+                    vcpmg = round(float(vcpmg), 3)
 
                 # Set current id
                 current_id = id_list[i]
@@ -2468,7 +2468,7 @@ class Relax_disp(SystemTestCase):
             # Make match for the regular search
             m = r.match(assn)
             # Convert to relax spin string
-            relax_string = ":%s@%s"%(m.group(2),m.group(3))
+            relax_string = ":%s@%s"%(m.group(2), m.group(3))
 
             # Save the relax spin string and the regular search
             relax_glob_ids.append([m.group(0), m.group(1), m.group(2), m.group(3), relax_string])
@@ -2759,7 +2759,7 @@ class Relax_disp(SystemTestCase):
         NR_exp = 70
 
         # Load the experiments settings file.
-        expfile = open(data_path+sep+'exp_parameters_sort.txt','r')
+        expfile = open(data_path+sep+'exp_parameters_sort.txt', 'r')
         expfileslines = expfile.readlines()[:NR_exp]
         expfile.close()
 

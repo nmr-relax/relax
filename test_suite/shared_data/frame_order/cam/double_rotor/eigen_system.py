@@ -7,7 +7,7 @@ from numpy.linalg import inv, norm
 
 # The axes of the double rotor.
 axis1 = array([ -7.778375610280605e-01,   6.284649244351433e-01, -7.532653237683726e-04], float64)
-axis2 = array([-0.487095774865268, -0.60362450312215 , -0.63116968030708 ], float64)
+axis2 = array([-0.487095774865268, -0.60362450312215, -0.63116968030708 ], float64)
 
 # The cross product.
 axis3 = cross(axis1, axis2)

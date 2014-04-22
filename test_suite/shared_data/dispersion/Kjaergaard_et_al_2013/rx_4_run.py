@@ -15,7 +15,7 @@ GRID_INC = 11; MC_NUM = 3
 state.load(state='ini_setup_rx.bz2')
 
 # Load the pipe names.
-fpipe = open('pipe_names_rx.txt','r')
+fpipe = open('pipe_names_rx.txt', 'r')
 pipenames = []
 for line in fpipe:
     pipenames.append([line.split()[0], line.split()[1]])
