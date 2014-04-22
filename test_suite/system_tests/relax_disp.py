@@ -24,7 +24,6 @@
 # Python module imports.
 from os import F_OK, access, sep
 import re
-import time
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -3553,7 +3552,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.deselect.all()            
 
         # Select few spins
-        for i in range(1):
+        for i in range(0,3):
             self.interpreter.select.spin(spin_id=relax_glob_ids[i][4], change_all=False)
 
         ##############
@@ -3583,37 +3582,24 @@ class Relax_disp(SystemTestCase):
         # Then select model
         self.interpreter.relax_disp.select_model(model=MODEL)
 
-        GRID_INCS = [3, 5]
+        # GRID inc of 7 was found to be appropriate not to find pA=0.5.
+        GRID_INCS = [7]
         #GRID_INCS = [3, 5, 7, 9, 11, 13, 19, 21]
-        GRID_RESULTS = []
+
         for GRID_INC in GRID_INCS:
-            # Measure time
-            start = time.time()
-
-            # Set initial value
-            for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                spin.kex = 2200.
-
             # Perform Grid Search
             self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-            # Stop time
-            done = time.time()
-            elapsed = done - start
-
             # Print info out
             for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                GRID_RESULTS.append([GRID_INC, spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600], mol_name, resi, resn, spin_id, elapsed])
+                # Print info
+                print("INC=%i r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(GRID_INC, spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn))
+
+                # Make tests
+                self.assert_(spin.pA > 0.5)
+
                 # Resetting back to nothing
                 spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600] = None, None, None, None, None
-
-        for GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed in GRID_RESULTS:
-            print("########################## GRID INC %s ##########################"%GRID)
-            print("GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed")
-            print(GRID, kex, pA, dw, r2500, r2600, mol, resi, resn, spin_id, elapsed)
-
-        #self.assertAlmostEqual(spin.pA, 0.99)
-        #self.assertAlmostEqual(spin.kex, 2200)
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
