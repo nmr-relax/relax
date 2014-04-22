@@ -368,11 +368,11 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                 # Exchange rates.
                 elif param_name in ['kex', 'kex_AB', 'kex_AC', 'kex_BC', 'k_AB', 'kB', 'kC']:
                     lower.append(1.0)
-                    upper.append(100000.0)
+                    upper.append(10000.0)
 
                 # Time of exchange.
                 elif param_name in ['tex']:
-                    lower.append(1/100000.0)
+                    lower.append(1/10000.0)
                     upper.append(1.0)
 
     # Pre-set parameters.
