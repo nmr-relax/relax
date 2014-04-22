@@ -329,7 +329,6 @@ class Relax:
         # Debugging options:  Debugging flag, escalate flag, traceback flag, and numpy warning to error conversion.
         if options.debug:
             status.debug = True
-            lib.warnings.TRACEBACK = True
         if options.escalate:
             lib.warnings.ESCALATE = True
         if options.traceback:
