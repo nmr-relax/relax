@@ -275,7 +275,7 @@ class Relax_disp(SystemTestCase):
             id_lists.append(id_list)
 
             # Read intensities
-            self.interpreter.spectrum.read_intensities(file="128_FT.ser", dir=data_path+sep+folder, int_method='height', spectrum_id=id_list, int_col=list(xrange(len(id_list))) )
+            self.interpreter.spectrum.read_intensities(file="128_FT.ser", dir=data_path+sep+folder, int_method='height', spectrum_id=id_list, int_col=list(range(len(id_list))) )
 
             # Loop over experiments
             for i in range(len(ncycs)):
