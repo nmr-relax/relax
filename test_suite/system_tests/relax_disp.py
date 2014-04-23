@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-import re
+import re, math
 from tempfile import mkdtemp
 
 # relax module imports.
@@ -3404,6 +3404,10 @@ class Relax_disp(SystemTestCase):
         select_spin_index = range(0,1)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
+        # Define replicated
+        repl_A = ['Z_A1', 'Z_A15']
+        repl_B = ['Z_B1', 'Z_B18']
+
         # Loop over spectrum ID, and sort them
         spectrum_ids_A = []
         spectrum_ids_B = []
@@ -3413,50 +3417,57 @@ class Relax_disp(SystemTestCase):
             elif "B" in spectrum_id:
                 spectrum_ids_B.append(spectrum_id)
 
-        # Loop over spin, first reset the error.
-        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            for id_A in spectrum_ids_A:
-                spin.peak_intensity_err[id_A] = None
-            for id_B in spectrum_ids_B:
-                spin.peak_intensity_err[id_B] = None
+        # To clean up old error analysis, delete attributes
+        delattr(cdp, "var_I") 
+        delattr(cdp, "sigma_I") 
 
         # Perform error analysis
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_A)
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_B)
 
-        # Hold errors
+        # Loop over spins, save errors to list
         Errors_A_B = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
             B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
             Errors_A_B.append([A_err, B_err])
-            # Reset errors
-            for id_A in spectrum_ids_A:
-                spin.peak_intensity_err[id_A] = None
-            for id_B in spectrum_ids_B:
-                spin.peak_intensity_err[id_B] = None
 
-        # Perform error analysis
+        # To clean up old error analysis, delete attributes
+        delattr(cdp, "var_I") 
+        delattr(cdp, "sigma_I") 
+
+        # Perform error analysis. Order is important
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_B)
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_A)
 
-        # Hold errors
+        # Loop over spins, save errors to list
         Errors_B_A = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
             B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
             Errors_B_A.append([A_err, B_err])
-            # Reset errors
-            for id_A in spectrum_ids_A:
-                spin.peak_intensity_err[id_A] = None
-            for id_B in spectrum_ids_B:
-                spin.peak_intensity_err[id_B] = None
 
+        # Make test for order of error
         for i in range(len(Errors_A_B)):
             Error_A_B = Errors_A_B[i]
             Error_B_A = Errors_B_A[i]
             self.assertAlmostEqual(Error_A_B[0], Error_B_A[0], 4)
             self.assertAlmostEqual(Error_A_B[1], Error_B_A[1], 4)
+
+        # Make further tests for fixed values
+        std_A = math.sqrt((cdp.var_I[repl_A[0]] + cdp.var_I[repl_A[1]])/2)
+        std_A_fix = 2785.7263335738567
+
+        for id_A in spectrum_ids_A:
+            self.assertEqual(cdp.sigma_I[id_A], std_A)
+            self.assertAlmostEqual(cdp.sigma_I[id_A], std_A_fix, 7)
+
+        std_B = math.sqrt((cdp.var_I[repl_B[0]] + cdp.var_I[repl_B[1]])/2)
+        std_B_fix = 4967.3772030667988
+
+        for id_B in spectrum_ids_B:
+            self.assertEqual(cdp.sigma_I[id_B], std_B)
+            self.assertAlmostEqual(cdp.sigma_I[id_B], std_B_fix, 7)
 
 
     def test_sod1wt_t25_to_cr72(self):
