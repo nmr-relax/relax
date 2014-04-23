@@ -25,6 +25,7 @@
 
 # Python module imports.
 from os import sep
+import math
 import wx
 
 # relax module imports.
@@ -386,9 +387,36 @@ class Relax_disp(GuiTestCase):
         analysis.opt_func_tol = 1e-5
         analysis.opt_max_iterations = 1000
 
+        subset_500 = ['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in']
+        subset_800 = ['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in']
+
         # Perform the error analysis.
-        self._execute_uf(uf_name='spectrum.error_analysis', subset=['500_reference.in', '500_66.667.in', '500_133.33.in', '500_133.33.in.bis', '500_200.in', '500_266.67.in', '500_333.33.in', '500_400.in', '500_466.67.in', '500_533.33.in', '500_533.33.in.bis', '500_600.in', '500_666.67.in', '500_733.33.in', '500_800.in', '500_866.67.in', '500_933.33.in', '500_933.33.in.bis', '500_1000.in'])
-        self._execute_uf(uf_name='spectrum.error_analysis', subset=['800_reference.in', '800_66.667.in', '800_133.33.in', '800_133.33.in.bis', '800_200.in', '800_266.67.in', '800_333.33.in', '800_400.in', '800_466.67.in', '800_533.33.in', '800_533.33.in.bis', '800_600.in', '800_666.67.in', '800_733.33.in', '800_800.in', '800_866.67.in', '800_933.33.in', '800_933.33.in.bis', '800_1000.in'])
+        self._execute_uf(uf_name='spectrum.error_analysis', subset=subset_500)
+        self._execute_uf(uf_name='spectrum.error_analysis', subset=subset_800)
+
+        # Do check of std calculation for 500 MHz
+        sum_var_500 = 0.0
+        for id_500 in subset_500:
+            sum_var_500 += cdp.var_I[id_500]
+
+        # Calculate std
+        std_500 = math.sqrt((sum_var_500)/len(subset_500))
+
+        print("Manually calculated standard deviation for 500 MHz: %f"%std_500)
+        for id_500 in subset_500:
+            self.assertAlmostEqual(cdp.sigma_I[id_500], std_500)
+
+        # Do check of std calculation for 800 MHz
+        sum_var_800 = 0.0
+        for id_800 in subset_800:
+            sum_var_800 += cdp.var_I[id_800]
+
+        # Calculate std
+        std_800 = math.sqrt((sum_var_800)/len(subset_800))
+
+        print("Manually calculated standard deviation for 800 MHz: %f"%std_800)
+        for id_800 in subset_800:
+            self.assertAlmostEqual(cdp.sigma_I[id_800], std_800)
 
         # Delete all residues but :4, :70 and :71.
         for i in range(1, 100):
