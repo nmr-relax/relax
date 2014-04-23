@@ -139,11 +139,11 @@ def select_model(model=MODEL_R2EFF):
     check_pipe_type()
     check_mol_res_spin_data()
     check_exp_type()
-    if model == MODEL_R2EFF:
-        check_c_modules()
 
     # The curve type.
     curve_type = get_curve_type()
+    if model == MODEL_R2EFF and curve_type == 'exponential':
+        check_c_modules()
 
     # R2eff/R1rho model.
     if model == MODEL_R2EFF:
