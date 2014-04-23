@@ -54,21 +54,21 @@ class General(GuiTestCase):
         # NOE tab:  Set up the analysis.
         self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
 
-        # R1 tab:  Simulate the new analysis wizard.
+        # Mf tab:  Simulate the new analysis wizard.
         self.app.gui.analysis.menu_new(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(0)
-        page.select_r1(None)
-        page.analysis_name.SetValue(str_to_gui("R1 test"))
+        page.select_mf(None)
+        page.analysis_name.SetValue(str_to_gui("Mf test"))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
         page = self.app.gui.analysis.new_wizard.wizard.get_page(1)
-        page.pipe_name.SetValue(str_to_gui('r1'))
-        page.pipe_bundle.SetValue(str_to_gui('r1 bundle'))
+        page.pipe_name.SetValue(str_to_gui('mf'))
+        page.pipe_bundle.SetValue(str_to_gui('mf bundle'))
         self.app.gui.analysis.new_wizard.wizard._go_next(None)
 
-        # R1 tab:  Get the data.
+        # Mf tab:  Get the data.
         analysis_type, analysis_name, pipe_name, pipe_bundle, uf_exec = self.app.gui.analysis.new_wizard.get_data()
 
-        # R1 tab:  Set up the analysis.
+        # Mf tab:  Set up the analysis.
         self.app.gui.analysis.new_analysis(analysis_type=analysis_type, analysis_name=analysis_name, pipe_name=pipe_name, pipe_bundle=pipe_bundle)
 
         # NOE tab:  Switch back.
@@ -77,5 +77,5 @@ class General(GuiTestCase):
         # NOE tab:  Closure.
         self.app.gui.analysis.delete_analysis(0)
 
-        # Check that the R1 data pipe is now the current pipe.
-        self.assertEqual(cdp_name(), 'r1')
+        # Check that the Mf data pipe is now the current pipe.
+        self.assertEqual(cdp_name(), 'mf')
