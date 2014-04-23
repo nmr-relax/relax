@@ -55,7 +55,6 @@ class Relax_disp(SystemTestCase):
             # The list of tests to skip.
             to_skip = [
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
-                "test_bug_21665_cpmg_two_fields_two_delaytimes_fail_relax_disp",
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard",
