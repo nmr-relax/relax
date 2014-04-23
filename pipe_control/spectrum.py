@@ -183,6 +183,10 @@ def __errors_repl(subset=None, verbosity=0):
 
         # Loop over all time points.
         for id in cdp.var_I.keys():
+            # Only use id's defined in subset
+            if id not in subset:
+                continue
+
             # Single spectrum (or extraordinarily accurate NMR spectra!).
             if cdp.var_I[id] == 0.0:
                 continue
