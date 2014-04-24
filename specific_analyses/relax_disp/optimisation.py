@@ -326,10 +326,10 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                 if si == None:
                     si = 0
 
-                # R2 relaxation rates (from 1 to 40 s^-1).
+                # R2 relaxation rates (from 5 to 20 s^-1).
                 if param_name in ['r2', 'r2a', 'r2b']:
-                    lower.append(1.0)
-                    upper.append(40.0)
+                    lower.append(5.0)
+                    upper.append(20.0)
 
                 # The pA.pB.dw**2 and pA.dw**2 parameters.
                 elif param_name in ['phi_ex', 'phi_ex_B', 'phi_ex_C', 'padw2']:
