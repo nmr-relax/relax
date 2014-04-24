@@ -54,7 +54,7 @@ class Relax_disp_params(Param_list):
         self._add_model_info()
 
         # Add the parameters of the 'R2eff' model.
-        self._add('r2eff', scope='spin', default=15.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
+        self._add('r2eff', scope='spin', default=10.0, desc='The effective transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2,eff\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self._add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=dict, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
 
         # Add the parameters of all dispersion models.
