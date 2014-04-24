@@ -30,6 +30,7 @@ from re import search
 from types import MethodType
 
 # relax module imports.
+from lib.arg_check import is_list, is_str_list
 from lib.errors import RelaxError, RelaxImplementError
 from multi import Processor_box
 from pipe_control import pipes, sequence
@@ -38,11 +39,11 @@ from pipe_control.sequence import return_attached_protons
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_model_type
-from specific_analyses.relax_disp.data import average_intensity, calc_rotating_frame_params, find_intensity_keys, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.data import average_intensity, calc_rotating_frame_params, find_intensity_keys, generate_r20_key, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
 from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, PARAMS_R20
 
 
 class Relax_disp(API_base, API_common):
@@ -59,7 +60,6 @@ class Relax_disp(API_base, API_common):
         self.model_type = self._model_type_local
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self.return_value
-        self.set_param_values = self._set_param_values_spin
 
         # Place a copy of the parameter list object in the instance namespace.
         self._PARAMS = Relax_disp_params()
@@ -865,6 +865,58 @@ class Relax_disp(API_base, API_common):
         else:
             for spin in spins:
                 setattr(spin, err_name, error)
+
+
+    def set_param_values(self, param=None, value=None, index=None, spin_id=None, error=False, force=True):
+        """Set the spin specific parameter values.
+
+        @keyword param:     The parameter name list.
+        @type param:        list of str
+        @keyword value:     The parameter value list.
+        @type value:        list
+        @keyword index:     The index for parameters which are of the list-type.  This is unused.
+        @type index:        None or int
+        @keyword spin_id:   The spin identification string, only used for spin specific parameters.
+        @type spin_id:      None or str
+        @keyword error:     A flag which if True will allow the parameter errors to be set instead of the values.
+        @type error:        bool
+        @keyword force:     A flag which if True will cause current values to be overwritten.  If False, a RelaxError will raised if the parameter value is already set.
+        @type force:        bool
+        """
+
+        # Checks.
+        is_str_list(param, 'parameter name')
+        is_list(value, 'parameter value')
+
+        # Loop over the parameters.
+        for i in range(len(param)):
+            # Is the parameter is valid?
+            if not self._PARAMS.contains(param[i]):
+                raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param[i])
+
+            # Spin loop.
+            for spin in spin_loop(spin_id):
+                # Skip deselected spins.
+                if not spin.select:
+                    continue
+
+                # The object name.
+                obj_name = param[i]
+                if error:
+                    obj_name += '_err'
+
+                # Handle the R20 parameters.
+                if param[i] in PARAMS_R20:
+                    # Loop over the current keys.
+                    for exp_type, frq in loop_exp_frq():
+                        # Create the key and set the value.
+                        key = generate_r20_key(exp_type=exp_type, frq=frq)
+                        obj = getattr(spin, obj_name)
+                        obj[key] = value[i]
+
+                # Set the other parameters.
+                else:
+                    setattr(spin, obj_name, value[i])
 
 
     def set_selected_sim(self, model_info, select_sim):
