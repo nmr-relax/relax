@@ -34,7 +34,7 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_spin
 from specific_analyses.relax_disp.data import count_spins, generate_r20_key, has_exponential_exp_type, loop_cluster, loop_exp_frq
-from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR
+from specific_analyses.relax_disp.variables import MODEL_LIST_MMQ, MODEL_M61B, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, PARAMS_R20
 
 
 def assemble_param_vector(spins=None, key=None, sim_index=None):
@@ -900,14 +900,13 @@ def param_num(spins=None):
             raise RelaxError("The number of parameters for each spin in the cluster are not the same.")
 
     # Count the number of R20 parameters.
-    r20_params = ['r2', 'r2a', 'r2b']
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:
             continue
 
         for i in range(len(spin.params)):
-            if spin.params[i] in r20_params:
+            if spin.params[i] in PARAMS_R20:
                 for exp_type, frq in loop_exp_frq():
                     num += 1
 
@@ -923,7 +922,7 @@ def param_num(spins=None):
                 num += 1
 
     # Count all other parameters, but only for a single spin.
-    all_params = r20_params + spin_params
+    all_params = PARAMS_R20 + spin_params
     for spin in spins:
         # Skip deselected spins.
         if not spin.select:
