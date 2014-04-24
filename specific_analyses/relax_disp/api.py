@@ -909,8 +909,29 @@ class Relax_disp(API_base, API_common):
                 if param[i] in PARAMS_R20:
                     # Loop over the current keys.
                     for exp_type, frq in loop_exp_frq():
-                        # Create the key and set the value.
+                        # The parameter key.
                         key = generate_r20_key(exp_type=exp_type, frq=frq)
+
+                        # Initialise the structure if needed.
+                        if not hasattr(spin, obj_name):
+                            setattr(spin, obj_name, {})
+
+                        # Set the value.
+                        obj = getattr(spin, obj_name)
+                        obj[key] = value[i]
+
+                # Handle the R2eff and I0 parameters.
+                elif param[i] in ['r2eff', 'i0'] and not isinstance(value[i], dict):
+                    # Loop over all the data.
+                    for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+                        # The parameter key.
+                        key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                        # Initialise the structure if needed.
+                        if not hasattr(spin, obj_name):
+                            setattr(spin, obj_name, {})
+
+                        # Set the value.
                         obj = getattr(spin, obj_name)
                         obj[key] = value[i]
 
