@@ -36,7 +36,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.pipes import has_pipe
 from prompt.interpreter import Interpreter
 from specific_analyses.relax_disp.data import has_exponential_exp_type, has_cpmg_exp_type, has_fixed_time_exp_type, has_r1rho_exp_type, loop_frq
-from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_ANALYTIC, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_PARAMS, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -58,8 +58,8 @@ class Relax_disp:
         @type results_dir:          str
         @keyword models:            The list of relaxation dispersion models to optimise.
         @type models:               list of str
-        @keyword grid_inc:          Number of grid search increments.
-        @type grid_inc:             int
+        @keyword grid_inc:          Number of grid search increments.  If set to None, then the grid search will be turned off and the default parameter values will be used instead.
+        @type grid_inc:             int or None
         @keyword mc_sim_num:        The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
         @type mc_sim_num:           int
         @keyword exp_mc_sim_num:    The number of Monte Carlo simulations for the error analysis in the 'R2eff' model when exponential curves are fitted.  This defaults to the value of the mc_sim_num argument when not given.  For the 2-point fixed-time calculation for the 'R2eff' model, this argument is ignored.
@@ -365,9 +365,16 @@ class Relax_disp:
             # Nested model simplification.
             nested = self.nesting(model=model)
 
-            # Grid search.
+            # Otherwise use a grid search of default values to start optimisation with.
             if not nested:
-                self.interpreter.grid_search(inc=self.grid_inc)
+                # Grid search.
+                if self.grid_inc:
+                    self.interpreter.grid_search(inc=self.grid_inc)
+
+                # Default values.
+                else:
+                    for param in MODEL_PARAMS[model]:
+                        self.interpreter.value.set(param=param)
 
         # Minimise.
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)
