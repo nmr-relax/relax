@@ -569,7 +569,17 @@ class API_common:
                     obj_name += '_err'
 
                 # Set the parameter.
-                setattr(spin, obj_name, value[i])
+                param_type = self._PARAMS.type(param[i])
+                if param_type == dict:
+                    obj = getattr(spin, obj_name)
+                    for key in obj:
+                        obj[key] = value[i]
+                elif param_type == list:
+                    obj = getattr(spin, obj_name)
+                    for j in range(len(obj)):
+                        obj[j] = value[i]
+                else:
+                    setattr(spin, obj_name, value[i])
 
 
     def _set_selected_sim_global(self, model_info, select_sim):
