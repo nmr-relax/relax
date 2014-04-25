@@ -31,7 +31,7 @@ from auto_analyses import relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from pipe_control.mol_res_spin import return_spin, spin_loop
-from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type
+from specific_analyses.relax_disp.data import generate_r20_key, get_curve_type, loop_exp_frq_offset_point, return_param_key_from_data, set_grid_r20_from_min_r2eff
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_IT99, MODEL_LM63, MODEL_M61B, MODEL_NOREX, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_R2EFF
 from status import Status; status = Status()
 from test_suite.system_tests.base_classes import SystemTestCase
@@ -3552,6 +3552,85 @@ class Relax_disp(SystemTestCase):
 
         # Save disp graph to temp
         #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True)
+
+
+    def test_sod1wt_t25_set_grid_r20_from_min_r2eff(self):
+        """Test speeding up grid search. Support requst sr #3151 U{https://gna.org/support/index.php?3151}.
+
+        User function to set the R20 parameters in the default grid search using the minimum R2eff value.
+
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        'SOD1-WT' CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
+        Data is for experiment at 25 degree Celcius.
+        """
+
+        # Base data setup.
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        pipe_name_r2eff = "%s_R2eff"%(pipe_name)
+        select_spin_index = range(0,2)
+        self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
+
+        # Generate r20 keu
+        r20_key_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.8908617*1E6)
+        r20_key_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=499.862139*1E6)
+
+        ## Now prepare for MODEL calculation
+        MODEL = "CR72"
+
+        # Change pipe
+        pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
+        self.interpreter.pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
+
+        # Then select model
+        self.interpreter.relax_disp.select_model(model=MODEL)
+
+        # Set the R20 parameters in the default grid search using the minimum R2eff value.
+        set_grid_r20_from_min_r2eff(force=False, verbosity=1)
+
+        # Test result, for normal run.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Print out
+            print("r2_600=%2.2f r2_500=%2.2f spin_id=%s resi=%i resn=%s"%(spin.r2[r20_key_600], spin.r2[r20_key_500], spin_id, resi, resn))
+
+            # Testing the r2 values for the different fields are not the same.
+            self.assert_(spin.r2[r20_key_600] != spin.r2[r20_key_500])
+
+            # Test values are larger than 0
+            self.assert_(spin.r2[r20_key_600] > 0.0)
+            self.assert_(spin.r2[r20_key_500] > 0.0)
+
+            # Loop over the experiment settings.
+            r2eff_600 = []
+            r2eff_500 = []
+            for exp_type, frq, offset, point, ei, mi, oi, di in loop_exp_frq_offset_point(return_indices=True):
+                # Create the data key.
+                data_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+                # Extract the r2 eff data
+                r2eff = spin.r2eff[data_key]
+                if frq == 599.8908617*1E6:
+                    r2eff_600.append(r2eff)
+                elif frq == 499.862139*1E6:
+                    r2eff_500.append(r2eff)
+
+            # Sort values
+            r2eff_600.sort()
+            r2eff_500.sort()
+
+            # Test values again
+            print("For r20 600MHz min r2eff=%3.3f."%(min(r2eff_600)))
+            print(r2eff_600)
+            self.assertEqual(spin.r2[r20_key_600], min(r2eff_600))
+            print("")
+
+            print("For r20 500MHz min r2eff=%3.3f."%(min(r2eff_500)))
+            print(r2eff_500)
+            self.assertEqual(spin.r2[r20_key_500], min(r2eff_500))
+            print("")
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
