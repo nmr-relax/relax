@@ -874,7 +874,7 @@ class Relax_disp(API_base, API_common):
         @type param:        list of str
         @keyword value:     The parameter value list.
         @type value:        list
-        @keyword index:     The index for parameters which are of the list-type.  This is unused.
+        @keyword index:     The index for parameters which are of the list-type.
         @type index:        None or int
         @keyword spin_id:   The spin identification string, only used for spin specific parameters.
         @type spin_id:      None or str
@@ -908,7 +908,7 @@ class Relax_disp(API_base, API_common):
                 # Handle the R20 parameters.
                 if param[i] in PARAMS_R20:
                     # Loop over the current keys.
-                    for exp_type, frq in loop_exp_frq():
+                    for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
                         # The parameter key.
                         key = generate_r20_key(exp_type=exp_type, frq=frq)
 
@@ -917,8 +917,13 @@ class Relax_disp(API_base, API_common):
                             setattr(spin, obj_name, {})
 
                         # Set the value.
-                        obj = getattr(spin, obj_name)
-                        obj[key] = value[i]
+                        if index == None:
+                            obj = getattr(spin, obj_name)
+                            obj[key] = value[i]
+                        # If the index is specified, let it mathc the frequency index
+                        elif index != None and mi == index:
+                            obj = getattr(spin, obj_name)
+                            obj[key] = value[i]
 
                 # Handle the R2eff and I0 parameters.
                 elif param[i] in ['r2eff', 'i0'] and not isinstance(value[i], dict):
