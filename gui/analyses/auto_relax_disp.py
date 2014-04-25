@@ -360,6 +360,10 @@ class Auto_relax_disp(Base_analysis):
         # The grid search optimisation settings.
         self.grid_inc = Spin_ctrl(box, self, text="Grid search increments:", default=21, min=1, max=100, tooltip="This is the number of increments per dimension of the grid search performed prior to numerical optimisation.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
+        # The speed up of grid search.
+        tooltip = "True will set the grid %s values from the minimum %s/%s values. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441." % (r2, r2eff, r1rho)
+        self.set_grid_r20 = Boolean_ctrl(box, self, text="Speed up of grid search", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+
         # The MC simulation settings.
         self.mc_sim_num = Spin_ctrl(box, self, text="Monte Carlo simulation number:", default=500, min=1, max=100000, tooltip="This is the number of Monte Carlo simulations performed for error propagation and analysis.  For best results, at least 500 is recommended.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
         self.mc_sim_all_models = Boolean_ctrl(box, self, text="Per model error analysis:", default=False, tooltip="A flag which if True will cause Monte Carlo simulations to be performed for each individual model.  Otherwise Monte Carlo simulations will be reserved for the final model.", width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
