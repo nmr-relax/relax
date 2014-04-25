@@ -395,6 +395,18 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                 lower[param_index] = val
                 upper[param_index] = val
 
+            # Test if the value is a dict, for example for r2.
+            if type(val) == dict:
+                    val_dic = val[r20_key]
+                    if is_float(val_dic) and val_dic != 0.0:
+                        # Printout.
+                        print("The spin '%s' parameter %s '%s[%i]' is pre-set to %s, skipping it in the grid search." % (spin_ids[si], r20_key, param_name, param_index, val_dic))
+
+                        # Turn of the grid search for this parameter.
+                        inc[param_index] = 1
+                        lower[param_index] = val_dic
+                        upper[param_index] = val_dic
+
     # The full grid size.
     grid_size = 1
     for i in range(n):
