@@ -3570,7 +3570,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0,2)
+        select_spin_index = range(0,1)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 keu
@@ -3631,6 +3631,31 @@ class Relax_disp(SystemTestCase):
             print(r2eff_500)
             self.assertEqual(spin.r2[r20_key_500], min(r2eff_500))
             print("")
+
+        # Test just the Grid search
+        GRID_INC = 5
+
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        ### Run auto_analysis
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 5
+
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
+
+        # Model selection technique.
+        MODSEL = 'AIC'
+
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        relax_disp.Relax_disp.opt_func_tol = OPT_FUNC_TOL
+        OPT_MAX_ITERATIONS = 1000
+        relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
+
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=pipe_name_r2eff, results_dir=ds.tmpdir, models=[MODEL], grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL, set_grid_r20=True)
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
