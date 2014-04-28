@@ -3522,7 +3522,7 @@ def set_exp_type(spectrum_id=None, exp_type=None):
     print(text)
 
 
-def set_grid_r20_from_min_r2eff(force=True, verbosity=0):
+def set_grid_r20_from_min_r2eff(force=True, verbosity=1):
     """Set the R20 values to the minimum R2eff values.
 
     For a 2 field cpmg experiment with model CR72, that would drop number of uniform grid search point from gridNr^5 to gridNr^3.
