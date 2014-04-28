@@ -381,7 +381,7 @@ class Relax_disp:
                 # Default values.
                 else:
                     for param in MODEL_PARAMS[model]:
-                        self.interpreter.value.set(param=param)
+                        self.interpreter.value.set(param=param, index=None)
 
         # Minimise.
         self.interpreter.minimise('simplex', func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations, constraints=True)

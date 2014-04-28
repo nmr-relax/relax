@@ -318,7 +318,8 @@ uf.add_keyarg(
     min = 0,
     max = 10000000,
     desc_short = "index for list-type parameters",
-    desc = "The list index for when the parameter is a list of values.  This is ignored in all other cases."
+    desc = "The list index for when the parameter is a list of values.  This is ignored in all other cases.",
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "spin_id",
