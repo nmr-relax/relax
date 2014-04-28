@@ -405,7 +405,7 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                             print("The key:%s does not exist"%r20_key)
                             continue
 
-                        if is_float(val_dic) and val_dic != 0.0:
+                        if is_float(val_dic):
                             # Printout.
                             print("The spin '%s' parameter %s '%s[%i]' is pre-set to %s, skipping it in the grid search." % (spin_ids[si], r20_key, param_name, param_index, val_dic))
 
