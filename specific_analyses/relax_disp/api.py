@@ -920,8 +920,9 @@ class Relax_disp(API_base, API_common):
                         if index == None:
                             obj = getattr(spin, obj_name)
                             obj[key] = value[i]
-                        # If the index is specified, let it mathc the frequency index
-                        elif index != None and mi == index:
+
+                        # If the index is specified, let it match the frequency index
+                        elif mi == index:
                             obj = getattr(spin, obj_name)
                             obj[key] = value[i]
 
