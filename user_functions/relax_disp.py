@@ -923,6 +923,7 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Set the R20 parameter values to that of the minimum R2eff value.  This user function will look through all R2eff values per magnetic field strength, and find the minimum.  This minimum is a very good guess for the minimisation.")
 uf.desc[-1].add_paragraph("Instead of making the grid search find initial values of the R20 parameter, the minimum for the R2eff points are used instead.  For example for a two field CPMG experiment with model CR72, that would drop the number of uniform grid search points from 5D to 3D.  For standard 21 grid increments per dimension, it would make the grid search 441 times faster.")
+uf.desc[-1].add_paragraph("This is an experimental unpublished feature of the dispersion analysis.  If R20 << min(R2eff), the grid search will be performed in a region of the optimisation space quite distant from the true minimum.  If unsure, do not activate this option, and let the grid search find a better starting value.")
 uf.backend = set_grid_r20_from_min_r2eff
 uf.menu_text = "&set_grid_r20_from_min_r2eff"
 uf.gui_icon = "relax.grid_search"
