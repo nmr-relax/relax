@@ -910,18 +910,19 @@ uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 # The relax_disp.set_grid_r20_from_min_r2eff user function.
 uf = uf_info.add_uf('relax_disp.set_grid_r20_from_min_r2eff')
-uf.title = "Set the initial guess for R20 in the grid search, to that of the minimum R2eff points."
-uf.title_short = "Speed-up grid search."
+uf.title = "Set the R20 parameter values to that of the minimum R2eff value."
+uf.title_short = "Set R20 from the minimum R2eff."
 uf.add_keyarg(
     name = "force",
     default = True,
     py_type = "bool",
     desc_short = "force flag",
-    desc = "A flag which if set to True will cause the R20 Values to be overwritten if they already exist."
+    desc = "A flag which if set to True will cause the R20 values to be overwritten if they already exist."
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Instead of making the grid search find initial values of the R20 parameter, the minimum for the R2eff points are used instead. For a 2 field cpmg experiment with model CR72, that would drop the number of uniform grid search points from gridNr^5 to gridNr^3. For standard 21 grid Nr, it would make the grid search 441 times faster.")
+uf.desc[-1].add_paragraph("Set the R20 parameter values to that of the minimum R2eff value.  This user function will look through all R2eff values per magnetic field strength, and find the minimum.  This minimum is a very good guess for the minimisation.")
+uf.desc[-1].add_paragraph("Instead of making the grid search find initial values of the R20 parameter, the minimum for the R2eff points are used instead.  For example for a two field CPMG experiment with model CR72, that would drop the number of uniform grid search points from 5D to 3D.  For standard 21 grid increments per dimension, it would make the grid search 441 times faster.")
 uf.backend = set_grid_r20_from_min_r2eff
 uf.menu_text = "&set_grid_r20_from_min_r2eff"
 uf.gui_icon = "relax.grid_search"
