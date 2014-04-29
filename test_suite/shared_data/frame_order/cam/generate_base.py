@@ -24,13 +24,13 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, eye, float16, float64, transpose, zeros
+from numpy import array, cross, dot, eye, float64, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
 
 # relax module imports.
-from lib.check_types import is_float
+from lib.check_types import float16, is_float
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import cartesian_to_spherical
