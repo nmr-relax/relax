@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -174,6 +174,11 @@ class Setup:
         ]
         blacklist_files = [
         ]
+        
+        # Whitelisted directories.
+        whitelist_dir = [
+            'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+        ]
 
         # All files and directories.
         includes = []
@@ -190,7 +195,7 @@ class Setup:
             # Skip blacklisted directories.
             skip = False
             for dir_name in blacklist_dir:
-                if search(dir_name, rel_path):
+                if search(dir_name, rel_path) and rel_path not in whitelist_dir:
                     skip = True
             if skip:
                 continue
