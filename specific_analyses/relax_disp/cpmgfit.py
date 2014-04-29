@@ -259,7 +259,7 @@ def create_spin_input(function=None, spin=None, spin_id=None, dir=None):
 
     # The data.
     file.write("data\n")
-    for exp_type, frq, point, offset in loop_exp_frq_offset_point():
+    for exp_type, frq, offset, point in loop_exp_frq_offset_point():
         # The parameter key.
         param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
 
