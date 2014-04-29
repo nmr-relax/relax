@@ -396,7 +396,8 @@ def grid_search_setup(spins=None, spin_ids=None, param_vector=None, lower=None, 
                 upper[param_index] = val
 
             # Test if the value is a dict, for example for r2.
-            if isinstance(val, dict):
+            if isinstance(val, dict) and len(val) > 0:
+                    print val
                     # Test if r20_key exists.
                     if r20_key != None:
                         try:
