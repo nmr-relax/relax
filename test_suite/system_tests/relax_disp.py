@@ -23,6 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, sep
+from numpy import median
 import re, math
 from tempfile import mkdtemp
 
@@ -3635,7 +3636,7 @@ class Relax_disp(SystemTestCase):
         select_spin_index = range(0,2)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
-        # Generate r20 keu.
+        # Generate r20 key.
         r20_key_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.8908617*1E6)
         r20_key_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=499.862139*1E6)
 
@@ -3651,53 +3652,136 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model=MODEL)
 
         # GRID inc of 7 was found to be appropriate not to find pA=0.5.
-        GRID_INCS = [7]
-        #GRID_INCS = [3, 5, 7, 9, 11, 13, 19, 21]
+        GRID_INC = 7
 
         # Store grid and minimisations results.
         grid_results = []
         mini_results = []
+        clust_results = []
 
-        for i in range(len(GRID_INCS)):
-            GRID_INC = GRID_INCS[i]
-            # Perform Grid Search.
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Set the R20 parameters in the default grid search using the minimum R2eff value.
+        self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
 
-            # Print info out.
-            for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-                # Print info.
-                print("INC=%i r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(GRID_INC, spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn))
+        # Deselect insignificant spins.
+        self.interpreter.relax_disp.insignificance(level=1.0)
 
-                # Store grid results.
-                grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn])
+        # Perform Grid Search.
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-                # Resetting back to nothing.
-                if i != len(GRID_INCS)-1:
-                    print("Resetting values")
-                    spin.kex, spin.pA, spin.dw, spin.r2[r20_key_500], spin.r2[r20_key_600] = None, None, None, None, None
+        # Store result.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Store grid results.
+            grid_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
-        self.interpreter.minimise(min_algor='simplex', func_tol=1e-10, max_iter=100000, constraints=True, scaling=True, verbosity=1)
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        set_func_tol = 1e-9
+        set_max_iter = 100000
+        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
-        ## Now test values.
+        # Store result.
+        pA_values = []
+        kex_values = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Print info
-            print("r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn))
-
             # Store minimisation results.
-            mini_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin_id, resi, resn])
+            mini_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
-        # Make tests.
+            # Store pA values.
+            pA_values.append(spin.pA)
+
+            # Store kex values.
+            kex_values.append(spin.kex)
+
+        print("\n# Now print before and after minimisation.\n")
+
+        # Print results.
         for i in range(len(grid_results)):
             # Get values.
-            g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_spin_id, g_resi, g_resn = grid_results[i]
-            m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_spin_id, m_resi, m_resn = mini_results[i]
+            g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
 
-            print("GRID r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_spin_id, g_resi, g_resn))
-            print("MIN  r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f spin_id=%s resi=%i resn=%s"%(m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_spin_id, m_resi, m_resn))
+            print("GRID r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
+
+        ## Prepare for clustering
+        # Change pipe.
+        pipe_name_MODEL_CLUSTER = "%s_%s_Cluster"%(pipe_name, MODEL)
+        self.interpreter.pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_CLUSTER)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL_CLUSTER)
+
+        # Then select model.
+        self.interpreter.relax_disp.select_model(model=MODEL)
+
+        # Define cluster id.
+        cluster_id = 'clust'
+
+        # Loop over spins to cluster them.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            self.interpreter.relax_disp.cluster(cluster_id, spin_id)
+
+        # Copy over values.
+        self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name_MODEL, pipe_to=pipe_name_MODEL_CLUSTER)
+
+        # Test the median values is correct
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            print(pA_values)
+            # The the median pA value returned.
+            self.assertEqual(median(pA_values), spin.pA)
+
+            # The the median kex value returned.
+            self.assertEqual(median(kex_values), spin.kex)
+
+        ## Now do minimisation.
+        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+
+        # Store result.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Store clust results.
+            clust_results.append([spin.r2[r20_key_600], spin.r2[r20_key_500], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+            # Store the outcome of the clustering minimisation.
+            clust_pA = spin.pA
+            clust_kex = spin.kex
+
+        print("\n# Now testing.\n")
+
+        # Define results
+        test_res = {}
+        test_res[':10@N'] = {}
+        test_res[':10@N']['r2600'] = 18.429755324773360
+        test_res[':10@N']['r2500'] = 16.981349161968630
+        test_res[':10@N']['dw'] = 2.700755859433969
+        test_res[':10@N']['pA'] = 0.971531659288657
+        test_res[':10@N']['kex'] = 3831.766337047963134
+        test_res[':11@N'] = {}
+        test_res[':11@N']['r2600'] = 18.193409421115213
+        test_res[':11@N']['r2500'] = 17.308838135567765
+        test_res[':11@N']['dw'] = 2.706650302761793
+        test_res[':11@N']['pA'] = 0.971531659288657
+        test_res[':11@N']['kex'] = 3831.766337047963134
+
+        # Then make tests.
+        for i in range(len(grid_results)):
+            # Get values.
+            g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+            c_r2_600, c_r2_500, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn = clust_results[i]
+
+            print("%s GRID   r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2_600, g_r2_500, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("%s MIN    r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2_600, m_r2_500, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
+            print("%s Clust  r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_spin_id, c_r2_600, c_r2_500, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
 
             # Make tests.
-            self.assert_(m_kex > 1000.)
+            self.assertEqual(clust_pA , c_pA)
+            self.assertEqual(clust_kex , c_kex)
+
+            # Test values.
+            if c_spin_id in test_res:
+                self.assertAlmostEqual(c_r2_600, test_res[c_spin_id]['r2600'], 4)
+                self.assertAlmostEqual(c_r2_500, test_res[c_spin_id]['r2500'], 4)
+                self.assertAlmostEqual(c_dw, test_res[c_spin_id]['dw'], 3)
+                self.assertAlmostEqual(c_pA, test_res[c_spin_id]['pA'], 5)
+                self.assertAlmostEqual(c_kex, test_res[c_spin_id]['kex'], 1)
 
         # Save disp graph to temp.
         #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True).
