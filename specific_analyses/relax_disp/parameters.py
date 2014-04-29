@@ -162,17 +162,17 @@ def copy(pipe_from=None, pipe_to=None):
     for spin_ids in loop_cluster():
         # Initialise some variables.
         model = None
-        pA = [0.0]
-        pB = [0.0]
-        pC = [0.0]
-        kex = [0.0]
-        kex_AB = [0.0]
-        kex_AC = [0.0]
-        kex_BC = [0.0]
-        k_AB = [0.0]
-        kB = [0.0]
-        kC = [0.0]
-        tex = [0.0]
+        pA = []
+        pB = []
+        pC = []
+        kex = []
+        kex_AB = []
+        kex_AC = []
+        kex_BC = []
+        k_AB = []
+        kB = []
+        kC = []
+        tex = []
         count = 0
         spins_from = []
         spins_to = []
@@ -240,38 +240,38 @@ def copy(pipe_from=None, pipe_to=None):
 
         # Take median of parameters.
         if len(pA) > 1:
-            pA = [median(pA)]
-            print("Median pA value:  %.15f" % pA[0])
+            pA = median(pA)
+            print("Median pA value:  %.15f" % pA)
         if len(pB) > 1:
-            pB = [median(pB)]
-            print("Median pA value:  %.15f" % pA[0])
+            pB = median(pB)
+            print("Median pB value:  %.15f" % pB)
         if len(pC) > 1:
-            pC = [median(pC)]
-            print("Median pC value:  %.15f" % pC[0])
+            pC = median(pC)
+            print("Median pC value:  %.15f" % pC)
         if len(kex) > 1:
-            kex = [median(kex)]
-            print("Median kex value: %.15f" % kex[0])
+            kex = median(kex)
+            print("Median kex value: %.15f" % kex)
         if len(kex_AB) > 1:
-            kex_AB = [median(kex_AB)]
-            print("Median k_AB value: %.15f" % kex_AB[0])
+            kex_AB = median(kex_AB)
+            print("Median k_AB value: %.15f" % kex_AB)
         if len(kex_AC) > 1:
-            kex_AC = [median(kex_AC)]
-            print("Median k_AC value: %.15f" % kex_AC[0])
+            kex_AC = median(kex_AC)
+            print("Median k_AC value: %.15f" % kex_AC)
         if len(kex_BC) > 1:
-            kex_BC = [median(kex_BC)]
-            print("Median k_BC value: %.15f" % kex_BC[0])
+            kex_BC = median(kex_BC)
+            print("Median k_BC value: %.15f" % kex_BC)
         if len(k_AB) > 1:
-            k_AB = [median(k_AB)]
-            print("Median k_AB value: %.15f" % k_AB[0])
+            k_AB = median(k_AB)
+            print("Median k_AB value: %.15f" % k_AB)
         if len(kB) > 1:
-            kB = [median(kB)]
-            print("Median kB value:  %.15f" % kB[0])
+            kB = median(kB)
+            print("Median kB value:  %.15f" % kB)
         if len(kC) > 1:
-            kC = [median(kC)]
-            print("Median kC value:  %.15f" % kC[0])
+            kC = median(kC)
+            print("Median kC value:  %.15f" % kC)
         if len(tex) > 1:
-            tex = [median(tex)]
-            print("Median tex value: %.15f" % tex[0])
+            tex = median(tex)
+            print("Median tex value: %.15f" % tex)
 
         # Loop over the spins, this time copying the parameters.
         for i in range(len(spin_ids)):
@@ -293,28 +293,28 @@ def copy(pipe_from=None, pipe_to=None):
 
             # The median parameters.
             if 'pB' in spin_from.params and 'pC' not in spin_from.params:
-                spin_to.pA = pA[0]
-                spin_to.pB = pB[0]
-                spin_to.pC = 1.0 - pA[0] - pB[0]
+                spin_to.pA = pA
+                spin_to.pB = pB
+                spin_to.pC = 1.0 - pA - pB
             elif 'pA' in spin_from.params:
-                spin_to.pA = pA[0]
-                spin_to.pB = 1.0 - pA[0]
+                spin_to.pA = pA
+                spin_to.pB = 1.0 - pA
             if 'kex' in spin_from.params:
-                spin_to.kex = kex[0]
+                spin_to.kex = kex
             if 'kex_AB' in spin_from.params:
-                spin_to.kex_AB = kex_AB[0]
+                spin_to.kex_AB = kex_AB
             if 'kex_AC' in spin_from.params:
-                spin_to.kex_AC = kex_AC[0]
+                spin_to.kex_AC = kex_AC
             if 'kex_BC' in spin_from.params:
-                spin_to.kex_BC = kex_BC[0]
+                spin_to.kex_BC = kex_BC
             if 'k_AB' in spin_from.params:
-                spin_to.k_AB = k_AB[0]
+                spin_to.k_AB = k_AB
             if 'kB' in spin_from.params:
-                spin_to.kB = kB[0]
+                spin_to.kB = kB
             if 'kC' in spin_from.params:
-                spin_to.kC = kC[0]
+                spin_to.kC = kC
             if 'tex' in spin_from.params:
-                spin_to.tex = tex[0]
+                spin_to.tex = tex
 
             # All other spin specific parameters.
             for param in spin_from.params:
