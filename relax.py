@@ -160,6 +160,14 @@ class Relax:
         # Set up the warning system.
         lib.warnings.setup()
 
+        # Logging.
+        if self.log_file:
+            io_streams_log(self.log_file)
+
+        # Tee.
+        elif self.tee_file:
+            io_streams_tee(self.tee_file)
+
         # Show the version number and exit.
         if self.mode == 'version':
             print('relax ' + version.version_full())
@@ -178,14 +186,6 @@ class Relax:
 
             # Stop execution.
             return
-
-        # Logging.
-        if self.log_file:
-            io_streams_log(self.log_file)
-
-        # Tee.
-        elif self.tee_file:
-            io_streams_tee(self.tee_file)
 
         # Run the interpreter for the prompt or script modes.
         if self.mode == 'prompt' or self.mode == 'script':
