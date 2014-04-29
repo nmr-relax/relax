@@ -213,6 +213,8 @@ class Library(TestCase):
             # Write.
             sys.stderr.write(line)
 
-        # An import failure occurred.
+        # An import failure occurred, so print the error message and fail.
         if len(err_lines):
+            for line in err_lines:
+                print(line)
             self.fail()
