@@ -1712,7 +1712,7 @@ class Relax_disp(SystemTestCase):
         file = open("%s%sspin%s.in" % (ds.tmpdir, sep, '_70_N'))
         lines = file.readlines()
         file.close()
-        for i in range(len(lines)):
+        for i in range(len(spin1)):
             print("%s\"%s\\n\"," % (" "*12, lines[i][:-1]))
         for i in range(len(lines)):
             self.assertEqual(spin1[i], lines[i])
@@ -1724,7 +1724,7 @@ class Relax_disp(SystemTestCase):
         file.close()
         for i in range(len(lines)):
             print("%s\"%s\\n\"," % (" "*12, lines[i][:-1]))
-        for i in range(len(lines)):
+        for i in range(len(spin2)):
             self.assertEqual(spin2[i], lines[i])
 
 
