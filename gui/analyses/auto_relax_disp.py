@@ -366,7 +366,7 @@ class Auto_relax_disp(Base_analysis):
 
         # The speed up of grid search.
         tooltip = "Experimental option, be careful.  True will set the grid %s values from the minimum %s values.  This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq).  For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441." % (r2, r2eff)
-        self.set_grid_r20 = Boolean_ctrl(box, self, text="Set R20 to the minimum R2eff.", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
+        self.set_grid_r20 = Boolean_ctrl(box, self, text="Set R20 to the minimum R2eff:", default=False, tooltip=tooltip, width_text=self.width_text, width_button=self.width_button, spacer=self.spacer_horizontal)
 
         # The insignificance cutoff.
         tooltip = "The %s/%s value in rad/s by which to judge insignificance.  If the maximum difference between two points on all dispersion curves for a spin is less than this value, that spin will be deselected.  This does not affect the '%s' model.  Set this value to 0.0 to use all data." % (r2eff, r1rho, MODEL_NOREX)
