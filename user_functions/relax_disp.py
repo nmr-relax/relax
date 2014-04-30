@@ -949,6 +949,14 @@ uf.add_keyarg(
     desc = "The spin identification string.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "dir",
+    py_type = "str",
+    arg_type = "dir sel",
+    desc_short = "directory name",
+    desc = "The directory name to place ShereKhan cluster folders into.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This creates the files required for the ShereKhan server located at http://sherekhan.bionmr.org/.  One file per spin cluster per field strength will be created.  These will be placed in the directory 'clusterx' and named 'sherekhan_frqy.in', where x is the cluster index starting from 1 and y is the magnetic field strength index starting from 1.")

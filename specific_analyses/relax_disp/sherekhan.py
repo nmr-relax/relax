@@ -26,26 +26,29 @@
 import dep_check
 
 # Python module imports.
+from os import sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoSequenceError
-from lib.io import open_write_file
+from lib.io import mkdir_nofail, open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue
 from specific_analyses.relax_disp.data import loop_cluster, loop_exp_frq, loop_offset_point, return_param_key_from_data, spin_ids_to_containers
 
 
-def sherekhan_input(spin_id=None, force=False):
+def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
     """Create the ShereKhan input files.
 
     @keyword spin_id:           The spin ID string to restrict the file creation to.
     @type spin_id:              str
     @keyword force:             A flag which if True will cause all pre-existing files to be overwritten.
     @type force:                bool
+    @keyword dir:               The optional directory to place the files into.  If None, then the files will be placed into the current directory.
+    @type dir:                  str or None
     """
 
     # Test if the current pipe exists.
@@ -63,6 +66,10 @@ def sherekhan_input(spin_id=None, force=False):
     if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
+    # Directory creation.
+    if dir != None:
+        mkdir_nofail(dir, verbosity=0)
+
     # Loop over the spin blocks.
     cluster_index = 0
     for spin_ids in loop_cluster():
@@ -73,7 +80,10 @@ def sherekhan_input(spin_id=None, force=False):
         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
             # The ShereKhan input file for the spin cluster.
             file_name = 'sherekhan_frq%s.in' % (mi+1)
-            dir_name = 'cluster%s' % (cluster_index+1)
+            if dir != None:
+                dir_name = dir + sep + 'cluster%s' % (cluster_index+1)
+            else:
+                dir_name = 'cluster%s' % (cluster_index+1)
             file = open_write_file(file_name=file_name, dir=dir_name, force=force)
 
             # The B0 field for the nuclei of interest in MHz (must be positive to be accepted by the server).
