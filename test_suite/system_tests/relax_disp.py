@@ -3787,6 +3787,30 @@ class Relax_disp(SystemTestCase):
         #self.interpreter.relax_disp.plot_disp_curves(dir="~"+sep+"test", num_points=1000, extend=500.0, force=True).
 
 
+    def test_sod1wt_t25_to_sherekhan_input(self):
+        """Conversion of SOD1-WT CPMG R2eff values into input files for sherekhan.
+
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        'SOD1-WT' CPMG data to the CR72 dispersion model.
+
+        This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
+        Data is for experiment at 25 degree Celcius.
+        """
+
+        # Base data setup.
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        pipe_name_r2eff = "%s_R2eff"%(pipe_name)
+        select_spin_index = range(0,2)
+        self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
+
+        # Generate r20 key.
+        r20_key_600 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=599.8908617*1E6)
+        r20_key_500 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=499.862139*1E6)
+
+        self.interpreter.relax_disp.sherekhan_input(force=True, spin_id=None)
+
+
     def test_sprangers_data_to_mmq_cr72(self, model=None):
         """Test the 'MMQ CR72' model fitting against Remco Sprangers' ClpP data.
 
