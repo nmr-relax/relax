@@ -63,10 +63,6 @@ def sherekhan_input(spin_id=None, force=False):
     if not hasattr(cdp, 'model_type'):
         raise RelaxError("The relaxation dispersion model has not been specified.")
 
-    # Test that this is a fixed time period experiment.
-    if len(cdp.relax_time_list) != 1:
-            raise RelaxError("ShereKhan only supports the fixed time relaxation dispersion experiments.")
-
     # Loop over the spin blocks.
     cluster_index = 0
     for spin_ids in loop_cluster():
