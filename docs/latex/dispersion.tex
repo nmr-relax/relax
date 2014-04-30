@@ -1637,6 +1637,10 @@ Multiple clusters in one analysis can be defined.
 Any spins not included in a cluster will be treated as a free spin whereby all parameters of the dispersion model are local to that spin.
 Spin clusters can be defined using the \uf{relax\ufus{}disp\ufsep{}cluster} user function (see Section~\ref{uf: relax_disp.cluster} on page~\pageref{uf: relax_disp.cluster}) or via the spin cluster GUI element.
 
+For the spin clustering, the special \uf{relax\ufus{}disp\ufsep{}parameter\ufus{}copy} user function has been designed to help avoid the impossibly large grid search.
+This user function will copy the parameters from one non-clustered data pipe to another pipe, taking the median of the parameters from the first data pipe.
+Rather than taking the median, the $\Rtwozero/\Ronerhoprime$ and $\dw$ related parameters which are independent of the clustering are simply copied.
+
 
 % Grid search.
 %~~~~~~~~~~~~~
