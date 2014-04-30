@@ -3812,20 +3812,21 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":1-1000")
 
         # Write input
-        self.interpreter.relax_disp.sherekhan_input(force=True, spin_id=None)
+        self.interpreter.relax_disp.sherekhan_input(force=True, spin_id=None, dir=ds.tmpdir)
 
         # Check the r2eff set files.
         print("\nChecking the R2eff input set files.")
-        files = [[path.join(getcwd(), 'cluster1'), 'sherekhan_frq1.in'], [path.join(getcwd(), 'cluster1'), 'sherekhan_frq2.in']]
+        files = [[ds.tmpdir + sep + 'cluster1', 'sherekhan_frq1.in'], [ ds.tmpdir + sep + 'cluster1', 'sherekhan_frq2.in']]
 
         # First check file exists
         for dir, file in files:
+            print(dir+sep+file)
             self.assert_(access(dir+sep+file, F_OK))
 
         # Define how files should look like
         data_set_600 = [
              "60.8272464287\n",
-             "0.06\n",
+             "0.04\n",
              "# nu_cpmg (Hz)       R2eff (rad/s)        Error               \n",
              "# G10\n",
              "              33.333     26.5355607871143    0.523610477116325\n",
@@ -3919,6 +3920,37 @@ class Relax_disp(SystemTestCase):
         for i in range(len(data_set_500)):
             # Make the string test
             self.assertEqual(data_set_500[i], lines[i])
+
+        # Test local dir tests. This will be turned off in system test.
+        turn_on_local_dir_test = True
+
+        if turn_on_local_dir_test:
+            ## Now check to local folder with None argument.
+            # Write input
+            self.interpreter.relax_disp.sherekhan_input(force=True, spin_id=None)
+
+            # Check the r2eff set files.
+            print("\nChecking the R2eff input set files.")
+            files = [[path.join(getcwd(), 'cluster1'), 'sherekhan_frq1.in'], [path.join(getcwd(), 'cluster1'), 'sherekhan_frq2.in']]
+
+            # First check file exists
+            for dir, file in files:
+                print(dir+sep+file)
+                self.assert_(access(dir+sep+file, F_OK))
+
+            ## Now check to local folder with dir argument.
+            # Write input
+            set_dir = "Test_ShereKhan"
+            self.interpreter.relax_disp.sherekhan_input(force=True, spin_id=None, dir=set_dir)
+
+            # Check the r2eff set files.
+            print("\nChecking the R2eff input set files.")
+            files = [[path.join(getcwd(), set_dir, 'cluster1'), 'sherekhan_frq1.in'], [path.join(getcwd(), set_dir, 'cluster1'), 'sherekhan_frq2.in']]
+
+            # First check file exists
+            for dir, file in files:
+                print(dir+sep+file)
+                self.assert_(access(dir+sep+file, F_OK))
 
 
     def test_sprangers_data_to_mmq_cr72(self, model=None):
