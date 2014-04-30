@@ -78,9 +78,14 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
 
         # Loop over the magnetic fields.
         for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            # Loop over the time.
+            # Loop over the time, and count it.
+            time_i = 0
             for time, ti in loop_time(exp_type=exp_type, frq=frq, return_indices=True):
-                pass
+                time_i += 1
+
+            # Check that not more than one time point is returned.
+            if time_i > 1:
+                raise RelaxError("Number of returned time poins is %i. Only 1 time point is expected."%time_i)
 
             # The ShereKhan input file for the spin cluster.
             file_name = 'sherekhan_frq%s.in' % (mi+1)
