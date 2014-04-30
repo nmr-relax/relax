@@ -37,7 +37,7 @@ from lib.io import mkdir_nofail, open_write_file
 from lib.physical_constants import g1H, g15N
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, return_residue
-from specific_analyses.relax_disp.data import loop_cluster, loop_exp_frq, loop_offset_point, return_param_key_from_data, spin_ids_to_containers
+from specific_analyses.relax_disp.data import loop_cluster, loop_exp_frq_point_time, loop_offset_point, return_param_key_from_data, spin_ids_to_containers
 
 
 def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
@@ -77,7 +77,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
         spins = spin_ids_to_containers(spin_ids)
 
         # Loop over the magnetic fields.
-        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+        for exp_type, frq, point, time, ei, mi, di, ti in loop_exp_frq_point_time(return_indices=True):
             # The ShereKhan input file for the spin cluster.
             file_name = 'sherekhan_frq%s.in' % (mi+1)
             if dir != None:
@@ -90,7 +90,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
             file.write("%s\n" % abs(frq / g1H * g15N / 1e6))
 
             # The constant relaxation time for the CPMG experiment in seconds.
-            file.write("%s\n" % (cdp.relax_time_list[0]))
+            file.write("%s\n" % (time))
 
             # The comment line.
             file.write("# %-18s %-20s %-20s\n" % ("nu_cpmg (Hz)", "R2eff (rad/s)", "Error"))
