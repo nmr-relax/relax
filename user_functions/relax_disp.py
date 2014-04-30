@@ -437,8 +437,8 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This is a special function for copying relaxation dispersion parameters from one data pipe to another.  It is much more advanced than the value.copy user function, in that clustering is taken into account.  When the destination data pipe has spin clusters defined, then the new parameter values, when required, will be averaged.")
-uf.desc[-1].add_paragraph("For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, an average value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.")
+uf.desc[-1].add_paragraph("This is a special function for copying relaxation dispersion parameters from one data pipe to another.  It is much more advanced than the value.copy user function, in that clustering is taken into account.  When the destination data pipe has spin clusters defined, then the new parameter values, when required, will be taken as the median value.")
+uf.desc[-1].add_paragraph("For the cluster specific parameters, i.e. the populations of the states and the exchange parameters, a median value will be used as the starting point.  For all other parameters, the R20 values for each spin and magnetic field, as well as the parameters related to the chemical shift difference dw, the optimised values of the previous run will be directly copied.")
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To copy the CSA values from the data pipe 'm1' to 'm2', type:")
 uf.desc[-1].add_prompt("relax> value.parameter_copy('m1', 'm2', 'csa')")
