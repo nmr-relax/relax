@@ -3826,7 +3826,7 @@ class Relax_disp(SystemTestCase):
         # Define how files should look like
         data_set_600 = [
              "60.8272464287\n",
-             "0.04\n",
+             "0.06\n",
              "# nu_cpmg (Hz)       R2eff (rad/s)        Error               \n",
              "# G10\n",
              "              33.333     26.5355607871143    0.523610477116325\n",
@@ -3866,6 +3866,7 @@ class Relax_disp(SystemTestCase):
         file = open(files[0][0]+sep+files[0][1])
         lines = file.readlines()
         file.close()
+        self.assertEqual(len(data_set_600), len(lines))
         for i in range(len(data_set_600)):
             # Make the string test
             self.assertEqual(data_set_600[i], lines[i])
@@ -3917,12 +3918,13 @@ class Relax_disp(SystemTestCase):
         file = open(files[1][0]+sep+files[1][1])
         lines = file.readlines()
         file.close()
+        self.assertEqual(len(data_set_500), len(lines))
         for i in range(len(data_set_500)):
             # Make the string test
             self.assertEqual(data_set_500[i], lines[i])
 
         # Test local dir tests. This will be turned off in system test.
-        turn_on_local_dir_test = True
+        turn_on_local_dir_test = False
 
         if turn_on_local_dir_test:
             ## Now check to local folder with None argument.
