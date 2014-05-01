@@ -23,7 +23,7 @@
 
 # Python module imports.
 from os import F_OK, access, getcwd, path, sep
-from numpy import median
+from numpy import array, median
 import re, math
 from tempfile import mkdtemp
 
@@ -364,6 +364,187 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model=MODEL)
         # Calculate R2eff values
         self.interpreter.calc(verbosity=1)
+
+
+    def test_baldwin_synthetic(self):
+        """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
+
+        This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Baldwin_2014'
+
+        # Create pipe
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        pipe_name_r2eff = "%s_R2eff"%(pipe_name)
+
+        # Create base pipe
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
+
+        # Generate the sequence.
+        self.interpreter.spin.create(res_name='Ala', res_num=1, spin_name='N')
+        self.interpreter.spin.isotope('15N', spin_id='@N')
+
+        # Build the experiment IDs.
+        # Number of cpmg cycles (1 cycle = delay/180/delay/delay/180/delay)
+        ncycs = [2, 4, 8, 10, 20, 40, 500]
+        ids = []
+        for ncyc in ncycs:
+            ids.append('CPMG_%s' % ncyc)
+
+        print("\n\nThe experiment IDs are %s." % ids)
+
+        # Set up the metadata for the experiments.
+        # This value is used in Baldwin.py. It is the Larmor frequency.
+        sfrq= 200. * 1E6
+
+        # Total time of CPMG block.
+        Trelax=0.04
+
+        # First set the 
+        for i in range(len(ids)):
+            id = ids[i]
+            # Set the spectrometer frequency.
+            self.interpreter.spectrometer.frequency(id=id, frq=sfrq)
+
+            # Set the experiment type.
+            self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
+
+            # Set the relaxation dispersion CPMG constant time delay T (in s).
+            self.interpreter.relax_disp.relax_time(spectrum_id=id, time=Trelax)
+
+            # Set the relaxation dispersion CPMG frequencies.
+            ncyc = ncycs[i]
+            nu_cpmg = ncyc / Trelax
+            self.interpreter.relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=nu_cpmg)
+
+        # Prepare for R2eff reading.
+        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_r2eff)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_r2eff)
+
+        # Try reading the R2eff file.
+        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@N', disp_point_col=1, data_col=2, error_col=3)        
+
+        # Check the global data.
+        data = [
+            ['cpmg_frqs', {'CPMG_20': 500.0, 'CPMG_10': 250.0, 'CPMG_40': 1000.0, 'CPMG_4': 100.0, 'CPMG_2': 50.0, 'CPMG_500': 12500.0, 'CPMG_8': 200.0}],
+            ['cpmg_frqs_list', list(array(ncycs)/Trelax) ],
+            ['dispersion_points', len(ncycs)],
+            ['exp_type', {'CPMG_20': 'SQ CPMG', 'CPMG_10': 'SQ CPMG', 'CPMG_40': 'SQ CPMG', 'CPMG_4': 'SQ CPMG', 'CPMG_2': 'SQ CPMG', 'CPMG_500': 'SQ CPMG', 'CPMG_8': 'SQ CPMG'}],
+            ['exp_type_list', ['SQ CPMG']],
+            ['spectrometer_frq', {'CPMG_20': 200000000.0, 'CPMG_10': 200000000.0, 'CPMG_40': 200000000.0, 'CPMG_4': 200000000.0, 'CPMG_2': 200000000.0, 'CPMG_500': 200000000.0, 'CPMG_8': 200000000.0}],
+            ['spectrometer_frq_count', 1],
+            ['spectrometer_frq_list', [sfrq]],
+            ['spectrum_ids', ['CPMG_2', 'CPMG_4', 'CPMG_8', 'CPMG_10', 'CPMG_20', 'CPMG_40', 'CPMG_500']]
+        ]
+        for name, value in data:
+            # Does it exist?
+            self.assert_(hasattr(cdp, name))
+
+            # Check the object.
+            obj = getattr(cdp, name)
+            if not isinstance(data, dict):
+                self.assertEqual(obj, value)
+
+            # Check the global dictionary data.
+            else:
+                for id in ids:
+                    self.assertEqual(obj[id], value[id])
+
+        # Check the spin data.
+        n_data = [
+            [ 50.000000, 10.286255, 1.0],
+            [ 100.000000, 10.073083, 1.0],
+            [ 200.000000, 9.692746, 1.0],
+            [ 250.000000, 9.382441, 1.0],
+            [ 500.000000, 6.312396, 1.0],
+            [ 1000.000000, 3.957029, 1.0],
+            [ 12500.000000, 2.880420, 1.0]
+        ]
+        for disp_point, value, error in n_data:
+            id = 'sq_cpmg_200.00000000_0.000_%.3f' % disp_point
+            self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff[id], value)
+            self.assertEqual(cdp.mol[0].res[0].spin[0].r2eff_err[id], error)
+
+        # Generate r20 key.
+        r20_key = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq)
+
+        ## Now prepare for MODEL calculation.
+        MODEL = "CR72"
+
+        # Change pipe.
+        pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
+        self.interpreter.pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
+
+        # Then select model.
+        self.interpreter.relax_disp.select_model(model=MODEL)
+
+        # Store grid and minimisations results.
+        grid_results = []
+        mini_results = []
+
+        # Set the R20 parameters in the default grid search using the minimum R2eff value.
+        #self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 7
+
+        # Perform Grid Search.
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        # Store result.
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Store grid results.
+            grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+        ## Now do minimisation.
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        set_func_tol = 1e-9
+        set_max_iter = 100000
+        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
+
+        # Store result.
+        pA_values = []
+        kex_values = []
+        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+            # Store minimisation results.
+            mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+            # Store pA values.
+            pA_values.append(spin.pA)
+
+            # Store kex values.
+            kex_values.append(spin.kex)
+
+        print("\n# Now print before and after minimisation.\n")
+
+        # Print results.
+        for i in range(len(grid_results)):
+            # Get values.
+            g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+
+            print("GRID r2=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  r2=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
+
+        # Reference values from Baldwin.py.
+        # Exchange rate = k+ + k- (s-1)
+        kex=1000.
+        # Fractional population of excited state k+/kex
+        pb=0.01
+        # deltaOmega in ppm
+        dw_ppm=2.
+        #relaxation rate of ground (s-1)
+        R2g=2.
+        #relaxation rate of excited (s-1)
+        R2e=100.
+
+        #self.assertEqual(cdp.mol[0].res[0].spin[0].kex, kex)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 2)
+        #self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 2)
+        #self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 2)
 
 
     def test_bug_21081_disp_cluster_fail(self):
