@@ -23,6 +23,7 @@
 """The relax-lib NMR package - a library of functions for relaxation dispersion."""
 
 __all__ = [
+    'b14',
     'cr72',
     'dpl94',
     'it99',
