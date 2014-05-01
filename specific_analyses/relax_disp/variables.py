@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2013 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -70,6 +71,10 @@ MODEL_PARAMS_LM63 = ['r2', 'phi_ex', 'kex']
 MODEL_LM63_3SITE = 'LM63 3-site'
 MODEL_DESC_LM63_3SITE = "The Luz and Meiboom (1963) 3-site fast exchange model for SQ-CPMG experiments."
 MODEL_PARAMS_LM63_3SITE = ['r2', 'phi_ex_B', 'phi_ex_C', 'kB', 'kC']
+
+MODEL_B14 = 'B14'
+MODEL_DESC_B14 = "The Baldwin (2014) 2-site CPMG exact solution model for all time scales for SQ-CPMG experiments."
+MODEL_PARAMS_B14 = ['r2a', 'r2b', 'pA', 'dw', 'kex']
 
 MODEL_CR72 = 'CR72'
 MODEL_DESC_CR72 = "The reduced Carver and Richards (1972) 2-site model for all time scales for SQ-CPMG experiments, whereby the simplification R20A = R20B is assumed."
