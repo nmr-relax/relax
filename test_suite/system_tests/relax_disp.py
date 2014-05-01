@@ -1070,7 +1070,6 @@ class Relax_disp(SystemTestCase):
         # Set the model.
         ds.models = [
             MODEL_NOREX,
-            MODEL_B14,
             MODEL_LM63,
             MODEL_CR72,
             MODEL_IT99
