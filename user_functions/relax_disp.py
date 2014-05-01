@@ -2,6 +2,7 @@
 #                                                                             #
 # Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2009 Sebastien Morin                                          #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -42,7 +43,7 @@ from specific_analyses.relax_disp.data import cpmg_frq, insignificance, plot_dis
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from specific_analyses.relax_disp import uf as relax_disp_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
@@ -801,6 +802,7 @@ uf.add_keyarg(
         "%s: {%s, ...}" % (MODEL_NOREX, r2),
         "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_B14, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_CR72_FULL, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_IT99, r2, dw, kex),
@@ -829,6 +831,7 @@ uf.add_keyarg(
         MODEL_NOREX,
         MODEL_LM63,
         MODEL_LM63_3SITE,
+        MODEL_B14,
         MODEL_CR72,
         MODEL_CR72_FULL,
         MODEL_IT99,
@@ -864,6 +867,7 @@ uf.desc.append(Desc_container('The SQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63_3SITE, "The original Luz and Meiboom (1963) 3-site fast exchange equation with parameters {R20, ..., phi_ex, kex, phi_ex2, kex2},")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_B14, "The Baldwin (2014) 2-site exact solution model for all time scales with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The reduced Carver and Richards (1972) 2-site equation for most time scales whereby the simplification R20A = R20B is assumed.  The parameters are {R20, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72_FULL, "The full Carver and Richards (1972) 2-site equation for most time scales with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., pA, dw, kex},")
