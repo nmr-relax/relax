@@ -38,11 +38,11 @@ from data_store import Relax_data_store; ds = Relax_data_store()
 from specific_analyses.api import return_api
 
 
-# The specific analysis API object.
-api = return_api()
-
 # Create the data pipe.
 pipe.create('lactose', 'N-state')
+
+# The specific analysis API object.
+api = return_api()
 
 # Load all PDB structures from the current directory.
 files = listdir(getcwd())
