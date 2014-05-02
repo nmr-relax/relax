@@ -30,6 +30,9 @@ import sys
 from tempfile import mkdtemp
 from unittest import TestCase
 
+# relax module imports.
+from status import Status; status = Status()
+
 
 class Library(TestCase):
     """Test the relax library."""
@@ -56,7 +59,7 @@ class Library(TestCase):
 
         # Copy the entire library to the temporary directory.
         tmplib = self.tmpdir + sep + 'lib'
-        copytree('lib', tmplib)
+        copytree(status.install_path+sep+'lib', tmplib)
 
         # Create a Python script for testing the import independently of relax.
         script_name = self.tmpdir + sep + 'test.py'
