@@ -62,7 +62,7 @@ class Relax_disp(SystemTestCase):
                 "test_value_write_calc_rotating_frame_params_auto_analysis"
             ]
 
-            # Store in the status object. 
+            # Store in the status object.
             if methodName in to_skip:
                 status.skipped_tests.append([methodName, 'Relax curve-fitting C module', self._skip_type])
 
@@ -245,7 +245,7 @@ class Relax_disp(SystemTestCase):
     def setup_sod1wt_t25(self, pipe_name, pipe_type, pipe_name_r2eff, select_spin_index):
         """Setup of data SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
 
-        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009
         'SOD1-WT' CPMG data to the CR72 dispersion model.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
@@ -317,11 +317,11 @@ class Relax_disp(SystemTestCase):
         #############
 
         # Define the 64 residues which was used for Global fitting
-        glob_assn = ["G10N-H", "D11N-H", "Q15N-H", "G16N-H", "G37N-H", "G41N-H", "L42N-H", "H43N-H", "H46N-H", "V47N-H", "E49N-H", 
-        "E50N-H", "E51N-H", "N53N-H", "T54N-H", "G56N-H", "C57N-H", "T58N-H", "G61N-H", "H63aN-H", "F64aN-H", "N65aN-H", 
-        "L67N-H", "S68N-H", "K70N-H", "G72N-H", "G73N-H", "K75N-H", "E78N-H", "R79N-H", "H80N-H", "V81N-H", "G82N-H", 
-        "G85N-H", "N86N-H", "V87N-H", "S102N-H", "V103N-H", "I104N-H", "S105N-H", "A111N-H", "I112N-H", "R115N-H", 
-        "V118N-H", "E121N-H", "A123N-H", "L126N-H", "G127N-H", "K128N-H", "G129N-H", "G130N-H", "N131N-H", "E133N-H", 
+        glob_assn = ["G10N-H", "D11N-H", "Q15N-H", "G16N-H", "G37N-H", "G41N-H", "L42N-H", "H43N-H", "H46N-H", "V47N-H", "E49N-H",
+        "E50N-H", "E51N-H", "N53N-H", "T54N-H", "G56N-H", "C57N-H", "T58N-H", "G61N-H", "H63aN-H", "F64aN-H", "N65aN-H",
+        "L67N-H", "S68N-H", "K70N-H", "G72N-H", "G73N-H", "K75N-H", "E78N-H", "R79N-H", "H80N-H", "V81N-H", "G82N-H",
+        "G85N-H", "N86N-H", "V87N-H", "S102N-H", "V103N-H", "I104N-H", "S105N-H", "A111N-H", "I112N-H", "R115N-H",
+        "V118N-H", "E121N-H", "A123N-H", "L126N-H", "G127N-H", "K128N-H", "G129N-H", "G130N-H", "N131N-H", "E133N-H",
         "S134N-H", "T135N-H", "T137N-H", "G138N-H", "N139N-H", "A140N-H", "G141N-H", "S142N-H", "R143N-H", "C146N-H", "G147N-H"]
 
         # Test number of global
@@ -347,7 +347,7 @@ class Relax_disp(SystemTestCase):
         ############# Deselect all spins, and select few spins
 
         ## Deselect all spins, and select a few for analysis
-        self.interpreter.deselect.all()            
+        self.interpreter.deselect.all()
 
         # Select few spins
         for i in select_spin_index:
@@ -402,7 +402,7 @@ class Relax_disp(SystemTestCase):
         # Total time of CPMG block.
         Trelax=0.04
 
-        # First set the 
+        # First set the
         for i in range(len(ids)):
             id = ids[i]
             # Set the spectrometer frequency.
@@ -424,7 +424,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.switch(pipe_name=pipe_name_r2eff)
 
         # Try reading the R2eff file.
-        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@N', disp_point_col=1, data_col=2, error_col=3)        
+        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@N', disp_point_col=1, data_col=2, error_col=3)
 
         # Check the global data.
         data = [
@@ -2561,7 +2561,7 @@ class Relax_disp(SystemTestCase):
 
         Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl. The precise values are:
 
-          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1] 
+          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1]
           - 0.483 0.89623903 2.4503699912708878
           - 0.545 1.1694838
           - 0.545 1.1761503
@@ -2627,7 +2627,7 @@ class Relax_disp(SystemTestCase):
 
         Figure 3 shows the ln( k_a [s^-1]) for different concentrations of GuHCl.  The precise values are:
 
-          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1] 
+          - [GuHCL][M] ln(k_a[s^-1]) k_a[s^-1]
           - 0.483 0.89623903 2.4503699912708878
           - 0.545 1.1694838
           - 0.545 1.1761503
@@ -2901,9 +2901,9 @@ class Relax_disp(SystemTestCase):
         self.interpreter.chemical_shift.read(file='1_0_46_0_max_standard.ser', dir=data_path+sep+'peak_lists')
 
         # Test the chemical shift data.
-        cs = [122.223, 122.162, 114.250, 125.852, 118.626, 117.449, 119.999, 122.610, 118.602, 118.291, 115.393, 
-        121.288, 117.448, 116.378, 116.316, 117.263, 122.211, 118.748, 118.103, 119.421, 119.317, 119.386, 117.279, 
-        122.103, 120.038, 116.698, 111.811, 118.639, 118.285, 121.318, 117.770, 119.948, 119.759, 118.314, 118.160, 
+        cs = [122.223, 122.162, 114.250, 125.852, 118.626, 117.449, 119.999, 122.610, 118.602, 118.291, 115.393,
+        121.288, 117.448, 116.378, 116.316, 117.263, 122.211, 118.748, 118.103, 119.421, 119.317, 119.386, 117.279,
+        122.103, 120.038, 116.698, 111.811, 118.639, 118.285, 121.318, 117.770, 119.948, 119.759, 118.314, 118.160,
         121.442, 118.714, 113.080, 125.706, 119.183, 120.966, 122.361, 126.675, 117.069, 120.875, 109.372, 119.811, 126.048]
 
         i = 0
@@ -3020,7 +3020,7 @@ class Relax_disp(SystemTestCase):
             if curspin.select == False:
                 j += 1
 
-        # Test number of selected/deselected spins. 
+        # Test number of selected/deselected spins.
         self.assertEqual(i, len(cluster_ids))
         self.assertEqual(j, 48-len(cluster_ids))
 
@@ -3158,7 +3158,7 @@ class Relax_disp(SystemTestCase):
                 self.interpreter.relax_disp.cluster('free spins', curspin)
                 # Shut them down
                 self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
-                
+
             # Select only a subset of spins for global fitting
             #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
             #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
@@ -3571,7 +3571,7 @@ class Relax_disp(SystemTestCase):
 
         User function to set the R20 parameters in the default grid search using the minimum R2eff value.
 
-        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009
         'SOD1-WT' CPMG data to the CR72 dispersion model.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
@@ -3718,7 +3718,7 @@ class Relax_disp(SystemTestCase):
     def test_sod1wt_t25_bug_21954_order_error_analysis(self):
         """Error analysis of SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
 
-        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009
         'SOD1-WT' CPMG data to the CR72 dispersion model.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
@@ -3748,8 +3748,8 @@ class Relax_disp(SystemTestCase):
                 spectrum_ids_B.append(spectrum_id)
 
         # To clean up old error analysis, delete attributes
-        delattr(cdp, "var_I") 
-        delattr(cdp, "sigma_I") 
+        delattr(cdp, "var_I")
+        delattr(cdp, "sigma_I")
 
         # Perform error analysis
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_A)
@@ -3758,13 +3758,13 @@ class Relax_disp(SystemTestCase):
         # Loop over spins, save errors to list
         Errors_A_B = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
-            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
+            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]
+            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]
             Errors_A_B.append([A_err, B_err])
 
         # To clean up old error analysis, delete attributes
-        delattr(cdp, "var_I") 
-        delattr(cdp, "sigma_I") 
+        delattr(cdp, "var_I")
+        delattr(cdp, "sigma_I")
 
         # Perform error analysis. Order is important
         self.interpreter.spectrum.error_analysis(subset=spectrum_ids_B)
@@ -3773,8 +3773,8 @@ class Relax_disp(SystemTestCase):
         # Loop over spins, save errors to list
         Errors_B_A = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]  
-            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]  
+            A_err = spin.peak_intensity_err[spectrum_ids_A[0]]
+            B_err = spin.peak_intensity_err[spectrum_ids_B[0]]
             Errors_B_A.append([A_err, B_err])
 
         # Make test for order of error
@@ -3803,7 +3803,7 @@ class Relax_disp(SystemTestCase):
     def test_sod1wt_t25_to_cr72(self):
         """Optimisation of SOD1-WT CPMG. From paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.
 
-        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009
         'SOD1-WT' CPMG data to the CR72 dispersion model.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
@@ -3971,7 +3971,7 @@ class Relax_disp(SystemTestCase):
     def test_sod1wt_t25_to_sherekhan_input(self):
         """Conversion of SOD1-WT CPMG R2eff values into input files for sherekhan.
 
-        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009 
+        Optimisation of Kaare Teilum, Melanie H. Smith, Eike Schulz, Lea C. Christensen, Gleb Solomentseva, Mikael Oliveberg, and Mikael Akkea 2009
         'SOD1-WT' CPMG data to the CR72 dispersion model.
 
         This uses the data from paper at U{http://dx.doi.org/10.1073/pnas.0907387106}.  This is CPMG data with a fixed relaxation time period recorded at fields of 500 and 600MHz.
