@@ -77,7 +77,7 @@ if not hasattr(ds, 'set_max_iter'):
 
 # The verbosity level.
 if not hasattr(ds, 'verbosity'):
-    ds.verbosity = 0
+    ds.verbosity = 1
 
 # The rel_change WARNING level.
 if not hasattr(ds, 'rel_change'):
@@ -94,6 +94,10 @@ if not hasattr(ds, 'r2eff_err'):
 # The number of Monte Carlo simulations to be used for the error analyses.
 if not hasattr(ds, 'MC_NUM'):
     ds.MC_NUM = 3
+
+# The print result info.
+if not hasattr(ds, 'print_res'):
+    ds.print_res = True
 
 # Set up the data pipe.
 #######################
@@ -208,7 +212,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         ###Now back calculate, and stuff it back.
         r2effs = optimisation.back_calc_r2eff(spin=cur_spin, spin_id=cur_spin_id)
 
-        file = open_write_file(file_name=file_name, dir=ds.tmpdir, force=True)
+        file = open_write_file(file_name=file_name, dir=ds.resdir, force=True)
         ## Loop over the R2eff structure
         # Loop over the points.
         for offset, point, oi, di in loop_offset_point(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, return_indices=True):
@@ -220,7 +224,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         file.close()
 
         # Read in the R2eff file to put into spin structure.
-        relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.tmpdir, disp_point_col=1, data_col=2, error_col=3)
+        relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.resdir, disp_point_col=1, data_col=2, error_col=3)
 
         # Add to counter.
         i += 1
@@ -296,20 +300,24 @@ for i in range(len(cur_spins)):
                 set_r2_frq = set_r2[key]
                 frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
                 rel_change = sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
-                print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                if ds.print_res:
+                    print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
                 if rel_change > ds.rel_change:
-                    print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
-                    print("###################################")
+                    if ds.print_res:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
         else:
             grid_val = grid_params[mo_param]
             min_val = min_params[mo_param]
             set_val = params[mo_param]
             rel_change = sqrt( (min_val - set_val)**2/(min_val)**2 )
-            print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+            if ds.print_res:
+                print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
             if rel_change > ds.rel_change:
-                print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
-                print("###################################")
+                if ds.print_res:
+                    print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                    print("###################################")
 
 # Plot curves.
 if ds.plot_curves:
-    relax_disp.plot_disp_curves(dir=ds.tmpdir, force=True)
+    relax_disp.plot_disp_curves(dir=ds.resdir, force=True)
