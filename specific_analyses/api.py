@@ -28,6 +28,7 @@ This module is for directly accessing the specific analysis API.  The individual
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.errors import RelaxError
+from pipe_control import pipes
 
 
 def get_string(function_type):
@@ -83,6 +84,9 @@ def return_api(analysis_type=None, pipe_name=None):
 
     # The analysis type, if not given.
     if analysis_type is None:
+        # Check if a data pipe exists.
+        pipes.test()
+
         # Use a custom data pipe name.
         if pipe_name:
             analysis_type = ds[pipe_name].pipe_type
