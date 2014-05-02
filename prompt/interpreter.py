@@ -328,11 +328,6 @@ def exec_script(name, globals):
     script_path = path.join(getcwd(), head)
     sys.path.append(script_path)
 
-    # Switch directories for nested scripting.
-    if head:
-        orig_dir = getcwd()
-        chdir(head)
-
     # The module name.
     module, ext = path.splitext(tail)
 
@@ -356,10 +351,6 @@ def exec_script(name, globals):
             exec(compile(open(name).read(), name, 'exec'), globals)
 
     finally:
-        # Switch back to the original working directory.
-        if head:
-            chdir(orig_dir)
-
         # Remove the script path.
         sys.path.reverse()
         sys.path.pop(sys.path.index(script_path))
