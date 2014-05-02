@@ -1,0 +1,8 @@
+The relax sample scripts are designed to help you create your own scripts to perform your own custom analyses.  The correct way to use these scripts are as follows:
+
+    - Find the script which is closest to the analysis you wish to perform.
+    - Copy that script to your own analysis directory.
+    - Modify the file paths to point to your own files.
+    - Customise the settings and user function calls to suit your data.
+
+Note, you should never run these scripts directly from the sample_script/ directories.  A few of the scripts will run without modification using data from the relax test suite directories, however the majority will not.  They are not provided as a tutorial but as a starting example to be modified to suit your needs.
