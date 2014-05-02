@@ -40,7 +40,7 @@ from specific_analyses.api import return_api
 
 
 # The specific analysis API object.
-api = return_api()
+api = return_api(analysis_type='N-state')
 
 # Loop over random positions.
 for rand_index in range(200):
