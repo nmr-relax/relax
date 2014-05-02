@@ -27,20 +27,22 @@ if not hasattr(ds, 'data'):
     r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
     time_T2_1 = 0.06
     ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
-    exp_1 = [sfrq_1, time_T2_1, ncycs_1]
+    r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+    exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
 
     sfrq_2 = 499.8908617*1E6
     r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
     time_T2_2 = 0.05
     ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
-    exp_2 = [sfrq_2, time_T2_2, ncycs_2]
+    r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+    exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
 
     # Collect all exps
     exps = [exp_1, exp_2]
 
     spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1:2, r20_key_2:2}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ],
-            ['Ala', 2, 'N', {'r2': {r20_key_1:3, r20_key_2:3}, 'kex': 1000, 'pA': 0.99, 'dw': 1} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10, r20_key_2:11.5}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13, r20_key_2:14.5}, 'kex': 1000, 'pA': 0.99, 'dw': 1} ]
             ]
 
     ds.data = [model, spins, exps]
@@ -55,7 +57,7 @@ if not hasattr(ds, 'resdir'):
 
 # Do set_grid_r20_from_min_r2eff ?.
 if not hasattr(ds, 'set_grid_r20_from_min_r2eff'):
-    ds.set_grid_r20_from_min_r2eff = False
+    ds.set_grid_r20_from_min_r2eff = True
 
 # Remove insignificant level.
 if not hasattr(ds, 'insignificance'):
@@ -63,17 +65,17 @@ if not hasattr(ds, 'insignificance'):
 
 # The grid search size (the number of increments per dimension).
 if not hasattr(ds, 'GRID_INC'):
-    ds.GRID_INC = 5
+    ds.GRID_INC = 12
 
 # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
 # The default value is 1e-25.
 if not hasattr(ds, 'set_func_tol'):
-    ds.set_func_tol = 1e-9
+    ds.set_func_tol = 1e-25
 
 # The maximum number of iterations.
 # The default value is 1e7.
 if not hasattr(ds, 'set_max_iter'):
-    ds.set_max_iter = 10000
+    ds.set_max_iter = 10000000
 
 # The verbosity level.
 if not hasattr(ds, 'verbosity'):
@@ -126,7 +128,7 @@ exps = ds.data[2]
 # Now loop over the experiments
 exp_ids = []
 for exp in exps:
-    sfrq, time_T2, ncycs = exp
+    sfrq, time_T2, ncycs, r2eff_errs = exp
     exp_id = 'CPMG_%3.1f' % (sfrq/1E6)
     exp_ids.append(exp_id)
 
@@ -187,6 +189,8 @@ for res_name, res_num, spin_name, params in cur_spins:
 i = 0
 for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
     exp_id = exp_ids[mi]
+    exp = exps[mi]
+    sfrq, time_T2, ncycs, r2eff_errs = exp
 
     # Then loop over the spins.
     for res_name, res_num, spin_name, params in cur_spins:
@@ -216,8 +220,16 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         ## Loop over the R2eff structure
         # Loop over the points.
         for offset, point, oi, di in loop_offset_point(exp_type=EXP_TYPE_CPMG_SQ, frq=frq, return_indices=True):
+            # Extract the Calculated R2eff.
             r2eff = r2effs[ei][0][mi][oi][di]
-            string = "%.15f %.15f %.3f\n"%(point, r2eff, ds.r2eff_err)
+
+            # Find the defined error setup.
+            set_r2eff_err = r2eff_errs[di]
+
+            # Add the defined error to the calculated error.
+            r2eff_w_err = r2eff + set_r2eff_err
+
+            string = "%.15f %.15f %.3f %.15f\n"%(point, r2eff_w_err, ds.r2eff_err, r2eff)
             file.write(string)
 
         # Close file.
