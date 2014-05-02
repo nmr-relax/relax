@@ -517,12 +517,12 @@ class Main(wx.Frame):
         self.controller.reset()
 
 
-    def run_test_suite(self, event=None, categories=['system', 'unit', 'gui']):
+    def run_test_suite(self, event=None, categories=['system', 'unit', 'gui', 'verification']):
         """Execute the full test suite.
 
         @keyword event:         The wx event.
         @type event:            wx event
-        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui'] for all tests.
+        @keyword categories:    The list of test categories to run, for example ['system', 'unit', 'gui', 'verification'] for all tests.
         @type categories:       list of str
         """
 
@@ -622,6 +622,17 @@ class Main(wx.Frame):
 
         # Forward the call.
         self.run_test_suite(event, categories=['unit'])
+
+
+    def run_test_suite_verification(self, event=None):
+        """Execute the verification tests.
+
+        @keyword event: The wx event.
+        @type event:    wx event
+        """
+
+        # Forward the call.
+        self.run_test_suite(event, categories=['verification'])
 
 
     def show_controller(self, event=None):

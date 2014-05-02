@@ -58,6 +58,7 @@ class Menu:
     MENU_TOOLS_TEST_SUITE_SYS = wx.NewId()
     MENU_TOOLS_TEST_SUITE_UNIT = wx.NewId()
     MENU_TOOLS_TEST_SUITE_GUI = wx.NewId()
+    MENU_TOOLS_TEST_SUITE_VERIFICATION = wx.NewId()
     MENU_TOOLS_SYS_INFO = wx.NewId()
     MENU_HELP_MANUAL = wx.NewId()
     MENU_HELP_MAIL = wx.NewId()
@@ -132,6 +133,7 @@ class Menu:
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_SYS, text="&System tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_UNIT, text="&Unit tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
         sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_GUI, text="&GUI tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
+        sub_menu.AppendItem(build_menu_item(sub_menu, id=self.MENU_TOOLS_TEST_SUITE_VERIFICATION, text="&Verification tests", icon=fetch_icon('oxygen.mimetypes.application-x-desktop', "16x16")))
         menu.AppendItem(test_suite_item)
         self.menubar.Append(menu, "&Tools")
 
@@ -142,6 +144,7 @@ class Menu:
         self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_sys, id=self.MENU_TOOLS_TEST_SUITE_SYS)
         self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_unit, id=self.MENU_TOOLS_TEST_SUITE_UNIT)
         self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_gui, id=self.MENU_TOOLS_TEST_SUITE_GUI)
+        self.gui.Bind(wx.EVT_MENU, self.gui.run_test_suite_verification, id=self.MENU_TOOLS_TEST_SUITE_VERIFICATION)
 
         # The 'Help' menu entries.
         menu = wx.Menu()
