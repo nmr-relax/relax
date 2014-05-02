@@ -41,6 +41,7 @@ Equations
 =========
 
 The equation used is::
+
             R2A0 + R2B0 + kex      Ncyc                      1      ( 1+y            1-y                          )
     R2eff = ------------------ -  ------ * cosh^-1 * v1c - ------ ln( --- + ------------------ * (v2 + 2*kAB*pD ) )   
                   2                Trel                     Trel    (  2    2*sqrt(v1c^2 -1 )                     )
@@ -50,6 +51,7 @@ The equation used is::
                            Trel    (  2    2*sqrt(v1c^2 -1 )                     )
 
 Which have these following definitions::
+
     v1c = F0 * cosh(tauCP * E0)- F2 * cosh(tauCP * E2) 
     v1s = F0 * sinh(tauCP * E0)- F2 * sinh(tauCP * E2) 
     v2*N = v1s * (OB-OA) + 4OB * F1^a * sinh(tauCP * E1) 
@@ -57,23 +59,20 @@ Which have these following definitions::
     v3 = ( v2^2 + 4 * kBA * kAB * pD^2 )^1/2 
     y = ( (v1c-v3)/(v1c+v3) )^NCYC
 
-Note, E2 is complex. If |x| denotes the complex modulus:<br>
+Note, E2 is complex. If |x| denotes the complex modulus::
+
     cosh(tauCP * E2) = cos(tauCP * |E2|)
     sinh(tauCP * E2) = i sin(tauCP * |E2|)
 
 The term pD is based on product of the off diagonal elements in the CPMG propagator (Supplementary Section 3).
 
-It is interesting to consider the region of validity of the Carver Richards result.
-The two results are equal when the correction is zero, which is true when
+It is interesting to consider the region of validity of the Carver Richards result.  The two results are equal when the correction is zero, which is true when::
 
     sqrt(v1c^2-1) ~ v2 + 2*kAB * pD
 
-This occurs when 2*kAB * pD tends to zero, and so v2=v3.
-Setting "kAB * pD" to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa.
-This will be a good approximation when pA >> p_B.
+This occurs when 2*kAB * pD tends to zero, and so v2=v3.  Setting "kAB * pD" to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa.  This will be a good approximation when pA >> p_B.
 
-In practise, significant deviations from the Carver Richards equation can be incurred if pB > 1 %.
-Incorporation of the correction term into equation (50), results in an improved description of the CPMG experiment over the Carver Richards equation.
+In practise, significant deviations from the Carver Richards equation can be incurred if pB > 1 %.  Incorporation of the correction term into equation (50), results in an improved description of the CPMG experiment over the Carver Richards equation.
 
 kex is the chemical exchange rate constant, pA and pB are the populations of states A and B, and delta_omega is the chemical shift difference between the two states in ppm.
 
