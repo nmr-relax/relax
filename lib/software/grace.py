@@ -90,7 +90,7 @@ def script_grace2images(file=None):
     file.write("        wpngpar = open(pngpar, \"w\")\n")
     file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" FONT ANTIALIASING on\\n\")\n")
     file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"transparent:off\\\"\\n\")\n")
-    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"compression:1\\\"\\n\")\n")
+    file.write("        wpngpar.write(\"DEVICE \\\"PNG\\\" OP \\\"compression:9\\\"\\n\")\n")
     file.write("        wpngpar.close()\n")
     file.write("\n")
     file.write("# Now loop over the grace files\n")
