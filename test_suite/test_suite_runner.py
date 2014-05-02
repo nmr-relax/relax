@@ -54,6 +54,7 @@ class Test_suite_runner:
         - System/functional tests.
         - Unit tests.
         - GUI tests.
+        - Verification tests.
     """
 
     def __init__(self, tests=[], from_gui=False, categories=['system', 'unit', 'gui', 'verification'], timing=False):
