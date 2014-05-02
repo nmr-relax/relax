@@ -802,11 +802,11 @@ uf.add_keyarg(
         "%s: {%s, ...}" % (MODEL_NOREX, r2),
         "%s: {%s, ..., %s, %s}" % (MODEL_LM63, r2, phi_ex, kex),
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
-        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_B14, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_CR72_FULL, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_IT99, r2, dw, kex),
         "%s: {%s, ..., %s, k_AB}" % (MODEL_TSMFK01, r2a, dw),
+        "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_B14, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_3D, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_3D_FULL, r2a, r2b, dw, kex),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_NS_CPMG_2SITE_STAR, r2, dw, kex),
@@ -831,11 +831,11 @@ uf.add_keyarg(
         MODEL_NOREX,
         MODEL_LM63,
         MODEL_LM63_3SITE,
-        MODEL_B14,
         MODEL_CR72,
         MODEL_CR72_FULL,
         MODEL_IT99,
         MODEL_TSMFK01,
+        MODEL_B14,
         MODEL_NS_CPMG_2SITE_3D,
         MODEL_NS_CPMG_2SITE_3D_FULL,
         MODEL_NS_CPMG_2SITE_STAR,
@@ -867,11 +867,11 @@ uf.desc.append(Desc_container('The SQ CPMG-type experiments'))
 uf.desc[-1].add_paragraph("The currently supported analytic models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63, "The original Luz and Meiboom (1963) 2-site fast exchange equation with parameters {R20, ..., phi_ex, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_LM63_3SITE, "The original Luz and Meiboom (1963) 3-site fast exchange equation with parameters {R20, ..., phi_ex, kex, phi_ex2, kex2},")
-uf.desc[-1].add_item_list_element("'%s'" % MODEL_B14, "The Baldwin (2014) 2-site exact solution model for all time scales with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72, "The reduced Carver and Richards (1972) 2-site equation for most time scales whereby the simplification R20A = R20B is assumed.  The parameters are {R20, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_CR72_FULL, "The full Carver and Richards (1972) 2-site equation for most time scales with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_IT99, "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB and with parameters {R20, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_TSMFK01, "The Tollinger, Kay et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.  Applicable in the limit of slow exchange, when |R20A-R20B| << k_AB,kB << 1/tau_CP.  R20A is the transverse relaxation rate of site A in the absence of exchange.  2*tau_CP is is the time between successive 180 deg. pulses.  The parameters are {R20A, ..., dw, k_AB}.")
+uf.desc[-1].add_item_list_element("'%s'" % MODEL_B14, "The Baldwin (2014) 2-site exact solution model for all time scales with parameters {R20A, R20B, ..., pA, dw, kex},")
 uf.desc[-1].add_paragraph("The currently supported numeric models are:")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_3D, "The reduced numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors whereby the simplification R20A = R20B is assumed.  Its parameters are {R20, ..., pA, dw, kex},")
 uf.desc[-1].add_item_list_element("'%s'" % MODEL_NS_CPMG_2SITE_3D_FULL, "The full numerical solution for the 2-site Bloch-McConnell equations using 3D magnetisation vectors.  Its parameters are {R20A, R20B, ..., pA, dw, kex},")
