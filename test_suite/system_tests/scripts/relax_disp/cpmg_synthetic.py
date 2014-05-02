@@ -93,7 +93,7 @@ if not hasattr(ds, 'r2eff_err'):
 
 # The number of Monte Carlo simulations to be used for the error analyses.
 if not hasattr(ds, 'MC_NUM'):
-    ds.GRID_INC = 3
+    ds.MC_NUM = 3
 
 # Set up the data pipe.
 #######################
