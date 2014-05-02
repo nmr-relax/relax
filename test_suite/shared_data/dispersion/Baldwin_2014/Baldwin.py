@@ -1,4 +1,26 @@
 #!/usr/bin/python
+###############################################################################
+#                                                                             #
+# Copyright (C) 2014 Andrew Baldwin (andrew.baldwin@chem.ox.ac.uk),           #
+# University of Oxford                                                        #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
 ######################################################################
 # Script to simulate R2eff from a CPMG experiment
 #
@@ -8,11 +30,6 @@
 # Requires numpy.
 #
 #
-# Do not distribute without permission.
-# Copyright (c) 
-# Andrew Baldwin
-# andrew.baldwin@chem.ox.ac.uk
-# University of Oxford 2014.
 #
  
 import numpy
