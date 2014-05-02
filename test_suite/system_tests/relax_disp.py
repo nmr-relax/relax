@@ -656,13 +656,15 @@ class Relax_disp(SystemTestCase):
         r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
         time_T2_1 = 0.06
         ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
-        exp_1 = [sfrq_1, time_T2_1, ncycs_1]
+        r2eff_err_1 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_err_1]
 
         sfrq_2 = 499.8908617*1E6
         r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
         time_T2_2 = 0.05
         ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
-        exp_2 = [sfrq_2, time_T2_2, ncycs_2]
+        r2eff_err_2 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_err_2]
 
         # Collect all exps
         exps = [exp_1, exp_2]
@@ -758,6 +760,7 @@ class Relax_disp(SystemTestCase):
 
                         ## Make test on parameters.
                         self.assertAlmostEqual(set_val, min_val, 10)
+
 
     def test_curve_type_cpmg_fixed_time(self):
         """Test the curve type detection using the Dr. Flemming Hansen's CPMG fixed time test data."""
