@@ -27,6 +27,7 @@ from os import pardir, sep
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
+from status import Status; status = Status()
 
 
 # Analysis variables.
@@ -65,7 +66,7 @@ INSIGNIFICANCE = 1.0
 #######################
 
 # The path to the data files.
-DATA_PATH = pardir+sep+pardir+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+DATA_PATH = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
 
 # Create the data pipe.
 pipe_name = 'base pipe'
