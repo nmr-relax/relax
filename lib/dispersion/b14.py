@@ -43,32 +43,32 @@ Equations
 The equation used is::
 
             R2A0 + R2B0 + kex      Ncyc                      1      ( 1+y            1-y                          )
-    R2eff = ------------------ -  ------ * cosh^-1 * v1c - ------ ln( --- + ------------------ * (v2 + 2*kAB*pD ) )   
+    R2eff = ------------------ -  ------ * cosh^-1 * v1c - ------ ln( --- + ------------------ * (v2 + 2*kAB*pD ) ) ,
                   2                Trel                     Trel    (  2    2*sqrt(v1c^2 -1 )                     )
 
                             1      ( 1+y            1-y                          )
-          = R2eff(CR72) - ------ ln( --- + ------------------ * (v2 + 2*kAB*pD ) )   
+          = R2eff(CR72) - ------ ln( --- + ------------------ * (v2 + 2*kAB*pD ) ) ,
                            Trel    (  2    2*sqrt(v1c^2 -1 )                     )
 
 Which have these following definitions::
 
-    v1c = F0 * cosh(tauCP * E0)- F2 * cosh(tauCP * E2) 
-    v1s = F0 * sinh(tauCP * E0)- F2 * sinh(tauCP * E2) 
-    v2*N = v1s * (OB-OA) + 4OB * F1^a * sinh(tauCP * E1) 
-    pD N = v1s + (F1^a + F1^b) * sinh(tauCP * E1)
-    v3 = ( v2^2 + 4 * kBA * kAB * pD^2 )^1/2 
-    y = ( (v1c-v3)/(v1c+v3) )^NCYC
+    v1c = F0 * cosh(tauCP * E0)- F2 * cosh(tauCP * E2) ,
+    v1s = F0 * sinh(tauCP * E0)- F2 * sinh(tauCP * E2) ,
+    v2*N = v1s * (OB-OA) + 4OB * F1^a * sinh(tauCP * E1) ,
+    pD N = v1s + (F1^a + F1^b) * sinh(tauCP * E1) ,
+    v3 = ( v2^2 + 4 * kBA * kAB * pD^2 )^1/2 ,
+    y = ( (v1c-v3)/(v1c+v3) )^NCYC ,
 
 Note, E2 is complex. If |x| denotes the complex modulus::
 
-    cosh(tauCP * E2) = cos(tauCP * |E2|)
-    sinh(tauCP * E2) = i sin(tauCP * |E2|)
+    cosh(tauCP * E2) = cos(tauCP * |E2|) ,
+    sinh(tauCP * E2) = i sin(tauCP * |E2|) ,
 
 The term pD is based on product of the off diagonal elements in the CPMG propagator (Supplementary Section 3).
 
 It is interesting to consider the region of validity of the Carver Richards result.  The two results are equal when the correction is zero, which is true when::
 
-    sqrt(v1c^2-1) ~ v2 + 2*kAB * pD
+    sqrt(v1c^2-1) ~ v2 + 2*kAB * pD ,
 
 This occurs when 2*kAB * pD tends to zero, and so v2=v3.  Setting "kAB * pD" to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa.  This will be a good approximation when pA >> p_B.
 
@@ -98,11 +98,87 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, sqrt
+import numpy
+from math import cos,sin,atan2
 
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
+    """Calculate the R2eff values for the CR72 model.
+
+    See the module docstring for details.
+
+
+    @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
+    @type r20a:             float
+    @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
+    @type r20b:             float
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               float
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
+    @keyword power:         The matrix exponential power array. The number of CPMG blocks.
+    @type power:            numpy int16, rank-1 array
+    @keyword relax_time:    The total relaxation time period (in seconds).
+    @type relax_time:       float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy rank-1 float array
+    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
+    @type back_calc:        numpy rank-1 float array
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @type num_points:       int
     """
-    """
 
-    return None
+    # Conversion from relax parameters, to the exact code of Baldwin.
+    pb = 1 - pA
+    R2e = r20b
+    R2g = r20a
+    Trel = relax_time
+    ncyc = power
+
+    #########################################################################
+    ##### Baldwins code.
+    #########################################################################
+    pa=(1-pb)
+    keg=kex*(1-pb)
+    kge=kex*pb
+    deltaR2=R2e-R2g
+    #  This is not used
+    #nu_cpmg=ncyc/Trel
+    #tcp=Trel/(4.0*ncyc)  #time for one free precession element
+
+    #########################################################################
+    #get the real and imaginary components of the exchange induced shift
+    g1=2*dw*(deltaR2+keg-kge)                   #same as carver richards zeta
+    g2=(deltaR2+keg-kge)**2.0+4*keg*kge-dw**2   #same as carver richards psi
+    g3=cos(0.5*atan2(g1,g2))*(g1**2.0+g2**2.0)**(1/4.0)   #trig faster than square roots
+    g4=sin(0.5*atan2(g1,g2))*(g1**2.0+g2**2.0)**(1/4.0)   #trig faster than square roots
+    #########################################################################
+    #time independent factors
+    N=complex(kge+g3-kge,g4)            #N=oG+oE
+    NNc=(g3**2.+g4**2.)
+    f0=(dw**2.+g3**2.)/(NNc)              #f0
+    f2=(dw**2.-g4**2.)/(NNc)              #f2
+    #t1=(-dw+g4)*(complex(-dw,-g3))/(NNc) #t1
+    t2=(dw+g4)*(complex(dw,-g3))/(NNc) #t2
+    t1pt2=complex(2*dw**2.,-g1)/(NNc)     #t1+t2
+    oGt2=complex((deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
+    Rpre=(R2g+R2e+kex)/2.0   #-1/Trel*log(LpreDyn)
+    E0= 2.0*tcp*g3  #derived from relaxation       #E0=-2.0*tcp*(f00R-f11R)
+    E2= 2.0*tcp*g4  #derived from chemical shifts  #E2=complex(0,-2.0*tcp*(f00I-f11I))
+    E1=(complex(g3,-g4))*tcp    #mixed term (complex) (E0-iE2)/2
+    ex0b=(f0*numpy.cosh(E0)-f2*numpy.cos(E2))               #real
+    ex0c=(f0*numpy.sinh(E0)-f2*numpy.sin(E2)*complex(0,1.)) #complex
+    ex1c=(numpy.sinh(E1))                                   #complex
+    v3=numpy.sqrt(ex0b**2.-1)  #exact result for v2v3
+    y=numpy.power((ex0b-v3)/(ex0b+v3),ncyc)
+    v2pPdN=(( complex(deltaR2+kex,dw) )*ex0c+(-oGt2-kge*t1pt2)*2*ex1c)        #off diagonal common factor. sinh fuctions
+    Tog=(((1+y)/2+(1-y)/(2*v3)*(v2pPdN)/N))
+    Minty=Rpre-ncyc/(Trel)*numpy.arccosh((ex0b).real)-1/Trel*numpy.log((Tog.real))  #estimate R2eff
+
+    # Loop over the time points, back calculating the R2eff values.
+    for i in range(num_points):
+
+        # The full formula.
+        back_calc[i] = Minty[i]
