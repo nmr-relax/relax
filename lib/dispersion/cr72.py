@@ -50,9 +50,9 @@ where::
     D+/- = - | +/-1 + -------------------- | ,
            2 \        sqrt(Psi^2 + zeta^2) /
 
-             2^(2/3)
-    eta+/- = ------- sqrt(+/-Psi + sqrt(Psi^2 + zeta^2)) ,
-             nu_cpmg
+                           1
+    eta+/- = 2^(-3/2) . -------- sqrt(+/-Psi + sqrt(Psi^2 + zeta^2)) ,
+                        nu_cpmg
 
     Psi = (R2A0 - R2B0 - pA.kex + pB.kex)^2 - delta_omega^2 + 4pA.pB.kex^2 ,
 
