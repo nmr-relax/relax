@@ -201,7 +201,7 @@ class Dispersion:
                 for mi in range(len(values[ei][0])):
                     self.num_disp_points[ei][si].append([])
                     self.num_offsets[ei][si].append([])
-                    
+
                     # The offset data.
                     if len(offset[ei][si][mi]):
                         self.num_offsets[ei][si][mi] = len(self.offset[ei][si][mi])
@@ -275,7 +275,7 @@ class Dispersion:
             self.M0 = zeros(9, float64)
 
         # Special CPMG-type data structures.
-        if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01]:
+        if model in [MODEL_B14, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01]:
             # The number of CPMG blocks.
             self.power = []
             for ei in range(self.num_exp):
@@ -786,8 +786,33 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
-        # Calculate and return the chi-squared value.
-        return self.calc_CR72_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for si in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for mi in range(self.num_frq):
+                # The R20 index.
+                r20_index = mi + si*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[si] * self.frqs[0][si][mi]
+
+                # Back calculate the R2eff values.
+                r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, power=self.power[0][mi], relax_time=self.relax_times[0][mi], tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for di in range(self.num_disp_points[0][si][mi][0]):
+                    if self.missing[0][si][mi][0][di]:
+                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
 
 
     def func_CR72(self, params):
