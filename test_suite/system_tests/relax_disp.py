@@ -383,8 +383,8 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type)
 
         # Generate the sequence.
-        self.interpreter.spin.create(res_name='Ala', res_num=1, spin_name='N')
-        self.interpreter.spin.isotope('15N', spin_id='@N')
+        self.interpreter.spin.create(res_name='Ala', res_num=1, spin_name='H')
+        self.interpreter.spin.isotope('1H', spin_id='@H')
 
         # Build the experiment IDs.
         # Number of cpmg cycles (1 cycle = delay/180/delay/delay/180/delay)
@@ -396,7 +396,7 @@ class Relax_disp(SystemTestCase):
         print("\n\nThe experiment IDs are %s." % ids)
 
         # Set up the metadata for the experiments.
-        # This value is used in Baldwin.py. It is the Larmor frequency.
+        # This value is used in Baldwin.py. It is the 1H Larmor frequency.
         sfrq= 200. * 1E6
 
         # Total time of CPMG block.
@@ -424,7 +424,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.pipe.switch(pipe_name=pipe_name_r2eff)
 
         # Try reading the R2eff file.
-        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@N', disp_point_col=1, data_col=2, error_col=3)
+        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@H', disp_point_col=1, data_col=2, error_col=3)
 
         # Check the global data.
         data = [
@@ -451,16 +451,17 @@ class Relax_disp(SystemTestCase):
             else:
                 for id in ids:
                     self.assertEqual(obj[id], value[id])
+                    pass
 
         # Check the spin data.
         n_data = [
-            [ 50.000000, 10.286255, 1.0],
-            [ 100.000000, 10.073083, 1.0],
-            [ 200.000000, 9.692746, 1.0],
-            [ 250.000000, 9.382441, 1.0],
-            [ 500.000000, 6.312396, 1.0],
-            [ 1000.000000, 3.957029, 1.0],
-            [ 12500.000000, 2.880420, 1.0]
+            [ 50.000000, 10.286255, 0.1],
+            [ 100.000000, 10.073083, 0.1],
+            [ 200.000000, 9.692746, 0.1],
+            [ 250.000000, 9.382441, 0.1],
+            [ 500.000000, 6.312396, 0.1],
+            [ 1000.000000, 3.957029, 0.1],
+            [ 12500.000000, 2.880420, 0.1]
         ]
         for disp_point, value, error in n_data:
             id = 'sq_cpmg_200.00000000_0.000_%.3f' % disp_point
@@ -471,7 +472,7 @@ class Relax_disp(SystemTestCase):
         r20_key = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq)
 
         ## Now prepare for MODEL calculation.
-        MODEL = "CR72"
+        MODEL = "B14"
 
         # Change pipe.
         pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
@@ -486,10 +487,10 @@ class Relax_disp(SystemTestCase):
         mini_results = []
 
         # Set the R20 parameters in the default grid search using the minimum R2eff value.
-        #self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+        self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
 
         # The grid search size (the number of increments per dimension).
-        GRID_INC = 7
+        GRID_INC = 11
 
         # Perform Grid Search.
         self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
@@ -497,11 +498,11 @@ class Relax_disp(SystemTestCase):
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Store grid results.
-            grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+            grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
-        set_func_tol = 1e-9
+        set_func_tol = 1e-11
         set_max_iter = 100000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
@@ -510,7 +511,7 @@ class Relax_disp(SystemTestCase):
         kex_values = []
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
             # Store minimisation results.
-            mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+            mini_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
             # Store pA values.
             pA_values.append(spin.pA)
@@ -523,11 +524,11 @@ class Relax_disp(SystemTestCase):
         # Print results.
         for i in range(len(grid_results)):
             # Get values.
-            g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-            m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+            g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
 
-            print("GRID r2=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-            print("MIN  r2=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
+            print("GRID r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
@@ -541,10 +542,15 @@ class Relax_disp(SystemTestCase):
         #relaxation rate of excited (s-1)
         R2e=100.
 
-        #self.assertEqual(cdp.mol[0].res[0].spin[0].kex, kex)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 2)
-        #self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 2)
-        #self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 2)
+        # Test the parameters which created the data.
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 4)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 2)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
+
+        # Save graphs
+        #self.interpreter.relax_disp.plot_disp_curves(dir=path.join(getcwd()), num_points=20, extend=0.0, force=True)
 
 
     def test_bug_21081_disp_cluster_fail(self):
