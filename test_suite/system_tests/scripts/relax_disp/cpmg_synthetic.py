@@ -7,11 +7,11 @@ from math import sqrt
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
-from lib.io import mkdir_nofail, open_write_file
+from lib.io import open_write_file
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.mol_res_spin import return_spin, spin_loop
-from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset, loop_frq, loop_offset_point
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ
+from pipe_control.mol_res_spin import return_spin
+from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset_point
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
 
@@ -28,6 +28,7 @@ if not hasattr(ds, 'data'):
     time_T2_1 = 0.06
     ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
     r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+    #r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
 
     sfrq_2 = 499.8908617*1E6
@@ -35,6 +36,7 @@ if not hasattr(ds, 'data'):
     time_T2_2 = 0.05
     ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
     r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+    #r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
     exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
 
     # Collect all exps
@@ -63,19 +65,24 @@ if not hasattr(ds, 'set_grid_r20_from_min_r2eff'):
 if not hasattr(ds, 'insignificance'):
     ds.insignificance = 0.0
 
-# The grid search size (the number of increments per dimension).
+# The grid search size (the number of increments per dimension). "None" will set default values.
 if not hasattr(ds, 'GRID_INC'):
-    ds.GRID_INC = 12
+    #ds.GRID_INC = None
+    ds.GRID_INC = 13
+
+# The do clustering.
+if not hasattr(ds, 'do_cluster'):
+    ds.do_cluster = False
 
 # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
 # The default value is 1e-25.
 if not hasattr(ds, 'set_func_tol'):
-    ds.set_func_tol = 1e-25
+    ds.set_func_tol = 1e-8
 
 # The maximum number of iterations.
 # The default value is 1e7.
 if not hasattr(ds, 'set_max_iter'):
-    ds.set_max_iter = 10000000
+    ds.set_max_iter = 10000
 
 # The verbosity level.
 if not hasattr(ds, 'verbosity'):
@@ -88,6 +95,15 @@ if not hasattr(ds, 'rel_change'):
 # The plot_curves.
 if not hasattr(ds, 'plot_curves'):
     ds.plot_curves = True
+
+# The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+if not hasattr(ds, 'sherekhan_input'):
+    ds.sherekhan_input = True
+
+# Make a dx map to be opened om OpenDX.
+# To map the hypersurface of chi2, when altering kex, dw and pA.
+if not hasattr(ds, 'opendx'):
+    ds.opendx = True
 
 # The set r2eff err.
 if not hasattr(ds, 'r2eff_err'):
@@ -109,7 +125,6 @@ pipe_name = 'base pipe'
 pipe_type = 'relax_disp'
 pipe_bundle = 'relax_disp'
 pipe_name_r2eff = "%s_%s_R2eff"%(ds.data[0], pipe_name)
-#pipe_name_r2eff_calc = "%s_calc"%(pipe_name_r2eff)
 pipe.create(pipe_name=pipe_name, pipe_type=pipe_type, bundle = pipe_bundle)
 
 
@@ -256,15 +271,31 @@ value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL, param='r2eff')
 # Then select model.
 relax_disp.select_model(model=ds.data[0])
 
-# Set the R20 parameters in the default grid search using the minimum R2eff value.
-if ds.set_grid_r20_from_min_r2eff:
-    relax_disp.set_grid_r20_from_min_r2eff(force=False)
+# Do a dx map.
+# To map the hypersurface of chi2, when altering kex, dw and pA.
+if ds.opendx:
+    dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=20, lower=None, upper=None, axis_incs=5, file_prefix='map', dir=ds.resdir, point=None, point_file='point', remap=None)
 
 # Remove insignificant
 relax_disp.insignificance(level=ds.insignificance)
 
 # Perform Grid Search.
-grid_search(lower=None, upper=None, inc=ds.GRID_INC, constraints=True, verbosity=ds.verbosity)
+if ds.GRID_INC:
+    # Set the R20 parameters in the default grid search using the minimum R2eff value.
+    # This speeds it up considerably.
+    if ds.set_grid_r20_from_min_r2eff:
+        relax_disp.set_grid_r20_from_min_r2eff(force=False)
+
+    # Then do grid search.
+    grid_search(lower=None, upper=None, inc=ds.GRID_INC, constraints=True, verbosity=ds.verbosity)
+
+# If no Grid search, set the default values.
+else:
+    for param in MODEL_PARAMS[ds.data[0]]:
+        value.set(param=param, index=None)
+        # Do a grid search, which will store the chi2 value.
+    #grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=ds.verbosity)
+
 
 # Define function to store grid results.
 def save_res(res_spins):
@@ -286,9 +317,38 @@ def save_res(res_spins):
 ds.grid_results = save_res(cur_spins)
 
 ## Now do minimisation.
+
 minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
 
+# Save results
 ds.min_results = save_res(cur_spins)
+
+# Now do clustering
+if ds.do_cluster:
+    # Change pipe.
+    pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(pipe_name, ds.data[0])
+    pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL_CLUSTER)
+    pipe.switch(pipe_name=pipe_name_MODEL_CLUSTER)
+
+    # Copy R2eff, but not the original parameters
+    value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_CLUSTER, param='r2eff')
+
+    # Then select model.
+    relax_disp.select_model(model=ds.data[0])
+
+    # Then cluster
+    relax_disp.cluster('model_cluster', ":1-100")
+
+    # Copy the parameters from before.
+    relax_disp.parameter_copy(pipe_from=pipe_name_MODEL, pipe_to=pipe_name_MODEL_CLUSTER)
+
+    # Now minimise.
+    minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
+
+    # Save results
+    ds.clust_results = save_res(cur_spins)
+else:
+    ds.clust_results = ds.min_results
 
 # Compare results.
 for i in range(len(cur_spins)):
@@ -298,22 +358,26 @@ for i in range(len(cur_spins)):
 
     grid_params = ds.grid_results[i][3]
     min_params = ds.min_results[i][3]
+    clust_params = ds.clust_results[i][3]
     # Now read the parameters.
-    print("For spin: '%s'"%cur_spin_id)
+    if ds.print_res:
+        print("For spin: '%s'"%cur_spin_id)
     for mo_param in cur_spin.params:
         # The R2 is a dictionary, depending on spectrometer frequency.
         if isinstance(getattr(cur_spin, mo_param), dict):
             grid_r2 = grid_params[mo_param]
             min_r2 = min_params[mo_param]
+            clust_r2 = clust_params[mo_param]
             set_r2 = params[mo_param]
             for key, val in set_r2.items():
                 grid_r2_frq = grid_r2[key]
                 min_r2_frq = min_r2[key]
+                clust_r2_frq = min_r2[key]
                 set_r2_frq = set_r2[key]
                 frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
-                rel_change = sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                rel_change = sqrt( (clust_r2_frq - set_r2_frq)**2/(clust_r2_frq)**2 )
                 if ds.print_res:
-                    print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                    print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, clust_r2_frq, set_r2_frq, rel_change) )
                 if rel_change > ds.rel_change:
                     if ds.print_res:
                         print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
@@ -321,10 +385,11 @@ for i in range(len(cur_spins)):
         else:
             grid_val = grid_params[mo_param]
             min_val = min_params[mo_param]
+            clust_val = clust_params[mo_param]
             set_val = params[mo_param]
-            rel_change = sqrt( (min_val - set_val)**2/(min_val)**2 )
+            rel_change = sqrt( (clust_val - set_val)**2/(clust_val)**2 )
             if ds.print_res:
-                print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                print("%s %s %s %s GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, clust_val, set_val, rel_change) )
             if rel_change > ds.rel_change:
                 if ds.print_res:
                     print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
@@ -333,3 +398,9 @@ for i in range(len(cur_spins)):
 # Plot curves.
 if ds.plot_curves:
     relax_disp.plot_disp_curves(dir=ds.resdir, force=True)
+
+# The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+if ds.sherekhan_input:
+    relax_disp.cluster('sherekhan', ":1-100")
+    print(cdp.clustering)
+    relax_disp.sherekhan_input(force=True, spin_id=None, dir=ds.resdir)

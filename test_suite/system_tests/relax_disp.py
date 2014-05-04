@@ -498,8 +498,8 @@ class Relax_disp(SystemTestCase):
 
         # The grid search size (the number of increments per dimension).
         # If None, use the default values.
-        GRID = None
-        #GRID = 21
+        #GRID = None
+        GRID = 13
         # Perform Grid Search.
         if GRID:
             # Set the R20 parameters in the default grid search using the minimum R2eff value.
@@ -514,7 +514,7 @@ class Relax_disp(SystemTestCase):
             for param in MODEL_PARAMS[MODEL]:
                 self.interpreter.value.set(param=param, index=None)
                 # Do a grid search, which will store the chi2 value.
-                self.interpreter.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
+            self.interpreter.grid_search(lower=None, upper=None, inc=1, constraints=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -731,7 +731,7 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=2, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
 
 
-    def test_cpmg_synthetic(self):
+    def test_cpmg_synthetic_cr72(self):
         """Test synthetic cpmg data.
 
         This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
@@ -761,7 +761,7 @@ class Relax_disp(SystemTestCase):
         exps = [exp_1, exp_2]
 
         spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1:2, r20_key_2:2}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1:2, r20_key_2:2}, 'r2a': {r20_key_1:2, r20_key_2:2}, 'r2b': {r20_key_1:2, r20_key_2:2}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ]
             ]
 
         # Collect the data to be used.
@@ -783,6 +783,9 @@ class Relax_disp(SystemTestCase):
         # The grid search size (the number of increments per dimension).
         ds.GRID_INC = 8
 
+        # The do clustering.
+        ds.do_cluster = False
+
         # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
         # The default value is 1e-25.
         ds.set_func_tol = 1e-9
@@ -799,6 +802,12 @@ class Relax_disp(SystemTestCase):
 
         # The plot_curves.
         ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
 
         # The set r2eff err.
         ds.r2eff_err = 0.1
@@ -849,12 +858,12 @@ class Relax_disp(SystemTestCase):
                         print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
                         print("###################################")
 
-                        ## Make test on parameters.
-                        self.assertAlmostEqual(set_val, min_val, 10)
+                    ## Make test on parameters.
+                    self.assertAlmostEqual(set_val, min_val, 2)
 
 
-    def test_cpmg_synthetic_cr72_fail(self):
-        """Test synthetic cpmg data. Make CR72 model fail, for small noise.
+    def test_cpmg_synthetic_cr72_full_noise_cluster(self):
+        """Test synthetic cpmg data. For CR72 with small noise and cluster.
 
         This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
         """
@@ -869,22 +878,24 @@ class Relax_disp(SystemTestCase):
         r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
         time_T2_1 = 0.06
         ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
-        r2eff_err_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
-        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_err_1]
+        r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        #r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
 
         sfrq_2 = 499.8908617*1E6
         r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
         time_T2_2 = 0.05
         ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
-        r2eff_err_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
-        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_err_2]
+        r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
+        #r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
 
         # Collect all exps
         exps = [exp_1, exp_2]
 
         spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1:10, r20_key_2:11.5}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ],
-            ['Ala', 2, 'N', {'r2': {r20_key_1:13, r20_key_2:14.5}, 'kex': 1000, 'pA': 0.99, 'dw': 1} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10, r20_key_2:11.5}, 'r2a': {r20_key_1:10, r20_key_2:11.5}, 'r2b': {r20_key_1:10, r20_key_2:11.5}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ],
+            ['Ala', 2, 'N', {'r2': {r20_key_1:13, r20_key_2:14.5}, 'r2a': {r20_key_1:13, r20_key_2:14.5}, 'r2b': {r20_key_1:13, r20_key_2:14.5}, 'kex': 1000, 'pA': 0.99, 'dw': 1} ]
             ]
 
         # Collect the data to be used.
@@ -904,15 +915,18 @@ class Relax_disp(SystemTestCase):
         ds.insignificance = 0.0
 
         # The grid search size (the number of increments per dimension).
-        ds.GRID_INC = 11
+        ds.GRID_INC = 13
+
+        # The do clustering.
+        ds.do_cluster = True
 
         # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
         # The default value is 1e-25.
-        ds.set_func_tol = 1e-15
+        ds.set_func_tol = 1e-8
 
         # The maximum number of iterations.
         # The default value is 1e7.
-        ds.set_max_iter = 1000000
+        ds.set_max_iter = 10000
 
         # The verbosity level.
         ds.verbosity = 1
@@ -922,6 +936,12 @@ class Relax_disp(SystemTestCase):
 
         # The plot_curves.
         ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
 
         # The set r2eff err.
         ds.r2eff_err = 0.1
@@ -940,7 +960,9 @@ class Relax_disp(SystemTestCase):
             cur_spin = return_spin(cur_spin_id)
 
             grid_params = ds.grid_results[i][3]
-            min_params = ds.min_results[i][3]
+
+            # Extract the clust results.
+            min_params = ds.clust_results[i][3]
             # Now read the parameters.
             print("For spin: '%s'"%cur_spin_id)
             for mo_param in cur_spin.params:
@@ -961,7 +983,7 @@ class Relax_disp(SystemTestCase):
                             print("###################################")
 
                         ## Make test on R2.
-                        self.assertAlmostEqual(set_r2_frq/10, min_r2_frq/10, 1)
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 1)
                 else:
                     grid_val = grid_params[mo_param]
                     min_val = min_params[mo_param]
@@ -972,7 +994,7 @@ class Relax_disp(SystemTestCase):
                         print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
                         print("###################################")
 
-                        ## Make test on parameters.
+                        ## Make test on parameters. Only if breaking the relative change.
                         self.assertAlmostEqual(set_val, min_val, 1)
 
 
