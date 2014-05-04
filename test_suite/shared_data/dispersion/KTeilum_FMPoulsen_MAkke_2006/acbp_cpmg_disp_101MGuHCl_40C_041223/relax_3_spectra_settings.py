@@ -37,7 +37,7 @@ for line in ncycfile:
     relax_disp.relax_time(spectrum_id=current_id, time=time_T2)
 
     # Set the relaxation dispersion CPMG frequencies.
-    relax_disp.cpmg_frq(spectrum_id=current_id, cpmg_frq=vcpmg)
+    relax_disp.cpmg_setup(spectrum_id=current_id, cpmg_frq=vcpmg)
 
     i += 1
 

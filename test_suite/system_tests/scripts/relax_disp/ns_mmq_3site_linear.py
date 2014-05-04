@@ -105,7 +105,7 @@ for data_type, id, file, exp_type, spin_id, H_frq, relax_time in data:
         relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
 
         # Set the CPMG frequency.
-        relax_disp.cpmg_frq(spectrum_id=new_id, cpmg_frq=cpmg_frq)
+        relax_disp.cpmg_setup(spectrum_id=new_id, cpmg_frq=cpmg_frq)
 
     # Read the R2eff data.
     relax_disp.r2eff_read_spin(id=id, file=file, dir=DATA_PATH, spin_id=spin_id, disp_point_col=7, data_col=10, error_col=9)

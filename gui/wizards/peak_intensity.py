@@ -152,11 +152,11 @@ class Peak_intensity_wizard(Wiz_window):
             page.on_init = self.wizard_update_relax_disp_relax_time
             self.set_seq_next_fn(self.page_indices['relax_time'], self.wizard_page_after_relax_time)
 
-            # The relax_disp.cpmg_frq page.
-            page = uf_store['relax_disp.cpmg_frq'].create_page(self, sync=True)
-            self.page_indices['cpmg_frq'] = self.add_page(page, skip_button=True, proceed_on_error=False)
-            page.on_init = self.wizard_update_relax_disp_cpmg_frq
-            self.set_seq_next_fn(self.page_indices['cpmg_frq'], self.wizard_page_after_cpmg_frq)
+            # The relax_disp.cpmg_setup page.
+            page = uf_store['relax_disp.cpmg_setup'].create_page(self, sync=True)
+            self.page_indices['cpmg_setup'] = self.add_page(page, skip_button=True, proceed_on_error=False)
+            page.on_init = self.wizard_update_relax_disp_cpmg_setup
+            self.set_seq_next_fn(self.page_indices['cpmg_setup'], self.wizard_page_after_cpmg_setup)
 
             # The relax_disp.spin_lock_field page.
             page = uf_store['relax_disp.spin_lock_field'].create_page(self, sync=True)
@@ -176,8 +176,8 @@ class Peak_intensity_wizard(Wiz_window):
         self.run()
 
 
-    def wizard_page_after_cpmg_frq(self):
-        """Set the page after the CPMG frequency page.
+    def wizard_page_after_cpmg_setup(self):
+        """Set the page after the CPMG setup page.
 
         This should either be the R1rho page if R1rho experiment types exist, or terminate the wizard.
 
@@ -223,7 +223,7 @@ class Peak_intensity_wizard(Wiz_window):
 
         # CPMG experiments exists.
         if has_cpmg_exp_type():
-            return self.page_indices['cpmg_frq']
+            return self.page_indices['cpmg_setup']
 
         # R1rho experiments exists.
         elif has_r1rho_exp_type():
@@ -345,11 +345,11 @@ class Peak_intensity_wizard(Wiz_window):
         self.wizard_update_ids(page_key='pts')
 
 
-    def wizard_update_relax_disp_cpmg_frq(self):
-        """Update the relax_disp.cpmg_frq page based on previous data."""
+    def wizard_update_relax_disp_cpmg_setup(self):
+        """Update the relax_disp.cpmg_setup page based on previous data."""
 
         # Update the spectrum ID.
-        self.wizard_update_ids(page_key='cpmg_frq')
+        self.wizard_update_ids(page_key='cpmg_setup')
 
 
     def wizard_update_relax_disp_exp_type(self):

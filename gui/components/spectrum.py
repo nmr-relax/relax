@@ -79,8 +79,8 @@ class Spectra_list(Base_list):
         super(Spectra_list, self).__init__(gui=gui, parent=parent, box=box, id=id, proportion=proportion, button_placement=button_placement)
 
 
-    def action_relax_disp_cpmg_frq(self, event=None, item=None):
-        """Launch the relax_disp.cpmg_frq user function.
+    def action_relax_disp_cpmg_setup(self, event=None, item=None):
+        """Launch the relax_disp.cpmg_setup user function.
 
         @keyword event: The wx event.
         @type event:    wx event
@@ -102,11 +102,18 @@ class Spectra_list(Base_list):
             frq = cdp.cpmg_frqs[id]
             frq_flag = True
 
+        # The current ncyc_even flag.
+        even = True
+        even_flag = False
+        if hasattr(cdp, 'ncyc_even') and id in cdp.ncyc_even.keys():
+            even = cdp.ncyc_even[id]
+            even_flag = True
+
         # Launch the dialog.
         if frq_flag:
-            uf_store['relax_disp.cpmg_frq'](cpmg_frq=frq, spectrum_id=id)
+            uf_store['relax_disp.cpmg_setup'](spectrum_id=id, cpmg_frq=frq, ncyc_even=even)
         else:
-            uf_store['relax_disp.cpmg_frq'](spectrum_id=id)
+            uf_store['relax_disp.cpmg_setup'](spectrum_id=id, ncyc_even=even)
 
 
     def action_relax_disp_exp_type(self, event=None, item=None):
@@ -493,9 +500,9 @@ class Spectra_list(Base_list):
         if self.relax_disp_flag and is_cpmg_exp_type(id):
             popup_menus.append({
                 'id': wx.NewId(),
-                'text': u("Set the &CPMG pulse frequency \u03BDCPMG"),
+                'text': u("Set the &CPMG pulse sequence information"),
                 'icon': fetch_icon("relax.relax_disp"),
-                'method': self.action_relax_disp_cpmg_frq
+                'method': self.action_relax_disp_cpmg_setup
             })
 
         # Return the menu.

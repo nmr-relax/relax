@@ -233,7 +233,7 @@ class Relax_disp(SystemTestCase):
                 self.interpreter.relax_disp.relax_time(spectrum_id=new_id, time=relax_time)
 
                 # Set the CPMG frequency.
-                self.interpreter.relax_disp.cpmg_frq(spectrum_id=new_id, cpmg_frq=cpmg_frq)
+                self.interpreter.relax_disp.cpmg_setup(spectrum_id=new_id, cpmg_frq=cpmg_frq)
 
             # Read the R2eff data.
             self.interpreter.relax_disp.r2eff_read_spin(id=id, file=file, dir=data_path, spin_id=spin_id, disp_point_col=1, data_col=2, error_col=3)
@@ -301,7 +301,7 @@ class Relax_disp(SystemTestCase):
                 self.interpreter.relax_disp.relax_time(spectrum_id=current_id, time=time_T2)
 
                 # Set the relaxation dispersion CPMG frequencies.
-                self.interpreter.relax_disp.cpmg_frq(spectrum_id=current_id, cpmg_frq=vcpmg)
+                self.interpreter.relax_disp.cpmg_setup(spectrum_id=current_id, cpmg_frq=vcpmg)
 
         # Define replicated
         self.interpreter.spectrum.replicated(spectrum_ids=Exps[0][5])
@@ -417,7 +417,7 @@ class Relax_disp(SystemTestCase):
             # Set the relaxation dispersion CPMG frequencies.
             ncyc = ncycs[i]
             nu_cpmg = ncyc / Trelax
-            self.interpreter.relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=nu_cpmg)
+            self.interpreter.relax_disp.cpmg_setup(spectrum_id=id, cpmg_frq=nu_cpmg)
 
         # Prepare for R2eff reading.
         self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_r2eff)
@@ -3717,9 +3717,9 @@ class Relax_disp(SystemTestCase):
             self.interpreter.spectrometer.frequency(id=id, frq=500e6)
             self.interpreter.relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
         for value in H_disp_points:
-            self.interpreter.relax_disp.cpmg_frq(spectrum_id='1H_CPMG_%s' % value, cpmg_frq=value)
+            self.interpreter.relax_disp.cpmg_setup(spectrum_id='1H_CPMG_%s' % value, cpmg_frq=value)
         for value in N_disp_points:
-            self.interpreter.relax_disp.cpmg_frq(spectrum_id='15N_CPMG_%s' % value, cpmg_frq=value)
+            self.interpreter.relax_disp.cpmg_setup(spectrum_id='15N_CPMG_%s' % value, cpmg_frq=value)
 
         # Loop over the experiments.
         for id, file, spin_id in [['1H_CPMG', 'hs_500.res', ':9@H'], ['15N_CPMG', 'ns_500.res', ':9@N']]:

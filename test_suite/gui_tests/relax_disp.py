@@ -344,7 +344,7 @@ class Relax_disp(GuiTestCase):
 
         # Set the CPMG frequencies.
         for id, file, cpmg_frq, H_frq in data:
-            wizard.setup_page(page='cpmg_frq', spectrum_id=id, cpmg_frq=cpmg_frq)
+            wizard.setup_page(page='cpmg_setup', spectrum_id=id, cpmg_frq=cpmg_frq)
             wizard._apply(None)
         wizard._skip(None)
 
@@ -357,8 +357,8 @@ class Relax_disp(GuiTestCase):
         # Simulate the popup menu entries to catch bugs there (just apply the user functions with the currently set values).
         # FIXME: skipping the checks for certain wxPython bugs.
         if status.relax_mode != 'gui' and wx.version() != '2.9.4.1 gtk2 (classic)':
-            analysis.peak_intensity.action_relax_disp_cpmg_frq(item=4)
-            uf_store['relax_disp.cpmg_frq'].wizard._go_next()
+            analysis.peak_intensity.action_relax_disp_cpmg_setup(item=4)
+            uf_store['relax_disp.cpmg_setup'].wizard._go_next()
             interpreter.flush()
             analysis.peak_intensity.action_relax_disp_exp_type(item=5)
             uf_store['relax_disp.exp_type'].wizard._go_next()

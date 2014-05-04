@@ -149,7 +149,7 @@ for exp in exps:
         relax_disp.relax_time(spectrum_id=cur_id, time=time_T2)
 
         # Set the relaxation dispersion CPMG frequencies.
-        relax_disp.cpmg_frq(spectrum_id=cur_id, cpmg_frq=nu_cpmg)
+        relax_disp.cpmg_setup(spectrum_id=cur_id, cpmg_frq=nu_cpmg)
 
 print("\n\nThe experiment IDs are %s." % ids)
 

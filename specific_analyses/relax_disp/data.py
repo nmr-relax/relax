@@ -315,24 +315,28 @@ def count_spins(spins=None):
     return spin_num
 
 
-def cpmg_frq(spectrum_id=None, cpmg_frq=None):
+def cpmg_setup(spectrum_id=None, cpmg_frq=None, ncyc_even=True):
     """Set the CPMG frequency associated with a given spectrum.
 
     @keyword spectrum_id:   The spectrum identification string.
     @type spectrum_id:      str
     @keyword cpmg_frq:      The frequency, in Hz, of the CPMG pulse train.
     @type cpmg_frq:         float
+    @keyword ncyc_even:     A flag which if True means that the number of CPMG blocks must be even.  This is pulse sequence dependant.
+    @type ncyc_even:        bool
     """
 
     # Test if the spectrum id exists.
     if spectrum_id not in cdp.spectrum_ids:
         raise RelaxNoSpectraError(spectrum_id)
 
-    # Initialise the global CPMG frequency data structures if needed.
+    # Initialise the global data structures if needed.
     if not hasattr(cdp, 'cpmg_frqs'):
         cdp.cpmg_frqs = {}
     if not hasattr(cdp, 'cpmg_frqs_list'):
         cdp.cpmg_frqs_list = []
+    if not hasattr(cdp, 'ncyc_even'):
+        cdp.ncyc_even = {}
 
     # Add the frequency at the correct position, converting to a float if needed.
     if cpmg_frq == None:
@@ -358,8 +362,12 @@ def cpmg_frq(spectrum_id=None, cpmg_frq=None):
     if None in cdp.cpmg_frqs_list:
         cdp.dispersion_points -= 1
 
+    # Add the ncyc flag.
+    cdp.ncyc_even[spectrum_id] = ncyc_even
+
     # Printout.
     print("The spectrum ID '%s' CPMG frequency is set to %s Hz." % (spectrum_id, cdp.cpmg_frqs[spectrum_id]))
+    print("The spectrum ID '%s' even number of CPMG blocks flag is set to %s." % (spectrum_id, cdp.ncyc_even[spectrum_id]))
 
 
 def decompose_r20_key(key=None):
@@ -2198,7 +2206,7 @@ def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id
     if data_flag:
         # Set the dispersion point frequency.
         if exp_type in EXP_TYPE_LIST_CPMG:
-            cpmg_frq(spectrum_id=id, cpmg_frq=disp_frq)
+            cpmg_setup(spectrum_id=id, cpmg_frq=disp_frq)
         else:
             spin_lock_field(spectrum_id=id, field=disp_frq)
 

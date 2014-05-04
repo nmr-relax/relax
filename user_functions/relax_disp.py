@@ -39,7 +39,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.data import cpmg_frq, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, set_grid_r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
+from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, set_grid_r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -161,15 +161,15 @@ uf.wizard_size = (800, 600)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
-# The relax_disp.cpmg_frq user function.
-uf = uf_info.add_uf('relax_disp.cpmg_frq')
-uf.title = "Set the CPMG frequency associated with a given spectrum."
-uf.title_short = "CPMG frequency setting."
+# The relax_disp.cpmg_setup user function.
+uf = uf_info.add_uf('relax_disp.cpmg_setup')
+uf.title = "Set the CPMG pulse sequence information associated with a given spectrum."
+uf.title_short = "CPMG experiment setup."
 uf.add_keyarg(
     name = "spectrum_id",
     py_type = "str",
     desc_short = "spectrum ID string",
-    desc = "The spectrum ID string to associate the CPMG frequency to.",
+    desc = "The spectrum ID string to associate the CPMG pulse sequence information to.",
     wiz_element_type = 'combo',
     wiz_combo_iter = spectrum.get_ids,
     wiz_read_only = True
@@ -181,20 +181,27 @@ uf.add_keyarg(
     desc = "The frequency, in Hz, of the CPMG pulse train.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "ncyc_even",
+    default = True,
+    py_type = "bool",
+    desc_short = "even ncyc flag",
+    desc = "A flag which if True means that the number of CPMG blocks must be even.  This is pulse sequence dependant."
+)
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("This allows the CPMG pulse train frequency of a given spectrum to be set.  If None is given for frequency, then the spectrum will be treated as a reference spectrum.")
+uf.desc[-1].add_paragraph("This allows all information about CPMG pulse sequence required for a relaxation dispersion analysis to be specified.  This includes:")
+uf.desc[-1].add_list_element("'cpmg_frq' allows the CPMG pulse train frequency of a given spectrum to be set.  If None is given for frequency, then the spectrum will be treated as a reference spectrum.")
+uf.desc[-1].add_list_element("'ncyc_even' specifies if an even number of CPMG blocks are required for the pulse sequence.")
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
-uf.desc[-1].add_paragraph("To identify the reference spectrum called 'reference_spectrum', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(None, 'reference_spectrum')")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=None, spectrum_id='reference_spectrum')")
-uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type one of:")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(200, '200_Hz_spectrum')")
-uf.desc[-1].add_prompt("relax> relax_disp.cpmg_frq(cpmg_frq=200, spectrum_id='200_Hz_spectrum')")
-uf.backend = cpmg_frq
-uf.menu_text = "&cpmg_frq"
-uf.wizard_size = (800, 500)
+uf.desc[-1].add_paragraph("To identify the reference spectrum called 'reference_spectrum', type:")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_setup(spectrum_id='reference_spectrum', cpmg_frq=None)")
+uf.desc[-1].add_paragraph("To set a frequency of 200 Hz for the spectrum '200_Hz_spectrum', type:")
+uf.desc[-1].add_prompt("relax> relax_disp.cpmg_setup(spectrum_id='200_Hz_spectrum', cpmg_frq=200)")
+uf.backend = cpmg_setup
+uf.menu_text = "&cpmg_setup"
+uf.wizard_size = (900, 600)
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 

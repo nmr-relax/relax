@@ -136,7 +136,7 @@ for id, file, cpmg_frq, H_frq in data:
     relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
-    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+    relax_disp.cpmg_setup(spectrum_id=id, cpmg_frq=cpmg_frq)
 
     # Set the NMR field strength of the spectrum.
     spectrometer.frequency(id=id, frq=H_frq)
