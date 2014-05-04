@@ -239,37 +239,37 @@ def copy(pipe_from=None, pipe_to=None):
             continue
 
         # Take median of parameters.
-        if len(pA) > 1:
+        if len(pA) > 0:
             pA = median(pA)
             print("Median pA value:  %.15f" % pA)
-        if len(pB) > 1:
+        if len(pB) > 0:
             pB = median(pB)
             print("Median pB value:  %.15f" % pB)
-        if len(pC) > 1:
+        if len(pC) > 0:
             pC = median(pC)
             print("Median pC value:  %.15f" % pC)
-        if len(kex) > 1:
+        if len(kex) > 0:
             kex = median(kex)
             print("Median kex value: %.15f" % kex)
-        if len(kex_AB) > 1:
+        if len(kex_AB) > 0:
             kex_AB = median(kex_AB)
             print("Median k_AB value: %.15f" % kex_AB)
-        if len(kex_AC) > 1:
+        if len(kex_AC) > 0:
             kex_AC = median(kex_AC)
             print("Median k_AC value: %.15f" % kex_AC)
-        if len(kex_BC) > 1:
+        if len(kex_BC) > 0:
             kex_BC = median(kex_BC)
             print("Median k_BC value: %.15f" % kex_BC)
-        if len(k_AB) > 1:
+        if len(k_AB) > 0:
             k_AB = median(k_AB)
             print("Median k_AB value: %.15f" % k_AB)
-        if len(kB) > 1:
+        if len(kB) > 0:
             kB = median(kB)
             print("Median kB value:  %.15f" % kB)
-        if len(kC) > 1:
+        if len(kC) > 0:
             kC = median(kC)
             print("Median kC value:  %.15f" % kC)
-        if len(tex) > 1:
+        if len(tex) > 0:
             tex = median(tex)
             print("Median tex value: %.15f" % tex)
 
