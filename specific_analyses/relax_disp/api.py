@@ -40,7 +40,7 @@ from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
 from specific_analyses.relax_disp.checks import check_model_type
 from specific_analyses.relax_disp.data import average_intensity, calc_rotating_frame_params, find_intensity_keys, generate_r20_key, has_exponential_exp_type, has_proton_mmq_cpmg, loop_cluster, loop_exp_frq, loop_exp_frq_offset_point, loop_time, pack_back_calc_r2eff, return_param_key_from_data, spin_ids_to_containers
-from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, minimise_r2eff
+from specific_analyses.relax_disp.optimisation import Disp_memo, Disp_minimise_command, back_calc_peak_intensities, back_calc_r2eff, calculate_r2eff, grid_search_setup, minimise_r2eff
 from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 from specific_analyses.relax_disp.parameters import assemble_scaling_matrix, get_param_names, get_value, loop_parameters, param_index_to_param_info, param_num
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, MODEL_LIST_MMQ, PARAMS_R20
@@ -481,6 +481,65 @@ class Relax_disp(API_base, API_common):
 
         # Minimisation.
         self.minimise(min_algor='grid', lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity, sim_index=sim_index)
+
+
+    def map_bounds(self, param, spin_id=None):
+        """Create bounds for the OpenDX mapping function.
+
+        @param param:       The name of the parameter to return the lower and upper bounds of.
+        @type param:        str
+        @param spin_id:     The spin identification string (unused).
+        @type spin_id:      None
+        @return:            The upper and lower bounds of the parameter.
+        @rtype:             list of float
+        """
+
+        # Is the parameter is valid?
+        if not self._PARAMS.contains(param):
+            raise RelaxError("The parameter '%s' is not valid for this data pipe type." % param)
+
+        # Return the spin.
+        spin = return_spin(spin_id)
+
+        # Loop over each spectrometer frequency and dispersion point to collect param_keys.
+        param_keys = []
+        for exp_type, frq, offset, point in loop_exp_frq_offset_point():
+            # The parameter key.
+            param_key = return_param_key_from_data(exp_type=exp_type, frq=frq, offset=offset, point=point)
+
+            # Collect the key.
+            param_keys.append(param_key)
+
+        # Diagonal scaling.
+        scaling_matrix = assemble_scaling_matrix(spins=[spin], key=param_keys[0], scaling=False)
+
+        # The initial parameter vector.
+        param_vector = []
+
+        # Collect param_names.
+        param_names = []
+        for param_name, param_index, si, r20_key in loop_parameters(spins=[spin]):
+            # Add to the param vector.
+            param_vector.append([0.0])
+
+            # Collect parameter names.
+            param_names.append(param_name)
+
+
+        # Define default for grid search.
+        lower = None
+        upper = None
+        inc = 0
+
+        # Get the grid search minimisation options.
+        grid_size, inc_new, lower_new, upper_new = grid_search_setup(spins=[spin], spin_ids=[spin_id], param_vector=param_vector, lower=lower, upper=upper, inc=inc, scaling_matrix=scaling_matrix)
+
+        # Loop over the parameter names.
+        for i in range(len(param_names)):
+            # Test if the parameter is in the list:
+
+            if param_names[i] == param:
+                return [lower_new[i], upper_new[i]]
 
 
     def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
