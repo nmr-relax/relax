@@ -668,9 +668,9 @@ class Relax_disp(API_base, API_common):
         chi2 - the chi-squared value.
 
 
-        @keyword model_info:    The model index from model_info().
-        @type model_info:       None or int
-        @keyword spin_id:       The spin identification string.  This is ignored in the N-state model.
+        @keyword model_info:    The model information originating from model_loop().
+        @type model_info:       unknown
+        @keyword spin_id:       The spin ID string to override the model_info argument.  This is ignored in the N-state model.
         @type spin_id:          None or str
         @keyword global_stats:  A parameter which determines if global or local statistics are returned.  For the N-state model, this argument is ignored.
         @type global_stats:     None or bool
