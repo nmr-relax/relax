@@ -151,14 +151,18 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     g3 = 1/sqrt(2) * sqrt(g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     g4 = 1/sqrt(2) * sqrt(-g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     #########################################################################
+    # Repetitive calculations (to speed up calculations).
+    g32 = g3**2
+
+
     #Time independent factors.
     #N = oG + oE.
     N = complex(g3, g4)
 
-    NNc = g3**2 + g4**2
+    NNc = g32 + g4**2
 
     # f0.
-    f0 = (dw2 + g3**2) / NNc
+    f0 = (dw2 + g32) / NNc
 
     # f2.
     f2 = (dw2 - g4**2) / NNc
