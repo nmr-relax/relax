@@ -99,10 +99,10 @@ Comparison to CR72 full model can be found in the:
 
 # Python module imports.
 import numpy
-from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt
+from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -118,8 +118,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     @type dw:               float
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
-    @keyword power:         The matrix exponential power array. The number of CPMG blocks.
-    @type power:            numpy int16, rank-1 array
+    @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
+    @type ncyc:             numpy int16, rank-1 array
     @keyword relax_time:    The total relaxation time period (in seconds).
     @type relax_time:       float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -133,7 +133,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     # Conversion from relax parameters, to the exact code of Baldwin.
     pb = 1 - pA
     Trel = relax_time
-    ncyc = power
 
     #########################################################################
     ##### Baldwins code.
@@ -202,7 +201,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     # Exact result for v2v3.
     v3 = sqrt(ex0b**2 - 1)
 
-    y = numpy.power((ex0b - v3) / (ex0b + v3), ncyc)
+    y = power((ex0b - v3) / (ex0b + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
     v2pPdN = (( complex(-deltaR2 + kex, dw) ) * ex0c + (-oGt2 - kge * t1pt2) * 2 * ex1c)
