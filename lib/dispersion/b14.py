@@ -130,15 +130,14 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     @type num_points:       int
     """
 
-    # Conversion from relax parameters, to the exact code of Baldwin.
-    pb = 1 - pA
+    # The B population.
+    pB = 1.0 - pA
 
     #########################################################################
     ##### Baldwins code.
     #########################################################################
-    pa = (1 - pb)
-    keg = kex * (1 - pb)
-    kge = kex * pb
+    keg = kex * (1 - pB)
+    kge = kex * pB
     deltaR2 = r20a - r20b
     alpha_m = r20a - r20b + kge - keg
 
