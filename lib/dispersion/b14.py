@@ -152,7 +152,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     #########################################################################
     #Time independent factors.
     #N = oG + oE.
-    N = complex(k_AB + g3 - k_AB, g4)
+    N = complex(g3, g4)
 
     NNc = g3**2 + g4**2
 
