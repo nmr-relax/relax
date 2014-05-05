@@ -175,7 +175,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     t1pt2 = complex(2 * dw**2,g1)/ NNc
 
     # -2 * oG * t2.
-    oGt2 = complex((-deltaR2 + keg - kge - g3), (dw - g4)) * t2
+    oGt2 = complex((-alpha_m - g3), (dw - g4)) * t2
 
     # -1/Trel * log(LpreDyn).
     Rpre = (r20a + r20b + kex) / 2.0
