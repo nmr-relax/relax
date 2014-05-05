@@ -139,42 +139,42 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     ##### Baldwins code.
     #########################################################################
     pa=(1-pb)
-    keg=kex*(1-pb)
-    kge=kex*pb
+    keg=kex * (1-pb)
+    kge=kex * pb
     deltaR2=r20a-r20b
     alpha_m = r20a - r20b  + kge - keg
     #  This is not used
     #nu_cpmg=ncyc/Trel
-    #tcp=Trel/(4.0*ncyc)  #time for one free precession element
+    #tcp=Trel/(4.0 * ncyc)  #time for one free precession element
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
-    g1=2*dw*alpha_m                            #same as carver richards zeta
-    g2=alpha_m**2+4*keg*kge-dw**2   #same as carver richards psi
-    g3=1/sqrt(2)*sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
-    g4=1/sqrt(2)*sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
+    g1=2 * dw * alpha_m                            #same as carver richards zeta
+    g2=alpha_m**2+4 * keg * kge-dw**2   #same as carver richards psi
+    g3=1/sqrt(2) * sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
+    g4=1/sqrt(2) * sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     #########################################################################
     #time independent factors
     N=complex(kge+g3-kge,g4)            #N=oG+oE
     NNc=(g3**2+g4**2)
     f0=(dw**2+g3**2)/(NNc)              #f0
     f2=(dw**2-g4**2)/(NNc)              #f2
-    #t1=(-dw+g4)*(complex(-dw,-g3))/(NNc) #t1
-    t2=(dw+g4)*(complex(dw,-g3))/(NNc) #t2
-    t1pt2=complex(2*dw**2,g1)/(NNc)     #t1+t2
-    oGt2=complex((-deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
-    Rpre=(r20a+r20b+kex)/2.0   #-1/Trel*log(LpreDyn)
-    E0= 2.0*tcp*g3  #derived from relaxation       #E0=-2.0*tcp*(f00R-f11R)
-    E2= 2.0*tcp*g4  #derived from chemical shifts  #E2=complex(0,-2.0*tcp*(f00I-f11I))
-    E1=(complex(g3,-g4))*tcp    #mixed term (complex) (E0-iE2)/2
-    ex0b=(f0*numpy.cosh(E0)-f2*numpy.cos(E2))               #real
-    ex0c=(f0*numpy.sinh(E0)-f2*numpy.sin(E2)*complex(0,1.)) #complex
+    #t1=(-dw+g4) * (complex(-dw,-g3))/(NNc) #t1
+    t2=(dw+g4) * (complex(dw,-g3))/(NNc) #t2
+    t1pt2=complex(2 * dw**2,g1)/(NNc)     #t1+t2
+    oGt2=complex((-deltaR2+keg-kge-g3),(dw-g4)) * t2  #-2 * oG * t2
+    Rpre=(r20a+r20b+kex)/2.0   #-1/Trel * log(LpreDyn)
+    E0= 2.0 * tcp * g3  #derived from relaxation       #E0=-2.0 * tcp * (f00R-f11R)
+    E2= 2.0 * tcp * g4  #derived from chemical shifts  #E2=complex(0,-2.0 * tcp * (f00I-f11I))
+    E1=(complex(g3,-g4)) * tcp    #mixed term (complex) (E0-iE2)/2
+    ex0b=(f0 * numpy.cosh(E0)-f2 * numpy.cos(E2))               #real
+    ex0c=(f0 * numpy.sinh(E0)-f2 * numpy.sin(E2) * complex(0,1.)) #complex
     ex1c=(numpy.sinh(E1))                                   #complex
     v3=numpy.sqrt(ex0b**2-1)  #exact result for v2v3
     y=numpy.power((ex0b-v3)/(ex0b+v3),ncyc)
-    v2pPdN=(( complex(-deltaR2+kex,dw) )*ex0c+(-oGt2-kge*t1pt2)*2*ex1c)        #off diagonal common factor. sinh fuctions
-    Tog=(((1+y)/2+(1-y)/(2*v3)*(v2pPdN)/N))
-    Minty=Rpre-ncyc/(Trel)*numpy.arccosh((ex0b).real)-1/Trel*numpy.log((Tog.real))  #estimate R2eff
+    v2pPdN=(( complex(-deltaR2+kex,dw) ) * ex0c+(-oGt2-kge * t1pt2) * 2 * ex1c)        #off diagonal common factor. sinh fuctions
+    Tog=(((1+y)/2+(1-y)/(2 * v3) * (v2pPdN)/N))
+    Minty=Rpre-ncyc/(Trel) * numpy.arccosh((ex0b).real)-1/Trel * numpy.log((Tog.real))  #estimate R2eff
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
