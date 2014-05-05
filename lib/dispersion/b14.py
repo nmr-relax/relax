@@ -149,7 +149,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
     g1=2*dw*(r20a-r20b+kge-keg)                   #same as carver richards zeta
-    g2=(deltaR2+keg-kge)**2+4*keg*kge-dw**2   #same as carver richards psi
+    g2=(r20a-r20b+kge-keg)**2+4*keg*kge-dw**2   #same as carver richards psi
     g3=1/sqrt(2)*sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     g4=1/sqrt(2)*sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     #########################################################################
