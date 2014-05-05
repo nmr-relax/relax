@@ -136,6 +136,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     # Repetitive calculations (to speed up calculations).
     k_BA = pA * kex
     k_AB = pB * kex
+    dw2 = dw**2
 
     #########################################################################
     ##### Baldwins code.
@@ -146,7 +147,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
     g1 = 2 * dw * alpha_m                            #same as carver richards zeta
-    g2 = alpha_m**2 + 4 * k_BA * k_AB - dw**2   #same as carver richards psi
+    g2 = alpha_m**2 + 4 * k_BA * k_AB - dw2   #same as carver richards psi
     g3 = 1/sqrt(2) * sqrt(g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     g4 = 1/sqrt(2) * sqrt(-g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     #########################################################################
@@ -157,10 +158,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     NNc = g3**2 + g4**2
 
     # f0.
-    f0 = (dw**2 + g3**2) / NNc
+    f0 = (dw2 + g3**2) / NNc
 
     # f2.
-    f2 = (dw**2 - g4**2) / NNc
+    f2 = (dw2 - g4**2) / NNc
 
     # t1 = (-dw + g4) * (complex(-dw, -g3)) / NNc #t1.
 
@@ -168,7 +169,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     t2 = (dw + g4) * complex(dw, -g3) / NNc
 
     # t1 + t2.
-    t1pt2 = complex(2 * dw**2,g1) / NNc
+    t1pt2 = complex(2 * dw2,g1) / NNc
 
     # -2 * oG * t2.
     oGt2 = complex(-alpha_m - g3, dw - g4) * t2
