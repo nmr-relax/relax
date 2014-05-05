@@ -678,9 +678,21 @@ class Relax_disp(API_base, API_common):
         @rtype:                 tuple of (int, int, float)
         """
 
+        # Bad argument combination.
+        if model_info == None and spin_id == None:
+            raise RelaxError("Either the model_info or spin_id argument must be supplied.")
+        elif model_info != None and spin_id != None:
+            raise RelaxError("The model_info arg " + repr(model_info) + " and spin_id arg " + repr(spin_id) + " clash.  Only one should be supplied.")
+
         # Unpack the data.
         spin_ids = model_info
-        spins = spin_ids_to_containers(spin_ids)
+        #spins = spin_ids_to_containers(spin_ids)
+
+        spins_list = []
+        for spin_id in self.model_loop():
+            spins_list.append(spin_id[0])
+
+        spins = spin_ids_to_containers(spins_list)
 
         # The number of parameters for the cluster.
         k = param_num(spins=spins)
