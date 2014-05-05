@@ -133,18 +133,21 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     # The B population.
     pB = 1.0 - pA
 
+    # Repetitive calculations (to speed up calculations).
+    k_BA = pA * kex
+    k_AB = pB * kex
+
     #########################################################################
     ##### Baldwins code.
     #########################################################################
-    keg = kex * (1 - pB)
     kge = kex * pB
     deltaR2 = r20a - r20b
-    alpha_m = r20a - r20b + kge - keg
+    alpha_m = r20a - r20b + kge - k_BA
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
     g1 = 2 * dw * alpha_m                            #same as carver richards zeta
-    g2 = alpha_m**2 + 4 * keg * kge - dw**2   #same as carver richards psi
+    g2 = alpha_m**2 + 4 * k_BA * kge - dw**2   #same as carver richards psi
     g3 = 1/sqrt(2) * sqrt(g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     g4 = 1/sqrt(2) * sqrt(-g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     #########################################################################
