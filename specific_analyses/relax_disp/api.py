@@ -678,9 +678,11 @@ class Relax_disp(API_base, API_common):
         @rtype:                 tuple of (int, int, float)
         """
 
-        # Unpack the data.
-        spin_ids = model_info
-        spins = spin_ids_to_containers(spin_ids)
+        # Get the spin containers (the spin ID overrides the model info).
+        if spin_id != None:
+            spins = [return_spin(spin_id)]
+        else:
+            spins = spin_ids_to_containers(model_info)
 
         # The number of parameters for the cluster.
         k = param_num(spins=spins)
