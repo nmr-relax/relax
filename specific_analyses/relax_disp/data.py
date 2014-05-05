@@ -1632,8 +1632,8 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
                                 num_points = int(round(max_frq / min_frq))
 
                                 # Interpolate (adding the extended amount to the end).
-                                for di in range(2, num_points+2, 2):
-                                    point = di * min_frq
+                                for di in range(num_points):
+                                    point = (di + 1) * min_frq
                                     cpmg_frqs_new[ei][mi][oi].append(point)
 
                                 # Convert to a numpy array.
