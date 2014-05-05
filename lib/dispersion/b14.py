@@ -140,20 +140,19 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     #########################################################################
     ##### Baldwins code.
     #########################################################################
-    kge = kex * pB
     deltaR2 = r20a - r20b
-    alpha_m = r20a - r20b + kge - k_BA
+    alpha_m = r20a - r20b + k_AB - k_BA
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
     g1 = 2 * dw * alpha_m                            #same as carver richards zeta
-    g2 = alpha_m**2 + 4 * k_BA * kge - dw**2   #same as carver richards psi
+    g2 = alpha_m**2 + 4 * k_BA * k_AB - dw**2   #same as carver richards psi
     g3 = 1/sqrt(2) * sqrt(g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     g4 = 1/sqrt(2) * sqrt(-g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
     #########################################################################
     #Time independent factors.
     #N = oG + oE.
-    N = complex(kge + g3 - kge, g4)
+    N = complex(k_AB + g3 - k_AB, g4)
 
     NNc = g3**2 + g4**2
 
@@ -202,7 +201,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     y = power( (ex0b - v3) / (ex0b + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v2pPdN = complex(-deltaR2 + kex, dw) * ex0c + (-oGt2 - kge * t1pt2) * 2 * ex1c
+    v2pPdN = complex(-deltaR2 + kex, dw) * ex0c + (-oGt2 - k_AB * t1pt2) * 2 * ex1c
 
     Tog = (1 + y) / 2 + (1 - y) / (2 * v3) * v2pPdN / N
 
