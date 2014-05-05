@@ -213,8 +213,6 @@ class Map:
         # Initial value of the first parameter.
         values[0] = self.bounds[0, 0]
 
-        # The model identifier.
-
         # Loop over the first parameter.
         for i in range((self.inc + 1)):
             # Initial value of the second parameter.
