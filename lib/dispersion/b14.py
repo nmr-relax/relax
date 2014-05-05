@@ -99,7 +99,7 @@ Comparison to CR72 full model can be found in the:
 
 # Python module imports.
 import numpy
-from math import cos,sin,atan2
+from math import cos,sin, sqrt
 
 
 def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
@@ -150,8 +150,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     #get the real and imaginary components of the exchange induced shift
     g1=2*dw*(deltaR2+keg-kge)                   #same as carver richards zeta
     g2=(deltaR2+keg-kge)**2+4*keg*kge-dw**2   #same as carver richards psi
-    g3=cos(0.5*atan2(g1,g2))*(g1**2+g2**2)**(1/4.0)   #trig faster than square roots
-    g4=sin(0.5*atan2(g1,g2))*(g1**2+g2**2)**(1/4.0)   #trig faster than square roots
+    g3=1/sqrt(2)*sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
+    g4=1/sqrt(2)*sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     #########################################################################
     #time independent factors
     N=complex(kge+g3-kge,g4)            #N=oG+oE
