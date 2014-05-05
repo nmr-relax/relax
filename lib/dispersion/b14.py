@@ -132,7 +132,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
 
     # Conversion from relax parameters, to the exact code of Baldwin.
     pb = 1 - pA
-    Trel = relax_time
 
     #########################################################################
     ##### Baldwins code.
@@ -142,9 +141,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     kge = kex * pb
     deltaR2 = r20a - r20b
     alpha_m = r20a - r20b + kge - keg
-    #  This is not used
-    #nu_cpmg = ncyc/Trel
-    #tcp = Trel/(4.0 * ncyc)  #time for one free precession element
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
@@ -208,8 +204,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
 
     Tog = (1 + y) / 2 + (1 - y) / (2 * v3) * v2pPdN / N
 
-    # Estimate R2eff.
-    Minty = Rpre - ncyc/Trel * arccosh(ex0b.real) - 1/Trel * log(Tog.real)
+    # Estimate R2eff. relax_time = Trel. 
+    Minty = Rpre - ncyc/relax_time * arccosh(ex0b.real) - 1/relax_time * log(Tog.real)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
