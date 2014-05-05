@@ -112,18 +112,7 @@ class Map:
         self.remap = remap
 
         # The specific analysis API object.
-        api = return_api()
-
-        # Alias the specific functions.
-        self.calculate = api.calculate
-        self.model_statistics = api.model_statistics
-        self.map_bounds = []
-        self.return_conversion_factor = []
-        self.return_units = []
-        for i in range(self.n):
-            self.map_bounds.append(api.map_bounds)
-            self.return_conversion_factor.append(api.return_conversion_factor)
-            self.return_units.append(api.return_units)
+        self.api = return_api()
 
         # Points.
         if point != None:
@@ -136,7 +125,7 @@ class Map:
         self.bounds = zeros((self.n, 2), float64)
         for i in range(self.n):
             # Get the bounds for the parameter i.
-            bounds = self.map_bounds[i](self.params[i], self.spin_id)
+            bounds = self.api.map_bounds(self.params[i], self.spin_id)
 
             # No bounds found.
             if not bounds:
@@ -246,15 +235,15 @@ class Map:
 
                     # Calculate the function values.
                     if self.spin_id:
-                        self.calculate(spin_id=self.spin_id, verbosity=0)
+                        self.api.calculate(spin_id=self.spin_id, verbosity=0)
                     else:
-                        self.calculate(verbosity=0)
+                        self.api.calculate(verbosity=0)
 
                     # Get the minimisation statistics for the model.
                     if self.spin_id:
-                        k, n, chi2 = self.model_statistics(spin_id=self.spin_id)
+                        k, n, chi2 = self.api.model_statistics(spin_id=self.spin_id)
                     else:
-                        k, n, chi2 = self.model_statistics(model_info=0)
+                        k, n, chi2 = self.api.model_statistics(model_info=0)
 
                     # Set maximum value to 1e20 to stop the OpenDX server connection from breaking.
                     if chi2 > 1e20:
@@ -292,10 +281,10 @@ class Map:
         # Loop over the parameters
         for i in range(self.n):
             # Parameter conversion factors.
-            factor = self.return_conversion_factor[i](self.params[i])
+            factor = self.api.return_conversion_factor(self.params[i])
 
             # Parameter units.
-            units = self.return_units[i](self.params[i])
+            units = self.api.return_units(self.params[i])
 
             # Labels.
             if units:
