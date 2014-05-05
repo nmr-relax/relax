@@ -189,7 +189,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = complex(g3, -g4) * tcp
 
-    # Real.
+    # Real. The v_1c in paper.
     ex0b = f0 * cosh(E0) - f2 * cos(E2)
 
     # Complex.
