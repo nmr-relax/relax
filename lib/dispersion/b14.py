@@ -99,7 +99,7 @@ Comparison to CR72 full model can be found in the:
 
 # Python module imports.
 import numpy
-from math import cos,sin, sqrt
+from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt
 
 
 def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
@@ -191,16 +191,16 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     E1 = (complex(g3, -g4)) * tcp
 
     # Real.
-    ex0b = (f0 * numpy.cosh(E0) - f2 * numpy.cos(E2))
+    ex0b = (f0 * cosh(E0) - f2 * cos(E2))
 
     # Complex.
-    ex0c = (f0 * numpy.sinh(E0) - f2 * numpy.sin(E2) * complex(0, 1.0))
+    ex0c = (f0 * sinh(E0) - f2 * sin(E2) * complex(0, 1.0))
 
     # Complex.
-    ex1c = numpy.sinh(E1)
+    ex1c = sinh(E1)
 
     # Exact result for v2v3.
-    v3 = numpy.sqrt(ex0b**2 - 1)
+    v3 = sqrt(ex0b**2 - 1)
 
     y = numpy.power((ex0b - v3) / (ex0b + v3), ncyc)
 
@@ -209,7 +209,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     Tog = (((1 + y)/2 + (1 - y)/(2 * v3) * v2pPdN / N))
 
     # Estimate R2eff.
-    Minty = Rpre - ncyc/(Trel) * numpy.arccosh((ex0b).real) - 1/Trel * numpy.log((Tog.real))
+    Minty = Rpre - ncyc/(Trel) * arccosh((ex0b).real) - 1/Trel * log((Tog.real))
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
