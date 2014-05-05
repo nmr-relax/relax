@@ -153,19 +153,19 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     #########################################################################
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
-
+    g42 = g4**2
 
     #Time independent factors.
     #N = oG + oE.
     N = complex(g3, g4)
 
-    NNc = g32 + g4**2
+    NNc = g32 + g42
 
     # f0.
     f0 = (dw2 + g32) / NNc
 
     # f2.
-    f2 = (dw2 - g4**2) / NNc
+    f2 = (dw2 - g42) / NNc
 
     # t1 = (-dw + g4) * (complex(-dw, -g3)) / NNc #t1.
 
