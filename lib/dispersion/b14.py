@@ -188,7 +188,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     E2 =  2.0 * tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
-    E1 = (complex(g3, -g4)) * tcp    
+    E1 = (complex(g3, -g4)) * tcp
 
     # Real.
     ex0b = (f0 * numpy.cosh(E0) - f2 * numpy.cos(E2))
