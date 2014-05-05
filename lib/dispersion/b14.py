@@ -141,7 +141,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     pa=(1-pb)
     keg=kex*(1-pb)
     kge=kex*pb
-    deltaR2=r20b-r20a
+    deltaR2=r20a-r20b
     #  This is not used
     #nu_cpmg=ncyc/Trel
     #tcp=Trel/(4.0*ncyc)  #time for one free precession element
@@ -161,7 +161,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     #t1=(-dw+g4)*(complex(-dw,-g3))/(NNc) #t1
     t2=(dw+g4)*(complex(dw,-g3))/(NNc) #t2
     t1pt2=complex(2*dw**2,g1)/(NNc)     #t1+t2
-    oGt2=complex((deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
+    oGt2=complex((-deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
     Rpre=(r20a+r20b+kex)/2.0   #-1/Trel*log(LpreDyn)
     E0= 2.0*tcp*g3  #derived from relaxation       #E0=-2.0*tcp*(f00R-f11R)
     E2= 2.0*tcp*g4  #derived from chemical shifts  #E2=complex(0,-2.0*tcp*(f00I-f11I))
@@ -171,7 +171,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     ex1c=(numpy.sinh(E1))                                   #complex
     v3=numpy.sqrt(ex0b**2-1)  #exact result for v2v3
     y=numpy.power((ex0b-v3)/(ex0b+v3),ncyc)
-    v2pPdN=(( complex(deltaR2+kex,dw) )*ex0c+(-oGt2-kge*t1pt2)*2*ex1c)        #off diagonal common factor. sinh fuctions
+    v2pPdN=(( complex(-deltaR2+kex,dw) )*ex0c+(-oGt2-kge*t1pt2)*2*ex1c)        #off diagonal common factor. sinh fuctions
     Tog=(((1+y)/2+(1-y)/(2*v3)*(v2pPdN)/N))
     Minty=Rpre-ncyc/(Trel)*numpy.arccosh((ex0b).real)-1/Trel*numpy.log((Tog.real))  #estimate R2eff
 
