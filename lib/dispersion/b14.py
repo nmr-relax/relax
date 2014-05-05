@@ -148,7 +148,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
-    g1=2*dw*(deltaR2+keg-kge)                   #same as carver richards zeta
+    g1=2*dw*(r20a-r20b+kge-keg)                   #same as carver richards zeta
     g2=(deltaR2+keg-kge)**2+4*keg*kge-dw**2   #same as carver richards psi
     g3=1/sqrt(2)*sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     g4=1/sqrt(2)*sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
@@ -160,7 +160,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     f2=(dw**2-g4**2)/(NNc)              #f2
     #t1=(-dw+g4)*(complex(-dw,-g3))/(NNc) #t1
     t2=(dw+g4)*(complex(dw,-g3))/(NNc) #t2
-    t1pt2=complex(2*dw**2,-g1)/(NNc)     #t1+t2
+    t1pt2=complex(2*dw**2,g1)/(NNc)     #t1+t2
     oGt2=complex((deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
     Rpre=(r20a+r20b+kex)/2.0   #-1/Trel*log(LpreDyn)
     E0= 2.0*tcp*g3  #derived from relaxation       #E0=-2.0*tcp*(f00R-f11R)
