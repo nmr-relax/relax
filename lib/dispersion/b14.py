@@ -142,14 +142,15 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     keg=kex*(1-pb)
     kge=kex*pb
     deltaR2=r20a-r20b
+    alpha_m = r20a - r20b  + kge - keg
     #  This is not used
     #nu_cpmg=ncyc/Trel
     #tcp=Trel/(4.0*ncyc)  #time for one free precession element
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
-    g1=2*dw*(r20a-r20b+kge-keg)                   #same as carver richards zeta
-    g2=(r20a-r20b+kge-keg)**2+4*keg*kge-dw**2   #same as carver richards psi
+    g1=2*dw*alpha_m                            #same as carver richards zeta
+    g2=alpha_m**2+4*keg*kge-dw**2   #same as carver richards psi
     g3=1/sqrt(2)*sqrt(g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     g4=1/sqrt(2)*sqrt(-g2+sqrt(g1**2+g2**2))   #trig faster than square roots
     #########################################################################
