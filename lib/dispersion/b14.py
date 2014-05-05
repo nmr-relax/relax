@@ -143,7 +143,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     pa=(1-pb)
     keg=kex*(1-pb)
     kge=kex*pb
-    deltaR2=R2e-R2g
+    deltaR2=r20b-R2g
     #  This is not used
     #nu_cpmg=ncyc/Trel
     #tcp=Trel/(4.0*ncyc)  #time for one free precession element
@@ -164,7 +164,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, power=None, rela
     t2=(dw+g4)*(complex(dw,-g3))/(NNc) #t2
     t1pt2=complex(2*dw**2,-g1)/(NNc)     #t1+t2
     oGt2=complex((deltaR2+keg-kge-g3),(dw-g4))*t2  #-2*oG*t2
-    Rpre=(R2g+R2e+kex)/2.0   #-1/Trel*log(LpreDyn)
+    Rpre=(R2g+r20b+kex)/2.0   #-1/Trel*log(LpreDyn)
     E0= 2.0*tcp*g3  #derived from relaxation       #E0=-2.0*tcp*(f00R-f11R)
     E2= 2.0*tcp*g4  #derived from chemical shifts  #E2=complex(0,-2.0*tcp*(f00I-f11I))
     E1=(complex(g3,-g4))*tcp    #mixed term (complex) (E0-iE2)/2
