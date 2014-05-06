@@ -18,18 +18,17 @@ def alpha_angle(pivot=None, com=None, theta=None, phi=None):
     axis = zeros(3, float64)
     spherical_to_cartesian([1, theta, phi], axis)
 
-    # The pivot-CoM axis.
-    piv_com = com - pivot
-    piv_com /= norm(piv_com)
+    # The CoM-pivot axis.
+    com_piv = com - pivot
+    com_piv /= norm(com_piv)
 
     # The mu_xy vector.
     z_axis = array([0, 0, 1], float64)
-    mu_xy = cross(piv_com, z_axis)
+    mu_xy = cross(z_axis, com_piv)
     mu_xy /= norm(mu_xy)
 
     # The alpha angle.
-    return vector_angle(mu_xy, axis, piv_com)
-    #return vector_angle(axis, mu_xy, piv_com)
+    return vector_angle(mu_xy, axis, com_piv)
 
 
 def shift_pivot(pivot_orig=None, com=None, theta=None, phi=None):
