@@ -1,8 +1,62 @@
 # Script for optimising the second rotor frame order test model of CaM.
 
 # Python module imports.
-from numpy import array
+from numpy import array, cross, float64, zeros
+from numpy.linalg import norm
 
+# relax module imports.
+from lib.geometry.lines import closest_point_ax
+from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.vectors import vector_angle
+from pipe_control.structure.mass import pipe_centre_of_mass
+
+
+def alpha_angle(pivot=None, com=None, theta=None, phi=None):
+    """Calculate and return the rotor alpha angle."""
+
+    # Create the rotor axis.
+    axis = zeros(3, float64)
+    spherical_to_cartesian([1, theta, phi], axis)
+
+    # The pivot-CoM axis.
+    piv_com = com - pivot
+    piv_com /= norm(piv_com)
+
+    # The mu_xy vector.
+    z_axis = array([0, 0, 1], float64)
+    mu_xy = cross(piv_com, z_axis)
+    mu_xy /= norm(mu_xy)
+
+    # The alpha angle.
+    return vector_angle(mu_xy, axis, piv_com)
+    #return vector_angle(axis, mu_xy, piv_com)
+
+
+def shift_pivot(pivot_orig=None, com=None, theta=None, phi=None):
+    """Shift the pivot to the closest point on the rotor axis to the CoM.)"""
+
+    # Create the rotor axis.
+    axis = zeros(3, float64)
+    spherical_to_cartesian([1, theta, phi], axis)
+
+    # The closest point.
+    pivot_new = closest_point_ax(line_pt=pivot_orig, axis=axis, point=com)
+
+    # Printout.
+    print("\n%-20s%s" % ("Original pivot:", pivot_orig))
+    print("%-20s%s" % ("New pivot:", pivot_new))
+
+    # Return the shifted pivot.
+    return pivot_new
+
+
+# The real parameter values.
+AVE_POS_ALPHA = 4.3434999280669997
+AVE_POS_BETA = 0.43544332764249905
+AVE_POS_GAMMA = 3.8013235235956007
+AXIS_THETA = 0.69828059079619353433
+AXIS_PHI = 4.03227550621962294031
+CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -67,7 +121,7 @@ frame_order.average_position(pivot='motional', translation=False)
 frame_order.ref_domain('N')
 
 # Set the initial pivot point.
-pivot = array([ 37.254, 0.5, 16.7465])
+pivot = shift_pivot(pivot_orig=array([ 37.254, 0.5, 16.7465]), com=pipe_centre_of_mass(verbosity=0), theta=AXIS_THETA, phi=AXIS_PHI)
 frame_order.pivot(pivot, fix=True)
 
 # Set the paramagnetic centre.
@@ -78,18 +132,17 @@ frame_order.num_int_pts(num=50)
 frame_order.quad_int(flag=False)
 
 # Check the minimum.
-value.set(param='ave_pos_alpha', val=4.3434999280669997)
-value.set(param='ave_pos_beta', val=0.43544332764249905)
-value.set(param='ave_pos_gamma', val=3.8013235235956007)
-value.set(param='axis_theta', val=0.69828059079619353433)
-value.set(param='axis_phi', val=4.03227550621962294031)
-value.set(param='cone_sigma_max', val=30.0 / 360.0 * 2.0 * pi)
+value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), theta=AXIS_THETA, phi=AXIS_PHI))
+value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-grid_search(inc=3)
-minimise('simplex', constraints=False)
+grid_search(inc=5)
+minimise('simplex', constraints=True)
 
 # Optimise the pivot and model.
 #frame_order.pivot(pivot, fix=False)
