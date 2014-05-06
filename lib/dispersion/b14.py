@@ -83,6 +83,18 @@ Links
 More information on the B14 model can be found in the:
 
     - U{relax wiki<http://wiki.nmr-relax.com/B14>},
+    - U{relax manual<http://www.nmr-relax.com/manual/reduced_B14_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#B14>}.
+
+More information on the B14 full model can be found in the:
+
+    - U{relax wiki<http://wiki.nmr-relax.com/B14_full>},
+    - U{relax manual<http://www.nmr-relax.com/manual/full_B14_2_site_CPMG_model.html>},
+    - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#B14_full>}.
+
+
+Comparison to CR72 model
+========================
 
 Comparison to CR72 model can be found in the:
 
