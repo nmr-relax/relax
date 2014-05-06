@@ -175,7 +175,7 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     t2 = (dw + g4) * complex(dw, -g3) / NNc
 
     # t1 + t2.
-    t1pt2 = complex(2 * dw2, zeta) / NNc
+    t1pt2 = complex(2. * dw2, zeta) / NNc
 
     # -2 * oG * t2.
     oGt2 = complex(-alpha_m - g3, dw - g4) * t2
@@ -203,14 +203,14 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     ex1c = sinh(E1)
 
     # Exact result for v2v3.
-    v3 = sqrt(ex0b**2 - 1)
+    v3 = sqrt(ex0b**2 - 1.)
 
     y = power( (ex0b - v3) / (ex0b + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v2pPdN = complex(-deltaR2 + kex, dw) * ex0c + (-oGt2 - k_AB * t1pt2) * 2 * ex1c
+    v2pPdN = complex(-deltaR2 + kex, dw) * ex0c + (-oGt2 - k_AB * t1pt2) * 2. * ex1c
 
-    Tog = (1 + y) / 2 + (1 - y) / (2 * v3) * v2pPdN / N
+    Tog = (1. + y) / 2. + (1. - y) / (2. * v3) * v2pPdN / N
 
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
     Minty = Rpre - ncyc * inv_tcpmg * arccosh(ex0b.real) - inv_tcpmg * log(Tog.real)
