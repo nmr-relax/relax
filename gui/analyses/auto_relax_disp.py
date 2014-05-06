@@ -48,7 +48,7 @@ from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kB
 from pipe_control.mol_res_spin import exists_mol_res_spin_data, spin_loop
 from pipe_control.pipes import has_bundle, has_pipe
 from specific_analyses.relax_disp.data import has_cpmg_exp_type, has_r1rho_exp_type
-from specific_analyses.relax_disp.variables import MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MMQ_CR72, MODEL_MP05, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_R2EFF, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 from status import Status; status = Status()
 
 
@@ -722,8 +722,6 @@ class Disp_model_list(Model_list):
         MODEL_CR72_FULL,
         MODEL_IT99,
         MODEL_TSMFK01,
-        MODEL_B14,
-        MODEL_B14_FULL,
         MODEL_NS_CPMG_2SITE_EXPANDED,
         MODEL_NS_CPMG_2SITE_3D,
         MODEL_NS_CPMG_2SITE_3D_FULL,
@@ -757,8 +755,6 @@ class Disp_model_list(Model_list):
         "{%s, ..., %s, %s, %s}" % (r2, phi_ex, padw2, kex),
         "{%s, ..., %s, k_AB}" % (r2a, dw),
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
-        "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
-        "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
         "{%s, %s, ..., pA, %s, %s}" % (r2a, r2b, dw, kex),
         "{%s, ..., pA, %s, %s}" % (r2, dw, kex),
@@ -790,8 +786,6 @@ class Disp_model_list(Model_list):
         "The Carver and Richards (1972) 2-site equation for all time scales.",
         "The Ishima and Torchia (1999) 2-site model for all time scales with pA >> pB.",
         "The Tollinger et al. (2001) 2-site very-slow exchange model.",
-        "The Baldwin (2014) 2-site exact solution model for all time scales (with %s = %s)." % (r2a, r2b),
-        "The Baldwin (2014) 2-site exact solution model for all time scales.",
         "The 2-site numerical solution expanded using Maple by Nikolai Skrynnikov.",
         "The 2-site numerical solution using 3D magnetisation vectors (with %s = %s)." % (r2a, r2b),
         "The 2-site numerical solution using 3D magnetisation vectors.",

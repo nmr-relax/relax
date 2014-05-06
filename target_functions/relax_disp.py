@@ -27,7 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import complex64, dot, float64, int16, sqrt, zeros
+from numpy import complex64, dot, float64, int16, zeros
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -54,7 +54,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -73,8 +73,7 @@ class Dispersion:
             - 'CR72 full':  The full Carver and Richards (1972) 2-site model for all time scales.
             - 'IT99':  The Ishima and Torchia (1999) 2-site model for all time scales with skewed populations (pA >> pB).
             - 'TSMFK01':  The Tollinger et al. (2001) 2-site very-slow exchange model, range of microsecond to second time scale.
-            - 'B14':  The Baldwin (2014) 2-site exact solution model for all time scales with R20A = R20B..
-            - 'B14 full':  The Baldwin (2014) 2-site exact solution model for all time scales.
+            - 'B14':  The Baldwin (2014) 2-site exact solution model for all time scales.
             - 'M61':  The Meiboom (1961) 2-site fast exchange model for R1rho-type experiments.
             - 'DPL94':  The Davis, Perlman and London (1994) 2-site fast exchange model for R1rho-type experiments.
             - 'M61 skew':  The Meiboom (1961) on-resonance 2-site model with skewed populations (pA >> pB) for R1rho-type experiments.
@@ -229,7 +228,7 @@ class Dispersion:
 
         # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_exp * self.num_spins * self.num_frq)
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_B14, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             self.end_index.append(2 * self.num_exp * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
@@ -276,7 +275,7 @@ class Dispersion:
             self.M0 = zeros(9, float64)
 
         # Special CPMG-type data structures.
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01]:
+        if model in [MODEL_B14, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01]:
             # The number of CPMG blocks.
             self.power = []
             for ei in range(self.num_exp):
@@ -322,7 +321,7 @@ class Dispersion:
                         self.spin_lock_omega1_squared[ei][mi][oi] = self.spin_lock_omega1[ei][mi][oi] ** 2
 
         # The inverted relaxation delay.
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+        if model in [MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.inv_relax_times = 1.0 / relax_times
 
         # Special storage matrices for the multi-quantum CPMG N-site numerical models.
@@ -354,8 +353,6 @@ class Dispersion:
             self.func = self.func_TSMFK01
         if model == MODEL_B14:
             self.func = self.func_B14
-        if model == MODEL_B14_FULL:
-            self.func = self.func_B14_full
         if model == MODEL_NS_CPMG_2SITE_3D_FULL:
             self.func = self.func_ns_cpmg_2site_3D_full
         if model == MODEL_NS_CPMG_2SITE_3D:
@@ -394,78 +391,8 @@ class Dispersion:
             self.func = self.func_ns_mmq_3site_linear
 
 
-    def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
-        """Calculate the chi-squared value of the Baldwin (2014) 2-site exact solution model for all time scales.
-
-
-        @keyword R20A:  The R2 value for state A in the absence of exchange.
-        @type R20A:     list of float
-        @keyword R20B:  The R2 value for state B in the absence of exchange.
-        @type R20B:     list of float
-        @keyword dw:    The chemical shift differences in ppm for each spin.
-        @type dw:       list of float
-        @keyword pA:    The population of state A.
-        @type pA:       float
-        @keyword kex:   The rate of exchange.
-        @type kex:      float
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-        g_fact = 1/sqrt(2)
-
-        # Initialise.
-        chi2_sum = 0.0
-
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * self.frqs[ei][si][mi]
-
-                    # Alias the dw frequency combinations.
-                    if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
-                        aliased_dw = dw_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
-                        aliased_dw = dw_frq
-
-                    # The R20 index.
-                    r20_index = mi + si*self.num_frq
-
-                    # Repetitive calculations (to speed up calculations).
-                    r20a = R20A[r20_index]
-                    r20b = R20B[r20_index]
-                    deltaR2 = r20a - r20b
-
-                    # The Carver and Richards (1972) alpha_minus short notation.
-                    alpha_m = deltaR2 + k_AB - k_BA
-                    zeta = 2 * aliased_dw * alpha_m
-                    Psi = alpha_m**2 + 4 * k_BA * k_AB - aliased_dw**2
-
-                    # Back calculate the R2eff values.
-                    r2eff_B14(r20a=r20a, r20b=r20b, deltaR2=deltaR2, alpha_m=alpha_m, pA=pA, pB=pB, dw=dw_frq, zeta=zeta, Psi=Psi, g_fact=g_fact, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
-
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[ei][si][mi][0]):
-                        if self.missing[ei][si][mi][0][di]:
-                            self.back_calc[ei][si][mi][0][di] = self.values[ei][si][mi][0][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[ei][si][mi][0], self.back_calc[ei][si][mi][0], self.errors[ei][si][mi][0])
-
-        # Return the total chi-squared value.
-        return chi2_sum
-
-
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
-        """Calculate the chi-squared value of the Carver and Richards (1972) 2-site exchange model on all time scales.
+        """Calculate the chi-squared value of the 'NS CPMG 2-site star' models.
 
         @keyword R20A:  The R2 value for state A in the absence of exchange.
         @type R20A:     list of float
@@ -837,32 +764,6 @@ class Dispersion:
 
 
     def func_B14(self, params):
-        """Target function for the Baldwin (2014) 2-site exact solution model for all time scales, whereby the simplification R20A = R20B is assumed.
-
-        This assumes that pA > pB, and hence this must be implemented as a constraint.
-
-
-        @param params:  The vector of parameter values.
-        @type params:   numpy rank-1 float array
-        @return:        The chi-squared value.
-        @rtype:         float
-        """
-
-        # Scaling.
-        if self.scaling_flag:
-            params = dot(params, self.scaling_matrix)
-
-        # Unpack the parameter values.
-        R20 = params[:self.end_index[0]]
-        dw = params[self.end_index[0]:self.end_index[1]]
-        pA = params[self.end_index[1]]
-        kex = params[self.end_index[1]+1]
-
-        # Calculate and return the chi-squared value.
-        return self.calc_B14_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
-
-
-    def func_B14_full(self, params):
         """Target function for the Baldwin (2014) 2-site exact solution model for all time scales.
 
         This assumes that pA > pB, and hence this must be implemented as a constraint.
@@ -885,8 +786,33 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
-        # Calculate and return the chi-squared value.
-        return self.calc_B14_chi2(R20A=R20A, R20B=R20B, dw=dw, pA=pA, kex=kex)
+        # Initialise.
+        chi2_sum = 0.0
+
+        # Loop over the spins.
+        for si in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for mi in range(self.num_frq):
+                # The R20 index.
+                r20_index = mi + si*self.num_frq
+
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[si] * self.frqs[0][si][mi]
+
+                # Back calculate the R2eff values.
+                r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, ncyc=self.power[0][mi], relax_time=self.relax_times[0][mi], tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+
+                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                for di in range(self.num_disp_points[0][si][mi][0]):
+                    if self.missing[0][si][mi][0][di]:
+                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+
+                # Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+
+        # Return the total chi-squared value.
+        return chi2_sum
+
 
 
     def func_CR72(self, params):
