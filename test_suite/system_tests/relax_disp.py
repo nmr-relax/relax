@@ -366,7 +366,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.calc(verbosity=1)
 
 
-    def test_baldwin_synthetic(self):
+    def test_baldwin_synthetic_full(self):
         """Test synthetic data of Andrew J. Baldwin B14 model. Support requst sr #3154 U{https://gna.org/support/index.php?3154}.
 
         This uses the synthetic data from paper U{DOI: 10.1016/j.jmr.2014.02.023 <http://dx.doi.org/10.1016/j.jmr.2014.02.023>}."""
@@ -477,7 +477,7 @@ class Relax_disp(SystemTestCase):
         r20_key = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq)
 
         ## Now prepare for MODEL calculation.
-        MODEL = "B14"
+        MODEL = "B14 full"
         #MODEL = "CR72 full"
         #MODEL = "NS CPMG 2-site star full"
         #MODEL = "NS CPMG 2-site 3D full"
