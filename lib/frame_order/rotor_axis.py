@@ -49,12 +49,12 @@ def create_rotor_axis_alpha(alpha=None, pivot=None, point=None):
     """
 
     # The point-pivot unit vector - the norm of the system (the pivot is defined as the point on the axis closest to the point).
-    n = point - pivot
-    n = n / norm(n)
+    n = pivot - point
+    n /= norm(n)
 
     # The vector perpendicular to the CoM-pivot vector and in the xy plane.
     mu_xy = cross(n, Z_AXIS)
-    mu_xy = mu_xy / norm(mu_xy)
+    mu_xy /= norm(mu_xy)
 
     # Rotate the vector about the CoM-pivot axis by the angle alpha.
     axis_angle_to_R(n, alpha, R)
