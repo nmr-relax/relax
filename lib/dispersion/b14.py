@@ -163,7 +163,7 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
 
     # Time independent factors.
     # N = oG + oE.
-    N = complex(g3, g4)
+    N = g3 + g4*1j
 
     NNc = g32 + g42
 
@@ -176,13 +176,13 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     # t1 = (-dw + g4) * (complex(-dw, -g3)) / NNc #t1.
 
     # t2.
-    t2 = (dw + g4) * complex(dw, -g3) / NNc
+    t2 = (dw + g4) * (dw - g3*1j) / NNc
 
     # t1 + t2.
-    t1pt2 = complex(2. * dw2, zeta) / NNc
+    t1pt2 = (2. * dw2 + zeta*1j) / NNc
 
     # -2 * oG * t2.
-    oGt2 = complex(-alpha_m - g3, dw - g4) * t2
+    oGt2 = t2 * (-alpha_m - g3 ) + t2 * (dw - g4)*1j
 
     # -1/Trel * log(LpreDyn).
     Rpre = (r20a + r20b + kex) / 2.0
@@ -195,13 +195,13 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     E2 =  two_tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
-    E1 = complex(g3, -g4) * tcp
+    E1 = (g3 - g4*1j) * tcp
 
     # Real. The v_1c in paper.
     ex0b = f0 * cosh(E0) - f2 * cos(E2)
 
     # Complex.
-    ex0c = f0 * sinh(E0) - f2 * sin(E2) * complex(0, 1.0)
+    ex0c = f0 * sinh(E0) - f2 * sin(E2)*1j
 
     # Complex.
     ex1c = sinh(E1)
@@ -212,7 +212,7 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     y = power( (ex0b - v3) / (ex0b + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v2pPdN = complex(-deltaR2 + kex, dw) * ex0c + (-oGt2 - k_AB * t1pt2) * 2. * ex1c
+    v2pPdN = (-deltaR2 + kex + dw*1j) * ex0c + (-oGt2 - k_AB * t1pt2) * 2. * ex1c
 
     Tog = (1. + y) / 2. + (1. - y) / (2. * v3) * v2pPdN / N
 
