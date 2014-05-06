@@ -803,6 +803,12 @@ class Dispersion:
                     # The R20 index.
                     r20_index = mi + si*self.num_frq
 
+                    # Repetitive calculations (to speed up calculations).
+                    r20a = R20A[r20_index]
+                    r20b = R20B[r20_index]
+                    deltaR2 = r20a - r20b
+                    alpha_m = deltaR2 + k_AB - k_BA
+
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[si] * self.frqs[ei][si][mi]
 
@@ -813,7 +819,7 @@ class Dispersion:
                         aliased_dw = dw_frq
 
                     # Back calculate the R2eff values.
-                    r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
+                    r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, pB=pB, dw=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, deltaR2=deltaR2, alpha_m=alpha_m, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):
@@ -825,7 +831,6 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_sum
-
 
 
     def func_CR72(self, params):
