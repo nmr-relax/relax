@@ -102,6 +102,11 @@ For the SQ CPMG-type experiments, the analytic models currently supported are:
     $2*\taucpmg$ is the time between successive 180 degree pulses.
     Parameters are $\{\RtwozeroA, \dots, \dw, \kAB\}$.
     See Section~\ref{sect: dispersion: TSMFK01 model} on page~\pageref{sect: dispersion: TSMFK01 model}.
+  \item[`B14':]\index{relaxation dispersion!B14 model}  The reduced \citet{Baldwin2014} 2-site exact solution equation for all time scales whereby the simplification $\RtwozeroA = \RtwozeroB$ is assumed.
+    It has the parameters $\{\Rtwozero, \dots, \pA, \dw, \kex\}$.
+    See Section~\ref{sect: dispersion: B14 model} on page~\pageref{sect: dispersion: B14 model}.
+  \item[`B14 full':]\index{relaxation dispersion!B14 full model}  The full \citet{Baldwin2014} 2-site exact equation for all time scales with parameters $\{\RtwozeroA, \RtwozeroB, \dots, \pA, \dw, \kex\}$.
+    See Section~\ref{sect: dispersion: B14 full model} on page~\pageref{sect: dispersion: B14 full model}.
 \end{description}
 
 For the SQ CPMG-type experiments, the numeric models currently supported are:
@@ -549,6 +554,79 @@ More information about the TSMFK01 model is available from:
   \item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#TSMFK01}.
 \end{itemize}
 
+
+% Full B14 model.
+%~~~~~~~~~~~~~~~~~
+
+\subsection{The full B14 2-site CPMG model}
+\label{sect: dispersion: B14 full model}
+\index{relaxation dispersion!B14 full model|textbf}
+
+This is the model for 2-site exchange exact analytical derivation on all time scales (with the constraint that $\pA > \pB$), named after \citet{Baldwin2014}.
+It is selected by setting the model to `B14 full'.
+The equation is
+\begin{eqnarray}
+  R_{2,\textrm{eff}} & = & \frac{R_2^A+R_2^B+k_{\textrm{EX}}}{2}-\frac{N_{\textrm{CYC}}}{T_{\textrm{rel}}}\cosh{}^{-1}(v_{1c}) \nonumber \\
+                     & - &  \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} \nonumber \\
+    & = & R_{2,\textrm{eff}}^{\textrm{CR72}} - \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} ,
+\end{eqnarray}
+
+where
+\begin{eqnarray}
+    v_{1c} & = & F_0\cosh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\cosh{\left(\tau_{\textrm{CP}}E_2\right)} \nonumber \\
+    v_{1s} & = & F_0\sinh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\sinh{\left(\tau_{\textrm{CP}}E_2\right)} \nonumber \\
+    v_{2}N & = & v_{1s}\left(O_B-O_A\right)+4O_B F_1^a \sinh{\left(\tau_{\textrm{CP}}E_1\right)} \nonumber \\
+    p_D N & = & v_{1s} + \left(F_1^a+F_1^b\right)\sinh{\left(\tau_{\textrm{CP}}E_1\right)} \nonumber \\
+    v_3 & = & \left( v_2^2 + 4 k_{\textrm{BA}} k_{\textrm{AB}} p_D^2 \right)^{1/2} \nonumber \\
+    y & = & \left( \frac{v_{1c}-v_3}{v_{1c}+v_3} \right)^{N_{\textrm{CYC}}}
+\end{eqnarray}
+
+The advantage of this code will be that you will always get the right answer provided you got 2-site exchange, in-phase magnetisation and on-resonance pulses. 
+
+The term $p_D$ is based on product of the off diagonal elements in the CPMG propagator, see supplementary Section 3, \citet{Baldwin2014}.
+
+It is interesting to consider the region of validity of the Carver Richards result. The two results are equal when the correction is zero, which is true when
+
+\begin{equation}
+    \sqrt{v_{1c}^2-1} \approx v_2 + 2k_{\textrm{AB}}p_D
+\end{equation}
+
+This occurs when $k_{\textrm{AB}}p_D$ tends to zero, and so $v_2=v_3$.
+Setting $k_{\textrm{AB}}p_D$ to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa. 
+This will be a good approximation when $p_A \gg p_B$.
+In practise, significant deviations from the Carver Richards equation can be incurred if $p_B > 1$\%.
+Incorporation of the correction term, results in an improved description of the CPMG experiment over the Carver Richards equation \citet{CarverRichards72}.
+
+The reference for this equation is:
+\begin{itemize}
+  \item \bibentry{Baldwin2014}
+\end{itemize}
+
+More information about the B14 full model is available from:
+\begin{itemize}
+  \item the relax wiki at \url{http://wiki.nmr-relax.com/B14\_full},
+  \item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.B14-module.html},
+  \item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#B14\_full}.
+\end{itemize}
+
+
+% B14 model.
+%~~~~~~~~~~~~
+
+\subsection{The reduced B14 2-site CPMG model}
+\label{sect: dispersion: B14 model}
+\index{relaxation dispersion!B14 model|textbf}
+
+This is the model for 2-site exchange exact analytical derivation on all time scales (with the constraint that $\pA > \pB$), named after \citet{Baldwin2014}.
+It is selected by setting the model to `B14'.
+It is the same as the full B14 model described above, but with the simplification that $\RtwozeroA = \RtwozeroB$.
+
+More information about the B14 model is available from:
+\begin{itemize}
+  \item the relax wiki at \url{http://wiki.nmr-relax.com/B14},
+  \item the API documentation at \url{http://www.nmr-relax.com/api/3.1/lib.dispersion.B14-module.html},
+  \item the relaxation dispersion page of the relax website at \url{http://www.nmr-relax.com/analyses/relaxation\_dispersion.html#B14}.
+\end{itemize}
 
 
 % The numeric CPMG models.
