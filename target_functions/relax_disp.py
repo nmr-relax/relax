@@ -836,6 +836,32 @@ class Dispersion:
                 raise RelaxError("The '%s' CPMG model is not compatible with the '%s' experiment type." % (self.model, self.exp_types[0]))
 
 
+    def func_B14(self, params):
+        """Target function for the Baldwin (2014) 2-site exact solution model for all time scales, whereby the simplification R20A = R20B is assumed.
+
+        This assumes that pA > pB, and hence this must be implemented as a constraint.
+
+
+        @param params:  The vector of parameter values.
+        @type params:   numpy rank-1 float array
+        @return:        The chi-squared value.
+        @rtype:         float
+        """
+
+        # Scaling.
+        if self.scaling_flag:
+            params = dot(params, self.scaling_matrix)
+
+        # Unpack the parameter values.
+        R20 = params[:self.end_index[0]]
+        dw = params[self.end_index[0]:self.end_index[1]]
+        pA = params[self.end_index[1]]
+        kex = params[self.end_index[1]+1]
+
+        # Calculate and return the chi-squared value.
+        return self.calc_B14_chi2(R20A=R20, R20B=R20, dw=dw, pA=pA, kex=kex)
+
+
     def func_B14_full(self, params):
         """Target function for the Baldwin (2014) 2-site exact solution model for all time scales.
 
