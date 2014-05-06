@@ -102,7 +102,7 @@ import numpy
 from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, deltaR2=None, alpha_m=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -112,6 +112,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type r20a:             float
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
     @type r20b:             float
+    @keyword deltaR2:       The difference r20a - r20b.
+    @type deltaR2:          float
+    @keyword alpha_m:       The Carver and Richards (1972) alpha_minus short notation. alpha_m = deltaR2 + k_AB - k_BA = r20a - r20b + k_AB - k_BA.
+    @type alpha_m:          float
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
@@ -124,10 +128,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
-    @keyword deltaR2:       The difference r20a - r20b.
-    @type deltaR2:          float
-    @keyword alpha_m:       The Carver and Richards (1972) alpha_minus short notation. alpha_m = deltaR2 + k_AB - k_BA = r20a - r20b + k_AB - k_BA.
-    @type alpha_m:          float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
     @type ncyc:             numpy int16, rank-1 array
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
