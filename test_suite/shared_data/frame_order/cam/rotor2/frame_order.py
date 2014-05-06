@@ -7,6 +7,7 @@ from numpy.linalg import norm
 # relax module imports.
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.coord_transform import spherical_to_cartesian
+from lib.geometry.rotations import reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
 from pipe_control.structure.mass import pipe_centre_of_mass
 
@@ -50,9 +51,7 @@ def shift_pivot(pivot_orig=None, com=None, theta=None, phi=None):
 
 
 # The real parameter values.
-AVE_POS_ALPHA = 4.3434999280669997
-AVE_POS_BETA = 0.43544332764249905
-AVE_POS_GAMMA = 3.8013235235956007
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
 AXIS_THETA = 0.69828059079619353433
 AXIS_PHI = 4.03227550621962294031
 CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
