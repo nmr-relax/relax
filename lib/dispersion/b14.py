@@ -102,7 +102,7 @@ import numpy
 from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax_time=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -120,8 +120,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
     @type kex:              float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
     @type ncyc:             numpy int16, rank-1 array
-    @keyword relax_time:    The total relaxation time period (in seconds).
-    @type relax_time:       float
+    @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
+    @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
@@ -210,8 +210,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, dw=None, kex=None, ncyc=None, relax
 
     Tog = (1 + y) / 2 + (1 - y) / (2 * v3) * v2pPdN / N
 
-    # Estimate R2eff. relax_time = Trel. 
-    Minty = Rpre - ncyc/relax_time * arccosh(ex0b.real) - 1/relax_time * log(Tog.real)
+    # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
+    Minty = Rpre - ncyc * inv_tcpmg * arccosh(ex0b.real) - inv_tcpmg * log(Tog.real)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
