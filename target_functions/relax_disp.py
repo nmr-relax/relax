@@ -462,7 +462,7 @@ class Dispersion:
 
 
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
-        """Calculate the chi-squared value of the 'NS CPMG 2-site star' models.
+        """Calculate the chi-squared value of the Carver and Richards (1972) 2-site exchange model on all time scales.
 
         @keyword R20A:  The R2 value for state A in the absence of exchange.
         @type R20A:     list of float
