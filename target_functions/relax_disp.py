@@ -27,7 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import complex64, dot, float64, int16, zeros
+from numpy import complex64, dot, float64, int16, sqrt, zeros
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -790,6 +790,7 @@ class Dispersion:
         pB = 1.0 - pA
         k_BA = pA * kex
         k_AB = pB * kex
+        g_fact = 1/sqrt(2)
 
         # Initialise.
         chi2_sum = 0.0
@@ -823,7 +824,7 @@ class Dispersion:
                     Psi = alpha_m**2 + 4 * k_BA * k_AB - aliased_dw**2
 
                     # Back calculate the R2eff values.
-                    r2eff_B14(r20a=r20a, r20b=r20b, deltaR2=deltaR2, alpha_m=alpha_m, pA=pA, pB=pB, dw=dw_frq, zeta=zeta, Psi=Psi, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
+                    r2eff_B14(r20a=r20a, r20b=r20b, deltaR2=deltaR2, alpha_m=alpha_m, pA=pA, pB=pB, dw=dw_frq, zeta=zeta, Psi=Psi, g_fact=g_fact, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):

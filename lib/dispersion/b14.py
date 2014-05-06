@@ -102,7 +102,7 @@ import numpy
 from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
 
-def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, zeta=None, Psi=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, zeta=None, Psi=None, g_fact=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -126,6 +126,8 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     @type zeta:             float
     @keyword Psi:           The Carver and Richards (1972) Psi notation. Psi =  alpha_m**2 + 4 * k_BA * k_AB - dw**2.
     @type Psi:              float
+    @keyword g_fact:        The factor g = 1/sqrt(2). This is calculated outside library function, to only be calculated once.
+    @type g_fact:           float
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -151,8 +153,8 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     two_tcp = 2.0 * tcp
 
     # Get the real and imaginary components of the exchange induced shift.
-    g3 = 1/sqrt(2) * sqrt(Psi + sqrt(zeta2 + Psi2))
-    g4 = 1/sqrt(2) * sqrt(-Psi + sqrt(zeta2 + Psi2))
+    g3 = g_fact * sqrt(Psi + sqrt(zeta2 + Psi2))
+    g4 = g_fact * sqrt(-Psi + sqrt(zeta2 + Psi2))
 
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
