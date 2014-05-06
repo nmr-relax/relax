@@ -146,22 +146,19 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
+    zeta2 = zeta**2
+    Psi2 = Psi**2
 
-    #########################################################################
-    ##### Baldwins code.
-    #########################################################################
+    # Get the real and imaginary components of the exchange induced shift.
+    g3 = 1/sqrt(2) * sqrt(Psi + sqrt(zeta2 + Psi2))
+    g4 = 1/sqrt(2) * sqrt(-Psi + sqrt(zeta2 + Psi2))
 
-    #########################################################################
-    #get the real and imaginary components of the exchange induced shift
-    g3 = 1/sqrt(2) * sqrt(Psi + sqrt(zeta**2 + Psi**2))   #trig faster than square roots
-    g4 = 1/sqrt(2) * sqrt(-Psi + sqrt(zeta**2 + Psi**2))   #trig faster than square roots
-    #########################################################################
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
     g42 = g4**2
 
-    #Time independent factors.
-    #N = oG + oE.
+    # Time independent factors.
+    # N = oG + oE.
     N = complex(g3, g4)
 
     NNc = g32 + g42
