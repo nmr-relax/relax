@@ -565,24 +565,25 @@ More information about the TSMFK01 model is available from:
 This is the model for 2-site exchange exact analytical derivation on all time scales (with the constraint that $\pA > \pB$), named after \citet{Baldwin2014}.
 It is selected by setting the model to `B14 full'.
 The equation is
-\begin{equation}
-    R_{2,\textrm{eff}} = \frac{R_2^A+R_2^B+k_{\textrm{EX}}}{2}-\frac{N_{\textrm{CYC}}}{T_{\textrm{rel}}}\cosh{}^{-1}(v_{1c}) - \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} \\
-    = R_{2,\textrm{eff}}^{\textrm{CR72}} - \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} ,
-\end{equation}
+\begin{eqnarray}
+  R_{2,\textrm{eff}} & = & \frac{R_2^A+R_2^B+k_{\textrm{EX}}}{2}-\frac{N_{\textrm{CYC}}}{T_{\textrm{rel}}}\cosh{}^{-1}(v_{1c}) \nonumber \\
+                     & - &  \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} \nonumber \\
+    & = & R_{2,\textrm{eff}}^{\textrm{CR72}} - \frac{1}{T_{\textrm{rel}}}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2k_{\textrm{AB}}p_D )\right)} ,
+\end{eqnarray}
 
 where
-\begin{equation}
-    v_{1c} = F_0\cosh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\cosh{\left(\tau_{\textrm{CP}}E_2\right)} \\
-    v_{1s} = F_0\sinh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\sinh{\left(\tau_{\textrm{CP}}E_2\right)} \\
-    v_{2}N = v_{1s}\left(O_B-O_A\right)+4O_B F_1^a \sinh{\left(\tau_{\textrm{CP}}E_1\right)} \\
-    p_D N = v_{1s} + \left(F_1^a+F_1^b\right)\sinh{\left(\tau_{\textrm{CP}}E_1\right)}\\
-    v_3 = \left( v_2^2 + 4 k_{\textrm{BA}} k_{\textrm{AB}} p_D^2 \right)^{1/2} \\
-    y = \left( \frac{v_{1c}-v_3}{v_{1c}+v_3} \right)^{N_{\textrm{CYC}}}
-\end{equation}
+\begin{eqnarray}
+    v_{1c} & = & F_0\cosh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\cosh{\left(\tau_{\textrm{CP}}E_2\right)} \nonumber \\
+    v_{1s} & = & F_0\sinh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\sinh{\left(\tau_{\textrm{CP}}E_2\right)} \nonumber \\
+    v_{2}N & = & v_{1s}\left(O_B-O_A\right)+4O_B F_1^a \sinh{\left(\tau_{\textrm{CP}}E_1\right)} \nonumber \\
+    p_D N & = & v_{1s} + \left(F_1^a+F_1^b\right)\sinh{\left(\tau_{\textrm{CP}}E_1\right)} \nonumber \\
+    v_3 & = & \left( v_2^2 + 4 k_{\textrm{BA}} k_{\textrm{AB}} p_D^2 \right)^{1/2} \nonumber \\
+    y & = & \left( \frac{v_{1c}-v_3}{v_{1c}+v_3} \right)^{N_{\textrm{CYC}}}
+\end{eqnarray}
 
 The advantage of this code will be that you will always get the right answer provided you got 2-site exchange, in-phase magnetisation and on-resonance pulses. 
 
-The term $$p_D$$ is based on product of the off diagonal elements in the CPMG propagator (Supplementary Section 3, \citet{Baldwin2014}).
+The term $p_D$ is based on product of the off diagonal elements in the CPMG propagator, see supplementary Section 3, \citet{Baldwin2014}.
 
 It is interesting to consider the region of validity of the Carver Richards result. The two results are equal when the correction is zero, which is true when
 
@@ -590,10 +591,10 @@ It is interesting to consider the region of validity of the Carver Richards resu
     \sqrt{v_{1c}^2-1} \approx v_2 + 2k_{\textrm{AB}}p_D
 \end{equation}
 
-This occurs when $$k_{\textrm{AB}}p_D$$ tends to zero, and so $$v_2=v_3$$.
-Setting $$k_{\textrm{AB}}p_D$$ to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa. 
-This will be a good approximation when $$p_A \gg p_B$$.
-In practise, significant deviations from the Carver Richards equation can be incurred if $$p_B > 1\%$$.
+This occurs when $k_{\textrm{AB}}p_D$ tends to zero, and so $v_2=v_3$.
+Setting $k_{\textrm{AB}}p_D$ to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa. 
+This will be a good approximation when $p_A \gg p_B$.
+In practise, significant deviations from the Carver Richards equation can be incurred if $p_B > 1$\%.
 Incorporation of the correction term, results in an improved description of the CPMG experiment over the Carver Richards equation \citet{CarverRichards72}.
 
 The reference for this equation is:
