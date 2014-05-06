@@ -102,7 +102,7 @@ import numpy
 from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
 
-def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, zeta=None, Psi=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -122,6 +122,10 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               float
+    @keyword zeta:          The Carver and Richards (1972) zeta notation. zeta = 2 * dw * alpha_m.
+    @type zeta:             float
+    @keyword Psi:           The Carver and Richards (1972) Psi notation. Psi =  alpha_m**2 + 4 * k_BA * k_AB - dw**2.
+    @type Psi:              float
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -149,10 +153,8 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
 
     #########################################################################
     #get the real and imaginary components of the exchange induced shift
-    g1 = 2 * dw * alpha_m                            #same as carver richards zeta
-    g2 = alpha_m**2 + 4 * k_BA * k_AB - dw2   #same as carver richards psi
-    g3 = 1/sqrt(2) * sqrt(g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
-    g4 = 1/sqrt(2) * sqrt(-g2 + sqrt(g1**2 + g2**2))   #trig faster than square roots
+    g3 = 1/sqrt(2) * sqrt(Psi + sqrt(zeta**2 + Psi**2))   #trig faster than square roots
+    g4 = 1/sqrt(2) * sqrt(-Psi + sqrt(zeta**2 + Psi**2))   #trig faster than square roots
     #########################################################################
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
@@ -176,7 +178,7 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     t2 = (dw + g4) * complex(dw, -g3) / NNc
 
     # t1 + t2.
-    t1pt2 = complex(2 * dw2,g1) / NNc
+    t1pt2 = complex(2 * dw2, zeta) / NNc
 
     # -2 * oG * t2.
     oGt2 = complex(-alpha_m - g3, dw - g4) * t2
