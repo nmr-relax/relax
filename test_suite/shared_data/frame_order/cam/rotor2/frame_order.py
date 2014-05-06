@@ -136,7 +136,6 @@ value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), theta=AXIS_THETA, phi=AXIS_PHI))
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
-print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
 grid_search(inc=5)
