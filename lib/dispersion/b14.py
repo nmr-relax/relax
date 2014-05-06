@@ -148,6 +148,7 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     dw2 = dw**2
     zeta2 = zeta**2
     Psi2 = Psi**2
+    two_tcp = 2.0 * tcp
 
     # Get the real and imaginary components of the exchange induced shift.
     g3 = 1/sqrt(2) * sqrt(Psi + sqrt(zeta2 + Psi2))
@@ -185,10 +186,10 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
 
     # Derived from relaxation.
     # E0 = -2.0 * tcp * (f00R - f11R).
-    E0 =  2.0 * tcp * g3
+    E0 =  two_tcp * g3
 
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (f00I - f11I)).
-    E2 =  2.0 * tcp * g4
+    E2 =  two_tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = complex(g3, -g4) * tcp
