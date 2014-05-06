@@ -569,17 +569,13 @@ class Relax_disp(SystemTestCase):
             if "r2a" in MODEL_PARAMS[MODEL]:
                 g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
                 m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                c_r2a, c_r2b, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn = clust_results[i]
                 print("GRID %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
                 print("MIN  %s r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-                print("CLUS %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s\n"%(c_spin_id, c_r2a, c_r2b, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
             else:
                 g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
                 m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                c_r2, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn = clust_results[i]
                 print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
                 print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-                print("CLUS %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s\n"%(c_spin_id, c_r2, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
