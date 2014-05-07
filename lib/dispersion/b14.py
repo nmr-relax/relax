@@ -177,8 +177,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
     NNc = g32 + g42
 
-    # f0.
-    f0 = (dw2 + g32) / NNc
+    # F0.
+    F0 = (dw2 + g32) / NNc
 
     # f2.
     f2 = (dw2 - g42) / NNc
@@ -198,20 +198,20 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     Rpre = (r20a + r20b + kex) / 2.0
 
     # Derived from relaxation.
-    # E0 = -2.0 * tcp * (f00R - f11R).
+    # E0 = -2.0 * tcp * (F00R - f11R).
     E0 =  two_tcp * g3
 
-    # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (f00I - f11I)).
+    # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
 
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = (g3 - g4*1j) * tcp
 
     # Real. The v_1c in paper.
-    ex0b = f0 * cosh(E0) - f2 * cos(E2)
+    ex0b = F0 * cosh(E0) - f2 * cos(E2)
 
     # Complex.
-    ex0c = f0 * sinh(E0) - f2 * sin(E2)*1j
+    ex0c = F0 * sinh(E0) - f2 * sin(E2)*1j
 
     # Complex.
     ex1c = sinh(E1)
