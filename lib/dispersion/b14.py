@@ -160,10 +160,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
-    zeta2 = zeta**2
-    Psi2 = Psi**2
     two_tcp = 2.0 * tcp
-    sqrt_zeta2_Psi2 = sqrt(zeta2 + Psi2)
+    sqrt_zeta2_Psi2 = sqrt(zeta**2 + Psi**2)
 
     # Get the real and imaginary components of the exchange induced shift.
     g3 = g_fact * sqrt( Psi + sqrt_zeta2_Psi2)
