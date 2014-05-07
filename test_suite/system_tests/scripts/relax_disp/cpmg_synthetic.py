@@ -11,15 +11,24 @@ from lib.io import open_write_file
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import return_spin
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset_point
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
+# The variables already defined in relax.
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
+# Analytical
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_IT99, MODEL_TSMFK01, MODEL_B14
+# Analytical full
+from specific_analyses.relax_disp.variables import MODEL_CR72_FULL, MODEL_B14_FULL
+# NS
+from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED
+# NS full
+from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 # Analysis variables.
 #####################
 # The dispersion model to test.
 if not hasattr(ds, 'data'):
-    model = "CR72"
+    model_create = "CR72"
 
     ## Experiments
     # Exp 1

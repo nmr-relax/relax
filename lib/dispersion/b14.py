@@ -155,8 +155,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
     # The Carver and Richards (1972) alpha_minus short notation.
     alpha_m = deltaR2 + k_AB - k_BA
-    zeta = 2 * dw * alpha_m
-    Psi = alpha_m**2 + 4 * k_BA * k_AB - dw**2
+    zeta = 2.0 * dw * alpha_m
+    Psi = alpha_m**2 + 4.0 * k_BA * k_AB - dw**2
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
