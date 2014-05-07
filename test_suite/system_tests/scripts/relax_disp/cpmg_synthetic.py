@@ -11,43 +11,85 @@ from lib.io import open_write_file
 from data_store import Relax_data_store; ds = Relax_data_store()
 from pipe_control.mol_res_spin import return_spin
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset_point
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
+# The variables already defined in relax.
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_PARAMS
+# Analytical
+from specific_analyses.relax_disp.variables import MODEL_CR72, MODEL_IT99, MODEL_TSMFK01, MODEL_B14
+# Analytical full
+from specific_analyses.relax_disp.variables import MODEL_CR72_FULL, MODEL_B14_FULL
+# NS : Numerical Solution
+from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_EXPANDED
+# NS full
+from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 # Analysis variables.
 #####################
 # The dispersion model to test.
 if not hasattr(ds, 'data'):
-    model = "CR72"
+    ### Take a numerical model to create the data.
+    ## The "NS CPMG 2-site 3D full" is here the best, since you can define both r2a and r2b.
+    #model_create = MODEL_NS_CPMG_2SITE_3D
+    #model_create = MODEL_NS_CPMG_2SITE_3D_FULL
+    #model_create = MODEL_NS_CPMG_2SITE_STAR
+    #model_create = MODEL_NS_CPMG_2SITE_STAR_FULL
+    model_create = MODEL_NS_CPMG_2SITE_EXPANDED
+    #model_create = MODEL_CR72
+    #model_create = MODEL_CR72_FULL
+    #model_create = MODEL_B14
+    #model_create = MODEL_B14_FULL
+
+    ### The select a model to analyse with.
+    ## Analytical : r2a = r2b
+    model_analyse = MODEL_CR72
+    #model_analyse = MODEL_IT99
+    #model_analyse = MODEL_TSMFK01
+    #model_analyse = MODEL_B14
+
+    ## Analytical full : r2a != r2b
+    #model_analyse = MODEL_CR72_FULL
+    #model_analyse = MODEL_B14_FULL
+    ## NS : r2a = r2b
+    #model_analyse = MODEL_NS_CPMG_2SITE_3D
+    #model_analyse = MODEL_NS_CPMG_2SITE_STAR
+    #model_analyse = MODEL_NS_CPMG_2SITE_EXPANDED
+    ## NS full : r2a = r2b
+    #model_analyse = MODEL_NS_CPMG_2SITE_3D_FULL
+    #model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL
 
     ## Experiments
     # Exp 1
     sfrq_1 = 599.8908617*1E6
     r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
     time_T2_1 = 0.06
-    ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
-    r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
-    #r2eff_errs_1 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    ncycs_1 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 50, 18, 40, 6, 12, 24]
+    # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
+    #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
+    r2eff_errs_1 = [0.0] * len(ncycs_1)
     exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
 
     sfrq_2 = 499.8908617*1E6
     r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
-    time_T2_2 = 0.05
-    ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
-    r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05]
-    #r2eff_errs_2 = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    time_T2_2 = 0.04
+    ncycs_2 = [20, 16, 10, 36, 2, 12, 4, 22, 18, 40, 14, 26, 8, 32, 24, 6, 28 ]
+    # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
+    #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
+    r2eff_errs_2 = [0.0] * len(ncycs_2)
     exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
 
     # Collect all exps
-    exps = [exp_1, exp_2]
+    #exps = [exp_1, exp_2]
+    exps = [exp_1]
 
+    # Add more spins here.
     spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1:10, r20_key_2:11.5}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ],
-            ['Ala', 2, 'N', {'r2': {r20_key_1:13, r20_key_2:14.5}, 'kex': 1000, 'pA': 0.99, 'dw': 1} ]
+            #['Ala', 1, 'N', {'r2': {r20_key_1: 25.0, r20_key_2: 25.0}, 'r2a': {r20_key_1: 25.0, r20_key_2: 25.0}, 'r2b': {r20_key_1: 25.0, r20_key_2: 25.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 2.0} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1: 20.0}, 'r2a': {r20_key_1: 20.0}, 'r2b': {r20_key_1: 20.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 3.0} ]
+            #['Ala', 2, 'N', {'r2': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2a': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2b': {r20_key_1: 13.0, r20_key_2: 14.5}, 'kex': 2200.0, 'pA': 0.993, 'dw': 2.} ]
             ]
 
-    ds.data = [model, spins, exps]
+    ds.data = [model_create, model_analyse, spins, exps]
 
 # The tmp directory.
 if not hasattr(ds, 'tmpdir'):
@@ -68,7 +110,7 @@ if not hasattr(ds, 'insignificance'):
 # The grid search size (the number of increments per dimension). "None" will set default values.
 if not hasattr(ds, 'GRID_INC'):
     #ds.GRID_INC = None
-    ds.GRID_INC = 13
+    ds.GRID_INC = 21
 
 # The do clustering.
 if not hasattr(ds, 'do_cluster'):
@@ -77,12 +119,12 @@ if not hasattr(ds, 'do_cluster'):
 # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
 # The default value is 1e-25.
 if not hasattr(ds, 'set_func_tol'):
-    ds.set_func_tol = 1e-8
+    ds.set_func_tol = 1e-25
 
 # The maximum number of iterations.
 # The default value is 1e7.
 if not hasattr(ds, 'set_max_iter'):
-    ds.set_max_iter = 10000
+    ds.set_max_iter = 10000000
 
 # The verbosity level.
 if not hasattr(ds, 'verbosity'):
@@ -98,7 +140,7 @@ if not hasattr(ds, 'plot_curves'):
 
 # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
 if not hasattr(ds, 'sherekhan_input'):
-    ds.sherekhan_input = True
+    ds.sherekhan_input = False
 
 # Make a dx map to be opened om OpenDX.
 # To map the hypersurface of chi2, when altering kex, dw and pA.
@@ -120,25 +162,27 @@ if not hasattr(ds, 'print_res'):
 # Set up the data pipe.
 #######################
 
+# Extract the models
+model_create = ds.data[0]
+model_analyse = model_analyse
+
 # Create the data pipe.
 pipe_name = 'base pipe'
 pipe_type = 'relax_disp'
 pipe_bundle = 'relax_disp'
-pipe_name_r2eff = "%s_%s_R2eff"%(ds.data[0], pipe_name)
+pipe_name_r2eff = "%s_%s_R2eff"%(model_create, pipe_name)
 pipe.create(pipe_name=pipe_name, pipe_type=pipe_type, bundle = pipe_bundle)
 
-
 # Generate the sequence.
-cur_spins = ds.data[1]
+cur_spins = ds.data[2]
 for res_name, res_num, spin_name, params in cur_spins:
     spin.create(res_name=res_name, res_num=res_num, spin_name=spin_name)
 
 # Set isotope
 spin.isotope('15N', spin_id='@N')
 
-
 # Extract experiment settings.
-exps = ds.data[2]
+exps = ds.data[3]
 
 # Now loop over the experiments
 exp_ids = []
@@ -173,7 +217,7 @@ pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_r2eff, bundle_to = pipe_bundle)
 pipe.switch(pipe_name=pipe_name_r2eff)
 
 # Then select model.
-relax_disp.select_model(model=ds.data[0])
+relax_disp.select_model(model=model_create)
 
 # First loop over the spins and set the model parameters.
 for res_name, res_num, spin_name, params in cur_spins:
@@ -181,6 +225,7 @@ for res_name, res_num, spin_name, params in cur_spins:
     cur_spin = return_spin(cur_spin_id)
     #print cur_spin.model, cur_spin.name, cur_spin.isotope
 
+    #print as
     # Now set the parameters.
     for mo_param in cur_spin.params:
         # The R2 is a dictionary, depending on spectrometer frequency.
@@ -195,7 +240,7 @@ for res_name, res_num, spin_name, params in cur_spins:
             before = getattr(cur_spin, mo_param)
             setattr(cur_spin, mo_param, float(params[mo_param]))
             after = getattr(cur_spin, mo_param)
-            print cur_spin.model, res_name, cur_spin_id, mo_param, before, after
+            print cur_spin.model, res_name, cur_spin_id, mo_param, before
 
 
 ## Now doing the back calculation of R2eff values.
@@ -229,6 +274,7 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.tmpdir, disp_point_col=1, data_col=2, error_col=3)
 
         ###Now back calculate, and stuff it back.
+        print("Generating data with MODEL:%s, for spin id:%s"%(model_create, cur_spin_id))
         r2effs = optimisation.back_calc_r2eff(spin=cur_spin, spin_id=cur_spin_id)
 
         file = open_write_file(file_name=file_name, dir=ds.resdir, force=True)
@@ -261,7 +307,7 @@ print("Did following number of iterations: %i"%i)
 # Now do fitting.
 
 # Change pipe.
-pipe_name_MODEL = "%s_%s"%(pipe_name, ds.data[0])
+pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
 pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
 pipe.switch(pipe_name=pipe_name_MODEL)
 
@@ -269,12 +315,14 @@ pipe.switch(pipe_name=pipe_name_MODEL)
 value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL, param='r2eff')
 
 # Then select model.
-relax_disp.select_model(model=ds.data[0])
+relax_disp.select_model(model=model_analyse)
+
+print("Analysing with MODEL:%s."%(model_analyse))
 
 # Do a dx map.
 # To map the hypersurface of chi2, when altering kex, dw and pA.
 if ds.opendx:
-    dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=20, lower=None, upper=None, axis_incs=5, file_prefix='map', dir=ds.resdir, point=None, point_file='point', remap=None)
+    dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=20, lower=None, upper=None, axis_incs=7, file_prefix='map', dir=ds.resdir, point=None, point_file='point', remap=None)
 
 # Remove insignificant
 relax_disp.insignificance(level=ds.insignificance)
@@ -291,7 +339,7 @@ if ds.GRID_INC:
 
 # If no Grid search, set the default values.
 else:
-    for param in MODEL_PARAMS[ds.data[0]]:
+    for param in MODEL_PARAMS[model_analyse]:
         value.set(param=param, index=None)
         # Do a grid search, which will store the chi2 value.
     #grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=ds.verbosity)
@@ -326,7 +374,7 @@ ds.min_results = save_res(cur_spins)
 # Now do clustering
 if ds.do_cluster:
     # Change pipe.
-    pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(pipe_name, ds.data[0])
+    pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(pipe_name, model_create)
     pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL_CLUSTER)
     pipe.switch(pipe_name=pipe_name_MODEL_CLUSTER)
 
@@ -334,7 +382,7 @@ if ds.do_cluster:
     value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_CLUSTER, param='r2eff')
 
     # Then select model.
-    relax_disp.select_model(model=ds.data[0])
+    relax_disp.select_model(model=model_create)
 
     # Then cluster
     relax_disp.cluster('model_cluster', ":1-100")
@@ -350,7 +398,23 @@ if ds.do_cluster:
 else:
     ds.clust_results = ds.min_results
 
+# Plot curves.
+if ds.plot_curves:
+    relax_disp.plot_disp_curves(dir=ds.resdir, force=True)
+
+# The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+if ds.sherekhan_input:
+    relax_disp.cluster('sherekhan', ":1-100")
+    print(cdp.clustering)
+    relax_disp.sherekhan_input(force=True, spin_id=None, dir=ds.resdir)
+
 # Compare results.
+if ds.print_res:
+    print("\n########################")
+    print("Generated data with MODEL:%s"%(model_create))
+    print("Analysing with MODEL:%s."%(model_analyse))
+    print("########################\n")
+
 for i in range(len(cur_spins)):
     res_name, res_num, spin_name, params = cur_spins[i]
     cur_spin_id = ":%i@%s"%(res_num, spin_name)
@@ -360,6 +424,7 @@ for i in range(len(cur_spins)):
     min_params = ds.min_results[i][3]
     clust_params = ds.clust_results[i][3]
     # Now read the parameters.
+
     if ds.print_res:
         print("For spin: '%s'"%cur_spin_id)
     for mo_param in cur_spin.params:
@@ -380,8 +445,9 @@ for i in range(len(cur_spins)):
                     print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, clust_r2_frq, set_r2_frq, rel_change) )
                 if rel_change > ds.rel_change:
                     if ds.print_res:
-                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
                         print("###################################")
+                        print("WARNING: %s Have relative change above %.2f, and is %.4f."%(key, ds.rel_change, rel_change))
+                        print("###################################\n")
         else:
             grid_val = grid_params[mo_param]
             min_val = min_params[mo_param]
@@ -392,15 +458,6 @@ for i in range(len(cur_spins)):
                 print("%s %s %s %s GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, clust_val, set_val, rel_change) )
             if rel_change > ds.rel_change:
                 if ds.print_res:
-                    print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
                     print("###################################")
-
-# Plot curves.
-if ds.plot_curves:
-    relax_disp.plot_disp_curves(dir=ds.resdir, force=True)
-
-# The conversion for ShereKhan at http://sherekhan.bionmr.org/.
-if ds.sherekhan_input:
-    relax_disp.cluster('sherekhan', ":1-100")
-    print(cdp.clustering)
-    relax_disp.sherekhan_input(force=True, spin_id=None, dir=ds.resdir)
+                    print("WARNING: %s Have relative change above %.2f, and is %.4f."%(mo_param, ds.rel_change, rel_change))
+                    print("###################################\n")
