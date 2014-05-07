@@ -231,6 +231,11 @@
 \htmladdtonavigation{\htmladdnormallink{\htmladdimg{http://www.nmr-relax.com/images/pdf_icon_nav.png}}{http://download.gna.org/relax/manual/relax.pdf}}
 \htmladdtonavigation{\htmladdnormallink{\htmladdimg{http://www.nmr-relax.com/images/relax_logo_nav.png}}{http://www.nmr-relax.com}}
 
+% Make hyperrefs work in latex2html.
+\begin{htmlonly}
+  \def\url#1{\htmladdnormallink{#1}{#1}}
+\end{htmlonly}
+
 % Make the index.
 \makeindex
 
