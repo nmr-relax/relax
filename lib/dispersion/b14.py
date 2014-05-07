@@ -113,8 +113,10 @@ Comparison to CR72 full model can be found in the:
 import numpy
 from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
 
+# Repetitive calculations (to speed up calculations).
+g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None, dw=None, zeta=None, Psi=None, g_fact=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -124,22 +126,12 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     @type r20a:             float
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
     @type r20b:             float
-    @keyword deltaR2:       The difference r20a - r20b.
-    @type deltaR2:          float
-    @keyword alpha_m:       The Carver and Richards (1972) alpha_minus short notation. alpha_m = deltaR2 + k_AB - k_BA = r20a - r20b + k_AB - k_BA.
-    @type alpha_m:          float
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               float
-    @keyword zeta:          The Carver and Richards (1972) zeta notation. zeta = 2 * dw * alpha_m.
-    @type zeta:             float
-    @keyword Psi:           The Carver and Richards (1972) Psi notation. Psi =  alpha_m**2 + 4 * k_BA * k_AB - dw**2.
-    @type Psi:              float
-    @keyword g_fact:        The factor g = 1/sqrt(2). This is calculated outside library function, to only be calculated once.
-    @type g_fact:           float
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -157,6 +149,14 @@ def r2eff_B14(r20a=None, r20b=None, deltaR2=None, alpha_m=None, pA=None, pB=None
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
+
+    # Repetitive calculations (to speed up calculations).
+    deltaR2 = r20a - r20b
+
+    # The Carver and Richards (1972) alpha_minus short notation.
+    alpha_m = deltaR2 + k_AB - k_BA
+    zeta = 2 * dw * alpha_m
+    Psi = alpha_m**2 + 4 * k_BA * k_AB - dw**2
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2

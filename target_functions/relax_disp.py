@@ -416,7 +416,6 @@ class Dispersion:
         pB = 1.0 - pA
         k_BA = pA * kex
         k_AB = pB * kex
-        g_fact = 1/sqrt(2)
 
         # Initialise.
         chi2_sum = 0.0
@@ -427,6 +426,9 @@ class Dispersion:
             for si in range(self.num_spins):
                 # Loop over the spectrometer frequencies.
                 for mi in range(self.num_frq):
+                    # The R20 index.
+                    r20_index = mi + si*self.num_frq
+
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[si] * self.frqs[ei][si][mi]
 
@@ -436,21 +438,8 @@ class Dispersion:
                     elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
                         aliased_dw = dw_frq
 
-                    # The R20 index.
-                    r20_index = mi + si*self.num_frq
-
-                    # Repetitive calculations (to speed up calculations).
-                    r20a = R20A[r20_index]
-                    r20b = R20B[r20_index]
-                    deltaR2 = r20a - r20b
-
-                    # The Carver and Richards (1972) alpha_minus short notation.
-                    alpha_m = deltaR2 + k_AB - k_BA
-                    zeta = 2 * aliased_dw * alpha_m
-                    Psi = alpha_m**2 + 4 * k_BA * k_AB - aliased_dw**2
-
                     # Back calculate the R2eff values.
-                    r2eff_B14(r20a=r20a, r20b=r20b, deltaR2=deltaR2, alpha_m=alpha_m, pA=pA, pB=pB, dw=dw_frq, zeta=zeta, Psi=Psi, g_fact=g_fact, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
+                    r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=aliased_dw, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):
