@@ -237,6 +237,13 @@
 
   % Support for \bibentry{}.
   \def\bibentry#1{\citet{#1}}
+
+  % Kill the rotate environment that latex2html cannot handle.
+  \renewenvironment{rotate}[1]{}
+
+  % Redefine some commands to be prettier in HTML.
+  \newcommand{\no}{-}
+  \newcommand{\yes}{y}
 \end{htmlonly}
 
 % Make the index.
