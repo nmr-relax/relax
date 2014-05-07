@@ -186,13 +186,13 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # t1 = (-dw + g4) * (complex(-dw, -g3)) / NNc #t1.
 
     # t2.
-    t2 = (dw + g4) * (dw - g3*1j) / NNc
+    F1b = (dw + g4) * (dw - g3*1j) / NNc
 
     # t1 + t2.
     t1pt2 = (2. * dw2 + zeta*1j) / NNc
 
     # -2 * oG * t2.
-    v4 = t2 * (-alpha_m - g3 ) + t2 * (dw - g4)*1j
+    v4 = F1b * (-alpha_m - g3 ) + F1b * (dw - g4)*1j
 
     # -1/Trel * log(LpreDyn).
     Rpre = (r20a + r20b + kex) / 2.0
