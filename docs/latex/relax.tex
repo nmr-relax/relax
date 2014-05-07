@@ -230,10 +230,13 @@
 \usepackage{html}
 \htmladdtonavigation{\htmladdnormallink{\htmladdimg{http://www.nmr-relax.com/images/pdf_icon_nav.png}}{http://download.gna.org/relax/manual/relax.pdf}}
 \htmladdtonavigation{\htmladdnormallink{\htmladdimg{http://www.nmr-relax.com/images/relax_logo_nav.png}}{http://www.nmr-relax.com}}
-
-% Make hyperrefs work in latex2html.
 \begin{htmlonly}
+  % Make hyperrefs work in latex2html.
   \def\url#1{\htmladdnormallink{#1}{#1}}
+  \def\href#1#2{\htmladdnormallink{#2}{#1}}
+
+  % Support for \bibentry{}.
+  \def\bibentry#1{\citet{#1}}
 \end{htmlonly}
 
 % Make the index.
