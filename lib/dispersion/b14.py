@@ -222,9 +222,9 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v2pPdN = (-deltaR2 + kex + dw*1j) * v1s - 2. * (oGt2 + k_AB * t1pt2) * ex1c
+    v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (oGt2 + k_AB * t1pt2) * ex1c
 
-    Tog = 0.5 * (1. + y) + (1. - y) * v2pPdN / (2. * v3 * N )
+    Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
     Minty = Rpre - ncyc * inv_tcpmg * arccosh(v1c.real) - inv_tcpmg * log(Tog.real)
