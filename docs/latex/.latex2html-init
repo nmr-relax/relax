@@ -72,7 +72,6 @@ $ADDRESS = "The <a href=http://www.nmr-relax.com>relax</a> <a href=http://www.nm
 documentstyle # [] # {}
 linebreak # []
 mbox
-bibitem
 _IGNORED_CMDS_
 
 1;	# This must be the last line
