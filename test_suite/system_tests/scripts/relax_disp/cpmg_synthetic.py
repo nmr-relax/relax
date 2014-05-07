@@ -326,7 +326,7 @@ print("Analysing with MODEL:%s."%(model_analyse))
 if ds.opendx:
     for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
         cur_spin_id = spin_id
-        file_name = "map3%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        file_name = "map%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
         dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name, dir=ds.resdir, point=None, point_file='point', remap=None)
         #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
         #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
