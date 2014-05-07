@@ -230,23 +230,23 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     # Include the sphere.
     if num_points == 1:
         file.write("\n")
-        file.write("// page assignment: Colour Space    order=3, windowed=0, showing=0\n")
-        file.write("// page assignment: ColourScene     order=5, windowed=0, showing=0\n")
-        file.write("// page assignment: Glyph           order=2, windowed=0, showing=0\n")
-        file.write("// page assignment: Grey Space      order=4, windowed=0, showing=0\n")
-        file.write("// page assignment: GreyScene       order=6, windowed=0, showing=0\n")
-        file.write("// page assignment: Image           order=7, windowed=0, showing=0\n")
-        file.write("// page assignment: Isosurfaces     order=1, windowed=0, showing=1\n")
+        file.write("// page assignment: Colour Space\torder=3, windowed=0, showing=0\n")
+        file.write("// page assignment: ColourScene\t\torder=5, windowed=0, showing=0\n")
+        file.write("// page assignment: Glyph\t\torder=2, windowed=0, showing=0\n")
+        file.write("// page assignment: Grey Space\t\torder=4, windowed=0, showing=0\n")
+        file.write("// page assignment: GreyScene\t\torder=6, windowed=0, showing=0\n")
+        file.write("// page assignment: Image\t\t\torder=7, windowed=0, showing=0\n")
+        file.write("// page assignment: Isosurfaces\t\torder=1, windowed=0, showing=1\n")
 
     # No sphere.
     else:
         file.write("\n")
-        file.write("// page assignment: Colour Space    order=4, windowed=0, showing=0\n")
-        file.write("// page assignment: ColourScene     order=6, windowed=0, showing=0\n")
-        file.write("// page assignment: Grey Space      order=5, windowed=0, showing=0\n")
-        file.write("// page assignment: GreyScene       order=7, windowed=0, showing=0\n")
-        file.write("// page assignment: Image           order=8, windowed=0, showing=0\n")
-        file.write("// page assignment: Isosurfaces     order=2, windowed=0, showing=1\n")
+        file.write("// page assignment: Colour Space\torder=4, windowed=0, showing=0\n")
+        file.write("// page assignment: ColourScene\t\torder=6, windowed=0, showing=0\n")
+        file.write("// page assignment: Grey Space\t\torder=5, windowed=0, showing=0\n")
+        file.write("// page assignment: GreyScene\t\torder=7, windowed=0, showing=0\n")
+        file.write("// page assignment: Image\t\t\torder=8, windowed=0, showing=0\n")
+        file.write("// page assignment: Isosurfaces\t\torder=2, windowed=0, showing=1\n")
 
     # Common code.
     file.write("\n")
@@ -794,7 +794,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     # Common code.
     file.write("\n")
     file.write("    // page group: Colour Space\n")
-    file.write("    // n")
+    file.write("    // \n")
 
     # Include the sphere.
     if num_points == 1:
