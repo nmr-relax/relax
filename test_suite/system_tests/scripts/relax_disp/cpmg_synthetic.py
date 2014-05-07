@@ -9,7 +9,7 @@ from math import sqrt
 from auto_analyses.relax_disp import Relax_disp
 from lib.io import open_write_file
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.mol_res_spin import return_spin
+from pipe_control.mol_res_spin import return_spin, spin_loop
 from specific_analyses.relax_disp.data import generate_r20_key, loop_exp_frq, loop_offset_point
 from specific_analyses.relax_disp import optimisation
 from status import Status; status = Status()
@@ -84,9 +84,8 @@ if not hasattr(ds, 'data'):
 
     # Add more spins here.
     spins = [
-            #['Ala', 1, 'N', {'r2': {r20_key_1: 25.0, r20_key_2: 25.0}, 'r2a': {r20_key_1: 25.0, r20_key_2: 25.0}, 'r2b': {r20_key_1: 25.0, r20_key_2: 25.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 2.0} ]
-            ['Ala', 1, 'N', {'r2': {r20_key_1: 20.0}, 'r2a': {r20_key_1: 20.0}, 'r2b': {r20_key_1: 20.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 3.0} ]
-            #['Ala', 2, 'N', {'r2': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2a': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2b': {r20_key_1: 13.0, r20_key_2: 14.5}, 'kex': 2200.0, 'pA': 0.993, 'dw': 2.} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1: 20.0, r20_key_2: 20.0}, 'r2a': {r20_key_1: 20.0, r20_key_2: 20.0}, 'r2b': {r20_key_1: 20.0, r20_key_2: 20.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
+            #['Ala', 2, 'N', {'r2': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2a': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2b': {r20_key_1: 13.0, r20_key_2: 14.5}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
             ]
 
     ds.data = [model_create, model_analyse, spins, exps]
@@ -146,6 +145,9 @@ if not hasattr(ds, 'sherekhan_input'):
 # To map the hypersurface of chi2, when altering kex, dw and pA.
 if not hasattr(ds, 'opendx'):
     ds.opendx = True
+
+if not hasattr(ds, 'dx_inc'):
+    ds.dx_inc = 70
 
 # The set r2eff err.
 if not hasattr(ds, 'r2eff_err'):
@@ -322,7 +324,12 @@ print("Analysing with MODEL:%s."%(model_analyse))
 # Do a dx map.
 # To map the hypersurface of chi2, when altering kex, dw and pA.
 if ds.opendx:
-    dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=20, lower=None, upper=None, axis_incs=7, file_prefix='map', dir=ds.resdir, point=None, point_file='point', remap=None)
+    for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+        cur_spin_id = spin_id
+        file_name = "map3%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name, dir=ds.resdir, point=None, point_file='point', remap=None)
+        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
+        #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
 
 # Remove insignificant
 relax_disp.insignificance(level=ds.insignificance)
@@ -434,7 +441,7 @@ for i in range(len(cur_spins)):
             min_r2 = min_params[mo_param]
             clust_r2 = clust_params[mo_param]
             set_r2 = params[mo_param]
-            for key, val in set_r2.items():
+            for key, val in getattr(cur_spin, mo_param).items():
                 grid_r2_frq = grid_r2[key]
                 min_r2_frq = min_r2[key]
                 clust_r2_frq = min_r2[key]
