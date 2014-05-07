@@ -574,15 +574,62 @@ The equation is
 \end{subequations}
 
 
-where
+where Appendix 1 in \citet{Baldwin2014} list the recipe for exact calculation of $\Rtwoeff$.
+
+Establish the complex free precession Eigenfrequency.
 \begin{subequations}
 \begin{align}
-    v_{1c} & = F_0\cosh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\cosh{\left(\tau_{\textrm{CP}}E_2\right)} \\
-    v_{1s} & = F_0\sinh{\left(\tau_{\textrm{CP}}E_0\right)}-F_2\sinh{\left(\tau_{\textrm{CP}}E_2\right)}  \\
-    v_{2}N & = v_{1s}\left(O_B-O_A\right)+4O_B F_1^a \sinh{\left(\tau_{\textrm{CP}}E_1\right)} \\
-    p_D N & = v_{1s} + \left(F_1^a+F_1^b\right)\sinh{\left(\tau_{\textrm{CP}}E_1\right)} \\
-    v_3 & = \left( v_2^2 + 4 \kBA \kAB p_D^2 \right)^{1/2} \\
-    y & = \left( \frac{v_{1c}-v_3}{v_{1c}+v_3} \right)^{N_{\textrm{CYC}}}
+	\Delta \Rtwozero & = \RtwozeroA - \RtwozeroB  \\
+	\alpha_- & = \Delta \Rtwozero + \kAB - \kBA \\
+	\zeta & = 2 \dw \alpha_- \\
+	\Psi & = \alpha_-^2 + 4 \kAB \kBA - \dw^2 \\
+	h_3 &= \frac{1}{\sqrt{2}}\sqrt{ \Psi + \sqrt{\zeta^2 + \Psi^2} } \\
+    h_4 &= \frac{1}{\sqrt{2}}\sqrt{ -\Psi + \sqrt{\zeta^2 + \Psi^2} } \\
+\end{align}
+\end{subequations}
+
+The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components, in terms
+of definitions $\zeta , \Psi , h_3 , h_4$.
+\begin{subequations}
+\begin{align}
+	f_{00} & = \frac{1}{2}(\RtwozeroA + \RtwozeroB + \kex) + \frac{1}{2}(\dw - h_4) i
+\end{align}
+\end{subequations}
+
+Define substutions for 'stay' and 'swap' factors.
+\begin{subequations}
+\begin{align}
+	N & = h_3 + h_4 i \\
+	NN^* & = h_3^2 + h_42 \\
+	F_0 & = (\dw^2 + h_3^2) / NN^* \\
+	F_2 & = (\dw^2 - h_4^2) / NN^* \\
+	F_1^b & = (\dw + h_4) (\dw - h_3 i) / NN^* \\
+	F_1^{a+b} & = (2\dw^2 + \zeta i) / NN^* \\
+\end{align}
+\end{subequations}
+
+Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block, ($F_{0-2}$).
+$\taucpmg = 1 / \nucpmg $.
+\begin{subequations}
+\begin{align}
+	E_0 & =  2 \taucpmg \cdot h_3 \\
+	E2 & =  2 \taucpmg \cdot  h_4 \\
+	E1 & = (h_3 - h_4 i) \cdot \taucpmg
+\end{align}
+\end{subequations}
+
+Final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation.
+\begin{subequations}
+\begin{align}
+	\nu_{1c} = F_0  \cosh(E_0) - F_2 \cos(E_2)
+	\nu_{1s} & = F_0  \sinh(E_0) - F_2 \sin(E_2)i \\
+	\nu_{3} & = \sqrt({\nu_{1c}^2 - 1} \\
+	\nu_{4} & = F_1^b (-\alpha_- - h_3 ) + F_1^b (\dw - h_4) i \\
+	\nu_{5} & =(-\Delta \Rtwozero + \kex + \dw i) \nu_{1s} + 2 (\nu_{4} + \kAB F_1^{a+b}) \sinh(E_1) \\
+	y & = \left( \frac{\nu_{1c} - \nu_{3}}{\nu_{1c} + \nu_{3}} \right) ^ {N_{\textrm{CYC}}} \\
+	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_{5}}{2 \nu_{3}N} \\
+	\Rtwoeff & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} \nonumber \\
+    & \qquad - \frac{1}{\taucpmg} \left( N_{\textrm{CYC}} \cdot \textrm{arcosh}(\operatorname{Re}(\nu_{1c})) -  \log(\operatorname{Re}(T)) \right)	
 \end{align}
 \end{subequations}
 
