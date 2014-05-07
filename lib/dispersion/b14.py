@@ -211,7 +211,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     v1c = F0 * cosh(E0) - f2 * cos(E2)
 
     # Complex.
-    ex0c = F0 * sinh(E0) - f2 * sin(E2)*1j
+    v1s = F0 * sinh(E0) - f2 * sin(E2)*1j
 
     # Complex.
     ex1c = sinh(E1)
@@ -222,7 +222,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v2pPdN = (-deltaR2 + kex + dw*1j) * ex0c - 2. * (oGt2 + k_AB * t1pt2) * ex1c
+    v2pPdN = (-deltaR2 + kex + dw*1j) * v1s - 2. * (oGt2 + k_AB * t1pt2) * ex1c
 
     Tog = (1. + y) / 2. + (1. - y) / (2. * v3) * v2pPdN / N
 
