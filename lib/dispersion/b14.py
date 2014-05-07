@@ -180,8 +180,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # F0.
     F0 = (dw2 + g32) / NNc
 
-    # f2.
-    f2 = (dw2 - g42) / NNc
+    # F2.
+    F2 = (dw2 - g42) / NNc
 
     # t1 = (-dw + g4) * (complex(-dw, -g3)) / NNc #t1.
 
@@ -208,10 +208,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     E1 = (g3 - g4*1j) * tcp
 
     # Real. The v_1c in paper.
-    v1c = F0 * cosh(E0) - f2 * cos(E2)
+    v1c = F0 * cosh(E0) - F2 * cos(E2)
 
     # Complex.
-    v1s = F0 * sinh(E0) - f2 * sin(E2)*1j
+    v1s = F0 * sinh(E0) - F2 * sin(E2)*1j
 
     # Complex.
     ex1c = sinh(E1)
