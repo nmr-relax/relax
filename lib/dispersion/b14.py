@@ -208,7 +208,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     E1 = (g3 - g4*1j) * tcp
 
     # Real. The v_1c in paper.
-    ex0b = F0 * cosh(E0) - f2 * cos(E2)
+    v1c = F0 * cosh(E0) - f2 * cos(E2)
 
     # Complex.
     ex0c = F0 * sinh(E0) - f2 * sin(E2)*1j
@@ -217,9 +217,9 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     ex1c = sinh(E1)
 
     # Exact result for v2v3.
-    v3 = sqrt(ex0b**2 - 1.)
+    v3 = sqrt(v1c**2 - 1.)
 
-    y = power( (ex0b - v3) / (ex0b + v3), ncyc)
+    y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
     v2pPdN = (-deltaR2 + kex + dw*1j) * ex0c - 2. * (oGt2 + k_AB * t1pt2) * ex1c
@@ -227,7 +227,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     Tog = (1. + y) / 2. + (1. - y) / (2. * v3) * v2pPdN / N
 
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
-    Minty = Rpre - ncyc * inv_tcpmg * arccosh(ex0b.real) - inv_tcpmg * log(Tog.real)
+    Minty = Rpre - ncyc * inv_tcpmg * arccosh(v1c.real) - inv_tcpmg * log(Tog.real)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
