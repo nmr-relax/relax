@@ -306,6 +306,28 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
 
 print("Did following number of iterations: %i"%i)
 
+# Do a dx map.
+# To map the hypersurface of chi2, when altering kex, dw and pA.
+if ds.opendx:
+    # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
+    pipe_name_MODEL_MAP = "%s_%s_map"%(pipe_name, model_analyse)
+    pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_MAP, bundle_to = pipe_bundle)
+    pipe.switch(pipe_name=pipe_name_MODEL_MAP)
+
+    dx_params = ['dw', 'pA', 'kex']
+    for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
+        cur_spin_id = spin_id
+        dx_point = []
+        for dx_param in dx_params:
+            set_val = getattr(cur_spin, dx_param)
+            dx_point.append( set_val )
+
+        file_name_map = "map%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        file_name_point = "point%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        dx.map(params=dx_params, map_type='Iso3D', spin_id=":1@N", inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name_map, dir=ds.resdir, point=dx_point, point_file=file_name_point, remap=None)
+        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
+        #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
+
 # Now do fitting.
 
 # Change pipe.
@@ -320,16 +342,6 @@ value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL, param='r2eff')
 relax_disp.select_model(model=model_analyse)
 
 print("Analysing with MODEL:%s."%(model_analyse))
-
-# Do a dx map.
-# To map the hypersurface of chi2, when altering kex, dw and pA.
-if ds.opendx:
-    for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-        cur_spin_id = spin_id
-        file_name = "map%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        dx.map(params=['dw', 'pA', 'kex'], map_type='Iso3D', spin_id=":1@N", inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name, dir=ds.resdir, point=None, point_file='point', remap=None)
-        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
-        #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
 
 # Remove insignificant
 relax_disp.insignificance(level=ds.insignificance)
