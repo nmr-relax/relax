@@ -965,7 +965,8 @@ class Relax_disp(SystemTestCase):
         #self.interpreter.reset()
 
         ## Set Experiments.
-        model = "CR72"
+        model_create = 'CR72'
+        model_analyse = 'CR72'
         # Exp 1
         sfrq_1 = 599.8908617*1E6
         r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
@@ -989,7 +990,7 @@ class Relax_disp(SystemTestCase):
             ]
 
         # Collect the data to be used.
-        ds.data = [model, spins, exps]
+        ds.data = [model_create, model_analyse, spins, exps]
 
         # The tmp directory. None is the local directory.
         ds.tmpdir = ds.tmpdir
@@ -1042,7 +1043,7 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
 
-        cur_spins = ds.data[1]
+        cur_spins = ds.data[2]
         # Compare results.
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]
@@ -1096,7 +1097,9 @@ class Relax_disp(SystemTestCase):
         #self.interpreter.reset()
 
         ## Set Experiments.
-        model = "CR72"
+        model_create = 'CR72'
+        model_analyse = 'CR72'
+
         # Exp 1
         sfrq_1 = 599.8908617*1E6
         r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
@@ -1123,7 +1126,7 @@ class Relax_disp(SystemTestCase):
             ]
 
         # Collect the data to be used.
-        ds.data = [model, spins, exps]
+        ds.data = [model_create, model_analyse, spins, exps]
 
         # The tmp directory. None is the local directory.
         ds.tmpdir = ds.tmpdir
@@ -1176,7 +1179,7 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
 
-        cur_spins = ds.data[1]
+        cur_spins = ds.data[2]
         # Compare results.
         for i in range(len(cur_spins)):
             res_name, res_num, spin_name, params = cur_spins[i]

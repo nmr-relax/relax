@@ -164,7 +164,7 @@ if not hasattr(ds, 'print_res'):
 
 # Extract the models
 model_create = ds.data[0]
-model_analyse = model_analyse
+model_analyse = ds.data[1]
 
 # Create the data pipe.
 pipe_name = 'base pipe'
