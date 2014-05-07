@@ -226,11 +226,14 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # -1/Trel * log(LpreDyn).
     Rpre = (r20a + r20b + kex) / 2.0
 
+    # Carver and Richards (1972)
+    R2eff_CR72 = Rpre - inv_tcpmg * ncyc *  arccosh(v1c.real)
+
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
-    Minty = Rpre - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+    R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
 
         # The full formula.
-        back_calc[i] = Minty[i]
+        back_calc[i] = R2eff[i]
