@@ -189,7 +189,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     F1b = (dw + g4) * (dw - g3*1j) / NNc
 
     # t1 + t2.
-    t1pt2 = (2. * dw2 + zeta*1j) / NNc
+    F1a_plus_b = (2. * dw2 + zeta*1j) / NNc
 
     # -2 * oG * t2.
     v4 = F1b * (-alpha_m - g3 ) + F1b * (dw - g4)*1j
@@ -222,7 +222,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (v4 + k_AB * t1pt2) * ex1c
+    v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (v4 + k_AB * F1a_plus_b) * ex1c
 
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
