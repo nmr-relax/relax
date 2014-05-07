@@ -227,7 +227,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
-    Minty = Rpre - ncyc * inv_tcpmg * arccosh(v1c.real) - inv_tcpmg * log(Tog.real)
+    Minty = Rpre - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
 
     # Loop over the time points, back calculating the R2eff values.
     for i in range(num_points):
