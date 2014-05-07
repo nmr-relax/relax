@@ -229,7 +229,7 @@ class Dispersion:
 
         # The spin and frequency dependent R2 parameters.
         self.end_index.append(self.num_exp * self.num_spins * self.num_frq)
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
             self.end_index.append(2 * self.num_exp * self.num_spins * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
