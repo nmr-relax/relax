@@ -192,7 +192,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     t1pt2 = (2. * dw2 + zeta*1j) / NNc
 
     # -2 * oG * t2.
-    oGt2 = t2 * (-alpha_m - g3 ) + t2 * (dw - g4)*1j
+    v4 = t2 * (-alpha_m - g3 ) + t2 * (dw - g4)*1j
 
     # -1/Trel * log(LpreDyn).
     Rpre = (r20a + r20b + kex) / 2.0
@@ -222,7 +222,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     # Off diagonal common factor. sinh fuctions.
-    v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (oGt2 + k_AB * t1pt2) * ex1c
+    v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (v4 + k_AB * t1pt2) * ex1c
 
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
