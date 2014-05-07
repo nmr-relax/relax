@@ -278,6 +278,7 @@ The single weight $c_0$ is equal to one and the single correlation time $\tau_0$
 \subsection{The model-free models}
 
 Extending the list of models given in \citet{Mandel95, Fushman97, Orekhov99b, Korzhnev01, Zhuravleva04}, the models built into relax include
+\begin{latexonly}
 \begin{subequations}
 \renewcommand{\theequation}{\theparentequation .\arabic{equation}}
 \addtocounter{equation}{-1}
@@ -294,11 +295,27 @@ Extending the list of models given in \citet{Mandel95, Fushman97, Orekhov99b, Ko
  m9 &= \{R_{ex}\}.                             \label{model: m9}
 \end{align}
 \end{subequations}
+\end{latexonly}
+\begin{htmlonly}
+\begin{eqnarray}
+ m0 &= \{\},                                   \label{model: m0} \\
+ m1 &= \{S^2\},                                \label{model: m1} \\
+ m2 &= \{S^2, \tau_e\},                        \label{model: m2} \\
+ m3 &= \{S^2, R_{ex}\},                        \label{model: m3} \\
+ m4 &= \{S^2, \tau_e, R_{ex}\},                \label{model: m4} \\
+ m5 &= \{S^2, S^2_f, \tau_s\},                 \label{model: m5} \\
+ m6 &= \{S^2, \tau_f, S^2_f, \tau_s\},         \label{model: m6} \\
+ m7 &= \{S^2, S^2_f, \tau_s, R_{ex}\},         \label{model: m7} \\
+ m8 &= \{S^2, \tau_f, S^2_f, \tau_s, R_{ex}\}, \label{model: m8} \\
+ m9 &= \{R_{ex}\}.                             \label{model: m9}
+\end{eqnarray}
+\end{htmlonly}
 
 \noindent The parameter $R_{ex}$ is scaled quadratically with field strength in these models as it is assumed to be fast.
 In the set theory notation, the model-free model for the spin system $i$ is represented by the symbol $\Mfset_i$.
 Through the addition of the local $\tau_m$ to each of these models, only the component of Brownian rotational diffusion experienced by the spin system is probed.
 These models, represented in set notation by the symbol $\Localset_i$, are
+\begin{latexonly}
 \begin{subequations}
 \renewcommand{\theequation}{\theparentequation .\arabic{equation}}
 \addtocounter{equation}{-1}
@@ -315,6 +332,21 @@ These models, represented in set notation by the symbol $\Localset_i$, are
  tm9 &= \{\tau_m, R_{ex}\}.                             \label{model: tm9}
 \end{align}
 \end{subequations}
+\end{latexonly}
+\begin{htmlonly}
+\begin{eqnarray}
+ tm0 &=& \{\tau_m\},                                     \label{model: tm0} \\
+ tm1 &=& \{\tau_m, S^2\},                                \label{model: tm1} \\
+ tm2 &=& \{\tau_m, S^2, \tau_e\},                        \label{model: tm2} \\
+ tm3 &=& \{\tau_m, S^2, R_{ex}\},                        \label{model: tm3} \\
+ tm4 &=& \{\tau_m, S^2, \tau_e, R_{ex}\},                \label{model: tm4} \\
+ tm5 &=& \{\tau_m, S^2, S^2_f, \tau_s\},                 \label{model: tm5} \\
+ tm6 &=& \{\tau_m, S^2, \tau_f, S^2_f, \tau_s\},         \label{model: tm6} \\
+ tm7 &=& \{\tau_m, S^2, S^2_f, \tau_s, R_{ex}\},         \label{model: tm7} \\
+ tm8 &=& \{\tau_m, S^2, \tau_f, S^2_f, \tau_s, R_{ex}\}, \label{model: tm8} \\
+ tm9 &=& \{\tau_m, R_{ex}\}.                             \label{model: tm9}
+\end{eqnarray}
+\end{htmlonly}
 
 
 
