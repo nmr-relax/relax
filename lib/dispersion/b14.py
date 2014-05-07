@@ -191,12 +191,6 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # t1 + t2.
     F1a_plus_b = (2. * dw2 + zeta*1j) / NNc
 
-    # -2 * oG * t2.
-    v4 = F1b * (-alpha_m - g3 ) + F1b * (dw - g4)*1j
-
-    # -1/Trel * log(LpreDyn).
-    Rpre = (r20a + r20b + kex) / 2.0
-
     # Derived from relaxation.
     # E0 = -2.0 * tcp * (F00R - f11R).
     E0 =  two_tcp * g3
@@ -213,18 +207,24 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Complex.
     v1s = F0 * sinh(E0) - F2 * sin(E2)*1j
 
-    # Complex.
-    ex1c = sinh(E1)
-
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
-    y = power( (v1c - v3) / (v1c + v3), ncyc)
+    # -2 * oG * t2.
+    v4 = F1b * (-alpha_m - g3 ) + F1b * (dw - g4)*1j
+
+    # Complex.
+    ex1c = sinh(E1)
 
     # Off diagonal common factor. sinh fuctions.
     v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (v4 + k_AB * F1a_plus_b) * ex1c
 
+    y = power( (v1c - v3) / (v1c + v3), ncyc)
+
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+
+    # -1/Trel * log(LpreDyn).
+    Rpre = (r20a + r20b + kex) / 2.0
 
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
     Minty = Rpre - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
