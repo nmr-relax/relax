@@ -116,8 +116,16 @@ class Map:
 
         # Points.
         if point != None:
-            self.point = array(point, float64)
-            self.num_points = 1
+            # Check if list is a nested list of lists.
+            if type(point[0]) == float:
+                self.point = array(point, float64)
+                self.num_points = 1
+            else:
+                point_list = []
+                for i in range(len(point)):
+                    point_list.append(array(point[i], float64))
+                self.point = point_list
+                self.num_points = i + 1
         else:
             self.num_points = 0
 
@@ -168,6 +176,12 @@ class Map:
         # Create the OpenDX .general and data files for the given point.
         if self.num_points == 1:
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, bounds=self.bounds, N=self.n)
+
+        # Generate the OpenDX .general and data files for each point.
+        elif self.num_points > 1:
+            for i in range(self.num_points):
+                file_prefix = "%s_%i"%(self.point_file, i)
+                write_point(file_prefix=file_prefix, dir=self.dir, inc=self.inc, point=self.point[i], bounds=self.bounds, N=self.n)
 
         # Generate the map.
         self.create_map()

@@ -131,8 +131,8 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, bounds=None, N
     @type dir:              str or None
     @keyword inc:           The number of increments in the map.
     @type inc:              int
-    @keyword point:         The coordinates of the point.
-    @type point:            numpy rank-1 float array
+    @keyword point:         The list of coordinates of the point.
+    @type point:            numpy rank-1 float array or list of numpy rank-1 float array.
     @keyword bounds:        The bounds of the map.
     @type bounds:           numpy rank-2 float array
     @keyword N:             The dimension of the map.
