@@ -568,66 +568,65 @@ The equation is
 \begin{subequations}
 \begin{align}
   \Rtwoeff & = \frac{\RtwozeroA + \RtwozeroB + \kex }{2}-\frac{ N_{\textrm{CYC}} }{ \taucpmg } \cosh{}^{-1}(v_{1c}) \nonumber \\
-& \qquad - \frac{1}{\taucpmg}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2 \kAB p_D)\right)} \\
+& \qquad - \frac{1}{\taucpmg}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2 \kAB p_D)\right)} , \\
     & = \Rtwoeff^{\textrm{CR72}} - \frac{1}{\taucpmg}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2\kAB p_D )\right)} ,
 \end{align}
 \end{subequations}
 
-
 where Appendix 1 in \citet{Baldwin2014} list the recipe for exact calculation of $\Rtwoeff$.
 
-Establish the complex free precession Eigenfrequency.
+Establish the complex free precession Eigenfrequency with
 \begin{subequations}
 \begin{align}
-	\Delta \Rtwozero & = \RtwozeroA - \RtwozeroB  \\
-	\alpha_- & = \Delta \Rtwozero + \kAB - \kBA \\
-	\zeta & = 2 \dw \alpha_- \\
-	\Psi & = \alpha_-^2 + 4 \kAB \kBA - \dw^2 \\
-	h_3 &= \frac{1}{\sqrt{2}}\sqrt{ \Psi + \sqrt{\zeta^2 + \Psi^2} } \\
-    h_4 &= \frac{1}{\sqrt{2}}\sqrt{ -\Psi + \sqrt{\zeta^2 + \Psi^2} }
+	\Delta \Rtwozero & = \RtwozeroA - \RtwozeroB , \\
+	\alpha_- & = \Delta \Rtwozero + \kAB - \kBA , \\
+	\zeta & = 2 \dw \alpha_- , \\
+	\Psi & = \alpha_-^2 + 4 \kAB \kBA - \dw^2 , \\
+	h_3 &= \frac{1}{\sqrt{2}}\sqrt{ \Psi + \sqrt{\zeta^2 + \Psi^2} } , \\
+    h_4 &= \frac{1}{\sqrt{2}}\sqrt{ -\Psi + \sqrt{\zeta^2 + \Psi^2} } .
 \end{align}
 \end{subequations}
 
 The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components, in terms
-of definitions $\zeta , \Psi , h_3 , h_4$.
+of definitions $\zeta , \Psi , h_3 , h_4$ is
 \begin{equation}
-	f_{00} = \frac{1}{2}(\RtwozeroA + \RtwozeroB + \kex) + \frac{1}{2}(\dw - h_4) i
+	f_{00} = \frac{1}{2}(\RtwozeroA + \RtwozeroB + \kex) + \frac{1}{2}(\dw - h_4) i .
 \end{equation}
 
-Define substutions for 'stay' and 'swap' factors.
+Define substutions for 'stay' and 'swap' factors are
 \begin{subequations}
 \begin{align}
-	N & = h_3 + h_4 i \\
-	NN^* & = h_3^2 + h_42 \\
-	F_0 & = (\dw^2 + h_3^2) / NN^* \\
-	F_2 & = (\dw^2 - h_4^2) / NN^* \\
-	F_1^b & = (\dw + h_4) (\dw - h_3 i) / NN^* \\
-	F_1^{a+b} & = (2\dw^2 + \zeta i) / NN^*
+	N & = h_3 + h_4 i , \\
+	NN^* & = h_3^2 + h_42 , \\
+	F_0 & = (\dw^2 + h_3^2) / NN^* , \\
+	F_2 & = (\dw^2 - h_4^2) / NN^* , \\
+	F_1^b & = (\dw + h_4) (\dw - h_3 i) / NN^* , \\
+	F_1^{a+b} & = (2\dw^2 + \zeta i) / NN^* .
 \end{align}
 \end{subequations}
 
-Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block, ($F_{0-2}$).
+Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block, ($F_{0-2}$), are
+\begin{subequations}
+\begin{align}
+	E_0 & =  2 \taucpmg \cdot h_3 , \\
+	E2 & =  2 \taucpmg \cdot  h_4 , \\
+	E1 & = (h_3 - h_4 i) \cdot \taucpmg .
+\end{align}
+\end{subequations}
+
 Here $\taucpmg = 1 / 4\nucpmg $.
+Final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation is
 \begin{subequations}
 \begin{align}
-	E_0 & =  2 \taucpmg \cdot h_3 \\
-	E2 & =  2 \taucpmg \cdot  h_4 \\
-	E1 & = (h_3 - h_4 i) \cdot \taucpmg
-\end{align}
-\end{subequations}
-
-Final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation.
-\begin{subequations}
-\begin{align}
-	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) \\
-	\nu_{1s} & = F_0  \sinh(E_0) - F_2 \sin(E_2)i \\
-	\nu_{3} & = \sqrt{\nu_{1c}^2 - 1} \\
-	\nu_{4} & = F_1^b (-\alpha_- - h_3 ) + F_1^b (\dw - h_4) i \\
-	\nu_{5} & =(-\Delta \Rtwozero + \kex + \dw i) \nu_{1s} + 2 (\nu_{4} + \kAB F_1^{a+b}) \sinh(E_1) \\
-	y & = \left( \frac{\nu_{1c} - \nu_{3}}{\nu_{1c} + \nu_{3}} \right) ^ {N_{\textrm{CYC}}} \\
-	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_{5}}{2 \nu_{3}N} \\
-	\Rtwoeff{}_{\_ \textrm{CR72}} & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} - \frac{N_{\textrm{CYC}}}{\taucpmg} \, \textrm{arcosh}(\, \operatorname{Re}(\nu_{1c}) \, ) \\
-	\Rtwoeff{} & = \Rtwoeff{}_{\_ \textrm{CR72}} - \frac{1}{\taucpmg} \log(\operatorname{Re}(T))
+	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) , \\
+	\nu_{1s} & = F_0  \sinh(E_0) - F_2 \sin(E_2)i , \\
+	\nu_{3} & = \sqrt{\nu_{1c}^2 - 1} , \\
+	\nu_{4} & = F_1^b (-\alpha_- - h_3 ) + F_1^b (\dw - h_4) i , \\
+	\nu_{5} & =(-\Delta \Rtwozero + \kex + \dw i) \nu_{1s} + 2 (\nu_{4} + \kAB F_1^{a+b}) \sinh(E_1) , \\
+	y & = \left( \frac{\nu_{1c} - \nu_{3}}{\nu_{1c} + \nu_{3}} \right) ^ {N_{\textrm{CYC}}} , \\
+	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_{5}}{2 \nu_{3}N} , \\
+	\Rtwoeff{}_{\_ \textrm{CR72}} & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} - \frac{N_{\textrm{CYC}}}{\taucpmg} \, \textrm{arcosh}(\, \operatorname{Re}(\nu_{1c}) \, ) , \\
+	\Rtwoeff{} & = \Rtwoeff{}_{\_ \textrm{CR72}} - \frac{1}{\taucpmg} \log(\operatorname{Re}(T)) .
 \end{align}
 \end{subequations}
 
@@ -636,9 +635,8 @@ The advantage of this code will be that you will always get the right answer pro
 The term $p_D$ is based on product of the off diagonal elements in the CPMG propagator, see supplementary Section 3, \citet{Baldwin2014}.
 
 It is interesting to consider the region of validity of the Carver Richards result. The two results are equal when the correction is zero, which is true when
-
 \begin{equation}
-    \sqrt{v_{1c}^2-1} \approx v_2 + 2k_{\textrm{AB}}p_D
+    \sqrt{v_{1c}^2-1} \approx v_2 + 2k_{\textrm{AB}}p_D .
 \end{equation}
 
 This occurs when $k_{\textrm{AB}}p_D$ tends to zero, and so $v_2=v_3$.
