@@ -173,10 +173,11 @@ uf.add_keyarg(
 )
 uf.add_keyarg(
     name = "point",
-    py_type = "num_list",
-    desc_short = "point",
-    desc = "An array of parameter values where a point in the map, shown as a red sphere, will be placed.  The length must be equal to the number of parameters.",
-    can_be_none = True
+    py_type = "list_val_or_list_of_list_val",
+    desc_short = "[x, y, x] point of list of x, y, x points. [[x1, y1, z1], [x2, y2, z2]]",
+    desc = "An list of parameter values where a point in the map, shown as a red sphere, will be placed.  The length of each point must be equal to the number of parameters.",
+    can_be_none = True,
+    list_of_lists = True
 )
 uf.add_keyarg(
     name = "point_file",
