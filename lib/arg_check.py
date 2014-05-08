@@ -599,6 +599,8 @@ def is_list_val_or_list_of_list_val(arg, name=None, size=None, can_be_none=False
     @rtype:                                 bool
     """
 
+    # FIXME:  This still needs to be implemented as a check for is_list_val_or_list_of_list_val:
+
     # Init.
     fail = False
 
