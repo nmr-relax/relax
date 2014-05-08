@@ -228,7 +228,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("// MODULE main\n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("// page assignment: Colour Space\torder=3, windowed=0, showing=0\n")
         file.write("// page assignment: ColourScene\t\torder=5, windowed=0, showing=0\n")
@@ -259,66 +259,64 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
-        for i in range(num_points):
-            i_point_file = "%s_%i"%(point_file, i)
-            file.write("\n")
-            file.write("    // node Import[4]: x = 177, y = 62, inputs = 6, label = %s\n" % i_point_file)
-            file.write("    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"%s.general\"\n" % i_point_file)
-            file.write("    // input[3]: defaulting = 1, visible = 1, type = 32, value = \"general\"\n")
-            file.write("    // page group: Glyph\n")
-            file.write("    //\n")
-            file.write("main_Import_4_out_1 = \n")
-            file.write("    Import(\n")
-            file.write("    main_Import_4_in_1,\n")
-            file.write("    main_Import_4_in_2,\n")
-            file.write("    main_Import_4_in_3,\n")
-            file.write("    main_Import_4_in_4,\n")
-            file.write("    main_Import_4_in_5,\n")
-            file.write("    main_Import_4_in_6\n")
-            file.write("    ) [instance: 4, cache: 1];\n")
-            file.write("    // \n")
-            file.write("    // node Glyph[2]: x = 201, y = 182, inputs = 7, label = Glyph\n")
-            file.write("    // input[2]: defaulting = 0, visible = 1, type = 32, value = \"sphere\"\n")
-            file.write("    // input[3]: defaulting = 1, visible = 1, type = 5, value = 10.0\n")
-            file.write("    // input[4]: defaulting = 0, visible = 1, type = 5, value = %s\n" % sphere_size)
-            file.write("    // input[5]: defaulting = 0, visible = 1, type = 5, value = 0.0\n")
-            file.write("    // page group: Glyph\n")
-            file.write("    //\n")
-            file.write("main_Glyph_2_out_1 = \n")
-            file.write("    Glyph(\n")
-            file.write("    main_Import_4_out_1,\n")
-            file.write("    main_Glyph_2_in_2,\n")
-            file.write("    main_Glyph_2_in_3,\n")
-            file.write("    main_Glyph_2_in_4,\n")
-            file.write("    main_Glyph_2_in_5,\n")
-            file.write("    main_Glyph_2_in_6,\n")
-            file.write("    main_Glyph_2_in_7\n")
-            file.write("    ) [instance: 2, cache: 1];\n")
-            file.write("    // \n")
-            file.write("    // node Color[10]: x = 357, y = 278, inputs = 5, label = Color\n")
-            file.write("    // input[2]: defaulting = 0, visible = 1, type = 8, value = [0 0 0]\n")
-            file.write("    // input[3]: defaulting = 0, visible = 1, type = 5, value = 1.0\n")
-            file.write("    // page group: Glyph\n")
-            file.write("    //\n")
-            file.write("main_Color_10_out_1 = \n")
-            file.write("    Color(\n")
-            file.write("    main_Glyph_2_out_1,\n")
-            file.write("    main_Color_10_in_2,\n")
-            file.write("    main_Color_10_in_3,\n")
-            file.write("    main_Color_10_in_4,\n")
-            file.write("    main_Color_10_in_5\n")
-            file.write("    ) [instance: 10, cache: 1];\n")
-            file.write("    // \n")
-            file.write("    // node Transmitter[1]: x = 352, y = 386, inputs = 1, label = GreySphere\n")
-            file.write("    // page group: Glyph\n")
-            file.write("    //\n")
-            file.write("GreySphere = main_Color_10_out_1;\n")
-            file.write("    // \n")
-            file.write("    // node Receiver[2]: x = 190, y = 350, inputs = 1, label = GreySphere\n")
-            file.write("    // page group: Grey Space\n")
-            file.write("    //\n")
-            file.write("main_Receiver_2_out_1[cache: 0] = GreySphere;\n")
+    if num_points == 1:
+        file.write("\n")
+        file.write("    // node Import[4]: x = 177, y = 62, inputs = 6, label = %s\n" % point_file)
+        file.write("    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"%s.general\"\n" % point_file)
+        file.write("    // input[3]: defaulting = 1, visible = 1, type = 32, value = \"general\"\n")
+        file.write("    // page group: Glyph\n")
+        file.write("    //\n")
+        file.write("main_Import_4_out_1 = \n")
+        file.write("    Import(\n")
+        file.write("    main_Import_4_in_1,\n")
+        file.write("    main_Import_4_in_2,\n")
+        file.write("    main_Import_4_in_3,\n")
+        file.write("    main_Import_4_in_4,\n")
+        file.write("    main_Import_4_in_5,\n")
+        file.write("    main_Import_4_in_6\n")
+        file.write("    ) [instance: 4, cache: 1];\n")
+        file.write("    // \n")
+        file.write("    // node Glyph[2]: x = 201, y = 182, inputs = 7, label = Glyph\n")
+        file.write("    // input[2]: defaulting = 0, visible = 1, type = 32, value = \"sphere\"\n")
+        file.write("    // input[3]: defaulting = 1, visible = 1, type = 5, value = 10.0\n")
+        file.write("    // input[4]: defaulting = 0, visible = 1, type = 5, value = %s\n" % sphere_size)
+        file.write("    // input[5]: defaulting = 0, visible = 1, type = 5, value = 0.0\n")
+        file.write("    // page group: Glyph\n")
+        file.write("    //\n")
+        file.write("main_Glyph_2_out_1 = \n")
+        file.write("    Glyph(\n")
+        file.write("    main_Import_4_out_1,\n")
+        file.write("    main_Glyph_2_in_2,\n")
+        file.write("    main_Glyph_2_in_3,\n")
+        file.write("    main_Glyph_2_in_4,\n")
+        file.write("    main_Glyph_2_in_5,\n")
+        file.write("    main_Glyph_2_in_6,\n")
+        file.write("    main_Glyph_2_in_7\n")
+        file.write("    ) [instance: 2, cache: 1];\n")
+        file.write("    // \n")
+        file.write("    // node Color[10]: x = 357, y = 278, inputs = 5, label = Color\n")
+        file.write("    // input[2]: defaulting = 0, visible = 1, type = 8, value = [0 0 0]\n")
+        file.write("    // input[3]: defaulting = 0, visible = 1, type = 5, value = 1.0\n")
+        file.write("    // page group: Glyph\n")
+        file.write("    //\n")
+        file.write("main_Color_10_out_1 = \n")
+        file.write("    Color(\n")
+        file.write("    main_Glyph_2_out_1,\n")
+        file.write("    main_Color_10_in_2,\n")
+        file.write("    main_Color_10_in_3,\n")
+        file.write("    main_Color_10_in_4,\n")
+        file.write("    main_Color_10_in_5\n")
+        file.write("    ) [instance: 10, cache: 1];\n")
+        file.write("    // \n")
+        file.write("    // node Transmitter[1]: x = 352, y = 386, inputs = 1, label = GreySphere\n")
+        file.write("    // page group: Glyph\n")
+        file.write("    //\n")
+        file.write("GreySphere = main_Color_10_out_1;\n")
+        file.write("    // \n")
+        file.write("    // node Receiver[2]: x = 190, y = 350, inputs = 1, label = GreySphere\n")
+        file.write("    // page group: Grey Space\n")
+        file.write("    //\n")
+        file.write("main_Receiver_2_out_1[cache: 0] = GreySphere;\n")
 
     # Common code.
     file.write("\n")
@@ -519,7 +517,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("    // node Collect[8]: x = 293, y = 431, inputs = 2, label = Collect\n")
         file.write("    // page group: Grey Space\n")
@@ -543,7 +541,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("GreySpace = main_Collect_8_out_1;\n")
 
@@ -638,7 +636,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("    // node Color[11]: x = 133, y = 278, inputs = 5, label = Color\n")
         file.write("    // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 0 0]\n")
@@ -775,7 +773,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("    // node Collect[12]: x = 293, y = 431, inputs = 2, label = Collect\n")
         file.write("    // page group: Colour Space\n")
@@ -799,7 +797,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("ColourSpace = main_Collect_12_out_1;\n")
 
@@ -1037,33 +1035,29 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("}\n")
 
     # Include the sphere.
-    if num_points > 0:
-        if num_points > 0:
-            for i in range(num_points):
-                i_point_file = "%s_%i"%(point_file, i)
-
-                file.write("\n")
-                file.write("main_Import_4_in_1 = \"%s.general\";\n" % i_point_file)
-                file.write("main_Import_4_in_2 = NULL;\n")
-                file.write("main_Import_4_in_3 = NULL;\n")
-                file.write("main_Import_4_in_4 = NULL;\n")
-                file.write("main_Import_4_in_5 = NULL;\n")
-                file.write("main_Import_4_in_6 = NULL;\n")
-                file.write("main_Import_4_out_1 = NULL;\n")
-                file.write("main_Glyph_2_in_2 = \"sphere\";\n")
-                file.write("main_Glyph_2_in_3 = NULL;\n")
-                file.write("main_Glyph_2_in_4 = %s;\n" % sphere_size)
-                file.write("main_Glyph_2_in_5 = 0.0;\n")
-                file.write("main_Glyph_2_in_6 = NULL;\n")
-                file.write("main_Glyph_2_in_7 = NULL;\n")
-                file.write("main_Glyph_2_out_1 = NULL;\n")
-                file.write("main_Color_10_in_2 = [0 0 0];\n")
-                file.write("main_Color_10_in_3 = 1.0;\n")
-                file.write("main_Color_10_in_4 = NULL;\n")
-                file.write("main_Color_10_in_5 = NULL;\n")
-                file.write("main_Color_10_out_1 = NULL;\n")
-                file.write("main_Transmitter_1_out_1 = NULL;\n")
-                file.write("main_Receiver_2_out_1 = NULL;\n")
+    if num_points == 1:
+        file.write("\n")
+        file.write("main_Import_4_in_1 = \"%s.general\";\n" % point_file)
+        file.write("main_Import_4_in_2 = NULL;\n")
+        file.write("main_Import_4_in_3 = NULL;\n")
+        file.write("main_Import_4_in_4 = NULL;\n")
+        file.write("main_Import_4_in_5 = NULL;\n")
+        file.write("main_Import_4_in_6 = NULL;\n")
+        file.write("main_Import_4_out_1 = NULL;\n")
+        file.write("main_Glyph_2_in_2 = \"sphere\";\n")
+        file.write("main_Glyph_2_in_3 = NULL;\n")
+        file.write("main_Glyph_2_in_4 = %s;\n" % sphere_size)
+        file.write("main_Glyph_2_in_5 = 0.0;\n")
+        file.write("main_Glyph_2_in_6 = NULL;\n")
+        file.write("main_Glyph_2_in_7 = NULL;\n")
+        file.write("main_Glyph_2_out_1 = NULL;\n")
+        file.write("main_Color_10_in_2 = [0 0 0];\n")
+        file.write("main_Color_10_in_3 = 1.0;\n")
+        file.write("main_Color_10_in_4 = NULL;\n")
+        file.write("main_Color_10_in_5 = NULL;\n")
+        file.write("main_Color_10_out_1 = NULL;\n")
+        file.write("main_Transmitter_1_out_1 = NULL;\n")
+        file.write("main_Receiver_2_out_1 = NULL;\n")
 
     # Common code.
     file.write("\n")
@@ -1131,7 +1125,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_Collect_7_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("main_Collect_8_out_1 = NULL;\n")
 
@@ -1170,7 +1164,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_AutoAxes_2_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("main_Color_11_in_2 = [1 0 0];\n")
         file.write("main_Color_11_in_3 = 1.0;\n")
@@ -1211,7 +1205,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_Collect_11_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points > 0:
+    if num_points == 1:
         file.write("\n")
         file.write("main_Collect_12_out_1 = NULL;\n")
 
