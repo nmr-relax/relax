@@ -576,6 +576,44 @@ def is_list(arg, name=None, size=None, can_be_none=False, can_be_empty=False, li
     return True
 
 
+def is_list_val_or_list_of_list_val(arg, name=None, size=None, can_be_none=False, can_be_empty=False, list_of_lists=False, raise_error=True):
+    """Test if the argument is a list of values or list of list with values.
+
+    @param arg:                             The argument.
+    @type arg:                              anything
+    @keyword name:                          The plain English name of the argument.
+    @type name:                             str
+    @keyword size:                          The number of elements required.
+    @type size:                             None or int
+    @keyword can_be_none:                   A flag specifying if the argument can be none.
+    @type can_be_none:                      bool
+    @keyword can_be_empty:                  A flag which if True allows the list to be empty.
+    @type can_be_empty:                     bool
+    @keyword list_of_lists:                 A flag which if True allows the argument to be a list of lists of values.
+    @type list_of_lists:                    bool
+    @keyword raise_error:                   A flag which if True will cause RelaxErrors to be raised.
+    @type raise_error:                      bool
+    @raise RelaxNumStrListNumStrError:      If not a float, a string, or a list of floats or strings (and the raise_error flag is set).
+    @raise RelaxNoneNumStrListNumStrError:  If not a float, a string, a list of floats or strings, or None (and the raise_error flag is set).
+    @return:                                The answer to the question (if raise_error is not set).
+    @rtype:                                 bool
+    """
+
+    # Init.
+    fail = False
+
+    # An argument of None is allowed.
+    if can_be_none and arg == None:
+        return True
+
+    # A list.
+    if not isinstance(arg, list):
+        fail = True
+
+    # Success.
+    return True
+
+
 def is_none(arg, name, raise_error=True):
     """Test if the argument is None.
 
