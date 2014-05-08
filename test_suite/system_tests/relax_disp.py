@@ -1331,21 +1331,132 @@ class Relax_disp(SystemTestCase):
         ds.dx_inc = 4
         ds.dx_params = ['dw', 'pA', 'kex']
 
-        # First loop over the defined spins and set the model parameters.
-        for i in range(len(cur_spins)):
-            res_name, res_num, spin_name, params = cur_spins[i]
-            cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
+        res_name, res_num, spin_name, params = cur_spins[0]
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
 
-            print("Params for dx map is")
-            print(ds.dx_params)
-            print("Point param for dx map is")
-            print(ds.dx_set_val)
-            cur_model = model_analyse.replace(' ', '_')
-            file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
-            file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-            self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, remap=None)
-            #self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=ds.dx_set_val, point_file=file_name_point, remap=None)
+        print("Params for dx map is")
+        print(ds.dx_params)
+        print("Point param for dx map is")
+        print(ds.dx_set_val)
+        cur_model = model_analyse.replace(' ', '_')
+        file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+        file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, remap=None)
+        #self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=ds.dx_set_val, point_file=file_name_point, remap=None)
+
+        ## Check for file creation
+        # Set filepaths.
+        map_cfg = ds.tmpdir+sep+file_name_map+".cfg"
+        map_net = ds.tmpdir+sep+file_name_map+".net"
+        map_general = ds.tmpdir+sep+file_name_map+".general"
+
+        point_general = ds.tmpdir+sep+file_name_point+".general"
+        point_point = ds.tmpdir+sep+file_name_point
+
+        # Test the files exists.
+        self.assert_(access(map_cfg, F_OK))
+        self.assert_(access(map_net, F_OK))
+        self.assert_(access(map_general, F_OK))
+        self.assert_(access(point_general, F_OK))
+        self.assert_(access(point_point, F_OK))
+
+        # Open the files for testing.
+        # Check the cfg file.
+        print("\nChecking the dx map .cfg file.")
+        res_file = [
+            '//'+"\n",
+            '//'+"\n",
+            '// time: Thu May  8 18:55:31 2014'+"\n",
+            '//'+"\n",
+            '// version: 3.2.0 (format), 4.3.2 (DX)'+"\n",
+            '//'+"\n",
+            '//'+"\n",
+            '// panel[0]: position = (0.0164,0.0000), size = 0.2521x0.1933, startup = 1, devstyle = 1'+"\n",
+            '// title: value = Control Panel'+"\n",
+            '//'+"\n",
+            '// workspace: width = 251, height = 142'+"\n",
+            '// layout: snap = 0, width = 50, height = 50, align = NN'+"\n",
+            '//'+"\n",
+            '// interactor Selector[1]: num_components = 1, value = 1 '+"\n",
+            '// selections: maximum = 2, current = 0 '+"\n",
+            '// option[0]: name = "Colour", value = 1'+"\n",
+            '// option[1]: name = "Grey", value = 2'+"\n",
+            '// instance: panel = 0, x = 81, y = 6, style = Scrolled List, vertical = 1, size = 170x136'+"\n",
+            '// label: value = Colour Selector'+"\n",
+            '//'+"\n",
+            '// node Image[3]:'+"\n",
+            '// title: value = Surface'+"\n",
+            '// depth: value = 24'+"\n",
+            '// window: position = (0.0000,0.0400), size = 0.9929x0.9276'+"\n",
+        ]
+        file = open(map_cfg, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
+            # Skip time point
+            if i == 2:
+                continue
+            self.assertEqual(res_file[i], lines[i])
+
+        print("\nChecking the dx map .general file.")
+        res_file = [
+            'file = CR72_map_1_N'+"\n",
+            'grid = 5 x 5 x 5'+"\n",
+            'format = ascii'+"\n",
+            'interleaving = field'+"\n",
+            'majority = row'+"\n",
+            'field = data'+"\n",
+            'structure = scalar'+"\n",
+            'type = float'+"\n",
+            'dependency = positions'+"\n",
+            'positions = regular, regular, regular, 0, 1, 0, 1, 0, 1'+"\n",
+            ''+"\n",
+            'end'+"\n",
+        ]
+        file = open(map_general, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
+            # Skip time point
+            #if i == 2:
+            #    continue
+            self.assertEqual(res_file[i], lines[i])
+
+        print("\nChecking the dx point .general file.")
+        res_file = [
+            'file = CR72_point_1_N'+"\n",
+            'points = 2'+"\n",
+            'format = ascii'+"\n",
+            'interleaving = field'+"\n",
+            'field = locations, field0'+"\n",
+            'structure = 3-vector, scalar'+"\n",
+            'type = float, float'+"\n",
+            ''+"\n",
+            'end'+"\n",
+        ]
+        file = open(point_general, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
+            # Skip time point
+            #if i == 2:
+            #    continue
+            self.assertEqual(res_file[i], lines[i])
+
+        print("\nChecking the dx point point file.")
+        res_file = [
+            '0.8            3.92           0.39964        1'+"\n",
+            '4e-05          0.08           3.8            1'+"\n",
+        ]
+        file = open(point_point, 'r')
+        lines = file.readlines()
+        file.close()
+        for i in range(len(res_file)):
+            # Skip time point
+            #if i == 2:
+            #    continue
+            self.assertEqual(res_file[i], lines[i])
 
 
     def test_curve_type_cpmg_fixed_time(self):
