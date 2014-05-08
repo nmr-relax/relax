@@ -33,7 +33,7 @@ else:
     FD_SAVE = -1
 
 # relax module imports.
-from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff
+from lib.text.gui import dw, dw_AB, dw_BC, dwH, dwH_AB, dwH_BC, i0, kex, kAB, kBC, kAC, phi_ex, phi_exB, phi_exC, r1rho, r1rho_prime, r2, r2a, r2b, r2eff, tex
 from graphics import ANALYSIS_IMAGE_PATH, WIZARD_IMAGE_PATH
 from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
@@ -811,7 +811,7 @@ uf.add_keyarg(
         "%s: {%s, ..., %s, kB, %s, kC}" % (MODEL_LM63_3SITE, r2, phi_exB, phi_exC),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_CR72, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_CR72_FULL, r2a, r2b, dw, kex),
-        "%s: {%s, ..., pA, %s, %s}" % (MODEL_IT99, r2, dw, kex),
+        "%s: {%s, ..., pA, %s, %s}" % (MODEL_IT99, r2, dw, tex),
         "%s: {%s, ..., %s, k_AB}" % (MODEL_TSMFK01, r2a, dw),
         "%s: {%s, ..., pA, %s, %s}" % (MODEL_B14, r2, dw, kex),
         "%s: {%s, %s, ..., pA, %s, %s}" % (MODEL_B14_FULL, r2a, r2b, dw, kex),
