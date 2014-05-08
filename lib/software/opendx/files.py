@@ -153,7 +153,7 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, bounds=None, N
     point_file.write("1\n")
 
     # The text of the point .general file.
-    point_file_general.write("file = %s\n" % point_file)
+    point_file_general.write("file = %s\n" % file_prefix)
     point_file_general.write("points = 1\n")
     point_file_general.write("format = ascii\n")
     point_file_general.write("interleaving = field\n")
