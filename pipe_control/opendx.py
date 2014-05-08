@@ -175,6 +175,7 @@ class Map:
 
         # Create the OpenDX .general and data files for the given point.
         if self.num_points == 1:
+            file_prefix = "%s_0"%(self.point_file)
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, bounds=self.bounds, N=self.n)
 
         # Generate the OpenDX .general and data files for each point.
