@@ -164,6 +164,7 @@ class Uf_object(object):
             can_be_none = arg['can_be_none']
             can_be_empty = arg['can_be_empty']
             none_elements = arg['none_elements']
+            list_of_lists = arg['list_of_lists']
 
             # Check if the correct Python object type has been supplied.
             if py_type == 'bool':
@@ -186,6 +187,8 @@ class Uf_object(object):
                 lib.arg_check.is_int_or_int_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, none_elements=none_elements)
             elif py_type == 'list':
                 lib.arg_check.is_list(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty)
+            elif py_type == 'list_val_or_list_of_list_val':
+                lib.arg_check.is_list_val_or_list_of_list_val(value, desc_short, size=dim, can_be_none=can_be_none, can_be_empty=can_be_empty, list_of_lists=list_of_lists)
             elif py_type == 'none':
                 lib.arg_check.is_none(value, desc_short)
             elif py_type == 'num':
