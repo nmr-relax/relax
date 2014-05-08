@@ -99,13 +99,13 @@ if not hasattr(ds, 'data'):
     exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
 
     # Collect all exps
-    #exps = [exp_1, exp_2]
-    exps = [exp_1]
+    exps = [exp_1, exp_2]
+    #exps = [exp_1]
 
     # Add more spins here.
     spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1: 20.0, r20_key_2: 20.0}, 'r2a': {r20_key_1: 20.0, r20_key_2: 20.0}, 'r2b': {r20_key_1: 20.0, r20_key_2: 20.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
-            #['Ala', 2, 'N', {'r2': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2a': {r20_key_1: 13.0, r20_key_2: 14.5}, 'r2b': {r20_key_1: 13.0, r20_key_2: 14.5}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2a': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2b': {r20_key_1: 25.0, r20_key_2: 24.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
+            #['Ala', 2, 'N', {'r2': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2a': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2b': {r20_key_1: 15.0, r20_key_2: 14.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
             ]
 
     ds.data = [model_create, model_analyse, spins, exps]
@@ -165,9 +165,10 @@ if not hasattr(ds, 'sherekhan_input'):
 # To map the hypersurface of chi2, when altering kex, dw and pA.
 if not hasattr(ds, 'opendx'):
     ds.opendx = True
-
 if not hasattr(ds, 'dx_inc'):
-    ds.dx_inc = 50
+    ds.dx_inc = 4
+if not hasattr(ds, 'dx_params'):
+    ds.dx_params = ['dw', 'pA', 'kex']
 
 # The set r2eff err.
 if not hasattr(ds, 'r2eff_err'):
@@ -189,11 +190,11 @@ model_create = ds.data[0]
 model_analyse = ds.data[1]
 
 # Create the data pipe.
-pipe_name = 'base pipe'
-pipe_type = 'relax_disp'
-pipe_bundle = 'relax_disp'
-pipe_name_r2eff = "%s_%s_R2eff"%(model_create, pipe_name)
-pipe.create(pipe_name=pipe_name, pipe_type=pipe_type, bundle = pipe_bundle)
+ds.pipe_name = 'base pipe'
+ds.pipe_type = 'relax_disp'
+ds.pipe_bundle = 'relax_disp'
+ds.pipe_name_r2eff = "%s_%s_R2eff"%(model_create, ds.pipe_name )
+pipe.create(pipe_name=ds.pipe_name , pipe_type=ds.pipe_type, bundle = ds.pipe_bundle)
 
 # Generate the sequence.
 cur_spins = ds.data[2]
@@ -217,7 +218,6 @@ for exp in exps:
     for ncyc in ncycs:
         nu_cpmg = ncyc / time_T2
         cur_id = '%s_%.1f' % (exp_id, nu_cpmg)
-        print cur_id
         ids.append(cur_id)
 
         # Set the spectrometer frequency.
@@ -235,35 +235,35 @@ for exp in exps:
 print("\n\nThe experiment IDs are %s." % ids)
 
 ## Now prepare to calculate the synthetic R2eff values.
-pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_r2eff, bundle_to = pipe_bundle)
-pipe.switch(pipe_name=pipe_name_r2eff)
+pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_r2eff, bundle_to = ds.pipe_bundle)
+pipe.switch(pipe_name=ds.pipe_name_r2eff)
 
 # Then select model.
 relax_disp.select_model(model=model_create)
 
-# First loop over the spins and set the model parameters.
-for res_name, res_num, spin_name, params in cur_spins:
+# First loop over the defined spins and set the model parameters.
+for i in range(len(cur_spins)):
+    res_name, res_num, spin_name, params = cur_spins[i]
     cur_spin_id = ":%i@%s"%(res_num, spin_name)
     cur_spin = return_spin(cur_spin_id)
-    #print cur_spin.model, cur_spin.name, cur_spin.isotope
 
-    #print as
-    # Now set the parameters.
+    if ds.print_res:
+        print("For spin: '%s'"%cur_spin_id)
     for mo_param in cur_spin.params:
         # The R2 is a dictionary, depending on spectrometer frequency.
         if isinstance(getattr(cur_spin, mo_param), dict):
             set_r2 = params[mo_param]
-            for key, val in set_r2.items():
+            for key, val in getattr(cur_spin, mo_param).items():
                 # Update value to float
                 set_r2.update({ key : float(val) })
-                print cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val)
+                print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val))
+            # Set it back
             setattr(cur_spin, mo_param, set_r2)
         else:
             before = getattr(cur_spin, mo_param)
             setattr(cur_spin, mo_param, float(params[mo_param]))
             after = getattr(cur_spin, mo_param)
-            print cur_spin.model, res_name, cur_spin_id, mo_param, before
-
+            print(cur_spin.model, res_name, cur_spin_id, mo_param, before)
 
 ## Now doing the back calculation of R2eff values.
 
@@ -326,51 +326,14 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
 
 print("Did following number of iterations: %i"%i)
 
-# Do a dx map.
-# To map the hypersurface of chi2, when altering kex, dw and pA.
-if ds.opendx:
-    # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
-    pipe_name_MODEL_MAP = "%s_%s_map"%(pipe_name, model_analyse)
-    pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL_MAP, bundle_to = pipe_bundle)
-    pipe.switch(pipe_name=pipe_name_MODEL_MAP)
-
-    # Copy R2eff, but not the original parameters
-    value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_MAP, param='r2eff')
-
-    # Then select model.
-    relax_disp.select_model(model=model_analyse)
-
-    # Define dx parameters
-    dx_params = ['dw', 'pA', 'kex']
-    for res_name, res_num, spin_name, params in cur_spins:
-        cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
-        dx_point = []
-
-        # Now get the parameters.
-        for dx_param in dx_params:
-            set_value = float(params[dx_param ])
-            dx_point.append(set_value)
-
-        print("Params for dx map is")
-        print(dx_params)
-        print("Point param for dx map is")
-        print(dx_point)
-        file_name_map = "map%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        file_name_point = "point%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name_map, dir=ds.resdir, point=dx_point, point_file=file_name_point, remap=None)
-        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
-        #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
-
-# Now do fitting.
-
+### Now do fitting.
 # Change pipe.
-pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
-pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
-pipe.switch(pipe_name=pipe_name_MODEL)
+ds.pipe_name_MODEL = "%s_%s"%(ds.pipe_name , model_analyse)
+pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL, bundle_to = ds.pipe_bundle)
+pipe.switch(pipe_name=ds.pipe_name_MODEL)
 
 # Copy R2eff, but not the original parameters
-value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL, param='r2eff')
+value.copy(pipe_from=ds.pipe_name_r2eff, pipe_to=ds.pipe_name_MODEL, param='r2eff')
 
 # Then select model.
 relax_disp.select_model(model=model_analyse)
@@ -427,12 +390,12 @@ ds.min_results = save_res(cur_spins)
 # Now do clustering
 if ds.do_cluster:
     # Change pipe.
-    pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(pipe_name, model_create)
-    pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL_CLUSTER)
-    pipe.switch(pipe_name=pipe_name_MODEL_CLUSTER)
+    ds.pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(ds.pipe_name , model_create)
+    pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_CLUSTER)
+    pipe.switch(pipe_name=ds.pipe_name_MODEL_CLUSTER)
 
     # Copy R2eff, but not the original parameters
-    value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_CLUSTER, param='r2eff')
+    value.copy(pipe_from=ds.pipe_name_r2eff, pipe_to=ds.pipe_name_MODEL_CLUSTER, param='r2eff')
 
     # Then select model.
     relax_disp.select_model(model=model_create)
@@ -441,7 +404,7 @@ if ds.do_cluster:
     relax_disp.cluster('model_cluster', ":1-100")
 
     # Copy the parameters from before.
-    relax_disp.parameter_copy(pipe_from=pipe_name_MODEL, pipe_to=pipe_name_MODEL_CLUSTER)
+    relax_disp.parameter_copy(pipe_from=ds.pipe_name_MODEL, pipe_to=ds.pipe_name_MODEL_CLUSTER)
 
     # Now minimise.
     minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
@@ -468,16 +431,21 @@ if ds.print_res:
     print("Analysing with MODEL:%s."%(model_analyse))
     print("########################\n")
 
+# Looping over data, to collect the results.
+# Define which dx_params to collect for.
+ds.dx_set_val = list(range(len(ds.dx_params)))
+ds.dx_clust_val = list(range(len(ds.dx_params)))
 for i in range(len(cur_spins)):
     res_name, res_num, spin_name, params = cur_spins[i]
     cur_spin_id = ":%i@%s"%(res_num, spin_name)
     cur_spin = return_spin(cur_spin_id)
 
+    # Fetch data.
     grid_params = ds.grid_results[i][3]
     min_params = ds.min_results[i][3]
     clust_params = ds.clust_results[i][3]
-    # Now read the parameters.
 
+    # Now read the parameters.
     if ds.print_res:
         print("For spin: '%s'"%cur_spin_id)
     for mo_param in cur_spin.params:
@@ -514,3 +482,41 @@ for i in range(len(cur_spins)):
                     print("###################################")
                     print("WARNING: %s Have relative change above %.2f, and is %.4f."%(mo_param, ds.rel_change, rel_change))
                     print("###################################\n")
+
+            # Store to dx map.
+            if mo_param in ds.dx_params:
+                ds.dx_set_val[ds.dx_params.index(mo_param)] = set_val
+                ds.dx_clust_val[ds.dx_params.index(mo_param)] = clust_val
+
+## Do a dx map.
+# To map the hypersurface of chi2, when altering kex, dw and pA.
+if ds.opendx:
+    # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
+    ds.pipe_name_MODEL_MAP = "%s_%s_map"%(ds.pipe_name, model_analyse)
+    pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
+    pipe.switch(pipe_name=ds.pipe_name_MODEL_MAP)
+
+    # Copy R2eff, but not the original parameters
+    value.copy(pipe_from=ds.pipe_name_r2eff, pipe_to=ds.pipe_name_MODEL_MAP, param='r2eff')
+
+    # Then select model.
+    relax_disp.select_model(model=model_analyse)
+
+    # First loop over the defined spins and set the model parameters.
+    for i in range(len(cur_spins)):
+        res_name, res_num, spin_name, params = cur_spins[i]
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
+
+        if ds.print_res:
+            print("Params for dx map is")
+            print(ds.dx_params)
+            print("Point param for dx map is")
+            print(ds.dx_set_val)
+        cur_model = model_analyse.replace(' ', '_')
+        file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+        file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+        #dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, remap=None)
+        dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=ds.dx_set_val, point_file=file_name_point, remap=None)
+        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
+        #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)

@@ -1225,6 +1225,129 @@ class Relax_disp(SystemTestCase):
                         self.assertAlmostEqual(set_val, min_val, 1)
 
 
+    def test_cpmg_synthetic_dx_map_points(self):
+        """Test synthetic cpmg data, calling the dx.map function with one or two points.
+
+        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = MODEL_NS_CPMG_2SITE_EXPANDED
+        model_analyse = 'CR72'
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        r2eff_err_1 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_err_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        r2eff_err_2 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_err_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:2, r20_key_2:2}, 'r2a': {r20_key_1:2, r20_key_2:2}, 'r2b': {r20_key_1:2, r20_key_2:2}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do set_grid_r20_from_min_r2eff ?.
+        ds.set_grid_r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = None
+
+        # The do clustering.
+        ds.do_cluster = False
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-9
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        # Get the spins.
+        cur_spins = ds.data[2]
+
+        # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
+        ds.pipe_name_MODEL_MAP = "%s_%s_map"%(ds.pipe_name, model_analyse)
+        self.interpreter.pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
+        self.interpreter.pipe.switch(pipe_name=ds.pipe_name_MODEL_MAP)
+
+        # Copy R2eff, but not the original parameters
+        self.interpreter.value.copy(pipe_from=ds.pipe_name_r2eff, pipe_to=ds.pipe_name_MODEL_MAP, param='r2eff')
+
+        # Then select model.
+        self.interpreter.relax_disp.select_model(model=model_analyse)
+
+        # Define dx.map settings.
+        ds.dx_inc = 4
+        ds.dx_params = ['dw', 'pA', 'kex']
+
+        # First loop over the defined spins and set the model parameters.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            print("Params for dx map is")
+            print(ds.dx_params)
+            print("Point param for dx map is")
+            print(ds.dx_set_val)
+            cur_model = model_analyse.replace(' ', '_')
+            file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
+            file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+            self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, remap=None)
+            #self.interpreter.dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=ds.dx_set_val, point_file=file_name_point, remap=None)
+
+
     def test_curve_type_cpmg_fixed_time(self):
         """Test the curve type detection using the Dr. Flemming Hansen's CPMG fixed time test data."""
 
