@@ -609,7 +609,7 @@ Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block,
 \begin{subequations}
 \begin{align}
 	E_0 & =  2 \taucpmg \cdot h_3 , \\
-	E_2 & =  2 \taucpmg \cdot  h_4 , \\
+	| E_2 | & =  2 \taucpmg \cdot  h_4 , \\
 	E_1 & = (h_3 - \imath h_4) \cdot \taucpmg .
 \end{align}
 \end{subequations}
@@ -618,8 +618,8 @@ Here $\taucpmg = 1 / 4\nucpmg $.
 Final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation is
 \begin{subequations}
 \begin{align}
-	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) , \\
-	\nu_{1s} & = F_0  \sinh(E_0) - \imath F_2 \sin(E_2), \\
+	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(| E_2 |) , \\
+    \nu_{1s} & = F_0  \sinh(E_0) - \imath F_2 \sin(| E_2 |), \\
 	\nu_3 & = \sqrt{\nu_{1c}^2 - 1} , \\
 	\nu_4 & = F_1^b (-\alpha_- - h_3 ) + \imath F_1^b (\dw - h_4) , \\
 	\nu_5 & =(-\Delta \Rtwozero + \kex + \imath \dw) \nu_{1s} + 2 (\nu_4 + \kAB F_1^{a+b}) \sinh(E_1) , \\
