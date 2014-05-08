@@ -376,7 +376,7 @@ class Auto_model_free(Base_analysis):
 
         # Insufficient data.
         if hasattr(cdp, 'ri_ids') and len(cdp.ri_ids) <= 3:
-            missing.append("Insufficient relaxation data, 4 or more data sets are essential for the execution of the dauvergne_protocol auto-analysis.")
+            missing.append("Insufficient relaxation data, 4 or more data sets are essential for the execution of the dauvergne_protocol auto-analysis. Check that you have entered data for a least two spectrometer fields.")
 
         # Interatomic data containers.
         if not hasattr(cdp, 'interatomic') or len(cdp.interatomic) == 0:
