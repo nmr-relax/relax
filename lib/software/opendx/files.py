@@ -107,7 +107,7 @@ def write_general(file_prefix=None, dir=None, inc=None):
     file.close()
 
 
-def write_point(file_prefix=None, dir=None, inc=None, point=None, bounds=None, N=None):
+def write_point(file_prefix=None, dir=None, inc=None, point=None, num_points=None, bounds=None, N=None):
     """Creating a sphere at a given position within the map.
 
     The formula used to calculate the coordinate position is::
@@ -133,6 +133,8 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, bounds=None, N
     @type inc:              int
     @keyword point:         The list of coordinates of the point.
     @type point:            numpy rank-1 float array or list of numpy rank-1 float array.
+    @keyword num_points:    The number of points.
+    @type num_points:       int
     @keyword bounds:        The bounds of the map.
     @type bounds:           numpy rank-2 float array
     @keyword N:             The dimension of the map.
@@ -147,14 +149,25 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, bounds=None, N
     point_file_general = open_write_file(file_name=file_prefix+".general", dir=dir, force=True)
 
     # Calculate the coordinate values.
-    coords = inc * (point - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
-    for i in range(N):
-        point_file.write("%-15.5g" % coords[i])
-    point_file.write("1\n")
+    if num_points > 1:
+        for i in range(num_points):
+            i_point = point[i]
+
+            coords = inc * (i_point - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+            for i in range(N):
+                point_file.write("%-15.5g" % coords[i])
+            point_file.write("1\n")
+    else:
+        i_point = point
+
+        coords = inc * (i_point - bounds[:, 0]) / (bounds[:, 1] - bounds[:, 0])
+        for i in range(N):
+            point_file.write("%-15.5g" % coords[i])
+        point_file.write("1\n")
 
     # The text of the point .general file.
     point_file_general.write("file = %s\n" % file_prefix)
-    point_file_general.write("points = 1\n")
+    point_file_general.write("points = %s\n" % num_points)
     point_file_general.write("format = ascii\n")
     point_file_general.write("interleaving = field\n")
     point_file_general.write("field = locations, field0\n")
@@ -228,7 +241,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("// MODULE main\n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("// page assignment: Colour Space\torder=3, windowed=0, showing=0\n")
         file.write("// page assignment: ColourScene\t\torder=5, windowed=0, showing=0\n")
@@ -259,7 +272,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("    // node Import[4]: x = 177, y = 62, inputs = 6, label = %s\n" % point_file)
         file.write("    // input[1]: defaulting = 0, visible = 1, type = 32, value = \"%s.general\"\n" % point_file)
@@ -517,7 +530,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("    // node Collect[8]: x = 293, y = 431, inputs = 2, label = Collect\n")
         file.write("    // page group: Grey Space\n")
@@ -541,7 +554,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("GreySpace = main_Collect_8_out_1;\n")
 
@@ -636,7 +649,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("    // node Color[11]: x = 133, y = 278, inputs = 5, label = Color\n")
         file.write("    // input[2]: defaulting = 0, visible = 1, type = 8, value = [1 0 0]\n")
@@ -773,7 +786,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("    // node Collect[12]: x = 293, y = 431, inputs = 2, label = Collect\n")
         file.write("    // page group: Colour Space\n")
@@ -797,7 +810,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    // \n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("ColourSpace = main_Collect_12_out_1;\n")
 
@@ -1035,7 +1048,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("}\n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("main_Import_4_in_1 = \"%s.general\";\n" % point_file)
         file.write("main_Import_4_in_2 = NULL;\n")
@@ -1125,7 +1138,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_Collect_7_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("main_Collect_8_out_1 = NULL;\n")
 
@@ -1164,7 +1177,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_AutoAxes_2_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("main_Color_11_in_2 = [1 0 0];\n")
         file.write("main_Color_11_in_3 = 1.0;\n")
@@ -1205,7 +1218,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("main_Collect_11_out_1 = NULL;\n")
 
     # Include the sphere.
-    if num_points == 1:
+    if num_points > 0:
         file.write("\n")
         file.write("main_Collect_12_out_1 = NULL;\n")
 

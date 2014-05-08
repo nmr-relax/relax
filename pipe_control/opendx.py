@@ -174,14 +174,8 @@ class Map:
         write_general(file_prefix=self.file_prefix, dir=self.dir, inc=self.inc)
 
         # Create the OpenDX .general and data files for the given point.
-        if self.num_points == 1:
-            write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, bounds=self.bounds, N=self.n)
-
-        # Generate the OpenDX .general and data files for each point.
-        elif self.num_points > 1:
-            for i in range(self.num_points):
-                file_prefix = "%s_%i"%(self.point_file, i)
-                write_point(file_prefix=file_prefix, dir=self.dir, inc=self.inc, point=self.point[i], bounds=self.bounds, N=self.n)
+        if self.num_points > 1:
+            write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, num_points=self.num_points, bounds=self.bounds, N=self.n)
 
         # Generate the map.
         self.create_map()
