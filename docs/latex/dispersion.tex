@@ -569,7 +569,7 @@ The equation is
 \begin{align}
   \Rtwoeff & = \frac{\RtwozeroA + \RtwozeroB + \kex }{2}-\frac{ N_{\textrm{CYC}} }{ \taucpmg } \cosh{}^{-1}(v_{1c}) \nonumber \\
 & \qquad - \frac{1}{\taucpmg}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2 \kAB p_D)\right)} , \\
-    & = \Rtwoeff^{\textrm{CR72}} - \frac{1}{\taucpmg}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2\kAB p_D )\right)} ,
+    & = \RtwoeffCR - \frac{1}{\taucpmg}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{v_{1c}^2-1}}(v_2 + 2\kAB p_D )\right)} ,
 \end{align}
 \end{subequations}
 
@@ -625,8 +625,8 @@ Final result, with identities to assist efficient matrix exponentiation optimise
 	\nu_{5} & =(-\Delta \Rtwozero + \kex + \dw i) \nu_{1s} + 2 (\nu_{4} + \kAB F_1^{a+b}) \sinh(E_1) , \\
 	y & = \left( \frac{\nu_{1c} - \nu_{3}}{\nu_{1c} + \nu_{3}} \right) ^ {N_{\textrm{CYC}}} , \\
 	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_{5}}{2 \nu_{3}N} , \\
-	\Rtwoeff{}_{\_ \textrm{CR72}} & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} - \frac{N_{\textrm{CYC}}}{\taucpmg} \, \textrm{arcosh}(\, \operatorname{Re}(\nu_{1c}) \, ) , \\
-	\Rtwoeff{} & = \Rtwoeff{}_{\_ \textrm{CR72}} - \frac{1}{\taucpmg} \log(\operatorname{Re}(T)) .
+	\RtwoeffCR & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} - \frac{N_{\textrm{CYC}}}{\taucpmg} \, \textrm{arcosh}(\, \operatorname{Re}(\nu_{1c}) \, ) , \\
+	\Rtwoeff & = \RtwoeffCR - \frac{1}{\taucpmg} \log(\operatorname{Re}(T)) .
 \end{align}
 \end{subequations}
 
