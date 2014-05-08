@@ -111,7 +111,7 @@ Comparison to CR72 full model can be found in the:
 
 # Python module imports.
 import numpy
-from numpy import arccosh, cos, cosh, log, sin, sinh, sqrt, power
+from numpy import arccosh, array, cos, cosh, in1d, log, nonzero, sin, sinh, sqrt, power
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -201,14 +201,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Mixed term (complex) (E0 - iE2)/2.
     E1 = (g3 - g4*1j) * tcp
 
-    # Real. The v_1c in paper.
-    v1c = F0 * cosh(E0) - F2 * cos(E2)
-
     # Complex.
     v1s = F0 * sinh(E0) - F2 * sin(E2)*1j
-
-    # Exact result for v2v3.
-    v3 = sqrt(v1c**2 - 1.)
 
     # -2 * oG * t2.
     v4 = F1b * (-alpha_m - g3 ) + F1b * (dw - g4)*1j
@@ -219,25 +213,73 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Off diagonal common factor. sinh fuctions.
     v5 = (-deltaR2 + kex + dw*1j) * v1s - 2. * (v4 + k_AB * F1a_plus_b) * ex1c
 
-    y = power( (v1c - v3) / (v1c + v3), ncyc)
+    # Real. The v_1c in paper.
+    v1c = F0 * cosh(E0) - F2 * cos(E2)
 
-    Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+    # Catch devision with zero in y, when v3 = 0. v3 is 0, when v1c = 1.
+    # If no 1.0, perform normally.
+    if not in1d(1.0, v1c):
+        # Exact result for v2v3.
+        v3 = sqrt(v1c**2 - 1.)
 
-    ## -1/Trel * log(LpreDyn).
-    # Rpre = (r20a + r20b + kex) / 2.0
+        y = power( (v1c - v3) / (v1c + v3), ncyc)
 
-    ## Carver and Richards (1972)
-    # R2eff_CR72 = Rpre - inv_tcpmg * ncyc *  arccosh(v1c.real)
+        Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
-    ## Baldwin final.
-    # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
-    # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
+        # Find where Tog has negative values.
+        neg_index = nonzero(Tog.real < 0.0)[0]
 
-    # Fastest calculation.
-    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+        # Do normal calculation
+        if len(neg_index) == 0:
+            ## -1/Trel * log(LpreDyn).
+            # Rpre = (r20a + r20b + kex) / 2.0
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
+            ## Carver and Richards (1972)
+            # R2eff_CR72 = Rpre - inv_tcpmg * ncyc *  arccosh(v1c.real)
 
-        # The full formula.
-        back_calc[i] = R2eff[i]
+            ## Baldwin final.
+            # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
+            # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
+
+            # Fastest calculation.
+            R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+
+            # Loop over the time points, back calculating the R2eff values.
+            for i in range(num_points):
+
+                # Put values back.
+                back_calc[i] = R2eff[i]
+
+        else:
+            # Loop over each point.
+            for i in range(num_points):
+
+                # Return large value
+                if i in neg_index:
+                    back_calc[i] = 1e100        
+
+                else:
+                    v3 = sqrt(v1c[i]**2 - 1.)
+                    y = power( (v1c[i] - v3) / (v1c[i] + v3), ncyc[i])
+                    Tog = 0.5 * (1. + y) + (1. - y) * v5[i] / (2. * v3 * N )
+                    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc[i] *  arccosh(v1c[i].real) + log(Tog.real) )
+                    back_calc[i] = R2eff
+
+    # This section is for catching math domain errors.
+    else:
+        # Find index where 
+        one_indexes = nonzero(v1c == 1.0)[0]
+
+        # Loop over each point.
+        for i in range(num_points):
+
+            # Return large value
+            if i in one_indexes:
+                back_calc[i] = 1e100
+
+            else:
+                v3 = sqrt(v1c[i]**2 - 1.)
+                y = power( (v1c[i] - v3) / (v1c[i] + v3), ncyc[i])
+                Tog = 0.5 * (1. + y) + (1. - y) * v5[i] / (2. * v3 * N )
+                R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc[i] *  arccosh(v1c[i].real) + log(Tog.real) )
+                back_calc[i] = R2eff
