@@ -1,3 +1,23 @@
+###############################################################################
+#                                                                             #
+# Copyright (C) 2013-2014 Troels E. Linnet                                    #
+#                                                                             #
+# This file is part of the program relax (http://www.nmr-relax.com).          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 # Script for calculating synthetics CPMG data.
 
 # Python module imports.
@@ -147,7 +167,7 @@ if not hasattr(ds, 'opendx'):
     ds.opendx = True
 
 if not hasattr(ds, 'dx_inc'):
-    ds.dx_inc = 70
+    ds.dx_inc = 50
 
 # The set r2eff err.
 if not hasattr(ds, 'r2eff_err'):
@@ -311,20 +331,34 @@ print("Did following number of iterations: %i"%i)
 if ds.opendx:
     # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
     pipe_name_MODEL_MAP = "%s_%s_map"%(pipe_name, model_analyse)
-    pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_MAP, bundle_to = pipe_bundle)
+    pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL_MAP, bundle_to = pipe_bundle)
     pipe.switch(pipe_name=pipe_name_MODEL_MAP)
 
-    dx_params = ['dw', 'pA', 'kex']
-    for cur_spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-        cur_spin_id = spin_id
-        dx_point = []
-        for dx_param in dx_params:
-            set_val = getattr(cur_spin, dx_param)
-            dx_point.append( set_val )
+    # Copy R2eff, but not the original parameters
+    value.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_MAP, param='r2eff')
 
+    # Then select model.
+    relax_disp.select_model(model=model_analyse)
+
+    # Define dx parameters
+    dx_params = ['dw', 'pA', 'kex']
+    for res_name, res_num, spin_name, params in cur_spins:
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
+        dx_point = []
+
+        # Now get the parameters.
+        for dx_param in dx_params:
+            set_value = float(params[dx_param ])
+            dx_point.append(set_value)
+
+        print("Params for dx map is")
+        print(dx_params)
+        print("Point param for dx map is")
+        print(dx_point)
         file_name_map = "map%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
         file_name_point = "point%s" % (cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        dx.map(params=dx_params, map_type='Iso3D', spin_id=":1@N", inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name_map, dir=ds.resdir, point=dx_point, point_file=file_name_point, remap=None)
+        dx.map(params=dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=5, file_prefix=file_name_map, dir=ds.resdir, point=dx_point, point_file=file_name_point, remap=None)
         #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
         #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
 
