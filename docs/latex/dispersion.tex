@@ -597,7 +597,7 @@ Define substutions for `stay' and `swap' factors are
 \begin{subequations}
 \begin{align}
 	N & = h_3 + \imath h_4 , \\
-	NN^* & = h_3^2 + h_42 , \\
+	NN^* & = h_3^2 + h_4^2 , \\
 	F_0 & = (\dw^2 + h_3^2) / NN^* , \\
 	F_2 & = (\dw^2 - h_4^2) / NN^* , \\
 	F_1^b & = (\dw + h_4) (\dw - \imath h_3) / NN^* , \\
@@ -609,8 +609,8 @@ Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block,
 \begin{subequations}
 \begin{align}
 	E_0 & =  2 \taucpmg \cdot h_3 , \\
-	E2 & =  2 \taucpmg \cdot  h_4 , \\
-	E1 & = (h_3 - \imath h_4) \cdot \taucpmg .
+	E_2 & =  2 \taucpmg \cdot  h_4 , \\
+	E_1 & = (h_3 - \imath h_4) \cdot \taucpmg .
 \end{align}
 \end{subequations}
 
@@ -623,7 +623,7 @@ Final result, with identities to assist efficient matrix exponentiation optimise
 	\nu_3 & = \sqrt{\nu_{1c}^2 - 1} , \\
 	\nu_4 & = F_1^b (-\alpha_- - h_3 ) + \imath F_1^b (\dw - h_4) , \\
 	\nu_5 & =(-\Delta \Rtwozero + \kex + \imath \dw) \nu_{1s} + 2 (\nu_4 + \kAB F_1^{a+b}) \sinh(E_1) , \\
-	y & = \left( \frac{\nu_{1c} - \nu_3}{\nu_{1c} + \nu_3} \right) ^ \ncyc , \\
+    y & = \left( \frac{\nu_{1c} - \nu_3}{\nu_{1c} + \nu_3} \right) ^ {\ncyc} , \\
 	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_5}{2 \nu_3 N} , \\
 	\RtwoeffCR & = \frac{(\RtwozeroA + \RtwozeroB + \kex)}{2} - \frac{\ncyc}{\taucpmg} \, \textrm{arcosh}(\, \operatorname{Re}(\nu_{1c}) \, ) , \\
 	\Rtwoeff & = \RtwoeffCR - \frac{1}{\taucpmg} \log(\operatorname{Re}(T)) .
