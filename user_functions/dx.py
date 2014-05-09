@@ -186,6 +186,14 @@ uf.add_keyarg(
     desc = "The name of that the point output files will be prefixed with.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "chi_surface",
+    default = None,
+    py_type = "list",
+    desc_short = "Set the chi2 surface level for the Innermost, Inner, Middle and Outer Isosurface.",
+    desc = "A list of 4 numbers, setting the level for the 4 isosurfaces. Useful in scripting if you create a set of OpenDX maps with all the same contour levels.  Ideal for comparisons.",
+    can_be_none = True
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
