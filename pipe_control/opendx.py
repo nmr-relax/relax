@@ -30,6 +30,7 @@ from time import asctime, localtime
 # relax module imports.
 from lib.errors import RelaxError
 from lib.io import open_write_file
+from lib.mathematics import percentile
 from lib.software.opendx.files import write_config, write_general, write_point, write_program
 from pipe_control import value
 from specific_analyses.api import return_api
@@ -163,7 +164,12 @@ class Map:
 
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
-            chi_surface = [7.0, 20.0, 100.0, 500.0]
+            all_chi2 = array(self.all_chi, float64)
+            innermost = percentile(all_chi2, 0.10)
+            inner = percentile(all_chi2, 0.20)
+            middle = percentile(all_chi2, 0.50)
+            outer = percentile(all_chi2, 0.90)
+            chi_surface = [innermost, inner, middle, outer]
 
         # Create the OpenDX .net program file.
         write_program(file_prefix=self.file_prefix, point_file=self.point_file, dir=self.dir, inc=self.inc, N=self.n, num_points=self.num_points, labels=self.labels, tick_locations=self.tick_locations, tick_values=self.tick_values, date=self.date, chi_surface = chi_surface)
