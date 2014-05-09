@@ -576,7 +576,7 @@ The equation is
 where Appendix 1 in \citet{Baldwin2014} list the recipe for exact calculation of $\Rtwoeff$.
 Note that the following definitions are different to those in the original publication, but match both the reference implementation and the relax implementation.
 The definitions are functionally equivalent.
-Establish the complex free precession eigenfrequency with
+First establish the complex free precession eigenfrequency with
 \begin{subequations}
 \begin{align}
 	\Delta \Rtwozero & = \RtwozeroA - \RtwozeroB , \\
@@ -588,13 +588,12 @@ Establish the complex free precession eigenfrequency with
 \end{align}
 \end{subequations}
 
-The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components, in terms
-of definitions $\zeta , \Psi , h_3 , h_4$ is
+The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components, in terms of definitions $\zeta$, $\Psi$, and $h_4$ is
 \begin{equation}
 	f_{00} = \frac{1}{2}\left(\RtwozeroA + \RtwozeroB + \kex\right) + \frac{\imath}{2}\left(\dw - h_4\right) .
 \end{equation}
 
-Define substitutions for `stay' and `swap' factors are
+Define substitutions for `stay' and `swap' factors as
 \begin{subequations}
 \begin{align}
 	N & = h_3 + \imath h_4 , \\
@@ -606,7 +605,7 @@ Define substitutions for `stay' and `swap' factors are
 \end{align}
 \end{subequations}
 
-Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block, ($F_{0-2}$), are
+The weighting factors for frequencies $E_{0-2}$ emerging from a single CPMG block, $F_{0-2}$, are
 \begin{subequations}
 \begin{align}
 	E_0 & =  2 \taucpmg \cdot h_3 , \\
@@ -615,8 +614,8 @@ Weighting factors for frequencies ($E_{0-2}$) emerging from a single CPMG block,
 \end{align}
 \end{subequations}
 
-Here $\taucpmg = 1 / 4\nucpmg $.
-Final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation is
+Here $\taucpmg = 1 / 4\nucpmg$.
+The final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation is
 \begin{subequations}
 \begin{align}
 	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) , \\
