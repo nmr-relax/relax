@@ -220,24 +220,24 @@ The $\Rtwoeff$/$\Ronerho$ values determined can be later copied to the data pipe
 
 For the fixed relaxation time period CPMG-type experiments, the $\Rtwoeff$/$\Ronerho$ values are determined by direct calculation using the formula
 \begin{equation}
-    \Rtwoeff(\nucpmg) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
+    \Rtwoeff(\nucpmg) = - \frac{1}{\Trelax} \cdot \ln \left( \frac{I_1(\nucpmg)}{I_0} \right) .
 \end{equation}
 
 The values and errors are determined with a single call of the \uf{calc} user function.
 The $\Ronerho$ version of the equation is essentially the same:
 \begin{equation}
-    \Ronerho(\omega_1) = - \frac{1}{T_\textrm{relax}} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
+    \Ronerho(\omega_1) = - \frac{1}{\Trelax} \cdot \ln \left( \frac{I_1(\omega_1)}{I_0} \right) .
 \end{equation}
 
 Errors are calculated using the formula
 \begin{equation} \label{eq: dispersion error}
-    \sigma_{\Rtwo} = \frac{1}{T_\textrm{relax}} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
+    \sigma_{\Rtwo} = \frac{1}{\Trelax} \sqrt{ \left( \frac{\sigma_{I_1}}{I_1(\omega_1)} \right)^2  +  \left( \frac{\sigma_{I_0}}{I_0} \right)^2 } .
 \end{equation}
 
 In a number of publications, the error formula from \citet{IshimaTorchia05} has been used.
 This is the collapse of Equation~\ref{eq: dispersion error} by setting $\sigma_{I_0}$ to zero:
 \begin{equation} \label{eq: IT05 dispersion error}
-    \sigma_{\Rtwo} = \frac{\sigma_{I_1}}{T_\textrm{relax} I_1(\omega_1)} .
+    \sigma_{\Rtwo} = \frac{\sigma_{I_1}}{\Trelax I_1(\omega_1)} .
 \end{equation}
 
 This is not implemented in relax as it can be shown by simple simulation that the formula is incorrect (see Figure~\ref{fig: dispersion error comparison}).
@@ -772,9 +772,9 @@ The relative peak intensities, magnetisation, and effective $\Rtwo$ relaxation r
 \begin{subequations}
 \begin{align}
     I_0 &= \pA, \\
-    I_1 &= \Re(t_{139}) \exp(-T_\textrm{relax} \Rtwozero), \\
+    I_1 &= \Re(t_{139}) \exp(-\Trelax \Rtwozero), \\
     M_x &= I_1 / I_0, \\
-    \Rtwoeff &= -\frac{1}{T_\textrm{relax}} \cdot \ln \left( M_x \right). \label{eq: R2eff NS CPMG 2-site expanded}
+    \Rtwoeff &= -\frac{1}{\Trelax} \cdot \ln \left( M_x \right). \label{eq: R2eff NS CPMG 2-site expanded}
 \end{align}
 \end{subequations}
 
@@ -894,7 +894,7 @@ It is selected by setting the model to `MMQ CR72'.
 The simple constraint $\pA > \pB$ is used to halve the optimisation space, as both sides of the limit are mirror image spaces.
 The equation for the exchange process is 
 \begin{equation}
-    \Rtwoeff = \Re(\lambda_1) - \frac{1}{T_\textrm{relax}}\ln(Q),
+    \Rtwoeff = \Re(\lambda_1) - \frac{1}{\Trelax}\ln(Q),
 \end{equation}
 
 where
@@ -973,12 +973,12 @@ Different sets of equations are used for the different data types.
 
 The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
 \begin{equation}
-    \Rtwoeff = - \frac{1}{T_\textrm{relax}} \log \frac{\mathbf{M}_A(T_\textrm{relax})}{\mathbf{M}_A(0)},
+    \Rtwoeff = - \frac{1}{\Trelax} \log \frac{\mathbf{M}_A(\Trelax)}{\mathbf{M}_A(0)},
 \end{equation}
 
 where $\mathbf{M}_A(0)$ is proportional to the vector $[\pA, \pB]^T$ and
 \begin{equation}
-    \mathbf{M}_A(T_\textrm{relax}) = \left( \mathbf{A_\pm}\mathbf{A_\mp}\mathbf{A_\mp}\mathbf{A_\pm} \right)^n \mathbf{M}_A(0)
+    \mathbf{M}_A(\Trelax) = \left( \mathbf{A_\pm}\mathbf{A_\mp}\mathbf{A_\mp}\mathbf{A_\pm} \right)^n \mathbf{M}_A(0)
 \end{equation}
 
 The evolution matrix $\mathbf{A}$ is defined as
@@ -1468,7 +1468,7 @@ The simple constraint $\pA > \pB$ is used to halve the optimisation space, as bo
 For this model, the equations from \citet{Korzhnev05a} have been used.
 The $\Ronerho$ value for state A magnetisation is defined as
 \begin{equation}
-    \Ronerho = - \frac{1}{T_\textrm{relax}}  \cdot \ln \left( M_0^T \cdot e^{R \cdot T_\textrm{relax}} \cdot M_0 \right),
+    \Ronerho = - \frac{1}{\Trelax}  \cdot \ln \left( M_0^T \cdot e^{R \cdot \Trelax} \cdot M_0 \right),
 \end{equation}
 
 where
@@ -1514,7 +1514,7 @@ For this model, as for the 2-site model above, the equations from \citet{Korzhne
 These have been however rearranged to match the notation in \citet{PalmerMassi06}.
 The $\Ronerho$ value for state A magnetisation is defined as
 \begin{equation}
-    \Ronerho = - \frac{1}{T_\textrm{relax}}  \cdot \ln \left( M_0^T \cdot e^{R \cdot T_\textrm{relax}} \cdot M_0 \right),
+    \Ronerho = - \frac{1}{\Trelax}  \cdot \ln \left( M_0^T \cdot e^{R \cdot \Trelax} \cdot M_0 \right),
 \end{equation}
 
 where
@@ -2139,7 +2139,7 @@ Missing features include:
   \item The van't Hoff analysis of multi-temperature dispersion data (see \url{https://en.wikipedia.org/wiki/Van\_\%27t\_Hoff\_equation}).
   \item ZZ exchange.
   \item HD exchange.
-  \item The \citet{Korzhnev05a} correction for constant-time $\Ronerho$ experiments for the analytic models ($\Ronerho$ = $-\lambda_1 -1/T_\textrm{relax}\log{a_1}$, where $a_1$ = $1 - \pB\cos^2(\theta_A - \theta_B)$, and $\theta_A$ = $\arctan(\omegaone/\omegaA)$ and $\theta_B$ = $\arctan(\omegaone/\omegaB)$.
+  \item The \citet{Korzhnev05a} correction for constant-time $\Ronerho$ experiments for the analytic models ($\Ronerho$ = $-\lambda_1 -1/\Trelax\log{a_1}$, where $a_1$ = $1 - \pB\cos^2(\theta_A - \theta_B)$, and $\theta_A$ = $\arctan(\omegaone/\omegaA)$ and $\theta_B$ = $\arctan(\omegaone/\omegaB)$.
 \end{itemize}
 
 If you would like one of these features, please contact the ``relax-devel at gna.org''\index{mailing list!relax-devel} mailing list.
