@@ -471,19 +471,19 @@ class Fetch_docstrings:
         string = string.replace(' >> ', ' $>>$ ')
 
         # 1st, 2nd, etc.
-        string = string.replace('1st', '1$^\mathrm{st}$')
-        string = string.replace('2nd', '2$^\mathrm{nd}$')
-        string = string.replace('3rd', '3$^\mathrm{rd}$')
-        string = string.replace('4th', '4$^\mathrm{th}$')
-        string = string.replace('5th', '5$^\mathrm{th}$')
-        string = string.replace('6th', '6$^\mathrm{th}$')
-        string = string.replace('7th', '7$^\mathrm{th}$')
-        string = string.replace('8th', '8$^\mathrm{th}$')
-        string = string.replace('9th', '9$^\mathrm{th}$')
-        string = string.replace('0th', '0$^\mathrm{th}$')
-        string = string.replace('1th', '1$^\mathrm{th}$')
-        string = string.replace('2th', '2$^\mathrm{th}$')
-        string = string.replace('3th', '3$^\mathrm{th}$')
+        string = string.replace('1st', '1$^{\mathrm{st}}$')
+        string = string.replace('2nd', '2$^{\mathrm{nd}}$')
+        string = string.replace('3rd', '3$^{\mathrm{rd}}$')
+        string = string.replace('4th', '4$^{\mathrm{th}}$')
+        string = string.replace('5th', '5$^{\mathrm{th}}$')
+        string = string.replace('6th', '6$^{\mathrm{th}}$')
+        string = string.replace('7th', '7$^{\mathrm{th}}$')
+        string = string.replace('8th', '8$^{\mathrm{th}}$')
+        string = string.replace('9th', '9$^{\mathrm{th}}$')
+        string = string.replace('0th', '0$^{\mathrm{th}}$')
+        string = string.replace('1th', '1$^{\mathrm{th}}$')
+        string = string.replace('2th', '2$^{\mathrm{th}}$')
+        string = string.replace('3th', '3$^{\mathrm{th}}$')
 
 
         # Relaxation data.

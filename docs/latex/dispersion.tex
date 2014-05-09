@@ -324,7 +324,7 @@ This is the original model for 2-site fast exchange for CPMG-type experiments.
 It is selected by setting the model to `LM63', here named after \citet{LuzMeiboom63}.
 The original $n$-site Equation~(7) from their paper can be written as
 \begin{equation}
-    \Rex = \left[ 1 - 2\tex g \cdot \tanh \left( 2\tex g \right)^{-1} \right] \cdot \tex \cdot \sum_{i=2}^n p_\textrm{i}\dw_{i},
+    \Rex = \left[ 1 - 2\tex g \cdot \tanh \left( 2\tex g \right)^{-1} \right] \cdot \tex \cdot \sum_{i=2}^n p_{\textrm{i}}\dw_{i},
 \end{equation}
 
 where $g$ is the pulse repetition rate defined as
@@ -334,7 +334,7 @@ where $g$ is the pulse repetition rate defined as
 
 It can be rearranged as
 \begin{equation} \label{eq: Luz-Meiboom}
-    \Rex = \sum_{i=2}^n \frac{\Phiexi}{\textrm{k}_\textrm{i}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_\textrm{i}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right).
+    \Rex = \sum_{i=2}^n \frac{\Phiexi}{\textrm{k}_{\textrm{i}}} \cdot \left( 1 - \frac{4\nucpmg}{\textrm{k}_{\textrm{i}}} \cdot \tanh \left( \frac{\textrm{k}_\textrm{i}}{4\nucpmg} \right) \right).
 \end{equation}
 
 
@@ -431,10 +431,10 @@ The equation is
 
 where
 \begin{align}
-    D_\pm    &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
-    \eta_\pm &= 2^{\frac{-3}{2}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
-    \Psi     &= \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
-    \zeta    &= 2\dw \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right).
+    D_{\pm}    &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
+    \eta_{\pm} &= 2^{\frac{-3}{2}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
+    \Psi       &= \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
+    \zeta      &= 2\dw \left( \RtwozeroA - \RtwozeroB - \pA\kex + \pB\kex \right).
 \end{align}
 
 Note that these equations use the numerically simplified form derived in the appendix of \citet{Davis94}.
@@ -470,7 +470,7 @@ This simplifies the equations to
     \Rtwoeff = \Rtwozero + \frac{\kex}{2} - \nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big) ,
 \end{equation}
 
-where $D_\pm$ and $\eta_\pm$ are unchanged and
+where $D_{\pm}$ and $\eta_{\pm}$ are unchanged and
 \begin{align}
     \Psi  &= \kex^2 - \dw^2 , \\
     \zeta &= -2\dw (\pA\kex - \pB\kex) .
@@ -499,18 +499,18 @@ It is selected by setting the model to `IT99'.
 The equation is:
 \begin{align}
     \Rex       &\simeq \frac{\Phiex\tex}{1 + \omega_a^2\tex^2} , \\
-    \omega_a^2 &= \sqrt{\omega_\textrm{1eff}^4 + \pA^2\dw^4} , \\
+    \omega_a^2 &= \sqrt{\omega_{\textrm{1eff}}^4 + \pA^2\dw^4} , \\
     \Rtwoeff   &= \Rtwozero + \Rex .
 \end{align}
 
 The effective rotating frame field for a CPMG-type experiment is given by
 \begin{equation}
-    \omega_\textrm{1eff} = 4\sqrt{3}\nucpmg ,
+    \omega_{\textrm{1eff}} = 4\sqrt{3}\nucpmg ,
 \end{equation}
 
 and hence
 \begin{equation}
-    \omega_\textrm{1eff}^4 = 2304\nucpmg^4 .
+    \omega_{\textrm{1eff}}^4 = 2304\nucpmg^4 .
 \end{equation}
 
 The reference for this equation is:
@@ -756,7 +756,7 @@ Further simplifications can be found in the code.
     t_{108} &= t_{62} t_{88} + t_{82} t_{31}, \\
     t_{112} &= \sqrt{t_{98} - 2 t_{99} t_{97} + t_{102} + 2 (t_{91} t_{68} + t_{95} t_{55}) t_{108}}, \\
     t_{113} &= t_{97} - t_{99} - t_{112}, \\
-    t_{115} &= n_\textrm{CPMG}, \\
+    t_{115} &= n_{\textrm{CPMG}}, \\
     t_{116} &= \left( \frac{t_{97} + t_{99} + t_{112}}{2} \right)^{t_{115}}, \\
     t_{118} &= \frac{1}{t_{112}}, \\
     t_{120} &= t_{97} - t_{99} + t_{112}, \\
@@ -778,7 +778,7 @@ The relative peak intensities, magnetisation, and effective $\Rtwo$ relaxation r
 \end{align}
 \end{subequations}
 
-In these equations $\taucpmg$ and $n_\textrm{CPMG}$ are numpy arrays and hence $t_{139}$ is also a numpy array.
+In these equations $\taucpmg$ and $n_{\textrm{CPMG}}$ are numpy arrays and hence $t_{139}$ is also a numpy array.
 This avoids a Python loop over the dispersion points until the very end of the calculation, required to populate the $\Rtwoeff$ data structure, resulting in very fast calculations.
 
 The reference for this model is:
@@ -899,11 +899,11 @@ The equation for the exchange process is
 
 where
 \begin{align}
-    \lambda_1 &= \RtwozeroMQ + \frac{\kex}{2} - \nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big), \\
-    D_\pm     &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
-    \eta_\pm  &= 2^{\frac{2}{3}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
-    \Psi      &= \left( \imath \dwH + \pA\kex - \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
-    \zeta     &= -2\dw \left( \imath \dwH + \pA\kex - \pB\kex \right),
+    \lambda_1  &= \RtwozeroMQ + \frac{\kex}{2} - \nucpmg\cosh^{-1} \big( D_+\cosh(\eta_+) - D_-\cos(\eta_-) \big), \\
+    D_{\pm}    &= \frac{1}{2} \left( \pm1 + \frac{\Psi + 2\dw^2}{\sqrt{\Psi^2 + \zeta^2}} \right) , \\
+    \eta_{\pm} &= 2^{\frac{2}{3}}\frac{1}{\nucpmg} \left( \pm\Psi + \sqrt{\Psi^2 + \zeta^2} \right)^{\frac{1}{2}} , \\
+    \Psi       &= \left( \imath \dwH + \pA\kex - \pB\kex \right)^2 - \dw^2 + 4\pA\pB\kex^2 , \\
+    \zeta      &= -2\dw \left( \imath \dwH + \pA\kex - \pB\kex \right),
 \end{align}
 
 and where
@@ -913,14 +913,14 @@ and where
 
 and
 \begin{align}
-    m_{D\pm} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_\pm z_\pm} \left( z_\pm + 2\dw \frac{\sin(z_\pm\delta)}{\sin((d_\pm + z_\pm)\delta)} \right), \\
-    m_{Z\mp} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_\pm z_\pm} \left( d_\pm - 2\dw \frac{\sin(d_\pm\delta)}{\sin((d_\pm + z_\pm)\delta)} \right),
+    m_{D\pm} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_{\pm} z_\pm} \left( z_{\pm} + 2\dw \frac{\sin(z_{\pm}\delta)}{\sin((d_{\pm} + z_{\pm})\delta)} \right), \\
+    m_{Z\mp} &= \pm \frac{\imath\kex\sqrt{\pA\pB}}{d_{\pm} z_\pm} \left( d_{\pm} - 2\dw \frac{\sin(d_{\pm}\delta)}{\sin((d_{\pm} + z_{\pm})\delta)} \right),
 \end{align}
 
 and
 \begin{align}
-    d_\pm    &= \left( \dwH + \dw \right) \pm \imath\kex, \\
-    z_\pm    &= \left( \dwH - \dw \right) \pm \imath\kex.
+    d_{\pm}    &= \left( \dwH + \dw \right) \pm \imath\kex, \\
+    z_{\pm}    &= \left( \dwH - \dw \right) \pm \imath\kex.
 \end{align}
 
 The symbol $\delta$ is half of $\taucpmg$ or
@@ -978,17 +978,17 @@ The basic evolution matrices for single, zero and double quantum CPMG-type data 
 
 where $\mathbf{M}_A(0)$ is proportional to the vector $[\pA, \pB]^T$ and
 \begin{equation}
-    \mathbf{M}_A(\Trelax) = \left( \mathbf{A_\pm}\mathbf{A_\mp}\mathbf{A_\mp}\mathbf{A_\pm} \right)^n \mathbf{M}_A(0)
+    \mathbf{M}_A(\Trelax) = \left( \mathbf{A_{\pm}}\mathbf{A_\mp}\mathbf{A_\mp}\mathbf{A_{\pm}} \right)^n \mathbf{M}_A(0)
 \end{equation}
 
 The evolution matrix $\mathbf{A}$ is defined as
 \begin{equation}
-    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+    \mathbf{A_{\pm}} = e^{\mathbf{a_{\pm}} \cdot \taucpmg},
 \end{equation}
 
 where
 \begin{equation}
-    \mathbf{a_\pm} = \begin{pmatrix}
+    \mathbf{a_{\pm}} = \begin{pmatrix}
                        -\kAB -\RtwozeroA & \kBA \\
                        \kAB  & -\kBA \pm\imath\dw - \RtwozeroB
                      \end{pmatrix}.
@@ -1093,21 +1093,21 @@ To simplify the optimisation space for the model, the assumption $\RtwozeroA$~= 
 
 The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
 \begin{equation}
-    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+    \mathbf{A_{\pm}} = e^{\mathbf{a_{\pm}} \cdot \taucpmg},
 \end{equation}
 
 where
 \begin{align}
-    \mathbf{a_\pm} &= \begin{pmatrix}
-                        -\kAB & \kBA                          & 0    \\
-                        \kAB  & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
-                        0     & \kBC                          & -\kCB \pm\imath\dwAC
-                      \end{pmatrix}  \nonumber \\
-                   &\qquad - \begin{pmatrix}
-                               \RtwozeroA & 0          & 0    \\
-                               0          & \RtwozeroB & 0    \\
-                               0          & 0          & \RtwozeroC
-                             \end{pmatrix}.
+    \mathbf{a_{\pm}} &= \begin{pmatrix}
+                          -\kAB & \kBA                          & 0    \\
+                          \kAB  & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
+                          0     & \kBC                          & -\kCB \pm\imath\dwAC
+                        \end{pmatrix}  \nonumber \\
+                     &\qquad - \begin{pmatrix}
+                                 \RtwozeroA & 0          & 0    \\
+                                 0          & \RtwozeroB & 0    \\
+                                 0          & 0          & \RtwozeroC
+                               \end{pmatrix}.
 \end{align}
 
 
@@ -1176,21 +1176,21 @@ To simplify the optimisation space for the model as in the `NS MMQ 3-site linear
 
 The basic evolution matrices for single, zero and double quantum CPMG-type data for this model are
 \begin{equation}
-    \mathbf{A_\pm} = e^{\mathbf{a_\pm} \cdot \taucpmg},
+    \mathbf{A_{\pm}} = e^{\mathbf{a_{\pm}} \cdot \taucpmg},
 \end{equation}
 
 where
 \begin{align}
-    \mathbf{a_\pm} &= \begin{pmatrix}
-                        -\kAB -\kAC & \kBA                          & \kCA \\
-                        \kAB        & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
-                        \kAC        & \kBC                          & -\kCB -\kCA \pm\imath\dwAC
-                      \end{pmatrix}  \nonumber \\
-                   &\qquad - \begin{pmatrix}
-                               \RtwozeroA & 0          & 0    \\
-                               0          & \RtwozeroB & 0    \\
-                               0          & 0          & \RtwozeroC
-                             \end{pmatrix}.
+    \mathbf{a_{\pm}} &= \begin{pmatrix}
+                          -\kAB -\kAC & \kBA                          & \kCA \\
+                          \kAB        & -\kBA -\kBC \pm\imath\dwAB    & \kCB \\
+                          \kAC        & \kBC                          & -\kCB -\kCA \pm\imath\dwAC
+                        \end{pmatrix}  \nonumber \\
+                     &\qquad - \begin{pmatrix}
+                                 \RtwozeroA & 0          & 0    \\
+                                 0          & \RtwozeroB & 0    \\
+                                 0          & 0          & \RtwozeroC
+                               \end{pmatrix}.
 \end{align}
 
 

@@ -922,29 +922,29 @@ The second partial derivatives of the relaxation equations with respect to the b
 
 \subsection{The model-free equations}
 
-In the original model-free analysis of \cite{LipariSzabo82a} the correlation function $C(\tau)$ of the XH bond vector is approximated by decoupling the internal fluctuations of the bond vector $C_\mathrm{I}(\tau)$ from the correlation function of the overall Brownian rotational diffusion $C_\mathrm{O}(\tau)$ by the equation
+In the original model-free analysis of \cite{LipariSzabo82a} the correlation function $C(\tau)$ of the XH bond vector is approximated by decoupling the internal fluctuations of the bond vector $C_{\mathrm{I}}(\tau)$ from the correlation function of the overall Brownian rotational diffusion $C_{\mathrm{O}}(\tau)$ by the equation
 \begin{equation}
-    C(\tau) = C_\mathrm{O}(\tau) \cdot C_\mathrm{I}(\tau).
+    C(\tau) = C_{\mathrm{O}}(\tau) \cdot C_{\mathrm{I}}(\tau).
 \end{equation}
 
 \noindent The overall correlation functions of the diffusion of a sphere, spheroid, and ellipsoid are presented respectively in section~\ref{ellipsoid equation} on page~\pageref{ellipsoid equation}, section~\ref{spheroid equation} on page~\pageref{spheroid equation}, and section~\ref{sphere equation} on page~\pageref{sphere equation}.
 These three different equations can be combined into one generic correlation function which is independent of the type of diffusion.
 This generic correlation function is
 \begin{equation}
-    C_\mathrm{O}(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
+    C_{\mathrm{O}}(\tau) = \frac{1}{5} \sum_{i=-k}^k c_i \cdot e^{-\tau/\tau_i},
 \end{equation}
 
 \noindent where $c_i$ are the weights and $\tau_i$ are correlation times of the exponential terms.
 In the original model-free analysis of \citet{LipariSzabo82a,LipariSzabo82b} the internal motions are modelled by the correlation function
 \begin{equation}
-    C_\mathrm{I}(\tau) = S^2 + (1 - S^2) e^{-\tau / \tau_e},
+    C_{\mathrm{I}}(\tau) = S^2 + (1 - S^2) e^{-\tau / \tau_e},
 \end{equation}
 
 \noindent where $S^2$ is the generalised Lipari and Szabo order parameter which is related to the amplitude of the motion and $\tau_e$ is the effective correlation time which is an indicator of the timescale of the motion, albeit being dependent on the value of the order parameter.
 The order parameter ranges from one for complete rigidity to zero for unrestricted motions.
 Model-free theory was extended by \citet{Clore90a} to include motions on two timescales by the correlation function
 \begin{equation}
-    C_\mathrm{I}(\tau) = S^2 + (1 - S^2_f) e^{-\tau / \tau_f} + (S^2_f - S^2) e^{-\tau / \tau_s},
+    C_{\mathrm{I}}(\tau) = S^2 + (1 - S^2_f) e^{-\tau / \tau_f} + (S^2_f - S^2) e^{-\tau / \tau_s},
 \end{equation}
 
 \noindent where the faster of the motions is defined by the order parameter $S^2_f$ and the correlation time $\tau_f$, the slower by the parameters $S^2_s$ and $\tau_s$, and the two order parameter are related by the equation $S^2 = S^2_f \cdot S^2_s$.
@@ -1789,7 +1789,7 @@ The second partial derivative of~\eqref{eq: maths: J(w) model-free generic} with
 
 The correlation function of the Brownian rotational diffusion of an ellipsoid is
 \begin{equation} \label{eq: ellipsoid correlation function}
-    C_\mathrm{O}(\tau) = \frac{1}{5} \sum^2_{i=-2} c_i e^{-\frac{\tau}{\tau_i}}.
+    C_{\mathrm{O}}(\tau) = \frac{1}{5} \sum^2_{i=-2} c_i e^{-\frac{\tau}{\tau_i}}.
 \end{equation}
 
 \noindent where $c_i$ are the weights of the five exponential terms which are dependent on the orientation of the XH bond vector and $\tau_i$ are the correlation times of the five exponential terms.
@@ -2531,7 +2531,7 @@ The second partial derivatives with respect to the geometric parameter $\Diff_r$
 
 The correlation function of the Brownian rotational diffusion of a spheroid is
 \begin{equation} \label{eq: spheroid correlation function}
-    C_\mathrm{O}(\tau) = \frac{1}{5} \sum^1_{i=-1} c_i e^{-\frac{\tau}{\tau_i}}.
+    C_{\mathrm{O}}(\tau) = \frac{1}{5} \sum^1_{i=-1} c_i e^{-\frac{\tau}{\tau_i}}.
 \end{equation}
 
 \noindent where $c_i$ are the weights of the three exponential terms which are dependent on the orientation of the XH bond vector and $\tau_i$ are the correlation times of the three exponential terms.
@@ -2779,7 +2779,7 @@ The second partial derivatives with respect to the geometric parameter $\Diff_a$
 
 The correlation function of the Brownian rotational diffusion of a sphere is
 \begin{align} \label{eq: spherical correlation function}
-    C_\mathrm{O}(\tau) &= \frac{1}{5} e^{-\frac{\tau}{\tau_m}}, \\
+    C_{\mathrm{O}}(\tau) &= \frac{1}{5} e^{-\frac{\tau}{\tau_m}}, \\
               &= \frac{1}{5} \sum^0_{i=0} c_i e^{-\frac{\tau}{\tau_i}}.
 \end{align}
 
