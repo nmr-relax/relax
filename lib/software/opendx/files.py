@@ -184,7 +184,7 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, num_points=Non
     point_file_general.close()
 
 
-def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None, num_points=None, labels=None, tick_locations=None, tick_values=None, date=None, min_chi2=7.0, max_chi2=500.0, median_chi2=100.0):
+def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None, num_points=None, labels=None, tick_locations=None, tick_values=None, date=None, chi_surface=[7.0, 20.0, 100.0, 500.0]):
     """Create the OpenDX .net program file.
 
     @keyword file_prefix:       The base part of the file name without extension.
@@ -207,12 +207,8 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     @type tick_values:          str
     @keyword date:              The date string to include in the configuration.
     @type date:                 str
-    @keyword min_chi2:          The minimum Chi-squared value found when creating the map. This will set the Innermost Isosurface value.
-    @type float:                float
-    @keyword max_chi2:          The maxium Chi-squared value found when creating the map. This will set the Outer Isosurface value.
-    @type float:                float
-    @keyword median_chi2:       The median Chi-squared value found when creating the map. This will set the Middle Isosurface value.
-    @type float:                float
+    @keyword chi_surface:       Chi2 surface level for the Innermost, Inner, Middle and Outer Isosurface.
+    @type chi_surface:          list of 4 floats
     """
 
     # Print out.
@@ -238,19 +234,8 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     image_array2 = "[%s %s %s]" % (0.6 * (inc + 1.0), 0.3 * (inc + 1.0), 6.0 * (inc + 1.0))
     image_val = repr(3.0 * (inc + 1.0))
 
-    # Setting the default values for the 4 isosurfaces.
-    # For Innermost Isosurface, let it be the min chi2 value.
-    innermost_isosurface_value = min_chi2
-
-    # For Outer Isosurface, let it be max chi2 value, round to ceiling of first 3 digits.
-    nr_digits = len((str(max_chi2).split(".")[0])) - 3
-    outer_isosurface_value = ceil(max_chi2/(10**nr_digits) )*(10**nr_digits)
-
-    # For the Middle Isosurface, let it be the median value of chi2.
-    middle_isosurface_value = median_chi2
-
-    # For the Inner Isosurface, let it be the median value between Innermost Isosurface and Middle Isosurface.
-    inner_isosurface_value = median([innermost_isosurface_value, middle_isosurface_value])
+    # Unpacking the values for the 4 isosurfaces.
+    innermost_isosurface_value, inner_isosurface_value, middle_isosurface_value, outer_isosurface_value  = chi_surface
 
     # Generate the text of the program.
     ###################################
