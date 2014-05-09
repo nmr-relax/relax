@@ -22,6 +22,10 @@
 # Module docstring.
 """Module for generating OpenDX files."""
 
+
+# Python module imports.
+from numpy import ceil, median
+
 # relax module imports.
 from lib.io import open_write_file
 
@@ -180,7 +184,7 @@ def write_point(file_prefix=None, dir=None, inc=None, point=None, num_points=Non
     point_file_general.close()
 
 
-def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None, num_points=None, labels=None, tick_locations=None, tick_values=None, date=None):
+def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None, num_points=None, labels=None, tick_locations=None, tick_values=None, date=None, min_chi2=7.0, max_chi2=500.0, median_chi2=100.0):
     """Create the OpenDX .net program file.
 
     @keyword file_prefix:       The base part of the file name without extension.
@@ -203,6 +207,12 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     @type tick_values:          str
     @keyword date:              The date string to include in the configuration.
     @type date:                 str
+    @keyword min_chi2:          The minimum Chi-squared value found when creating the map. This will set the Innermost Isosurface value.
+    @type float:                float
+    @keyword max_chi2:          The maxium Chi-squared value found when creating the map. This will set the Outer Isosurface value.
+    @type float:                float
+    @keyword median_chi2:       The median Chi-squared value found when creating the map. This will set the Middle Isosurface value.
+    @type float:                float
     """
 
     # Print out.
@@ -228,6 +238,19 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     image_array2 = "[%s %s %s]" % (0.6 * (inc + 1.0), 0.3 * (inc + 1.0), 6.0 * (inc + 1.0))
     image_val = repr(3.0 * (inc + 1.0))
 
+    # Setting the default values for the 4 isosurfaces.
+    # For Innermost Isosurface, let it be the min chi2 value.
+    innermost_isosurface_value = min_chi2
+
+    # For Outer Isosurface, let it be max chi2 value, round to ceiling of first 3 digits.
+    nr_digits = len((str(max_chi2).split(".")[0])) - 3
+    outer_isosurface_value = ceil(max_chi2/(10**nr_digits) )*(10**nr_digits)
+
+    # For the Middle Isosurface, let it be the median value of chi2.
+    middle_isosurface_value = median_chi2
+
+    # For the Inner Isosurface, let it be the median value between Innermost Isosurface and Middle Isosurface.
+    inner_isosurface_value = median([innermost_isosurface_value, middle_isosurface_value])
 
     # Generate the text of the program.
     ###################################
@@ -350,7 +373,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    ) [instance: 3, cache: 1];\n")
     file.write("    // \n")
     file.write("    // node Isosurface[5]: x = 102, y = 191, inputs = 6, label = Outer Isosurface\n")
-    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = 500.0\n")
+    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = %.1f\n"%(outer_isosurface_value))
     file.write("    // page group: Isosurfaces\n")
     file.write("    //\n")
     file.write("main_Isosurface_5_out_1 = \n")
@@ -388,7 +411,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    ) [instance: 6, cache: 1];\n")
     file.write("    // \n")
     file.write("    // node Isosurface[6]: x = 200, y = 191, inputs = 6, label = Middle Isosurface\n")
-    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = 100.0\n")
+    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = %.1f\n"%(middle_isosurface_value))
     file.write("    // page group: Isosurfaces\n")
     file.write("    //\n")
     file.write("main_Isosurface_6_out_1 = \n")
@@ -435,7 +458,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    ) [instance: 5, cache: 1];\n")
     file.write("    // \n")
     file.write("    // node Isosurface[7]: x = 298, y = 191, inputs = 6, label = Inner Isosurface\n")
-    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = 20.0\n")
+    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = %.1f\n"%(inner_isosurface_value))
     file.write("    // page group: Isosurfaces\n")
     file.write("    //\n")
     file.write("main_Isosurface_7_out_1 = \n")
@@ -473,7 +496,7 @@ def write_program(file_prefix=None, point_file=None, dir=None, inc=None, N=None,
     file.write("    ) [instance: 8, cache: 1];\n")
     file.write("    // \n")
     file.write("    // node Isosurface[8]: x = 396, y = 191, inputs = 6, label = Innermost Isosurface\n")
-    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = 7.0\n")
+    file.write("    // input[2]: defaulting = 0, visible = 1, type = 5, value = %.1f\n"%(innermost_isosurface_value))
     file.write("    // page group: Isosurfaces\n")
     file.write("    //\n")
     file.write("main_Isosurface_8_out_1 = \n")
