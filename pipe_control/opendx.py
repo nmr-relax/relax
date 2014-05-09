@@ -35,7 +35,7 @@ from pipe_control import value
 from specific_analyses.api import return_api
 
 
-def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", remap=None):
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point"):
     """Map the space corresponding to the spin identifier and create the OpenDX files.
 
     @keyword params:        
@@ -67,10 +67,6 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
     @type point:            None or list of float
     @keyword point_file:    The file prefix for the point output files.
     @type point_file:       str or None
-    @keyword remap:         A function which is used to remap the space.  The function should accept
-                            the parameter array (list of float) and return an array of equal length
-                            (again list of float).
-    @type remap:            None or func
     """
 
     # Check the args.
@@ -85,7 +81,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
             raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
         # Create the map.
-        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap)
+        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file)
     else:
         raise RelaxError("The map type '" + map_type + "' is not supported.")
 
@@ -94,7 +90,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
 class Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, remap):
+    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file):
         """Map the space upon class instantiation."""
 
         # Initialise.
@@ -109,7 +105,6 @@ class Map:
         self.file_prefix = file_prefix
         self.dir = dir
         self.point_file = point_file
-        self.remap = remap
 
         # The specific analysis API object.
         self.api = return_api()
