@@ -186,14 +186,6 @@ uf.add_keyarg(
     desc = "The name of that the point output files will be prefixed with.",
     can_be_none = True
 )
-uf.add_keyarg(
-    name = "remap",
-    py_type = "func",
-    arg_type = "func",
-    desc_short = "remap function",
-    desc = "A user supplied remapping function.  This function will receive the parameter array and must return an array of equal length.",
-    can_be_none = True
-)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will map the space corresponding to the spin identifier and create the OpenDX files.  The map type can be changed to one of the following supported map types:")
