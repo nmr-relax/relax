@@ -573,7 +573,7 @@ The equation is
 \end{align}
 \end{subequations}
 
-where Appendix 1 in \citet{Baldwin2014} list the recipe for exact calculation of $\Rtwoeff$.
+where Appendix 1 in \citet{Baldwin2014} lists the recipe for the exact calculation of $\Rtwoeff$.
 Note that the following definitions are different to those in the original publication, but match both the reference implementation and the relax implementation.
 The definitions are functionally equivalent.
 First establish the complex free precession eigenfrequency with
@@ -588,7 +588,7 @@ First establish the complex free precession eigenfrequency with
 \end{align}
 \end{subequations}
 
-The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components, in terms of definitions $\zeta$, $\Psi$, and $h_4$ is
+The ground state ensemble evolution frequency $f_{00}$ expressed in separated real and imaginary components in terms of definitions $\zeta$, $\Psi$, and $h_4$ is
 \begin{equation}
 	f_{00} = \frac{1}{2}\left(\RtwozeroA + \RtwozeroB + \kex\right) + \frac{\imath}{2}\left(\dw - h_4\right) .
 \end{equation}
@@ -615,7 +615,7 @@ The weighting factors for frequencies $E_{0-2}$ emerging from a single CPMG bloc
 \end{subequations}
 
 Here $\taucpmg = 1 / 4\nucpmg$.
-The final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation is
+The final result, with identities to assist efficient matrix exponentiation optimised for numerical calculation, is
 \begin{subequations}
 \begin{align}
 	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) , \\
@@ -630,9 +630,9 @@ The final result, with identities to assist efficient matrix exponentiation opti
 \end{align}
 \end{subequations}
 
-The advantage of this code will be that you will always obtain the correct answer provided you have 2-site exchange, in-phase magnetisation and on-resonance pulses. 
+The advantage of these equations is that you will always obtain the correct answer provided you have 2-site exchange, in-phase magnetisation and on-resonance pulses. 
 
-The term $p_D$ is based on product of the off diagonal elements in the CPMG propagator, see supplementary Section 3, \citet{Baldwin2014}.
+The term $p_D$ is based on product of the off diagonal elements in the CPMG propagator, see supplementary Section 3 \citep{Baldwin2014}.
 
 It is interesting to consider the region of validity of the Carver and Richards result. The two results are equal when the correction is zero, which is true when
 \begin{equation}
@@ -640,10 +640,10 @@ It is interesting to consider the region of validity of the Carver and Richards 
 \end{equation}
 
 This occurs when $k_{\textrm{AB}}p_D$ tends to zero, and so $v_2=v_3$.
-Setting $k_{\textrm{AB}}p_D$ to zero, amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa. 
+Setting $k_{\textrm{AB}}p_D$ to zero amounts to neglecting magnetisation that starts on the ground state ensemble and end on the excited state ensemble and vice versa. 
 This will be a good approximation when $p_A \gg p_B$.
 In practise, significant deviations from the Carver and Richards equation can be incurred if $p_B > 1$\%.
-Incorporation of the correction term, results in an improved description of the CPMG experiment over \citet{CarverRichards72}.
+Incorporation of the correction term results in an improved description of the CPMG experiment over \citet{CarverRichards72}.
 
 The reference for this equation is:
 \begin{itemize}
