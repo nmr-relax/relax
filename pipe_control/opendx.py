@@ -24,7 +24,7 @@
 
 
 # Python module imports.
-from numpy import float64, array, zeros
+from numpy import float64, array, median, zeros
 from time import asctime, localtime
 
 # relax module imports.
@@ -164,8 +164,11 @@ class Map:
         # Create the strings associated with the map axes.
         self.map_axes()
 
+        # Generate the map.
+        self.create_map()
+
         # Create the OpenDX .net program file.
-        write_program(file_prefix=self.file_prefix, point_file=self.point_file, dir=self.dir, inc=self.inc, N=self.n, num_points=self.num_points, labels=self.labels, tick_locations=self.tick_locations, tick_values=self.tick_values, date=self.date)
+        write_program(file_prefix=self.file_prefix, point_file=self.point_file, dir=self.dir, inc=self.inc, N=self.n, num_points=self.num_points, labels=self.labels, tick_locations=self.tick_locations, tick_values=self.tick_values, date=self.date, min_chi2=self.min_chi2, max_chi2=self.max_chi2, median_chi2=self.median_chi2)
 
         # Create the OpenDX .cfg program configuration file.
         write_config(file_prefix=self.file_prefix, dir=self.dir, date=self.date)
@@ -176,9 +179,6 @@ class Map:
         # Create the OpenDX .general and data files for the given point.
         if self.num_points > 1:
             write_point(file_prefix=self.point_file, dir=self.dir, inc=self.inc, point=self.point, num_points=self.num_points, bounds=self.bounds, N=self.n)
-
-        # Generate the map.
-        self.create_map()
 
 
     def create_map(self):
@@ -211,6 +211,11 @@ class Map:
         percent = 0.0
         percent_inc = 100.0 / (self.inc + 1.0)**(self.n - 1.0)
         print("%-10s%8.3f%-1s" % ("Progress:", percent, "%"))
+
+        # Define min/max chi2 values.
+        min_chi2 = 1e20
+        max_chi2 = 1.
+        all_chi = []
 
         # Fix the diffusion tensor.
         unfix = False
@@ -257,6 +262,14 @@ class Map:
                     else:
                         map_file.write("%30f\n" % chi2)
 
+                        # Save min and max values of chi2.
+                        all_chi.append(chi2)
+                        if chi2 < min_chi2:
+                            min_chi2 = chi2
+
+                        if chi2 > max_chi2:
+                            max_chi2 = chi2
+
                     # Increment the value of the third parameter.
                     values[2] = values[2] + self.step_size[2]
 
@@ -274,6 +287,11 @@ class Map:
         if unfix:
             cdp.diff_tensor.fixed = False
 
+        # Save the min/max chi2 values.
+        self.min_chi2 = min_chi2
+        self.max_chi2 = max_chi2
+        # Save the median chi2 value.
+        self.median_chi2 = median(array(all_chi))
 
     def map_axes(self):
         """Function for creating labels, tick locations, and tick values for an OpenDX map."""
