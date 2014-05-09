@@ -34,8 +34,7 @@ from lib.software.opendx.files import write_config, write_general, write_point, 
 from pipe_control import value
 from specific_analyses.api import return_api
 
-
-def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point"):
+def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=None, axis_incs=10, file_prefix="map", dir="dx", point=None, point_file="point", chi_surface=None):
     """Map the space corresponding to the spin identifier and create the OpenDX files.
 
     @keyword params:        
@@ -81,7 +80,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
             raise RelaxError("The 3D isosurface map requires a 3 parameter model.")
 
         # Create the map.
-        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file)
+        Map(params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface)
     else:
         raise RelaxError("The map type '" + map_type + "' is not supported.")
 
@@ -90,7 +89,7 @@ def map(params=None, map_type='Iso3D', spin_id=None, inc=20, lower=None, upper=N
 class Map:
     """The space mapping base class."""
 
-    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file):
+    def __init__(self, params, spin_id, inc, lower, upper, axis_incs, file_prefix, dir, point, point_file, chi_surface):
         """Map the space upon class instantiation."""
 
         # Initialise.
