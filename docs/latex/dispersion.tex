@@ -567,9 +567,9 @@ It is selected by setting the model to `B14 full'.
 The equation is
 \begin{subequations}
 \begin{align}
-  \Rtwoeff & = \frac{\RtwozeroA + \RtwozeroB + \kex }{2}-\frac{\ncyc}{\Trelax} \cosh{}^{-1}(\nu_{1c}) \nonumber \\
-& \qquad - \frac{1}{\Trelax}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{\nu_{1c}^2-1}}(\nu_2 + 2 \kAB p_D)\right)} , \\
-    & = \RtwoeffCR - \frac{1}{\Trelax}\ln{\left( \frac{1+y}{2} + \frac{1-y}{2\sqrt{\nu_{1c}^2-1}}(\nu_2 + 2\kAB p_D )\right)} ,
+  \Rtwoeff & = \frac{\RtwozeroA + \RtwozeroB + \kex}{2}-\frac{\ncyc}{\Trelax} \cosh{}^{-1}(\nu_{1c}) \nonumber \\
+           & \qquad - \frac{1}{\Trelax}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{\nu_{1c}^2-1}}(\nu_2 + 2\kAB p_D)\right)} , \\
+    & = \RtwoeffCR - \frac{1}{\Trelax}\ln{\left(\frac{1+y}{2} + \frac{1-y}{2\sqrt{\nu_{1c}^2-1}}(\nu_2 + 2\kAB p_D)\right)} ,
 \end{align}
 \end{subequations}
 
@@ -583,8 +583,8 @@ First establish the complex free precession eigenfrequency with
 	\alpha_- & = \Delta \Rtwozero + \kAB - \kBA , \\
 	\zeta & = 2 \dw \alpha_- , \\
 	\Psi & = \alpha_-^2 + 4 \kAB \kBA - \dw^2 , \\
-	h_3 &= \frac{1}{\sqrt{2}}\sqrt{ \Psi + \sqrt{\zeta^2 + \Psi^2} } , \\
-    h_4 &= \frac{1}{\sqrt{2}}\sqrt{ -\Psi + \sqrt{\zeta^2 + \Psi^2} } .
+	h_3 &= \frac{1}{\sqrt{2}}\sqrt{\Psi + \sqrt{\zeta^2 + \Psi^2} } , \\
+    h_4 &= \frac{1}{\sqrt{2}}\sqrt{-\Psi + \sqrt{\zeta^2 + \Psi^2} } .
 \end{align}
 \end{subequations}
 
@@ -621,9 +621,9 @@ The final result, with identities to assist efficient matrix exponentiation opti
 	\nu_{1c} & = F_0  \cosh(E_0) - F_2 \cos(E_2) , \\
 	\nu_{1s} & = F_0  \sinh(E_0) - \imath F_2 \sin(E_2), \\
 	\nu_3 & = \sqrt{\nu_{1c}^2 - 1} , \\
-	\nu_4 & = F_1^b (-\alpha_- - h_3 ) + \imath F_1^b (\dw - h_4) , \\
-	\nu_5 & =\left(-\Delta \Rtwozero + \kex + \imath \dw\right) \nu_{1s} + 2 \left(\nu_4 + \kAB F_1^{a+b}\right) \sinh(E_1) , \\
-    y & = \left( \frac{\nu_{1c} - \nu_3}{\nu_{1c} + \nu_3} \right) ^ {\ncyc} , \\
+	\nu_4 & = F_1^b (-\alpha_- - h_3) + \imath F_1^b (\dw - h_4) , \\
+	\nu_5 & = \left(-\Delta \Rtwozero + \kex + \imath \dw\right) \nu_{1s} + 2 \left(\nu_4 + \kAB F_1^{a+b}\right) \sinh(E_1) , \\
+    y & = \left( \frac{\nu_{1c} - \nu_3}{\nu_{1c} + \nu_3} \right) ^{\ncyc} , \\
 	T & = \frac{1}{2}(1 + y) + \frac{(1 - y)\nu_5}{2 \nu_3 N} , \\
 	\RtwoeffCR & = \frac{\RtwozeroA + \RtwozeroB + \kex}{2} - \frac{\ncyc}{\taucpmg} \, \arccosh\left(\Re(\nu_{1c})\right) , \\
 	\Rtwoeff & = \RtwoeffCR - \frac{1}{\taucpmg} \log\left(\Re(T)\right) .
