@@ -23,7 +23,7 @@
 """Module for basic mathematical operations."""
 
 # Python module imports.
-from math import ceil, floor, log10
+from math import ceil, log10
 
 
 def order_of_magnitude(value):
@@ -56,30 +56,3 @@ def round_to_next_order(value):
     
     # Calculate and return the value.
     return 10**(order_of_magnitude(value))
-
-
-def percentile(N, percent, key=lambda x:x):
-    """
-    Find the percentile of a list of values.
-
-    @parameter N:           Array of values.
-    @type N:                numpy float array
-    @parameter percent:     Float value from 0.0 to 1.0.
-    @type percent:          float
-    @parameter key:         Optional key function to compute value from each element of N.
-    @type key:              lambda function
-
-    @return:                The percentile of the values
-    """
-
-    # Sort N.
-    N.sort() 
-
-    k = (len(N)-1) * percent
-    f = floor(k)
-    c = ceil(k)
-    if f == c:
-        return key(N[int(k)])
-    d0 = key(N[int(f)]) * (c-k)
-    d1 = key(N[int(c)]) * (k-f)
-    return d0+d1
