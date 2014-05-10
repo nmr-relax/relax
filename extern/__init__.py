@@ -23,5 +23,6 @@
 """External Python modules bundled with relax."""
 
 __all__ = [
+    'numpy_future',
     'sobol'
 ]

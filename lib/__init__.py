@@ -43,7 +43,6 @@ __all__ = [
     'mathematics',
     'model_selection',
     'nmr',
-    'numpy_future',
     'optimisation',
     'order',
     'periodic_table',
