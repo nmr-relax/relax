@@ -165,10 +165,10 @@ class Map:
         # Default the chi2 surface values, for Innermost, Inner, Middle and Outer Isosurface.
         if chi_surface == None:
             all_chi2 = array(self.all_chi, float64)
-            innermost = percentile(all_chi2, 0.10)
-            inner = percentile(all_chi2, 0.20)
-            middle = percentile(all_chi2, 0.50)
-            outer = percentile(all_chi2, 0.90)
+            innermost = percentile(all_chi2, 10)
+            inner = percentile(all_chi2, 20)
+            middle = percentile(all_chi2, 50)
+            outer = percentile(all_chi2, 90)
             chi_surface = [innermost, inner, middle, outer]
 
         # Create the OpenDX .net program file.
