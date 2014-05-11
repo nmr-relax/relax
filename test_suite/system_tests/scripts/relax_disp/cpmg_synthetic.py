@@ -24,6 +24,7 @@
 from os import sep
 from tempfile import mkdtemp
 from math import sqrt
+import sys
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
@@ -45,7 +46,7 @@ from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D, MODEL
 from specific_analyses.relax_disp.variables import MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 # Analysis variables.
-#####################
+##################################################################################
 # The dispersion model to test.
 if not hasattr(ds, 'data'):
     ### Take a numerical model to create the data.
@@ -104,12 +105,15 @@ if not hasattr(ds, 'data'):
 
     # Add more spins here.
     spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2a': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2b': {r20_key_1: 25.0, r20_key_2: 24.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
-            #['Ala', 2, 'N', {'r2': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2a': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2b': {r20_key_1: 15.0, r20_key_2: 14.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.5} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2a': {r20_key_1: 25.0, r20_key_2: 24.0}, 'r2b': {r20_key_1: 25.0, r20_key_2: 24.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 1.0}],
+            ['Ala', 2, 'N', {'r2': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2a': {r20_key_1: 15.0, r20_key_2: 14.0}, 'r2b': {r20_key_1: 15.0, r20_key_2: 14.0}, 'kex': 2200.0, 'pA': 0.993, 'dw': 2.0}],
             ]
 
+    # Collect the eksperiment to simulate.
     ds.data = [model_create, model_analyse, spins, exps]
 
+# Setup variables to be used
+##################################################################################
 # The tmp directory.
 if not hasattr(ds, 'tmpdir'):
     ds.tmpdir = None
@@ -118,7 +122,7 @@ if not hasattr(ds, 'tmpdir'):
 if not hasattr(ds, 'resdir'):
     ds.resdir = None
 
-# Do set_grid_r20_from_min_r2eff ?.
+# Do set_grid_r20_from_min_r2eff.
 if not hasattr(ds, 'set_grid_r20_from_min_r2eff'):
     ds.set_grid_r20_from_min_r2eff = True
 
@@ -133,7 +137,7 @@ if not hasattr(ds, 'GRID_INC'):
 
 # The do clustering.
 if not hasattr(ds, 'do_cluster'):
-    ds.do_cluster = False
+    ds.do_cluster = True
 
 # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
 # The default value is 1e-25.
@@ -161,29 +165,139 @@ if not hasattr(ds, 'plot_curves'):
 if not hasattr(ds, 'sherekhan_input'):
     ds.sherekhan_input = False
 
-# Make a dx map to be opened om OpenDX.
-# To map the hypersurface of chi2, when altering kex, dw and pA.
-if not hasattr(ds, 'opendx'):
-    ds.opendx = True
-if not hasattr(ds, 'dx_inc'):
-    ds.dx_inc = 4
-if not hasattr(ds, 'dx_params'):
-    ds.dx_params = ['dw', 'pA', 'kex']
-
-# The set r2eff err.
+# The set r2eff err, for defining the error on the graphs and in the fitting weight.
+# We set the error to be the same for all ncyc eksperiments.
 if not hasattr(ds, 'r2eff_err'):
     ds.r2eff_err = 0.1
-
-# The number of Monte Carlo simulations to be used for the error analyses.
-if not hasattr(ds, 'MC_NUM'):
-    ds.MC_NUM = 3
 
 # The print result info.
 if not hasattr(ds, 'print_res'):
     ds.print_res = True
 
+# Make a dx map to be opened om OpenDX.
+# To map the hypersurface of chi2, when altering kex, dw and pA.
+if not hasattr(ds, 'opendx'):
+    #ds.opendx = False
+    ds.opendx = True
+
+# Which parameters to map on chi2 surface.
+if not hasattr(ds, 'dx_params'):
+    ds.dx_params = ['dw', 'pA', 'kex']
+
+# How many increements to map for each of the parameters.
+# Above 20 is good. 70 - 100 is a quite good resolution.
+# 4 is for speed tests.
+if not hasattr(ds, 'dx_inc'):
+    ds.dx_inc = 70
+    #ds.dx_inc = 4
+
+# If bounds set to None, uses the normal Grid search bounds.
+if not hasattr(ds, 'dx_lower_bounds'):
+    ds.dx_lower_bounds = None
+    #ds.dx_lower_bounds = [0.0, 0.5, 1.0 ]
+
+# If bounds set to None, uses the normal Grid search bounds.
+if not hasattr(ds, 'dx_upper_bounds'):
+    #ds.dx_upper_bounds = None
+    ds.dx_upper_bounds = [10.0, 1.0, 3000.0]
+
+# If dx_chi_surface is None, it will find Innermost, Inner, Middle and Outer Isosurface
+# at 10, 20, 50 and 90 percentile of all chi2 values.
+if not hasattr(ds, 'dx_chi_surface'):
+    ds.dx_chi_surface = None
+    #ds.dx_chi_surface = [1000.0, 20000.0, 30000., 30000.00]
+
+##################################################################################
+
+# Define repeating functions.
+##################################################################################
+# Define function to store grid results.
+def save_res(res_spins):
+    res_list = []
+    for res_name, res_num, spin_name, params in res_spins:
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
+
+        # Save all the paramers to loop throgh later.
+        ds.model_analyse_params = cur_spin.params
+
+        par_dic = {}
+        # Now read the parameters.
+        for mo_param in cur_spin.params:
+            par_dic.update({mo_param : getattr(cur_spin, mo_param) })
+
+        # Append result.
+        res_list.append([res_name, res_num, spin_name, par_dic])
+
+    return res_list
+
+# Define function print relative change
+def print_res(cur_spins=None, grid_params=None, min_params=None, clust_params=None, dx_params=[]):
+    # Define list to hold data.
+    dx_set_val = list(range(len(dx_params)))
+    dx_clust_val = list(range(len(dx_params)))
+
+    # Compare results.
+    if ds.print_res:
+        print("\n########################")
+        print("Generated data with MODEL:%s"%(model_create))
+        print("Analysing with MODEL:%s."%(model_analyse))
+        print("########################\n")
+
+    for i in range(len(cur_spins)):
+        res_name, res_num, spin_name, params = cur_spins[i]
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
+
+        # Now read the parameters.
+        if ds.print_res:
+            print("For spin: '%s'"%cur_spin_id)
+        for mo_param in cur_spin.params:
+            # The R2 is a dictionary, depending on spectrometer frequency.
+            if isinstance(getattr(cur_spin, mo_param), dict):
+                grid_r2 = grid_params[mo_param]
+                min_r2 = min_params[mo_param]
+                clust_r2 = clust_params[mo_param]
+                set_r2 = params[mo_param]
+                for key, val in min_r2.items():
+                    grid_r2_frq = grid_r2[key]
+                    min_r2_frq = min_r2[key]
+                    clust_r2_frq = min_r2[key]
+                    set_r2_frq = set_r2[key]
+                    frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                    rel_change = sqrt( (clust_r2_frq - set_r2_frq)**2/(clust_r2_frq)**2 )
+                    if ds.print_res:
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, clust_r2_frq, set_r2_frq, rel_change) )
+                    if rel_change > ds.rel_change:
+                        if ds.print_res:
+                            print("###################################")
+                            print("WARNING: %s Have relative change above %.2f, and is %.4f."%(key, ds.rel_change, rel_change))
+                            print("###################################\n")
+            else:
+                grid_val = grid_params[mo_param]
+                min_val = min_params[mo_param]
+                clust_val = clust_params[mo_param]
+                set_val = params[mo_param]
+                rel_change = sqrt( (clust_val - set_val)**2/(clust_val)**2 )
+                if ds.print_res:
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, clust_val, set_val, rel_change) )
+                if rel_change > ds.rel_change:
+                    if ds.print_res:
+                        print("###################################")
+                        print("WARNING: %s Have relative change above %.2f, and is %.4f."%(mo_param, ds.rel_change, rel_change))
+                        print("###################################\n")
+
+                # Store to dx map.
+                if mo_param in dx_params:
+                    dx_set_val[ds.dx_params.index(mo_param)] = set_val
+                    dx_clust_val[ds.dx_params.index(mo_param)] = clust_val
+
+    return dx_set_val, dx_clust_val
+
+# Now starting
+##################################################################################
 # Set up the data pipe.
-#######################
+##################################################################################
 
 # Extract the models
 model_create = ds.data[0]
@@ -207,7 +321,7 @@ spin.isotope('15N', spin_id='@N')
 # Extract experiment settings.
 exps = ds.data[3]
 
-# Now loop over the experiments
+# Now loop over the experiments, to set the variables in relax.
 exp_ids = []
 for exp in exps:
     sfrq, time_T2, ncycs, r2eff_errs = exp
@@ -238,7 +352,7 @@ print("\n\nThe experiment IDs are %s." % ids)
 pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_r2eff, bundle_to = ds.pipe_bundle)
 pipe.switch(pipe_name=ds.pipe_name_r2eff)
 
-# Then select model.
+# Then select the model to create data.
 relax_disp.select_model(model=model_create)
 
 # First loop over the defined spins and set the model parameters.
@@ -253,7 +367,8 @@ for i in range(len(cur_spins)):
         # The R2 is a dictionary, depending on spectrometer frequency.
         if isinstance(getattr(cur_spin, mo_param), dict):
             set_r2 = params[mo_param]
-            for key, val in getattr(cur_spin, mo_param).items():
+
+            for key, val in set_r2.items():
                 # Update value to float
                 set_r2.update({ key : float(val) })
                 print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val))
@@ -266,9 +381,7 @@ for i in range(len(cur_spins)):
             print(cur_spin.model, res_name, cur_spin_id, mo_param, before)
 
 ## Now doing the back calculation of R2eff values.
-
 # First loop over the frequencies.
-i = 0
 for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
     exp_id = exp_ids[mi]
     exp = exps[mi]
@@ -292,10 +405,11 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         # Close file.
         file.close()
 
-        # Read in the R2eff file to create the structure
+        # Read in the R2eff file to create the structure.
+        # This is a trick, or else relax complains.
         relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.tmpdir, disp_point_col=1, data_col=2, error_col=3)
 
-        ###Now back calculate, and stuff it back.
+        ### Now back calculate values from parameters, and stuff R2eff it back.
         print("Generating data with MODEL:%s, for spin id:%s"%(model_create, cur_spin_id))
         r2effs = optimisation.back_calc_r2eff(spin=cur_spin, spin_id=cur_spin_id)
 
@@ -320,11 +434,6 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
 
         # Read in the R2eff file to put into spin structure.
         relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.resdir, disp_point_col=1, data_col=2, error_col=3)
-
-        # Add to counter.
-        i += 1
-
-print("Did following number of iterations: %i"%i)
 
 ### Now do fitting.
 # Change pipe.
@@ -360,28 +469,10 @@ else:
         # Do a grid search, which will store the chi2 value.
     #grid_search(lower=None, upper=None, inc=10, constraints=True, verbosity=ds.verbosity)
 
-
-# Define function to store grid results.
-def save_res(res_spins):
-    res_list = []
-    for res_name, res_num, spin_name, params in res_spins:
-        cur_spin_id = ":%i@%s"%(res_num, spin_name)
-        cur_spin = return_spin(cur_spin_id)
-
-        par_dic = {}
-        # Now read the parameters.
-        for mo_param in cur_spin.params:
-            par_dic.update({mo_param : getattr(cur_spin, mo_param) })
-
-        # Append result.
-        res_list.append([res_name, res_num, spin_name, par_dic])
-
-    return res_list
-
+# Save result.
 ds.grid_results = save_res(cur_spins)
 
 ## Now do minimisation.
-
 minimise(min_algor='simplex', func_tol=ds.set_func_tol, max_iter=ds.set_max_iter, constraints=True, scaling=True, verbosity=ds.verbosity)
 
 # Save results
@@ -390,7 +481,7 @@ ds.min_results = save_res(cur_spins)
 # Now do clustering
 if ds.do_cluster:
     # Change pipe.
-    ds.pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(ds.pipe_name , model_create)
+    ds.pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(ds.pipe_name , model_analyse)
     pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_CLUSTER)
     pipe.switch(pipe_name=ds.pipe_name_MODEL_CLUSTER)
 
@@ -398,7 +489,7 @@ if ds.do_cluster:
     value.copy(pipe_from=ds.pipe_name_r2eff, pipe_to=ds.pipe_name_MODEL_CLUSTER, param='r2eff')
 
     # Then select model.
-    relax_disp.select_model(model=model_create)
+    relax_disp.select_model(model=model_analyse)
 
     # Then cluster
     relax_disp.cluster('model_cluster', ":1-100")
@@ -424,69 +515,9 @@ if ds.sherekhan_input:
     print(cdp.clustering)
     relax_disp.sherekhan_input(force=True, spin_id=None, dir=ds.resdir)
 
-# Compare results.
-if ds.print_res:
-    print("\n########################")
-    print("Generated data with MODEL:%s"%(model_create))
-    print("Analysing with MODEL:%s."%(model_analyse))
-    print("########################\n")
-
 # Looping over data, to collect the results.
 # Define which dx_params to collect for.
-ds.dx_set_val = list(range(len(ds.dx_params)))
-ds.dx_clust_val = list(range(len(ds.dx_params)))
-for i in range(len(cur_spins)):
-    res_name, res_num, spin_name, params = cur_spins[i]
-    cur_spin_id = ":%i@%s"%(res_num, spin_name)
-    cur_spin = return_spin(cur_spin_id)
-
-    # Fetch data.
-    grid_params = ds.grid_results[i][3]
-    min_params = ds.min_results[i][3]
-    clust_params = ds.clust_results[i][3]
-
-    # Now read the parameters.
-    if ds.print_res:
-        print("For spin: '%s'"%cur_spin_id)
-    for mo_param in cur_spin.params:
-        # The R2 is a dictionary, depending on spectrometer frequency.
-        if isinstance(getattr(cur_spin, mo_param), dict):
-            grid_r2 = grid_params[mo_param]
-            min_r2 = min_params[mo_param]
-            clust_r2 = clust_params[mo_param]
-            set_r2 = params[mo_param]
-            for key, val in getattr(cur_spin, mo_param).items():
-                grid_r2_frq = grid_r2[key]
-                min_r2_frq = min_r2[key]
-                clust_r2_frq = min_r2[key]
-                set_r2_frq = set_r2[key]
-                frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
-                rel_change = sqrt( (clust_r2_frq - set_r2_frq)**2/(clust_r2_frq)**2 )
-                if ds.print_res:
-                    print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, clust_r2_frq, set_r2_frq, rel_change) )
-                if rel_change > ds.rel_change:
-                    if ds.print_res:
-                        print("###################################")
-                        print("WARNING: %s Have relative change above %.2f, and is %.4f."%(key, ds.rel_change, rel_change))
-                        print("###################################\n")
-        else:
-            grid_val = grid_params[mo_param]
-            min_val = min_params[mo_param]
-            clust_val = clust_params[mo_param]
-            set_val = params[mo_param]
-            rel_change = sqrt( (clust_val - set_val)**2/(clust_val)**2 )
-            if ds.print_res:
-                print("%s %s %s %s GRID=%.3f MIN=%.3f CLUST=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, clust_val, set_val, rel_change) )
-            if rel_change > ds.rel_change:
-                if ds.print_res:
-                    print("###################################")
-                    print("WARNING: %s Have relative change above %.2f, and is %.4f."%(mo_param, ds.rel_change, rel_change))
-                    print("###################################\n")
-
-            # Store to dx map.
-            if mo_param in ds.dx_params:
-                ds.dx_set_val[ds.dx_params.index(mo_param)] = set_val
-                ds.dx_clust_val[ds.dx_params.index(mo_param)] = clust_val
+ds.dx_set_val, ds.dx_clust_val = print_res(cur_spins=cur_spins, grid_params=ds.grid_results[i][3], min_params=ds.min_results[i][3], clust_params=ds.clust_results[i][3], dx_params=ds.dx_params)
 
 ## Do a dx map.
 # To map the hypersurface of chi2, when altering kex, dw and pA.
@@ -502,21 +533,52 @@ if ds.opendx:
     # Then select model.
     relax_disp.select_model(model=model_analyse)
 
-    # First loop over the defined spins and set the model parameters.
+    if ds.do_cluster:
+        # Then cluster
+        relax_disp.cluster('model_cluster', ":1-100")
+
+    # First loop over the defined spins and set the model parameters which is not in the dx.dx_params.
     for i in range(len(cur_spins)):
         res_name, res_num, spin_name, params = cur_spins[i]
         cur_spin_id = ":%i@%s"%(res_num, spin_name)
         cur_spin = return_spin(cur_spin_id)
 
-        if ds.print_res:
-            print("Params for dx map is")
-            print(ds.dx_params)
-            print("Point param for dx map is")
-            print(ds.dx_set_val)
+        for mo_param in cur_spin.params:
+            # The R2 is a dictionary, depending on spectrometer frequency.
+            if isinstance(getattr(cur_spin, mo_param), dict):
+                set_r2 = params[mo_param]
+                if mo_param not in ds.dx_params:
+                    for key, val in set_r2.items():
+                        # Update value to float
+                        set_r2.update({ key : float(val) })
+                        print("Setting param:%s to :%f"%(key, float(val)))
+                    # Set it back
+                    setattr(cur_spin, mo_param, set_r2)
+
+            # For non dict values.
+            else:
+                if mo_param not in ds.dx_params:
+                    before = getattr(cur_spin, mo_param)
+                    setattr(cur_spin, mo_param, float(params[mo_param]))
+                    after = getattr(cur_spin, mo_param)
+                    print("Setting param:%s to :%f"%(mo_param, after))
+
         cur_model = model_analyse.replace(' ', '_')
         file_name_map = "%s_map%s" % (cur_model, cur_spin_id.replace('#', '_').replace(':', '_').replace('@', '_'))
         file_name_point = "%s_point%s" % (cur_model, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-        #dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, remap=None)
-        dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=None, upper=None, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=ds.dx_set_val, point_file=file_name_point, remap=None)
-        #vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
+        dx.map(params=ds.dx_params, map_type='Iso3D', spin_id=cur_spin_id, inc=ds.dx_inc, lower=ds.dx_lower_bounds, upper=ds.dx_upper_bounds, axis_incs=10, file_prefix=file_name_map, dir=ds.resdir, point=[ds.dx_set_val, ds.dx_clust_val], point_file=file_name_point, chi_surface=ds.dx_chi_surface)
+        # vp_exec:  A flag specifying whether to execute the visual program automatically at start-up.
         #dx.execute(file_prefix=file_name, dir=ds.resdir, dx_exe='dx', vp_exec=True)
+
+        if ds.print_res:
+            print("For spin: '%s'"%cur_spin_id)
+            print("Params for dx map is")
+            print(ds.dx_params)
+            print("Point creating dx map is")
+            print(ds.dx_set_val)
+            print("Minimises point in dx map is")
+            print(ds.dx_clust_val)
+
+# Print result again after dx map.
+if ds.opendx:
+    print_res(cur_spins=cur_spins, grid_params=ds.grid_results[i][3], min_params=ds.min_results[i][3], clust_params=ds.clust_results[i][3])
