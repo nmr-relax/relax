@@ -12,12 +12,8 @@ from lib.geometry.vectors import vector_angle
 from pipe_control.structure.mass import pipe_centre_of_mass
 
 
-def alpha_angle(pivot=None, com=None, theta=None, phi=None):
+def alpha_angle(pivot=None, com=None, axis=None):
     """Calculate and return the rotor alpha angle."""
-
-    # Create the rotor axis.
-    axis = zeros(3, float64)
-    spherical_to_cartesian([1, theta, phi], axis)
 
     # The CoM-pivot axis.
     com_piv = com - pivot
@@ -32,12 +28,8 @@ def alpha_angle(pivot=None, com=None, theta=None, phi=None):
     return vector_angle(mu_xy, axis, com_piv)
 
 
-def shift_pivot(pivot_orig=None, com=None, theta=None, phi=None):
+def shift_pivot(pivot_orig=None, com=None, axis=None):
     """Shift the pivot to the closest point on the rotor axis to the CoM.)"""
-
-    # Create the rotor axis.
-    axis = zeros(3, float64)
-    spherical_to_cartesian([1, theta, phi], axis)
 
     # The closest point.
     pivot_new = closest_point_ax(line_pt=pivot_orig, axis=axis, point=com)
@@ -55,6 +47,11 @@ AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.343499928066999
 AXIS_THETA = 0.69828059079619353433
 AXIS_PHI = 4.03227550621962294031
 CONE_SIGMA_MAX = 30.0 / 360.0 * 2.0 * pi
+
+# Reconstruct the rotation axis.
+AXIS = zeros(3, float64)
+spherical_to_cartesian([1, AXIS_THETA, AXIS_PHI], AXIS)
+print("Rotation axis: %s" % AXIS)
 
 # Create the data pipe.
 pipe.create(pipe_name='frame order', pipe_type='frame order')
@@ -119,7 +116,7 @@ frame_order.average_position(pivot='motional', translation=False)
 frame_order.ref_domain('N')
 
 # Set the initial pivot point.
-pivot = shift_pivot(pivot_orig=array([ 37.254, 0.5, 16.7465]), com=pipe_centre_of_mass(verbosity=0), theta=AXIS_THETA, phi=AXIS_PHI)
+pivot = shift_pivot(pivot_orig=array([ 37.254, 0.5, 16.7465]), com=pipe_centre_of_mass(verbosity=0), axis=AXIS)
 frame_order.pivot(pivot, fix=True)
 
 # Set the paramagnetic centre.
@@ -133,7 +130,7 @@ frame_order.quad_int(flag=False)
 value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
 value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
-value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), theta=AXIS_THETA, phi=AXIS_PHI))
+value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_mass(verbosity=0), axis=AXIS))
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
 
@@ -142,8 +139,14 @@ grid_search(inc=5)
 minimise('simplex', constraints=True)
 
 # Optimise the pivot and model.
-#frame_order.pivot(pivot, fix=False)
-#minimise('simplex', constraints=False)
+frame_order.pivot(pivot, fix=False)
+minimise('simplex', constraints=True)
+
+# The distance from the optimised pivot and the rotation axis.
+opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
+print("\n\nOptimised pivot displacement: %s" % norm(pivot - opt_piv))
+pt = closest_point_ax(line_pt=pivot, axis=AXIS, point=opt_piv)
+print("Distance from axis: %s\n" % norm(pt - opt_piv))
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
