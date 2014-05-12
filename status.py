@@ -75,7 +75,7 @@ class Status(object):
         """
 
         # The file to search for.
-        file_to_find = 'compat.py'
+        file_to_find = 'dep_check.py'
 
         # Loop over the system paths, searching for the real path.
         for path in sys.path:
