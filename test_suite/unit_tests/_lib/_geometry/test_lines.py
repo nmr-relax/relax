@@ -24,7 +24,7 @@ from numpy import array, float64
 from unittest import TestCase
 
 # relax module imports.
-from lib.geometry.lines import closest_point
+from lib.geometry.lines import closest_point, closest_point_ax
 
 
 class Test_lines(TestCase):
@@ -38,3 +38,43 @@ class Test_lines(TestCase):
         self.assertEqual(pt[0], 0.0)
         self.assertEqual(pt[1], 0.0)
         self.assertEqual(pt[2], 0.0)
+
+
+    def test_closest_point_ax1(self):
+        """Test the closest_point_ax() function."""
+
+        # Get and check the point.
+        pt = closest_point_ax(line_pt=array([1, 1, 0], float64), axis=array([1, 1, 0], float64), point=array([0, 0, 10], float64))
+        self.assertAlmostEqual(pt[0], 0.0)
+        self.assertAlmostEqual(pt[1], 0.0)
+        self.assertAlmostEqual(pt[2], 0.0)
+
+
+    def test_closest_point_ax2(self):
+        """Test the closest_point_ax() function."""
+
+        # Get and check the point.
+        pt = closest_point_ax(line_pt=array([2, 2, 2], float64), axis=array([1, 1, 1], float64), point=array([0, 0, 0], float64))
+        self.assertAlmostEqual(pt[0], 0.0)
+        self.assertAlmostEqual(pt[1], 0.0)
+        self.assertAlmostEqual(pt[2], 0.0)
+
+
+    def test_closest_point_ax3(self):
+        """Test the closest_point_ax() function."""
+
+        # Get and check the point.
+        pt = closest_point_ax(line_pt=array([-2, -2, -2], float64), axis=array([1, 1, 1], float64), point=array([1, -1, 0], float64))
+        self.assertAlmostEqual(pt[0], 0.0)
+        self.assertAlmostEqual(pt[1], 0.0)
+        self.assertAlmostEqual(pt[2], 0.0)
+
+
+    def test_closest_point_ax4(self):
+        """Test the closest_point_ax() function."""
+
+        # Get and check the point.
+        pt = closest_point_ax(line_pt=array([-2, -2, 0], float64), axis=array([1, 1, 1], float64), point=array([1, -1, 2], float64))
+        self.assertAlmostEqual(pt[0], 0.0)
+        self.assertAlmostEqual(pt[1], 0.0)
+        self.assertAlmostEqual(pt[2], 2.0)
