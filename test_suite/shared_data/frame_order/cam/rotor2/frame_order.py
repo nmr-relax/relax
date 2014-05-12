@@ -5,6 +5,7 @@ from numpy import array, cross, float64, zeros
 from numpy.linalg import norm
 
 # relax module imports.
+from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.rotations import reverse_euler_zyz
@@ -148,6 +149,11 @@ print("\n\nOptimised pivot displacement: %s" % norm(pivot - opt_piv))
 pt = closest_point_ax(line_pt=pivot, axis=AXIS, point=opt_piv)
 print("Distance from axis: %s\n" % norm(pt - opt_piv))
 
+# Recreate the axis and compare to the original.
+opt_axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=opt_piv, point=pipe_centre_of_mass(verbosity=0))
+print("Original axis:   %s" % AXIS)
+print("Optimised axis:  %s" % opt_axis)
+
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
@@ -159,10 +165,10 @@ monte_carlo.error_analysis()
 # Create the PDB representation.
 frame_order.pdb_model(force=True)
 
+# Save the state.
+state.save('frame_order', force=True)
+
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
 pymol.cone_pdb('frame_order.pdb')
-
-# Save the state.
-state.save('frame_order', force=True)
