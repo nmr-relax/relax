@@ -24,7 +24,7 @@
 
 The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given
 set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE
-violations and RDC Q-factors.
+violations and RDC Q factors.
 
 This script is split into multiple stages:
 
@@ -39,12 +39,12 @@ This script is split into multiple stages:
     using the fit to first algorithm.  The superimposed ensembles will be placed into the
     "ensembles_superimposed" directory.  This stage is not necessary for the NOE analysis.
 
-    4.  The RDC Q-factor analysis.
+    4.  The RDC Q factor analysis.
 
     5.  Generation of Grace graphs.
 
-    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
-    Q-factor is defined as::
+    6.  Final ordering of ensembles using the combined RDC and NOE Q factors, whereby the NOE
+    Q factor is defined as::
 
         Q^2 = U / sum(NOE_i^2),
 
@@ -210,7 +210,7 @@ class Stereochem_analysis:
         elif self.stage == 3:
             self.superimpose()
 
-        # RDC Q-factor analysis.
+        # RDC Q factor analysis.
         elif self.stage == 4:
             self.rdc_analysis()
 
@@ -231,13 +231,13 @@ class Stereochem_analysis:
 
 
     def combined_q(self):
-        """Calculate the combined Q-factor.
+        """Calculate the combined Q factor.
 
         The combined Q is defined as::
 
             Q_total^2 = Q_NOE^2 + Q_RDC^2,
 
-        and the NOE Q-factor as::
+        and the NOE Q factor as::
 
             Q^2 = U / sum(NOE_i^2),
 
@@ -253,7 +253,7 @@ class Stereochem_analysis:
         # Loop over the configurations.
         for i in range(len(self.configs)):
             # Print out.
-            print("Creating the combined Q-factor file for configuration '%s'." % self.configs[i])
+            print("Creating the combined Q factor file for configuration '%s'." % self.configs[i])
 
             # Open the NOE results file and read the data.
             file = open(self.results_dir+sep+"NOE_viol_" + self.configs[i])
@@ -265,7 +265,7 @@ class Stereochem_analysis:
             rdc_lines = file.readlines()
             file.close()
 
-            # The combined Q-factor file.
+            # The combined Q factor file.
             out = open(self.results_dir+sep+"Q_total_%s" % self.configs[i], 'w')
             out_sorted = open(self.results_dir+sep+"Q_total_%s_sorted" % self.configs[i], 'w')
 
@@ -277,7 +277,7 @@ class Stereochem_analysis:
                 noe_viol = float(noe_lines[j].split()[1])
                 q_rdc = float(rdc_lines[j].split()[1])
 
-                # The NOE Q-factor.
+                # The NOE Q factor.
                 q_noe = sqrt(noe_viol/self.noe_norm)
 
                 # Combined Q.
@@ -430,10 +430,10 @@ class Stereochem_analysis:
             grace_curve.close()
             grace_dist.close()
 
-        # RDC Q-factors.
+        # RDC Q factors.
         if access(self.results_dir+sep+"Q_factors_" + self.configs[0] + "_sorted", F_OK):
             # Print out.
-            print("Generating RDC Q-factor Grace plots.")
+            print("Generating RDC Q factor Grace plots.")
 
             # Open the Grace output files.
             grace_curve = open(self.results_dir+sep+"RDC_%s_curve.agr" % self.rdc_name, 'w')
@@ -451,7 +451,7 @@ class Stereochem_analysis:
                 # Add a new graph set.
                 data.append([])
 
-                # Loop over the Q-factors.
+                # Loop over the Q factors.
                 values = []
                 for j in range(1, len(lines)):
                     # Extract the violation.
@@ -465,8 +465,8 @@ class Stereochem_analysis:
                 dist.append(self.generate_distribution(values, inc=self.bucket_num, upper=self.upper_lim_rdc, lower=self.lower_lim_rdc))
 
             # Headers.
-            write_xy_header(file=grace_curve, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[0]*n], axis_labels=[['Ensemble (sorted)', '%s RDC Q-factor (pales format)' % self.rdc_name]], legend_pos=[[0.3, 0.8]])
-            write_xy_header(file=grace_dist, title='%s RDC Q-factor comparison' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[1]*n], symbol_sizes=[[0.5]*n], linestyle=[[3]*n], axis_labels=[['%s RDC Q-factor (pales format)' % self.rdc_name, 'Frequency']], legend_pos=[[1.1, 0.8]])
+            write_xy_header(file=grace_curve, title='%s RDC Q factor comparison' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[0]*n], axis_labels=[['Ensemble (sorted)', '%s RDC Q factor (pales format)' % self.rdc_name]], legend_pos=[[0.3, 0.8]])
+            write_xy_header(file=grace_dist, title='%s RDC Q factor comparison' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[1]*n], symbol_sizes=[[0.5]*n], linestyle=[[3]*n], axis_labels=[['%s RDC Q factor (pales format)' % self.rdc_name, 'Frequency']], legend_pos=[[1.1, 0.8]])
 
             # Write the data.
             write_xy_data([data], file=grace_curve, graph_type='xy')
@@ -514,8 +514,8 @@ class Stereochem_analysis:
                     data_scaled[i].append([sqrt(noe_viol/self.noe_norm), q_factor])
 
             # Write the data.
-            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[9]*n], symbol_sizes=[[0.24]*n], linetype=[[0]*n], axis_labels=[['NOE violation (Angstrom\\S2\\N)', '%s RDC Q-factor (pales format)' % self.rdc_name]], legend_pos=[[1.1, 0.8]])
-            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q-factor' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[9]*n], symbol_sizes=[[0.24]*n], linetype=[[0]*n], axis_labels=[['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q-factor (pales format)' % self.rdc_name]], legend_pos=[[1.1, 0.8]])
+            write_xy_header(file=grace_file, title='Correlation plot - %s RDC vs. NOE' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[9]*n], symbol_sizes=[[0.24]*n], linetype=[[0]*n], axis_labels=[['NOE violation (Angstrom\\S2\\N)', '%s RDC Q factor (pales format)' % self.rdc_name]], legend_pos=[[1.1, 0.8]])
+            write_xy_header(file=grace_file_scaled, title='Correlation plot - %s RDC vs. NOE Q factor' % self.rdc_name, subtitle=subtitle, sets=[n], set_names=[self.configs], set_colours=[colours], symbols=[[9]*n], symbol_sizes=[[0.24]*n], linetype=[[0]*n], axis_labels=[['Normalised NOE violation (Q = sqrt(U / \\xS\\f{}NOE\\si\\N\\S2\\N))', '%s RDC Q factor (pales format)' % self.rdc_name]], legend_pos=[[1.1, 0.8]])
             write_xy_data([data], file=grace_file, graph_type='xy')
             write_xy_data([data_scaled], file=grace_file_scaled, graph_type='xy')
 
@@ -694,7 +694,7 @@ class Stereochem_analysis:
                 #grid_search(inc=4)
                 self.interpreter.minimise("simplex", constraints=False)
 
-                # Store and write out the Q-factors.
+                # Store and write out the Q factors.
                 q_factors.append([cdp.q_rdc, ens])
                 out.write("%-20i%20.15f%20.15f\n" % (ens, cdp.q_rdc, cdp.q_rdc_norm2))
 

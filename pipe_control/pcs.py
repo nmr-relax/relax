@@ -544,9 +544,9 @@ def opt_uses_pcs(align_id):
 
 
 def q_factors(spin_id=None):
-    """Calculate the Q-factors for the PCS data.
+    """Calculate the Q factors for the PCS data.
 
-    @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
+    @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
     """
 
@@ -558,7 +558,7 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No PCS data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor dictionary.
+    # Q factor dictionary.
     cdp.q_factors_pcs = {}
 
     # Loop over the alignments.
@@ -595,7 +595,7 @@ def q_factors(spin_id=None):
             # Sum the PCSs squared (for normalisation).
             pcs2_sum = pcs2_sum + spin.pcs[align_id]**2
 
-        # The Q-factor for the alignment.
+        # The Q factor for the alignment.
         if pcs2_sum:
             Q = sqrt(sse / pcs2_sum)
             cdp.q_factors_pcs[align_id] = Q
@@ -611,7 +611,7 @@ def q_factors(spin_id=None):
             warn(RelaxWarning("No back-calculated PCS data can be found for the alignment ID '%s', skipping the PCS Q factor calculation for this alignment." % align_id))
             continue
 
-    # The total Q-factor.
+    # The total Q factor.
     cdp.q_pcs = 0.0
     for id in cdp.q_factors_pcs:
         cdp.q_pcs = cdp.q_pcs + cdp.q_factors_pcs[id]**2

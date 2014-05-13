@@ -161,11 +161,11 @@ class N_state_model(API_base, API_common):
             # Store the back-calculated data.
             minimise_bc_data(model)
 
-            # Calculate the RDC Q-factors.
+            # Calculate the RDC Q factors.
             if 'rdc' in data_types:
                 rdc.q_factors()
 
-            # Calculate the PCS Q-factors.
+            # Calculate the PCS Q factors.
             if 'pcs' in data_types:
                 pcs.q_factors()
 
@@ -568,14 +568,14 @@ class N_state_model(API_base, API_common):
 
         # Statistical analysis.
         if sim_index == None and ('rdc' in data_types or 'pcs' in data_types):
-            # Get the final back calculated data (for the Q-factor and
+            # Get the final back calculated data (for the Q factor and
             minimise_bc_data(model)
 
-            # Calculate the RDC Q-factors.
+            # Calculate the RDC Q factors.
             if 'rdc' in data_types:
                 rdc.q_factors()
 
-            # Calculate the PCS Q-factors.
+            # Calculate the PCS Q factors.
             if 'pcs' in data_types:
                 pcs.q_factors()
 

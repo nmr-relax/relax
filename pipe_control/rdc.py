@@ -575,9 +575,9 @@ def opt_uses_rdc(align_id):
 
 
 def q_factors(spin_id=None):
-    """Calculate the Q-factors for the RDC data.
+    """Calculate the Q factors for the RDC data.
 
-    @keyword spin_id:   The spin ID string used to restrict the Q-factor calculation to a subset of all spins.
+    @keyword spin_id:   The spin ID string used to restrict the Q factor calculation to a subset of all spins.
     @type spin_id:      None or str
     """
 
@@ -589,7 +589,7 @@ def q_factors(spin_id=None):
         warn(RelaxWarning("No RDC data exists, Q factors cannot be calculated."))
         return
 
-    # Q-factor dictonaries.
+    # Q factor dictonaries.
     cdp.q_factors_rdc = {}
     cdp.q_factors_rdc_norm2 = {}
 
@@ -683,16 +683,16 @@ def q_factors(spin_id=None):
             if Da == 0.0:
                 norm = 1e-15
 
-            # The Q-factor for the alignment.
+            # The Q factor for the alignment.
             cdp.q_factors_rdc[align_id] = sqrt(sse / N / norm)
 
         else:
             cdp.q_factors_rdc[align_id] = 0.0
 
-        # The second Q-factor definition.
+        # The second Q factor definition.
         cdp.q_factors_rdc_norm2[align_id] = sqrt(sse / D2_sum)
 
-    # The total Q-factor.
+    # The total Q factor.
     cdp.q_rdc = 0.0
     cdp.q_rdc_norm2 = 0.0
     for id in cdp.q_factors_rdc:

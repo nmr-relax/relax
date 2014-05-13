@@ -64,7 +64,7 @@ for id in ids:
     rdc.write(align_id=id, file='ave_pos_rdc_%s.txt'%id, bc=True, force=True)
     pcs.write(align_id=id, file='ave_pos_pcs_%s.txt'%id, bc=True, force=True)
 
-# Calculate Q-factors.
+# Calculate Q factors.
 rdc.calc_q_factors()
 pcs.calc_q_factors()
 

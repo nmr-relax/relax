@@ -55,7 +55,7 @@ self._execute_uf(uf_name='align_tensor.display', tensor=tag)
 # Back calc.
 self._execute_uf(uf_name='rdc.back_calc')
 
-# Q-factors.
+# Q factors.
 self._execute_uf(uf_name='rdc.calc_q_factors')
 
 # Correlation plots.

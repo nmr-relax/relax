@@ -23,7 +23,7 @@
 
 The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given
 set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE
-violations and RDC Q-factors.
+violations and RDC Q factors.
 
 This script is split into multiple stages:
 
@@ -38,7 +38,7 @@ This script is split into multiple stages:
     using the fit to first algorithm.  The superimposed ensembles will be placed into the
     "ensembles_superimposed" directory.  This stage is not necessary for the NOE analysis.
 
-    4.  The RDC Q-factor analysis.
+    4.  The RDC Q factor analysis.
 
     5.  Generation of Grace graphs.
 """
