@@ -21,35 +21,25 @@
 
 """Script for the determination of relative stereochemistry.
 
-The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given
-set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE
-violations and RDC Q-factors.
+The analysis is preformed by using multiple ensembles of structures, randomly sampled from a given set of structures.  The discrimination is performed by comparing the sets of ensembles using NOE violations and RDC Q factors.
 
 This script is split into multiple stages:
 
-    1.  The random sampling of the snapshots to generate the N ensembles (NUM_ENS, usually 10,000 to
-    100,000) of M members (NUM_MODELS, usually ~10).  The original snapshot files are expected to be
-    named the SNAPSHOT_DIR + CONFIG + a number from SNAPSHOT_MIN to SNAPSHOT_MAX + ".pdb", e.g.
-    "snapshots/R647.pdb".  The ensembles will be placed into the "ensembles" directory.
+    1.  The random sampling of the snapshots to generate the N ensembles (NUM_ENS, usually 10,000 to 100,000) of M members (NUM_MODELS, usually ~10).  The original snapshot files are expected to be named the SNAPSHOT_DIR + CONFIG + a number from SNAPSHOT_MIN to SNAPSHOT_MAX + ".pdb", e.g. "snapshots/R647.pdb".  The ensembles will be placed into the "ensembles" directory.
 
     2.  The NOE violation analysis.
 
-    3.  The superimposition of ensembles.  For each ensemble, Molmol is used for superimposition
-    using the fit to first algorithm.  The superimposed ensembles will be placed into the
-    "ensembles_superimposed" directory.  This stage is not necessary for the NOE analysis.
+    3.  The superimposition of ensembles.  For each ensemble, Molmol is used for superimposition using the fit to first algorithm.  The superimposed ensembles will be placed into the "ensembles_superimposed" directory.  This stage is not necessary for the NOE analysis.
 
-    4.  The RDC Q-factor analysis.
+    4.  The RDC Q factor analysis.
 
     5.  Generation of Grace graphs.
 
-    6.  Final ordering of ensembles using the combined RDC and NOE Q-factors, whereby the NOE
-    Q-factor is defined as::
+    6.  Final ordering of ensembles using the combined RDC and NOE Q factors, whereby the NOE Q factor is defined as::
 
         Q^2 = U / sum(NOE_i^2),
 
-    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2. The
-    denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The
-    combined Q is given by::
+    where U is the quadratic flat bottom well potential - the NOE violation in Angstrom^2. The denominator is the sum of all squared NOEs - this must be given as the value of NOE_NORM.  The combined Q is given by::
 
         Q_total^2 = Q_NOE^2 + Q_RDC^2.
 """
