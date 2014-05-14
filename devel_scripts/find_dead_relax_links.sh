@@ -20,6 +20,10 @@ done < <(grep -r http . \
 | sed "s/\\\\_/_/g" \
 | sed "s/\"//g" \
 | sed "s/<br>.*//g" \
+| sed "s/<u>.*//g" \
 | sed "s/,//g" \
 | sed "s/#.*//g" \
+| sed "s/).*//g" \
+| sed "s/\%s.*//g" \
+| sed "s/\.$//g" \
 | sort -u)
