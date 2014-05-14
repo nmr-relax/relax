@@ -402,7 +402,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Init.
     data = []
     title = "RDC correlation plot"
-    axis_labels = ["Measured RDC", "Back-calculated RDC"]
+    axis_labels = ["Measured RDC (Hz)", "Back-calculated RDC (Hz)"]
 
     # The diagonal.
     data.append([[-100, -100, 0], [100, 100, 0]])
@@ -439,7 +439,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
                 # A different title and axis labels.
                 title = "T = J+D correlation plot"
-                axis_labels = ["Measured T = J+D", "Back-calculated T = J+D"]
+                axis_labels = ["Measured T = J+D (Hz)", "Back-calculated T = J+D (Hz)"]
 
             # Append the data.
             data[-1].append([rdc, rdc_bc])
