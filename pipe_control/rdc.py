@@ -401,6 +401,8 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
     # Init.
     data = []
+    title = "RDC correlation plot"
+    axis_labels = ["Measured RDC", "Back-calculated RDC"]
 
     # The diagonal.
     data.append([[-100, -100, 0], [100, 100, 0]])
@@ -424,13 +426,23 @@ def corr_plot(format=None, file=None, dir=None, force=False):
             if not hasattr(interatom, 'rdc') or not hasattr(interatom, 'rdc_bc') or not align_id in interatom.rdc.keys() or not align_id in interatom.rdc_bc.keys():
                 continue
 
-            # Append the data.
+            # Convert between the 2D and D notation.
             rdc_bc = convert(interatom.rdc_bc[align_id], interatom.rdc_data_types[align_id], align_id)
             rdc = convert(interatom.rdc[align_id], interatom.rdc_data_types[align_id], align_id)
+
+            # T=J+D type data.
             if hasattr(interatom, 'rdc_data_types') and align_id in interatom.rdc_data_types and interatom.rdc_data_types[align_id] == 'T':
-                rdc_bc -= interatom.j_coupling
-                rdc -= interatom.j_coupling
-            data[-1].append([rdc_bc, rdc])
+                # Convert T=J+D type data to D, if not absolute.
+                if not interatom.absolute_rdc[align_id]:
+                    rdc_bc -= interatom.j_coupling
+                    rdc -= interatom.j_coupling
+
+                # A different title and axis labels.
+                title = "T = J+D correlation plot"
+                axis_labels = ["Measured T = J+D", "Back-calculated T = J+D"]
+
+            # Append the data.
+            data[-1].append([rdc, rdc_bc])
 
             # Errors.
             if err_flag:
@@ -457,10 +469,10 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title="RDC correlation plot", sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc_bc', 'rdc'], legend_pos=[[1, 0.5]])
+        grace.write_xy_header(file=file, title=title, world=[[-50, -50, 50, 50]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
-        grace.write_xy_data(data=data, file=file, graph_type=graph_type)
+        grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
 
 
 def delete(align_id=None):
