@@ -444,9 +444,10 @@ def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force
                     rdc -= interatom.j_coupling
 
                 # A different title and axis labels.
-                if orig_title == None:
-                    title = "T = J+D correlation plot"
-                axis_labels = ["Measured T = J+D (Hz)", "Back-calculated T = J+D (Hz)"]
+                else:
+                    if orig_title == None:
+                        title = "T = J+D correlation plot"
+                    axis_labels = ["Measured T = J+D (Hz)", "Back-calculated T = J+D (Hz)"]
 
             # Append the data.
             data[-1].append([rdc, rdc_bc])
