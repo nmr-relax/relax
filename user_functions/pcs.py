@@ -200,6 +200,7 @@ uf.desc[-1].add_prompt("relax> pcs.corr_plot(None)")
 uf.desc[-1].add_prompt("relax> pcs.corr_plot(format=None)")
 uf.backend = pcs.corr_plot
 uf.menu_text = "corr_&plot"
+uf.gui_icon = "relax.grace_icon"
 uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'align_tensor.png'
 uf.wizard_apply_button = False
