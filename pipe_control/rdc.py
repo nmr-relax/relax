@@ -375,11 +375,15 @@ def copy(pipe_from=None, pipe_to=None, align_id=None):
                 interatom_to.rdc_err[align_id] = interatom_from.rdc_err[align_id]
 
 
-def corr_plot(format=None, file=None, dir=None, force=False):
+def corr_plot(format=None, title=None, subtitle=None, file=None, dir=None, force=False):
     """Generate a correlation plot of the measured vs. back-calculated RDCs.
 
     @keyword format:    The format for the plot file.  The following values are accepted: 'grace', a Grace plot; None, a plain text file.
     @type format:       str or None
+    @keyword title:     The title for the plot, overriding the default.
+    @type title:        None or str
+    @keyword subtitle:  The subtitle for the plot, overriding the default.
+    @type subtitle:     None or str
     @keyword file:      The file name or object to write to.
     @type file:         str or file object
     @keyword dir:       The name of the directory to place the file into (defaults to the current directory).
@@ -401,7 +405,9 @@ def corr_plot(format=None, file=None, dir=None, force=False):
 
     # Init.
     data = []
-    title = "RDC correlation plot"
+    orig_title = title
+    if orig_title == None:
+        title = "RDC correlation plot"
     axis_labels = ["Measured RDC (Hz)", "Back-calculated RDC (Hz)"]
 
     # The diagonal.
@@ -438,7 +444,8 @@ def corr_plot(format=None, file=None, dir=None, force=False):
                     rdc -= interatom.j_coupling
 
                 # A different title and axis labels.
-                title = "T = J+D correlation plot"
+                if orig_title == None:
+                    title = "T = J+D correlation plot"
                 axis_labels = ["Measured T = J+D (Hz)", "Back-calculated T = J+D (Hz)"]
 
             # Append the data.
@@ -469,7 +476,7 @@ def corr_plot(format=None, file=None, dir=None, force=False):
     # Grace file.
     if format == 'grace':
         # The header.
-        grace.write_xy_header(file=file, title=title, world=[[-50, -50, 50, 50]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
+        grace.write_xy_header(file=file, title=title, subtitle=subtitle, world=[[-50, -50, 50, 50]], sets=[size], set_names=[[None]+cdp.rdc_ids], linestyle=[[2]+[0]*size], data_type=['rdc', 'rdc_bc'], axis_labels=[axis_labels], tick_major_spacing=[[10, 10]], tick_minor_count=[[9, 9]], legend_pos=[[1, 0.5]])
 
         # The main data.
         grace.write_xy_data(data=data, file=file, graph_type=graph_type, autoscale=False)
