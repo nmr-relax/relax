@@ -137,6 +137,8 @@ The auto-analysis is accessed via the \module{Stereochem\_\linebreak[0]analysis}
 
 The following script was used for the analysis in \citet{Sun11}.
 It is used to complete the first step of the analysis, the determination of relative configuration, and for the generation of ensembles for the second step of the analysis.
+The file is located at \file{sample\osus{}scripts\ossep{}n\osus{}state\osus{}model\ossep{}stereochem\osus{}analysis.py}.
+The contents of the script are:
 
 
 \begin{lstlisting}
@@ -251,3 +253,13 @@ analysis = Stereochem_analysis(
 )
 analysis.run()
 \end{lstlisting}
+
+In contrast to all of the other auto-analyses, here you do not set up your own data pipe containing all of the relevant data that is then passed into the auto-analysis.
+This may change in the future to allow for more flexibility in how you load structures, load the RDC and NOE base data, set up pseudo-atoms and bond lengths for the RDC, etc.
+
+Note that you need to execute this script 6 times, changing the \pycode{STAGE} variable to match.
+These stages are fully documented at the start of the script.
+
+Due to the original analysis being performed prior to the addition of the \uf{structure\ufsep{}superimpose} user function to relax, you will see that the auto-analysis performs superimposition of each ensemble using the external software \software{Molmol}.
+If you wish to perform this analysis without using \software{Molmol}, please contact the relax users mailing list ``relax-users at gna.org''\index{mailing list!relax-users} (see Section~\ref{sect: relax-users mailing list} on page~\pageref{sect: relax-users mailing list}).
+It would be rather straightforward for the relax developers to replace the complicated \software{Molmol} superimposition code with a single call to the \uf{structure\ufsep{}superimpose} user function.
