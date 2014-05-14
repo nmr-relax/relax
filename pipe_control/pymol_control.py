@@ -358,6 +358,97 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     return commands
 
 
+def frame_order(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None):
+    """Display the frame order results (the geometric object, average position and distribution).
+
+    @keyword ave_pos_file:  The name of the file for the average molecule structure.
+    @type ave_pos_file:     str
+    @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
+    @type rep_file:         str
+    @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+    @type dist_file:        str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
+    """
+
+    # The path.
+    path = ''
+    if dir != None:
+        path = dir + sep
+
+    # Set up the respective objects.
+    frame_order_ave_pos(file=path+ave_pos_file)
+    frame_order_geometric(file=path+rep_file)
+    frame_order_distribution(file=path+dist_file)
+
+
+def frame_order_ave_pos(file=None):
+    """Display the PDB structure for the frame order average domain position.
+
+    @keyword file:  The name of the PDB file containing the frame order average structure.
+    @type file:     str
+    """
+
+    # Read in the PDB file.
+    pymol_obj.exec_cmd("load " + file)
+
+    # The object ID.
+    id = file_root(file)
+
+
+def frame_order_distribution(file=None):
+    """Display the PDB structure for the frame order distribution of domain positions.
+
+    @keyword file:  The name of the PDB file containing the frame order distribution of domain positions.
+    @type file:     str
+    """
+
+    # Read in the PDB file.
+    pymol_obj.exec_cmd("load " + file)
+
+
+
+def frame_order_geometric(file=None):
+    """Display the frame order geometric object.
+
+    @keyword file:  The name of the PDB file containing the frame order geometric object.
+    @type file:     str
+    """
+
+    # Read in the PDB file.
+    pymol_obj.exec_cmd("load " + file)
+
+    # The object ID.
+    id = file_root(file)
+
+
+    # Rotor objects.
+    ################
+
+    # Shorten the stick width from 0.25 to 0.15.
+    pymol_obj.exec_cmd("set stick_radius,0.15000")
+
+    # Set up the rotor axis (the residues AX and PRC).
+    pymol_obj.exec_cmd("select (resn AX,PRC)")
+    pymol_obj.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("color red, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Display the central point.
+    pymol_obj.exec_cmd("select (name CTR)")
+    pymol_obj.exec_cmd("show spheres, 'sele'")
+    pymol_obj.exec_cmd("color red, 'sele'")
+    pymol_obj.exec_cmd("set sphere_scale, 0.3, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Set up the propellers.
+    pymol_obj.exec_cmd("select (resn PRB)")
+    pymol_obj.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+
+
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
     """Execute a PyMOL macro.
 
