@@ -364,7 +364,7 @@ def display():
     if cdp.diff_tensor.type == 'sphere':
         tensor_info_table(type='sphere', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, fixed=cdp.diff_tensor.fixed)
     elif cdp.diff_tensor.type == 'spheroid':
-        tensor_info_table(type='spheroid', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, Da=cdp.diff_tensor.Da, Dpar=cdp.diff_tensor.Dpar, Dper=cdp.diff_tensor.Dpar, Dratio=cdp.diff_tensor.Dratio, theta=cdp.diff_tensor.theta, phi=cdp.diff_tensor.phi, fixed=cdp.diff_tensor.fixed)
+        tensor_info_table(type='spheroid', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, Da=cdp.diff_tensor.Da, Dpar=cdp.diff_tensor.Dpar, Dper=cdp.diff_tensor.Dper, Dratio=cdp.diff_tensor.Dratio, theta=cdp.diff_tensor.theta, phi=cdp.diff_tensor.phi, fixed=cdp.diff_tensor.fixed)
     elif cdp.diff_tensor.type == 'ellipsoid':
         tensor_info_table(type='ellipsoid', tm=cdp.diff_tensor.tm, Diso=cdp.diff_tensor.Diso, Da=cdp.diff_tensor.Da, Dr=cdp.diff_tensor.Dr, Dx=cdp.diff_tensor.Dx, Dy=cdp.diff_tensor.Dy, Dz=cdp.diff_tensor.Dz, alpha=cdp.diff_tensor.alpha, beta=cdp.diff_tensor.beta, gamma=cdp.diff_tensor.gamma, fixed=cdp.diff_tensor.fixed)
 
