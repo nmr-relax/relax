@@ -13,15 +13,15 @@ done < <(grep -r http . \
 | sed "s/\">.*//g" \
 | sed "s/<\/.>.*//g" \
 | sed "s/\" .*//g" \
-| sed "s/&quot//g" \
-| sed "s/;\///g" \
+| sed "s/&quot.*//g" \
+| sed "s/;\/.*//g" \
 | sed "s/}.*//g" \
 | sed "s/ .*//g" \
 | sed "s/\\\\_/_/g" \
-| sed "s/\"//g" \
+| sed "s/\"$//g" \
 | sed "s/<br>.*//g" \
 | sed "s/<u>.*//g" \
-| sed "s/,//g" \
+| sed "s/,$//g" \
 | sed "s/#.*//g" \
 | sed "s/).*//g" \
 | sed "s/\%s.*//g" \
@@ -29,6 +29,6 @@ done < <(grep -r http . \
 | sed "s/&gt.*//g" \
 | sed "s/'.*//g" \
 | sed "s/>.*//g" \
-| sed "s/\/>//g" \
+| sed "s/\/>.*//g" \
 | sed "s/<\/tt.*//g" \
 | sort -u)
