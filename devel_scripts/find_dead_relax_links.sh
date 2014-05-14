@@ -26,4 +26,9 @@ done < <(grep -r http . \
 | sed "s/).*//g" \
 | sed "s/\%s.*//g" \
 | sed "s/\.$//g" \
+| sed "s/&gt.*//g" \
+| sed "s/'.*//g" \
+| sed "s/>.*//g" \
+| sed "s/\/>//g" \
+| sed "s/<\/tt.*//g" \
 | sort -u)
