@@ -157,9 +157,15 @@ value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_ma
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
 
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
+
 # Optimise.
 grid_search(inc=5)
 minimise('simplex', constraints=True)
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
@@ -193,7 +199,7 @@ state.save('frame_order', force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order()
 ----------------------------------------------------------------------------------------------------
 Rotation axis: [-0.404308801706154 -0.499856915428411  0.765948729982189]
 
@@ -1909,6 +1915,34 @@ Number of integration points: 50
 Base data: ['RDCs', 'PCSs']
 Chi2:  16.1757857066
 
+relax> frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, dir=None, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Generating the PDB file.
+Opening the file 'true_frame_order.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
+
 relax> grid_search(lower=None, upper=None, inc=5, constraints=True, verbosity=1)
 The centre of mass reference coordinate for the rotor models is at:
     [44.737253525507697, -1.1684805963699558, 14.072436716990133]
@@ -2111,6 +2145,52 @@ Gradient calls:   0
 Hessian calls:    0
 Warning:          None
 
+
+relax> frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, dir=None, size=30.0, inc=36, force=True)
+
+Creating a PDB file with the moving domains shifted to the average position.
+----------------------------------------------------------------------------
+
+Opening the file 'ave_pos_fixed_piv.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Generating the PDB file.
+Opening the file 'frame_order_fixed_piv.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
 
 relax> frame_order.pivot(pivot=array([ 38.968163825736738,   2.6192628972111  ,  13.499077238576398]), order=1, fix=False)
 
@@ -2405,30 +2485,5 @@ relax> pymol.view()
 
 relax> pymol.command(command='show spheres')
 
-relax> pymol.cone_pdb(file='frame_order.pdb')
-Traceback (most recent call last):
-  File "/data/relax/git/trunk/multi/processor.py", line 494, in run
-    self.callback.init_master(self)
-  File "/data/relax/git/trunk/multi/__init__.py", line 318, in default_init_master
-    self.master.run()
-  File "/data/relax/git/trunk/relax.py", line 194, in run
-    self.interpreter.run(self.script_file)
-  File "/data/relax/git/trunk/prompt/interpreter.py", line 275, in run
-    return run_script(intro=self.__intro_string, local=locals(), script_file=script_file, show_script=self.__show_script, raise_relax_error=self.__raise_relax_error)
-  File "/data/relax/git/trunk/prompt/interpreter.py", line 569, in run_script
-    return console.interact(intro, local, script_file, show_script=show_script, raise_relax_error=raise_relax_error)
-  File "/data/relax/git/trunk/prompt/interpreter.py", line 468, in interact_script
-    exec_script(script_file, local)
-  File "/data/relax/git/trunk/prompt/interpreter.py", line 347, in exec_script
-    runpy.run_module(module, globals)
-  File "/usr/lib64/python2.7/runpy.py", line 180, in run_module
-    fname, loader, pkg_name)
-  File "/usr/lib64/python2.7/runpy.py", line 72, in _run_code
-    exec code in run_globals
-  File "/data/relax/git/trunk/test_suite/shared_data/frame_order/cam/rotor2/frame_order.py", line 174, in <module>
-    pymol.cone_pdb('frame_order.pdb')
-  File "/data/relax/git/trunk/prompt/uf_objects.py", line 223, in __call__
-    self._backend(*new_args, **uf_kargs)
-  File "/data/relax/git/trunk/pipe_control/pymol_control.py", line 355, in cone_pdb
-    for i in range(len(cdp.domain_to_pdb)):
-AttributeError: 'PipeContainer' object has no attribute 'domain_to_pdb'
+relax> pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file='domain_distribution.pdb', dir=None)
+

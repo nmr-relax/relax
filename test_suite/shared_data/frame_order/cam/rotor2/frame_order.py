@@ -135,9 +135,15 @@ value.set(param='axis_alpha', val=alpha_angle(pivot=pivot, com=pipe_centre_of_ma
 value.set(param='cone_sigma_max', val=CONE_SIGMA_MAX)
 calc()
 
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
+
 # Optimise.
 grid_search(inc=5)
 minimise('simplex', constraints=True)
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
@@ -171,4 +177,4 @@ state.save('frame_order', force=True)
 # PyMOL.
 pymol.view()
 pymol.command('show spheres')
-pymol.cone_pdb('frame_order.pdb')
+pymol.frame_order()
