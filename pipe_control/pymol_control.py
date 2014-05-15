@@ -425,9 +425,6 @@ def frame_order_geometric(file=None):
     # Rotor objects.
     ################
 
-    # Shorten the stick width from 0.25 to 0.15.
-    pymol_obj.exec_cmd("set stick_radius,0.15000")
-
     # Set up the rotor axis (the residues AX and PRC).
     pymol_obj.exec_cmd("select (resn AX,PRC)")
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -444,6 +441,7 @@ def frame_order_geometric(file=None):
     # Set up the propellers.
     pymol_obj.exec_cmd("select (resn PRB)")
     pymol_obj.exec_cmd("show stick, 'sele'")
+    pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 
