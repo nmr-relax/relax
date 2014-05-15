@@ -363,11 +363,11 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos_file:  The name of the file for the average molecule structure.
-    @type ave_pos_file:     str
+    @type ave_pos_file:     str or None
     @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
-    @type rep_file:         str
+    @type rep_file:         str or None
     @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type dist_file:        str
+    @type dist_file:        str or None
     @keyword dir:           The name of the directory to place the PDB file into.
     @type dir:              str
     @keyword size:          The size of the geometric object in Angstroms.
@@ -380,21 +380,28 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
     @type neg_cone:         bool
     """
 
+    # Check that at least one PDB file name is given.
+    if not ave_pos_file and not rep_file and not dist_file:
+        raise RelaxError("Minimally one PDB file name must be supplied.")
+
     # Test if the current data pipe exists.
     pipes.test()
 
     # Create the average position structure.
-    pdb_ave_pos(file=ave_pos_file, dir=dir, force=force)
+    if ave_pos_file:
+        pdb_ave_pos(file=ave_pos_file, dir=dir, force=force)
 
     # Nothing more to do for the rigid model.
     if cdp.model == 'rigid':
         return
 
     # Create the geometric representation.
-    pdb_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
+    if rep_file:
+        pdb_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
 
     # Create the distribution.
-    pdb_distribution(file=dist_file, dir=dir, force=force)
+    if dist_file:
+        pdb_distribution(file=dist_file, dir=dir, force=force)
 
 
 def pivot(pivot=None, order=1, fix=False):
