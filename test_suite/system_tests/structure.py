@@ -144,6 +144,58 @@ class Structure(SystemTestCase):
         self.interpreter.structure.read_pdb('SpUreE_dimer_H_new', dir=path)
 
 
+    def test_bug_22041_atom_numbering(self):
+        """Catch U{bug #22041<https://gna.org/bugs/?22041>}, the atom serial number not being sequential from 1 onwards."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'structures'
+
+        # Read a PDB file twice as two different molecules.
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path, set_mol_name='N-dom')
+        self.interpreter.structure.read_pdb('1RTE_trunc.pdb', dir=path, set_mol_name='C-dom')
+
+        # Create a PDB file.
+        file = DummyFileObject()
+        self.interpreter.structure.write_pdb(file=file, force=True)
+
+        # The file contents, as they should be.
+        contents = [
+            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
+            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
+            "HET    CYN  A 445       1                                                       \n",
+            "HET    CYN  B 445       1                                                       \n",
+            "HETNAM     CYN UNKNOWN                                                          \n",
+            "FORMUL   1  CYN    C1                                                           \n",
+            "ATOM      1  N   LEU A   3      49.617   4.693  46.426  1.00  0.00           N  \n",
+            "ATOM      2 CA   LEU A   3      49.432   5.476  45.190  1.00  0.00           C  \n",
+            "ATOM      3  C   LEU A   3      50.346   4.980  44.055  1.00  0.00           C  \n",
+            "ATOM      4  O   LEU A   3      49.924   4.868  42.889  1.00  0.00           O  \n",
+            "ATOM      5 CB   LEU A   3      49.673   6.968  45.457  1.00  0.00           C  \n",
+            "ATOM      6 CG   LEU A   3      49.804   7.863  44.222  1.00  0.00           C  \n",
+            "ATOM      7 CD1  LEU A   3      48.564   7.837  43.327  1.00  0.00           C  \n",
+            "ATOM      8 CD2  LEU A   3      50.075   9.282  44.625  1.00  0.00           C  \n",
+            "TER       9      LEU A   3                                                      \n",
+            "HETATM   10    C CYN A 445      29.160  13.127  62.533  1.00  0.00           C  \n",
+            "ATOM     11  N   LEU B   3      49.617   4.693  46.426  1.00  0.00           N  \n",
+            "ATOM     12 CA   LEU B   3      49.432   5.476  45.190  1.00  0.00           C  \n",
+            "ATOM     13  C   LEU B   3      50.346   4.980  44.055  1.00  0.00           C  \n",
+            "ATOM     14  O   LEU B   3      49.924   4.868  42.889  1.00  0.00           O  \n",
+            "ATOM     15 CB   LEU B   3      49.673   6.968  45.457  1.00  0.00           C  \n",
+            "ATOM     16 CG   LEU B   3      49.804   7.863  44.222  1.00  0.00           C  \n",
+            "ATOM     17 CD1  LEU B   3      48.564   7.837  43.327  1.00  0.00           C  \n",
+            "ATOM     18 CD2  LEU B   3      50.075   9.282  44.625  1.00  0.00           C  \n",
+            "TER      19      LEU B   3                                                      \n",
+            "HETATM   20    C CYN B 445      29.160  13.127  62.533  1.00  0.00           C  \n",
+            "MASTER        0    0    2    0    0    0    0    0   18    2    0    0          \n",
+            "END                                                                             \n"
+        ]
+
+        # Check the created PDB file.
+        lines = file.readlines()
+        for i in range(len(lines)):
+            self.assertEqual(contents[i], lines[i])
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
