@@ -317,15 +317,6 @@ class Frame_order:
         elif model == 'iso cone, free rotor':
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone_free_rotor
-        elif model == 'line':
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
-            self.func = self.func_line
-        elif model == 'line, torsionless':
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta'])
-            self.func = self.func_line_torsionless
-        elif model == 'line, free rotor':
-            self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'sigma'])
-            self.func = self.func_line_free_rotor
         elif model == 'rotor':
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
             self.func = self.func_rotor
