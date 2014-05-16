@@ -25,10 +25,3 @@
 # relax module imports.
 from lib.errors import RelaxError
 
-
-def check_ave_domain_setup():
-    """Check that the average domain displacements have been set up."""
-
-    # Check for the pivot.
-    if not hasattr(cdp, 'ave_pos_pivot') or not hasattr(cdp, 'ave_pos_translation'):
-        raise RelaxError("The mechanics of the average domain displacements have not been set up, please use the frame_order.average_position user function.")

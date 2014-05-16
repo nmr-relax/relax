@@ -42,29 +42,8 @@ from lib.text.sectioning import subsection
 from pipe_control import pipes
 from pipe_control.structure import geometric
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.data import domain_moving, translation_fixed
+from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.parameters import update_model
-
-
-def average_position(pivot='com', translation=True):
-    """Set up the mechanics of the average domain position.
-
-    @keyword pivot:         What to use as the motional pivot.  This can be 'com' for the centre of mass of the moving domain, or 'motional' to link the pivot of the motion to the rotation of the average domain position.
-    @type pivot:            str
-    @keyword translation:   If True, translation to the average domain position will be allowed.  If False, then translation will not occur.
-    @type translation:      bool
-    """
-
-    # Test if the current data pipe exists.
-    pipes.test()
-
-    # Check the pivot value.
-    if pivot not in ['com', 'motional']:
-        raise RelaxError("The pivot for the rotation to the average domain position must be either 'com' or 'motional'.")
-
-    # Store the data.
-    cdp.ave_pos_pivot = pivot
-    cdp.ave_pos_translation = translation
 
 
 def num_int_pts(num=200000):
@@ -104,15 +83,11 @@ def pdb_ave_pos(file=None, dir=None, force=False):
         euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
     else:
         euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-    if cdp.ave_pos_pivot == 'com':
-        origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-    else:
-        origin = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
+    origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
     structure.rotate(R=R, origin=origin, atom_id=domain_moving())
 
     # Then translate the moving domain.
-    if not translation_fixed():
-        structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
+    structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
 
     # Write out the PDB file.
     file = open_write_file(file_name=file, dir=dir, force=force)
