@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -867,23 +867,30 @@ def set_vector(spin=None, xh_vect=None):
     spin.xh_vect = xh_vect
 
 
-def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
+def superimpose(models=None, method='fit to mean', atom_id=None, centre_type="centroid", centroid=None):
     """Superimpose a set of structural models.
 
-    @keyword models:    The list of models to superimpose.  If set to None, then all models will be used.
-    @type models:       list of int or None
-    @keyword method:    The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
-    @type method:       str
-    @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.
-    @type atom_id:      str or None
-    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:     list of float or numpy rank-1, 3D array
+    @keyword models:        The list of models to superimpose.  If set to None, then all models will be used.
+    @type models:           list of int or None
+    @keyword method:        The superimposition method.  It must be one of 'fit to mean' or 'fit to first'.
+    @type method:           str
+    @keyword atom_id:       The molecule, residue, and atom identifier string.  This matches the spin ID string format.
+    @type atom_id:          str or None
+    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:      str
+    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:         list of float or numpy rank-1, 3D array
     """
 
     # Check the method.
     allowed = ['fit to mean', 'fit to first']
     if method not in allowed:
         raise RelaxError("The superimposition method '%s' is unknown.  It must be one of %s." % (method, allowed))
+
+    # Check the type.
+    allowed = ['centroid', 'CoM']
+    if centre_type not in allowed:
+        raise RelaxError("The superimposition centre type '%s' is unknown.  It must be one of %s." % (centre_type, allowed))
 
     # Test if the current data pipe exists.
     pipes.test()
@@ -905,11 +912,16 @@ def superimpose(models=None, method='fit to mean', atom_id=None, centroid=None):
             coord[-1].append(pos[0])
         coord[-1] = array(coord[-1])
 
+    # Assemble the element types.
+    elements = []
+    for elem in cdp.structure.atom_loop(atom_id=atom_id, model_num=model, element_flag=True):
+        elements.append(elem)
+
     # The different algorithms.
     if method == 'fit to mean':
-        T, R, pivot = fit_to_mean(models=models, coord=coord, centroid=centroid)
+        T, R, pivot = fit_to_mean(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
     elif method == 'fit to first':
-        T, R, pivot = fit_to_first(models=models, coord=coord, centroid=centroid)
+        T, R, pivot = fit_to_first(models=models, coord=coord, centre_type=centre_type, elements=elements, centroid=centroid)
 
 
     # Update to the new coordinates.
