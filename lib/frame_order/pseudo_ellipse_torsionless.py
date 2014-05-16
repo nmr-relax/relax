@@ -25,13 +25,13 @@
 # Python module imports.
 from math import cos, pi, sin, sqrt
 try:
-    from scipy.integrate import dblquad, quad
+    from scipy.integrate import quad
 except ImportError:
     pass
 
 # relax module imports.
 from lib.geometry.pec import pec
-from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless, pcs_pivot_motion_torsionless_qrint, rotate_daeg
+from lib.frame_order.matrix_ops import pcs_pivot_motion_torsionless_qrint, rotate_daeg
 from lib.frame_order.pseudo_ellipse import tmax_pseudo_ellipse
 
 
@@ -254,46 +254,6 @@ def part_int_daeg2_pseudo_ellipse_torsionless_88(phi, x, y):
 
     # The theta integral.
     return 2 - 2*cos(tmax)**3
-
-
-def pcs_numeric_int_pseudo_ellipse_torsionless(theta_x=None, theta_y=None, c=None, r_pivot_atom=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None):
-    """Determine the averaged PCS value via numerical integration.
-
-    @keyword theta_x:       The x-axis half cone angle.
-    @type theta_x:          float
-    @keyword theta_y:       The y-axis half cone angle.
-    @type theta_y:          float
-    @keyword c:             The PCS constant (without the interatomic distance and in Angstrom units).
-    @type c:                float
-    @keyword r_pivot_atom:  The pivot point to atom vector.
-    @type r_pivot_atom:     numpy rank-1, 3D array
-    @keyword r_ln_pivot:    The lanthanide position to pivot point vector.
-    @type r_ln_pivot:       numpy rank-1, 3D array
-    @keyword A:             The full alignment tensor of the non-moving domain.
-    @type A:                numpy rank-2, 3D array
-    @keyword R_eigen:       The eigenframe rotation matrix.
-    @type R_eigen:          numpy rank-2, 3D array
-    @keyword RT_eigen:      The transpose of the eigenframe rotation matrix (for faster calculations).
-    @type RT_eigen:         numpy rank-2, 3D array
-    @keyword Ri_prime:      The empty rotation matrix for the in-frame isotropic cone motion, used to calculate the PCS for each state i in the numerical integration.
-    @type Ri_prime:         numpy rank-2, 3D array
-    @return:                The averaged PCS value.
-    @rtype:                 float
-    """
-
-    def pseudo_ellipse(phi):
-        """The pseudo-ellipse wrapper formula."""
-
-        return tmax_pseudo_ellipse(phi, theta_x, theta_y)
-
-    # Perform numerical integration.
-    result = dblquad(pcs_pivot_motion_torsionless, -pi, pi, lambda phi: 0.0, pseudo_ellipse, args=(r_pivot_atom, r_ln_pivot, A, R_eigen, RT_eigen, Ri_prime))
-
-    # The surface area normalisation factor.
-    SA = pec(theta_x, theta_y)
-
-    # Return the value.
-    return c * result[0] / SA
 
 
 def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, theta_y=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None, error_flag=False):
