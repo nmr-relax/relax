@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ from numpy import diag, dot, eye, float64, outer, sign, transpose, zeros
 from numpy.linalg import det, norm, svd
 
 # relax module import.
+from lib.structure.mass import centre_of_mass
 from lib.structure.statistics import calc_mean_structure
 from lib.geometry.rotations import R_to_axis_angle, R_to_euler_zyz
 
@@ -49,17 +50,21 @@ def find_centroid(coords):
     return centroid
 
 
-def fit_to_first(models=None, coord=None, centroid=None):
+def fit_to_first(models=None, coord=None, centre_type="centroid", elements=None, centroid=None):
     """Superimpose a set of structural models using the fit to first algorithm.
 
-    @keyword models:    The list of models to superimpose.
-    @type models:       list of int
-    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
-    @type coord:        list of numpy rank-2, Nx3 arrays
-    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:     list of float or numpy rank-1, 3D array
-    @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
-    @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
+    @keyword models:        The list of models to superimpose.
+    @type models:           list of int
+    @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
+    @type coord:            list of numpy rank-2, Nx3 arrays
+    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:         list of float or numpy rank-1, 3D array
+    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:      str
+    @keyword elements:      The list of elements corresponding to the atoms.
+    @type elements:         list of str
+    @return:                The lists of translation vectors, rotation matrices, and rotation pivots.
+    @rtype:                 list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
     """
 
     # Print out.
@@ -73,7 +78,7 @@ def fit_to_first(models=None, coord=None, centroid=None):
     # Loop over the ending models.
     for i in range(1, len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0], centroid=centroid)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='model %s'%models[i], coord_from=coord[i], coord_to=coord[0], centre_type=centre_type, elements=elements, centroid=centroid)
 
         # Store the transforms.
         T_list.append(trans_vect)
@@ -84,19 +89,23 @@ def fit_to_first(models=None, coord=None, centroid=None):
     return T_list, R_list, pivot_list
 
 
-def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
+def fit_to_mean(models=None, coord=None, centre_type="centroid", elements=None, centroid=None, verbosity=1):
     """Superimpose a set of structural models using the fit to first algorithm.
 
-    @keyword models:    The list of models to superimpose.
-    @type models:       list of int
-    @keyword coord:     The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
-    @type coord:        list of numpy rank-2, Nx3 arrays
-    @keyword centroid:  An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
-    @type centroid:     list of float or numpy rank-1, 3D array
-    @keyword verbosity: The amount of information to print out.  If 0, nothing will be printed.
-    @type verbosity:    int
-    @return:            The lists of translation vectors, rotation matrices, and rotation pivots.
-    @rtype:             list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
+    @keyword models:        The list of models to superimpose.
+    @type models:           list of int
+    @keyword coord:         The list of coordinates of all models to superimpose.  The first index is the models, the second is the atomic positions, and the third is the xyz coordinates.
+    @type coord:            list of numpy rank-2, Nx3 arrays
+    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:      str
+    @keyword elements:      The list of elements corresponding to the atoms.
+    @type elements:         list of str
+    @keyword centroid:      An alternative position of the centroid to allow for different superpositions, for example of pivot point motions.
+    @type centroid:         list of float or numpy rank-1, 3D array
+    @keyword verbosity:     The amount of information to print out.  If 0, nothing will be printed.
+    @type verbosity:        int
+    @return:                The lists of translation vectors, rotation matrices, and rotation pivots.
+    @rtype:                 list of numpy rank-1 3D arrays, list of numpy rank-2 3D arrays, list of numpy rank-1 3D arrays
     """
 
     # Print out.
@@ -131,7 +140,7 @@ def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
         converged = True
         for i in range(len(models)):
             # Calculate the displacements (Kabsch algorithm).
-            trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, centroid=centroid, verbosity=0)
+            trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[0], name_to='mean', coord_from=coord[i], coord_to=mean, centre_type=centre_type, elements=elements, centroid=centroid, verbosity=0)
 
             # Table printout.
             if verbosity:
@@ -161,7 +170,7 @@ def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
     # Perform the fit once from the original coordinates to obtain the full transforms.
     for i in range(len(models)):
         # Calculate the displacements (Kabsch algorithm).
-        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean, centroid=centroid, verbosity=0)
+        trans_vect, trans_dist, R, axis, angle, pivot = kabsch(name_from='model %s'%models[i], name_to='the mean structure', coord_from=orig_coord[i], coord_to=mean, centre_type=centre_type, elements=elements, centroid=centroid, verbosity=0)
 
         # Store the transforms.
         T_list.append(trans_vect)
@@ -172,7 +181,7 @@ def fit_to_mean(models=None, coord=None, centroid=None, verbosity=1):
     return T_list, R_list, pivot_list
 
 
-def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroid=None, verbosity=1):
+def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centre_type="centroid", elements=None, centroid=None, verbosity=1):
     """Calculate the rotational and translational displacements between the two given coordinate sets.
 
     This uses the U{Kabsch algorithm<http://en.wikipedia.org/wiki/Kabsch_algorithm>}.
@@ -186,6 +195,10 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     @type coord_from:       numpy rank-2, Nx3 array
     @keyword coord_to:      The list of atomic coordinates for the ending structure.
     @type coord_to:         numpy rank-2, Nx3 array
+    @keyword centre_type:   The type of centre to superimpose over.  This can either be the standard centroid superimposition or the CoM could be used instead.
+    @type centre_type:      str
+    @keyword elements:      The list of elements corresponding to the atoms.
+    @type elements:         list of str
     @keyword centroid:      An alternative position of the centroid, used for studying pivoted systems.
     @type centroid:         list of float or numpy rank-1, 3D array
     @return:                The translation vector T, translation distance d, rotation matrix R, rotation axis r, rotation angle theta, and the rotational pivot defined as the centroid of the ending structure.
@@ -196,9 +209,12 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     if centroid != None:
         centroid_from = centroid
         centroid_to = centroid
-    else:
+    elif centre_type == 'centroid':
         centroid_from = find_centroid(coord_from)
         centroid_to = find_centroid(coord_to)
+    else:
+        centroid_from, mass_from = centre_of_mass(pos=coord_from, elements=elements)
+        centroid_to, mass_to = centre_of_mass(pos=coord_to, elements=elements)
 
     # The translation.
     trans_vect = centroid_to - centroid_from
@@ -212,8 +228,12 @@ def kabsch(name_from=None, name_to=None, coord_from=None, coord_to=None, centroi
     # Print out.
     if verbosity >= 1:
         print("\n\nCalculating the rotational and translational displacements from %s to %s using the Kabsch algorithm.\n" % (name_from, name_to))
-        print("Start centroid:          [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
-        print("End centroid:            [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
+        if centre_type == 'centroid':
+            print("Start centroid:          [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
+            print("End centroid:            [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
+        else:
+            print("Start CoM:               [%20.15f, %20.15f, %20.15f]" % (centroid_from[0], centroid_from[1], centroid_from[2]))
+            print("End CoM:                 [%20.15f, %20.15f, %20.15f]" % (centroid_to[0], centroid_to[1], centroid_to[2]))
         print("Translation vector:      [%20.15f, %20.15f, %20.15f]" % (trans_vect[0], trans_vect[1], trans_vect[2]))
         print("Translation distance:    %.15f" % trans_dist)
         print("Rotation matrix:")

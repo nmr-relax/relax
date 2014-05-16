@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -930,6 +930,16 @@ uf.add_keyarg(
     desc_short = "atom ID string",
     desc = "The atom identification string.",
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "centre_type",
+    py_type = "str",
+    default = "centroid",
+    desc_short = "centre type",
+    desc = "The type of centre to user for the superimposition, i.e. either the standard centroid superimposition or a superimposition using the centre of mass (CoM).",
+    wiz_element_type = "combo",
+    wiz_combo_choices = ["The centroid", "The centre of mass (CoM)"],
+    wiz_combo_data = ["centroid", "CoM"]
 )
 uf.add_keyarg(
     name = "centroid",
