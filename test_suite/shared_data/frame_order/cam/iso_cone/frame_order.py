@@ -8,7 +8,8 @@ from lib.geometry.rotations import reverse_euler_zyz
 
 
 # The real parameter values.
-AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = reverse_euler_zyz(4.3434999280669997, 0.43544332764249905, 3.8013235235956007)
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623469076122531,    0.435439405668396,    5.081265529106499]
 AXIS_THETA = 0.96007997859534299767
 AXIS_PHI = 4.03227550621962294031
 CONE_THETA = 0.6
@@ -85,6 +86,9 @@ frame_order.num_int_pts(num=1000)
 frame_order.quad_int(flag=False)
 
 # Check the minimum.
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
 value.set(param='ave_pos_alpha', val=AVE_POS_ALPHA)
 value.set(param='ave_pos_beta', val=AVE_POS_BETA)
 value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
