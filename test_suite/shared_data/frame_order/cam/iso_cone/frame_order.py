@@ -3,9 +3,6 @@
 # Python module imports.
 from numpy import array
 
-# relax module imports.
-from lib.geometry.rotations import reverse_euler_zyz
-
 
 # The real parameter values.
 AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
@@ -111,7 +108,6 @@ frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_orde
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
 minimise('simplex', constraints=True)
-
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
