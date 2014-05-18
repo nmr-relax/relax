@@ -92,8 +92,10 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, sqrt
+from numpy import arccosh, array, cos, cosh, isfinite, sqrt, sum
 
+# Repetitive calculations (to speed up calculations).
+eta_scale = 2.0**(-3.0/2.0)
 
 def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
@@ -146,26 +148,17 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     Dneg = 0.5 * (-1.0 + D_part)
 
     # Partial eta+/- values.
-    eta_scale = 2.0**(-3.0/2.0)
-    etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
-    etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
+    etapos = eta_scale * sqrt(Psi + sqrt_psi2_zeta2) / cpmg_frqs
+    etaneg = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2) / cpmg_frqs
 
-    # Loop over the time points, back calculating the R2eff values.
+    # Calculate R2eff.
+    R2eff = r20_kex - cpmg_frqs * arccosh( Dpos * cosh(etapos) - Dneg * cos(etaneg) )
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
     for i in range(num_points):
-        # The full eta+/- values.
-        etapos = etapos_part / cpmg_frqs[i]
-        etaneg = etaneg_part / cpmg_frqs[i]
-
-        # Catch large values of etapos going into the cosh function.
-        if etapos > 100:
-            back_calc[i] = 1e100
-            continue
-
-        # The arccosh argument - catch invalid values.
-        fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-        if fact < 1.0:
-            back_calc[i] = r20_kex
-            continue
-
-        # The full formula.
-        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(fact)
+        back_calc[i] = R2eff[i]
