@@ -67,7 +67,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from math import sin
+from numpy import sin, isfinite, sum
 
 
 def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_points=None):
@@ -90,24 +90,20 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_p
     @type num_points:       int
     """
 
-    # Loop over the time points, back calculating the R2eff values.
+    # Denominator.
+    denom = dw * tcp
+
+    # The numerator.
+    numer = sin(denom)
+
+    # Calculate R2eff.
+    R2eff = r20a + k_AB - k_AB * numer / denom
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
     for i in range(num_points):
-        # Denominator.
-        denom = dw * tcp[i]
-
-        # The numerator.
-        numer = sin(denom)
-
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = r20a + k_AB
-            continue
-
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
-
-        # The full formula.
-        else:
-            back_calc[i] = r20a + k_AB - k_AB * numer / denom
+        back_calc[i] = R2eff[i]
