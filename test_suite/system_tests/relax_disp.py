@@ -1287,7 +1287,7 @@ class Relax_disp(SystemTestCase):
 
         # The maximum number of iterations.
         # The default value is 1e7.
-        ds.set_max_iter = 1000
+        ds.set_max_iter = 10000
 
         # The verbosity level.
         ds.verbosity = 1
@@ -1446,7 +1446,7 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the dx point point file.")
         res_file = [
             '0.8            3.92           0.39964        1'+"\n",
-            '4e-05          0.08           3.8            1'+"\n",
+            '0.76982        3.9169         0.41353        1'+"\n",
         ]
         file = open(point_point, 'r')
         lines = file.readlines()
