@@ -196,9 +196,10 @@ class Main:
         # Printout.
         sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
 
-        # Load N copies of the original C-domain.
-        for global_index, mode_indices in self._state_loop():
-            self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=global_index+1)
+        # Load N copies of the original C-domain for the distribution.
+        if self.DIST_PDB:
+            for global_index, mode_indices in self._state_loop():
+                self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=global_index+1)
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
