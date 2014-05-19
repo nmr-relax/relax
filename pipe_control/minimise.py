@@ -80,7 +80,8 @@ def calc(verbosity=1):
         api.calculate(verbosity=verbosity)
 
     # Execute any queued commands.
-    processor.run_queue()
+    # No processes has been queued in the calc function().
+    #processor.run_queue()
 
 
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
