@@ -240,17 +240,19 @@ class Internal:
             return 'Average vector'
 
 
-    def _parse_models_gaussian(self, file_path):
+    def _parse_models_gaussian(self, file_path, verbosity=1):
         """Generator function for looping over the models in the Gaussian log file.
 
         @param file_path:   The full path of the Gaussian log file.
         @type file_path:    str
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         """
 
         # Open the file.
-        file = open_read_file(file_path)
+        file = open_read_file(file_path, verbosity=verbosity)
         lines = file.readlines()
         file.close()
 
@@ -580,17 +582,19 @@ class Internal:
         return lines[i:]
 
 
-    def _parse_models_xyz(self, file_path):
+    def _parse_models_xyz(self, file_path, verbosity=1):
         """Generator function for looping over the models in the XYZ file.
 
         @param file_path:   The full path of the XYZ file.
         @type file_path:    str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
         """
 
         # Open the file.
-        file = open_read_file(file_path)
+        file = open_read_file(file_path, verbosity=verbosity)
         lines = file.readlines()
         file.close()
 
@@ -1798,7 +1802,7 @@ class Internal:
             set_model_num = [1]
 
         # Loop over all models in the Gaussian log file, doing nothing so the last model records are stored.
-        for model_records in self._parse_models_gaussian(file_path):
+        for model_records in self._parse_models_gaussian(file_path, verbosity=verbosity):
             pass
 
         # Generate the molecule container.
@@ -1863,7 +1867,7 @@ class Internal:
             set_model_num = [set_model_num]
 
         # Open the PDB file.
-        pdb_file = open_read_file(file_path)
+        pdb_file = open_read_file(file_path, verbosity=verbosity)
         pdb_lines = pdb_file.readlines()
         pdb_file.close()
 
@@ -1999,7 +2003,7 @@ class Internal:
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
-        for model_records in self._parse_models_xyz(file_path):
+        for model_records in self._parse_models_xyz(file_path, verbosity=verbosity):
             # Increment the xyz_model_increment
             xyz_model_increment = xyz_model_increment +1
 
