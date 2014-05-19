@@ -1480,7 +1480,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0], num_cpmg=self.power[0][mi])
+                self.back_calc[0][si][mi][0] = r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], tcp=self.tau_cpmg[0][mi], num_points=self.num_disp_points[0][si][mi][0], num_cpmg=self.power[0][mi])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):

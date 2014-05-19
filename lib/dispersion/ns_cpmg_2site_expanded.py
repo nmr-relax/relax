@@ -235,14 +235,13 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from math import log
-from numpy import exp, power, sqrt
+from numpy import array, exp, isfinite, power, log, min, sqrt, sum
 
 # relax module imports.
 from lib.float import isNaN
 
 
-def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
+def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, num_points=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -264,9 +263,7 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     @type inv_relax_time:       float
     @keyword tcp:               The tau_CPMG times (1 / 4.nu1).
     @type tcp:                  numpy rank-1 float array
-    @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp .
     @type num_points:           int
     @keyword num_cpmg:          The array of numbers of CPMG blocks.
     @type num_cpmg:             numpy int16, rank-1 array
@@ -342,7 +339,15 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     t116 = power(0.5*(t97_t99 + t112), t115)
     t118 = 1.0/t112
     t120 = t97_nt99 + t112
-    t122 = power(0.5*(t97_t99 - t112), t115)
+
+    half_t97_t99_m_t112 = 0.5*(t97_t99 - t112)
+    # Catch math domain error of power(val < 1.e-7, 40).
+    # This is when abs(half_t97_t99_m_t112) < 1.e-7.
+    if min(abs(half_t97_t99_m_t112.real)) < 1.e-7:
+        R2eff = array([1e100]*num_points)
+        return R2eff
+
+    t122 = power(half_t97_t99_m_t112, t115)
     t127 = 0.5/t108
     t120_t122 = t120*t122
     t139 = 0.5/(k_AB + k_BA) * ((t120_t122 - t113*t116)*t118*k_BA + (t120_t122 - t116*t120)*t127*t113*t118*k_AB)
@@ -355,8 +360,11 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     Mx = intensity / intensity0
 
     # Calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential, and store it for each dispersion point.
-    for i in range(num_points):
-        if Mx[i] <= 0.0 or isNaN(Mx[i]):
-            back_calc[i] = 1e99
-        else:
-            back_calc[i]= -inv_relax_time * log(Mx[i])
+    R2eff = -inv_relax_time * log(Mx)
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)) or min(Mx) <= 0.0 or not isfinite(sum(Mx)):
+        R2eff = array([1e100]*num_points)
+
+    return R2eff
