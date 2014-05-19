@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, eye, float64, transpose, zeros
+from numpy import array, cross, dot, eye, float64, tensordot, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
@@ -204,6 +204,24 @@ class Main:
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
 
+        # Set up some data structures for faster calculations.
+        spins = []
+        spin_pos = []
+        for spin in spin_loop():
+            if hasattr(spin, 'pos'):
+                spins.append(spin)
+                spin_pos.append(spin.orig_pos[0])
+        spin_pos = array(spin_pos, float64)
+        num_spins = len(spin_pos)
+        interatoms = []
+        vectors = []
+        for interatom in interatomic_loop():
+            if hasattr(interatom, 'vector'):
+                interatoms.append(interatom)
+                vectors.append(interatom.orig_vect)
+        vectors = array(vectors, float64)
+        num_interatoms = len(vectors)
+
         # Loop over each position.
         for global_index, mode_indices in self._state_loop():
             # The progress meter.
@@ -213,19 +231,17 @@ class Main:
             total_R = eye(3)
 
             # Loop over each motional mode.
+            new_pos = spin_pos
+            new_vect = vectors
             for motion_index in range(self.MODES):
                 # Generate the distribution specific rotation.
                 self.rotation(mode_indices[motion_index], motion_index=motion_index)
 
-                # Rotate the atomic position.
-                for spin in spin_loop():
-                    if hasattr(spin, 'pos'):
-                        spin.pos[global_index] = dot(self.R, (spin.orig_pos[0] - self.PIVOT[motion_index])) + self.PIVOT[motion_index]
+                # Rotate the atomic positions.
+                new_pos = transpose(tensordot(self.R, transpose(new_pos - self.PIVOT[motion_index]), axes=1)) + self.PIVOT[motion_index]
 
                 # Rotate the NH vector.
-                for interatom in interatomic_loop():
-                    if hasattr(interatom, 'vector'):
-                        interatom.vector[global_index] = dot(self.R, interatom.orig_vect)
+                new_vect = transpose(dot(self.R, transpose(new_vect)))
 
                 # Decompose the rotation into Euler angles and store them.
                 if self.ROT_FILE:
@@ -238,6 +254,12 @@ class Main:
 
                 # Contribution to the total rotation.
                 total_R = dot(self.R, total_R)
+
+            # Pack the positional and vector data.
+            for i in range(num_spins):
+                spins[i].pos[global_index] = new_pos[i]
+            for i in range(num_interatoms):
+                interatoms[i].vector[global_index] = new_vect[i]
 
             # The frame order matrix component.
             self.daeg += kron_prod(total_R, total_R)
@@ -317,7 +339,7 @@ class Main:
             self.axes = [self.axes]
 
 
-    def _progress(self, i, a=5, b=100):
+    def _progress(self, i, a=5, b=1000):
         """A simple progress write out (which goes to the terminal STDERR)."""
 
         # The spinner characters.
