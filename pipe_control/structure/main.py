@@ -293,11 +293,15 @@ def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     status.observers.result_file.notify()
 
 
-def delete(atom_id=None):
+def delete(atom_id=None, verbosity=1, spin_info=True):
     """Delete structural data.
     
     @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
     @type atom_id:      str or None
+    @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+    @type verbosity:    int
+    @keyword spin_info: A flag which if True will cause all structural information in the spin containers and interatomic data containers to be deleted as well.  If False, then only the 3D structural data will be deleted.
+    @type spin_info:    bool
     """
 
     # Test if the current data pipe exists.
@@ -305,20 +309,27 @@ def delete(atom_id=None):
 
     # Run the object method.
     if hasattr(cdp, 'structure'):
-        print("Deleting structural data from the current pipe.")
+        if verbosity:
+            print("Deleting structural data from the current pipe.")
         cdp.structure.delete(atom_id=atom_id)
-    else:
+    elif verbosity:
         print("No structures are present.")
 
+    # Skip the rest.
+    if not spin_info:
+        return
+
     # Then remove any spin specific structural info.
-    print("Deleting all spin specific structural info.")
+    if verbosity:
+        print("Deleting all spin specific structural info.")
     for spin in spin_loop(selection=atom_id):
         # Delete positional information.
         if hasattr(spin, 'pos'):
             del spin.pos
 
     # Then remove any interatomic vector structural info.
-    print("Deleting all interatomic vectors.")
+    if verbosity:
+        print("Deleting all interatomic vectors.")
     for interatom in interatomic_loop(selection1=atom_id):
         # Delete bond vectors.
         if hasattr(interatom, 'vector'):
