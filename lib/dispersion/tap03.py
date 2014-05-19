@@ -60,7 +60,7 @@ More information on the TAP03 model can be found in the:
 """
 
 # Python module imports.
-from math import atan2, sin, sqrt
+from numpy import arctan2, isfinite, sin, sqrt, sum
 
 
 def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
@@ -105,50 +105,42 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     phi_ex = pA * pB * dw**2
     numer = phi_ex * kex
 
-    # Loop over the dispersion points, back calculating the R1rho values.
-    for i in range(num_points):
-        # The factors.
-        da = Wa - offset    # Offset of spin-lock from A.
-        db = Wb - offset    # Offset of spin-lock from B.
-        d = W - offset      # Offset of spin-lock from pop-average.
+    # The factors.
+    da = Wa - offset    # Offset of spin-lock from A.
+    db = Wb - offset    # Offset of spin-lock from B.
+    d = W - offset      # Offset of spin-lock from pop-average.
 
-        # The gamma factor.
-        sigma = pB*da + pA*db
-        sigma2 = sigma**2
-        gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2[i]) / (sigma2 + kex2 + spin_lock_fields2[i])**2
+    # The gamma factor.
+    sigma = pB*da + pA*db
+    sigma2 = sigma**2
+    gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2) / (sigma2 + kex2 + spin_lock_fields2)**2
 
-        # Bad gamma.
-        if gamma < 0.0:
-            back_calc[i] = 1e100
-            continue
+    # Special omega values.
+    waeff2 = gamma*spin_lock_fields2 + da**2     # Effective field at A.
+    wbeff2 = gamma*spin_lock_fields2 + db**2     # Effective field at B.
+    weff2 = gamma*spin_lock_fields2 + d**2       # Effective field at pop-average.
 
-        # Special omega values.
-        waeff2 = gamma*spin_lock_fields2[i] + da**2     # Effective field at A.
-        wbeff2 = gamma*spin_lock_fields2[i] + db**2     # Effective field at B.
-        weff2 = gamma*spin_lock_fields2[i] + d**2       # Effective field at pop-average.
+    # The rotating frame flip angle.
+    theta = arctan2(spin_lock_fields, d)
+    hat_theta = arctan2(sqrt(gamma)*spin_lock_fields, d)
 
-        # The rotating frame flip angle.
-        theta = atan2(spin_lock_fields[i], d)
-        hat_theta = atan2(sqrt(gamma)*spin_lock_fields[i], d)
+    # Repetitive calculations (to speed up calculations).
+    sin_theta2 = sin(theta)**2
+    hat_sin_theta2 = sin(hat_theta)**2
+    R1_cos_theta2 = R1 * (1.0 - sin_theta2)
+    R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
-        # Repetitive calculations (to speed up calculations).
-        sin_theta2 = sin(theta)**2
-        hat_sin_theta2 = sin(hat_theta)**2
-        R1_cos_theta2 = R1 * (1.0 - sin_theta2)
-        R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
-
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2
-            continue
-
-        # Denominator.
-        denom = waeff2*wbeff2/weff2 + kex2 - 2.0*hat_sin_theta2*phi_ex + (1.0 - gamma)*spin_lock_fields2[i]
+    # Denominator.
+    denom = waeff2*wbeff2/weff2 + kex2 - 2.0*hat_sin_theta2*phi_ex + (1.0 - gamma)*spin_lock_fields2
  
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
+    # R1rho calculation.
+    R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + hat_sin_theta2 * numer / denom / gamma
 
-        # R1rho calculation.
-        back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2 + hat_sin_theta2 * numer / denom / gamma
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R1rho)):
+        R1rho = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
+    for i in range(num_points):
+        back_calc[i] = R1rho[i]
