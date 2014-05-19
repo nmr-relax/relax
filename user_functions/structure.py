@@ -427,6 +427,20 @@ uf.add_keyarg(
     desc = "The atom identification string.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
+)
+uf.add_keyarg(
+    name = "spin_info",
+    default = True,
+    py_type = "bool",
+    desc_short = "spin information flag",
+    desc = "A flag which if True will cause all structural information in the spin containers and interatomic data containers to be deleted as well.  If False, then only the 3D structural data will be deleted."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will delete structural information from the current data pipe.  All spin and sequence information loaded from these structures will be preserved - this only affects the structural data.  The atom ID argument can be used to restrict deletion to parts of the loaded molecules.")
@@ -644,6 +658,13 @@ uf.add_keyarg(
     desc = "Set the model numbers of the loaded molecules.  This can be a single number or list of numbers.",
     can_be_none = True
 )
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
+)
 # Description.
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("The atomic positions from a Gaussian log file can be read into relax.  If optimisation has been preformed, the last set of atomic coordinates from the log will be read to obtain the final structure.  The log file can be Gzip or Bzip2 compressed.")
@@ -716,6 +737,13 @@ uf.add_keyarg(
     desc_short = "alternate location indicator",
     desc = "The PDB ATOM record 'Alternate location indicator' field value.",
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
 uf.add_keyarg(
     name = "merge",
@@ -804,6 +832,13 @@ uf.add_keyarg(
     desc_short = "setting of model numbers",
     desc = "Set the model numbers of the loaded molecules.  If unset, then the PDB model numbers will be preserved if they exist.  This can be a single number or list of numbers.",
     can_be_none = True
+)
+uf.add_keyarg(
+    name = "verbosity",
+    default = 1,
+    py_type = "int",
+    desc_short = "verbosity level",
+    desc = "The amount of information to print out.  Set to zero to silence the user function, or one to see all messages."
 )
 # Description.
 uf.desc.append(Desc_container())
