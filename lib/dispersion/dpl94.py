@@ -63,7 +63,7 @@ More information on the DPL94 model can be found in the:
 """
 
 # Python module imports.
-from math import cos, sin
+from numpy import array, cos, isfinite, sin, sum
 
 
 def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None, num_points=None):
@@ -93,27 +93,24 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     # Repetitive calculations (to speed up calculations).
     kex2 = kex**2
 
-    # Loop over the dispersion points, back calculating the R1rho values.
+    # The non-Rex factors.
+    sin_theta2 = sin(theta)**2
+    R1_R2 = R1 * cos(theta)**2  +  r1rho_prime * sin_theta2
+
+    # The numerator.
+    numer = sin_theta2 * phi_ex * kex
+
+    # Denominator.
+    denom = kex2 + spin_lock_fields2
+
+    # R1rho calculation.
+    R1rho = R1_R2 + numer / denom
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R1rho)):
+        R1rho = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
     for i in range(num_points):
-        # The non-Rex factors.
-        sin_theta2 = sin(theta[i])**2
-        R1_R2 = R1 * cos(theta[i])**2  +  r1rho_prime * sin_theta2
-
-        # The numerator.
-        numer = sin_theta2 * phi_ex * kex
-
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = R1_R2
-            continue
-
-        # Denominator.
-        denom = kex2 + spin_lock_fields2[i]
-
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
-
-        # R1rho calculation.
-        back_calc[i] = R1_R2 + numer / denom
+        back_calc[i] = R1rho[i]
