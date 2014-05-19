@@ -311,7 +311,7 @@ def delete(atom_id=None, verbosity=1, spin_info=True):
     if hasattr(cdp, 'structure'):
         if verbosity:
             print("Deleting structural data from the current pipe.")
-        cdp.structure.delete(atom_id=atom_id)
+        cdp.structure.delete(atom_id=atom_id, verbosity=verbosity)
     elif verbosity:
         print("No structures are present.")
 

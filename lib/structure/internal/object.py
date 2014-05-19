@@ -240,17 +240,19 @@ class Internal:
             return 'Average vector'
 
 
-    def _parse_models_gaussian(self, file_path):
+    def _parse_models_gaussian(self, file_path, verbosity=1):
         """Generator function for looping over the models in the Gaussian log file.
 
         @param file_path:   The full path of the Gaussian log file.
         @type file_path:    str
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         """
 
         # Open the file.
-        file = open_read_file(file_path)
+        file = open_read_file(file_path, verbosity=verbosity)
         lines = file.readlines()
         file.close()
 
@@ -580,17 +582,19 @@ class Internal:
         return lines[i:]
 
 
-    def _parse_models_xyz(self, file_path):
+    def _parse_models_xyz(self, file_path, verbosity=1):
         """Generator function for looping over the models in the XYZ file.
 
         @param file_path:   The full path of the XYZ file.
         @type file_path:    str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         @return:            The model number and all the records for that model.
         @rtype:             tuple of int and array of str
         """
 
         # Open the file.
-        file = open_read_file(file_path)
+        file = open_read_file(file_path, verbosity=verbosity)
         lines = file.readlines()
         file.close()
 
@@ -1499,18 +1503,21 @@ class Internal:
             mol.atom_connect(index1=index1, index2=index2)
 
 
-    def delete(self, atom_id=None):
+    def delete(self, atom_id=None, verbosity=1):
         """Deletion of structural information.
 
         @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
         @type atom_id:      str or None
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         """
 
         # All data.
         if atom_id == None:
-            # Print out.
-            print("Deleting the following structural data:\n")
-            print(self.structural_data)
+            # Printout.
+            if verbosity:
+                print("Deleting the following structural data:\n")
+                print(self.structural_data)
 
             # Delete the structural data.
             del self.structural_data
@@ -1795,7 +1802,7 @@ class Internal:
             set_model_num = [1]
 
         # Loop over all models in the Gaussian log file, doing nothing so the last model records are stored.
-        for model_records in self._parse_models_gaussian(file_path):
+        for model_records in self._parse_models_gaussian(file_path, verbosity=verbosity):
             pass
 
         # Generate the molecule container.
@@ -1805,7 +1812,7 @@ class Internal:
         mol.fill_object_from_gaussian(model_records)
 
         # Create the structural data data structures.
-        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs)
+        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -1860,7 +1867,7 @@ class Internal:
             set_model_num = [set_model_num]
 
         # Open the PDB file.
-        pdb_file = open_read_file(file_path)
+        pdb_file = open_read_file(file_path, verbosity=verbosity)
         pdb_lines = pdb_file.readlines()
         pdb_file.close()
 
@@ -1938,7 +1945,7 @@ class Internal:
             return False
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -1996,7 +2003,7 @@ class Internal:
         mol_conts = []
         orig_mol_num = []
         new_mol_name = []
-        for model_records in self._parse_models_xyz(file_path):
+        for model_records in self._parse_models_xyz(file_path, verbosity=verbosity):
             # Increment the xyz_model_increment
             xyz_model_increment = xyz_model_increment +1
 
@@ -2040,7 +2047,7 @@ class Internal:
 
         # Create the structural data data structures.
         orig_mol_num = [0]
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -2114,7 +2121,7 @@ class Internal:
         return len(self.structural_data[0].mol)
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, merge=False):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, verbosity=1, merge=False):
         """From the given structural data, expand the structural data data structure.
 
         @param data_matrix:         A matrix of structural objects.
@@ -2133,6 +2140,8 @@ class Internal:
         @type file_path:            None or str
         @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
         @type file_path_abs:        None or str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
         @type merge:                bool
         """
@@ -2189,11 +2198,12 @@ class Internal:
 
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
-                # Print out.
-                if merge:
-                    print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
-                else:
-                    print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
+                # Printout.
+                if verbosity:
+                    if merge:
+                        print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
+                    else:
+                        print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
