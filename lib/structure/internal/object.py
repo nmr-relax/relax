@@ -1808,7 +1808,7 @@ class Internal:
         mol.fill_object_from_gaussian(model_records)
 
         # Create the structural data data structures.
-        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs)
+        self.pack_structs([[mol]], orig_model_num=[1], set_model_num=set_model_num, orig_mol_num=[0], set_mol_name=set_mol_name, file_name=file_name, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -1941,7 +1941,7 @@ class Internal:
             return False
 
         # Create the structural data data structures.
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, merge=merge, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -2043,7 +2043,7 @@ class Internal:
 
         # Create the structural data data structures.
         orig_mol_num = [0]
-        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs)
+        self.pack_structs(mol_conts, orig_model_num=orig_model_num, set_model_num=set_model_num, orig_mol_num=orig_mol_num, set_mol_name=new_mol_name, file_name=file, file_path=path, file_path_abs=path_abs, verbosity=verbosity)
 
         # Loading worked.
         return True
@@ -2117,7 +2117,7 @@ class Internal:
         return len(self.structural_data[0].mol)
 
 
-    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, merge=False):
+    def pack_structs(self, data_matrix, orig_model_num=None, set_model_num=None, orig_mol_num=None, set_mol_name=None, file_name=None, file_path=None, file_path_abs=None, verbosity=1, merge=False):
         """From the given structural data, expand the structural data data structure.
 
         @param data_matrix:         A matrix of structural objects.
@@ -2136,6 +2136,8 @@ class Internal:
         @type file_path:            None or str
         @keyword file_path_abs:     The absolute path to the file specified by 'file_name'.  This is a fallback mechanism in case results or save files are located somewhere other than the working directory.
         @type file_path_abs:        None or str
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         @keyword merge:             A flag which if set to True will try to merge the structure into the currently loaded structures.
         @type merge:                bool
         """
@@ -2192,11 +2194,12 @@ class Internal:
 
             # Loop over the molecules.
             for j in range(len(set_mol_name)):
-                # Print out.
-                if merge:
-                    print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
-                else:
-                    print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
+                # Printout.
+                if verbosity:
+                    if merge:
+                        print("Merging with model %s of molecule '%s' (from the original molecule number %s of model %s)" % (set_model_num[i], set_mol_name[j], orig_mol_num[j], orig_model_num[i]))
+                    else:
+                        print("Adding molecule '%s' to model %s (from the original molecule number %s of model %s)" % (set_mol_name[j], set_model_num[i], orig_mol_num[j], orig_model_num[i]))
 
                 # The index of the new molecule to add or merge.
                 index = len(model.mol)
