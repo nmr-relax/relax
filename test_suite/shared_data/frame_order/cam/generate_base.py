@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, eye, float64, tensordot, transpose, zeros
+from numpy import array, cross, dot, eye, float32, float64, tensordot, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
@@ -90,114 +90,147 @@ class Main:
         self.print_axis_system()
         self.axes_to_pdb()
     
-        # Create the distribution.
+        # Set up the system.
         self._multi_system()
-        self._create_distribution()
+
+        # Handle the RDC and PCS data separately for saving RAM.
+        for data_index in range(2):
+            # Create the distribution.
+            self._create_distribution(data_index=data_index)
     
-        # Back-calculate the RDCs and PCSs.
-        self._back_calc()
+            # Back-calculate the RDCs and PCSs.
+            self._back_calc(data_index=data_index)
+
+            # Delete the huge data structures.
+            if data_index == 0:
+                for interatom in interatomic_loop():
+                    del interatom.vector
+            else:
+                for spin in spin_loop():
+                    del spin.pos
+
 
         # Save a state file for debugging.
         if self.SAVE_STATE:
             self.interpreter.state.save('generate_distribution', dir=self.save_path, force=True)
 
 
-    def _back_calc(self):
-        """Calculate the RDCs and PCSs expected for the structural distribution."""
+    def _back_calc(self, data_index=None):
+        """Calculate the RDCs and PCSs expected for the structural distribution.
+
+        @keyword data_index:    The data index where 0 is the RDC and 1 is the PCS.
+        @type data_index:       int
+        """
     
-        # Load the tensors.
-        self.interpreter.script(self.path+'tensors.py')
+        # Set up.
+        if data_index == 0:
+            # Load the tensors.
+            self.interpreter.script(self.path+'tensors.py')
     
-        # Set up the model.
-        self.interpreter.n_state_model.select_model(model='fixed')
-        self.interpreter.n_state_model.number_of_states(self.N)
+            # Set up the model.
+            self.interpreter.n_state_model.select_model(model='fixed')
+            self.interpreter.n_state_model.number_of_states(self.N)
     
         # Set the paramagnetic centre.
-        self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
+        else:
+                self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
     
         # Loop over the alignments.
         tensors = ['dy', 'tb', 'tm', 'er']
         for i in range(len(tensors)):
             # The tag.
             tag = tensors[i]
+
+            # RDC data.
+            if data_index == 0:
+                # Back-calculate the data.
+                self.interpreter.rdc.back_calc(tag)
     
-            # The temperature and field strength.
-            self.interpreter.spectrometer.temperature(id=tag, temp=303)
-            self.interpreter.spectrometer.frequency(id=tag, frq=900e6)
+                # Set 1 Hz errors on all RDC data.
+                for interatom in interatomic_loop():
+                    if not hasattr(interatom, 'rdc_err'):
+                        interatom.rdc_err = {}
+                    interatom.rdc_err[tag] = 1.0
+
+                # Write the data.
+                self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
+
+            # PCS data.
+            else:
+                # The temperature and field strength.
+                self.interpreter.spectrometer.temperature(id=tag, temp=303)
+                self.interpreter.spectrometer.frequency(id=tag, frq=900e6)
     
-            # Back-calculate the data.
-            self.interpreter.rdc.back_calc(tag)
-            self.interpreter.pcs.back_calc(tag)
+                # Back-calculate the data.
+                self.interpreter.pcs.back_calc(tag)
     
-            # Set 0.1 ppm errors on all PCS data.
-            for spin in spin_loop():
-                if not hasattr(spin, 'pcs_err'):
-                    spin.pcs_err = {}
-                spin.pcs_err[tag] = 0.1
+                # Set 0.1 ppm errors on all PCS data.
+                for spin in spin_loop():
+                    if not hasattr(spin, 'pcs_err'):
+                        spin.pcs_err = {}
+                    spin.pcs_err[tag] = 0.1
     
-            # Set 1 Hz errors on all RDC data.
+                # Write the data.
+                self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
+
+
+    def _create_distribution(self, data_index=None):
+        """Generate the distribution of structures.
+
+        @keyword data_index:    The data index where 0 is the RDC and 1 is the PCS.
+        @type data_index:       int
+        """
+
+        # Data pipe setup (only once).
+        if data_index == 0:
+            # Create a data pipe.
+            self.interpreter.pipe.create('distribution', 'N-state')
+
+            # Load the original PDB.
+            self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom')
+
+            # Set up the 15N and 1H spins.
+            self.interpreter.structure.load_spins(spin_id='@N', ave_pos=False)
+            self.interpreter.structure.load_spins(spin_id='@H', ave_pos=False)
+            self.interpreter.spin.isotope(isotope='15N', spin_id='@N')
+            self.interpreter.spin.isotope(isotope='1H', spin_id='@H')
+
+            # Define the magnetic dipole-dipole relaxation interaction.
+            self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+            self.interpreter.interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+            self.interpreter.interatom.unit_vectors()
+
+            # Init a rotation matrix and the frame order matrix.
+            self.R = zeros((3, 3), float64)
+            self.daeg = zeros((9, 9), float64)
+
+            # Open the output files.
+            if self.ROT_FILE:
+                rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
+
+        # Store and then reinitalise the atomic position to the full sized array.
+        if data_index == 0:
             for interatom in interatomic_loop():
-                if not hasattr(spin, 'rdc_err'):
-                    interatom.rdc_err = {}
-                interatom.rdc_err[tag] = 1.0
+                if hasattr(interatom, 'vector'):
+                    interatom.orig_vect = array(interatom.vector, float64)
+                    interatom.vector = zeros((self.N**self.MODES, 3), float32)
 
-            # Write the data.
-            self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
-            self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
-
-
-    def _backup_pos(self):
-        """Back up the positional data prior to the rotations."""
-    
-        # Store and then reinitalise the atomic position.
-        for spin in spin_loop():
-            if hasattr(spin, 'pos'):
-                spin.orig_pos = array(spin.pos, float64)
-                spin.pos = zeros((self.N**self.MODES, 3), float64)
-    
-        # Store and then reinitalise the bond vector.
-        for interatom in interatomic_loop():
-            if hasattr(interatom, 'vector'):
-                interatom.orig_vect = array(interatom.vector, float64)
-                interatom.vector = zeros((self.N**self.MODES, 3), float64)
-
-
-    def _create_distribution(self):
-        """Generate the distribution of structures."""
-
-        # Create a data pipe.
-        self.interpreter.pipe.create('distribution', 'N-state')
-
-        # Load the original PDB.
-        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom')
-
-        # Set up the 15N and 1H spins.
-        self.interpreter.structure.load_spins(spin_id='@N', ave_pos=False)
-        self.interpreter.structure.load_spins(spin_id='@H', ave_pos=False)
-        self.interpreter.spin.isotope(isotope='15N', spin_id='@N')
-        self.interpreter.spin.isotope(isotope='1H', spin_id='@H')
-
-        # Define the magnetic dipole-dipole relaxation interaction.
-        self.interpreter.interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
-        self.interpreter.interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
-        self.interpreter.interatom.unit_vectors()
-
-        # Back up the original positional data.
-        self._backup_pos()
-
-        # Init a rotation matrix and the frame order matrix.
-        self.R = zeros((3, 3), float64)
-        self.daeg = zeros((9, 9), float64)
-
-        # Open the output files.
-        if self.ROT_FILE:
-            rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
+        # Store and then reinitalise the bond vector to the full sized array.
+        else:
+            for spin in spin_loop():
+                if hasattr(spin, 'pos'):
+                    spin.orig_pos = array(spin.pos, float64)
+                    spin.pos = zeros((self.N**self.MODES, 3), float32)
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states:\n\n" % self.N)
+        if data_index == 0:
+            type = 'RDC'
+        else:
+            type = 'PCS'
+        sys.stdout.write("\n\nRotating %s states for the %s:\n\n" % (self.N, type))
 
         # Load N copies of the original C-domain for the distribution.
-        if self.DIST_PDB:
+        if data_index == 0 and self.DIST_PDB:
             for global_index, mode_indices in self._state_loop():
                 self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=self.path, set_mol_name='C-dom', set_model_num=global_index+1)
 
@@ -205,22 +238,24 @@ class Main:
         self.interpreter.off()
 
         # Set up some data structures for faster calculations.
-        spins = []
-        spin_pos = []
-        for spin in spin_loop():
-            if hasattr(spin, 'pos'):
-                spins.append(spin)
-                spin_pos.append(spin.orig_pos[0])
-        spin_pos = array(spin_pos, float64)
-        num_spins = len(spin_pos)
-        interatoms = []
-        vectors = []
-        for interatom in interatomic_loop():
-            if hasattr(interatom, 'vector'):
-                interatoms.append(interatom)
-                vectors.append(interatom.orig_vect)
-        vectors = array(vectors, float64)
-        num_interatoms = len(vectors)
+        if data_index == 0:
+            interatoms = []
+            vectors = []
+            for interatom in interatomic_loop():
+                if hasattr(interatom, 'vector'):
+                    interatoms.append(interatom)
+                    vectors.append(interatom.orig_vect)
+            vectors = array(vectors, float64)
+            num_interatoms = len(vectors)
+        else:
+            spins = []
+            spin_pos = []
+            for spin in spin_loop():
+                if hasattr(spin, 'pos'):
+                    spins.append(spin)
+                    spin_pos.append(spin.orig_pos[0])
+            spin_pos = array(spin_pos, float64)
+            num_spins = len(spin_pos)
 
         # Loop over each position.
         for global_index, mode_indices in self._state_loop():
@@ -230,53 +265,66 @@ class Main:
             # Total rotation matrix (for construction of the frame order matrix).
             total_R = eye(3)
 
+            # Data initialisation.
+            if data_index == 0:
+                new_vect = vectors
+            else:
+                new_pos = spin_pos
+
             # Loop over each motional mode.
-            new_pos = spin_pos
-            new_vect = vectors
             for motion_index in range(self.MODES):
                 # Generate the distribution specific rotation.
                 self.rotation(mode_indices[motion_index], motion_index=motion_index)
 
-                # Rotate the atomic positions.
-                new_pos = transpose(tensordot(self.R, transpose(new_pos - self.PIVOT[motion_index]), axes=1)) + self.PIVOT[motion_index]
+                # RDC data.
+                if data_index == 0:
+                    # Rotate the NH vector.
+                    new_vect = transpose(dot(self.R, transpose(new_vect)))
 
-                # Rotate the NH vector.
-                new_vect = transpose(dot(self.R, transpose(new_vect)))
+                    # Decompose the rotation into Euler angles and store them.
+                    if self.ROT_FILE:
+                        a, b, g = R_to_euler_zyz(self.R)
+                        rot_file.write('Mode %i:  %10.7f %10.7f %10.7f\n' % (motion_index, a, b, g))
 
-                # Decompose the rotation into Euler angles and store them.
-                if self.ROT_FILE:
-                    a, b, g = R_to_euler_zyz(self.R)
-                    rot_file.write('Mode %i:  %10.7f %10.7f %10.7f\n' % (motion_index, a, b, g))
+                    # Rotate the structure for the PDB distribution.
+                    if self.DIST_PDB:
+                        self.interpreter.structure.rotate(R=self.R, origin=self.PIVOT[motion_index], model=global_index+1)
 
-                # Rotate the structure for the PDB distribution.
-                if self.DIST_PDB:
-                    self.interpreter.structure.rotate(R=self.R, origin=self.PIVOT[motion_index], model=global_index+1)
+                    # Contribution to the total rotation.
+                    total_R = dot(self.R, total_R)
 
-                # Contribution to the total rotation.
-                total_R = dot(self.R, total_R)
+                # PCS data.
+                else:
+                    # Rotate the atomic positions.
+                    new_pos = transpose(tensordot(self.R, transpose(new_pos - self.PIVOT[motion_index]), axes=1)) + self.PIVOT[motion_index]
 
             # Pack the positional and vector data.
-            for i in range(num_spins):
-                spins[i].pos[global_index] = new_pos[i]
-            for i in range(num_interatoms):
-                interatoms[i].vector[global_index] = new_vect[i]
+            if data_index == 0:
+                for i in range(num_interatoms):
+                    interatoms[i].vector[global_index] = new_vect[i]
+            else:
+                for i in range(num_spins):
+                    spins[i].pos[global_index] = new_pos[i]
 
             # The frame order matrix component.
-            self.daeg += kron_prod(total_R, total_R)
+            if data_index == 0:
+                self.daeg += kron_prod(total_R, total_R)
 
         # Print out.
         sys.stdout.write('\n\n')
 
-        # Frame order matrix averaging.
-        self.daeg = self.daeg / self.N**self.MODES
+        # Frame order data and the PDB distribution.
+        if data_index == 0:
+            # Frame order matrix averaging.
+            self.daeg = self.daeg / self.N**self.MODES
 
-        # Write out the frame order matrix.
-        file = open(self.save_path+sep+'frame_order_matrix', 'w')
-        print_frame_order_2nd_degree(self.daeg, file=file, places=8)
+            # Write out the frame order matrix.
+            file = open(self.save_path+sep+'frame_order_matrix', 'w')
+            print_frame_order_2nd_degree(self.daeg, file=file, places=8)
 
         # Write out the PDB distribution.
         self.interpreter.on()
-        if self.DIST_PDB:
+        if data_index == 0 and self.DIST_PDB:
             self.interpreter.structure.write_pdb('distribution.pdb', compress_type=2, force=True)
 
 
