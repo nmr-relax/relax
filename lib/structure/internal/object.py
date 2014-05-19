@@ -1499,18 +1499,21 @@ class Internal:
             mol.atom_connect(index1=index1, index2=index2)
 
 
-    def delete(self, atom_id=None):
+    def delete(self, atom_id=None, verbosity=1):
         """Deletion of structural information.
 
         @keyword atom_id:   The molecule, residue, and atom identifier string.  This matches the spin ID string format.  If not given, then all structural data will be deleted.
         @type atom_id:      str or None
+        @keyword verbosity: The amount of information to print to screen.  Zero corresponds to minimal output while higher values increase the amount of output.  The default value is 1.
+        @type verbosity:    int
         """
 
         # All data.
         if atom_id == None:
-            # Print out.
-            print("Deleting the following structural data:\n")
-            print(self.structural_data)
+            # Printout.
+            if verbosity:
+                print("Deleting the following structural data:\n")
+                print(self.structural_data)
 
             # Delete the structural data.
             del self.structural_data
