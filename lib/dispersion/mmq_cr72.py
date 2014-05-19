@@ -47,7 +47,7 @@ More information on the MMQ CR72 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, isfinite, log, sin, sqrt, sum
+from numpy import arccosh, array, cos, cosh, isfinite, log, sin, sqrt, sum
 
 
 def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):

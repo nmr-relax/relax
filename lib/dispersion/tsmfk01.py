@@ -67,7 +67,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from numpy import sin, isfinite, sum
+from numpy import array, sin, isfinite, sum
 
 
 def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_points=None):

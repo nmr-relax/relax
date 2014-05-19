@@ -64,7 +64,7 @@ More information on the LM63 model can be found in the:
 """
 
 # Python module imports.
-from numpy import isfinite, sum, tanh
+from numpy import array, isfinite, sum, tanh
 
 
 def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):

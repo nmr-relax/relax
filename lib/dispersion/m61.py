@@ -64,7 +64,7 @@ More information on the M61 model can be found in the:
 """
 
 # Python module imports.
-from numpy import isfinite, sum
+from numpy import array, isfinite, sum
 
 
 def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, back_calc=None, num_points=None):
