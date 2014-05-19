@@ -151,11 +151,10 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
-    if num_points > 0:
-        if max(etapos) > 700:
-            R2eff = array([1e100]*num_points)
+    if max(etapos) > 700:
+        R2eff = array([1e100]*num_points)
 
-            return R2eff
+        return R2eff
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( Dpos * cosh(etapos) - Dneg * cos(etaneg) )
