@@ -30,7 +30,7 @@ from os import getcwd, sep
 import sys
 
 # relax module imports.
-from lib.check_types import float16, is_float
+from lib.check_types import is_float
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import cartesian_to_spherical
@@ -152,14 +152,14 @@ class Main:
         # Store and then reinitalise the atomic position.
         for spin in spin_loop():
             if hasattr(spin, 'pos'):
-                spin.orig_pos = array(spin.pos, float16)
-                spin.pos = zeros((self.N**self.MODES, 3), float16)
+                spin.orig_pos = array(spin.pos, float64)
+                spin.pos = zeros((self.N**self.MODES, 3), float64)
     
         # Store and then reinitalise the bond vector.
         for interatom in interatomic_loop():
             if hasattr(interatom, 'vector'):
-                interatom.orig_vect = array(interatom.vector, float16)
-                interatom.vector = zeros((self.N**self.MODES, 3), float16)
+                interatom.orig_vect = array(interatom.vector, float64)
+                interatom.vector = zeros((self.N**self.MODES, 3), float64)
 
 
     def _create_distribution(self):
@@ -186,7 +186,7 @@ class Main:
         self._backup_pos()
 
         # Init a rotation matrix and the frame order matrix.
-        self.R = zeros((3, 3), float16)
+        self.R = zeros((3, 3), float64)
         self.daeg = zeros((9, 9), float64)
 
         # Open the output files.
