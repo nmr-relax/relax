@@ -129,18 +129,18 @@ class Main:
             self.interpreter.rdc.back_calc(tag)
             self.interpreter.pcs.back_calc(tag)
     
-            # Set 1 Hz and 0.1 ppm errors on all data.
+            # Set 0.1 ppm errors on all PCS data.
             for spin in spin_loop():
-                # Init.
-                if not hasattr(spin, 'rdc_err'):
-                    spin.rdc_err = {}
                 if not hasattr(spin, 'pcs_err'):
                     spin.pcs_err = {}
-    
-                # Set the errors.
-                spin.rdc_err[tag] = 1.0
                 spin.pcs_err[tag] = 0.1
     
+            # Set 1 Hz errors on all RDC data.
+            for interatom in interatomic_loop():
+                if not hasattr(spin, 'rdc_err'):
+                    interatom.rdc_err = {}
+                interatom.rdc_err[tag] = 1.0
+
             # Write the data.
             self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
             self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tensors[i], dir=self.save_path, bc=True, force=True)
