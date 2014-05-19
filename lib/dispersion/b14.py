@@ -110,12 +110,12 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, log, power, sin, sinh, sqrt, sum
+from numpy import abs, arccosh, array, cos, cosh, isfinite, log, min, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -143,9 +143,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
 
@@ -215,12 +213,24 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
+    # Catch math domain error of sqrt(neg val).
+    # This is when abs(v1c) =< 1.
+    if min(abs(v1c)) <= 1.:
+        R2eff = array([1e100]*num_points)
+        return R2eff
+
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+
+    # Catch math domain error of log(neg val or zero).
+    # This is when Tog.real =< 0.
+    if min(Tog.real) <= 0.:
+        R2eff = array([1e100]*num_points)
+        return R2eff
 
     ## -1/Trel * log(LpreDyn).
     # Rpre = (r20a + r20b + kex) / 2.0
@@ -240,6 +250,4 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff
