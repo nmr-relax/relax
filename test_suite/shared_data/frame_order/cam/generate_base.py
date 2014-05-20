@@ -23,6 +23,7 @@
 """Module containing the base class for the distribution and alignment data generation."""
 
 # Python module imports.
+import locale
 from math import pi
 from numpy import array, cross, dot, eye, float32, float64, inner, tensordot, transpose, zeros
 from numpy.linalg import norm
@@ -86,6 +87,9 @@ class Main:
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 
+        # Set up for the progress meter (commas between the thousands).
+        locale.setlocale(locale.LC_ALL, 'en_US')
+
         # Build the axis system.
         self.build_axes()
         self.print_axis_system()
@@ -116,7 +120,7 @@ class Main:
         """Calculate the averaged PCS for all states."""
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % self.N)
+        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % locale.format("%d", self.N, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -217,7 +221,7 @@ class Main:
             rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % self.N)
+        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % locale.format("%d", self.N, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -450,7 +454,8 @@ class Main:
 
         # Dump the progress.
         if i % b == 0:
-            sys.stderr.write('\b%i\n' % i)
+            num = locale.format("%d", i, grouping=True)
+            sys.stderr.write('\b%12s\n' % num)
 
 
     def _state_loop(self):
