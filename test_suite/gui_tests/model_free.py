@@ -518,7 +518,7 @@ class Mf(GuiTestCase):
             self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)
 
 
-    def test_opendx_s2_te_rex(self):
+    def xest_opendx_s2_te_rex(self):
         """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map().
 
         This is to catch U{bug #22035<https://gna.org/bugs/?22035>}, the dx.map user function being broken in the GUI.
