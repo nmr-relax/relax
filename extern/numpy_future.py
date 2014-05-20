@@ -1,6 +1,7 @@
 #####################################################################################################################################################
 #                                                                                                                                                   #
 # Copyright (c) 2005-2013, NumPy Developers.                                                                                                          #
+# Copyright (c) 2014 Edward d'Auvergne                                                                                                              #
 #                                                                                                                                                   #
 # All rights reserved.                                                                                                                              #
 #                                                                                                                                                   #
@@ -124,8 +125,7 @@ def percentile(a, q, axis=None, out=None, overwrite_input=False):
 
     if overwrite_input:
         if axis is None:
-            sorted = a.ravel()
-            sorted.sort()
+            sorted = sorted(a.ravel())
         else:
             a.sort(axis=axis)
             sorted = a
@@ -154,7 +154,7 @@ def _compute_qth_percentile(sorted, q, axis, out):
 
     q = q / 100.0
     if (q < 0) or (q > 1):
-        raise ValueError, "percentile must be either in the range [0,100]"
+        raise ValueError("percentile must be either in the range [0,100]")
 
     indexer = [slice(None)] * sorted.ndim
     Nx = sorted.shape[axis]
@@ -167,7 +167,7 @@ def _compute_qth_percentile(sorted, q, axis, out):
     else:
         indexer[axis] = slice(i, i+2)
         j = i + 1
-        weights = array([(j - index), (index - i)],float)
+        weights = array([(j - index), (index - i)], float)
         wshape = [1]*sorted.ndim
         wshape[axis] = 2
         weights.shape = wshape

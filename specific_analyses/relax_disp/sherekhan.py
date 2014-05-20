@@ -96,7 +96,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
             file = open_write_file(file_name=file_name, dir=dir_name, force=force)
 
             # The B0 field for the nuclei of interest in MHz (must be positive to be accepted by the server).
-            file.write("%s\n" % abs(frq / g1H * g15N / 1e6))
+            file.write("%.10f\n" % abs(frq / g1H * g15N / 1e6))
 
             # The constant relaxation time for the CPMG experiment in seconds.
             file.write("%s\n" % (time))
