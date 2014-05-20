@@ -605,8 +605,7 @@ class Test_data(UnitTestCase):
         ncyc_2 = [28, 4, 32, 60, 2, 10, 16, 8, 20, 52, 18, 40, 6, 12, 24, 14, 22]
         sfrq_2 = 599.8908587*1E6
         time_T2_2 = 0.06
-        cpmg_2 = [ncyc/time_T2_2 for ncyc in ncyc_2]
-        cpmg_2.sort()
+        cpmg_2 = sorted([ncyc/time_T2_2 for ncyc in ncyc_2])
 
         # Test the loop function.
         # First initialize index for the two lists.

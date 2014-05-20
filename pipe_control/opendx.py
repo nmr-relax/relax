@@ -112,7 +112,7 @@ class Map:
         # Points.
         if point != None:
             # Check if list is a nested list of lists.
-            if type(point[0]) == float:
+            if isinstance(point[0], float):
                 self.point = array(point, float64)
                 self.num_points = 1
             else:

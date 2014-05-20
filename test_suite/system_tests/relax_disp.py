@@ -286,7 +286,7 @@ class Relax_disp(SystemTestCase):
                 if float(vcpmg) == 0.0:
                     vcpmg = None
                 else:
-                    vcpmg = round(float(vcpmg),3)
+                    vcpmg = round(float(vcpmg), 3)
 
                 # Set current id
                 current_id = id_list[i]
@@ -339,7 +339,7 @@ class Relax_disp(SystemTestCase):
             # Make match for the regular search
             m = r.match(assn)
             # Convert to relax spin string
-            relax_string = ":%s@%s"%(m.group(2),m.group(3))
+            relax_string = ":%s@%s"%(m.group(2), m.group(3))
 
             # Save the relax spin string and the regular search
             relax_glob_ids.append([m.group(0), m.group(1), m.group(2), m.group(3), relax_string])
@@ -1318,7 +1318,7 @@ class Relax_disp(SystemTestCase):
 
         # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
         ds.pipe_name_MODEL_MAP = "%s_%s_map"%(ds.pipe_name, model_analyse)
-        self.interpreter.pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
+        self.interpreter.pipe.copy(pipe_from=ds.pipe_name, pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
         self.interpreter.pipe.switch(pipe_name=ds.pipe_name_MODEL_MAP)
 
         # Copy R2eff, but not the original parameters
@@ -4400,7 +4400,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0,1)
+        select_spin_index = range(0, 1)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
@@ -4549,7 +4549,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0,1)
+        select_spin_index = range(0, 1)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Define replicated
@@ -4632,7 +4632,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0,2)
+        select_spin_index = range(0, 2)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
@@ -4771,8 +4771,8 @@ class Relax_disp(SystemTestCase):
             print("%s Clust  r2600=%2.2f r2500=%2.2f dw=%1.1f pA=%1.3f kex=%3.2f chi2=%3.2f spin_id=%s resi=%i resn=%s"%(m_spin_id, c_r2_600, c_r2_500, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
 
             # Make tests.
-            self.assertEqual(clust_pA , c_pA)
-            self.assertEqual(clust_kex , c_kex)
+            self.assertEqual(clust_pA, c_pA)
+            self.assertEqual(clust_kex, c_kex)
 
             # Test values.
             if c_spin_id in test_res:
@@ -4800,7 +4800,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0,2)
+        select_spin_index = range(0, 2)
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
