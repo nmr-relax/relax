@@ -235,7 +235,7 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, exp, isfinite, power, log, min, sqrt, sum
+from numpy import array, argmax, exp, isfinite, power, log, min, sqrt, sum
 
 # relax module imports.
 from lib.float import isNaN
@@ -340,10 +340,24 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     t118 = 1.0/t112
     t120 = t97_nt99 + t112
 
+    # Catch math domain error of coming power(half_t97_t99_m_t112, NR).
+    # This is when power function calculate above 1.e300 or under -1.e300 or represented as less than 1.-e300.
     half_t97_t99_m_t112 = 0.5*(t97_t99 - t112)
-    # Catch math domain error of power(val < 1.e-7, 40).
-    # This is when abs(half_t97_t99_m_t112) < 1.e-7.
-    if min(abs(half_t97_t99_m_t112.real)) < 1.e-7:
+
+    # First find the index with the highest power.
+    index_max_t115 = argmax(t115)
+
+    # Store the power.
+    max_t115 = t115[index_max_t115]
+
+    # Match the value from half_t97_t99_m_t112.
+    val_half_t97_t99_m_t112 = half_t97_t99_m_t112[index_max_t115]
+
+    # Calculate lowest positive val, which raised to the power will not be represented less than 1.-e300.
+    low_pos_rep = power(1.e-300, 1./max_t115)
+
+    # Now test if value in array at the power position is less than this value.
+    if val_half_t97_t99_m_t112 < low_pos_rep:
         R2eff = array([1e100]*num_points)
         return R2eff
 
