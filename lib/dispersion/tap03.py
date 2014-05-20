@@ -127,6 +127,13 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     wbeff2 = gamma*spin_lock_fields2 + db**2     # Effective field at B.
     weff2 = gamma*spin_lock_fields2 + d**2       # Effective field at pop-average.
 
+    # Catch math domain error of dividing with 0.
+    # This is when weff2 = 0.
+    if min(abs(weff2)) == 0:
+        R2eff = array([1e100]*num_points)
+
+        return R2eff
+
     # The rotating frame flip angle.
     theta = arctan2(spin_lock_fields, d)
     hat_theta = arctan2(sqrt(gamma)*spin_lock_fields, d)
