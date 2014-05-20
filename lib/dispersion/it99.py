@@ -73,10 +73,10 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, isfinite, sqrt, sum
+from numpy import abs, array, isfinite, min, sqrt, sum
 
 
-def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, num_points=None):
     """Calculate the R2eff values for the IT99 model.
 
     See the module docstring for details.
@@ -94,9 +94,7 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     @type tex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
 
@@ -116,6 +114,13 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     omega_a2 = sqrt(omega_1eff4 + pa2dw4)
     denom = 1.0 + omega_a2 * tex2
 
+    # Catch math domain error of dividing with 0.
+    # This is when denom=0.
+    if min(abs(denom)) == 0:
+        R2eff = array([1e100]*num_points)
+
+        return R2eff
+
     # R2eff calculation.
     R2eff = r20 + numer / denom
 
@@ -124,6 +129,4 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff
