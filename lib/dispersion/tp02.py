@@ -60,10 +60,10 @@ More information on the TP02 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arctan2, array, isfinite, sin, sum
+from numpy import abs, arctan2, array, isfinite, min, sin, sum
 
 
-def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, num_points=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Trott and Palmer (2002) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
@@ -89,9 +89,7 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
     @type num_points:           int
     """
 
@@ -115,6 +113,13 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     wbeff2 = spin_lock_fields2 + db2       # Effective field at B.
     weff2 = spin_lock_fields2 + d2         # Effective field at pop-average.
 
+    # Catch math domain error of dividing with 0.
+    # This is when weff2 = 0.
+    if min(abs(weff2)) == 0:
+        R2eff = array([1e100]*num_points)
+
+        return R2eff
+
     # The rotating frame flip angle.
     theta = arctan2(spin_lock_fields, d)
 
@@ -127,6 +132,13 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     denom = waeff2 * wbeff2 / weff2 + kex2
     #denom_extended = waeff2*wbeff2/weff2+kex2-2*sin_theta2*pA*pB*dw**2
  
+    # Catch math domain error of dividing with 0.
+    # This is when denom=0.
+    if min(abs(denom)) == 0:
+        R1rho = array([1e100]*num_points)
+
+        return R1rho
+
     # R1rho calculation.
     R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
 
@@ -135,6 +147,4 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     if not isfinite(sum(R1rho)):
         R1rho = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R1rho[i]
+    return R1rho
