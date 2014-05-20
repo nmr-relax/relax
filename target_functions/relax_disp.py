@@ -490,7 +490,7 @@ class Dispersion:
                 # This is to prevent pointer to class object array that cannot change. Should be equivalent to numpy.copyto (v. 1.7).
                 #self.back_calc[0][si][mi][0][:] = r2eff
                 # Parse back the value to update the back_calc class object.
-                for i in range(num_points):
+                for i in range(self.num_disp_points[0][si][mi][0]):
                     self.back_calc[0][si][mi][0][i] = r2eff[i]
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
