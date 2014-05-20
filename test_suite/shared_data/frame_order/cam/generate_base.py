@@ -447,7 +447,7 @@ class Main:
         self.interpreter.paramag.centre(pos=[35.934, 12.194, -4.206])
 
 
-    def _progress(self, i, a=5, b=1000):
+    def _progress(self, i, a=250, b=10000):
         """A simple progress write out (which goes to the terminal STDERR)."""
 
         # The spinner characters.
