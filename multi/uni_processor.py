@@ -175,15 +175,18 @@ class Uni_processor(Processor):
 
 
     def run_queue(self):
-        #FIXME: need a finally here to cleanup exceptions states for windows etc
+        """Safely run each command in the queue, cleaning up after failures."""
 
-        last_command = len(self.command_queue)-1
-        for i, command  in enumerate(self.command_queue):
-            completed = (i == last_command)
+        # Run each command in the queue.
+        try:
+            last_command = len(self.command_queue)-1
+            for i, command  in enumerate(self.command_queue):
+                completed = (i == last_command)
 
-            command.run(self, completed)
+                command.run(self, completed)
 
-        #self.run_command_queue()
-        #TODO: add cheques for empty queues and maps if now warn
-        del self.command_queue[:]
-        self.memo_map.clear()
+        # Clear the queue, even if a failure occurs.
+        finally:
+            #TODO: add cheques for empty queues and maps if now warn
+            del self.command_queue[:]
+            self.memo_map.clear()
