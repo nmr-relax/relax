@@ -24,13 +24,13 @@
 
 # Python module imports.
 from math import pi
-from numpy import array, cross, dot, eye, float32, float64, inner, tensordot, transpose, zeros
+from numpy import array, average, cross, dot, eye, float32, float64, inner, tensordot, transpose, zeros
 from numpy.linalg import norm
 from os import getcwd, sep
 import sys
 
 # relax module imports.
-from lib.check_types import is_float
+from lib.check_types import float128, is_float
 from lib.frame_order.format import print_frame_order_2nd_degree
 from lib.geometry.angles import wrap_angles
 from lib.geometry.coord_transform import cartesian_to_spherical
@@ -134,8 +134,9 @@ class Main:
 
             # Initialise the PCS structure.
             spin.pcs = {}
+            spin.pcs_array = {}
             for tag in self._tensors:
-                spin.pcs[tag] = 0.0
+                spin.pcs_array[tag] = zeros(self.N, float128)
 
             # Pack the spin containers and positions.
             spins.append(spin)
@@ -191,7 +192,7 @@ class Main:
 
                 # Store the values.
                 for j in range(len(spins)):
-                    spins[j].pcs[self._tensors[i]] += pcss[j, j]
+                    spins[j].pcs_array[self._tensors[i]][global_index] = pcss[j, j]
 
         # Print out.
         sys.stdout.write('\n\n')
@@ -203,10 +204,14 @@ class Main:
         for tag in self._tensors:
             # Average.
             for spin in spin_loop():
-                spin.pcs[tag] = spin.pcs[tag] / self.N
+                spin.pcs[tag] = average(spin.pcs_array[tag])
 
             # Save.
             self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tag, dir=self.save_path, force=True)
+
+        # Delete the large data structures to save RAM.
+        for spin in spin_loop():
+            del spin.pcs_array
 
 
     def _calculate_rdc(self):
@@ -233,8 +238,9 @@ class Main:
 
             # Initialise the RDC structure.
             interatom.rdc = {}
+            interatom.rdc_array = {}
             for tag in self._tensors:
-                interatom.rdc[tag] = 0.0
+                interatom.rdc_array[tag] = zeros(self.N, float128)
 
             # Pack the interatomic containers and vectors.
             interatoms.append(interatom)
@@ -295,7 +301,7 @@ class Main:
 
                 # Store the values.
                 for j in range(len(interatoms)):
-                    interatoms[j].rdc[self._tensors[i]] += rdcs[j, j]
+                    interatoms[j].rdc_array[self._tensors[i]][global_index] = rdcs[j, j]
 
             # The frame order matrix component.
             self.daeg += kron_prod(total_R, total_R)
@@ -317,10 +323,14 @@ class Main:
         for tag in self._tensors:
             # Average.
             for interatom in interatomic_loop():
-                interatom.rdc[tag] = interatom.rdc[tag] / self.N
+                interatom.rdc[tag] = average(interatom.rdc_array[tag])
 
             # Save.
             self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tag, dir=self.save_path, force=True)
+
+        # Delete the large data structures to save RAM.
+        for interatom in interatomic_loop():
+            del interatom.rdc_array
 
 
     def _create_distribution(self):
