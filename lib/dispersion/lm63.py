@@ -67,7 +67,7 @@ More information on the LM63 model can be found in the:
 from numpy import array, isfinite, sum, tanh
 
 
-def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, num_points=None):
     """Calculate the R2eff values for the LM63 model.
 
     See the module docstring for details.
@@ -81,9 +81,7 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
 
@@ -99,6 +97,4 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff
