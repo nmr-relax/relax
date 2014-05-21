@@ -111,13 +111,6 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     wbeff2 = spin_lock_fields2 + db**2       # Effective field at B.
     weff2 = spin_lock_fields2 + d**2         # Effective field at pop-average.
 
-    # Catch math domain error of dividing with 0.
-    # This is when weff2 = 0.
-    if min(abs(weff2)) == 0:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
-
     # The rotating frame flip angle.
     theta = arctan2(spin_lock_fields, d)
 
@@ -126,6 +119,11 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     R1_cos_theta2 = R1 * (1.0 - sin_theta2)
     R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        return R1_cos_theta2 + R1rho_prime_sin_theta2
+
     # Denominator.
     waeff2_wbeff2 = waeff2*wbeff2
     fact_denom = waeff2_wbeff2 + weff2*kex2
@@ -133,19 +131,10 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Catch math domain error of dividing with 0.
     # This is when fact_denom = 0.
     if min(abs(fact_denom)) == 0:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
+        return array([1e100]*num_points)
 
     fact = 1.0 + 2.0*kex2*(pA*waeff2 + pB*wbeff2) / fact_denom
     denom = waeff2_wbeff2/weff2 + kex2 - sin_theta2*phi_ex*(fact)
-
-    # Catch math domain error of dividing with 0.
-    # This is when denom=0.
-    if min(abs(denom)) == 0:
-        R1rho = array([1e100]*num_points)
-
-        return R1rho
  
     # R1rho calculation.
     R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
