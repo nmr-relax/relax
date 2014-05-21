@@ -518,6 +518,16 @@ class Mf(GuiTestCase):
             self.assertAlmostEqual(interatom.r, 1.02 * 1e-10)
 
 
+    def test_opendx_s2_te_rex(self):
+        """Mapping the {S2, te, Rex} chi2 space through the OpenDX user function dx.map().
+
+        This is to catch U{bug #22035<https://gna.org/bugs/?22035>}, the dx.map user function being broken in the GUI.
+        """
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'model_free'+sep+'opendx_s2_te_rex.py')
+
+
 
 class Fake_right_click:
     """Simulate a grid_cell_right_click event ."""

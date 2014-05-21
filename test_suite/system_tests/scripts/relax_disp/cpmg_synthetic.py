@@ -308,7 +308,7 @@ ds.pipe_name = 'base pipe'
 ds.pipe_type = 'relax_disp'
 ds.pipe_bundle = 'relax_disp'
 ds.pipe_name_r2eff = "%s_%s_R2eff"%(model_create, ds.pipe_name )
-pipe.create(pipe_name=ds.pipe_name , pipe_type=ds.pipe_type, bundle = ds.pipe_bundle)
+pipe.create(pipe_name=ds.pipe_name, pipe_type=ds.pipe_type, bundle = ds.pipe_bundle)
 
 # Generate the sequence.
 cur_spins = ds.data[2]
@@ -349,7 +349,7 @@ for exp in exps:
 print("\n\nThe experiment IDs are %s." % ids)
 
 ## Now prepare to calculate the synthetic R2eff values.
-pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_r2eff, bundle_to = ds.pipe_bundle)
+pipe.copy(pipe_from=ds.pipe_name, pipe_to=ds.pipe_name_r2eff, bundle_to = ds.pipe_bundle)
 pipe.switch(pipe_name=ds.pipe_name_r2eff)
 
 # Then select the model to create data.
@@ -437,8 +437,8 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
 
 ### Now do fitting.
 # Change pipe.
-ds.pipe_name_MODEL = "%s_%s"%(ds.pipe_name , model_analyse)
-pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL, bundle_to = ds.pipe_bundle)
+ds.pipe_name_MODEL = "%s_%s"%(ds.pipe_name, model_analyse)
+pipe.copy(pipe_from=ds.pipe_name, pipe_to=ds.pipe_name_MODEL, bundle_to = ds.pipe_bundle)
 pipe.switch(pipe_name=ds.pipe_name_MODEL)
 
 # Copy R2eff, but not the original parameters
@@ -481,8 +481,8 @@ ds.min_results = save_res(cur_spins)
 # Now do clustering
 if ds.do_cluster:
     # Change pipe.
-    ds.pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(ds.pipe_name , model_analyse)
-    pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_CLUSTER)
+    ds.pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(ds.pipe_name, model_analyse)
+    pipe.copy(pipe_from=ds.pipe_name, pipe_to=ds.pipe_name_MODEL_CLUSTER)
     pipe.switch(pipe_name=ds.pipe_name_MODEL_CLUSTER)
 
     # Copy R2eff, but not the original parameters
@@ -524,7 +524,7 @@ ds.dx_set_val, ds.dx_clust_val = print_res(cur_spins=cur_spins, grid_params=ds.g
 if ds.opendx:
     # First switch pipe, since dx.map will go through parameters and end up a "bad" place. :-)
     ds.pipe_name_MODEL_MAP = "%s_%s_map"%(ds.pipe_name, model_analyse)
-    pipe.copy(pipe_from=ds.pipe_name , pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
+    pipe.copy(pipe_from=ds.pipe_name, pipe_to=ds.pipe_name_MODEL_MAP, bundle_to = ds.pipe_bundle)
     pipe.switch(pipe_name=ds.pipe_name_MODEL_MAP)
 
     # Copy R2eff, but not the original parameters
