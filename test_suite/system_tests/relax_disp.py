@@ -1093,6 +1093,145 @@ class Relax_disp(SystemTestCase):
                         self.assertAlmostEqual(set_val, min_val, 3)
 
 
+    def test_cpmg_synthetic_ns3d_to_b14(self):
+        """Test synthetic cpmg data.
+
+        This script will produce synthetic CPMG R2eff values according to the NS CPMG 2-site 3D model, and the fit the data with B14.
+        Try to catch bug #22021 U{https://gna.org/bugs/index.php?22021}: Model B14 shows bad fitting to data.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'NS CPMG 2-site 3D'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'B14'
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        r2eff_err_1 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_err_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        r2eff_err_2 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_err_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:10.}, 'r2a': {r20_key_1:10., r20_key_2:10.}, 'r2b': {r20_key_1:10., r20_key_2:10.}, 'kex': 1000., 'pA': 0.99, 'dw': 2.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do set_grid_r20_from_min_r2eff ?.
+        ds.set_grid_r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = 8
+
+        # The do clustering.
+        ds.do_cluster = False
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-9
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+            min_params = ds.min_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 2)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 6)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 5)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 7)
+
+
     def test_cpmg_synthetic_ns3d_to_cr72_noise_cluster(self):
         """Test synthetic cpmg data. For CR72 with small noise and cluster.
 
