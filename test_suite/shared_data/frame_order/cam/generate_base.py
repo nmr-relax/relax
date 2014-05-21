@@ -207,7 +207,7 @@ class Main:
         for tag in self._tensors:
             # Average.
             for spin in spin_loop():
-                spin.pcs[tag] = spin.pcs[tag][0] / self.N
+                spin.pcs[tag] = spin.pcs[tag][0] / self.N**self.MODES
 
             # Save.
             self.interpreter.pcs.write(align_id=tag, file='pcs_%s.txt'%tag, dir=self.save_path, force=True)
@@ -321,7 +321,7 @@ class Main:
         for tag in self._tensors:
             # Average.
             for interatom in interatomic_loop():
-                interatom.rdc[tag] = interatom.rdc[tag][0] / self.N
+                interatom.rdc[tag] = interatom.rdc[tag][0] / self.N**self.MODES
 
             # Save.
             self.interpreter.rdc.write(align_id=tag, file='rdc_%s.txt'%tag, dir=self.save_path, force=True)
