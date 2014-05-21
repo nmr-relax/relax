@@ -380,8 +380,8 @@ for i in range(len(cur_spins)):
             after = getattr(cur_spin, mo_param)
             print(cur_spin.model, res_name, cur_spin_id, mo_param, before)
 
-## Now doing the back calculation of R2eff values.
-# First loop over the frequencies.
+####### Now doing the back calculation of R2eff values.
+# First create fake data and read it in.
 for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
     exp_id = exp_ids[mi]
     exp = exps[mi]
@@ -409,10 +409,24 @@ for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
         # This is a trick, or else relax complains.
         relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=ds.tmpdir, disp_point_col=1, data_col=2, error_col=3)
 
+
+# Now back-calculate.
+for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+    exp_id = exp_ids[mi]
+    exp = exps[mi]
+    sfrq, time_T2, ncycs, r2eff_errs = exp
+
+    # Then loop over the spins.
+    for res_name, res_num, spin_name, params in cur_spins:
+        cur_spin_id = ":%i@%s"%(res_num, spin_name)
+        cur_spin = return_spin(cur_spin_id)
+
         ### Now back calculate values from parameters, and stuff R2eff it back.
         print("Generating data with MODEL:%s, for spin id:%s"%(model_create, cur_spin_id))
         r2effs = optimisation.back_calc_r2eff(spin=cur_spin, spin_id=cur_spin_id)
 
+        # Define file name
+        file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
         file = open_write_file(file_name=file_name, dir=ds.resdir, force=True)
         ## Loop over the R2eff structure
         # Loop over the points.
