@@ -354,7 +354,6 @@ class Frame_order_analysis:
 
             # The optimisation settings.
             self.interpreter.frame_order.num_int_pts(num=self.num_int_pts_grid)
-            self.interpreter.frame_order.quad_int(flag=False)
 
             # Grid search.
             incs = self.custom_grid_incs(model)
