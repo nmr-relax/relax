@@ -98,6 +98,11 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     # The numerator.
     numer = sin_theta2 * phi_ex * kex
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if min(numer) == 0.0:
+        return R1_R2
+
     # Denominator.
     denom = kex2 + spin_lock_fields2
 
