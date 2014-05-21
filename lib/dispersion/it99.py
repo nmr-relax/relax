@@ -107,6 +107,11 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, nu
     # The numerator.
     numer = padw2 * pB * tex
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        return array([r20]*num_points)
+
     # The effective rotating frame field.
     omega_1eff4 = 2304.0 * cpmg_frqs**4
 
