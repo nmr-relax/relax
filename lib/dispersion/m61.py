@@ -91,15 +91,18 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, n
     # The numerator.
     numer = phi_ex * kex
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        return array([r1rho_prime]*num_points)
+
     # Denominator.
     denom = kex2 + spin_lock_fields2
 
     # Catch math domain error of dividing with 0.
     # This is when denom=0.
     if min(abs(denom)) == 0:
-        R1rho = array([1e100]*num_points)
-
-        return R1rho
+        return array([1e100]*num_points)
 
     # R1rho calculation.
     R1rho = r1rho_prime + numer / denom
@@ -107,6 +110,6 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, n
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
     if not isfinite(sum(R1rho)):
-        R1rho = array([1e100]*num_points)
+        return array([1e100]*num_points)
 
     return R1rho
