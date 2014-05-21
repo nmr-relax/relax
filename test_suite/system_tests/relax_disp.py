@@ -512,12 +512,7 @@ class Relax_disp(SystemTestCase):
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store grid results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-
+            grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
@@ -527,11 +522,14 @@ class Relax_disp(SystemTestCase):
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store minimisation results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                mini_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+            mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+        # Print results.
+        for i in range(len(grid_results)):
+            g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+            print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
@@ -547,31 +545,11 @@ class Relax_disp(SystemTestCase):
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
-        if "r2a" in MODEL_PARAMS[MODEL]:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 1)
-        else:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 6)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 6)
 
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 8)
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 3)
-
-        print("\n# Now print before and after minimisation-\n")
-
-        # Print results.
-        for i in range(len(grid_results)):
-            # Get values.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                print("GRID %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-            else:
-                g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
 
 
     def test_baldwin_synthetic_full(self):
