@@ -554,8 +554,8 @@ class Frame_order(API_base, API_common):
         if constraints:
             A, b = linear_constraints(scaling_matrix=scaling_matrix)
 
-        # No constraints.
-        if len(A) == 0:
+        # Constraint flag set but no constraints present.
+        if A != None and len(A) == 0:
             warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
             constraints = False
 
