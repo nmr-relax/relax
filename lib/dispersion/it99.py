@@ -73,7 +73,7 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, array, isfinite, min, sqrt, sum
+from numpy import array, isfinite, sqrt, sum
 
 
 def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, num_points=None):
@@ -118,13 +118,6 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, nu
     # Denominator.
     omega_a2 = sqrt(omega_1eff4 + pa2dw4)
     denom = 1.0 + omega_a2 * tex2
-
-    # Catch math domain error of dividing with 0.
-    # This is when denom=0.
-    if min(abs(denom)) == 0:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
 
     # R2eff calculation.
     R2eff = r20 + numer / denom
