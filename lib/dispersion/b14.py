@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arccosh, array, cos, cosh, isfinite, log, min, power, sin, sinh, sqrt, sum
+from numpy import abs, arccosh, arctan2, array, cos, cosh, isfinite, log, min, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -158,11 +158,12 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
     two_tcp = 2.0 * tcp
-    sqrt_zeta2_Psi2 = sqrt(zeta**2 + Psi**2)
 
     # Get the real and imaginary components of the exchange induced shift.
-    g3 = g_fact * sqrt( Psi + sqrt_zeta2_Psi2)
-    g4 = g_fact * sqrt(-Psi + sqrt_zeta2_Psi2)
+    # Trigonometric functions faster than square roots.
+    quad_zeta2_Psi2 = (zeta**2 + Psi**2)**0.25
+    g3 = cos(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
+    g4 = sin(0.5 * arctan2(-zeta, Psi)) * quad_zeta2_Psi2
 
     # Repetitive calculations (to speed up calculations).
     g32 = g3**2
