@@ -955,17 +955,18 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=2, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
 
 
-    def test_cpmg_synthetic_cr72(self):
+    def test_cpmg_synthetic_ns3d_to_cr72(self):
         """Test synthetic cpmg data.
 
-        This script will produce synthetic CPMG R2eff values according to the selected model, and the fit the selected model.
+        This script will produce synthetic CPMG R2eff values according to the NS CPMG 2-site 3D model, and the fit the data with CR72.
         """
 
         # Reset.
         #self.interpreter.reset()
 
         ## Set Experiments.
-        model_create = 'CR72'
+        model_create = 'NS CPMG 2-site 3D'
+        #model_create = 'NS CPMG 2-site expanded'
         model_analyse = 'CR72'
         # Exp 1
         sfrq_1 = 599.8908617*1E6
@@ -986,7 +987,7 @@ class Relax_disp(SystemTestCase):
         exps = [exp_1, exp_2]
 
         spins = [
-            ['Ala', 1, 'N', {'r2': {r20_key_1:2, r20_key_2:2}, 'r2a': {r20_key_1:2, r20_key_2:2}, 'r2b': {r20_key_1:2, r20_key_2:2}, 'kex': 1000, 'pA': 0.99, 'dw': 2} ]
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:10.}, 'r2a': {r20_key_1:10., r20_key_2:10.}, 'r2b': {r20_key_1:10., r20_key_2:10.}, 'kex': 1000., 'pA': 0.99, 'dw': 2.} ]
             ]
 
         # Collect the data to be used.
@@ -1072,7 +1073,7 @@ class Relax_disp(SystemTestCase):
                             print("###################################")
 
                         ## Make test on R2.
-                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 6)
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 2)
                 else:
                     grid_val = grid_params[mo_param]
                     min_val = min_params[mo_param]
@@ -1084,7 +1085,12 @@ class Relax_disp(SystemTestCase):
                         print("###################################")
 
                     ## Make test on parameters.
-                    self.assertAlmostEqual(set_val, min_val, 2)
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 1)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 3)
 
 
     def test_cpmg_synthetic_cr72_full_noise_cluster(self):
