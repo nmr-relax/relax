@@ -67,7 +67,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, array, min, sin, isfinite, sum
+from numpy import array, min, sin, isfinite, sum
 
 
 def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
@@ -91,15 +91,18 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     # Denominator.
     denom = dw * tcp
 
-    # Catch math domain error of dividing with 0.
-    # This is when sin(0).
-    if min(abs(denom)) == 0:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
-
     # The numerator.
     numer = sin(denom)
+
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if min(numer) == 0.0:
+        return r20a + k_AB
+
+    # Catch math domain error of dividing with 0.
+    # This is when sin(denom) = 0.
+    if min(denom) == 0.0:
+        return array([1e100]*num_points)
 
     # Calculate R2eff.
     R2eff = r20a + k_AB - k_AB * numer / denom
