@@ -269,6 +269,12 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     @type num_cpmg:             numpy int16, rank-1 array
     """
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
+        for i in range(num_points):
+            back_calc[i] = r20
+        return
+
     # Repeditive calculations.
     half_tcp = 0.5 * tcp
     k_AB_plus_k_BA = k_AB + k_BA
