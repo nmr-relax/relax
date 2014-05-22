@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2013-2014 Troels E. Linnet                                    #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -23,5 +24,6 @@
 __all__ = [
     'test___init__',
     'test_dpl94',
+    'test_lm63',
     'test_ns_cpmg_2site_expanded'
 ]

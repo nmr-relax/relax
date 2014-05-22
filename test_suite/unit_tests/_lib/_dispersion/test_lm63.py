@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Edward d'Auvergne                                        #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -20,15 +21,15 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, zeros
+from numpy import array, float64, int16, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
-from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
+from lib.dispersion.lm63 import r2eff_LM63
 
 
-class Test_ns_cpmg_2site_expanded(TestCase):
-    """Unit tests for the lib.dispersion.ns_cpmg_2site_expanded relax module."""
+class Test_lm63(TestCase):
+    """Unit tests for the lib.dispersion.lm63 relax module."""
 
     def setUp(self):
         """Set up for all unit tests."""
@@ -39,51 +40,59 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.dw = 0.5
         self.kex = 100.0
 
+        # The spin Larmor frequencies.
+        self.sfrq = 599.8908617*1E6
+
         # Required data structures.
         self.num_points = 3
-        self.tcp = array([0.1, 0.2, 0.3], float64)
+        self.cpmg_frqs = array([[2.5, 1.25, 0.83]], float64)
         self.R2eff = zeros(3, float64)
-        self.num_cpmg = array([1, 2, 3], int16)
 
 
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA = self.param_conversion(pA=self.pA, kex=self.kex)
+        phi_ex_scaled = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=self.dw, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
-
+        R2eff = r2eff_LM63(r20=self.r20, phi_ex=phi_ex_scaled, kex=self.kex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
         # Check all R2eff values.
         for i in range(self.num_points):
             self.assertAlmostEqual(R2eff[i], self.r20)
 
 
-    def param_conversion(self, pA=None, kex=None):
+    def param_conversion(self, pA=None, dw=None, sfrq=None):
         """Convert the parameters.
 
         @keyword pA:    The population of state A.
         @type pA:       float
-        @keyword kex:   The rate of exchange.
-        @type kex:      float
-        @return:        The parameters {k_AB, k_BA}.
-        @rtype:         tuple of float
+        @keyword dw:    The chemical exchange difference between states A and B in ppm.
+        @type dw:       float
+        @keyword sfrq:  The spin Larmor frequencies in Hz.
+        @type sfrq:     float
+        @return:        The parameters phi_ex_scaled
+        @rtype:         float
         """
 
         # Calculate pB.
         pB = 1.0 - pA
 
-        # Exchange rates.
-        k_BA = pA * kex
-        k_AB = pB * kex
+        # Calculate spin Larmor frequencies in 2pi.
+        frqs = sfrq * 2 * pi
+
+        # The phi_ex parameter value (pA * pB * delta_omega^2).
+        phi_ex = pA * pB * dw**2
+
+        # Convert phi_ex from ppm^2 to (rad/s)^2.
+        phi_ex_scaled = phi_ex * frqs**2
 
         # Return all values.
-        return k_AB, k_BA
+        return phi_ex_scaled
 
 
-    def test_ns_cpmg_2site_expanded_no_rex1(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when dw = 0.0."""
+    def test_lm63_no_rex1(self):
+        """Test the r2eff_lm63() function for no exchange when dw = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -92,8 +101,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex2(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when pA = 1.0."""
+    def test_lm63_no_rex2(self):
+        """Test the r2eff_lm63() function for no exchange when pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -102,8 +111,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex3(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when kex = 0.0."""
+    def test_lm63_no_rex3(self):
+        """Test the r2eff_lm63() function for no exchange when kex = 0.0."""
 
         # Parameter reset.
         self.kex = 0.0
@@ -112,8 +121,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex4(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when dw = 0.0 and pA = 1.0."""
+    def test_lm63_no_rex4(self):
+        """Test the r2eff_lm63() function for no exchange when dw = 0.0 and pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -123,8 +132,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex5(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when dw = 0.0 and kex = 0.0."""
+    def test_lm63_no_rex5(self):
+        """Test the r2eff_lm63() function for no exchange when dw = 0.0 and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -134,8 +143,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex6(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when pA = 1.0 and kex = 0.0."""
+    def test_lm63_no_rex6(self):
+        """Test the r2eff_lm63() function for no exchange when pA = 1.0 and kex = 0.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -145,8 +154,8 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.calc_r2eff()
 
 
-    def test_ns_cpmg_2site_expanded_no_rex7(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
+    def test_lm63_no_rex7(self):
+        """Test the r2eff_lm63() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
