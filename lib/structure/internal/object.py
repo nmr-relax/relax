@@ -1579,42 +1579,44 @@ class Internal:
             del_res_nums.reverse()
 
             # Handle the helix metadata.
-            del_helix_indices = []
-            for i in range(len(self.helices)):
-                # Trim the helix.
-                helix = self._trim_helix(helix=self.helices[i], trim_res_list=del_res_nums, res_data=res_data)
+            if hasattr(self, 'helices'):
+                del_helix_indices = []
+                for i in range(len(self.helices)):
+                    # Trim the helix.
+                    helix = self._trim_helix(helix=self.helices[i], trim_res_list=del_res_nums, res_data=res_data)
 
-                # Trimmed helix.
-                if helix != None:
-                    self.helices[i] = helix
+                    # Trimmed helix.
+                    if helix != None:
+                        self.helices[i] = helix
 
-                # No helix left.
-                else:
-                    del_helix_indices.append(i)
+                    # No helix left.
+                    else:
+                        del_helix_indices.append(i)
 
-            # Loop over the reverse helix indices and pop out the data.
-            del_helix_indices.reverse()
-            for i in del_helix_indices:
-                self.helices.pop(i)
+                # Loop over the reverse helix indices and pop out the data.
+                del_helix_indices.reverse()
+                for i in del_helix_indices:
+                    self.helices.pop(i)
 
             # Handle the sheet metadata.
-            del_sheet_indices = []
-            for i in range(len(self.sheets)):
-                # Trim the sheet.
-                sheet = self._trim_sheet(sheet=self.sheets[i], trim_res_list=del_res_nums, res_data=res_data)
+            if hasattr(self, 'sheets'):
+                del_sheet_indices = []
+                for i in range(len(self.sheets)):
+                    # Trim the sheet.
+                    sheet = self._trim_sheet(sheet=self.sheets[i], trim_res_list=del_res_nums, res_data=res_data)
 
-                # Trimmed sheet.
-                if sheet != None:
-                    self.sheets[i] = sheet
+                    # Trimmed sheet.
+                    if sheet != None:
+                        self.sheets[i] = sheet
 
-                # No sheet left.
-                else:
-                    del_sheet_indices.append(i)
+                    # No sheet left.
+                    else:
+                        del_sheet_indices.append(i)
 
-            # Loop over the reverse sheet indices and pop out the data.
-            del_sheet_indices.reverse()
-            for i in del_sheet_indices:
-                self.sheets.pop(i)
+                # Loop over the reverse sheet indices and pop out the data.
+                del_sheet_indices.reverse()
+                for i in del_sheet_indices:
+                    self.sheets.pop(i)
 
 
     def empty(self):
