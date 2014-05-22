@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arccosh, arctan2, array, cos, cosh, isfinite, log, min, power, sin, sinh, sqrt, sum
+from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -218,24 +218,12 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
-    # Catch math domain error of sqrt(neg val).
-    # This is when abs(v1c) =< 1.
-    if min(abs(v1c)) <= 1.:
-        R2eff = array([1e100]*num_points)
-        return R2eff
-
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
-
-    # Catch math domain error of log(neg val or zero).
-    # This is when Tog.real =< 0.
-    if min(Tog.real) <= 0.:
-        R2eff = array([1e100]*num_points)
-        return R2eff
 
     ## -1/Trel * log(LpreDyn).
     # Rpre = (r20a + r20b + kex) / 2.0
