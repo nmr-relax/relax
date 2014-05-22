@@ -22,6 +22,6 @@
 
 __all__ = [
     'test___init__',
-    'test_ns_dpl94',
+    'test_dpl94',
     'test_ns_cpmg_2site_expanded'
 ]
