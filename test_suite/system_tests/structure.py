@@ -222,6 +222,11 @@ class Structure(SystemTestCase):
         # Delete the calciums.
         self.interpreter.structure.delete(atom_id='@CA')
 
+        # Check the deleted atoms of both models (the last atoms should now be the last ATOM record proton and not the HETATOM CA).
+        for i in range(2):
+            print("Checking the last atom of model %s." % i)
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_name[-1], 'H')
+
         # Superimpose.
         self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
 
