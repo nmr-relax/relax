@@ -134,6 +134,7 @@ class Test_suite_runner:
 
             # Execute the GUI tests.
             gui_runner = GUI_test_runner()
+            self.runner.category = 'gui'
             self.gui_result = gui_runner.run(self.tests, runner=self.runner)
 
             # Clean up for the GUI, if not in GUI mode.
@@ -167,6 +168,7 @@ class Test_suite_runner:
 
         # Run the tests.
         system_runner = System_test_runner()
+        self.runner.category = 'system'
         self.system_result = system_runner.run(self.tests, runner=self.runner)
 
         # Print out a summary of the test suite.
@@ -186,6 +188,7 @@ class Test_suite_runner:
 
         # Run the tests.
         unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
+        self.runner.category = 'unit'
         self.unit_result = unit_runner.run(runner=self.runner)
 
         # Print out a summary of the test suite.
@@ -205,6 +208,7 @@ class Test_suite_runner:
 
         # Run the tests.
         verification_runner = Verification_test_runner()
+        self.runner.category = 'verification'
         self.verification_result = verification_runner.run(self.tests, runner=self.runner)
 
         # Print out a summary of the test suite.
