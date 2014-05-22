@@ -116,7 +116,6 @@ def url():
                 return str(row[1])
 
     # Try git-svn, reading the output if there are no errors.
-    print 'cd %s; git svn info' % status.install_path
     pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
     if not pipe.stderr.readlines():
         # Loop over the output lines.
