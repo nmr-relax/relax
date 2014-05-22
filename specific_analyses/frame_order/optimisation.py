@@ -672,6 +672,11 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     if not hasattr(cdp, 'num_int_pts'):
         cdp.num_int_pts = 200000
 
+    # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
+    ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+    if verbosity:
+        print("The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:\n    %s" % list(ave_pos_pivot))
+
     # The centre of mass, for use in the rotor models.
     com = None
     if cdp.model in ['rotor', 'double rotor']:
@@ -682,9 +687,6 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
         # Printout.
         if verbosity:
             print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
-
-    # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
-    ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
 
     # Print outs.
     if sim_index == None:
