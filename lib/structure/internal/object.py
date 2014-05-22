@@ -1532,6 +1532,12 @@ class Internal:
             if atom_id:
                 sel_obj = Selection(atom_id)
 
+            # Loop over the atoms and find the indices of the atoms to delete.
+            indices = []
+            for i in self.atom_loop(atom_id=atom_id, index_flag=True):
+                indices.append(i)
+            indices.reverse()
+
             # Loop over the models.
             del_res_nums = []
             for model in self.model_loop():
@@ -1543,16 +1549,10 @@ class Internal:
                     if sel_obj and not sel_obj.contains_mol(mol.mol_name):
                         continue
 
-                    # Loop over the atoms.
-                    indices = []
-                    for i in self.atom_loop(atom_id=atom_id, model_num=model.num, index_flag=True):
-                        indices.append(i)
-
                     # Generate a residue data dictionary for the metadata trimming (prior to atom deletion).
                     res_data = self._residue_data(res_nums=mol.res_num, res_names=mol.res_name)
 
                     # Loop over the reverse indices and pop out the data.
-                    indices.reverse()
                     for i in indices:
                         mol.atom_num.pop(i)
                         mol.atom_name.pop(i)
