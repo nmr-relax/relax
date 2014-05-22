@@ -477,10 +477,6 @@ class Relax_disp(SystemTestCase):
 
         ## Now prepare for MODEL calculation.
         MODEL = "B14"
-        #MODEL = "CR72"
-        #MODEL = "NS CPMG 2-site star"
-        #MODEL = "NS CPMG 2-site 3D"
-        #MODEL = "NS CPMG 2-site expanded"
 
         # Change pipe.
         pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
@@ -516,26 +512,24 @@ class Relax_disp(SystemTestCase):
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store grid results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-
+            grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
-        set_func_tol = 1e-12
-        set_max_iter = 10000
+        set_func_tol = 1e-10
+        set_max_iter = 1000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store minimisation results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                mini_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+            mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+        # Print results.
+        for i in range(len(grid_results)):
+            g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+            print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
@@ -551,43 +545,11 @@ class Relax_disp(SystemTestCase):
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
-        if "r2a" in MODEL_PARAMS[MODEL]:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 1)
-        else:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 4)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 6)
 
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 1)
-
-        print("\n# Now print before and after minimisation-\n")
-
-        # Print results.
-        for i in range(len(grid_results)):
-            # Get values.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                print("GRID %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-            else:
-                g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-
-        # Test the parameters which created the data.
-        # This is for the 1H spin.
-        if "r2a" in MODEL_PARAMS[MODEL]:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 1)
-        else:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 4)
-
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 1)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 8)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 3)
 
 
     def test_baldwin_synthetic_full(self):
@@ -609,11 +571,9 @@ class Relax_disp(SystemTestCase):
         # Generate the sequence.
         # Generate both a 1H spin, and 15N spin.
         self.interpreter.spin.create(res_name='Ala', res_num=1, spin_name='H')
-        self.interpreter.spin.create(res_name='Ala', res_num=2, spin_name='N')
 
         # Define the isotope.
         self.interpreter.spin.isotope('1H', spin_id='@H')
-        self.interpreter.spin.isotope('15N', spin_id='@N')
 
         # Build the experiment IDs.
         # Number of cpmg cycles (1 cycle = delay/180/delay/delay/180/delay)
@@ -654,7 +614,6 @@ class Relax_disp(SystemTestCase):
 
         # Try reading the R2eff file.
         self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_w_error.out", dir=data_path, spin_id=':1@H', disp_point_col=1, data_col=2, error_col=3)
-        self.interpreter.relax_disp.r2eff_read_spin(id="CPMG", file="test_15N_w_error.out", dir=data_path, spin_id=':2@N', disp_point_col=1, data_col=2, error_col=3)
 
         # Check the global data.
         data = [
@@ -702,10 +661,6 @@ class Relax_disp(SystemTestCase):
 
         ## Now prepare for MODEL calculation.
         MODEL = "B14 full"
-        #MODEL = "CR72 full"
-        #MODEL = "NS CPMG 2-site star full"
-        #MODEL = "NS CPMG 2-site 3D full"
-        #MODEL = "NS CPMG 2-site expanded"
 
         # Change pipe.
         pipe_name_MODEL = "%s_%s"%(pipe_name, MODEL)
@@ -742,26 +697,26 @@ class Relax_disp(SystemTestCase):
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store grid results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                grid_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-
+            grid_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
 
         ## Now do minimisation.
         # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
-        set_func_tol = 1e-12
+        set_func_tol = 1e-11
         set_max_iter = 10000
         self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
 
         # Store result.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store minimisation results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                mini_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                mini_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+            mini_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
+
+        print("\n# Now print before and after minimisation-\n")
+
+        # Print results.
+        for i in range(len(grid_results)):
+            g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
+            m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
+            print("GRID %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
+            print("MIN  %s r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
 
         # Reference values from Baldwin.py.
         # Exchange rate = k+ + k- (s-1)
@@ -777,89 +732,12 @@ class Relax_disp(SystemTestCase):
 
         # Test the parameters which created the data.
         # This is for the 1H spin.
-        if "r2a" in MODEL_PARAMS[MODEL]:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 1)
-        else:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 4)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 4)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 2)
 
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 1)
-
-        ## Since the Rex is 5 times as small for N15, it have hard times finding the values.
-        ## So we can try to cluster. But it won't work.
-
-        # Change pipe.
-        pipe_name_MODEL_CLUSTER = "%s_%s_CLUSTER"%(pipe_name, MODEL)
-        self.interpreter.pipe.copy(pipe_from=pipe_name_r2eff, pipe_to=pipe_name_MODEL_CLUSTER)
-        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL_CLUSTER)
-
-        # Then select model.
-        self.interpreter.relax_disp.select_model(model=MODEL)
-
-        # Skip the clustering analysis, since it won't work. !!!
-        #self.interpreter.relax_disp.cluster('model_cluster', ":1-2")
-
-        # Copy the parameters from before.
-        self.interpreter.relax_disp.parameter_copy(pipe_from=pipe_name_MODEL, pipe_to=pipe_name_MODEL_CLUSTER)
-
-        # Skip the clustering analysis, since it won't work. !!!
-        self.interpreter.minimise(min_algor='simplex', func_tol=set_func_tol, max_iter=set_max_iter, constraints=True, scaling=True, verbosity=1)
-
-        # Store result.
-        for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
-            # Store minimisation results.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                clust_results.append([spin.r2a[r20_key], spin.r2b[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-            else:
-                clust_results.append([spin.r2[r20_key], spin.dw, spin.pA, spin.kex, spin.chi2, spin_id, resi, resn])
-
-        print("\n# Now print before and after minimisation-\n")
-
-        # Print results.
-        for i in range(len(grid_results)):
-            # Get values.
-            if "r2a" in MODEL_PARAMS[MODEL]:
-                g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                c_r2a, c_r2b, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn = clust_results[i]
-                print("GRID %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2a, g_r2b, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2b=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2a, m_r2b, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-                print("CLUS %s r2a=%2.4f r2b=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s\n"%(c_spin_id, c_r2a, c_r2b, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
-            else:
-                g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn = grid_results[i]
-                m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn = mini_results[i]
-                c_r2, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn = clust_results[i]
-                print("GRID %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(g_spin_id, g_r2, g_dw, g_pA, g_kex, g_chi2, g_spin_id, g_resi, g_resn))
-                print("MIN  %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s"%(m_spin_id, m_r2, m_dw, m_pA, m_kex, m_chi2, m_spin_id, m_resi, m_resn))
-                print("CLUS %s r2=%2.4f dw=%1.4f pA=%1.4f kex=%3.4f chi2=%3.4f spin_id=%s resi=%i resn=%s\n"%(c_spin_id, c_r2, c_dw, c_pA, c_kex, c_chi2, c_spin_id, c_resi, c_resn))
-
-        # Test the parameters which created the data.
-        # This is for the 1H spin.
-        if "r2a" in MODEL_PARAMS[MODEL]:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2a[r20_key], R2g, 3)
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2b[r20_key], R2e, 1)
-        else:
-            self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].r2[r20_key], R2g, 4)
-
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].dw, dw_ppm, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].pA, 1-pb, 6)
-        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 1)
-
-        # This is for the 15N spin. The data won't fit, since r2b is making trouble.
-        #if "r2a" in MODEL_PARAMS[MODEL]:
-        #    self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r2a[r20_key], R2g, 4)
-        #    self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r2b[r20_key], R2e, 2)
-        #else:
-        #    self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].r2[r20_key], R2g, 4)
-
-        #self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].dw, dw_ppm, 6)
-        #self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].pA, 1-pb, 6)
-        #self.assertAlmostEqual(cdp.mol[0].res[1].spin[0].kex, kex, 2)
-
-        # Save graphs
-        #self.interpreter.relax_disp.plot_disp_curves(dir=path.join(getcwd()), num_points=100, extend=0.0, force=True)
+        self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].kex, kex, 2)
 
 
     def test_bug_21081_disp_cluster_fail(self):
@@ -1091,6 +969,145 @@ class Relax_disp(SystemTestCase):
                         self.assertAlmostEqual(set_val/1000, min_val/1000, 1)
                     elif mo_param == 'pA':
                         self.assertAlmostEqual(set_val, min_val, 3)
+
+
+    def test_cpmg_synthetic_ns3d_to_b14(self):
+        """Test synthetic cpmg data.
+
+        This script will produce synthetic CPMG R2eff values according to the NS CPMG 2-site 3D model, and the fit the data with B14.
+        Try to catch bug #22021 U{https://gna.org/bugs/index.php?22021}: Model B14 shows bad fitting to data.
+        """
+
+        # Reset.
+        #self.interpreter.reset()
+
+        ## Set Experiments.
+        model_create = 'NS CPMG 2-site 3D'
+        #model_create = 'NS CPMG 2-site expanded'
+        model_analyse = 'B14'
+        # Exp 1
+        sfrq_1 = 599.8908617*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.06
+        ncycs_1 = [2, 4, 8, 10, 20, 30, 40, 60]
+        r2eff_err_1 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_err_1]
+
+        sfrq_2 = 499.8908617*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.05
+        ncycs_2 = [2, 4, 8, 10, 30, 35, 40, 50]
+        r2eff_err_2 = [0, 0, 0, 0, 0, 0, 0, 0]
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_err_2]
+
+        # Collect all exps
+        exps = [exp_1, exp_2]
+
+        spins = [
+            ['Ala', 1, 'N', {'r2': {r20_key_1:10., r20_key_2:10.}, 'r2a': {r20_key_1:10., r20_key_2:10.}, 'r2b': {r20_key_1:10., r20_key_2:10.}, 'kex': 1000., 'pA': 0.99, 'dw': 2.} ]
+            ]
+
+        # Collect the data to be used.
+        ds.data = [model_create, model_analyse, spins, exps]
+
+        # The tmp directory. None is the local directory.
+        ds.tmpdir = ds.tmpdir
+
+        # The results directory. None is the local directory.
+        #ds.resdir = None
+        ds.resdir = ds.tmpdir
+
+        # Do set_grid_r20_from_min_r2eff ?.
+        ds.set_grid_r20_from_min_r2eff = True
+
+        # Remove insignificant level.
+        ds.insignificance = 0.0
+
+        # The grid search size (the number of increments per dimension).
+        ds.GRID_INC = 8
+
+        # The do clustering.
+        ds.do_cluster = False
+
+        # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
+        # The default value is 1e-25.
+        ds.set_func_tol = 1e-9
+
+        # The maximum number of iterations.
+        # The default value is 1e7.
+        ds.set_max_iter = 1000
+
+        # The verbosity level.
+        ds.verbosity = 1
+
+        # The rel_change WARNING level.
+        ds.rel_change = 0.05
+
+        # The plot_curves.
+        ds.plot_curves = False
+
+        # The conversion for ShereKhan at http://sherekhan.bionmr.org/.
+        ds.sherekhan_input = False
+
+        # Make a dx map to be opened om OpenDX. To map the hypersurface of chi2, when altering kex, dw and pA.
+        ds.opendx = False
+
+        # The set r2eff err.
+        ds.r2eff_err = 0.1
+
+        # The print result info.
+        ds.print_res = False
+
+        # Execute the script.
+        self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'cpmg_synthetic.py')
+
+        cur_spins = ds.data[2]
+        # Compare results.
+        for i in range(len(cur_spins)):
+            res_name, res_num, spin_name, params = cur_spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            grid_params = ds.grid_results[i][3]
+            min_params = ds.min_results[i][3]
+            # Now read the parameters.
+            print("For spin: '%s'"%cur_spin_id)
+            for mo_param in cur_spin.params:
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    grid_r2 = grid_params[mo_param]
+                    min_r2 = min_params[mo_param]
+                    set_r2 = params[mo_param]
+                    for key, val in set_r2.items():
+                        grid_r2_frq = grid_r2[key]
+                        min_r2_frq = min_r2[key]
+                        set_r2_frq = set_r2[key]
+                        frq = float(key.split(EXP_TYPE_CPMG_SQ+' - ')[-1].split('MHz')[0])
+                        rel_change = math.sqrt( (min_r2_frq - set_r2_frq)**2/(min_r2_frq)**2 )
+                        print("%s %s %s %s %.1f GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, frq, grid_r2_frq, min_r2_frq, set_r2_frq, rel_change) )
+                        if rel_change > ds.rel_change:
+                            print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                            print("###################################")
+
+                        ## Make test on R2.
+                        self.assertAlmostEqual(set_r2_frq, min_r2_frq, 2)
+                else:
+                    grid_val = grid_params[mo_param]
+                    min_val = min_params[mo_param]
+                    set_val = params[mo_param]
+                    rel_change = math.sqrt( (min_val - set_val)**2/(min_val)**2 )
+                    print("%s %s %s %s GRID=%.3f MIN=%.3f SET=%.3f RELC=%.3f"%(cur_spin.model, res_name, cur_spin_id, mo_param, grid_val, min_val, set_val, rel_change) )
+                    if rel_change > ds.rel_change:
+                        print("WARNING: rel change level is above %.2f, and is %.4f."%(ds.rel_change, rel_change))
+                        print("###################################")
+
+                    ## Make test on parameters.
+                    if mo_param == 'dw':
+                        self.assertAlmostEqual(set_val/10, min_val/10, 6)
+                    elif mo_param == 'kex':
+                        self.assertAlmostEqual(set_val/1000, min_val/1000, 5)
+                    elif mo_param == 'pA':
+                        self.assertAlmostEqual(set_val, min_val, 7)
 
 
     def test_cpmg_synthetic_ns3d_to_cr72_noise_cluster(self):
