@@ -209,6 +209,28 @@ class Structure(SystemTestCase):
         self.interpreter.structure.delete(atom_id='@CA')
 
 
+    def test_bug_22070_structure_superimpose_after_deletion(self):
+        """Catch U{bug #22070<https://gna.org/bugs/?22070>}, the failure of the structure.superimpose user function after deleting atoms with structure.delete."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the structures to superimpose.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH.pdb', dir=path, set_mol_name='C-dom', set_model_num=1)
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path, set_mol_name='C-dom', set_model_num=2)
+
+        # Delete the calciums.
+        self.interpreter.structure.delete(atom_id='@CA')
+
+        # Check the deleted atoms of both models (the last atoms should now be the last ATOM record proton and not the HETATOM CA).
+        for i in range(2):
+            print("Checking the last atom of model %s." % i)
+            self.assertEqual(cdp.structure.structural_data[i].mol[0].atom_name[-1], 'H')
+
+        # Superimpose.
+        self.interpreter.structure.superimpose(method='fit to first', centre_type='CoM')
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
