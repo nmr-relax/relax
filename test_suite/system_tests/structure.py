@@ -196,6 +196,19 @@ class Structure(SystemTestCase):
             self.assertEqual(contents[i], lines[i])
 
 
+    def test_bug_22069_structure_delete_helix_attribute(self):
+        """Catch U{bug #22069<https://gna.org/bugs/?22069>}, the failure of the structure.delete user function with helix attribute errors."""
+
+        # Path of the structure file.
+        path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'frame_order'+sep+'cam'
+
+        # Load the structure.
+        self.interpreter.structure.read_pdb('1J7P_1st_NH_rot.pdb', dir=path)
+
+        # Delete the calciums.
+        self.interpreter.structure.delete(atom_id='@CA')
+
+
     def test_delete_empty(self):
         """Test the deletion of non-existent structural data."""
 
