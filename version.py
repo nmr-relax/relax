@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -27,6 +27,7 @@ import dep_check
 
 # Python module imports.
 from os import F_OK, access, sep
+from re import search
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -46,32 +47,36 @@ def revision():
     """
 
     # Does the base directory exist (i.e. is this a checked out copy).
-    if not access(status.install_path+sep+'.svn', F_OK):
+    if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
         return
 
     # Python 2.3 and earlier.
     if Popen == None:
         return
 
-    # Try to run 'svn info'.
+    # Try to run 'svn info', reading the output if there are no errors.
     pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    if not pipe.stderr.readlines():
+        # Loop over the output lines.
+        for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
 
-    # Errors.
-    if pipe.stderr.readlines():
-        return
+            # Split up the line.
+            row = line.split()
 
-    # Loop over the output lines.
-    for line in pipe.stdout.readlines():
-        # Decode Python 3 byte arrays.
-        if hasattr(line, 'decode'):
-            line = line.decode()
+            # The revision.
+            if len(row) and row[0] == 'Revision:':
+                return str(row[1])
 
-        # Split up the line.
-        row = line.split()
-
-        # The revision.
-        if len(row) and row[0] == 'Revision:':
-            return str(row[1])
+    # Try git-svn, reading the output if there are no errors.
+    pipe = Popen('git svn find-rev $(git rev-parse HEAD)', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    if not pipe.stderr.readlines():
+        # Loop over the output lines.
+        for line in pipe.stdout.readlines():
+            if search('^[0-9]', line):
+                return str(line[:-1])
 
 
 def url():
@@ -82,32 +87,36 @@ def url():
     """
 
     # Does the base directory exist (i.e. is this a checked out copy).
-    if not access(status.install_path+sep+'.svn', F_OK):
+    if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
         return
 
     # Python 2.3 and earlier.
     if Popen == None:
         return
 
-    # Try to run 'svn info'.
+    # Try to run 'svn info', reading the output if there are no errors.
     pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    if not pipe.stderr.readlines():
+        # Loop over the output lines.
+        for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
 
-    # Errors.
-    if pipe.stderr.readlines():
-        return
+            # Split up the line.
+            row = line.split()
 
-    # Loop over the output lines.
-    for line in pipe.stdout.readlines():
-        # Decode Python 3 byte arrays.
-        if hasattr(line, 'decode'):
-            line = line.decode()
+            # The revision.
+            if len(row) and row[0] == 'URL:':
+                return str(row[1])
 
-        # Split up the line.
-        row = line.split()
-
-        # The revision.
-        if len(row) and row[0] == 'URL:':
-            return str(row[1])
+    # Try git-svn, reading the output if there are no errors.
+    pipe = Popen('git svn info --url', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    if not pipe.stderr.readlines():
+        # Loop over the output lines.
+        for line in pipe.stdout.readlines():
+            if search('^svn', line):
+                return str(line[:-1])
 
 
 def version_full():
