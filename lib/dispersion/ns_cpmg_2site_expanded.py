@@ -345,29 +345,7 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     t116 = power(0.5*(t97_t99 + t112), t115)
     t118 = 1.0/t112
     t120 = t97_nt99 + t112
-
-    # Catch math domain error of coming power(half_t97_t99_m_t112, NR).
-    # This is when power function calculate above 1.e300 or under -1.e300 or represented as less than 1.-e300.
-    half_t97_t99_m_t112 = 0.5*(t97_t99 - t112)
-
-    # First find the index with the highest power.
-    index_max_t115 = argmax(t115)
-
-    # Store the power.
-    max_t115 = t115[index_max_t115]
-
-    # Match the value from half_t97_t99_m_t112.
-    val_half_t97_t99_m_t112 = half_t97_t99_m_t112[index_max_t115]
-
-    # Calculate lowest positive val, which raised to the power will not be represented less than 1.-e300.
-    low_pos_rep = power(1.e-300, 1./max_t115)
-
-    # Now test if value in array at the power position is less than this value.
-    if val_half_t97_t99_m_t112 < low_pos_rep:
-        R2eff = array([1e100]*num_points)
-        return R2eff
-
-    t122 = power(half_t97_t99_m_t112, t115)
+    t122 = power(0.5*(t97_t99 - t112), t115)
     t127 = 0.5/t108
     t120_t122 = t120*t122
     t139 = 0.5/(k_AB + k_BA) * ((t120_t122 - t113*t116)*t118*k_BA + (t120_t122 - t116*t120)*t127*t113*t118*k_AB)
