@@ -75,6 +75,11 @@ def revision():
     if not pipe.stderr.readlines():
         # Loop over the output lines.
         for line in pipe.stdout.readlines():
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # The revision.
             if search('^[0-9]', line):
                 return str(line[:-1])
 
@@ -111,12 +116,21 @@ def url():
                 return str(row[1])
 
     # Try git-svn, reading the output if there are no errors.
-    pipe = Popen('git svn info --url', shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+    print 'cd %s; git svn info' % status.install_path
+    pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
     if not pipe.stderr.readlines():
         # Loop over the output lines.
         for line in pipe.stdout.readlines():
-            if search('^svn', line):
-                return str(line[:-1])
+            # Decode Python 3 byte arrays.
+            if hasattr(line, 'decode'):
+                line = line.decode()
+
+            # Split up the line.
+            row = line.split()
+
+            # The revision.
+            if len(row) and row[0] == 'URL:':
+                return str(row[1])
 
 
 def version_full():
