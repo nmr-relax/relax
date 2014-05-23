@@ -47,7 +47,7 @@ from textwrap import wrap
 
 # relax module imports.
 from status import Status; status = Status()
-from version import revision, url, version, version_full
+from version import repo_revision, repo_url, version, version_full
 
 
 def print_sys_info():
@@ -283,8 +283,8 @@ class Info_box(object):
 
         # Program name and version - subversion code.
         if version == 'repository checkout':
-            text = "%s %s r%s" % (self.title, self.version, revision())
-            text2 = "%s" % (url())
+            text = "%s %s r%s" % (self.title, self.version, repo_revision)
+            text2 = "%s" % (repo_url)
             intro_string = intro_string + self.centre(text, status.text_width) + '\n' + self.centre(text2, status.text_width) + '\n\n'
 
         # Program name and version - official releases.

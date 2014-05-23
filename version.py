@@ -41,114 +41,51 @@ repo_revision = None
 repo_url = None
 
 
-def revision():
-    """Attempt to retrieve the SVN revision number, if this is a checked out copy.
+def repo_information():
+    """Determine the subversion revision number and URL from svn or git-svn copies of the repository."""
 
-    @return:    The SVN revision number, or None if unsuccessful.
-    @rtype:     None or str
-    """
-
-    # Return the global variable, if set.
+    # The global variables
     global repo_revision
-    if repo_revision != None:
-        return repo_revision
-
-    # Does the base directory exist (i.e. is this a checked out copy).
-    if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
-        return
-
-    # Python 2.3 and earlier.
-    if Popen == None:
-        return
-
-    # Try to run 'svn info', reading the output if there are no errors.
-    pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-    if not pipe.stderr.readlines():
-        # Loop over the output lines.
-        for line in pipe.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
-
-            # Split up the line.
-            row = line.split()
-
-            # Store revision as the global variable and return it.
-            if len(row) and row[0] == 'Revision:':
-                repo_revision = str(row[1])
-                return repo_revision
-
-    # Try git-svn, reading the output if there are no errors.
-    pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-    if not pipe.stderr.readlines():
-        # Loop over the output lines.
-        for line in pipe.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
-
-            # Split up the line.
-            row = line.split()
-
-            # Store revision as the global variable and return it.
-            if len(row) and row[0] == 'Revision:':
-                repo_revision = str(row[1])
-                return repo_revision
-
-
-def url():
-    """Attempt to retrieve the SVN URL, if this is a checked out copy.
-
-    @return:    The SVN URL, or None if unsuccessful.
-    @rtype:     None or str
-    """
-
-    # Return the global variable, if set.
     global repo_url
-    if repo_url != None:
-        return repo_url
 
-    # Does the base directory exist (i.e. is this a checked out copy).
-    if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
+    # The variables are already set, so do nothing.
+    if repo_revision != None or repo_url != None:
         return
 
     # Python 2.3 and earlier.
     if Popen == None:
         return
 
-    # Try to run 'svn info', reading the output if there are no errors.
-    pipe = Popen('svn info %s' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-    if not pipe.stderr.readlines():
-        # Loop over the output lines.
-        for line in pipe.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
+    # The command to use.
+    cmd = None
+    if access(status.install_path+sep+'.svn', F_OK):
+        cmd = 'svn info %s' % status.install_path
+    elif access(status.install_path+sep+'.git', F_OK):
+        cmd = 'cd %s; git svn info' % status.install_path
 
-            # Split up the line.
-            row = line.split()
+    # Not a repository copy, so do nothing.
+    if not cmd:
+        return
 
-            # Store URL as the global variable and return it.
-            if len(row) and row[0] == 'URL:':
-                repo_url = str(row[1])
-                return repo_url
+    # Open the pipe and run the command.
+    pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
-    # Try git-svn, reading the output if there are no errors.
-    pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
-    if not pipe.stderr.readlines():
-        # Loop over the output lines.
-        for line in pipe.stdout.readlines():
-            # Decode Python 3 byte arrays.
-            if hasattr(line, 'decode'):
-                line = line.decode()
+    # Loop over the output lines.
+    for line in pipe.stdout.readlines():
+        # Decode Python 3 byte arrays.
+        if hasattr(line, 'decode'):
+            line = line.decode()
 
-            # Split up the line.
-            row = line.split()
+        # Split up the line.
+        row = line.split()
 
-            # Store URL as the global variable and return it.
-            if len(row) and row[0] == 'URL:':
-                repo_url = str(row[1])
-                return repo_url
+        # Store revision as the global variable.
+        if len(row) and row[0] == 'Revision:':
+            repo_revision = str(row[1])
+
+        # Store URL as the global variable.
+        if len(row) and row[0] == 'URL:':
+            repo_url = str(row[1])
 
 
 def version_full():
@@ -163,15 +100,19 @@ def version_full():
 
     # Repository version.
     if ver == 'repository checkout':
-        # Get the SVN revision and URL.
-        svn_rev = revision()
-        svn_url = url()
+        # The global variables
+        global repo_revision
+        global repo_url
 
         # Change the version string.
-        if svn_rev:
-            ver = version + " r" + svn_rev
-        if svn_url:
-            ver = ver + " " + svn_url
+        if repo_revision != None:
+            ver = version + " r" + repo_revision
+        if repo_url != None:
+            ver = ver + " " + repo_url
 
     # Return the version.
     return ver
+
+
+# Fetch the repository information, if present.
+repo_information()
