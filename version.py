@@ -37,6 +37,8 @@ from status import Status; status = Status()
 
 
 version = "repository checkout"
+repo_revision = None
+repo_url = None
 
 
 def revision():
@@ -46,6 +48,11 @@ def revision():
     @rtype:     None or str
     """
 
+    # Return the global variable, if set.
+    global repo_revision
+    if repo_revision != None:
+        return repo_revision
+
     # Does the base directory exist (i.e. is this a checked out copy).
     if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
         return
@@ -66,9 +73,10 @@ def revision():
             # Split up the line.
             row = line.split()
 
-            # The revision.
+            # Store revision as the global variable and return it.
             if len(row) and row[0] == 'Revision:':
-                return str(row[1])
+                repo_revision = str(row[1])
+                return repo_revision
 
     # Try git-svn, reading the output if there are no errors.
     pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
@@ -82,9 +90,10 @@ def revision():
             # Split up the line.
             row = line.split()
 
-            # The revision.
+            # Store revision as the global variable and return it.
             if len(row) and row[0] == 'Revision:':
-                return str(row[1])
+                repo_revision = str(row[1])
+                return repo_revision
 
 
 def url():
@@ -94,6 +103,11 @@ def url():
     @rtype:     None or str
     """
 
+    # Return the global variable, if set.
+    global repo_url
+    if repo_url != None:
+        return repo_url
+
     # Does the base directory exist (i.e. is this a checked out copy).
     if not access(status.install_path+sep+'.svn', F_OK) and not access(status.install_path+sep+'.git', F_OK):
         return
@@ -114,9 +128,10 @@ def url():
             # Split up the line.
             row = line.split()
 
-            # The revision.
+            # Store URL as the global variable and return it.
             if len(row) and row[0] == 'URL:':
-                return str(row[1])
+                repo_url = str(row[1])
+                return repo_url
 
     # Try git-svn, reading the output if there are no errors.
     pipe = Popen('cd %s; git svn info' % status.install_path, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
@@ -130,9 +145,10 @@ def url():
             # Split up the line.
             row = line.split()
 
-            # The revision.
+            # Store URL as the global variable and return it.
             if len(row) and row[0] == 'URL:':
-                return str(row[1])
+                repo_url = str(row[1])
+                return repo_url
 
 
 def version_full():
