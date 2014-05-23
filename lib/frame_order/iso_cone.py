@@ -90,10 +90,8 @@ def pcs_numeric_int_iso_cone_qrint(points=None, theta_max=None, sigma_max=None, 
     """
 
     # Clear the data structures.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            pcs_theta[i, j] = 0.0
-            pcs_theta_err[i, j] = 0.0
+    pcs_theta[:] = 0.0
+    pcs_theta_err[:] = 0.0
 
     # Loop over the samples.
     num = 0
@@ -138,9 +136,7 @@ def populate_1st_eigenframe_iso_cone(matrix, angle):
     """
 
     # Zeros.
-    for i in range(3):
-        for j in range(3):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # The c33 element.
     matrix[2, 2] = (cos(angle) + 1.0) / 2.0
@@ -161,9 +157,7 @@ def populate_2nd_eigenframe_iso_cone(matrix, tmax, smax):
     """
 
     # Zeros.
-    for i in range(9):
-        for j in range(9):
-            matrix[i, j] = 0.0
+    matrix[:] = 0.0
 
     # Repetitive trig calculations.
     sinc_smax = sinc(smax/pi)

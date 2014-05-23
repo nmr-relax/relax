@@ -624,12 +624,9 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
     @type error_flag:           bool
     """
 
-
     # Clear the data structures.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            pcs_theta[i, j] = 0.0
-            pcs_theta_err[i, j] = 0.0
+    pcs_theta[:] = 0.0
+    pcs_theta_err[:] = 0.0
 
     # Loop over the samples.
     num = 0
