@@ -1475,7 +1475,7 @@ class Relax_disp(SystemTestCase):
         print("\nChecking the dx point point file.")
         res_file = [
             '0.8            3.92           0.39964        1'+"\n",
-            '4e-05          0.08           3.8            1'+"\n",
+            '0.76981        3.9169         0.41353        1'+"\n",
         ]
         file = open(point_point, 'r')
         lines = file.readlines()
