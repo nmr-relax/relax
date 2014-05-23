@@ -23,8 +23,8 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from math import cos, sin, sqrt
-from numpy import dot, inner, transpose
+from math import cos, sin
+from numpy import dot, inner, sqrt, transpose
 
 # relax module imports.
 from lib.linear_algebra.kronecker_product import transpose_23
@@ -134,12 +134,12 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
     rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
     rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
 
+    # The vector length (to the 5th power).
+    length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
+    length = 1.0 / norm(rot_vect, axis=1)**5
+
     # Loop over the atoms.
     for j in range(len(r_pivot_atom[0])):
-        # The vector length (to the 5th power).
-        length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
-        length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
-
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.
@@ -149,10 +149,10 @@ def pcs_pivot_motion_full_qrint(theta_i=None, phi_i=None, sigma_i=None, full_in_
             # The projection.
             if full_in_ref_frame[i]:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
-                length_i = length
+                length_i = length[j]
             else:
                 proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
+                length_i = length_rev[j]
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
@@ -219,12 +219,12 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
     rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
     rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
 
+    # The vector length (to the 5th power).
+    length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
+    length = 1.0 / norm(rot_vect, axis=1)**5
+
     # Loop over the atoms.
     for j in range(len(r_pivot_atom[0])):
-        # The vector length (to the 5th power).
-        length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
-        length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
-
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.
@@ -234,10 +234,10 @@ def pcs_pivot_motion_torsionless_qrint(theta_i=None, phi_i=None, full_in_ref_fra
             # The projection.
             if full_in_ref_frame[i]:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
-                length_i = length
+                length_i = length[j]
             else:
                 proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
+                length_i = length_rev[j]
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i
