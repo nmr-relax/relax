@@ -26,6 +26,7 @@
 from numpy import array, cross, float32, float64, transpose, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
+from string import upper
 
 # relax module imports.
 from data_store import Relax_data_store; ds = Relax_data_store()
@@ -159,36 +160,39 @@ class Base_script:
         if self.NUM_INT_PTS != None:
             self._execute_uf(uf_name='frame_order.num_int_pts', num=self.NUM_INT_PTS)
 
-        # Check the minimum.
-        if self.MODEL not in ['free rotor', 'iso cone, free rotor']:
-            if self.AVE_POS_ALPHA != None:
-                self._execute_uf(uf_name='value.set', val=self.AVE_POS_ALPHA, param='ave_pos_alpha')
-            if self.AVE_POS_BETA != None:
-                self._execute_uf(uf_name='value.set', val=self.AVE_POS_BETA, param='ave_pos_beta')
-            if self.AVE_POS_GAMMA != None:
-                self._execute_uf(uf_name='value.set', val=self.AVE_POS_GAMMA, param='ave_pos_gamma')
-        if self.EIGEN_ALPHA != None:
-            self._execute_uf(uf_name='value.set', val=self.EIGEN_ALPHA, param='eigen_alpha')
-        if self.EIGEN_BETA != None:
-            self._execute_uf(uf_name='value.set', val=self.EIGEN_BETA, param='eigen_beta')
-        if self.EIGEN_GAMMA != None:
-            self._execute_uf(uf_name='value.set', val=self.EIGEN_GAMMA, param='eigen_gamma')
-        if self.AXIS_THETA != None:
-            self._execute_uf(uf_name='value.set', val=self.AXIS_THETA, param='axis_theta')
-        if self.AXIS_PHI != None:
-            self._execute_uf(uf_name='value.set', val=self.AXIS_PHI, param='axis_phi')
-        if self.AXIS_ALPHA != None:
-            self._execute_uf(uf_name='value.set', val=self.AXIS_ALPHA, param='axis_alpha')
-        if self.CONE_THETA_X != None:
-            self._execute_uf(uf_name='value.set', val=self.CONE_THETA_X, param='cone_theta_x')
-        if self.CONE_THETA_Y != None:
-            self._execute_uf(uf_name='value.set', val=self.CONE_THETA_Y, param='cone_theta_y')
-        if self.CONE_THETA != None:
-            self._execute_uf(uf_name='value.set', val=self.CONE_THETA, param='cone_theta')
-        if self.CONE_S1 != None:
-            self._execute_uf(uf_name='value.set', val=self.CONE_S1, param='cone_s1')
-        if self.CONE_SIGMA_MAX != None:
-            self._execute_uf(uf_name='value.set', val=self.CONE_SIGMA_MAX, param='cone_sigma_max')
+        # Set the parameter values.
+        params = [
+            'ave_pos_x',
+            'ave_pos_y',
+            'ave_pos_z',
+            'ave_pos_alpha',
+            'ave_pos_beta',
+            'ave_pos_gamma',
+            'eigen_alpha',
+            'eigen_beta',
+            'eigen_gamma',
+            'axis_theta',
+            'axis_phi',
+            'axis_alpha',
+            'cone_theta_x',
+            'cone_theta_y',
+            'cone_theta',
+            'cone_s1',
+            'cone_sigma_max'
+        ]
+        for param in params:
+            # Variable name.
+            var_name = upper(param)
+
+            # Not set.
+            val = getattr(self, var_name)
+            if val == None:
+                continue
+
+            # Set the value.
+            self._execute_uf(uf_name='value.set', val=val, param=param)
+
+        # Calculate and show the chi-squared value.
         self._execute_uf(uf_name='calc')
         print("\nchi2: %s" % cdp.chi2)
 
