@@ -287,7 +287,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
-        self.check_chi2(26.111745902046135)
+        self.check_chi2(0.04917163800139096)
 
 
     def test_cam_free_rotor_missing_data(self):
@@ -296,7 +296,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'free_rotor_missing_data.py')
-        self.check_chi2(19.769652316529044)
+        self.check_chi2(0.044884875284772641)
 
 
     def test_cam_free_rotor_pcs(self):
@@ -305,7 +305,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
-        self.check_chi2(26.0561429411961)
+        self.check_chi2(0.00018033189835654231)
 
 
     def test_cam_free_rotor_rdc(self):
@@ -458,7 +458,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(1.8246387150578596)
+        self.check_chi2(1.6035432658413395)
 
 
     def test_cam_pseudo_ellipse_pcs(self):
@@ -476,7 +476,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse.py')
-        self.check_chi2(0.095461523976414595)
+        self.check_chi2(0.03300256897164619)
 
 
     def test_cam_pseudo_ellipse2(self):
@@ -593,7 +593,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'rotor.py')
-        self.check_chi2(0.51092299791624041)
+        self.check_chi2(0.076190530269006254)
 
 
     def test_cam_rotor_pcs(self):
