@@ -348,7 +348,7 @@ class Frame_order(SystemTestCase):
         """Test the isotropic cone, free rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags()
+        self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'iso_cone.py')
         self.check_chi2(4.4891048094666539)
 
