@@ -31,6 +31,9 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'free_rotor'
     MODEL = 'free rotor'
+    AVE_POS_ALPHA = None
+    AVE_POS_BETA = 0.19740471457956135
+    AVE_POS_GAMMA = 4.6622313104265416
     AXIS_THETA = 0.9600799785953431
     AXIS_PHI = 4.0322755062196229
 

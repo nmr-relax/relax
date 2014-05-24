@@ -253,15 +253,6 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH, set_mol_name='N-dom')
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH, set_mol_name='C-dom')
 
-        # Solve the {a, b, g} -> {0, b', g'} angle conversion problem in the rotor models by pre-rotating the domain!
-        if self.MODEL in ['free rotor', 'iso cone, free rotor']:
-            # The rotation matrix.
-            R = zeros((3, 3), float64)
-            euler_to_R_zyz(self.AVE_POS_ALPHA, self.AVE_POS_BETA, self.AVE_POS_GAMMA, R)
-
-            # Rotate.
-            self._execute_uf(uf_name='structure.rotate', R=R, atom_id='#C-dom')
-
         # Set up the 15N and 1H spins.
         self._execute_uf(uf_name='structure.load_spins', spin_id='@N', ave_pos=False)
         self._execute_uf(uf_name='structure.load_spins', spin_id='@H', ave_pos=False)
