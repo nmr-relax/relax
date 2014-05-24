@@ -155,7 +155,8 @@ uf.add_keyarg(
     desc_short = "average structure file name",
     desc = "The name of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "rep_file",
@@ -165,7 +166,8 @@ uf.add_keyarg(
     desc_short = "PDB representation file name",
     desc = "The name of the PDB file for the geometric object representation of the frame order dynamics.",
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "dist_file",
@@ -175,7 +177,8 @@ uf.add_keyarg(
     desc_short = "distribution file name",
     desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
     wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
-    wiz_filesel_style = FD_OPEN
+    wiz_filesel_style = FD_OPEN,
+    can_be_none = True
 )
 uf.add_keyarg(
     name = "dir",
