@@ -32,6 +32,7 @@ class Analysis(Base_script):
     # Set up some class variables.
     DIRECTORY = 'iso_cone_free_rotor2'
     MODEL = 'iso cone, free rotor'
+    # FIXME:  The b' and g' angles need to be newly optimised as in r23397, but with the free_rotor2 test data.
     AVE_POS_ALPHA = None
     AVE_POS_BETA = 0.19740471457956135
     AVE_POS_GAMMA = 4.6622313104265416
