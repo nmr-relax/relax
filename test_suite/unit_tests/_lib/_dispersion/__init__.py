@@ -28,6 +28,7 @@ __all__ = [
     'test_dpl94',
     'test_it99',
     'test_lm63',
+    'test_ns_cpmg_2site_3d',
     'test_ns_cpmg_2site_expanded',
     'test_m61',
     'test_m61b',
