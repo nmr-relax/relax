@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, power, sin, sinh, sqrt, sum
+from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -148,7 +148,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     """
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0 or kex >= 1.e5:
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
         return array([r20a]*num_points)
 
     # Repetitive calculations (to speed up calculations).
@@ -196,6 +196,11 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Derived from relaxation.
     # E0 = -2.0 * tcp * (F00R - f11R).
     E0 =  two_tcp * g3
+
+    # Catch math domain error of sinh(val > 710).
+    # This is when E0 > 710.
+    if max(E0) > 700:
+        return array([r20a]*num_points)
 
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
