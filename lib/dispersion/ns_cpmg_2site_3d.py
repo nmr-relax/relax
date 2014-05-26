@@ -103,6 +103,12 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     @type power:            numpy int16, rank-1 array
     """
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
+        for i in range(num_points):
+            back_calc[i] = r20a
+        return
+
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA)
 
@@ -123,6 +129,8 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mx = fabs(Mint[1] / pA)
         if Mx <= 0.0 or isNaN(Mx):
-            back_calc[i] = 1e99
+            for i in range(num_points):
+                back_calc[i] = r20a
+            return
         else:
             back_calc[i]= -inv_tcpmg * log(Mx)
