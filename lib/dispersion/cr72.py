@@ -129,7 +129,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0 or kex >= 1.e5:
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
         return array([r20a]*num_points)
 
     # The Psi and zeta values.
