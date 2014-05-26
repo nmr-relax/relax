@@ -123,18 +123,13 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if min(numer) == 0.0:
-        return R1_cos_theta2 + R1rho_prime_sin_theta2
+    if numer == 0.0:
+        return array([r1rho_prime]*num_points)
 
     # Denominator.
     denom = waeff2 * wbeff2 / weff2 + kex2
     #denom_extended = waeff2*wbeff2/weff2+kex2-2*sin_theta2*pA*pB*dw**2
  
-    # Catch math domain error of dividing with 0.
-    # This is when denom=0.
-    if min(abs(denom)) == 0:
-        return array([1e100]*num_points)
-
     # R1rho calculation.
     R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
 
