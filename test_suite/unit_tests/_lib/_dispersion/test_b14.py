@@ -169,3 +169,13 @@ class Test_b14(TestCase):
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
+
+
+    def test_b14_no_rex8(self):
+        """Test the r2eff_b14() function for no exchange when kex = 1e5."""
+
+        # Parameter reset.
+        self.kex = 1e5
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
