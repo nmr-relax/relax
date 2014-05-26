@@ -42,7 +42,6 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         # Required data structures.
         self.num_points = 3
         self.tcp = array([0.1, 0.2, 0.3], float64)
-        self.R2eff = zeros(3, float64)
         self.num_cpmg = array([1, 2, 3], int16)
 
 
@@ -53,11 +52,14 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         k_AB, k_BA = self.param_conversion(pA=self.pA, kex=self.kex)
 
         # Calculate the R2eff values.
-        self.R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=self.dw, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
+        R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=self.dw, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
 
-        # Check all R2eff values.
-        for i in range(self.num_points):
-            self.assertAlmostEqual(self.R2eff[i], 2.0, 5)
+        if self.kex >= 1.e5:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20, 5)
+        else:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, kex=None):
