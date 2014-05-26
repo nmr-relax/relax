@@ -84,6 +84,10 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @type power:            numpy int16, rank-1 array
     """
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0 or dwH == 0.0:
+        return array([r20]*num_points)
+
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
     r20_kex = r20 + kex/2.0
@@ -126,9 +130,7 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
+        return array([r20]*num_points)
 
     # The full eta - values.
     etaneg = etaneg_part / cpmg_frqs
