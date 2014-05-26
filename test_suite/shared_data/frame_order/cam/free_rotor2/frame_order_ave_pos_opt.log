@@ -1,0 +1,2082 @@
+
+
+
+                                  relax repository checkout r23407
+                    svn+ssh://svn.gna.org/svn/relax/branches/frame_order_cleanup
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'frame_order.py'
+----------------------------------------------------------------------------------------------------
+# Script for optimising the second free rotor frame order test model of CaM.
+
+# Python module imports.
+from numpy import array
+
+
+# The real parameter values.
+AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [-13.906916611307219, -0.36885112833337441, 2.8337112747880164]
+AVE_POS_BETA = 5.3889018775607838
+AVE_POS_GAMMA = 0.092195636926776542
+AXIS_THETA = 0.69828059079619353433
+AXIS_PHI = 4.03227550621962294031
+
+# Create the data pipe.
+pipe.create(pipe_name='frame order', pipe_type='frame order')
+
+# Read the structures.
+structure.read_pdb('1J7O_1st_NH.pdb', dir='..', set_mol_name='N-dom')
+structure.read_pdb('1J7P_1st_NH_rot.pdb', dir='..', set_mol_name='C-dom')
+
+# Set up the 15N and 1H spins.
+structure.load_spins(spin_id='@N', ave_pos=False)
+structure.load_spins(spin_id='@H', ave_pos=False)
+spin.isotope(isotope='15N', spin_id='@N')
+spin.isotope(isotope='1H', spin_id='@H')
+
+# Define the magnetic dipole-dipole relaxation interaction.
+interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True)
+interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041 * 1e-10)
+interatom.unit_vectors()
+
+# Loop over the alignments.
+ln = ['dy', 'tb', 'tm', 'er']
+for i in range(len(ln)):
+    # Load the RDCs.
+    rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
+
+    # The PCS.
+    pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+
+    # The temperature and field strength.
+    spectrometer.temperature(id=ln[i], temp=303)
+    spectrometer.frequency(id=ln[i], frq=900e6)
+
+# Load the N-domain tensors (the full tensors).
+script('../tensors.py')
+
+# Define the domains.
+domain(id='N', spin_id=":1-78")
+domain(id='C', spin_id=":80-148")
+
+# The tensor domains and reductions.
+full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
+red =  ['Dy C-dom', 'Tb C-dom', 'Tm C-dom', 'Er C-dom']
+ids = ['dy', 'tb', 'tm', 'er']
+for i in range(len(full)):
+    # Initialise the reduced tensor.
+    align_tensor.init(tensor=red[i], align_id=ids[i], params=(0, 0, 0, 0, 0))
+
+    # Set the domain info.
+    align_tensor.set_domain(tensor=full[i], domain='N')
+    align_tensor.set_domain(tensor=red[i], domain='C')
+
+    # Specify which tensor is reduced.
+    align_tensor.reduction(full_tensor=full[i], red_tensor=red[i])
+
+# Select the model.
+frame_order.select_model('free rotor')
+
+# Set the reference domain.
+frame_order.ref_domain('N')
+
+# Set the initial pivot point.
+pivot = array([ 37.254, 0.5, 16.7465])
+frame_order.pivot(pivot, fix=True)
+
+# Set the paramagnetic centre.
+paramag.centre(pos=[35.934, 12.194, -4.206])
+
+# The optimisation settings.
+frame_order.num_int_pts(num=100)
+
+# Check the minimum.
+value.set(param='ave_pos_x', val=AVE_POS_X)
+value.set(param='ave_pos_y', val=AVE_POS_Y)
+value.set(param='ave_pos_z', val=AVE_POS_Z)
+value.set(param='ave_pos_beta', val=AVE_POS_BETA)
+value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
+value.set(param='axis_theta', val=AXIS_THETA)
+value.set(param='axis_phi', val=AXIS_PHI)
+calc()
+
+# Create the PDB representation of the true state.
+frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, force=True)
+
+# Optimise.
+#grid_search(inc=[None, None, None, None, None, 21, 21])
+frame_order.num_int_pts(num=100)
+minimise('simplex', constraints=True)
+frame_order.num_int_pts(num=1000)
+minimise('simplex', constraints=True)
+frame_order.num_int_pts(num=10000)
+minimise('simplex', constraints=True)
+
+# Store the result.
+frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, force=True)
+
+## Optimise the pivot and model.
+#frame_order.pivot(pivot, fix=False)
+#minimise('simplex', constraints=True)
+
+# Test Monte Carlo simulations.
+#monte_carlo.setup(number=5)
+#monte_carlo.create_data()
+#monte_carlo.initial_values()
+#minimise('simplex', constraints=True)
+#eliminate()
+#monte_carlo.error_analysis()
+
+# Create the PDB representation.
+frame_order.pdb_model(force=True)
+
+# PyMOL.
+pymol.view()
+pymol.command('show spheres')
+pymol.frame_order(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None)
+pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None)
+
+# Save the state.
+state.save('frame_order', force=True)
+----------------------------------------------------------------------------------------------------
+
+relax> pipe.create(pipe_name='frame order', pipe_type='frame order', bundle=None)
+
+relax> structure.read_pdb(file='1J7O_1st_NH.pdb', dir='..', read_mol=None, set_mol_name='N-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../1J7O_1st_NH.pdb' for reading.
+Adding molecule 'N-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.read_pdb(file='1J7P_1st_NH_rot.pdb', dir='..', read_mol=None, set_mol_name='C-dom', read_model=None, set_model_num=None, alt_loc=None, verbosity=1, merge=False)
+
+Internal relax PDB parser.
+Opening the file '../1J7P_1st_NH_rot.pdb' for reading.
+Adding molecule 'C-dom' to model None (from the original molecule number 1 of model None)
+
+relax> structure.load_spins(spin_id='@N', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+N-dom         1          ALA         1           N            
+N-dom         2          ASP         3           N            
+N-dom         3          GLN         5           N            
+N-dom         4          LEU         7           N            
+N-dom         5          THR         9           N            
+N-dom         6          GLU         11          N            
+N-dom         7          GLU         13          N            
+N-dom         8          GLN         15          N            
+N-dom         9          ILE         17          N            
+N-dom         10         ALA         19          N            
+N-dom         11         GLU         21          N            
+N-dom         12         PHE         23          N            
+N-dom         13         LYS         25          N            
+N-dom         14         GLU         27          N            
+N-dom         15         ALA         29          N            
+N-dom         16         PHE         31          N            
+N-dom         17         SER         33          N            
+N-dom         18         LEU         35          N            
+N-dom         19         PHE         37          N            
+N-dom         20         ASP         39          N            
+N-dom         21         LYS         41          N            
+N-dom         22         ASP         43          N            
+N-dom         23         GLY         45          N            
+N-dom         24         ASP         47          N            
+N-dom         25         GLY         49          N            
+N-dom         26         THR         51          N            
+N-dom         27         ILE         53          N            
+N-dom         28         THR         55          N            
+N-dom         29         THR         57          N            
+N-dom         30         LYS         59          N            
+N-dom         31         GLU         61          N            
+N-dom         32         LEU         63          N            
+N-dom         33         GLY         65          N            
+N-dom         34         THR         67          N            
+N-dom         35         VAL         69          N            
+N-dom         36         MET         71          N            
+N-dom         37         ARG         73          N            
+N-dom         38         SER         75          N            
+N-dom         39         LEU         77          N            
+N-dom         40         GLY         79          N            
+N-dom         41         GLN         81          N            
+N-dom         42         ASN         83          N            
+N-dom         43         PRO         85          N            
+N-dom         44         THR         86          N            
+N-dom         45         GLU         88          N            
+N-dom         46         ALA         90          N            
+N-dom         47         GLU         92          N            
+N-dom         48         LEU         94          N            
+N-dom         49         GLN         96          N            
+N-dom         50         ASP         98          N            
+N-dom         51         MET         100         N            
+N-dom         52         ILE         102         N            
+N-dom         53         ASN         104         N            
+N-dom         54         GLU         106         N            
+N-dom         55         VAL         108         N            
+N-dom         56         ASP         110         N            
+N-dom         57         ALA         112         N            
+N-dom         58         ASP         114         N            
+N-dom         59         GLY         116         N            
+N-dom         60         ASN         118         N            
+N-dom         61         GLY         120         N            
+N-dom         62         THR         122         N            
+N-dom         63         ILE         124         N            
+N-dom         64         ASP         126         N            
+N-dom         65         PHE         128         N            
+N-dom         66         PRO         130         N            
+N-dom         67         GLU         131         N            
+N-dom         68         PHE         133         N            
+N-dom         69         LEU         135         N            
+N-dom         70         THR         137         N            
+N-dom         71         MET         139         N            
+N-dom         72         MET         141         N            
+N-dom         73         ALA         143         N            
+N-dom         74         ARG         145         N            
+N-dom         75         LYS         147         N            
+N-dom         76         MET         149         N            
+C-dom         82         GLU         1           N            
+C-dom         83         GLU         2           N            
+C-dom         84         GLU         4           N            
+C-dom         85         ILE         6           N            
+C-dom         86         ARG         8           N            
+C-dom         87         GLU         10          N            
+C-dom         88         ALA         12          N            
+C-dom         89         PHE         14          N            
+C-dom         90         ARG         16          N            
+C-dom         91         VAL         18          N            
+C-dom         92         PHE         20          N            
+C-dom         93         ASP         22          N            
+C-dom         94         LYS         24          N            
+C-dom         95         ASP         26          N            
+C-dom         96         GLY         28          N            
+C-dom         97         ASN         30          N            
+C-dom         98         GLY         32          N            
+C-dom         99         TYR         34          N            
+C-dom         100        ILE         36          N            
+C-dom         101        SER         38          N            
+C-dom         102        ALA         40          N            
+C-dom         103        ALA         42          N            
+C-dom         104        GLU         44          N            
+C-dom         105        LEU         46          N            
+C-dom         106        ARG         48          N            
+C-dom         107        HIS         50          N            
+C-dom         108        VAL         52          N            
+C-dom         109        MET         54          N            
+C-dom         110        THR         56          N            
+C-dom         111        ASN         58          N            
+C-dom         112        LEU         60          N            
+C-dom         113        GLY         62          N            
+C-dom         114        GLU         64          N            
+C-dom         115        LYS         66          N            
+C-dom         116        LEU         68          N            
+C-dom         117        THR         70          N            
+C-dom         118        ASP         72          N            
+C-dom         119        GLU         74          N            
+C-dom         120        GLU         76          N            
+C-dom         121        VAL         78          N            
+C-dom         122        ASP         80          N            
+C-dom         123        GLU         82          N            
+C-dom         124        MET         84          N            
+C-dom         125        ILE         86          N            
+C-dom         126        ARG         88          N            
+C-dom         127        GLU         90          N            
+C-dom         128        ALA         92          N            
+C-dom         129        ASP         94          N            
+C-dom         130        ILE         96          N            
+C-dom         131        ASP         98          N            
+C-dom         132        GLY         100         N            
+C-dom         133        ASP         102         N            
+C-dom         134        GLY         104         N            
+C-dom         135        GLN         106         N            
+C-dom         136        VAL         108         N            
+C-dom         137        ASN         110         N            
+C-dom         138        TYR         112         N            
+C-dom         139        GLU         114         N            
+C-dom         140        GLU         116         N            
+C-dom         141        PHE         118         N            
+C-dom         142        VAL         120         N            
+C-dom         143        GLN         122         N            
+C-dom         144        MET         124         N            
+C-dom         145        MET         126         N            
+C-dom         146        THR         128         N            
+C-dom         147        ALA         130         N            
+C-dom         148        LYS         132         N            
+
+relax> structure.load_spins(spin_id='@H', mol_name_target=None, ave_pos=False)
+Adding the following spins to the relax data store.
+
+# mol_name    res_num    res_name    spin_num    spin_name    
+N-dom         1          ALA         2           H            
+N-dom         2          ASP         4           H            
+N-dom         3          GLN         6           H            
+N-dom         4          LEU         8           H            
+N-dom         5          THR         10          H            
+N-dom         6          GLU         12          H            
+N-dom         7          GLU         14          H            
+N-dom         8          GLN         16          H            
+N-dom         9          ILE         18          H            
+N-dom         10         ALA         20          H            
+N-dom         11         GLU         22          H            
+N-dom         12         PHE         24          H            
+N-dom         13         LYS         26          H            
+N-dom         14         GLU         28          H            
+N-dom         15         ALA         30          H            
+N-dom         16         PHE         32          H            
+N-dom         17         SER         34          H            
+N-dom         18         LEU         36          H            
+N-dom         19         PHE         38          H            
+N-dom         20         ASP         40          H            
+N-dom         21         LYS         42          H            
+N-dom         22         ASP         44          H            
+N-dom         23         GLY         46          H            
+N-dom         24         ASP         48          H            
+N-dom         25         GLY         50          H            
+N-dom         26         THR         52          H            
+N-dom         27         ILE         54          H            
+N-dom         28         THR         56          H            
+N-dom         29         THR         58          H            
+N-dom         30         LYS         60          H            
+N-dom         31         GLU         62          H            
+N-dom         32         LEU         64          H            
+N-dom         33         GLY         66          H            
+N-dom         34         THR         68          H            
+N-dom         35         VAL         70          H            
+N-dom         36         MET         72          H            
+N-dom         37         ARG         74          H            
+N-dom         38         SER         76          H            
+N-dom         39         LEU         78          H            
+N-dom         40         GLY         80          H            
+N-dom         41         GLN         82          H            
+N-dom         42         ASN         84          H            
+N-dom         44         THR         87          H            
+N-dom         45         GLU         89          H            
+N-dom         46         ALA         91          H            
+N-dom         47         GLU         93          H            
+N-dom         48         LEU         95          H            
+N-dom         49         GLN         97          H            
+N-dom         50         ASP         99          H            
+N-dom         51         MET         101         H            
+N-dom         52         ILE         103         H            
+N-dom         53         ASN         105         H            
+N-dom         54         GLU         107         H            
+N-dom         55         VAL         109         H            
+N-dom         56         ASP         111         H            
+N-dom         57         ALA         113         H            
+N-dom         58         ASP         115         H            
+N-dom         59         GLY         117         H            
+N-dom         60         ASN         119         H            
+N-dom         61         GLY         121         H            
+N-dom         62         THR         123         H            
+N-dom         63         ILE         125         H            
+N-dom         64         ASP         127         H            
+N-dom         65         PHE         129         H            
+N-dom         67         GLU         132         H            
+N-dom         68         PHE         134         H            
+N-dom         69         LEU         136         H            
+N-dom         70         THR         138         H            
+N-dom         71         MET         140         H            
+N-dom         72         MET         142         H            
+N-dom         73         ALA         144         H            
+N-dom         74         ARG         146         H            
+N-dom         75         LYS         148         H            
+N-dom         76         MET         150         H            
+C-dom         83         GLU         3           H            
+C-dom         84         GLU         5           H            
+C-dom         85         ILE         7           H            
+C-dom         86         ARG         9           H            
+C-dom         87         GLU         11          H            
+C-dom         88         ALA         13          H            
+C-dom         89         PHE         15          H            
+C-dom         90         ARG         17          H            
+C-dom         91         VAL         19          H            
+C-dom         92         PHE         21          H            
+C-dom         93         ASP         23          H            
+C-dom         94         LYS         25          H            
+C-dom         95         ASP         27          H            
+C-dom         96         GLY         29          H            
+C-dom         97         ASN         31          H            
+C-dom         98         GLY         33          H            
+C-dom         99         TYR         35          H            
+C-dom         100        ILE         37          H            
+C-dom         101        SER         39          H            
+C-dom         102        ALA         41          H            
+C-dom         103        ALA         43          H            
+C-dom         104        GLU         45          H            
+C-dom         105        LEU         47          H            
+C-dom         106        ARG         49          H            
+C-dom         107        HIS         51          H            
+C-dom         108        VAL         53          H            
+C-dom         109        MET         55          H            
+C-dom         110        THR         57          H            
+C-dom         111        ASN         59          H            
+C-dom         112        LEU         61          H            
+C-dom         113        GLY         63          H            
+C-dom         114        GLU         65          H            
+C-dom         115        LYS         67          H            
+C-dom         116        LEU         69          H            
+C-dom         117        THR         71          H            
+C-dom         118        ASP         73          H            
+C-dom         119        GLU         75          H            
+C-dom         120        GLU         77          H            
+C-dom         121        VAL         79          H            
+C-dom         122        ASP         81          H            
+C-dom         123        GLU         83          H            
+C-dom         124        MET         85          H            
+C-dom         125        ILE         87          H            
+C-dom         126        ARG         89          H            
+C-dom         127        GLU         91          H            
+C-dom         128        ALA         93          H            
+C-dom         129        ASP         95          H            
+C-dom         130        ILE         97          H            
+C-dom         131        ASP         99          H            
+C-dom         132        GLY         101         H            
+C-dom         133        ASP         103         H            
+C-dom         134        GLY         105         H            
+C-dom         135        GLN         107         H            
+C-dom         136        VAL         109         H            
+C-dom         137        ASN         111         H            
+C-dom         138        TYR         113         H            
+C-dom         139        GLU         115         H            
+C-dom         140        GLU         117         H            
+C-dom         141        PHE         119         H            
+C-dom         142        VAL         121         H            
+C-dom         143        GLN         123         H            
+C-dom         144        MET         125         H            
+C-dom         145        MET         127         H            
+C-dom         146        THR         129         H            
+C-dom         147        ALA         131         H            
+C-dom         148        LYS         133         H            
+
+relax> spin.isotope(isotope='15N', spin_id='@N', force=False)
+
+relax> spin.isotope(isotope='1H', spin_id='@H', force=False)
+
+relax> interatom.define(spin_id1='@N', spin_id2='@H', direct_bond=True, pipe=None)
+Interatomic interactions are now defined for the following spins:
+
+# Spin_ID_1       Spin_ID_2         
+'#N-dom:1@N'      '#N-dom:1@H'      
+'#N-dom:2@N'      '#N-dom:2@H'      
+'#N-dom:3@N'      '#N-dom:3@H'      
+'#N-dom:4@N'      '#N-dom:4@H'      
+'#N-dom:5@N'      '#N-dom:5@H'      
+'#N-dom:6@N'      '#N-dom:6@H'      
+'#N-dom:7@N'      '#N-dom:7@H'      
+'#N-dom:8@N'      '#N-dom:8@H'      
+'#N-dom:9@N'      '#N-dom:9@H'      
+'#N-dom:10@N'     '#N-dom:10@H'     
+'#N-dom:11@N'     '#N-dom:11@H'     
+'#N-dom:12@N'     '#N-dom:12@H'     
+'#N-dom:13@N'     '#N-dom:13@H'     
+'#N-dom:14@N'     '#N-dom:14@H'     
+'#N-dom:15@N'     '#N-dom:15@H'     
+'#N-dom:16@N'     '#N-dom:16@H'     
+'#N-dom:17@N'     '#N-dom:17@H'     
+'#N-dom:18@N'     '#N-dom:18@H'     
+'#N-dom:19@N'     '#N-dom:19@H'     
+'#N-dom:20@N'     '#N-dom:20@H'     
+'#N-dom:21@N'     '#N-dom:21@H'     
+'#N-dom:22@N'     '#N-dom:22@H'     
+'#N-dom:23@N'     '#N-dom:23@H'     
+'#N-dom:24@N'     '#N-dom:24@H'     
+'#N-dom:25@N'     '#N-dom:25@H'     
+'#N-dom:26@N'     '#N-dom:26@H'     
+'#N-dom:27@N'     '#N-dom:27@H'     
+'#N-dom:28@N'     '#N-dom:28@H'     
+'#N-dom:29@N'     '#N-dom:29@H'     
+'#N-dom:30@N'     '#N-dom:30@H'     
+'#N-dom:31@N'     '#N-dom:31@H'     
+'#N-dom:32@N'     '#N-dom:32@H'     
+'#N-dom:33@N'     '#N-dom:33@H'     
+'#N-dom:34@N'     '#N-dom:34@H'     
+'#N-dom:35@N'     '#N-dom:35@H'     
+'#N-dom:36@N'     '#N-dom:36@H'     
+'#N-dom:37@N'     '#N-dom:37@H'     
+'#N-dom:38@N'     '#N-dom:38@H'     
+'#N-dom:39@N'     '#N-dom:39@H'     
+'#N-dom:40@N'     '#N-dom:40@H'     
+'#N-dom:41@N'     '#N-dom:41@H'     
+'#N-dom:42@N'     '#N-dom:42@H'     
+'#N-dom:44@N'     '#N-dom:44@H'     
+'#N-dom:45@N'     '#N-dom:45@H'     
+'#N-dom:46@N'     '#N-dom:46@H'     
+'#N-dom:47@N'     '#N-dom:47@H'     
+'#N-dom:48@N'     '#N-dom:48@H'     
+'#N-dom:49@N'     '#N-dom:49@H'     
+'#N-dom:50@N'     '#N-dom:50@H'     
+'#N-dom:51@N'     '#N-dom:51@H'     
+'#N-dom:52@N'     '#N-dom:52@H'     
+'#N-dom:53@N'     '#N-dom:53@H'     
+'#N-dom:54@N'     '#N-dom:54@H'     
+'#N-dom:55@N'     '#N-dom:55@H'     
+'#N-dom:56@N'     '#N-dom:56@H'     
+'#N-dom:57@N'     '#N-dom:57@H'     
+'#N-dom:58@N'     '#N-dom:58@H'     
+'#N-dom:59@N'     '#N-dom:59@H'     
+'#N-dom:60@N'     '#N-dom:60@H'     
+'#N-dom:61@N'     '#N-dom:61@H'     
+'#N-dom:62@N'     '#N-dom:62@H'     
+'#N-dom:63@N'     '#N-dom:63@H'     
+'#N-dom:64@N'     '#N-dom:64@H'     
+'#N-dom:65@N'     '#N-dom:65@H'     
+'#N-dom:67@N'     '#N-dom:67@H'     
+'#N-dom:68@N'     '#N-dom:68@H'     
+'#N-dom:69@N'     '#N-dom:69@H'     
+'#N-dom:70@N'     '#N-dom:70@H'     
+'#N-dom:71@N'     '#N-dom:71@H'     
+'#N-dom:72@N'     '#N-dom:72@H'     
+'#N-dom:73@N'     '#N-dom:73@H'     
+'#N-dom:74@N'     '#N-dom:74@H'     
+'#N-dom:75@N'     '#N-dom:75@H'     
+'#N-dom:76@N'     '#N-dom:76@H'     
+'#C-dom:83@N'     '#C-dom:83@H'     
+'#C-dom:84@N'     '#C-dom:84@H'     
+'#C-dom:85@N'     '#C-dom:85@H'     
+'#C-dom:86@N'     '#C-dom:86@H'     
+'#C-dom:87@N'     '#C-dom:87@H'     
+'#C-dom:88@N'     '#C-dom:88@H'     
+'#C-dom:89@N'     '#C-dom:89@H'     
+'#C-dom:90@N'     '#C-dom:90@H'     
+'#C-dom:91@N'     '#C-dom:91@H'     
+'#C-dom:92@N'     '#C-dom:92@H'     
+'#C-dom:93@N'     '#C-dom:93@H'     
+'#C-dom:94@N'     '#C-dom:94@H'     
+'#C-dom:95@N'     '#C-dom:95@H'     
+'#C-dom:96@N'     '#C-dom:96@H'     
+'#C-dom:97@N'     '#C-dom:97@H'     
+'#C-dom:98@N'     '#C-dom:98@H'     
+'#C-dom:99@N'     '#C-dom:99@H'     
+'#C-dom:100@N'    '#C-dom:100@H'    
+'#C-dom:101@N'    '#C-dom:101@H'    
+'#C-dom:102@N'    '#C-dom:102@H'    
+'#C-dom:103@N'    '#C-dom:103@H'    
+'#C-dom:104@N'    '#C-dom:104@H'    
+'#C-dom:105@N'    '#C-dom:105@H'    
+'#C-dom:106@N'    '#C-dom:106@H'    
+'#C-dom:107@N'    '#C-dom:107@H'    
+'#C-dom:108@N'    '#C-dom:108@H'    
+'#C-dom:109@N'    '#C-dom:109@H'    
+'#C-dom:110@N'    '#C-dom:110@H'    
+'#C-dom:111@N'    '#C-dom:111@H'    
+'#C-dom:112@N'    '#C-dom:112@H'    
+'#C-dom:113@N'    '#C-dom:113@H'    
+'#C-dom:114@N'    '#C-dom:114@H'    
+'#C-dom:115@N'    '#C-dom:115@H'    
+'#C-dom:116@N'    '#C-dom:116@H'    
+'#C-dom:117@N'    '#C-dom:117@H'    
+'#C-dom:118@N'    '#C-dom:118@H'    
+'#C-dom:119@N'    '#C-dom:119@H'    
+'#C-dom:120@N'    '#C-dom:120@H'    
+'#C-dom:121@N'    '#C-dom:121@H'    
+'#C-dom:122@N'    '#C-dom:122@H'    
+'#C-dom:123@N'    '#C-dom:123@H'    
+'#C-dom:124@N'    '#C-dom:124@H'    
+'#C-dom:125@N'    '#C-dom:125@H'    
+'#C-dom:126@N'    '#C-dom:126@H'    
+'#C-dom:127@N'    '#C-dom:127@H'    
+'#C-dom:128@N'    '#C-dom:128@H'    
+'#C-dom:129@N'    '#C-dom:129@H'    
+'#C-dom:130@N'    '#C-dom:130@H'    
+'#C-dom:131@N'    '#C-dom:131@H'    
+'#C-dom:132@N'    '#C-dom:132@H'    
+'#C-dom:133@N'    '#C-dom:133@H'    
+'#C-dom:134@N'    '#C-dom:134@H'    
+'#C-dom:135@N'    '#C-dom:135@H'    
+'#C-dom:136@N'    '#C-dom:136@H'    
+'#C-dom:137@N'    '#C-dom:137@H'    
+'#C-dom:138@N'    '#C-dom:138@H'    
+'#C-dom:139@N'    '#C-dom:139@H'    
+'#C-dom:140@N'    '#C-dom:140@H'    
+'#C-dom:141@N'    '#C-dom:141@H'    
+'#C-dom:142@N'    '#C-dom:142@H'    
+'#C-dom:143@N'    '#C-dom:143@H'    
+'#C-dom:144@N'    '#C-dom:144@H'    
+'#C-dom:145@N'    '#C-dom:145@H'    
+'#C-dom:146@N'    '#C-dom:146@H'    
+'#C-dom:147@N'    '#C-dom:147@H'    
+'#C-dom:148@N'    '#C-dom:148@H'    
+
+relax> interatom.set_dist(spin_id1='@N', spin_id2='@H', ave_dist=1.041e-10, unit='meter')
+The following averaged distances have been set:
+
+# Spin_ID_1       Spin_ID_2         Ave_distance(meters)    
+'#N-dom:1@N'      '#N-dom:1@H'      1.041e-10               
+'#N-dom:2@N'      '#N-dom:2@H'      1.041e-10               
+'#N-dom:3@N'      '#N-dom:3@H'      1.041e-10               
+'#N-dom:4@N'      '#N-dom:4@H'      1.041e-10               
+'#N-dom:5@N'      '#N-dom:5@H'      1.041e-10               
+'#N-dom:6@N'      '#N-dom:6@H'      1.041e-10               
+'#N-dom:7@N'      '#N-dom:7@H'      1.041e-10               
+'#N-dom:8@N'      '#N-dom:8@H'      1.041e-10               
+'#N-dom:9@N'      '#N-dom:9@H'      1.041e-10               
+'#N-dom:10@N'     '#N-dom:10@H'     1.041e-10               
+'#N-dom:11@N'     '#N-dom:11@H'     1.041e-10               
+'#N-dom:12@N'     '#N-dom:12@H'     1.041e-10               
+'#N-dom:13@N'     '#N-dom:13@H'     1.041e-10               
+'#N-dom:14@N'     '#N-dom:14@H'     1.041e-10               
+'#N-dom:15@N'     '#N-dom:15@H'     1.041e-10               
+'#N-dom:16@N'     '#N-dom:16@H'     1.041e-10               
+'#N-dom:17@N'     '#N-dom:17@H'     1.041e-10               
+'#N-dom:18@N'     '#N-dom:18@H'     1.041e-10               
+'#N-dom:19@N'     '#N-dom:19@H'     1.041e-10               
+'#N-dom:20@N'     '#N-dom:20@H'     1.041e-10               
+'#N-dom:21@N'     '#N-dom:21@H'     1.041e-10               
+'#N-dom:22@N'     '#N-dom:22@H'     1.041e-10               
+'#N-dom:23@N'     '#N-dom:23@H'     1.041e-10               
+'#N-dom:24@N'     '#N-dom:24@H'     1.041e-10               
+'#N-dom:25@N'     '#N-dom:25@H'     1.041e-10               
+'#N-dom:26@N'     '#N-dom:26@H'     1.041e-10               
+'#N-dom:27@N'     '#N-dom:27@H'     1.041e-10               
+'#N-dom:28@N'     '#N-dom:28@H'     1.041e-10               
+'#N-dom:29@N'     '#N-dom:29@H'     1.041e-10               
+'#N-dom:30@N'     '#N-dom:30@H'     1.041e-10               
+'#N-dom:31@N'     '#N-dom:31@H'     1.041e-10               
+'#N-dom:32@N'     '#N-dom:32@H'     1.041e-10               
+'#N-dom:33@N'     '#N-dom:33@H'     1.041e-10               
+'#N-dom:34@N'     '#N-dom:34@H'     1.041e-10               
+'#N-dom:35@N'     '#N-dom:35@H'     1.041e-10               
+'#N-dom:36@N'     '#N-dom:36@H'     1.041e-10               
+'#N-dom:37@N'     '#N-dom:37@H'     1.041e-10               
+'#N-dom:38@N'     '#N-dom:38@H'     1.041e-10               
+'#N-dom:39@N'     '#N-dom:39@H'     1.041e-10               
+'#N-dom:40@N'     '#N-dom:40@H'     1.041e-10               
+'#N-dom:41@N'     '#N-dom:41@H'     1.041e-10               
+'#N-dom:42@N'     '#N-dom:42@H'     1.041e-10               
+'#N-dom:44@N'     '#N-dom:44@H'     1.041e-10               
+'#N-dom:45@N'     '#N-dom:45@H'     1.041e-10               
+'#N-dom:46@N'     '#N-dom:46@H'     1.041e-10               
+'#N-dom:47@N'     '#N-dom:47@H'     1.041e-10               
+'#N-dom:48@N'     '#N-dom:48@H'     1.041e-10               
+'#N-dom:49@N'     '#N-dom:49@H'     1.041e-10               
+'#N-dom:50@N'     '#N-dom:50@H'     1.041e-10               
+'#N-dom:51@N'     '#N-dom:51@H'     1.041e-10               
+'#N-dom:52@N'     '#N-dom:52@H'     1.041e-10               
+'#N-dom:53@N'     '#N-dom:53@H'     1.041e-10               
+'#N-dom:54@N'     '#N-dom:54@H'     1.041e-10               
+'#N-dom:55@N'     '#N-dom:55@H'     1.041e-10               
+'#N-dom:56@N'     '#N-dom:56@H'     1.041e-10               
+'#N-dom:57@N'     '#N-dom:57@H'     1.041e-10               
+'#N-dom:58@N'     '#N-dom:58@H'     1.041e-10               
+'#N-dom:59@N'     '#N-dom:59@H'     1.041e-10               
+'#N-dom:60@N'     '#N-dom:60@H'     1.041e-10               
+'#N-dom:61@N'     '#N-dom:61@H'     1.041e-10               
+'#N-dom:62@N'     '#N-dom:62@H'     1.041e-10               
+'#N-dom:63@N'     '#N-dom:63@H'     1.041e-10               
+'#N-dom:64@N'     '#N-dom:64@H'     1.041e-10               
+'#N-dom:65@N'     '#N-dom:65@H'     1.041e-10               
+'#N-dom:67@N'     '#N-dom:67@H'     1.041e-10               
+'#N-dom:68@N'     '#N-dom:68@H'     1.041e-10               
+'#N-dom:69@N'     '#N-dom:69@H'     1.041e-10               
+'#N-dom:70@N'     '#N-dom:70@H'     1.041e-10               
+'#N-dom:71@N'     '#N-dom:71@H'     1.041e-10               
+'#N-dom:72@N'     '#N-dom:72@H'     1.041e-10               
+'#N-dom:73@N'     '#N-dom:73@H'     1.041e-10               
+'#N-dom:74@N'     '#N-dom:74@H'     1.041e-10               
+'#N-dom:75@N'     '#N-dom:75@H'     1.041e-10               
+'#N-dom:76@N'     '#N-dom:76@H'     1.041e-10               
+'#C-dom:83@N'     '#C-dom:83@H'     1.041e-10               
+'#C-dom:84@N'     '#C-dom:84@H'     1.041e-10               
+'#C-dom:85@N'     '#C-dom:85@H'     1.041e-10               
+'#C-dom:86@N'     '#C-dom:86@H'     1.041e-10               
+'#C-dom:87@N'     '#C-dom:87@H'     1.041e-10               
+'#C-dom:88@N'     '#C-dom:88@H'     1.041e-10               
+'#C-dom:89@N'     '#C-dom:89@H'     1.041e-10               
+'#C-dom:90@N'     '#C-dom:90@H'     1.041e-10               
+'#C-dom:91@N'     '#C-dom:91@H'     1.041e-10               
+'#C-dom:92@N'     '#C-dom:92@H'     1.041e-10               
+'#C-dom:93@N'     '#C-dom:93@H'     1.041e-10               
+'#C-dom:94@N'     '#C-dom:94@H'     1.041e-10               
+'#C-dom:95@N'     '#C-dom:95@H'     1.041e-10               
+'#C-dom:96@N'     '#C-dom:96@H'     1.041e-10               
+'#C-dom:97@N'     '#C-dom:97@H'     1.041e-10               
+'#C-dom:98@N'     '#C-dom:98@H'     1.041e-10               
+'#C-dom:99@N'     '#C-dom:99@H'     1.041e-10               
+'#C-dom:100@N'    '#C-dom:100@H'    1.041e-10               
+'#C-dom:101@N'    '#C-dom:101@H'    1.041e-10               
+'#C-dom:102@N'    '#C-dom:102@H'    1.041e-10               
+'#C-dom:103@N'    '#C-dom:103@H'    1.041e-10               
+'#C-dom:104@N'    '#C-dom:104@H'    1.041e-10               
+'#C-dom:105@N'    '#C-dom:105@H'    1.041e-10               
+'#C-dom:106@N'    '#C-dom:106@H'    1.041e-10               
+'#C-dom:107@N'    '#C-dom:107@H'    1.041e-10               
+'#C-dom:108@N'    '#C-dom:108@H'    1.041e-10               
+'#C-dom:109@N'    '#C-dom:109@H'    1.041e-10               
+'#C-dom:110@N'    '#C-dom:110@H'    1.041e-10               
+'#C-dom:111@N'    '#C-dom:111@H'    1.041e-10               
+'#C-dom:112@N'    '#C-dom:112@H'    1.041e-10               
+'#C-dom:113@N'    '#C-dom:113@H'    1.041e-10               
+'#C-dom:114@N'    '#C-dom:114@H'    1.041e-10               
+'#C-dom:115@N'    '#C-dom:115@H'    1.041e-10               
+'#C-dom:116@N'    '#C-dom:116@H'    1.041e-10               
+'#C-dom:117@N'    '#C-dom:117@H'    1.041e-10               
+'#C-dom:118@N'    '#C-dom:118@H'    1.041e-10               
+'#C-dom:119@N'    '#C-dom:119@H'    1.041e-10               
+'#C-dom:120@N'    '#C-dom:120@H'    1.041e-10               
+'#C-dom:121@N'    '#C-dom:121@H'    1.041e-10               
+'#C-dom:122@N'    '#C-dom:122@H'    1.041e-10               
+'#C-dom:123@N'    '#C-dom:123@H'    1.041e-10               
+'#C-dom:124@N'    '#C-dom:124@H'    1.041e-10               
+'#C-dom:125@N'    '#C-dom:125@H'    1.041e-10               
+'#C-dom:126@N'    '#C-dom:126@H'    1.041e-10               
+'#C-dom:127@N'    '#C-dom:127@H'    1.041e-10               
+'#C-dom:128@N'    '#C-dom:128@H'    1.041e-10               
+'#C-dom:129@N'    '#C-dom:129@H'    1.041e-10               
+'#C-dom:130@N'    '#C-dom:130@H'    1.041e-10               
+'#C-dom:131@N'    '#C-dom:131@H'    1.041e-10               
+'#C-dom:132@N'    '#C-dom:132@H'    1.041e-10               
+'#C-dom:133@N'    '#C-dom:133@H'    1.041e-10               
+'#C-dom:134@N'    '#C-dom:134@H'    1.041e-10               
+'#C-dom:135@N'    '#C-dom:135@H'    1.041e-10               
+'#C-dom:136@N'    '#C-dom:136@H'    1.041e-10               
+'#C-dom:137@N'    '#C-dom:137@H'    1.041e-10               
+'#C-dom:138@N'    '#C-dom:138@H'    1.041e-10               
+'#C-dom:139@N'    '#C-dom:139@H'    1.041e-10               
+'#C-dom:140@N'    '#C-dom:140@H'    1.041e-10               
+'#C-dom:141@N'    '#C-dom:141@H'    1.041e-10               
+'#C-dom:142@N'    '#C-dom:142@H'    1.041e-10               
+'#C-dom:143@N'    '#C-dom:143@H'    1.041e-10               
+'#C-dom:144@N'    '#C-dom:144@H'    1.041e-10               
+'#C-dom:145@N'    '#C-dom:145@H'    1.041e-10               
+'#C-dom:146@N'    '#C-dom:146@H'    1.041e-10               
+'#C-dom:147@N'    '#C-dom:147@H'    1.041e-10               
+'#C-dom:148@N'    '#C-dom:148@H'    1.041e-10               
+
+relax> interatom.unit_vectors(ave=True)
+Averaging all vectors.
+Calculated 1 N-H unit vector between the spins '#N-dom:1@N' and '#N-dom:1@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:2@N' and '#N-dom:2@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:3@N' and '#N-dom:3@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:4@N' and '#N-dom:4@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:5@N' and '#N-dom:5@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:6@N' and '#N-dom:6@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:7@N' and '#N-dom:7@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:8@N' and '#N-dom:8@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:9@N' and '#N-dom:9@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:10@N' and '#N-dom:10@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:11@N' and '#N-dom:11@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:12@N' and '#N-dom:12@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:13@N' and '#N-dom:13@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:14@N' and '#N-dom:14@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:15@N' and '#N-dom:15@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:16@N' and '#N-dom:16@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:17@N' and '#N-dom:17@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:18@N' and '#N-dom:18@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:19@N' and '#N-dom:19@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:20@N' and '#N-dom:20@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:21@N' and '#N-dom:21@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:22@N' and '#N-dom:22@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:23@N' and '#N-dom:23@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:24@N' and '#N-dom:24@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:25@N' and '#N-dom:25@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:26@N' and '#N-dom:26@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:27@N' and '#N-dom:27@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:28@N' and '#N-dom:28@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:29@N' and '#N-dom:29@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:30@N' and '#N-dom:30@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:31@N' and '#N-dom:31@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:32@N' and '#N-dom:32@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:33@N' and '#N-dom:33@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:34@N' and '#N-dom:34@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:35@N' and '#N-dom:35@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:36@N' and '#N-dom:36@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:37@N' and '#N-dom:37@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:38@N' and '#N-dom:38@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:39@N' and '#N-dom:39@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:40@N' and '#N-dom:40@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:41@N' and '#N-dom:41@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:42@N' and '#N-dom:42@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:44@N' and '#N-dom:44@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:45@N' and '#N-dom:45@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:46@N' and '#N-dom:46@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:47@N' and '#N-dom:47@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:48@N' and '#N-dom:48@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:49@N' and '#N-dom:49@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:50@N' and '#N-dom:50@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:51@N' and '#N-dom:51@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:52@N' and '#N-dom:52@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:53@N' and '#N-dom:53@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:54@N' and '#N-dom:54@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:55@N' and '#N-dom:55@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:56@N' and '#N-dom:56@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:57@N' and '#N-dom:57@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:58@N' and '#N-dom:58@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:59@N' and '#N-dom:59@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:60@N' and '#N-dom:60@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:61@N' and '#N-dom:61@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:62@N' and '#N-dom:62@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:63@N' and '#N-dom:63@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:64@N' and '#N-dom:64@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:65@N' and '#N-dom:65@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:67@N' and '#N-dom:67@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:68@N' and '#N-dom:68@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:69@N' and '#N-dom:69@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:70@N' and '#N-dom:70@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:71@N' and '#N-dom:71@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:72@N' and '#N-dom:72@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:73@N' and '#N-dom:73@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:74@N' and '#N-dom:74@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:75@N' and '#N-dom:75@H'.
+Calculated 1 N-H unit vector between the spins '#N-dom:76@N' and '#N-dom:76@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:83@N' and '#C-dom:83@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:84@N' and '#C-dom:84@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:85@N' and '#C-dom:85@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:86@N' and '#C-dom:86@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:87@N' and '#C-dom:87@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:88@N' and '#C-dom:88@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:89@N' and '#C-dom:89@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:90@N' and '#C-dom:90@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:91@N' and '#C-dom:91@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:92@N' and '#C-dom:92@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:93@N' and '#C-dom:93@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:94@N' and '#C-dom:94@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:95@N' and '#C-dom:95@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:96@N' and '#C-dom:96@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:97@N' and '#C-dom:97@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:98@N' and '#C-dom:98@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:99@N' and '#C-dom:99@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:100@N' and '#C-dom:100@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:101@N' and '#C-dom:101@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:102@N' and '#C-dom:102@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:103@N' and '#C-dom:103@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:104@N' and '#C-dom:104@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:105@N' and '#C-dom:105@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:106@N' and '#C-dom:106@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:107@N' and '#C-dom:107@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:108@N' and '#C-dom:108@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:109@N' and '#C-dom:109@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:110@N' and '#C-dom:110@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:111@N' and '#C-dom:111@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:112@N' and '#C-dom:112@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:113@N' and '#C-dom:113@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:114@N' and '#C-dom:114@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:115@N' and '#C-dom:115@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:116@N' and '#C-dom:116@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:117@N' and '#C-dom:117@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:118@N' and '#C-dom:118@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:119@N' and '#C-dom:119@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:120@N' and '#C-dom:120@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:121@N' and '#C-dom:121@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:122@N' and '#C-dom:122@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:123@N' and '#C-dom:123@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:124@N' and '#C-dom:124@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:125@N' and '#C-dom:125@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:126@N' and '#C-dom:126@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:127@N' and '#C-dom:127@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:128@N' and '#C-dom:128@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:129@N' and '#C-dom:129@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:130@N' and '#C-dom:130@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:131@N' and '#C-dom:131@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:132@N' and '#C-dom:132@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:133@N' and '#C-dom:133@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:134@N' and '#C-dom:134@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:135@N' and '#C-dom:135@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:136@N' and '#C-dom:136@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:137@N' and '#C-dom:137@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:138@N' and '#C-dom:138@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:139@N' and '#C-dom:139@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:140@N' and '#C-dom:140@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:141@N' and '#C-dom:141@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:142@N' and '#C-dom:142@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:143@N' and '#C-dom:143@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:144@N' and '#C-dom:144@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:145@N' and '#C-dom:145@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:146@N' and '#C-dom:146@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:147@N' and '#C-dom:147@H'.
+Calculated 1 N-H unit vector between the spins '#C-dom:148@N' and '#C-dom:148@H'.
+
+relax> rdc.read(align_id='dy', file='rdc_dy.txt', dir=None, data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file 'rdc_dy.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H      -21.335635311607959       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H      -13.016446844789620       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H      -28.097158627511398       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H      -28.192539557489276       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H      -16.290125663599238       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H      -14.199005685246156       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H      -31.735512941010054       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H      -21.750002217416149       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H       -5.537229531885973       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H      -18.314551455373117       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H      -29.650812434278599       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H       -4.360427106008113       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       13.606168125702339       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       13.367410508043855       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H      -15.744910577589405       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       18.610520454363961       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H        8.217114329184190       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H       3.867394305742780       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      19.207190427286857       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H      17.442007404010784       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      19.628123559982654       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      16.819675005771071       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H      17.188026244009691       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H      17.991526049895814       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      15.471894006345781       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      18.475995994928763       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H      18.792883956101715       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      19.523261231619795       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      13.692822453954568       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H      18.279133053571226       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H       4.900022546448527       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H      -0.939441144904717       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      18.584522120873636       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H       7.038445197237635       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      16.907987137317846       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H     -30.036389464879271       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H     -15.518950048837176       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H     -12.694943045036942       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H     -27.313633205852344       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H     -29.122098046968041       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H     -11.764727950253992       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H     -13.977054647998701       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H     -31.064326429853885       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H     -23.298725132400914       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H      -3.862420454272768       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H     -20.289125442395775       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H     -26.207745829745143       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H      -3.275369985401936       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      18.859356198706962       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H      10.920587951323068       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H     -23.461050262575949       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H       1.397501930288754       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H       0.457093472121686       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H       5.843610068895116       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      19.632034945851323       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      19.027654359965084       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      19.046296261584018       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      16.378066104195771       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      18.108598979871353       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      18.010722792050387       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      19.357964551338991       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      19.616713262389879       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      13.339311848551793       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H      15.451911259468115       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H     -18.493394896021996       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      12.835468708646136       1.000000000000000    
+
+relax> pcs.read(align_id='dy', file='pcs_dy.txt', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file 'pcs_dy.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         82         None        None        N              -0.620840193110033                     0.1    
+C-dom         83         None        None        N               -0.61345030301024                     0.1    
+C-dom         83         None        None        H              -0.654494976352141                     0.1    
+C-dom         84         None        None        N              -0.517639203948473                     0.1    
+C-dom         84         None        None        H              -0.548372519968233                     0.1    
+C-dom         85         None        None        N              -0.446798417657874                     0.1    
+C-dom         85         None        None        H              -0.477814699315413                     0.1    
+C-dom         86         None        None        N              -0.439926389430537                     0.1    
+C-dom         86         None        None        H               -0.47189906573566                     0.1    
+C-dom         87         None        None        N               -0.41458476710286                     0.1    
+C-dom         87         None        None        H              -0.442171635894809                     0.1    
+C-dom         88         None        None        N              -0.349568433734675                     0.1    
+C-dom         88         None        None        H              -0.371336151207401                     0.1    
+C-dom         89         None        None        N              -0.317912672164461                     0.1    
+C-dom         89         None        None        H              -0.340505846171013                     0.1    
+C-dom         90         None        None        N              -0.303857065401092                     0.1    
+C-dom         90         None        None        H              -0.324598008726541                     0.1    
+C-dom         91         None        None        N              -0.269806196851487                     0.1    
+C-dom         91         None        None        H              -0.285887475678898                     0.1    
+C-dom         92         None        None        N               -0.23245721783198                     0.1    
+C-dom         92         None        None        H              -0.246839077015586                     0.1    
+C-dom         93         None        None        N              -0.218406553752875                     0.1    
+C-dom         93         None        None        H              -0.232915781936877                     0.1    
+C-dom         94         None        None        N              -0.185831833711199                     0.1    
+C-dom         94         None        None        H              -0.182216363894758                     0.1    
+C-dom         95         None        None        N              -0.167846667449623                     0.1    
+C-dom         95         None        None        H              -0.168553204098153                     0.1    
+C-dom         96         None        None        N              -0.189152141598353                     0.1    
+C-dom         96         None        None        H              -0.191690615306045                     0.1    
+C-dom         97         None        None        N              -0.190558822792048                     0.1    
+C-dom         97         None        None        H               -0.18623386436622                     0.1    
+C-dom         98         None        None        N              -0.217016483841164                     0.1    
+C-dom         98         None        None        H              -0.218837450343954                     0.1    
+C-dom         99         None        None        N              -0.211136681045053                     0.1    
+C-dom         99         None        None        H              -0.203778640686613                     0.1    
+C-dom         100        None        None        N              -0.198318721424769                     0.1    
+C-dom         100        None        None        H              -0.204682751265235                     0.1    
+C-dom         101        None        None        N              -0.163480848775615                     0.1    
+C-dom         101        None        None        H              -0.164438041512435                     0.1    
+C-dom         102        None        None        N              -0.139249593075304                     0.1    
+C-dom         102        None        None        H              -0.135340943969123                     0.1    
+C-dom         103        None        None        N              -0.126772241660703                     0.1    
+C-dom         103        None        None        H              -0.124850338252455                     0.1    
+C-dom         104        None        None        N              -0.139018708210281                     0.1    
+C-dom         104        None        None        H              -0.139322862974289                     0.1    
+C-dom         105        None        None        N              -0.154216878454727                     0.1    
+C-dom         105        None        None        H              -0.151252776041422                     0.1    
+C-dom         106        None        None        N               -0.13897544848054                     0.1    
+C-dom         106        None        None        H              -0.136933296216937                     0.1    
+C-dom         107        None        None        N              -0.135150615925283                     0.1    
+C-dom         107        None        None        H              -0.136808161569532                     0.1    
+C-dom         108        None        None        N              -0.154835447547324                     0.1    
+C-dom         108        None        None        H              -0.156387216115755                     0.1    
+C-dom         109        None        None        N               -0.15641009480134                     0.1    
+C-dom         109        None        None        H              -0.155908824199219                     0.1    
+C-dom         110        None        None        N               -0.13433717888827                     0.1    
+C-dom         110        None        None        H              -0.135322275537807                     0.1    
+C-dom         111        None        None        N              -0.132495685076735                     0.1    
+C-dom         111        None        None        H              -0.135901195345856                     0.1    
+C-dom         112        None        None        N              -0.148809598228982                     0.1    
+C-dom         112        None        None        H              -0.149579557556373                     0.1    
+C-dom         113        None        None        N              -0.137977102053769                     0.1    
+C-dom         113        None        None        H              -0.135555838874459                     0.1    
+C-dom         114        None        None        N              -0.133499990551048                     0.1    
+C-dom         114        None        None        H              -0.139006425580995                     0.1    
+C-dom         115        None        None        N              -0.116155581804076                     0.1    
+C-dom         115        None        None        H               -0.11392342890138                     0.1    
+C-dom         116        None        None        N              -0.112520943684652                     0.1    
+C-dom         116        None        None        H              -0.115956762237651                     0.1    
+C-dom         117        None        None        N              -0.100631983510401                     0.1    
+C-dom         117        None        None        H              -0.100804473381021                     0.1    
+C-dom         118        None        None        N             -0.0944489158032493                     0.1    
+C-dom         118        None        None        H             -0.0905656664384586                     0.1    
+C-dom         119        None        None        N             -0.0930363837683044                     0.1    
+C-dom         119        None        None        H             -0.0900980122179465                     0.1    
+C-dom         120        None        None        N              -0.100633642774399                     0.1    
+C-dom         120        None        None        H              -0.097844880301598                     0.1    
+C-dom         121        None        None        N              -0.115427418578098                     0.1    
+C-dom         121        None        None        H              -0.110828833666341                     0.1    
+C-dom         122        None        None        N              -0.114219995904755                     0.1    
+C-dom         122        None        None        H               -0.10962952986003                     0.1    
+C-dom         123        None        None        N              -0.114102206112864                     0.1    
+C-dom         123        None        None        H              -0.111178082307801                     0.1    
+C-dom         124        None        None        N              -0.132795800692468                     0.1    
+C-dom         124        None        None        H              -0.129210859290333                     0.1    
+C-dom         125        None        None        N              -0.143435325595518                     0.1    
+C-dom         125        None        None        H              -0.137405327342924                     0.1    
+C-dom         126        None        None        N              -0.132653985409764                     0.1    
+C-dom         126        None        None        H              -0.128282867400194                     0.1    
+C-dom         127        None        None        N              -0.139197902076402                     0.1    
+C-dom         127        None        None        H               -0.13758042105338                     0.1    
+C-dom         128        None        None        N              -0.166239239636886                     0.1    
+C-dom         128        None        None        H              -0.161496142273854                     0.1    
+C-dom         129        None        None        N              -0.165968109602227                     0.1    
+C-dom         129        None        None        H              -0.158760280477454                     0.1    
+C-dom         130        None        None        N              -0.166098402192149                     0.1    
+C-dom         130        None        None        H              -0.176510095461696                     0.1    
+C-dom         131        None        None        N              -0.153221085389451                     0.1    
+C-dom         131        None        None        H              -0.160932861999572                     0.1    
+C-dom         132        None        None        N              -0.131910490860356                     0.1    
+C-dom         132        None        None        H               -0.13838065195407                     0.1    
+C-dom         133        None        None        N              -0.129447268153099                     0.1    
+C-dom         133        None        None        H              -0.137119894753938                     0.1    
+C-dom         134        None        None        N              -0.128844234902455                     0.1    
+C-dom         134        None        None        H              -0.132046029355856                     0.1    
+C-dom         135        None        None        N              -0.145540756087829                     0.1    
+C-dom         135        None        None        H              -0.146600605507028                     0.1    
+C-dom         136        None        None        N              -0.180564545668751                     0.1    
+C-dom         136        None        None        H              -0.178221470356768                     0.1    
+C-dom         137        None        None        N              -0.220359375535257                     0.1    
+C-dom         137        None        None        H              -0.216887117686419                     0.1    
+C-dom         138        None        None        N              -0.280914521601824                     0.1    
+C-dom         138        None        None        H              -0.277168781709108                     0.1    
+C-dom         139        None        None        N              -0.313471329131161                     0.1    
+C-dom         139        None        None        H              -0.304019345145398                     0.1    
+C-dom         140        None        None        N              -0.271895626573987                     0.1    
+C-dom         140        None        None        H              -0.265353645276842                     0.1    
+C-dom         141        None        None        N              -0.270375373573946                     0.1    
+C-dom         141        None        None        H              -0.271917028043327                     0.1    
+C-dom         142        None        None        N              -0.323047742258271                     0.1    
+C-dom         142        None        None        H              -0.324202748553475                     0.1    
+C-dom         143        None        None        N              -0.315241858645407                     0.1    
+C-dom         143        None        None        H              -0.312210988148121                     0.1    
+C-dom         144        None        None        N              -0.263409509949414                     0.1    
+C-dom         144        None        None        H              -0.265624140199393                     0.1    
+C-dom         145        None        None        N              -0.275401133607274                     0.1    
+C-dom         145        None        None        H              -0.284129548751605                     0.1    
+C-dom         146        None        None        N              -0.321351385214831                     0.1    
+C-dom         146        None        None        H              -0.316364485133908                     0.1    
+C-dom         147        None        None        N              -0.293932981203356                     0.1    
+C-dom         147        None        None        H              -0.284469101621941                     0.1    
+C-dom         148        None        None        N              -0.297228105935536                     0.1    
+C-dom         148        None        None        H              -0.308845332502244                     0.1    
+
+relax> spectrometer.temperature(id='dy', temp=303)
+
+relax> spectrometer.frequency(id='dy', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='tb', file='rdc_tb.txt', dir=None, data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file 'rdc_tb.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H      -17.561542766268385       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H      -10.713948030657658       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H      -23.127010076855353       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H      -23.205518931006118       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H      -13.408540890907449       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H      -11.687322263343729       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H      -26.121770436326845       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H      -17.902611688332204       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H       -4.557740691131599       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H      -15.074862966633550       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H      -24.405835730416896       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H       -3.589104612211627       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       11.199352629286732       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       11.002829204882275       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H      -12.959769719581367       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       15.318477565278265       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H        6.763576645349464       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H       3.183285123802862       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      15.809601691361014       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H      14.356664541807836       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      16.156075330585370       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      13.844417455330177       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H      14.147610490309358       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H      14.808978009845108       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      12.735047459298531       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      15.207749339332491       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H      15.468582513549084       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      16.069762256837201       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      11.270678543385751       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H      15.045709779073283       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H       4.033250205505590       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H      -0.773261991109322       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      15.297078116010697       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H       5.793404064798365       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      13.917107921411365       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H     -24.723207461499147       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H     -12.773779687823938       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H     -10.449315520473975       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H     -22.482083642748293       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H     -23.970646424437152       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H      -9.683647569636282       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H     -11.504632478122373       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H     -25.569311114274285       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H     -19.177378682957730       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H      -3.179191104382865       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H     -16.700151598155724       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H     -21.571818344033861       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H      -2.695984873845920       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      15.523296381415337       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H       8.988828761785843       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H     -19.310989877280029       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H       1.150295716826205       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H       0.376237521949007       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H       4.809925115211579       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      16.159294825538520       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      15.661824028389635       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      15.677168336058195       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      13.480925415008320       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      14.905341733564134       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      14.824779011474392       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      15.933705154366288       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      16.146683417655439       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      10.979700959431051       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H      12.718599490501054       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H     -15.222070522703516       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      10.564983388582334       1.000000000000000    
+
+relax> pcs.read(align_id='tb', file='pcs_tb.txt', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file 'pcs_tb.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         82         None        None        N              -0.361104714695538                     0.1    
+C-dom         83         None        None        N              -0.357425761171914                     0.1    
+C-dom         83         None        None        H               -0.37398764208695                     0.1    
+C-dom         84         None        None        N              -0.315636804151095                     0.1    
+C-dom         84         None        None        H              -0.330046807425142                     0.1    
+C-dom         85         None        None        N              -0.279364980005216                     0.1    
+C-dom         85         None        None        H              -0.294998069331042                     0.1    
+C-dom         86         None        None        N               -0.27655021487184                     0.1    
+C-dom         86         None        None        H              -0.292602021584842                     0.1    
+C-dom         87         None        None        N              -0.264889795969304                     0.1    
+C-dom         87         None        None        H               -0.27910308718312                     0.1    
+C-dom         88         None        None        N              -0.228332912370588                     0.1    
+C-dom         88         None        None        H              -0.240220332278319                     0.1    
+C-dom         89         None        None        N              -0.209984461882639                     0.1    
+C-dom         89         None        None        H              -0.222820786596569                     0.1    
+C-dom         90         None        None        N              -0.203320321527668                     0.1    
+C-dom         90         None        None        H               -0.21530400750489                     0.1    
+C-dom         91         None        None        N              -0.183107258165986                     0.1    
+C-dom         91         None        None        H              -0.192488855626439                     0.1    
+C-dom         92         None        None        N              -0.159439725391091                     0.1    
+C-dom         92         None        None        H              -0.168194111574824                     0.1    
+C-dom         93         None        None        N              -0.151213789649207                     0.1    
+C-dom         93         None        None        H              -0.160284642864948                     0.1    
+C-dom         94         None        None        N              -0.131016527722445                     0.1    
+C-dom         94         None        None        H              -0.128363209134096                     0.1    
+C-dom         95         None        None        N              -0.120079979405693                     0.1    
+C-dom         95         None        None        H              -0.120256301001904                     0.1    
+C-dom         96         None        None        N              -0.134963510246862                     0.1    
+C-dom         96         None        None        H              -0.136119350997582                     0.1    
+C-dom         97         None        None        N              -0.136297940087799                     0.1    
+C-dom         97         None        None        H              -0.132954459832507                     0.1    
+C-dom         98         None        None        N              -0.153499461997651                     0.1    
+C-dom         98         None        None        H               -0.15435627717147                     0.1    
+C-dom         99         None        None        N              -0.148611247496932                     0.1    
+C-dom         99         None        None        H              -0.143889354583646                     0.1    
+C-dom         100        None        None        N              -0.138865455136869                     0.1    
+C-dom         100        None        None        H              -0.143006755275991                     0.1    
+C-dom         101        None        None        N               -0.11579244872013                     0.1    
+C-dom         101        None        None        H              -0.116416122745294                     0.1    
+C-dom         102        None        None        N             -0.0995060348975069                     0.1    
+C-dom         102        None        None        H             -0.0970243966604119                     0.1    
+C-dom         103        None        None        N              -0.090929074815888                     0.1    
+C-dom         103        None        None        H             -0.0897352748599134                     0.1    
+C-dom         104        None        None        N              -0.099098532389287                     0.1    
+C-dom         104        None        None        H             -0.0993861601746332                     0.1    
+C-dom         105        None        None        N              -0.108935492443157                     0.1    
+C-dom         105        None        None        H              -0.107059766384249                     0.1    
+C-dom         106        None        None        N              -0.098757214233873                     0.1    
+C-dom         106        None        None        H             -0.0974453935816187                     0.1    
+C-dom         107        None        None        N             -0.0962644453181005                     0.1    
+C-dom         107        None        None        H             -0.0973884149049221                     0.1    
+C-dom         108        None        None        N               -0.10929822681614                     0.1    
+C-dom         108        None        None        H              -0.110296597629718                     0.1    
+C-dom         109        None        None        N              -0.110244216345124                     0.1    
+C-dom         109        None        None        H              -0.109879688764846                     0.1    
+C-dom         110        None        None        N             -0.0957355560141982                     0.1    
+C-dom         110        None        None        H             -0.0963535369205939                     0.1    
+C-dom         111        None        None        N             -0.0947064467886467                     0.1    
+C-dom         111        None        None        H             -0.0969242573242846                     0.1    
+C-dom         112        None        None        N              -0.105702687204561                     0.1    
+C-dom         112        None        None        H              -0.106082248022954                     0.1    
+C-dom         113        None        None        N             -0.0986456756133881                     0.1    
+C-dom         113        None        None        H             -0.0969360203657813                     0.1    
+C-dom         114        None        None        N             -0.0955116621350783                     0.1    
+C-dom         114        None        None        H             -0.0991398942384448                     0.1    
+C-dom         115        None        None        N                -0.0836872209723                     0.1    
+C-dom         115        None        None        H             -0.0822435492845151                     0.1    
+C-dom         116        None        None        N             -0.0810896521311334                     0.1    
+C-dom         116        None        None        H             -0.0833847132134625                     0.1    
+C-dom         117        None        None        N             -0.0730017509740425                     0.1    
+C-dom         117        None        None        H             -0.0731646406420252                     0.1    
+C-dom         118        None        None        N             -0.0687476641863533                     0.1    
+C-dom         118        None        None        H             -0.0660494277543045                     0.1    
+C-dom         119        None        None        N             -0.0679013289923725                     0.1    
+C-dom         119        None        None        H             -0.0658361586979025                     0.1    
+C-dom         120        None        None        N             -0.0732106486582475                     0.1    
+C-dom         120        None        None        H             -0.0712392771255398                     0.1    
+C-dom         121        None        None        N             -0.0832563193303364                     0.1    
+C-dom         121        None        None        H             -0.0800845403686143                     0.1    
+C-dom         122        None        None        N             -0.0825970188365234                     0.1    
+C-dom         122        None        None        H             -0.0794132196499224                     0.1    
+C-dom         123        None        None        N             -0.0827918296802974                     0.1    
+C-dom         123        None        None        H             -0.0807003562991396                     0.1    
+C-dom         124        None        None        N              -0.095483377626362                     0.1    
+C-dom         124        None        None        H             -0.0929362081609714                     0.1    
+C-dom         125        None        None        N              -0.102606657075113                     0.1    
+C-dom         125        None        None        H              -0.098462192488927                     0.1    
+C-dom         126        None        None        N             -0.0958722662410356                     0.1    
+C-dom         126        None        None        H             -0.0927619677920232                     0.1    
+C-dom         127        None        None        N              -0.100734280305588                     0.1    
+C-dom         127        None        None        H             -0.0994000172636713                     0.1    
+C-dom         128        None        None        N              -0.118828574736332                     0.1    
+C-dom         128        None        None        H              -0.115388003774186                     0.1    
+C-dom         129        None        None        N               -0.11889263267338                     0.1    
+C-dom         129        None        None        H              -0.113905792435657                     0.1    
+C-dom         130        None        None        N              -0.120382039534766                     0.1    
+C-dom         130        None        None        H              -0.127251819582396                     0.1    
+C-dom         131        None        None        N              -0.112569885164885                     0.1    
+C-dom         131        None        None        H              -0.117470322043617                     0.1    
+C-dom         132        None        None        N             -0.0973598078023699                     0.1    
+C-dom         132        None        None        H              -0.101705434555079                     0.1    
+C-dom         133        None        None        N             -0.0951833951031028                     0.1    
+C-dom         133        None        None        H              -0.100526296266553                     0.1    
+C-dom         134        None        None        N             -0.0939780279603968                     0.1    
+C-dom         134        None        None        H               -0.09627009371126                     0.1    
+C-dom         135        None        None        N              -0.104829489153245                     0.1    
+C-dom         135        None        None        H              -0.105814581325647                     0.1    
+C-dom         136        None        None        N              -0.127531204993644                     0.1    
+C-dom         136        None        None        H              -0.125763578699235                     0.1    
+C-dom         137        None        None        N              -0.153931607753752                     0.1    
+C-dom         137        None        None        H               -0.15199717889578                     0.1    
+C-dom         138        None        None        N               -0.19201477827023                     0.1    
+C-dom         138        None        None        H              -0.190310232976479                     0.1    
+C-dom         139        None        None        N              -0.213141764826299                     0.1    
+C-dom         139        None        None        H              -0.208152671433996                     0.1    
+C-dom         140        None        None        N              -0.187562450882623                     0.1    
+C-dom         140        None        None        H              -0.183628958884169                     0.1    
+C-dom         141        None        None        N              -0.184339900824089                     0.1    
+C-dom         141        None        None        H              -0.185450296256428                     0.1    
+C-dom         142        None        None        N              -0.215492880324547                     0.1    
+C-dom         142        None        None        H                -0.2165227081759                     0.1    
+C-dom         143        None        None        N              -0.213381906703657                     0.1    
+C-dom         143        None        None        H              -0.211707182563213                     0.1    
+C-dom         144        None        None        N              -0.181184091478635                     0.1    
+C-dom         144        None        None        H              -0.182309561340995                     0.1    
+C-dom         145        None        None        N              -0.187208888307731                     0.1    
+C-dom         145        None        None        H              -0.192290971376479                     0.1    
+C-dom         146        None        None        N              -0.216083348222217                     0.1    
+C-dom         146        None        None        H              -0.212925615297807                     0.1    
+C-dom         147        None        None        N              -0.202489301568099                     0.1    
+C-dom         147        None        None        H              -0.195647544101741                     0.1    
+C-dom         148        None        None        N              -0.209484608193048                     0.1    
+C-dom         148        None        None        H              -0.216690892861689                     0.1    
+
+relax> spectrometer.temperature(id='tb', temp=303)
+
+relax> spectrometer.frequency(id='tb', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='tm', file='rdc_tm.txt', dir=None, data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file 'rdc_tm.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H       14.430001800145547       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H        8.803457157876281       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H       19.003045545748424       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H       19.067554850073265       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H       11.017555334874086       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H        9.603261145305789       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H       21.463785923363933       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H       14.710251959534043       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H        3.745013023796003       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H       12.386742021509315       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H       20.053833436571441       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H        2.949102291548237       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       -9.202305330001012       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       -9.040825589543696       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H       10.648808186842921       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H      -12.586915727417267       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       -5.557508498358064       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H      -2.615647763878801       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H     -12.990463531718456       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H     -11.796611376324611       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H     -13.275154649364083       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H     -11.375707217824953       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H     -11.624835446407735       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H     -12.168269165442346       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H     -10.464157973386582       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H     -12.495932348508585       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H     -12.710254246281288       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H     -13.204232759064420       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      -9.260912542507581       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H     -12.362787375008516       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H      -3.314048685840476       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H       0.635375380864822       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H     -12.569332187317007       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H      -4.760335250533041       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H     -11.435435657994782       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H      20.314612043085937       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H      10.495983544453082       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H       8.586013414513237       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H      18.473121169001669       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H      19.696246261442738       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H       7.956877919075819       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H       9.453148255755108       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H      21.009840098795610       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H      15.757704923777293       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H       2.612283782229430       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H      13.722212269810544       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H      17.725172650248020       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H       2.215241969372161       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H     -12.755211641101944       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H      -7.385957881952721       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H      15.867490823584095       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H      -0.945177168396856       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H      -0.309147561308481       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H      -3.952228400137110       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H     -13.277800050089283       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H     -12.869037301057549       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H     -12.881645440913266       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H     -11.077032388056709       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H     -12.247449492890869       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H     -12.181252562458733       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H     -13.092437100806597       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H     -13.267437484517609       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      -9.021821528913192       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H     -10.450642975159193       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H      12.507699805649143       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      -8.681055607971807       1.000000000000000    
+
+relax> pcs.read(align_id='tm', file='pcs_tm.txt', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file 'pcs_tm.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         82         None        None        N               0.351824688839902                     0.1    
+C-dom         83         None        None        N               0.347893331193782                     0.1    
+C-dom         83         None        None        H               0.368264915419127                     0.1    
+C-dom         84         None        None        N               0.299157835331273                     0.1    
+C-dom         84         None        None        H               0.315173625981672                     0.1    
+C-dom         85         None        None        N               0.261055808862523                     0.1    
+C-dom         85         None        None        H               0.277643512599671                     0.1    
+C-dom         86         None        None        N               0.257634330998744                     0.1    
+C-dom         86         None        None        H               0.274707182869217                     0.1    
+C-dom         87         None        None        N               0.244522215074418                     0.1    
+C-dom         87         None        None        H               0.259390779907284                     0.1    
+C-dom         88         None        None        N               0.208270159791081                     0.1    
+C-dom         88         None        None        H               0.220268743705128                     0.1    
+C-dom         89         None        None        N               0.190396786928843                     0.1    
+C-dom         89         None        None        H               0.203049710972027                     0.1    
+C-dom         90         None        None        N               0.183060767022802                     0.1    
+C-dom         90         None        None        H               0.194753060760108                     0.1    
+C-dom         91         None        None        N               0.163647123145905                     0.1    
+C-dom         91         None        None        H               0.172748557720055                     0.1    
+C-dom         92         None        None        N               0.141736419419038                     0.1    
+C-dom         92         None        None        H               0.150026412551349                     0.1    
+C-dom         93         None        None        N               0.133774116974626                     0.1    
+C-dom         93         None        None        H               0.142235142877734                     0.1    
+C-dom         94         None        None        N               0.114850564152925                     0.1    
+C-dom         94         None        None        H               0.112576481941754                     0.1    
+C-dom         95         None        None        N                0.10449816658438                     0.1    
+C-dom         95         None        None        H               0.104796634184643                     0.1    
+C-dom         96         None        None        N                0.11757800547103                     0.1    
+C-dom         96         None        None        H               0.118874517947776                     0.1    
+C-dom         97         None        None        N               0.118590520287905                     0.1    
+C-dom         97         None        None        H               0.115799377325107                     0.1    
+C-dom         98         None        None        N               0.134283529037775                     0.1    
+C-dom         98         None        None        H               0.135226355225159                     0.1    
+C-dom         99         None        None        N               0.130348349003341                     0.1    
+C-dom         99         None        None        H               0.126008887713361                     0.1    
+C-dom         100        None        None        N               0.122148634484188                     0.1    
+C-dom         100        None        None        H               0.125927529199963                     0.1    
+C-dom         101        None        None        N               0.101288658394284                     0.1    
+C-dom         101        None        None        H               0.101857504040944                     0.1    
+C-dom         102        None        None        N              0.0866744155250992                     0.1    
+C-dom         102        None        None        H               0.084379639966081                     0.1    
+C-dom         103        None        None        N              0.0790656423623746                     0.1    
+C-dom         103        None        None        H              0.0779487956948396                     0.1    
+C-dom         104        None        None        N              0.0864264676170911                     0.1    
+C-dom         104        None        None        H              0.0866457613065282                     0.1    
+C-dom         105        None        None        N              0.0954323348556103                     0.1    
+C-dom         105        None        None        H               0.093694118469536                     0.1    
+C-dom         106        None        None        N              0.0862660166369369                     0.1    
+C-dom         106        None        None        H              0.0850601550298957                     0.1    
+C-dom         107        None        None        N              0.0839921117624726                     0.1    
+C-dom         107        None        None        H              0.0849963446561248                     0.1    
+C-dom         108        None        None        N               0.095782838463207                     0.1    
+C-dom         108        None        None        H              0.0966998747879824                     0.1    
+C-dom         109        None        None        N              0.0966847860595828                     0.1    
+C-dom         109        None        None        H              0.0963706276072215                     0.1    
+C-dom         110        None        None        N              0.0835090669363293                     0.1    
+C-dom         110        None        None        H              0.0840843449859431                     0.1    
+C-dom         111        None        None        N              0.0824881865869094                     0.1    
+C-dom         111        None        None        H              0.0845118662140518                     0.1    
+C-dom         112        None        None        N              0.0923424294601851                     0.1    
+C-dom         112        None        None        H              0.0927477646086812                     0.1    
+C-dom         113        None        None        N              0.0859046924694984                     0.1    
+C-dom         113        None        None        H              0.0844087333930306                     0.1    
+C-dom         114        None        None        N              0.0831502530696173                     0.1    
+C-dom         114        None        None        H              0.0864404228324587                     0.1    
+C-dom         115        None        None        N              0.0726150400186829                     0.1    
+C-dom         115        None        None        H              0.0712932123783747                     0.1    
+C-dom         116        None        None        N              0.0703549005882118                     0.1    
+C-dom         116        None        None        H              0.0724214958040033                     0.1    
+C-dom         117        None        None        N              0.0631400819029069                     0.1    
+C-dom         117        None        None        H              0.0632647987012453                     0.1    
+C-dom         118        None        None        N              0.0593668702376536                     0.1    
+C-dom         118        None        None        H               0.056985393694208                     0.1    
+C-dom         119        None        None        N              0.0585604156038989                     0.1    
+C-dom         119        None        None        H              0.0567481067855809                     0.1    
+C-dom         120        None        None        N              0.0632325663933593                     0.1    
+C-dom         120        None        None        H              0.0615076708061374                     0.1    
+C-dom         121        None        None        N              0.0722012995225626                     0.1    
+C-dom         121        None        None        H              0.0693918861834726                     0.1    
+C-dom         122        None        None        N              0.0715394353933356                     0.1    
+C-dom         122        None        None        H              0.0687274325917104                     0.1    
+C-dom         123        None        None        N              0.0715881788613927                     0.1    
+C-dom         123        None        None        H              0.0697693710821051                     0.1    
+C-dom         124        None        None        N              0.0829179465007534                     0.1    
+C-dom         124        None        None        H               0.080696144416006                     0.1    
+C-dom         125        None        None        N              0.0893226909858695                     0.1    
+C-dom         125        None        None        H              0.0856464576310515                     0.1    
+C-dom         126        None        None        N              0.0830422191268712                     0.1    
+C-dom         126        None        None        H              0.0803315533506097                     0.1    
+C-dom         127        None        None        N              0.0871887009883944                     0.1    
+C-dom         127        None        None        H              0.0861065394008394                     0.1    
+C-dom         128        None        None        N               0.103456171662413                     0.1    
+C-dom         128        None        None        H               0.100488800741989                     0.1    
+C-dom         129        None        None        N               0.103397984140228                     0.1    
+C-dom         129        None        None        H              0.0989921663798367                     0.1    
+C-dom         130        None        None        N               0.104076917635312                     0.1    
+C-dom         130        None        None        H               0.110295092384436                     0.1    
+C-dom         131        None        None        N               0.096682416488934                     0.1    
+C-dom         131        None        None        H               0.101205718147033                     0.1    
+C-dom         132        None        None        N              0.0834590113706042                     0.1    
+C-dom         132        None        None        H              0.0873559694163175                     0.1    
+C-dom         133        None        None        N              0.0817473535580823                     0.1    
+C-dom         133        None        None        H              0.0864519706183357                     0.1    
+C-dom         134        None        None        N              0.0810349391495214                     0.1    
+C-dom         134        None        None        H              0.0830259827401021                     0.1    
+C-dom         135        None        None        N              0.0909402526267654                     0.1    
+C-dom         135        None        None        H              0.0916968362592606                     0.1    
+C-dom         136        None        None        N               0.111698405966397                     0.1    
+C-dom         136        None        None        H               0.110204082783183                     0.1    
+C-dom         137        None        None        N               0.135537329003446                     0.1    
+C-dom         137        None        None        H               0.133612241845685                     0.1    
+C-dom         138        None        None        N               0.170926416641708                     0.1    
+C-dom         138        None        None        H               0.169005018372445                     0.1    
+C-dom         139        None        None        N               0.190210787020578                     0.1    
+C-dom         139        None        None        H                0.18508022041856                     0.1    
+C-dom         140        None        None        N               0.166158092441324                     0.1    
+C-dom         140        None        None        H               0.162410780505562                     0.1    
+C-dom         141        None        None        N                0.16433837195842                     0.1    
+C-dom         141        None        None        H               0.165297174065159                     0.1    
+C-dom         142        None        None        N               0.194316697548079                     0.1    
+C-dom         142        None        None        H               0.195114034259619                     0.1    
+C-dom         143        None        None        N               0.190889849534853                     0.1    
+C-dom         143        None        None        H               0.189213608651429                     0.1    
+C-dom         144        None        None        N               0.160770990080638                     0.1    
+C-dom         144        None        None        H               0.161955097587049                     0.1    
+C-dom         145        None        None        N               0.167156229057064                     0.1    
+C-dom         145        None        None        H               0.172091209697218                     0.1    
+C-dom         146        None        None        N                0.19399581808078                     0.1    
+C-dom         146        None        None        H               0.191074008033028                     0.1    
+C-dom         147        None        None        N               0.179468201343291                     0.1    
+C-dom         147        None        None        H               0.173575968358963                     0.1    
+C-dom         148        None        None        N               0.183415723650979                     0.1    
+C-dom         148        None        None        H               0.190151892701081                     0.1    
+
+relax> spectrometer.temperature(id='tm', temp=303)
+
+relax> spectrometer.frequency(id='tm', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> rdc.read(align_id='er', file='rdc_er.txt', dir=None, data_type='D', spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4, sep=None, neg_g_corr=False, absolute=False)
+Opening the file 'rdc_er.txt' for reading.
+The following RDCs have been loaded into the relax data store:
+
+# Spin_ID1      Spin_ID2        Value                   Error                   
+#C-dom:83@N     #C-dom:83@H        8.634728100094323       1.000000000000000    
+#C-dom:84@N     #C-dom:84@H        5.267875912414930       1.000000000000000    
+#C-dom:85@N     #C-dom:85@H       11.371178855957671       1.000000000000000    
+#C-dom:86@N     #C-dom:86@H       11.409780396725713       1.000000000000000    
+#C-dom:87@N     #C-dom:87@H        6.592763879171644       1.000000000000000    
+#C-dom:88@N     #C-dom:88@H        5.746468365865312       1.000000000000000    
+#C-dom:89@N     #C-dom:89@H       12.843654353876113       1.000000000000000    
+#C-dom:90@N     #C-dom:90@H        8.802426202966585       1.000000000000000    
+#C-dom:91@N     #C-dom:91@H        2.240967786397947       1.000000000000000    
+#C-dom:92@N     #C-dom:92@H        7.412067640952535       1.000000000000000    
+#C-dom:93@N     #C-dom:93@H       11.999956859854860       1.000000000000000    
+#C-dom:94@N     #C-dom:94@H        1.764705006940974       1.000000000000000    
+#C-dom:95@N     #C-dom:95@H       -5.506541545809512       1.000000000000000    
+#C-dom:96@N     #C-dom:96@H       -5.409914139116557       1.000000000000000    
+#C-dom:97@N     #C-dom:97@H        6.372110312731881       1.000000000000000    
+#C-dom:98@N     #C-dom:98@H       -7.531849020556104       1.000000000000000    
+#C-dom:99@N     #C-dom:99@H       -3.325541844132088       1.000000000000000    
+#C-dom:100@N    #C-dom:100@H      -1.565170092112210       1.000000000000000    
+#C-dom:101@N    #C-dom:101@H      -7.773326853600842       1.000000000000000    
+#C-dom:102@N    #C-dom:102@H      -7.058941027714568       1.000000000000000    
+#C-dom:103@N    #C-dom:103@H      -7.943682368965863       1.000000000000000    
+#C-dom:104@N    #C-dom:104@H      -6.807077374807270       1.000000000000000    
+#C-dom:105@N    #C-dom:105@H      -6.956152513235095       1.000000000000000    
+#C-dom:106@N    #C-dom:106@H      -7.281336284469247       1.000000000000000    
+#C-dom:107@N    #C-dom:107@H      -6.261617992016869       1.000000000000000    
+#C-dom:108@N    #C-dom:108@H      -7.477405732926271       1.000000000000000    
+#C-dom:109@N    #C-dom:109@H      -7.605653209177095       1.000000000000000    
+#C-dom:110@N    #C-dom:110@H      -7.901243618952945       1.000000000000000    
+#C-dom:111@N    #C-dom:111@H      -5.541611350491973       1.000000000000000    
+#C-dom:112@N    #C-dom:112@H      -7.397733487559276       1.000000000000000    
+#C-dom:113@N    #C-dom:113@H      -1.983084251064944       1.000000000000000    
+#C-dom:114@N    #C-dom:114@H       0.380200483080070       1.000000000000000    
+#C-dom:115@N    #C-dom:115@H      -7.521327255562192       1.000000000000000    
+#C-dom:116@N    #C-dom:116@H      -2.848523591537778       1.000000000000000    
+#C-dom:117@N    #C-dom:117@H      -6.842818107750492       1.000000000000000    
+#C-dom:118@N    #C-dom:118@H      12.156003435091700       1.000000000000000    
+#C-dom:119@N    #C-dom:119@H       6.280662005773451       1.000000000000000    
+#C-dom:120@N    #C-dom:120@H       5.137760363781553       1.000000000000000    
+#C-dom:121@N    #C-dom:121@H      11.054078901973323       1.000000000000000    
+#C-dom:122@N    #C-dom:122@H      11.785981278141071       1.000000000000000    
+#C-dom:123@N    #C-dom:123@H       4.761293748152618       1.000000000000000    
+#C-dom:124@N    #C-dom:124@H       5.656642737044078       1.000000000000000    
+#C-dom:125@N    #C-dom:125@H      12.572018991551968       1.000000000000000    
+#C-dom:126@N    #C-dom:126@H       9.429208629548617       1.000000000000000    
+#C-dom:127@N    #C-dom:127@H       1.563157128615855       1.000000000000000    
+#C-dom:128@N    #C-dom:128@H       8.211195918242858       1.000000000000000    
+#C-dom:129@N    #C-dom:129@H      10.606516096247208       1.000000000000000    
+#C-dom:130@N    #C-dom:130@H       1.325572397451340       1.000000000000000    
+#C-dom:131@N    #C-dom:131@H      -7.632555137932295       1.000000000000000    
+#C-dom:132@N    #C-dom:132@H      -4.419662516519370       1.000000000000000    
+#C-dom:133@N    #C-dom:133@H       9.494903104655778       1.000000000000000    
+#C-dom:134@N    #C-dom:134@H      -0.565581901413318       1.000000000000000    
+#C-dom:135@N    #C-dom:135@H      -0.184989937747551       1.000000000000000    
+#C-dom:136@N    #C-dom:136@H      -2.364962811322070       1.000000000000000    
+#C-dom:137@N    #C-dom:137@H      -7.945265342848629       1.000000000000000    
+#C-dom:138@N    #C-dom:138@H      -7.700666953727117       1.000000000000000    
+#C-dom:139@N    #C-dom:139@H      -7.708211502993977       1.000000000000000    
+#C-dom:140@N    #C-dom:140@H      -6.628354185364235       1.000000000000000    
+#C-dom:141@N    #C-dom:141@H      -7.328716777407752       1.000000000000000    
+#C-dom:142@N    #C-dom:142@H      -7.289105382810657       1.000000000000000    
+#C-dom:143@N    #C-dom:143@H      -7.834346530151639       1.000000000000000    
+#C-dom:144@N    #C-dom:144@H      -7.939064516447490       1.000000000000000    
+#C-dom:145@N    #C-dom:145@H      -5.398542352846894       1.000000000000000    
+#C-dom:146@N    #C-dom:146@H      -6.253530790325351       1.000000000000000    
+#C-dom:147@N    #C-dom:147@H       7.484447228433028       1.000000000000000    
+#C-dom:148@N    #C-dom:148@H      -5.194632394008399       1.000000000000000    
+
+relax> pcs.read(align_id='er', file='pcs_er.txt', dir=None, spin_id_col=None, mol_name_col=1, res_num_col=2, res_name_col=None, spin_num_col=None, spin_name_col=5, data_col=6, error_col=7, sep=None, spin_id=None)
+Opening the file 'pcs_er.txt' for reading.
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         82         None        None        N               0.241731716119217                     0.1    
+C-dom         83         None        None        N               0.238878554029022                     0.1    
+C-dom         83         None        None        H               0.254659664112311                     0.1    
+C-dom         84         None        None        N               0.201987903123322                     0.1    
+C-dom         84         None        None        H               0.213840117590345                     0.1    
+C-dom         85         None        None        N               0.174598176035081                     0.1    
+C-dom         85         None        None        H                 0.1865855180857                     0.1    
+C-dom         86         None        None        N               0.171958399870406                     0.1    
+C-dom         86         None        None        H               0.184312831802816                     0.1    
+C-dom         87         None        None        N               0.162195478536987                     0.1    
+C-dom         87         None        None        H                0.17286155274993                     0.1    
+C-dom         88         None        None        N               0.136973105150087                     0.1    
+C-dom         88         None        None        H                0.14540819462604                     0.1    
+C-dom         89         None        None        N               0.124674099173594                     0.1    
+C-dom         89         None        None        H               0.133444270048239                     0.1    
+C-dom         90         None        None        N               0.119262500806706                     0.1    
+C-dom         90         None        None        H               0.127317790709268                     0.1    
+C-dom         91         None        None        N                0.10602003028329                     0.1    
+C-dom         91         None        None        H               0.112268278915963                     0.1    
+C-dom         92         None        None        N              0.0914383327993843                     0.1    
+C-dom         92         None        None        H              0.0970402402755125                     0.1    
+C-dom         93         None        None        N              0.0859790787234924                     0.1    
+C-dom         93         None        None        H              0.0916391185564687                     0.1    
+C-dom         94         None        None        N              0.0732800117294119                     0.1    
+C-dom         94         None        None        H              0.0718524362083059                     0.1    
+C-dom         95         None        None        N              0.0662811220040857                     0.1    
+C-dom         95         None        None        H              0.0665441364869066                     0.1    
+C-dom         96         None        None        N              0.0746583838954485                     0.1    
+C-dom         96         None        None        H              0.0756285784711752                     0.1    
+C-dom         97         None        None        N              0.0752272308874714                     0.1    
+C-dom         97         None        None        H              0.0735125115458047                     0.1    
+C-dom         98         None        None        N               0.085568434681623                     0.1    
+C-dom         98         None        None        H              0.0862662886184411                     0.1    
+C-dom         99         None        None        N              0.0832246838015277                     0.1    
+C-dom         99         None        None        H              0.0803506643873585                     0.1    
+C-dom         100        None        None        N              0.0781520658994007                     0.1    
+C-dom         100        None        None        H              0.0806412517357804                     0.1    
+C-dom         101        None        None        N              0.0645058863807747                     0.1    
+C-dom         101        None        None        H              0.0648803967969833                     0.1    
+C-dom         102        None        None        N              0.0550010204177413                     0.1    
+C-dom         102        None        None        H              0.0534749542889288                     0.1    
+C-dom         103        None        None        N              0.0500964627314659                     0.1    
+C-dom         103        None        None        H              0.0493474638788561                     0.1    
+C-dom         104        None        None        N              0.0548980153576864                     0.1    
+C-dom         104        None        None        H              0.0550214309462112                     0.1    
+C-dom         105        None        None        N               0.060842487508375                     0.1    
+C-dom         105        None        None        H              0.0596851045052094                     0.1    
+C-dom         106        None        None        N              0.0548657463851983                     0.1    
+C-dom         106        None        None        H              0.0540674596936812                     0.1    
+C-dom         107        None        None        N              0.0533688540970197                     0.1    
+C-dom         107        None        None        H              0.0540196961977757                     0.1    
+C-dom         108        None        None        N              0.0610826806008888                     0.1    
+C-dom         108        None        None        H              0.0616893924223009                     0.1    
+C-dom         109        None        None        N              0.0616952118893313                     0.1    
+C-dom         109        None        None        H              0.0614972610884694                     0.1    
+C-dom         110        None        None        N              0.0530505753649569                     0.1    
+C-dom         110        None        None        H              0.0534349088618323                     0.1    
+C-dom         111        None        None        N              0.0523384526210079                     0.1    
+C-dom         111        None        None        H              0.0536710252479941                     0.1    
+C-dom         112        None        None        N              0.0587402133430787                     0.1    
+C-dom         112        None        None        H              0.0590356718934309                     0.1    
+C-dom         113        None        None        N              0.0545015823452958                     0.1    
+C-dom         113        None        None        H              0.0535476368339434                     0.1    
+C-dom         114        None        None        N              0.0527389795392899                     0.1    
+C-dom         114        None        None        H              0.0548956362519853                     0.1    
+C-dom         115        None        None        N              0.0459256696162635                     0.1    
+C-dom         115        None        None        H              0.0450529024584613                     0.1    
+C-dom         116        None        None        N              0.0444914687468393                     0.1    
+C-dom         116        None        None        H              0.0458388154443048                     0.1    
+C-dom         117        None        None        N              0.0398215712514375                     0.1    
+C-dom         117        None        None        H              0.0398918267052727                     0.1    
+C-dom         118        None        None        N              0.0373902971510195                     0.1    
+C-dom         118        None        None        H              0.0358618435323235                     0.1    
+C-dom         119        None        None        N              0.0368419568473219                     0.1    
+C-dom         119        None        None        H              0.0356841384128013                     0.1    
+C-dom         120        None        None        N              0.0398336740742318                     0.1    
+C-dom         120        None        None        H              0.0387342644072996                     0.1    
+C-dom         121        None        None        N              0.0456430613148238                     0.1    
+C-dom         121        None        None        H              0.0438345963680484                     0.1    
+C-dom         122        None        None        N              0.0451774177110597                     0.1    
+C-dom         122        None        None        H              0.0433713021739122                     0.1    
+C-dom         123        None        None        N               0.045145796302457                     0.1    
+C-dom         123        None        None        H              0.0439920212749828                     0.1    
+C-dom         124        None        None        N              0.0524851179549883                     0.1    
+C-dom         124        None        None        H              0.0510718875708067                     0.1    
+C-dom         125        None        None        N              0.0566570840965231                     0.1    
+C-dom         125        None        None        H              0.0542872608331169                     0.1    
+C-dom         126        None        None        N              0.0524541023681738                     0.1    
+C-dom         126        None        None        H              0.0507309300368641                     0.1    
+C-dom         127        None        None        N              0.0550438491412275                     0.1    
+C-dom         127        None        None        H              0.0543970901749623                     0.1    
+C-dom         128        None        None        N              0.0656428666715815                     0.1    
+C-dom         128        None        None        H              0.0637711840082319                     0.1    
+C-dom         129        None        None        N              0.0655481868137816                     0.1    
+C-dom         129        None        None        H              0.0627154666142222                     0.1    
+C-dom         130        None        None        N              0.0656662278422853                     0.1    
+C-dom         130        None        None        H              0.0697402480332428                     0.1    
+C-dom         131        None        None        N              0.0606619970786081                     0.1    
+C-dom         131        None        None        H              0.0636694042381943                     0.1    
+C-dom         132        None        None        N              0.0522660098627399                     0.1    
+C-dom         132        None        None        H              0.0548013980348598                     0.1    
+C-dom         133        None        None        N              0.0512730874938477                     0.1    
+C-dom         133        None        None        H              0.0542900743180591                     0.1    
+C-dom         134        None        None        N              0.0509946161410346                     0.1    
+C-dom         134        None        None        H              0.0522572335448109                     0.1    
+C-dom         135        None        None        N              0.0575226389181434                     0.1    
+C-dom         135        None        None        H              0.0579517418127835                     0.1    
+C-dom         136        None        None        N               0.071217176665738                     0.1    
+C-dom         136        None        None        H              0.0702897343521971                     0.1    
+C-dom         137        None        None        N              0.0868021379620346                     0.1    
+C-dom         137        None        None        H              0.0854579983307475                     0.1    
+C-dom         138        None        None        N               0.110423131981384                     0.1    
+C-dom         138        None        None        H               0.108986236242094                     0.1    
+C-dom         139        None        None        N               0.123140712790127                     0.1    
+C-dom         139        None        None        H               0.119489650221571                     0.1    
+C-dom         140        None        None        N               0.106951123750445                     0.1    
+C-dom         140        None        None        H               0.104406965022631                     0.1    
+C-dom         141        None        None        N               0.106274022744945                     0.1    
+C-dom         141        None        None        H               0.106880589127177                     0.1    
+C-dom         142        None        None        N               0.126750994450359                     0.1    
+C-dom         142        None        None        H               0.127211354561604                     0.1    
+C-dom         143        None        None        N               0.123800905847085                     0.1    
+C-dom         143        None        None        H                0.12262719983778                     0.1    
+C-dom         144        None        None        N               0.103602388489986                     0.1    
+C-dom         144        None        None        H               0.104456150456266                     0.1    
+C-dom         145        None        None        N               0.108223993174515                     0.1    
+C-dom         145        None        None        H               0.111614424337822                     0.1    
+C-dom         146        None        None        N               0.126144355055756                     0.1    
+C-dom         146        None        None        H               0.124199161929322                     0.1    
+C-dom         147        None        None        N               0.115582394800462                     0.1    
+C-dom         147        None        None        H               0.111860349133134                     0.1    
+C-dom         148        None        None        N               0.117049777042322                     0.1    
+C-dom         148        None        None        H               0.121570263725493                     0.1    
+
+relax> spectrometer.temperature(id='er', temp=303)
+
+relax> spectrometer.frequency(id='er', frq=900000000.0, units='Hz')
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+
+relax> script(file='../tensors.py', dir=None)
+script = '../tensors.py'
+----------------------------------------------------------------------------------------------------
+# The full alignment tensors (real RDC tensors from CaM-IQ).
+align_tensor.init(tensor='Dy N-dom', params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), param_types=2, align_id='dy')
+align_tensor.init(tensor='Dy N-dom', params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), param_types=2, errors=True, align_id='dy')
+
+align_tensor.init(tensor='Tb N-dom', params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), param_types=2, align_id='tb')
+align_tensor.init(tensor='Tb N-dom', params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), param_types=2, errors=True, align_id='tb')
+
+align_tensor.init(tensor='Tm N-dom', params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), param_types=2, align_id='tm')
+align_tensor.init(tensor='Tm N-dom', params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), param_types=2, errors=True, align_id='tm')
+
+align_tensor.init(tensor='Er N-dom', params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), param_types=2, align_id='er')
+align_tensor.init(tensor='Er N-dom', params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), param_types=2, errors=True, align_id='er')
+----------------------------------------------------------------------------------------------------
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(0.000622191953772, 1.35210609663e-05, -0.000133742852942, 0.000756743581636, 0.000550729840729), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Dy N-dom', align_id='dy', domain=None, params=(2.35766523882e-05, 2.51785772774e-05, 1.99369755031e-05, 1.86674275393e-05, 2.01343581166e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(0.000617222650166, -0.000438128542649, -0.000375477068228, 0.000760687126774, 0.00034129025543), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tb N-dom', align_id='tb', domain=None, params=(1.63152405109e-05, 1.86581336167e-05, 1.34361351013e-05, 1.46648001703e-05, 1.76633948194e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(-0.000385660891266, 0.000325292994524, 0.000318318888621, -0.00044409190064, -0.000473507384479), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Tm N-dom', align_id='tm', domain=None, params=(1.47916817671e-05, 1.81460089395e-05, 1.27148330285e-05, 1.54915569205e-05, 1.55953362766e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(-0.000187529356988, 0.000130813961653, 7.14700966617e-05, -0.000264275852243, -0.000343164086618), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.init(tensor='Er N-dom', align_id='er', domain=None, params=(1.88459382279e-05, 1.66197299895e-05, 1.69306486018e-05, 2.12500669486e-05, 1.96610327688e-05), scale=1.0, angle_units='deg', param_types=2, errors=True)
+
+
+relax> domain(id='N', spin_id=':1-78')
+
+relax> domain(id='C', spin_id=':80-148')
+
+relax> align_tensor.init(tensor='Dy C-dom', align_id='dy', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Dy N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Dy C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Dy N-dom', red_tensor='Dy C-dom')
+
+relax> align_tensor.init(tensor='Tb C-dom', align_id='tb', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Tb N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Tb C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Tb N-dom', red_tensor='Tb C-dom')
+
+relax> align_tensor.init(tensor='Tm C-dom', align_id='tm', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Tm N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Tm C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Tm N-dom', red_tensor='Tm C-dom')
+
+relax> align_tensor.init(tensor='Er C-dom', align_id='er', domain=None, params=(0, 0, 0, 0, 0), scale=1.0, angle_units='deg', param_types=2, errors=False)
+
+relax> align_tensor.set_domain(tensor='Er N-dom', domain='N')
+
+relax> align_tensor.set_domain(tensor='Er C-dom', domain='C')
+
+relax> align_tensor.reduction(full_tensor='Er N-dom', red_tensor='Er C-dom')
+
+relax> frame_order.select_model(model='free rotor')
+
+relax> frame_order.ref_domain(ref='N')
+
+relax> frame_order.pivot(pivot=array([ 37.253999999999998,   0.5              ,  16.746500000000001]), order=1, fix=True)
+
+relax> paramag.centre(pos=[35.934, 12.194, -4.206], atom_id=None, pipe=None, verbosity=1, fix=True, ave_pos=True, force=False)
+The paramagnetic centre position will be fixed during optimisation.
+Paramagnetic centres located at:
+
+Average paramagnetic centre located at:
+    [  35.934,   12.194,   -4.206]
+
+Using the average paramagnetic position.
+
+relax> frame_order.num_int_pts(num=100)
+
+relax> value.set(val=-13.906916611307219, param='ave_pos_x', index=0, spin_id=None, error=False)
+
+relax> value.set(val=-0.3688511283333744, param='ave_pos_y', index=0, spin_id=None, error=False)
+
+relax> value.set(val=2.8337112747880164, param='ave_pos_z', index=0, spin_id=None, error=False)
+
+relax> value.set(val=5.388901877560784, param='ave_pos_beta', index=0, spin_id=None, error=False)
+
+relax> value.set(val=0.09219563692677654, param='ave_pos_gamma', index=0, spin_id=None, error=False)
+
+relax> value.set(val=0.6982805907961935, param='axis_theta', index=0, spin_id=None, error=False)
+
+relax> value.set(val=4.032275506219623, param='axis_phi', index=0, spin_id=None, error=False)
+
+relax> calc(verbosity=1)
+The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:
+    [47.63725241103505, -9.4898655753656396, 30.825358289766502]
+Numerical integration via the quasi-random Sobol' sequence.
+Number of integration points: 100
+Base data: ['RDCs', 'PCSs']
+Chi2:  0.107771617642
+
+relax> frame_order.pdb_model(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, dir=None, size=30.0, inc=36, force=True)
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Generating the PDB file.
+Opening the file 'true_frame_order.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
+
+relax> frame_order.num_int_pts(num=100)
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:
+    [47.63725241103505, -9.4898655753656396, 30.825358289766502]
+Numerical integration via the quasi-random Sobol' sequence.
+Number of integration points: 100
+Base data: ['RDCs', 'PCSs']
+RelaxWarning: The 'free rotor' model parameters are not constrained, turning the linear constraint algorithm off.
+
+Simplex minimisation
+~~~~~~~~~~~~~~~~~~~~
+
+k: 0        xk: [   -13.90691661,   -0.3688511283,     2.833711275,     5.388901878,   0.09219563693]    fk: 0.107771617642      
+k: 100      xk: [   -13.90842704,   -0.3685746123,     2.835991214,     5.389497538,   0.09243466526]    fk: 0.0567462486008     
+k: 200      xk: [   -13.90934942,   -0.3684318461,     2.835515896,     5.389498926,   0.09243403971]    fk: 0.0567455359837     
+k: 300      xk: [   -13.90934944,   -0.3684318442,     2.835515904,     5.389498926,   0.09243403962]    fk: 0.0567455359828     
+
+Parameter values: [-13.90934943642902, -0.36843184418381547, 2.8355159040548301, 5.3894989261050981, 0.092434039619877895]
+Function value:   0.056745535982753122
+Iterations:       330
+Function calls:   673
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+relax> frame_order.num_int_pts(num=1000)
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:
+    [47.63725241103505, -9.4898655753656396, 30.825358289766502]
+Numerical integration via the quasi-random Sobol' sequence.
+Number of integration points: 1000
+Base data: ['RDCs', 'PCSs']
+RelaxWarning: The 'free rotor' model parameters are not constrained, turning the linear constraint algorithm off.
+
+Simplex minimisation
+~~~~~~~~~~~~~~~~~~~~
+
+k: 0        xk: [   -13.90934944,   -0.3684318442,     2.835515904,     5.389498926,   0.09243403962]    fk: 0.0567452250414     
+k: 100      xk: [   -13.90928204,    -0.368900259,     2.835281503,     5.389498978,    0.0924338815]    fk: 0.0567451211012     
+k: 200      xk: [   -13.90928364,   -0.3689372862,     2.835263938,     5.389498937,   0.09243393963]    fk: 0.0567451198481     
+k: 300      xk: [   -13.90928366,   -0.3689372875,     2.835263934,     5.389498937,   0.09243393961]    fk: 0.0567451198461     
+
+Parameter values: [-13.90928366390429, -0.36893728751938837, 2.835263933838239, 5.3894989373463353, 0.092433939606552912]
+Function value:   0.05674511984610911
+Iterations:       346
+Function calls:   693
+Gradient calls:   0
+Hessian calls:    0
+Warning:          None
+
+
+relax> frame_order.num_int_pts(num=10000)
+
+relax> minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:
+    [47.63725241103505, -9.4898655753656396, 30.825358289766502]
+Numerical integration via the quasi-random Sobol' sequence.
+Number of integration points: 10000
+Base data: ['RDCs', 'PCSs']
+RelaxWarning: The 'free rotor' model parameters are not constrained, turning the linear constraint algorithm off.
+
+Simplex minimisation
+~~~~~~~~~~~~~~~~~~~~
+
+k: 0        xk: [   -13.90928366,   -0.3689372875,     2.835263934,     5.389498937,   0.09243393961]    fk: 0.0567451198453     
+k: 100      xk: [   -13.90928366,   -0.3689372875,     2.835263934,     5.389498937,   0.09243393961]    fk: 0.0567451198453     
+k: 200      xk: [   -13.90928371,   -0.3689372945,     2.835264033,     5.389498937,    0.0924339368]    fk: 0.0567451198402     
+k: 300      xk: [    -13.9092837,   -0.3689372882,     2.835264042,     5.389498937,   0.09243393677]    fk: 0.0567451198401     
+
+Parameter values: [-13.9092836985788, -0.36893728819422167, 2.8352640418129806, 5.389498937346155, 0.09243393677259322]
+Function value:   0.056745119840131017
+Iterations:       307
+Function calls:   629
+Gradient calls:   0
+Hessian calls:    0
+Warning:          Simplex has not moved.
+
+
+relax> frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, dir=None, size=30.0, inc=36, force=True)
+
+Creating a PDB file with the moving domains shifted to the average position.
+----------------------------------------------------------------------------
+
+Opening the file 'ave_pos_fixed_piv.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Generating the PDB file.
+Opening the file 'frame_order_fixed_piv.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
+
+relax> frame_order.pdb_model(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file='domain_distribution.pdb', dir=None, size=30.0, inc=36, force=True)
+
+Creating a PDB file with the moving domains shifted to the average position.
+----------------------------------------------------------------------------
+
+Opening the file 'ave_pos.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+ATOM, HETATM, TER
+ATOM, HETATM, TER
+CONECT
+
+MASTER
+END
+
+Creating a PDB file containing a geometric object representing the frame order dynamics.
+----------------------------------------------------------------------------------------
+
+
+Generating the PDB file.
+Opening the file 'frame_order.pdb' for writing.
+
+Creating the PDB records
+
+REMARK
+HET
+HETNAM
+FORMUL
+
+MODEL 1
+ATOM, HETATM, TER
+ENDMDL
+
+MODEL 2
+ATOM, HETATM, TER
+ENDMDL
+CONECT
+
+MASTER
+END
+
+Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.
+-------------------------------------------------------------------------------------------------
+
+
+relax> pymol.view()
+
+relax> pymol.command(command='show spheres')
+
+relax> pymol.frame_order(ave_pos_file=None, rep_file='true_frame_order.pdb', dist_file=None, dir=None)
+
+relax> pymol.frame_order(ave_pos_file='ave_pos_fixed_piv.pdb', rep_file='frame_order_fixed_piv.pdb', dist_file=None, dir=None)
+
+relax> pymol.frame_order(ave_pos_file='ave_pos.pdb', rep_file='frame_order.pdb', dist_file=None, dir=None)
+
+relax> state.save(state='frame_order', dir=None, compress_type=1, force=True)
+Opening the file 'frame_order.bz2' for writing.
+
