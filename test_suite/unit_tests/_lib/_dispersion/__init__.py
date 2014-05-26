@@ -24,6 +24,7 @@
 __all__ = [
     'test___init__',
     'test_b14',
+    'test_cr72',
     'test_dpl94',
     'test_lm63',
     'test_ns_cpmg_2site_expanded'
