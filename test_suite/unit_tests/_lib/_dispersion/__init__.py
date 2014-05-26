@@ -26,9 +26,14 @@ __all__ = [
     'test_b14',
     'test_cr72',
     'test_dpl94',
+    'test_it99',
     'test_lm63',
+    'test_ns_cpmg_2site_expanded',
     'test_m61',
     'test_m61b',
-    'test_it99',
-    'test_ns_cpmg_2site_expanded'
+    'test_mmq_cr72',
+    'mp05',
+    'tap03',
+    'tp02',
+    'test_tsmfk01'
 ]
