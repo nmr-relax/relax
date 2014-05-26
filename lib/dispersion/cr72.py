@@ -128,9 +128,9 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_BA = pA * kex
     k_AB = pB * kex
 
-    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines.
-    if dw == 0.0 or pA == 1.0 or kex == 0.0:
-        return array([r20_kex]*num_points)
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0 or kex >= 1.e5:
+        return array([r20a]*num_points)
 
     # The Psi and zeta values.
     if r20a != r20b:
@@ -156,16 +156,12 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        R2eff = array([1e100]*num_points)
-
-        return R2eff
+        return array([r20a]*num_points)
 
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
     if min(fact) < 1.0:
-        R2eff = array([r20_kex]*num_points)
-
-        return R2eff
+        return array([r20_kex]*num_points)
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
