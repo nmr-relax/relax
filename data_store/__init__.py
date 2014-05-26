@@ -597,12 +597,10 @@ class Relax_data_store(dict):
         top_element.setAttribute('version', version.version)
         top_element.setAttribute('time', asctime())
         top_element.setAttribute('file_version', "2")
-        rev = version.revision()
-        if rev:
-            top_element.setAttribute('revision', rev)
-        url = version.url()
-        if url:
-            top_element.setAttribute('url', url)
+        if version.repo_revision:
+            top_element.setAttribute('revision', version.repo_revision)
+        if version.repo_url:
+            top_element.setAttribute('url', version.repo_url)
 
         # Add all objects in the data store base object to the XML element.
         if all:

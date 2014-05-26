@@ -362,13 +362,13 @@ def frame_order(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_fil
     """Display the frame order results (the geometric object, average position and distribution).
 
     @keyword ave_pos_file:  The name of the file for the average molecule structure.
-    @type ave_pos_file:     str
+    @type ave_pos_file:     str or None
     @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
-    @type rep_file:         str
+    @type rep_file:         str or None
     @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type dist_file:        str
+    @type dist_file:        str or None
     @keyword dir:           The name of the directory to place the PDB file into.
-    @type dir:              str
+    @type dir:              str or None
     """
 
     # The path.
@@ -377,9 +377,12 @@ def frame_order(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_fil
         path = dir + sep
 
     # Set up the respective objects.
-    frame_order_ave_pos(file=path+ave_pos_file)
-    frame_order_geometric(file=path+rep_file)
-    frame_order_distribution(file=path+dist_file)
+    if ave_pos_file:
+        frame_order_ave_pos(file=path+ave_pos_file)
+    if rep_file:
+        frame_order_geometric(file=path+rep_file)
+    if dist_file:
+        frame_order_distribution(file=path+dist_file)
 
 
 def frame_order_ave_pos(file=None):
