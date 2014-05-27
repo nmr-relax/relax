@@ -36,7 +36,7 @@ class Test_lm63(TestCase):
 
         # Default parameter values.
         self.r20 = 2.0
-        self.pA = 0.9
+        self.pA = 0.95
         self.dw = 0.5
         self.kex = 100.0
 
@@ -86,7 +86,7 @@ class Test_lm63(TestCase):
         frqs = sfrq * 2 * pi
 
         # The phi_ex parameter value (pA * pB * delta_omega^2).
-        phi_ex = pA * pB * dw**2
+        phi_ex = pA * pB * (dw / 1.e6)**2
 
         # Convert phi_ex from ppm^2 to (rad/s)^2.
         phi_ex_scaled = phi_ex * frqs**2

@@ -45,7 +45,7 @@ class Test_tp02(TestCase):
         self.offset = -35040.3526693
 
         # Population of ground state.
-        self.pA = 0.9
+        self.pA = 0.95
         # The chemical exchange difference between states A and B in ppm.
         self.dw = 0.5
         self.kex = 1000.0
@@ -114,7 +114,7 @@ class Test_tp02(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # The R1rho spin-lock field strengths (in rad.s-1).
         spin_lock_omega1 = (2. * pi * spin_lock_nu1)

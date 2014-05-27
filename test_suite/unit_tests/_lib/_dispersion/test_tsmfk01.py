@@ -35,7 +35,7 @@ class Test_tsmfk01(TestCase):
 
         # Default parameter values.
         self.r20a = 2.0
-        self.pA = 0.99
+        self.pA = 0.95
         self.dw = 2.0
         self.kex = 1000.0
 
@@ -90,7 +90,7 @@ class Test_tsmfk01(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # Return all values.
         return k_AB, k_BA, pB, dw_frq

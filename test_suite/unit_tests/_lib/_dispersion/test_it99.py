@@ -35,7 +35,7 @@ class Test_it99(TestCase):
 
         # Default parameter values.
         self.r20 = 2.0
-        self.pA = 0.99
+        self.pA = 0.95
         self.dw = 2.0
         self.kex = 1000.0
 
@@ -89,7 +89,7 @@ class Test_it99(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # Time of exchange: 1/(2*kex)
         if kex == 0.0:

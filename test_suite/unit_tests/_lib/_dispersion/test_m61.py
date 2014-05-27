@@ -37,7 +37,7 @@ class Test_m61(TestCase):
         # The R1rho_prime parameter value (R1rho with no exchange).
         self.r1rho_prime = 2.5
         # Population of ground state.
-        self.pA = 0.9
+        self.pA = 0.95
         # The chemical exchange difference between states A and B in ppm.
         self.dw = 0.5
         self.kex = 1000.0
@@ -96,7 +96,7 @@ class Test_m61(TestCase):
         frqs = sfrq * 2 * pi
 
         # The phi_ex parameter value (pA * pB * delta_omega^2).
-        phi_ex = pA * pB * dw**2
+        phi_ex = pA * pB * (dw / 1.e6)**2
 
         # Convert phi_ex from ppm^2 to (rad/s)^2.
         phi_ex_scaled = phi_ex * frqs**2
