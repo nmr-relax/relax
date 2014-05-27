@@ -558,7 +558,7 @@ class Validate:
         """Test for proper function spacing."""
 
         # Heading.
-        sys.stdout.write(self.indent + "Function spacing (2 preceding empty lines).\n")
+        sys.stdout.write(self.indent + "Function spacing (2 preceding empty lines).  Ignore for the first method in a class.\n")
 
         # Flags.
         ok = 1
