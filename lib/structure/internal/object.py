@@ -2527,14 +2527,6 @@ class Internal:
                     if het_data_coll[j][2] != het_data[index][i][2]:
                         continue
 
-                    # Sanity checks.
-                    if het_data_coll[j][1] != het_data[index][i][1]:
-                        raise RelaxError("The " + repr(het_data[index][i][1]) + " residue name of hetrogen " + repr(het_data[index][i][0]) + " " + het_data[index][i][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][1]) + " name of the previous structures.")
-                    elif het_data_coll[j][3] != het_data[index][i][3]:
-                        raise RelaxError("The " + repr(het_data[index][i][3]) + " atoms of hetrogen " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " does not match the " + repr(het_data_coll[j][3]) + " of the previous structures.")
-                    elif het_data_coll[j][4] != het_data[index][i][4]:
-                        raise RelaxError("The atom counts " + repr(het_data[index][i][4]) +  " for the hetrogen residue " + repr(het_data_coll[j][0]) + " " + het_data_coll[j][1] + " of structure " + repr(index) + " do not match the counts " + repr(het_data_coll[j][4]) + " of the previous structures.")
-
                     # Change the flag.
                     found = True
 

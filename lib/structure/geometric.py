@@ -200,9 +200,9 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
     """
 
     # The atom numbers (and indices).
-    origin_num = mol.atom_num[-1]+1
-    atom_num = mol.atom_num[-1]+2
-    atom_neg_num = mol.atom_num[-1]+3
+    origin_num = len(mol.atom_num)+1
+    atom_num = len(mol.atom_num)+2
+    atom_neg_num = len(mol.atom_num)+3
 
     # The origin atom.
     mol.atom_add(pdb_record='HETATM', atom_num=origin_num, atom_name='R', res_name=res_name_vect, chain_id=chain_id, res_num=res_num, pos=origin, segment_id=None, element='C')

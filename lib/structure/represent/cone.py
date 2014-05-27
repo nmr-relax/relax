@@ -27,9 +27,10 @@ from numpy import array, dot, eye, float64, zeros
 from lib.geometry.rotations import two_vect_to_R
 from lib.structure.angles import angles_regular, angles_uniform
 from lib.structure.conversion import get_proton_name
+from lib.structure.geometric import generate_vector_dist
 
 
-def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, distribution='uniform', debug=False):
+def cone_edge(mol=None, cone_obj=None, res_name='CON', res_num=None, chain_id='', apex=None, axis=None, R=None, scale=None, inc=None, distribution='uniform', debug=False):
     """Add a residue to the atomic data representing a cone of the given angle.
 
     A series of vectors totalling the number of increments and starting at the origin are equally spaced around the cone axis.  The atoms representing neighbouring vectors will be directly bonded together.  This will generate an object representing the outer edge of a cone.
@@ -37,8 +38,8 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the phi_max() method for returning the phi value for the given theta.
-    @type cone:             class instance
+    @keyword cone_obj:      The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the phi_max() method for returning the phi value for the given theta.
+    @type cone_obj:         class instance
     @keyword res_name:      The residue name.
     @type res_name:         str
     @keyword res_num:       The residue number.
@@ -85,7 +86,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     edge_index = zeros(len(theta), int)
     for i in range(len(theta)):
         # Get the polar angle for the longitude edge atom.
-        phi_max[i] = cone.phi_max(theta[i])
+        phi_max[i] = cone_obj.phi_max(theta[i])
 
         # The index.
         for j in range(len(phi)):
@@ -158,7 +159,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
                     theta_max = theta[fwd_index] + 2*pi
                 else:
                     theta_max = theta[fwd_index]
-                theta_max = cone.theta_max(phi_val, theta_min=theta[i], theta_max=theta_max-1e-7)
+                theta_max = cone_obj.theta_max(phi_val, theta_min=theta[i], theta_max=theta_max-1e-7)
 
             # Back edge (skip when the latitude is phi max).
             rev_index = i-1
@@ -174,7 +175,7 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
 
                 # Find the theta value for this polar angle phi.
                 phi_val = phi[k]
-                theta_max = cone.theta_max(phi_val, theta_min=theta[i-1], theta_max=theta[i])
+                theta_max = cone_obj.theta_max(phi_val, theta_min=theta[i-1], theta_max=theta[i])
 
             # Skipping.
             if skip:
@@ -216,13 +217,13 @@ def cone_edge(mol=None, cone=None, res_name='CON', res_num=None, chain_id='', ap
     mol.atom_connect(index1=atom_num-2, index2=origin_atom)
 
 
-def cone(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', axis_flag=True):
+def cone(mol=None, cone_obj=None, start_res=1, apex=None, axis=None, R=None, inc=None, scale=30.0, distribution='regular', axis_flag=True):
     """Create a structural representation of the given cone object.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
-    @type cone:             class instance
+    @keyword cone_obj:      The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi, the phi_max() method for returning the phi value for the given theta.
+    @type cone_obj:         class instance
     @keyword start_res:     The starting residue number.
     @type start_res:        str
     @keyword apex:          The apex of the cone.
@@ -266,22 +267,22 @@ def cone(mol=None, cone=None, start_res=1, apex=None, axis=None, R=None, inc=Non
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
     edge_start_atom = mol.atom_num[-1]+1
-    cone_edge(mol=mol, cone=cone, res_name='EDG', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
+    cone_edge(mol=mol, cone_obj=cone_obj, res_name='EDG', res_num=start_res+2, apex=apex, R=R, scale=scale, inc=inc, distribution=distribution)
 
     # Generate the cone cap, and stitch it to the cone edge.
     print("\nGenerating the cone cap.")
     cone_start_atom = mol.atom_num[-1]+1
-    generate_vector_dist(mol=mol, res_name='CON', res_num=start_res+3, centre=apex, R=R, limit_check=cone.limit_check, scale=scale, inc=inc, distribution=distribution)
-    stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc, distribution=distribution)
+    generate_vector_dist(mol=mol, res_name='CON', res_num=start_res+3, centre=apex, R=R, limit_check=cone_obj.limit_check, scale=scale, inc=inc, distribution=distribution)
+    stitch_cone_to_edge(mol=mol, cone_obj=cone_obj, dome_start=cone_start_atom, edge_start=edge_start_atom+1, scale=scale, inc=inc, distribution=distribution)
 
 
-def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_start=None, scale=1.0, inc=None, distribution='uniform', debug=False):
+def stitch_cone_to_edge(mol=None, cone_obj=None, chain_id='', dome_start=None, edge_start=None, scale=1.0, inc=None, distribution='uniform', debug=False):
     """Function for stitching the cone dome to its edge, in the PDB representations.
 
     @keyword mol:           The molecule container.
     @type mol:              MolContainer instance
-    @keyword cone:          The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi.
-    @type cone:             class instance
+    @keyword cone_obj:      The cone object.  This should provide the limit_check() method with determines the limits of the distribution accepting two arguments, the polar angle phi and the azimuthal angle theta, and return True if the point is in the limits or False if outside.  It should also provide the theta_max() method for returning the theta value for the given phi.
+    @type cone_obj:         class instance
     @keyword chain_id:      The chain identifier.
     @type chain_id:         str
     @keyword dome_start:    The starting atom number of the cone dome residue.
@@ -307,7 +308,7 @@ def stitch_cone_to_edge(mol=None, cone=None, chain_id='', dome_start=None, edge_
     edge_index = zeros(len(theta), int)
     for i in range(len(theta)):
         # Get the polar angle for the longitude edge atom.
-        phi_max[i] = cone.phi_max(theta[i])
+        phi_max[i] = cone_obj.phi_max(theta[i])
 
         # The index.
         for j in range(len(phi)):
