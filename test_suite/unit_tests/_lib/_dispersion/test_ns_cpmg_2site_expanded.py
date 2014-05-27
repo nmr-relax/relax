@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, zeros
+from numpy import array, float64, int16, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -86,6 +86,9 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         # Exchange rates.
         k_BA = pA * kex
         k_AB = pB * kex
+
+        # Calculate spin Larmor frequencies in 2pi.
+        frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
         dw_frq = dw * frqs / 1.e6
