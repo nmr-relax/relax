@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -65,6 +65,10 @@ def closest_point_ax(line_pt=None, axis=None, point=None):
     @return:            The position on the line closest to the point.
     @rtype:             numpy rank-1 array
     """
+
+    # Check if the two points are the same, returning the point to avoid NaNs.
+    if norm(line_pt - point) < 1e-6:
+        return point
 
     # The hypotenuse.
     hypo = point - line_pt
