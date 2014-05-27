@@ -124,7 +124,7 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if numer == 0.0:
-        return array([r1rho_prime]*num_points)
+        return R1_cos_theta2 + R1rho_prime_sin_theta2
 
     # Denominator.
     denom = waeff2 * wbeff2 / weff2 + kex2
