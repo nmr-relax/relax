@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import arctan2, array, cos, float64, int16, pi, sin, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -70,14 +70,17 @@ class Test_tp02(TestCase):
         # Calculate the R1rho values.
         R1rho = r1rho_TP02(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
 
+        # Compare to function value.
+        Wa = self.omega                         # Larmor frequency [s^-1].
+        Wb = self.omega + dw_frq                # Larmor frequency [s^-1].
+        W = self.pA * Wa + pB * Wb              # Pop-averaged Larmor frequency [s^-1].
+        d = W - self.offset                     # Offset of spin-lock from pop-average.
+        theta = arctan2(spin_lock_omega1, d)    # The rotating frame flip angle.
+        r1rho_no_rex = self.r1 * cos(theta)**2 + self.r1rho_prime * sin(theta)**2
 
         # Check all R1rho values.
-        if self.kex > 1.e5:
-            for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1, 6)
-        else:
-            for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1rho_prime)
+        for i in range(self.num_points):
+            self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i])
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):
