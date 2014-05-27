@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import array, cos, float64, int16, pi, sin, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -67,14 +67,16 @@ class Test_dpl94(TestCase):
         # Calculate the R1rho values.
         R1rho = r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
 
+        # Compare to function value.
+        r1rho_no_rex = self.r1 * cos(self.theta)**2 + self.r1rho_prime * sin(self.theta)**2
 
         # Check all R1rho values.
         if self.kex > 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1rho_prime, 2)
+                self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i], 2)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1rho_prime)
+                self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i])
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):
