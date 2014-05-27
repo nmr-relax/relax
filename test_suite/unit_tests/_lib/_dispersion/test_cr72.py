@@ -35,7 +35,7 @@ class Test_cr72(TestCase):
 
         # Default parameter values.
         self.r20a = 2.0
-        self.r20b = 2.0
+        self.r20b = 4.0
         self.pA = 0.99
         self.dw = 2.0
         self.kex = 1000.0
