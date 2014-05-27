@@ -51,11 +51,12 @@ class Test_b14(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_B14(r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points)

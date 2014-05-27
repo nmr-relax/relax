@@ -39,7 +39,7 @@ class Test_tap03(TestCase):
 
         # The R1rho_prime parameter value (R1rho with no exchange).
         self.r1rho_prime = 5.0
-        # The chemical shifts in rad/s.  This is only used for off-resonance R1rho models. 
+        # The chemical shifts in rad/s.  This is only used for off-resonance R1rho models.
         self.omega = -35670.44192
         # The structure of spin-lock or hard pulse offsets in rad/s.
         self.offset = -35040.3526693
@@ -71,11 +71,20 @@ class Test_tap03(TestCase):
         R1rho = r1rho_TAP03(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
 
         # Compare to function value.
-        Wa = self.omega                         # Larmor frequency [s^-1].
-        Wb = self.omega + dw_frq                # Larmor frequency [s^-1].
-        W = self.pA * Wa + pB * Wb              # Pop-averaged Larmor frequency [s^-1].
-        d = W - self.offset                     # Offset of spin-lock from pop-average.
-        theta = arctan2(spin_lock_omega1, d)    # The rotating frame flip angle.
+        # Larmor frequency [s^-1].
+        Wa = self.omega
+
+        # Larmor frequency [s^-1].
+        Wb = self.omega + dw_frq
+
+        # Pop-averaged Larmor frequency [s^-1].
+        W = self.pA * Wa + pB * Wb
+
+        # Offset of spin-lock from pop-average.
+        d = W - self.offset
+
+        # The rotating frame flip angle.
+        theta = arctan2(spin_lock_omega1, d)
         r1rho_no_rex = self.r1 * cos(theta)**2 + self.r1rho_prime * sin(theta)**2
 
         # Check all R1rho values.
@@ -92,7 +101,7 @@ class Test_tap03(TestCase):
         @type dw:               float
         @keyword sfrq:          The spin Larmor frequencies in Hz.
         @type sfrq:             float
-        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz. 
+        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz.
         @type spin_lock_nu1:    float
         @return:                The parameters {pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared}.
         @rtype:                 tuple of float

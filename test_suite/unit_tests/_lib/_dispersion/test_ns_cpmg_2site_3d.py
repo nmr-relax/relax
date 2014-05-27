@@ -60,15 +60,16 @@ class Test_ns_cpmg_2site_3d(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq, M0  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq, M0=self.M0)
+        k_AB, k_BA, pB, dw_frq, M0 = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq, M0=self.M0)
 
         # Calculate the R2eff values.
         r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points, power=self.ncyc)
-                                       
+
         # Check all R2eff values.
         for i in range(self.num_points):
             self.assertAlmostEqual(self.R2eff[i], self.r20a)

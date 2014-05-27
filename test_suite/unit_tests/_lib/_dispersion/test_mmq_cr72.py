@@ -56,7 +56,7 @@ class Test_mmq_cr72(TestCase):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq, dwH_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, dwH=self.dwH, sfrq=self.sfrq)
+        k_AB, k_BA, pB, dw_frq, dwH_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, dwH=self.dwH, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_mmq_cr72(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points, power=self.ncyc)

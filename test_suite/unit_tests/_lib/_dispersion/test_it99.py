@@ -53,7 +53,7 @@ class Test_it99(TestCase):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        pB, dw_frq, tex  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        pB, dw_frq, tex = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)

@@ -34,9 +34,6 @@ class Test_m61b(TestCase):
     def setUp(self):
         """Set up for all unit tests."""
 
-        # Default parameter values.
-
-
         # The R1rho_prime parameter value (R1rho with no exchange).
         self.r1rho_prime = 2.5
         # Population of ground state.
@@ -86,7 +83,7 @@ class Test_m61b(TestCase):
         @type dw:               float
         @keyword sfrq:          The spin Larmor frequencies in Hz.
         @type sfrq:             float
-        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz. 
+        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz.
         @type spin_lock_nu1:    float
         @return:                The parameters {phi_ex_scaled, dw_frq, spin_lock_omega1_squared}.
         @rtype:                 tuple of float

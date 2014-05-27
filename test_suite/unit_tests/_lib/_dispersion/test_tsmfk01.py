@@ -49,11 +49,12 @@ class Test_tsmfk01(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_TSMFK01(r20a=self.r20a, dw=dw_frq, k_AB=k_AB, tcp=self.cpmg_frqs, num_points=self.num_points)

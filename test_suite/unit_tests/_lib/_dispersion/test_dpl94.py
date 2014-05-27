@@ -88,7 +88,7 @@ class Test_dpl94(TestCase):
         @type dw:               float
         @keyword sfrq:          The spin Larmor frequencies in Hz.
         @type sfrq:             float
-        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz. 
+        @keyword spin_lock_nu1: The spin-lock field strengths in Hertz.
         @type spin_lock_nu1:    float
         @return:                The parameters {phi_ex_scaled, k_BA}.
         @rtype:                 tuple of float
