@@ -36,11 +36,12 @@ from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
 from lib.order import order_parameters
 from lib.structure.cones import Iso_cone, Pseudo_elliptic
+from lib.structure.geometric import generate_vector_residues
 from lib.structure.internal.object import Internal
+from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
 from pipe_control import pipes
-from pipe_control.structure import geometric
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, translation_fixed
 from specific_analyses.frame_order.parameters import update_model
@@ -148,7 +149,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     @type inc:              int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
-    @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
+    @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.  This is ignored for the rotor models.
     @type neg_cone:         bool
     """
 
@@ -169,9 +170,13 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     structure = Internal()
 
     # Create model for the positive and negative images.
+    if cdp.model in ['rotor', 'free rotor']:
+        neg_cone = False
     model = structure.add_model(model=1)
+    model_num = 1
     if neg_cone:
         model_neg = structure.add_model(model=2)
+        model_num = 2
 
     # The pivot point.
     pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
@@ -185,7 +190,9 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
             rotor_angle = cdp.cone_sigma_max
 
         # Get the CoM of the entire molecule to use as the centre of the rotor.
-        com = pipe_centre_of_mass(verbosity=0)
+        com = pivot
+        if cdp.model in ['rotor', 'free rotor']:
+            com = pipe_centre_of_mass(verbosity=0)
 
         # Generate the rotor axis.
         if cdp.model in ['rotor']:
@@ -195,15 +202,14 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         else:
             axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
 
-        # Add the rotor object to the structure as a new molecule.
-        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=2e-9, blade_length=5e-10, staggered=False)
+        # The size of the rotor, taking the 30 Angstrom cone representation into account.
+        if cdp.model in ['rotor', 'free rotor']:
+            span = 20e-10
+        else:
+            span = 35e-10
 
-    # FIXME:  Temporary write out and exit.
-    print("\nGenerating the PDB file.")
-    pdb_file = open_write_file(file, dir, force=force)
-    structure.write_pdb(pdb_file)
-    pdb_file.close()
-    return
+        # Add the rotor object to the structure as a new molecule.
+        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=span, blade_length=5e-10, staggered=True)
 
     # Create the molecule.
     structure.add_molecule(name='rest')
@@ -254,11 +260,11 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
-        res_num = geometric.generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
+        res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
 
         # The negative.
         if neg_cone:
-            res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
 
     # The full axis system.
     else:
@@ -303,9 +309,9 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
                 axis_sim_neg = axes_sim_neg[:,:, j]
 
             # The vectors.
-            res_num = geometric.generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
             if neg_cone:
-                res_num = geometric.generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
 
 
     # The cone object.
@@ -326,7 +332,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
 
         # The pseudo-ellipse cone object.
         if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
-            cone = Pseudo_elliptic(cdp.cone_theta_x, cdp.cone_theta_y)
+            cone_obj = Pseudo_elliptic(cdp.cone_theta_x, cdp.cone_theta_y)
 
         # The isotropic cone object.
         else:
@@ -337,14 +343,14 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
                 cone_theta = order_parameters.iso_cone_S_to_theta(cdp.cone_s1)
 
             # The object.
-            cone = Iso_cone(cone_theta)
+            cone_obj = Iso_cone(cone_theta)
 
         # Create the positive and negative cones.
-        geometric.create_cone_pdb(mol=mol, cone=cone, start_res=mol.res_num[-1]+1, apex=pivot, R=R_pos, inc=inc, distribution='regular', axis_flag=False)
+        cone(mol=mol, cone_obj=cone_obj, start_res=mol.res_num[-1]+1, apex=pivot, R=R_pos, inc=inc, distribution='regular', axis_flag=False)
 
         # The negative.
         if neg_cone:
-            geometric.create_cone_pdb(mol=mol_neg, cone=cone, start_res=mol_neg.res_num[-1]+1, apex=pivot, R=R_neg, inc=inc, distribution='regular', axis_flag=False)
+            cone(mol=mol_neg, cone_obj=cone_obj, start_res=mol_neg.res_num[-1]+1, apex=pivot, R=R_neg, inc=inc, distribution='regular', axis_flag=False)
 
 
     # Create the PDB file.
