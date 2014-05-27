@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -19,17 +19,22 @@
 #                                                                             #
 ###############################################################################
 
-# Package docstring.
-"""The relax-lib structure package - a library of functions handling structural information."""
 
-__all__ = [
-    'angles',
-    'cones',
-    'conversion',
-    'geometric',
-    'mass',
-    'pdb_read',
-    'pdb_write',
-    'statistics',
-    'superimpose'
-]
+def get_proton_name(atom_num):
+    """Return a valid PDB atom name of <4 characters.
+
+    @param atom_num:    The number of the atom.
+    @type atom_num:     int
+    @return:            The atom name to use in the PDB.
+    @rtype:             str
+    """
+
+    # Init the proton first letters and the atom number folding limits.
+    names = ['H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']
+    lims = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+
+    # Loop over the proton names.
+    for i in range(len(names)):
+        # In the bounds.
+        if atom_num >= lims[i] and atom_num < lims[i+1]:
+            return names[i] + repr(atom_num - lims[i])

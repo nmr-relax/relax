@@ -23,70 +23,9 @@
 from math import cos, pi, sin
 from numpy import arccos, array, dot, eye, float64, zeros
 
-
-def angles_regular(inc=None):
-    """Determine the spherical angles for a regular sphere point distribution.
-
-    @keyword inc:   The number of increments in the distribution.
-    @type inc:      int
-    @return:        The phi angle array and the theta angle array.
-    @rtype:         array of float, array of float
-    """
-
-    # Generate the increment values of u.
-    u = zeros(inc, float64)
-    val = 1.0 / float(inc)
-    for i in range(inc):
-        u[i] = float(i) * val
-
-    # Generate the increment values of v.
-    v = zeros(inc/2+1, float64)
-    val = 1.0 / float(inc/2)
-    for i in range(int(inc/2+1)):
-        v[i] = float(i) * val
-
-    # Generate the distribution of spherical angles theta.
-    theta = 2.0 * pi * u
-
-    # Generate the distribution of spherical angles phi (from bottom to top).
-    phi = zeros(len(v), float64)
-    for i in range(len(v)):
-        phi[len(v)-1-i] = pi * v[i]
-
-    # Return the angle arrays.
-    return phi, theta
-
-
-def angles_uniform(inc=None):
-    """Determine the spherical angles for a uniform sphere point distribution.
-
-    @keyword inc:   The number of increments in the distribution.
-    @type inc:      int
-    @return:        The phi angle array and the theta angle array.
-    @rtype:         array of float, array of float
-    """
-
-    # Generate the increment values of u.
-    u = zeros(inc, float64)
-    val = 1.0 / float(inc)
-    for i in range(inc):
-        u[i] = float(i) * val
-
-    # Generate the increment values of v.
-    v = zeros(inc/2+2, float64)
-    val = 1.0 / float(inc/2)
-    for i in range(1, int(inc/2)+1):
-        v[i] = float(i-1) * val + val/2.0
-    v[-1] = 1.0
-
-    # Generate the distribution of spherical angles theta.
-    theta = 2.0 * pi * u
-
-    # Generate the distribution of spherical angles phi.
-    phi = arccos(2.0 * v - 1.0)
-
-    # Return the angle arrays.
-    return phi, theta
+# relax module imports.
+from lib.structure.angles import angles_regular, angles_uniform
+from lib.structure.conversion import get_proton_name
 
 
 def generate_vector_dist(mol=None, res_name=None, res_num=None, chain_id='', centre=zeros(3, float64), R=eye(3), warp=eye(3), limit_check=None, scale=1.0, inc=20, distribution='uniform', debug=False):
@@ -305,26 +244,6 @@ def generate_vector_residues(mol=None, vector=None, atom_name=None, res_name_vec
 
     # Return the new residue number.
     return res_num
-
-
-def get_proton_name(atom_num):
-    """Return a valid PDB atom name of <4 characters.
-
-    @param atom_num:    The number of the atom.
-    @type atom_num:     int
-    @return:            The atom name to use in the PDB.
-    @rtype:             str
-    """
-
-    # Init the proton first letters and the atom number folding limits.
-    names = ['H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q']
-    lims = [0, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
-
-    # Loop over the proton names.
-    for i in range(len(names)):
-        # In the bounds.
-        if atom_num >= lims[i] and atom_num < lims[i+1]:
-            return names[i] + repr(atom_num - lims[i])
 
 
 def vect_dist_spherical_angles(inc=20, distribution='uniform'):
