@@ -104,10 +104,11 @@ class Test_mmq_cr72(TestCase):
 
 
     def test_mmq_cr72_no_rex1(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0."""
+        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0 and dwH = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
+        self.dwH = 0.0
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
@@ -134,21 +135,23 @@ class Test_mmq_cr72(TestCase):
 
 
     def test_mmq_cr72_no_rex4(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0 and pA = 1.0."""
+        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0, dwH = 0.0 and pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
         self.dw = 0.0
+        self.dwH = 0.0
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
 
 
     def test_mmq_cr72_no_rex5(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0 and kex = 0.0."""
+        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0, dwH = 0.0 and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
+        self.dwH = 0.0
         self.kex = 0.0
 
         # Calculate and check the R2eff values.
@@ -167,10 +170,12 @@ class Test_mmq_cr72(TestCase):
 
 
     def test_mmq_cr72_no_rex7(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
+        """Test the r2eff_mmq_cr72() function for no exchange when dw = 0.0, dwH = 0.0, pA = 1.0, and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
+        self.dwH = 0.0
+        self.pA = 1.0
         self.kex = 0.0
 
         # Calculate and check the R2eff values.
@@ -187,11 +192,3 @@ class Test_mmq_cr72(TestCase):
         self.calc_r2eff()
 
 
-    def test_mmq_cr72_no_rex9(self):
-        """Test the r2eff_mmq_cr72() function for no exchange when dwH = 0.0."""
-
-        # Parameter reset.
-        self.dwH = 0.0
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()
