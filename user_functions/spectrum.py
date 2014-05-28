@@ -37,6 +37,7 @@ from pipe_control import spectrum
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_SPECTRUM_PEAKLIST
 
 
 # The user function class.
@@ -222,6 +223,7 @@ uf.add_keyarg(
     arg_type = "file sel multi",
     desc_short = "file name(s)",
     desc = "The name of the file or the list of files containing the intensity data.",
+    wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -376,6 +378,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the intensity data.",
+    wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(

@@ -46,6 +46,14 @@ WILDCARD_RELAX_SAVE = \
     "Uncompressed relax state files (*.*)|*.*"
 WILDCARD_RELAX_SCRIPT = "relax scripts (*.py)|*.py;*.PY"
 
+# Spectral data.
+WILDCARD_SPECTRUM_PEAKLIST = \
+    "Sparky peak lists (*.list)|*.list;*.LIST|"+\
+    "XEasy peak lists (*.text)|*.text;*.TEXT|"+\
+    "NMRView peak lists (*.xpk)|*.xpk;*.XPK|"+\
+    "NMRPipe seriesTab peak lists (*.ser)|*.ser;*.SER|"+\
+    "All files (*)|*"
+
 # 3D structure related wildcards.
 WILDCARD_STRUCT_GAUSSIAN_ALL = \
     "Gaussian log files (*.log)|*.log;*.LOG|"+\
