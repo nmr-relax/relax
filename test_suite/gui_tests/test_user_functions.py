@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,16 +37,33 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class User_functions(GuiTestCase):
     """Class for testing special features of the user function GUI windows."""
 
-    def test_structure_pdb_read(self):
-        """Test the full operation of the structure.read_pdb user function GUI window."""
+    def exec_uf_pipe_create(self, pipe_name=None, pipe_type='mf'):
+        """Execute the pipe.create user function via the GUI user function window.
 
-        # Open the pipe.create user function window, set the args and execute.
+        @keyword pipe_name:     The pipe_name argument of the pipe.create user function.
+        @type pipe_name:        str
+        @keyword pipe_type:     The pipe_type argument of the pipe.create user function.
+        @type pipe_type:        str
+        """
+
+        # Open the pipe.create user function window.
         uf = uf_store['pipe.create']
         uf._sync = True
         uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('PDB reading test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
+
+        # Set the arguments.
+        uf.page.SetValue('pipe_name', str_to_gui(pipe_name))
+        uf.page.SetValue('pipe_type', str_to_gui(pipe_type))
+
+        # Execute.
         uf.wizard._go_next(None)
+
+
+    def test_structure_pdb_read(self):
+        """Test the full operation of the structure.read_pdb user function GUI window."""
+
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='PDB reading test')
 
         # Open the structure.read_pdb user function window.
         uf = uf_store['structure.read_pdb']
@@ -90,13 +107,8 @@ class User_functions(GuiTestCase):
     def test_structure_rotate(self):
         """Test the operation of the structure.rotate user function GUI window."""
 
-        # Open the pipe.create user function window, set the args and execute.
-        uf = uf_store['pipe.create']
-        uf._sync = True
-        uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('PDB rotation test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
-        uf.wizard._go_next(None)
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='PDB rotation test')
 
         # Open the structure.read_pdb user function window.
         uf = uf_store['structure.read_pdb']
@@ -186,13 +198,8 @@ class User_functions(GuiTestCase):
     def test_value_set(self):
         """Test the full operation of the value.set user function GUI window."""
 
-        # Open the pipe.create user function window, set the args and execute.
-        uf = uf_store['pipe.create']
-        uf._sync = True
-        uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('value.set user function test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
-        uf.wizard._go_next(None)
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='value.set user function test')
 
         # Create a spin to add data to.
         uf = uf_store['spin.create']
