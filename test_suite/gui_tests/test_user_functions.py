@@ -182,7 +182,7 @@ class User_functions(GuiTestCase):
         self.assertEqual(file[1], 'test2')
 
         # Set the file to a number of invalid values, checking that they are ignored.
-        for val in ["['1', '2', '3'", "['1'", "[['1'], ['2'], ['1', '2', '3']]"]:
+        for val in ["['1', '2', '3'", "['1'"]:
             uf.page.uf_args['file'].SetValue(str_to_gui(val))
             uf.page.uf_args['file'].selection_win_show()
             uf.page.uf_args['file'].selection_win_data()
