@@ -135,8 +135,9 @@ class User_functions(GuiTestCase):
         uf.create_wizard(parent=self.app.gui)
 
         # Change the rotation matrix without changing anything.
-        uf.page.uf_args['R'].open_dialog(None)
+        uf.page.uf_args['R'].selection_win_show()
         uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        uf.page.uf_args['R'].selection_win_data()
 
         # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
