@@ -40,7 +40,7 @@ from status import Status; status = Status()
 class File_element:
     """A single file element for the multiple file input GUI element."""
 
-    def __init__(self, default='', parent=None, index=None, wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, padding=3, height_spacer=1, width_spacer=2, height_element=27, preview=True):
+    def __init__(self, default='', parent=None, index=None, wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, padding=3, height_spacer=1, width_spacer=2, height_element=27, preview=True, can_be_none=False):
         """Set up the file GUI element.
 
         @keyword default:           The default value of the element.
@@ -63,6 +63,8 @@ class File_element:
         @type height_element:       int
         @keyword preview:           A flag which if true will allow the file to be previewed.
         @type preview:              bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Store the arguments.
@@ -70,6 +72,7 @@ class File_element:
         self.parent = parent
         self.wildcard = wildcard
         self.style = style
+        self.can_be_none = can_be_none
 
         # A vertical sizer for the two elements of the file selection GUI elements and a spacer element.
         self.sizer = wx.BoxSizer(wx.VERTICAL)
@@ -348,7 +351,7 @@ class Selector_file:
 class Selector_file_multiple:
     """Wizard GUI element for selecting files."""
 
-    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, preview=True, read_only=False):
+    def __init__(self, name=None, default=None, parent=None, sizer=None, desc=None, message='File selection', wildcard=wx.FileSelectorDefaultWildcardStr, style=wx.FD_DEFAULT_STYLE, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, preview=True, read_only=False, can_be_none=False):
         """Build the file selection element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -381,11 +384,14 @@ class Selector_file_multiple:
         @type preview:              bool
         @keyword read_only:         A flag which if True means that the text of the element cannot be edited.
         @type read_only:            bool
+        @keyword can_be_none:       A flag which specifies if the element is allowed to have the None value.
+        @type can_be_none:          bool
         """
 
         # Store the args.
         self.name = name
         self.parent = parent
+        self.can_be_none = can_be_none
 
         # Argument translation.
         if default == None:
@@ -485,7 +491,7 @@ class Selector_file_multiple:
                 value = gui_to_list(value)
 
             # Set the value to None or an empty sequence.
-            except RelaxError:
+            except:
                 if self.can_be_none:
                     value = None
                 else:
@@ -678,9 +684,7 @@ class Selector_file_window(wx.Dialog):
             return
 
         # Single values.
-        try:
-            len(values)
-        except TypeError:
+        if isinstance(values, str):
             values = [values]
 
         # Reset the elements. 
