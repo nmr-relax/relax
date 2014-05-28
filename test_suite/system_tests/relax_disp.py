@@ -1316,7 +1316,7 @@ class Relax_disp(SystemTestCase):
 
         # The maximum number of iterations.
         # The default value is 1e7.
-        ds.set_max_iter = 10000
+        ds.set_max_iter = 1000
 
         # The verbosity level.
         ds.verbosity = 1
