@@ -129,8 +129,6 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mx = Mint[1] / pA
         if Mx <= 0.0 or isNaN(Mx):
-            for i in range(num_points):
-                back_calc[i] = r20a
-            return
+            back_calc[i] = r20a
         else:
             back_calc[i]= -inv_tcpmg * log(Mx)
