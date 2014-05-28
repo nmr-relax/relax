@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,6 +34,7 @@ else:
 from pipe_control.state import load_state, save_state
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_RELAX_SAVE
 
 
 # The user function class.
@@ -54,7 +55,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, of a saved program state.",
-    wiz_filesel_wildcard = "relax state files (*.bz2)|*.bz2|relax state files (*.gz)|*.gz|relax state files (*.*)|*.*",
+    wiz_filesel_wildcard = WILDCARD_RELAX_SAVE,
     wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
@@ -105,7 +106,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The file name, which can be a string or a file descriptor object, to save the current program state in.",
-    wiz_filesel_wildcard = "relax state files (*.bz2)|*.bz2|relax state files (*.gz)|*.gz|relax state files (*.*)|*.*",
+    wiz_filesel_wildcard = WILDCARD_RELAX_SAVE,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(

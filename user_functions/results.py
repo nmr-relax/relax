@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -34,6 +34,7 @@ else:
 from pipe_control import results
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_RELAX_RESULT
 
 
 # The user function class.
@@ -69,7 +70,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to read results from.",
-    wiz_filesel_wildcard = "relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*",
+    wiz_filesel_wildcard = WILDCARD_RELAX_RESULT,
     wiz_filesel_style = FD_OPEN,
     wiz_filesel_preview = False
 )
@@ -102,7 +103,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file to output results to.  The default is 'results'.  Optionally this can be a file object, or any object with a write() method.",
-    wiz_filesel_wildcard = "relax results files (*.bz2)|*.bz2|relax results files (*.gz)|*.gz|relax results files (*.*)|*.*",
+    wiz_filesel_wildcard = WILDCARD_RELAX_RESULT,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(

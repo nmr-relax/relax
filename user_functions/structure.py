@@ -39,6 +39,7 @@ import pipe_control.structure.main
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_STRUCT_GAUSSIAN_ALL, WILDCARD_STRUCT_PDB_ALL, WILDCARD_STRUCT_XYZ_ALL
 
 
 # The user function class.
@@ -191,7 +192,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -245,7 +246,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -346,7 +347,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -635,7 +636,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the Gaussian log file.",
-    wiz_filesel_wildcard = "Gaussian log files (*.log)|*.log;*.log.gz;*.log.bz2",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_GAUSSIAN_ALL,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -694,7 +695,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -796,7 +797,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the XYZ file.",
-    wiz_filesel_wildcard = "XYZ files (*.xyz)|*.xyz;*.XYZ",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_XYZ_ALL,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -1058,7 +1059,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -1109,7 +1110,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(

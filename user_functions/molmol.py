@@ -38,6 +38,8 @@ from pipe_control import molmol
 from specific_analyses.model_free.uf import classic_style_doc
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_MOLMOL_MACRO, WILDCARD_STRUCT_PDB
+
 
 
 # The user function class.
@@ -178,7 +180,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "Molmol macro file",
     desc = "The name of the Molmol macro file.",
-    wiz_filesel_wildcard = "Molmol macro files (*.mac)|*.mac;*.MAC",
+    wiz_filesel_wildcard = WILDCARD_MOLMOL_MACRO,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -271,7 +273,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The optional name of the file.",
-    wiz_filesel_wildcard = "Molmol macro files (*.mac)|*.mac;*.MAC",
+    wiz_filesel_wildcard = WILDCARD_MOLMOL_MACRO,
     wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
@@ -345,7 +347,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file containing the tensor geometric object.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB,
     wiz_filesel_style = FD_OPEN
 )
 # Description.
