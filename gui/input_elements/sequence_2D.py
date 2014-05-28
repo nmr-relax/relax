@@ -99,7 +99,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_min=combo_list_min, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_min=combo_list_min, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
 
 
     def open_dialog(self, event):
@@ -170,7 +170,7 @@ class Sequence_window_2D(Sequence_window):
             self.offset = 1
 
         # Initialise the base class.
-        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim)
+        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim, titles=self.titles)
 
 
     def GetValue(self):
@@ -270,7 +270,7 @@ class Sequence_window_2D(Sequence_window):
         # Add a column for the indices.
         index_width = 0
         if self.variable_length:
-            index_width = 50
+            index_width = 70
             self.sequence.InsertColumn(0, "Number")
             self.sequence.SetColumnWidth(0, index_width)
 
@@ -283,6 +283,6 @@ class Sequence_window_2D(Sequence_window):
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
         # The fixed dimension sequence - add all the rows needed.
-        if self.dim[0] != None:
+        if not self.variable_length:
             for i in range(self.dim[0]):
                 self.add_element(None)
