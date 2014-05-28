@@ -146,12 +146,10 @@ class User_functions(GuiTestCase):
         uf._sync = True
         uf.create_wizard(parent=self.app.gui)
 
-        # Change the rotation matrix without changing anything.
+        # Change the rotation matrix in the Sequence_2D window, without changing anything, then check it.
         uf.page.uf_args['R'].selection_win_show()
         uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
-
-        # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
         self.assertEqual(len(R), 3)
@@ -166,26 +164,32 @@ class User_functions(GuiTestCase):
         self.assertEqual(R[2][1], 0)
         self.assertEqual(R[2][2], 1)
 
-        # Set the rotation matrix to nothing, and check what happens.
+        # Set the rotation matrix to nothing in the wizard, open the Sequence_2D window, set a value, close the window, and check what happens.
         uf.page.uf_args['R'].SetValue(str_to_gui(''))
         uf.page.uf_args['R'].selection_win_show()
         uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
-
-        # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
         self.assertEqual(len(R), 3)
         self.assertEqual(len(R[0]), 3)
-        self.assertEqual(R[0][0], 0)
-        self.assertEqual(R[0][1], 0)
-        self.assertEqual(R[0][2], 0)
-        self.assertEqual(R[1][0], 0)
+        self.assertEqual(R[0][0], None)
+        self.assertEqual(R[0][1], None)
+        self.assertEqual(R[0][2], None)
+        self.assertEqual(R[1][0], None)
         self.assertEqual(R[1][1], 2)
-        self.assertEqual(R[1][2], 0)
-        self.assertEqual(R[2][0], 0)
-        self.assertEqual(R[2][1], 0)
-        self.assertEqual(R[2][2], 0)
+        self.assertEqual(R[1][2], None)
+        self.assertEqual(R[2][0], None)
+        self.assertEqual(R[2][1], None)
+        self.assertEqual(R[2][2], None)
+
+        # Set the rotation matrix to nothing in the wizard, open the Sequence_2D window, close the window, and check that None comes back.
+        uf.page.uf_args['R'].SetValue(str_to_gui(''))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        R = uf.page.uf_args['R'].GetValue()
+        print("Rotation matrix:\n%s" % R)
+        self.assertEqual(R, None)
 
         # Check the structural data.
         self.assert_(hasattr(cdp, 'structure'))
