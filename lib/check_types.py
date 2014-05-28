@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -146,6 +146,44 @@ def is_int(num):
 
     # Not a int.
     return False
+
+
+def is_list(val):
+    """Check if the given value is a Python list.
+
+    @param val: The value to check.
+    @type val:  anything.
+    @return:    True if the value is a list, False otherwise.
+    @rtype:     bool
+    """
+
+    # Not a list.
+    if not isinstance(val, list):
+        return False
+
+    # Must be a list.
+    return True
+
+
+def is_list_of_lists(val):
+    """Check if the given value is a Python list of lists.
+
+    @param val: The value to check.
+    @type val:  anything.
+    @return:    True if the value is a list of lists, False otherwise.
+    @rtype:     bool
+    """
+
+    # First dimension is not a list.
+    if not isinstance(val, list):
+        return False
+
+    # Second dimension is not a list.
+    if not isinstance(val[0], list):
+        return False
+
+    # Must be a list of lists.
+    return True
 
 
 def is_num(num):
