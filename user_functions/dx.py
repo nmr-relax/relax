@@ -177,7 +177,7 @@ uf.add_keyarg(
     desc_short = "highlight points in the space",
     desc = "This argument allows specific points in the optimisation space to be displayed as coloured spheres.  This can be used to highlight a minimum or other any other feature of the space.  Either a single point or a list of points can be supplied.  Each point is a list of floating point numbers in the form [x, y, z]",
     can_be_none = True,
-    dim = (None, 3)
+    dim = (None, 4)
 )
 uf.add_keyarg(
     name = "point_file",
