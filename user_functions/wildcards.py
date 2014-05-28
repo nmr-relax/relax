@@ -27,7 +27,7 @@
 WILDCARD_GRACE_ALL = \
     "Grace files (*.agr)|*.agr;*.AGR|"+\
     "Gzipped Grace files (*.agr.gz)|*.agr.gz;*.AGR.gz;*.AGR.GZ|"+\
-    "All files (*.*)|*.*"
+    "All files (*)|*"
 
 # MOLMOL wildcards.
 WILDCARD_MOLMOL_MACRO = "Molmol macro files (*.pml)|*.pml;*.PML"
@@ -39,11 +39,11 @@ WILDCARD_PYMOL_MACRO = "PyMOL macro files (*.pml)|*.pml;*.PML"
 WILDCARD_RELAX_RESULT = \
     "Bzipped relax results files (*.bz2)|*.bz2;*.BZ2|"+\
     "Gzipped relax results files (*.gz)|*.gz;*.GZ|"+\
-    "Uncompressed relax results files (*.*)|*.*"
+    "Uncompressed relax results files (*)|*"
 WILDCARD_RELAX_SAVE = \
     "Bzipped relax state files (*.bz2)|*.bz2;*.BZ2|"+\
     "Gzipped relax state files (*.gz)|*.gz;*.GZ|"+\
-    "Uncompressed relax state files (*.*)|*.*"
+    "Uncompressed relax state files (*)|*"
 WILDCARD_RELAX_SCRIPT = "relax scripts (*.py)|*.py;*.PY"
 
 # Spectral data.
@@ -59,17 +59,17 @@ WILDCARD_STRUCT_GAUSSIAN_ALL = \
     "Gaussian log files (*.log)|*.log;*.LOG|"+\
     "Bzipped Gaussian log files (*.log.bz2)|*.log.bz2;*.LOG.bz2;*.LOG.BZ2|"+\
     "Gzipped Gaussian log files (*.log.gz)|*.log.gz;*.LOG.gz;*.LOG.GZ|"+\
-    "All files (*.*)|*.*"
+    "All files (*)|*"
 WILDCARD_STRUCT_PDB = \
     "PDB files (*.pdb)|*.pdb;*.PDB|"+\
-    "All files (*.*)|*.*"
+    "All files (*)|*"
 WILDCARD_STRUCT_PDB_ALL = \
     "PDB files (*.pdb)|*.pdb;*.PDB|"+\
     "Bzipped PDB files (*.pdb.bz2)|*.pdb.bz2;*.PDB.bz2;*.PDB.BZ2|"+\
     "Gzipped PDB files (*.pdb.gz)|*.pdb.gz;*.PDB.gz;*.PDB.GZ|"+\
-    "All files (*.*)|*.*"
+    "All files (*)|*"
 WILDCARD_STRUCT_XYZ_ALL = \
     "XYZ files (*.xyz)|*.xyz;*.XYZ|"+\
     "Bzipped XYZ files (*.xyz.bz2)|*.xyz.bz2;*.XYZ.bz2;*.XYZ.BZ2|"+\
     "Gzipped XYZ files (*.xyz.gz)|*.xyz.gz;*.XYZ.gz;*.XYZ.GZ|"+\
-    "All files (*.*)|*.*"
+    "All files (*)|*"
