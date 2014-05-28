@@ -61,7 +61,7 @@ class Relax_disp_params(Param_list):
         self._add('r2', scope='spin', default=10.0, desc='The transversal relaxation rate', set='params', py_type=dict, grace_string='\\qR\\s2\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self._add('r2a', scope='spin', default=10.0, desc='The transversal relaxation rate for state A in the absence of exchange', set='params', py_type=dict, grace_string='\\qR\\s2,A\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
         self._add('r2b', scope='spin', default=10.0, desc='The transversal relaxation rate for state B in the absence of exchange', set='params', py_type=dict, grace_string='\\qR\\s2,B\\N\\Q (rad.s\\S-1\\N)', err=True, sim=True)
-        self._add('pA', scope='spin', default=0.90, grid_lower=0.5, desc='The population for state A', set='params', py_type=float, grace_string='\\qp\\sA\\N\\Q', err=True, sim=True)
+        self._add('pA', scope='spin', default=0.90, desc='The population for state A', set='params', py_type=float, grace_string='\\qp\\sA\\N\\Q', err=True, sim=True)
         self._add('pB', scope='spin', default=0.5, desc='The population for state B', set='params', py_type=float, grace_string='\\qp\\sB\\N\\Q', err=True, sim=True)
         self._add('pC', scope='spin', default=0.5, desc='The population for state C', set='params', py_type=float, grace_string='\\qp\\sC\\N\\Q', err=True, sim=True)
         self._add('phi_ex', scope='spin', default=5.0, desc='The phi_ex = pA.pB.dw**2 value (ppm^2)', set='params', py_type=float, grace_string='\\xF\\B\\sex\\N = \\q p\\sA\\N.p\\sB\\N.\\xDw\\B\\S2\\N\\Q  (ppm\\S2\\N)', err=True, sim=True)
