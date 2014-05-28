@@ -632,13 +632,19 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
         # Unpack the point.
         theta, phi, sigma = points[i]
 
+        # Check the torsion angle first, for speed.
+        if sigma > sigma_max or sigma < -sigma_max:
+            continue
+
+        # As theta_x <= theta_y, check if theta is outside of the isotropic cone defined by theta_y to minimise calculations for speed.
+        if theta > theta_y:
+            continue
+
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse(phi, theta_x, theta_y)
 
         # Outside of the distribution, so skip the point.
         if theta > theta_max:
-            continue
-        if sigma > sigma_max or sigma < -sigma_max:
             continue
 
         # Calculate the PCSs for this state.
