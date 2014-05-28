@@ -439,7 +439,7 @@ class Dispersion:
                         aliased_dw = dw_frq
 
                     # Back calculate the R2eff values.
-                    self.back_calc[ei][si][mi][0] = r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=aliased_dw, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], num_points=self.num_disp_points[ei][si][mi][0])
+                    r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=aliased_dw, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):
