@@ -480,9 +480,12 @@ class Sequence_window(wx.Dialog):
             raise RelaxError("Unknown base data type '%s'." % value_type)
 
         # Variable length.
-        self.variable_length = False
-        if dim == None:
-            self.variable_length = True
+        if not hasattr(self, 'variable_length'):
+            self.variable_length = False
+            self.offset = 0
+            if dim == None:
+                self.variable_length = True
+                self.offset = 1
 
         # The title of the dialog.
         title = "Edit the %s values." % name

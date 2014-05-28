@@ -29,6 +29,7 @@ import wx.lib.mixins.listctrl
 
 # relax module imports.
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
+from gui.string_conv import int_to_gui
 from lib.check_types import is_list_of_lists
 from status import Status; status = Status()
 
@@ -163,8 +164,10 @@ class Sequence_window_2D(Sequence_window):
 
         # Variable length.
         self.variable_length = False
+        self.offset = 0
         if dim[0] == None:
             self.variable_length = True
+            self.offset = 1
 
         # Initialise the base class.
         Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim)
@@ -188,7 +191,7 @@ class Sequence_window_2D(Sequence_window):
             # Loop over the items.
             for j in range(self.dim[1]):
                 # The item.
-                item = self.sequence.GetItem(i, j)
+                item = self.sequence.GetItem(i, j+self.offset)
 
                 # Append the value.
                 try:
@@ -238,18 +241,14 @@ class Sequence_window_2D(Sequence_window):
 
         # Loop over the entries.
         for i in range(len(values)):
-            # Fixed dimension sequences - set the first value of the pre-created list.
-            if self.dim[0] != None:
-                self.sequence.SetStringItem(index=i, col=0, label=self.convert_to_gui(values[i][0]))
-
-            # Variable dimension sequences - append the first value to the end of the blank list.
-            else:
-                self.sequence.InsertStringItem(sys.maxint, self.convert_to_gui(values[i][0]))
+            # Append a row for variable dimension sequences (the first element already exists).
+            if self.variable_length and i != 0:
+                self.sequence.InsertStringItem(i, int_to_gui(i+1))
 
             # Loop over the values.
-            for j in range(1, self.dim[1]):
+            for j in range(self.dim[1]):
                 # Set the value.
-                self.sequence.SetStringItem(i, j, self.convert_to_gui(values[i][j]))
+                self.sequence.SetStringItem(i, j+self.offset, self.convert_to_gui(values[i][j]))
 
         # Refresh.
         self.Refresh()
@@ -268,10 +267,17 @@ class Sequence_window_2D(Sequence_window):
         # Set the column title.
         title = "%s%s" % (self.name[0].upper(), self.name[1:])
 
+        # Add a column for the indices.
+        index_width = 0
+        if self.variable_length:
+            index_width = 50
+            self.sequence.InsertColumn(0, "Number")
+            self.sequence.SetColumnWidth(0, index_width)
+
         # Add the columns.
         for i in range(self.dim[1]):
-            self.sequence.InsertColumn(i, self.titles[i])
-            self.sequence.SetColumnWidth(i, self.width/self.dim[1])
+            self.sequence.InsertColumn(i+self.offset, self.titles[i])
+            self.sequence.SetColumnWidth(i+self.offset, (self.width - index_width)/self.dim[1])
 
         # Add the table to the sizer.
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
