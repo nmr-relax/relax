@@ -77,7 +77,7 @@ class Relax_disp:
         @type mc_sim_all_models:    bool
         @keyword eliminate:         A flag which if True will enable the elimination of failed models and failed Monte Carlo simulations through the eliminate user function.
         @type eliminate:            bool
-        @keyword set_grid_r20:      A flag which if True will set the grid R20 values from the minimum R2eff values through the set_grid_r20_from_min_r2eff user function. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
+        @keyword set_grid_r20:      A flag which if True will set the grid R20 values from the minimum R2eff values through the r20_from_min_r2eff user function. This will speed up the grid search with a factor GRID_INC^(Nr_spec_freq). For a CPMG experiment with two fields and standard GRID_INC=21, the speed-up is a factor 441.
         @type set_grid_r20:         bool
         """
 
@@ -361,7 +361,7 @@ class Relax_disp:
 
         # Speed-up grid-search by using minium R2eff value.
         if self.set_grid_r20 and model != MODEL_R2EFF:
-            self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=True)
+            self.interpreter.relax_disp.r20_from_min_r2eff(force=True)
 
         # Use pre-run results as the optimisation starting point.
         if self.pre_run_dir:

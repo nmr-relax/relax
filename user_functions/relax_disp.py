@@ -39,7 +39,7 @@ from pipe_control import pipes, spectrum
 from pipe_control.mol_res_spin import get_spin_ids
 from specific_analyses.relax_disp.catia import catia_execute, catia_input
 from specific_analyses.relax_disp.cpmgfit import cpmgfit_execute, cpmgfit_input
-from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, set_grid_r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
+from specific_analyses.relax_disp.data import cpmg_setup, insignificance, plot_disp_curves, plot_exp_curves, r2eff_read, r2eff_read_spin, relax_time, set_exp_type, r20_from_min_r2eff, spin_lock_field, spin_lock_offset, write_disp_curves
 from specific_analyses.relax_disp.nessy import nessy_input
 from specific_analyses.relax_disp.parameters import copy
 from specific_analyses.relax_disp.sherekhan import sherekhan_input
@@ -922,8 +922,8 @@ uf.wizard_apply_button = False
 uf.wizard_image = ANALYSIS_IMAGE_PATH + 'relax_disp_200x200.png'
 
 
-# The relax_disp.set_grid_r20_from_min_r2eff user function.
-uf = uf_info.add_uf('relax_disp.set_grid_r20_from_min_r2eff')
+# The relax_disp.r20_from_min_r2eff user function.
+uf = uf_info.add_uf('relax_disp.r20_from_min_r2eff')
 uf.title = "Set the R20 parameter values to that of the minimum R2eff value."
 uf.title_short = "Set R20 from the minimum R2eff."
 uf.add_keyarg(
@@ -938,8 +938,8 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("Set the R20 parameter values to that of the minimum R2eff value.  This user function will look through all R2eff values per magnetic field strength, and find the minimum.  This minimum is a very good guess for the minimisation.")
 uf.desc[-1].add_paragraph("Instead of making the grid search find initial values of the R20 parameter, the minimum for the R2eff points are used instead.  For example for a two field CPMG experiment with model CR72, that would drop the number of uniform grid search points from 5D to 3D.  For standard 21 grid increments per dimension, it would make the grid search 441 times faster.")
 uf.desc[-1].add_paragraph("This is an experimental unpublished feature of the dispersion analysis.  If R20 << min(R2eff), the grid search will be performed in a region of the optimisation space quite distant from the true minimum.  If unsure, do not activate this option, and let the grid search find a better starting value.")
-uf.backend = set_grid_r20_from_min_r2eff
-uf.menu_text = "&set_grid_r20_from_min_r2eff"
+uf.backend = r20_from_min_r2eff
+uf.menu_text = "&r20_from_min_r2eff"
 uf.gui_icon = "relax.grid_search"
 uf.wizard_size = (800, 500)
 uf.wizard_apply_button = False

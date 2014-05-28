@@ -167,7 +167,7 @@ def cone_pdb(cone_type=None, scale=1.0, file=None, dir=None, force=False):
         angle = cdp.theta_diff_in_cone
     elif cone_type == 'diff on cone':
         angle = cdp.theta_diff_on_cone
-    cone = Iso_cone(angle)
+    cone_obj = Iso_cone(angle)
 
     # Create the structural object.
     structure = Internal()
@@ -191,14 +191,14 @@ def cone_pdb(cone_type=None, scale=1.0, file=None, dir=None, force=False):
     # Generate the cone outer edge.
     print("\nGenerating the cone outer edge.")
     cap_start_atom = mol.atom_num[-1]+1
-    cone_edge(mol=mol, cone=cone, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
+    cone_edge(mol=mol, cone_obj=cone_obj, res_name='CON', res_num=3, apex=cdp.pivot_point, R=R, scale=norm(cdp.pivot_CoM), inc=inc)
 
     # Generate the cone cap, and stitch it to the cone edge.
     if cone_type == 'diff in cone':
         print("\nGenerating the cone cap.")
         cone_start_atom = mol.atom_num[-1]+1
-        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
-        stitch_cone_to_edge(mol=mol, cone=cone, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
+        generate_vector_dist(mol=mol, res_name='CON', res_num=3, centre=cdp.pivot_point, R=R, limit_check=cone_obj.limit_check, scale=norm(cdp.pivot_CoM), inc=inc)
+        stitch_cone_to_edge(mol=mol, cone_obj=cone_obj, dome_start=cone_start_atom, edge_start=cap_start_atom+1, inc=inc)
 
     # Create the PDB file.
     print("\nGenerating the PDB file.")

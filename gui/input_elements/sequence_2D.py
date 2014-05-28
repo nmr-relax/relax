@@ -107,30 +107,29 @@ class Sequence_2D(Sequence):
         @type event:    wx event
         """
 
-        # Initialise the model selection window.
-        win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)
+        # Show the window.
+        self.selection_win_show()
 
-        # Set the model selector window selections.
-        win.SetValue(self.GetValue())
-
-        # Show the model selector window.
-        if status.show_gui:
-            win.ShowModal()
-            win.Close()
-
-        # Get the value.
-        value = win.GetValue()
-
-        # No sequence data.
-        if not len(value):
-            self.Clear()
-
-        # Set the values.
-        else:
-            self.SetValue(value)
+        # Extract the data from the selection window once closed.
+        self.selection_win_data()
 
         # Destroy the window.
-        del win
+        del self.sel_win
+
+
+    def selection_win_show(self):
+        """Show the selection window."""
+
+        # Initialise the window.
+        self.sel_win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)
+
+        # Set the values.
+        self.sel_win.SetValue(self.GetValue())
+
+        # Show the window.
+        if status.show_gui:
+            self.sel_win.ShowModal()
+            self.sel_win.Close()
 
 
 

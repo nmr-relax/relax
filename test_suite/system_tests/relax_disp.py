@@ -498,7 +498,7 @@ class Relax_disp(SystemTestCase):
         if GRID:
             # Set the R20 parameters in the default grid search using the minimum R2eff value.
             # This speeds it up considerably.
-            self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+            self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
             # Then do grid search.
             self.interpreter.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
@@ -683,7 +683,7 @@ class Relax_disp(SystemTestCase):
         if GRID:
             # Set the R20 parameters in the default grid search using the minimum R2eff value.
             # This speeds it up considerably.
-            self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+            self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
             # Then do grid search.
             self.interpreter.grid_search(lower=None, upper=None, inc=GRID, constraints=True, verbosity=1)
@@ -878,8 +878,8 @@ class Relax_disp(SystemTestCase):
         #ds.resdir = None
         ds.resdir = ds.tmpdir
 
-        # Do set_grid_r20_from_min_r2eff ?.
-        ds.set_grid_r20_from_min_r2eff = True
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
 
         # Remove insignificant level.
         ds.insignificance = 0.0
@@ -1017,8 +1017,8 @@ class Relax_disp(SystemTestCase):
         #ds.resdir = None
         ds.resdir = ds.tmpdir
 
-        # Do set_grid_r20_from_min_r2eff ?.
-        ds.set_grid_r20_from_min_r2eff = True
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
 
         # Remove insignificant level.
         ds.insignificance = 0.0
@@ -1159,8 +1159,8 @@ class Relax_disp(SystemTestCase):
         #ds.resdir = None
         ds.resdir = ds.tmpdir
 
-        # Do set_grid_r20_from_min_r2eff ?.
-        ds.set_grid_r20_from_min_r2eff = True
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
 
         # Remove insignificant level.
         ds.insignificance = 0.0
@@ -1298,8 +1298,8 @@ class Relax_disp(SystemTestCase):
         #ds.resdir = None
         ds.resdir = ds.tmpdir
 
-        # Do set_grid_r20_from_min_r2eff ?.
-        ds.set_grid_r20_from_min_r2eff = True
+        # Do r20_from_min_r2eff ?.
+        ds.r20_from_min_r2eff = True
 
         # Remove insignificant level.
         ds.insignificance = 0.0
@@ -4413,7 +4413,7 @@ class Relax_disp(SystemTestCase):
         self.assertEqual(cdp.mol[0].res[2].spin[0].ri_data['R2eff.600'], 7.2385)
 
 
-    def test_set_grid_r20_from_min_r2eff_cpmg(self):
+    def test_r20_from_min_r2eff_cpmg(self):
         """Test speeding up grid search. Support requst sr #3151 U{https://gna.org/support/index.php?3151}.
 
         User function to set the R20 parameters in the default grid search using the minimum R2eff value.
@@ -4448,7 +4448,7 @@ class Relax_disp(SystemTestCase):
         self.interpreter.relax_disp.select_model(model=MODEL)
 
         # Set the R20 parameters in the default grid search using the minimum R2eff value.
-        self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+        self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
         # Test result, for normal run.
         for spin, mol_name, resi, resn, spin_id in spin_loop(full_info=True, return_id=True, skip_desel=True):
@@ -4688,7 +4688,7 @@ class Relax_disp(SystemTestCase):
         clust_results = []
 
         # Set the R20 parameters in the default grid search using the minimum R2eff value.
-        self.interpreter.relax_disp.set_grid_r20_from_min_r2eff(force=False)
+        self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
 
         # Deselect insignificant spins.
         self.interpreter.relax_disp.insignificance(level=1.0)
