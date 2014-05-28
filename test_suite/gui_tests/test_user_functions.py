@@ -141,6 +141,7 @@ class User_functions(GuiTestCase):
 
         # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
+        print("Rotation matrix:\n%s" % R)
         self.assertEqual(len(R), 3)
         self.assertEqual(len(R[0]), 3)
         self.assertEqual(R[0][0], 1)
@@ -152,6 +153,27 @@ class User_functions(GuiTestCase):
         self.assertEqual(R[2][0], 0)
         self.assertEqual(R[2][1], 0)
         self.assertEqual(R[2][2], 1)
+
+        # Set the rotation matrix to nothing, and check what happens.
+        uf.page.uf_args['R'].SetValue(str_to_gui(''))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        uf.page.uf_args['R'].selection_win_data()
+
+        # GUI data checks for the rotation matrix.
+        R = uf.page.uf_args['R'].GetValue()
+        print("Rotation matrix:\n%s" % R)
+        self.assertEqual(len(R), 3)
+        self.assertEqual(len(R[0]), 3)
+        self.assertEqual(R[0][0], 0)
+        self.assertEqual(R[0][1], 0)
+        self.assertEqual(R[0][2], 0)
+        self.assertEqual(R[1][0], 0)
+        self.assertEqual(R[1][1], 2)
+        self.assertEqual(R[1][2], 0)
+        self.assertEqual(R[2][0], 0)
+        self.assertEqual(R[2][1], 0)
+        self.assertEqual(R[2][2], 0)
 
         # Check the structural data.
         self.assert_(hasattr(cdp, 'structure'))
