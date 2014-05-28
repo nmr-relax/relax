@@ -99,7 +99,7 @@ class Sequence_2D(Sequence):
         self.titles = titles
 
         # Initialise the base class.
-        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_min=combo_list_min, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
+        Sequence.__init__(self, name=name, default=default, parent=parent, sizer=sizer, element_type=element_type, seq_type=seq_type, value_type=value_type, dim=dim, min=min, max=max, titles=titles, desc=desc, combo_choices=combo_choices, combo_data=combo_data, combo_list_min=combo_list_min, tooltip=tooltip, divider=divider, padding=padding, spacer=spacer, height_element=height_element, read_only=read_only, can_be_none=can_be_none)
 
 
     def open_dialog(self, event):
@@ -170,7 +170,7 @@ class Sequence_window_2D(Sequence_window):
             self.offset = 1
 
         # Initialise the base class.
-        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim)
+        Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim, titles=self.titles)
 
 
     def GetValue(self):

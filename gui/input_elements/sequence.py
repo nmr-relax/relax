@@ -48,7 +48,7 @@ class Sequence:
         - tuple of strings
     """
 
-    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, sizer=None, desc=None, combo_choices=None, combo_data=None, combo_list_min=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, single_value=False, read_only=False, can_be_none=False):
+    def __init__(self, name=None, default=None, parent=None, element_type='default', seq_type=None, value_type=None, dim=None, min=0, max=1000, sizer=None, titles=None, desc=None, combo_choices=None, combo_data=None, combo_list_min=None, tooltip=None, divider=None, padding=0, spacer=None, height_element=27, single_value=False, read_only=False, can_be_none=False):
         """Set up the element.
 
         @keyword name:              The name of the element to use in titles, etc.
@@ -71,6 +71,8 @@ class Sequence:
         @type max:                  int
         @keyword sizer:             The sizer to put the input field widget into.
         @type sizer:                wx.Sizer instance
+        @keyword titles:            The titles of each of the elements of the fixed dimension elements.
+        @type titles:               list of str
         @keyword desc:              The text description.
         @type desc:                 str
         @keyword combo_choices:     The list of choices to present to the user.  This is only used if the element_type is set to 'combo'.
@@ -107,6 +109,7 @@ class Sequence:
         self.dim = dim
         self.min = min
         self.max = max
+        self.titles = titles
         self.single_value = single_value
         self.can_be_none = can_be_none
 
@@ -385,7 +388,7 @@ class Sequence:
         """Show the selection window."""
 
         # Initialise the model selection window.
-        self.sel_win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, dim=self.dim)
+        self.sel_win = Sequence_window(parent=self.parent, name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)
 
         # Set the model selector window selections.
         self.sel_win.SetValue(self.GetValue())
@@ -445,7 +448,7 @@ class Sequence_window(wx.Dialog):
     # Sizes.
     SIZE_BUTTON = (150, 33)
 
-    def __init__(self, parent=None, name='', seq_type='list', value_type='str', dim=None):
+    def __init__(self, parent=None, name='', seq_type='list', value_type='str', dim=None, titles=None):
         """Set up the string list editor window.
 
         @keyword parent:        The parent GUI element.
@@ -458,6 +461,8 @@ class Sequence_window(wx.Dialog):
         @type value_type:       str
         @keyword dim:           The fixed dimension that the sequence must conform to.
         @type dim:              int or None
+        @keyword titles:        The titles of each of the elements of the fixed dimension elements.
+        @type titles:           list of str
         """
 
         # Store the args.
@@ -465,6 +470,7 @@ class Sequence_window(wx.Dialog):
         self.seq_type = seq_type
         self.value_type = value_type
         self.dim = dim
+        self.titles = titles
 
         # The base types.
         if value_type in ['float', 'num']:
@@ -690,8 +696,12 @@ class Sequence_window(wx.Dialog):
         title = "%s%s" % (self.name[0].upper(), self.name[1:])
 
         # Add the index column.
-        self.sequence.InsertColumn(0, "Position")
-        self.sequence.SetColumnWidth(0, 70)
+        if self.titles:
+            self.sequence.InsertColumn(0, "")
+            self.sequence.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+        else:
+            self.sequence.InsertColumn(0, "Number")
+            self.sequence.SetColumnWidth(0, 70)
 
         # Add a single column, full width.
         self.sequence.InsertColumn(1, title)
@@ -703,7 +713,16 @@ class Sequence_window(wx.Dialog):
         # The fixed dimension sequence - add all the rows needed.
         if not self.variable_length:
             for i in range(self.dim):
+                # Add a new row.
                 self.add_element()
+
+                # Add a title to the first column.
+                if self.titles:
+                    self.sequence.SetStringItem(i, 0, str_to_gui(self.titles[i]))
+
+                # Otherwise add numbers starting from 1.
+                else:
+                    self.sequence.SetStringItem(i, 0, int_to_gui(i+1))
 
 
     def close(self, event):

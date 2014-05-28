@@ -415,7 +415,7 @@ class Uf_container(object):
         @type desc_short:               str
         @keyword desc:                  The long human-readable description of the argument.
         @type desc:                     str
-        @keyword list_titles:           The titles of each of the elements of the fixed width second dimension.  This only applies to list of lists.
+        @keyword list_titles:           The titles of each of the elements of the fixed length lists.  This only applies to lists or list of lists.
         @type list_titles:              list of str
         @keyword wiz_element_type:      The type of GUI element to create.  If left to 'default', then the currently set default element will be used.  If set to 'text', a wx.TextCtrl element will be used.  If set to 'combo', a wx.ComboBox element will be used.
         @type wiz_element_type:         str
