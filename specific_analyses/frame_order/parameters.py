@@ -96,8 +96,7 @@ def linear_constraints(scaling_matrix=None):
     The parameter constraints for the motional amplitude parameters are::
 
         0 <= theta <= pi,
-        0 <= theta_x <= pi,
-        0 <= theta_y <= pi,
+        0 <= theta_x <= theta_y <= pi,
         -0.125 <= S <= 1,
         0 <= sigma_max <= pi,
 
@@ -114,15 +113,17 @@ def linear_constraints(scaling_matrix=None):
         |-1  0  0  0  0 |                        |  -pi   |
         |               |                        |        |
         | 0  1  0  0  0 |                        |   0    |
-        |               |     |   theta   |      |        |
-        | 0 -1  0  0  0 |     |           |      |  -pi   |
-        |               |     |  theta_x  |      |        |
-        | 0  0  1  0  0 |     |           |      |   0    |
-        |               |  .  |  theta_y  |  >=  |        |
-        | 0  0 -1  0  0 |     |           |      |  -pi   |
-        |               |     |    S      |      |        |
-        | 0  0  0  1  0 |     |           |      | -0.125 |
-        |               |     | sigma_max |      |        |
+        |               |                        |        |
+        | 0 -1  0  0  0 |     |   theta   |      |  -pi   |
+        |               |     |           |      |        |
+        | 0 -1  1  0  0 |     |  theta_x  |      |   0    |
+        |               |     |           |      |        |
+        | 0  0  1  0  0 |  .  |  theta_y  |  >=  |   0    |
+        |               |     |           |      |        |
+        | 0  0 -1  0  0 |     |    S      |      |  -pi   |
+        |               |     |           |      |        |
+        | 0  0  0  1  0 |     | sigma_max |      | -0.125 |
+        |               |                        |        |
         | 0  0  0 -1  0 |                        |  -1    |
         |               |                        |        |
         | 0  0  0  0  1 |                        |   0    |
@@ -157,10 +158,10 @@ def linear_constraints(scaling_matrix=None):
             b.append(-pi / scaling_matrix[i, i])
             j = j + 2
 
-            # The pseudo-ellipse restriction (theta_x >= theta_y).
-            if cdp.params[i] == 'cone_theta_x':
+            # The pseudo-ellipse restriction (theta_x <= theta_y).
+            if cdp.params[i] == 'cone_theta_y':
                 for m in range(n):
-                    if cdp.params[m] == 'cone_theta_y':
+                    if cdp.params[m] == 'cone_theta_x':
                         A.append(zero_array * 0.0)
                         A[j][i] = 1.0
                         A[j][m] = -1.0

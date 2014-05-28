@@ -565,15 +565,15 @@ class Uf_page(Wiz_page):
                 self.uf_args[arg['name']] = Selector_bool(name=arg['name'], parent=self, element_type=arg['wiz_element_type'], sizer=sizer, desc=desc, tooltip=arg['desc'], default=arg['default'], divider=self._div_left, height_element=self.height_element)
 
             # Sequence types.
-            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list', 'float_object']:
+            elif arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_tuple', 'int_tuple', 'num_tuple', 'str_tuple', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'float_or_float_tuple', 'int_or_int_tuple', 'num_or_num_tuple', 'str_or_str_tuple', 'val_or_list', 'float_object', 'list_val_or_list_of_list_val']:
                 # The sequence type.
-                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'val_or_list', 'float_object']:
+                if arg['py_type'] in ['float_list', 'int_list', 'num_list', 'str_list', 'float_array', 'int_array', 'float_or_float_list', 'int_or_int_list', 'num_or_num_list', 'str_or_str_list', 'val_or_list', 'float_object', 'list_val_or_list_of_list_val']:
                     seq_type = 'list'
                 else:
                     seq_type = 'tuple'
 
                 # The value type.
-                if arg['py_type'] in ['float_list', 'num_list', 'float_tuple', 'num_tuple', 'float_array', 'float_or_float_list', 'num_or_num_list', 'float_or_float_tuple', 'num_or_num_tuple', 'float_object']:
+                if arg['py_type'] in ['float_list', 'num_list', 'float_tuple', 'num_tuple', 'float_array', 'float_or_float_list', 'num_or_num_list', 'float_or_float_tuple', 'num_or_num_tuple', 'float_object', 'list_val_or_list_of_list_val']:
                     value_type = 'float'
                 elif arg['py_type'] in ['int_list', 'int_tuple', 'int_array', 'int_or_int_list', 'int_or_int_tuple']:
                     value_type = 'int'
