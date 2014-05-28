@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ import wx.lib.mixins.listctrl
 
 # relax module imports.
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
+from lib.check_types import is_list_of_lists
 from status import Status; status = Status()
 
 
@@ -160,6 +161,11 @@ class Sequence_window_2D(Sequence_window):
         if dim == None:
             dim = (None, len(self.titles))
 
+        # Variable length.
+        self.variable_length = False
+        if dim[0] == None:
+            self.variable_length = True
+
         # Initialise the base class.
         Sequence_window.__init__(self, name=name, seq_type=seq_type, value_type=value_type, dim=dim)
 
@@ -168,7 +174,7 @@ class Sequence_window_2D(Sequence_window):
         """Return the values as a 2D sequence of values.
 
         @return:    The list of lists of values.
-        @rtype:     list of lists of str
+        @rtype:     list of lists of str or None
         """
 
         # Init.
@@ -185,7 +191,11 @@ class Sequence_window_2D(Sequence_window):
                 item = self.sequence.GetItem(i, j)
 
                 # Append the value.
-                values[-1].append(self.convert_from_gui(item.GetText()))
+                try:
+                    value = self.convert_from_gui(item.GetText())
+                except:
+                    value = None
+                values[-1].append(value)
 
             # Sequence conversion.
             if self.seq_type == 'tuple':
@@ -194,6 +204,18 @@ class Sequence_window_2D(Sequence_window):
         # Sequence conversion.
         if self.seq_type == 'tuple':
             values = tuple(values)
+
+        # Check that something is set.
+        empty = True
+        for i in range(len(values)):
+            for j in range(len(values[i])):
+                if values[i][j] != None:
+                    empty = False
+                    break
+
+        # Return nothing.
+        if empty:
+            return None
 
         # Return the list.
         return values
@@ -208,6 +230,10 @@ class Sequence_window_2D(Sequence_window):
 
         # No value.
         if values == None:
+            return
+
+        # Not a list of lists.
+        if not is_list_of_lists(values):
             return
 
         # Loop over the entries.

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012 Edward d'Auvergne                                        #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -37,16 +37,33 @@ from gui.uf_objects import Uf_storage; uf_store = Uf_storage()
 class User_functions(GuiTestCase):
     """Class for testing special features of the user function GUI windows."""
 
-    def test_structure_pdb_read(self):
-        """Test the full operation of the structure.read_pdb user function GUI window."""
+    def exec_uf_pipe_create(self, pipe_name=None, pipe_type='mf'):
+        """Execute the pipe.create user function via the GUI user function window.
 
-        # Open the pipe.create user function window, set the args and execute.
+        @keyword pipe_name:     The pipe_name argument of the pipe.create user function.
+        @type pipe_name:        str
+        @keyword pipe_type:     The pipe_type argument of the pipe.create user function.
+        @type pipe_type:        str
+        """
+
+        # Open the pipe.create user function window.
         uf = uf_store['pipe.create']
         uf._sync = True
         uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('PDB reading test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
+
+        # Set the arguments.
+        uf.page.SetValue('pipe_name', str_to_gui(pipe_name))
+        uf.page.SetValue('pipe_type', str_to_gui(pipe_type))
+
+        # Execute.
         uf.wizard._go_next(None)
+
+
+    def test_structure_pdb_read(self):
+        """Test the full operation of the structure.read_pdb user function GUI window."""
+
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='PDB reading test')
 
         # Open the structure.read_pdb user function window.
         uf = uf_store['structure.read_pdb']
@@ -90,13 +107,8 @@ class User_functions(GuiTestCase):
     def test_structure_rotate(self):
         """Test the operation of the structure.rotate user function GUI window."""
 
-        # Open the pipe.create user function window, set the args and execute.
-        uf = uf_store['pipe.create']
-        uf._sync = True
-        uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('PDB rotation test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
-        uf.wizard._go_next(None)
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='PDB rotation test')
 
         # Open the structure.read_pdb user function window.
         uf = uf_store['structure.read_pdb']
@@ -134,12 +146,10 @@ class User_functions(GuiTestCase):
         uf._sync = True
         uf.create_wizard(parent=self.app.gui)
 
-        # Change the rotation matrix without changing anything.
+        # Change the rotation matrix in the Sequence_2D window, without changing anything, then check it.
         uf.page.uf_args['R'].selection_win_show()
         uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
-
-        # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
         self.assertEqual(len(R), 3)
@@ -154,26 +164,62 @@ class User_functions(GuiTestCase):
         self.assertEqual(R[2][1], 0)
         self.assertEqual(R[2][2], 1)
 
-        # Set the rotation matrix to nothing, and check what happens.
+        # Set the rotation matrix to nothing in the wizard, open the Sequence_2D window, set a value, close the window, and check what happens.
         uf.page.uf_args['R'].SetValue(str_to_gui(''))
         uf.page.uf_args['R'].selection_win_show()
         uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
         uf.page.uf_args['R'].selection_win_data()
-
-        # GUI data checks for the rotation matrix.
         R = uf.page.uf_args['R'].GetValue()
         print("Rotation matrix:\n%s" % R)
         self.assertEqual(len(R), 3)
         self.assertEqual(len(R[0]), 3)
-        self.assertEqual(R[0][0], 0)
-        self.assertEqual(R[0][1], 0)
-        self.assertEqual(R[0][2], 0)
-        self.assertEqual(R[1][0], 0)
+        self.assertEqual(R[0][0], None)
+        self.assertEqual(R[0][1], None)
+        self.assertEqual(R[0][2], None)
+        self.assertEqual(R[1][0], None)
         self.assertEqual(R[1][1], 2)
-        self.assertEqual(R[1][2], 0)
-        self.assertEqual(R[2][0], 0)
-        self.assertEqual(R[2][1], 0)
-        self.assertEqual(R[2][2], 0)
+        self.assertEqual(R[1][2], None)
+        self.assertEqual(R[2][0], None)
+        self.assertEqual(R[2][1], None)
+        self.assertEqual(R[2][2], None)
+
+        # Set the rotation matrix to nothing in the wizard, open the Sequence_2D window, close the window, and check that None comes back.
+        uf.page.uf_args['R'].SetValue(str_to_gui(''))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        R = uf.page.uf_args['R'].GetValue()
+        print("Rotation matrix:\n%s" % R)
+        self.assertEqual(R, None)
+
+        # Set the rotation matrix to a number of invalid values, checking that they are ignored.
+        for val in ['2', 'die', '[1, 2, 3]', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
+            uf.page.uf_args['R'].SetValue(str_to_gui(val))
+            uf.page.uf_args['R'].selection_win_show()
+            uf.page.uf_args['R'].selection_win_data()
+            R = uf.page.uf_args['R'].GetValue()
+            print("Rotation matrix:\n%s" % R)
+            self.assertEqual(R, None)
+
+        # Set the Sequence_2D elements to invalid values.
+        for val in ['x']:
+            uf.page.uf_args['R'].SetValue(str_to_gui(''))
+            uf.page.uf_args['R'].selection_win_show()
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(1))
+            uf.page.uf_args['R'].selection_win_data()
+            R = uf.page.uf_args['R'].GetValue()
+            print("Rotation matrix:\n%s" % R)
+            self.assertEqual(len(R), 3)
+            self.assertEqual(len(R[0]), 3)
+            self.assertEqual(R[0][0], 1.0)
+            self.assertEqual(R[0][1], None)
+            self.assertEqual(R[0][2], None)
+            self.assertEqual(R[1][0], None)
+            self.assertEqual(R[1][1], None)
+            self.assertEqual(R[1][2], None)
+            self.assertEqual(R[2][0], None)
+            self.assertEqual(R[2][1], None)
+            self.assertEqual(R[2][2], None)
 
         # Check the structural data.
         self.assert_(hasattr(cdp, 'structure'))
@@ -186,13 +232,8 @@ class User_functions(GuiTestCase):
     def test_value_set(self):
         """Test the full operation of the value.set user function GUI window."""
 
-        # Open the pipe.create user function window, set the args and execute.
-        uf = uf_store['pipe.create']
-        uf._sync = True
-        uf.create_wizard(parent=self.app.gui)
-        uf.page.SetValue('pipe_name', str_to_gui('value.set user function test'))
-        uf.page.SetValue('pipe_type', str_to_gui('mf'))
-        uf.wizard._go_next(None)
+        # Create the data pipe.
+        self.exec_uf_pipe_create(pipe_name='value.set user function test')
 
         # Create a spin to add data to.
         uf = uf_store['spin.create']
