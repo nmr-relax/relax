@@ -59,6 +59,59 @@ class User_functions(GuiTestCase):
         uf.wizard._go_next(None)
 
 
+    def test_dx_map(self):
+        """Test the operation of the dx.map user function GUI window."""
+
+        # Open the dx.map user function window.
+        uf = uf_store['dx.map']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+
+        # Set the y-value of a single point, and check.
+        uf.page.uf_args['point'].selection_win_show()
+        uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=2, label=int_to_gui(2))
+        uf.page.uf_args['point'].selection_win_data()
+        points = uf.page.uf_args['point'].GetValue()
+        print("Points:  %s" % points)
+        self.assertEqual(len(points), 1)
+        self.assertEqual(len(points[0]), 3)
+        self.assertEqual(points[0][0], None)
+        self.assertEqual(points[0][1], 2.0)
+        self.assertEqual(points[0][2], None)
+
+        # Set the point to nothing in the wizard, open the Sequence_2D window, close the window, and check that None comes back.
+        uf.page.uf_args['point'].SetValue(str_to_gui(''))
+        uf.page.uf_args['point'].selection_win_show()
+        uf.page.uf_args['point'].selection_win_data()
+        points = uf.page.uf_args['point'].GetValue()
+        print("Points:  %s" % points)
+        self.assertEqual(points, None)
+
+        # Set the points to a number of invalid values, checking that they are ignored.
+        for val in ['2', 'die', '[1, 2, 3]', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
+            uf.page.uf_args['point'].SetValue(str_to_gui(val))
+            uf.page.uf_args['point'].selection_win_show()
+            uf.page.uf_args['point'].selection_win_data()
+            points = uf.page.uf_args['point'].GetValue()
+            print("Points:  %s" % points)
+            self.assertEqual(points, None)
+
+        # Set the Sequence_2D elements to invalid values.
+        for val in ['x']:
+            uf.page.uf_args['point'].SetValue(str_to_gui(''))
+            uf.page.uf_args['point'].selection_win_show()
+            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=2, label=str_to_gui(val))
+            uf.page.uf_args['point'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
+            uf.page.uf_args['point'].selection_win_data()
+            points = uf.page.uf_args['point'].GetValue()
+            print("Points:  %s" % points)
+            self.assertEqual(len(points), 1)
+            self.assertEqual(len(points[0]), 3)
+            self.assertEqual(points[0][0], 1.0)
+            self.assertEqual(points[0][1], None)
+            self.assertEqual(points[0][2], None)
+
+
     def test_structure_pdb_read(self):
         """Test the full operation of the structure.read_pdb user function GUI window."""
 
