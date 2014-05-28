@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
+from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 
 
 class Test_b14(TestCase):
@@ -51,6 +52,9 @@ class Test_b14(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+        # This is to test the default grid values.
+        self.test_val = True
+
 
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
@@ -62,8 +66,9 @@ class Test_b14(TestCase):
         R2eff = r2eff_B14(r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points)
 
         # Check all R2eff values.
-        for i in range(self.num_points):
-            self.assertAlmostEqual(R2eff[i], self.r20a)
+        if self.test_val:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20a)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):
@@ -177,6 +182,41 @@ class Test_b14(TestCase):
 
         # Parameter reset.
         self.kex = 1e5
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
+
+
+    def test_b14_no_rex9(self):
+        """Test the r2eff_b14() function for the default lower grid values.  This is to catch un-discovered numpy-raises in calculations. """
+
+        PARAMS = Relax_disp_params()
+
+        # Parameter reset.
+        self.r20a = PARAMS.grid_lower('r2a')
+        self.r20b = PARAMS.grid_lower('r2b')
+        self.pA =  PARAMS.grid_lower('pA')
+        self.kex = PARAMS.grid_lower('kex')
+
+        self.test_val = False
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
+
+
+    def test_b14_no_rex10(self):
+        """Test the r2eff_b14() function for the default lower grid values.  This is to catch un-discovered numpy-raises in calculations. """
+
+        PARAMS = Relax_disp_params()
+
+        # Parameter reset.
+        self.r20a = PARAMS.grid_upper('r2a')
+        self.r20b = PARAMS.grid_upper('r2b')
+        self.dw = PARAMS.grid_upper('dw')
+        self.pA =  PARAMS.grid_upper('pA')
+        self.kex = PARAMS.grid_upper('kex')
+
+        self.test_val = False
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
