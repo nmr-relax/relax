@@ -585,7 +585,7 @@ class Sequence_window(wx.Dialog):
         # Loop over the entries.
         for i in range(len(values)):
             # Fixed dimension sequences - set the values of the pre-created list.
-            if self.dim:
+            if not self.variable_length:
                 self.sequence.SetStringItem(index=i, col=1, label=self.convert_to_gui(values[i]))
 
             # Variable dimension sequences - append the item to the end of the blank list.
@@ -611,7 +611,7 @@ class Sequence_window(wx.Dialog):
         sizer.Add(button_sizer, 0, wx.ALIGN_CENTER|wx.ALL, 0)
 
         # The non-fixed sequence buttons.
-        if self.dim == None or (isinstance(self.dim, tuple) and self.dim[0] == None):
+        if self.variable_length:
             # The add button.
             button = wx.lib.buttons.ThemedGenBitmapTextButton(self, -1, None, "  Add")
             button.SetBitmapLabel(wx.Bitmap(fetch_icon('oxygen.actions.list-add-relax-blue', "22x22"), wx.BITMAP_TYPE_ANY))
@@ -701,7 +701,7 @@ class Sequence_window(wx.Dialog):
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
         # The fixed dimension sequence - add all the rows needed.
-        if self.dim:
+        if not self.variable_length:
             for i in range(self.dim):
                 self.add_element()
 
