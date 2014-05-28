@@ -270,7 +270,7 @@ class Sequence_window_2D(Sequence_window):
         # Add a column for the indices.
         index_width = 0
         if self.variable_length:
-            index_width = 50
+            index_width = 70
             self.sequence.InsertColumn(0, "Number")
             self.sequence.SetColumnWidth(0, index_width)
 
