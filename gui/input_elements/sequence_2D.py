@@ -191,7 +191,11 @@ class Sequence_window_2D(Sequence_window):
                 item = self.sequence.GetItem(i, j)
 
                 # Append the value.
-                values[-1].append(self.convert_from_gui(item.GetText()))
+                try:
+                    value = self.convert_from_gui(item.GetText())
+                except:
+                    value = None
+                values[-1].append(value)
 
             # Sequence conversion.
             if self.seq_type == 'tuple':
