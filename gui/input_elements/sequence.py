@@ -282,6 +282,14 @@ class Sequence:
                     else:
                         value = ()
 
+                # Handle all other errors.
+                except:
+                    value = None
+
+        # Nothing to do.
+        if value == None:
+            return None
+
         # Convert sequences to single values as needed.
         if self.single_value:
             if (isinstance(value, list) or isinstance(value, tuple)) and len(value) == 1:

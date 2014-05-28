@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,7 @@ import wx.lib.mixins.listctrl
 
 # relax module imports.
 from gui.input_elements.sequence import Sequence, Sequence_list_ctrl, Sequence_window
+from lib.check_types import is_list_of_lists
 from status import Status; status = Status()
 
 
@@ -225,6 +226,10 @@ class Sequence_window_2D(Sequence_window):
 
         # No value.
         if values == None:
+            return
+
+        # Not a list of lists.
+        if not is_list_of_lists(values):
             return
 
         # Loop over the entries.
