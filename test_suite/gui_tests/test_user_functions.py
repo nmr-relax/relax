@@ -133,6 +133,21 @@ class User_functions(GuiTestCase):
         uf = uf_store['structure.rotate']
         uf._sync = True
         uf.create_wizard(parent=self.app.gui)
+        uf.page.uf_args['set_model_num'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+
+        # GUI data checks for the rotation matrix.
+        R = uf.page.uf_args['R'].GetValue()
+        self.assertEqual(len(R), 3)
+        self.assertEqual(len(R[0]), 3)
+        self.assertEqual(R[0][0]), 1)
+        self.assertEqual(R[0][1]), 0)
+        self.assertEqual(R[0][2]), 0)
+        self.assertEqual(R[1][0]), 0)
+        self.assertEqual(R[1][1]), 2)
+        self.assertEqual(R[1][2]), 0)
+        self.assertEqual(R[2][0]), 0)
+        self.assertEqual(R[2][1]), 0)
+        self.assertEqual(R[2][2]), 1)
 
         # Change the rotation matrix without changing anything.
         uf.page.uf_args['R'].open_dialog(None)
