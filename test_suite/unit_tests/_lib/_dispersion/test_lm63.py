@@ -46,6 +46,7 @@ class Test_lm63(TestCase):
         # Required data structures.
         self.num_points = 3
         self.cpmg_frqs = array([2.5, 1.25, 0.83], float64)
+        self.R2eff = zeros(self.num_points, float64)
 
 
     def calc_r2eff(self):
@@ -55,15 +56,15 @@ class Test_lm63(TestCase):
         phi_ex_scaled = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_LM63(r20=self.r20, phi_ex=phi_ex_scaled, kex=self.kex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
+        R2eff = r2eff_LM63(r20=self.r20, phi_ex=phi_ex_scaled, kex=self.kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
 
         # Check all R2eff values.
         if self.kex > 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20, 2)
+                self.assertAlmostEqual(self.R2eff[i], self.r20, 2)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20)
+                self.assertAlmostEqual(self.R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None):
