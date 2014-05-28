@@ -192,7 +192,8 @@ uf.add_keyarg(
     py_type = "float_array",
     desc_short = "Set the chi2 surface level for the Innermost, Inner, Middle and Outer Isosurface.",
     desc = "A list of 4 numbers, setting the level for the 4 isosurfaces. Useful in scripting if you create a set of OpenDX maps with all the same contour levels.  Ideal for comparisons.",
-    can_be_none = True
+    can_be_none = True,
+    dim = 4
 )
 # Description.
 uf.desc.append(Desc_container())
