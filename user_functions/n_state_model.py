@@ -35,6 +35,7 @@ from specific_analyses.n_state_model import uf as n_state_model_uf
 from specific_analyses.n_state_model.parameters import elim_no_prob, number_of_states, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -117,7 +118,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the PDB file.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE
 )
 

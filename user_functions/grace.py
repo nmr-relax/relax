@@ -41,6 +41,7 @@ from specific_analyses.relax_disp.parameter_object import Relax_disp_params; rel
 from specific_analyses.relax_fit.parameter_object import Relax_fit_params; relax_fit_params = Relax_fit_params()
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_GRACE_ALL
 
 
 # The user function class.
@@ -60,7 +61,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
@@ -150,7 +151,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(

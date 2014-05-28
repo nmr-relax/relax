@@ -47,6 +47,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CP
 from specific_analyses.relax_disp import uf as relax_disp_uf
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_GRACE_ALL
 
 
 # The user function class.
@@ -516,7 +517,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file.",
-    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(

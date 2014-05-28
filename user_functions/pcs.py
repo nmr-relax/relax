@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -36,6 +36,7 @@ from pipe_control import align_tensor, pcs, pipes
 from pipe_control.mol_res_spin import get_spin_ids
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_GRACE_ALL
 
 
 # The user function class.
@@ -170,7 +171,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The name of the Grace file to create.",
-    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
     wiz_filesel_style = FD_SAVE
 )
 uf.add_keyarg(
@@ -468,7 +469,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "Grace file name",
     desc = "The optional name of the Grace file to plot the structural errors verses the paramagnetic centre to spin distances.",
-    wiz_filesel_wildcard = "Grace files (*.agr)|*.agr;*.AGR",
+    wiz_filesel_wildcard = WILDCARD_GRACE_ALL,
     wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )

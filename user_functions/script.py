@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2012-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2012-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -33,6 +33,7 @@ else:
 from pipe_control import script
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_RELAX_SCRIPT
 
 
 # The script user function.
@@ -45,7 +46,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the file containing the relaxation data.",
-    wiz_filesel_wildcard = "relax scripts (*.py)|*.py",
+    wiz_filesel_wildcard = WILDCARD_RELAX_SCRIPT,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(
