@@ -88,7 +88,7 @@ class User_functions(GuiTestCase):
         self.assertEqual(points, None)
 
         # Set a valid point in the wizard, open and close the Sequence_2D window (twice), and check that the point comes back.
-        uf.page.uf_args['point'].SetValue(str_to_gui('[1, 2, -3.]'))
+        uf.page.uf_args['point'].SetValue(str_to_gui('[[1, 2, -3.]]'))
         uf.page.uf_args['point'].selection_win_show()
         uf.page.uf_args['point'].selection_win_data()
         uf.page.uf_args['point'].selection_win_show()
@@ -100,6 +100,24 @@ class User_functions(GuiTestCase):
         self.assertEqual(points[0][0], 1.0)
         self.assertEqual(points[0][1], 2.0)
         self.assertEqual(points[0][2], -3.0)
+
+        # Set 2 valid points in the wizard, open and close the Sequence_2D window (twice), and check that the points come back.
+        uf.page.uf_args['point'].SetValue(str_to_gui('[[1, 2, 3], [-2, -3, -4]]'))
+        uf.page.uf_args['point'].selection_win_show()
+        uf.page.uf_args['point'].selection_win_data()
+        uf.page.uf_args['point'].selection_win_show()
+        uf.page.uf_args['point'].selection_win_data()
+        points = uf.page.uf_args['point'].GetValue()
+        print("Points:  %s" % points)
+        self.assertEqual(len(points), 2)
+        self.assertEqual(len(points[0]), 3)
+        self.assertEqual(len(points[1]), 3)
+        self.assertEqual(points[0][0], 1.0)
+        self.assertEqual(points[0][1], 2.0)
+        self.assertEqual(points[0][2], 3.0)
+        self.assertEqual(points[1][0], -2.0)
+        self.assertEqual(points[1][1], -3.0)
+        self.assertEqual(points[1][2], -4.0)
 
         # Set the points to a number of invalid values, checking that they are ignored.
         for val in ['2', 'die', '[1, 2, 3]', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
