@@ -253,4 +253,4 @@ class Sequence_window_2D(Sequence_window):
         # The fixed dimension sequence - add all the rows needed.
         if self.dim[0] != None:
             for i in range(self.dim[0]):
-                self.append_row(None)
+                self.add_element(None)
