@@ -88,7 +88,7 @@ class User_functions(GuiTestCase):
         self.assertEqual(points, None)
 
         # Set a valid point in the wizard, open and close the Sequence_2D window (twice), and check that the point comes back.
-        uf.page.uf_args['point'].SetValue(str_to_gui('[1, 2, -3.]'))
+        uf.page.uf_args['point'].SetValue(str_to_gui('[[1, 2, -3.]]'))
         uf.page.uf_args['point'].selection_win_show()
         uf.page.uf_args['point'].selection_win_data()
         uf.page.uf_args['point'].selection_win_show()
