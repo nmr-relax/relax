@@ -2089,6 +2089,59 @@ def plot_exp_curves(file=None, dir=None, force=None, norm=None):
     add_result_file(type='grace', label='Grace', file=file_path)
 
 
+def r20_from_min_r2eff(force=True, verbosity=1):
+    """Set the R20 values to the minimum R2eff values.
+
+    For a 2 field cpmg experiment with model CR72, that would drop number of uniform grid search point from gridNr^5 to gridNr^3.
+    For standard 21 grid Nr, it would make the grid search 441 times faster. 
+
+    @keyword force:         A flag forcing the overwriting of current values.
+    @type force:            bool
+    @keyword verbosity:     A flag specifying to print the setting of values.
+    @type verbosity:        int
+    """
+
+    # Number of spectrometer fields.
+    fields = [None]
+    field_count = 1
+    if hasattr(cdp, 'spectrometer_frq_count'):
+        fields = cdp.spectrometer_frq_list
+        field_count = cdp.spectrometer_frq_count
+
+    # Loop over all spins.
+    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
+        # Nothing to do (the R2eff model has no dispersion curves).
+        if spin.model == MODEL_R2EFF:
+            print("The spin model is %s. The %s model has no dispersion curves, so will not set the grid values."%(spin.model, spin.model))
+            continue
+
+        # Get all the data.
+        try:
+            values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
+
+        # No R2eff data, so skip the rest.
+        except RelaxError:
+            continue
+
+        # Loop over the experiments, magnetic fields, and offsets.
+        for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
+            # No data.
+            if not len(values[ei][0][mi][oi]):
+                continue
+
+            # The minimum
+            min_val = values[ei][0][mi][oi].min()
+
+            # Loop over the parameters for the current model
+            for param in MODEL_PARAMS[spin.model]:
+                # Check if the param is r2
+                if param in PARAMS_R20:
+                    # Set the value
+                    value.set(val=min_val, param=param, index=mi, spin_id=spin_id, force=force)
+                    if verbosity:
+                        print("For %s, frq=%3.1f, offset=%3.1f, for grid search setting initial %s=%3.2f for spin: %s"%(exp_type, frq/1E6, offset, param, min_val, spin_id))
+
+
 def r2eff_read(id=None, file=None, dir=None, disp_frq=None, offset=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, data_col=None, error_col=None, sep=None):
     """Read R2eff/R1rho values directly from a file whereby each row corresponds to a different spin.
 
@@ -3528,59 +3581,6 @@ def set_exp_type(spectrum_id=None, exp_type=None):
     elif exp_type == EXP_TYPE_R1RHO:
         text += EXP_TYPE_DESC_R1RHO + "."
     print(text)
-
-
-def set_grid_r20_from_min_r2eff(force=True, verbosity=1):
-    """Set the R20 values to the minimum R2eff values.
-
-    For a 2 field cpmg experiment with model CR72, that would drop number of uniform grid search point from gridNr^5 to gridNr^3.
-    For standard 21 grid Nr, it would make the grid search 441 times faster. 
-
-    @keyword force:         A flag forcing the overwriting of current values.
-    @type force:            bool
-    @keyword verbosity:     A flag specifying to print the setting of values.
-    @type verbosity:        int
-    """
-
-    # Number of spectrometer fields.
-    fields = [None]
-    field_count = 1
-    if hasattr(cdp, 'spectrometer_frq_count'):
-        fields = cdp.spectrometer_frq_list
-        field_count = cdp.spectrometer_frq_count
-
-    # Loop over all spins.
-    for spin, spin_id in spin_loop(return_id=True, skip_desel=True):
-        # Nothing to do (the R2eff model has no dispersion curves).
-        if spin.model == MODEL_R2EFF:
-            print("The spin model is %s. The %s model has no dispersion curves, so will not set the grid values."%(spin.model, spin.model))
-            continue
-
-        # Get all the data.
-        try:
-            values, errors, missing, frqs, frqs_H, exp_types, relax_times = return_r2eff_arrays(spins=[spin], spin_ids=[spin_id], fields=fields, field_count=field_count)
-
-        # No R2eff data, so skip the rest.
-        except RelaxError:
-            continue
-
-        # Loop over the experiments, magnetic fields, and offsets.
-        for exp_type, frq, offset, ei, mi, oi in loop_exp_frq_offset(return_indices=True):
-            # No data.
-            if not len(values[ei][0][mi][oi]):
-                continue
-
-            # The minimum
-            min_val = values[ei][0][mi][oi].min()
-
-            # Loop over the parameters for the current model
-            for param in MODEL_PARAMS[spin.model]:
-                # Check if the param is r2
-                if param in PARAMS_R20:
-                    # Set the value
-                    value.set(val=min_val, param=param, index=mi, spin_id=spin_id, force=force)
-                    if verbosity:
-                        print("For %s, frq=%3.1f, offset=%3.1f, for grid search setting initial %s=%3.2f for spin: %s"%(exp_type, frq/1E6, offset, param, min_val, spin_id))
 
 
 def spin_has_frq_data(spin=None, frq=None):

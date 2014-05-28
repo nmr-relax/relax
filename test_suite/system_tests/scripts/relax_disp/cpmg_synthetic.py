@@ -1,6 +1,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2014 Troels E. Linnet                                    #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -122,9 +123,9 @@ if not hasattr(ds, 'tmpdir'):
 if not hasattr(ds, 'resdir'):
     ds.resdir = None
 
-# Do set_grid_r20_from_min_r2eff.
-if not hasattr(ds, 'set_grid_r20_from_min_r2eff'):
-    ds.set_grid_r20_from_min_r2eff = True
+# Do r20_from_min_r2eff.
+if not hasattr(ds, 'r20_from_min_r2eff'):
+    ds.r20_from_min_r2eff = True
 
 # Remove insignificant level.
 if not hasattr(ds, 'insignificance'):
@@ -470,8 +471,8 @@ relax_disp.insignificance(level=ds.insignificance)
 if ds.GRID_INC:
     # Set the R20 parameters in the default grid search using the minimum R2eff value.
     # This speeds it up considerably.
-    if ds.set_grid_r20_from_min_r2eff:
-        relax_disp.set_grid_r20_from_min_r2eff(force=False)
+    if ds.r20_from_min_r2eff:
+        relax_disp.r20_from_min_r2eff(force=False)
 
     # Then do grid search.
     grid_search(lower=None, upper=None, inc=ds.GRID_INC, constraints=True, verbosity=ds.verbosity)
