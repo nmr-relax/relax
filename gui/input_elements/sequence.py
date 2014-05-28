@@ -32,6 +32,7 @@ from gui.input_elements.combo_list import Combo_list
 from gui.fonts import font
 from gui.misc import add_border
 from gui.string_conv import float_to_gui, gui_to_float, gui_to_int, gui_to_list, gui_to_py, gui_to_str, gui_to_tuple, int_to_gui, list_to_gui, py_to_gui, str_to_gui, tuple_to_gui
+from lib.check_types import is_list
 from lib.errors import RelaxError
 from status import Status; status = Status()
 
@@ -547,7 +548,11 @@ class Sequence_window(wx.Dialog):
             text = item.GetText()
 
             # Store the text.
-            values.append(self.convert_from_gui(text))
+            try:
+                value = self.convert_from_gui(text)
+            except:
+                value = None
+            values.append(value)
 
         # Sequence conversion.
         if self.seq_type == 'tuple':
@@ -577,6 +582,10 @@ class Sequence_window(wx.Dialog):
 
         # No value.
         if values == None:
+            return
+
+        # Invalid list, so do nothing.
+        if not self.variable_length and is_list(values) and len(values) != self.dim:
             return
 
         # Single values.
