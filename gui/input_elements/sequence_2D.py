@@ -283,6 +283,6 @@ class Sequence_window_2D(Sequence_window):
         sizer.Add(self.sequence, 1, wx.ALL|wx.EXPAND, 0)
 
         # The fixed dimension sequence - add all the rows needed.
-        if self.dim[0] != None:
+        if not self.variable_length:
             for i in range(self.dim[0]):
                 self.add_element(None)
