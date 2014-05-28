@@ -54,6 +54,7 @@ class Param_list(object):
         self._scope = {}
         self._string = {}
         self._defaults = {}
+        self._grid_lowers = {}
         self._units = {}
         self._desc = {}
         self._py_types = {}
@@ -92,7 +93,7 @@ class Param_list(object):
         return cls._instance
 
 
-    def _add(self, name, scope=None, string=None, default=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grace_string=None, err=False, sim=False):
+    def _add(self, name, scope=None, string=None, default=None, grid_lower=None, units=None, desc=None, py_type=None, set='all', conv_factor=None, grace_string=None, err=False, sim=False):
         """Add a parameter to the list.
 
         @param name:            The name of the parameter.  This will be used as the variable name.
@@ -103,6 +104,8 @@ class Param_list(object):
         @type string:           None or str
         @keyword default:       The default value of the parameter.
         @type default:          anything
+        @keyword grid_lower:    The default lower bounds of the grid search.
+        @type grid_lower:       float
         @keyword units:         A string representing the parameters units.
         @type units:            None or str
         @keyword desc:          The text description of the parameter.
@@ -134,6 +137,7 @@ class Param_list(object):
         self._names.append(name)
         self._scope[name] = scope
         self._defaults[name] = default
+        self._grid_lowers[name] = grid_lower
         self._units[name] = units
         self._desc[name] = desc
         self._py_types[name] = py_type
@@ -538,6 +542,22 @@ class Param_list(object):
 
         # Return the value.
         return self._grace_string[name]
+
+
+    def grid_lower(self, name):
+        """Return the default lower bounds of paramater for the grid search.
+
+        @param name:    The name of the parameter.
+        @type name:     str
+        @return:        The default value.
+        @rtype:         None or str
+        """
+
+        # Parameter check.
+        self.check_param(name)
+
+        # Return the default value.
+        return self._grid_lowers[name]
 
 
     def is_spin_param(self, name):
