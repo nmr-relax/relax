@@ -191,6 +191,23 @@ class User_functions(GuiTestCase):
         print("Rotation matrix:\n%s" % R)
         self.assertEqual(R, None)
 
+        # Set the rotation matrix to a number of invalid values.
+        uf.page.uf_args['R'].SetValue(str_to_gui('2'))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        uf.page.uf_args['R'].SetValue(str_to_gui('die'))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        uf.page.uf_args['R'].SetValue(str_to_gui('[1, 2, 3]'))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        uf.page.uf_args['R'].SetValue(str_to_gui('[1]'))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+        uf.page.uf_args['R'].SetValue(str_to_gui('[[1, 2, 3], 1, 2, 3], [1, 2, 3]]'))
+        uf.page.uf_args['R'].selection_win_show()
+        uf.page.uf_args['R'].selection_win_data()
+
         # Check the structural data.
         self.assert_(hasattr(cdp, 'structure'))
         self.assert_(hasattr(cdp.structure, 'structural_data'))
