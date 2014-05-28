@@ -365,7 +365,7 @@ class Sequence:
         value = self.sel_win.GetValue()
 
         # No sequence data.
-        if not len(value):
+        if value == None or not len(value):
             self.Clear()
 
         # Set the values.
@@ -471,6 +471,11 @@ class Sequence_window(wx.Dialog):
         else:
             raise RelaxError("Unknown base data type '%s'." % value_type)
 
+        # Variable length.
+        self.variable_length = False
+        if dim == None:
+            self.variable_length = True
+
         # The title of the dialog.
         title = "Edit the %s values." % name
 
@@ -530,6 +535,17 @@ class Sequence_window(wx.Dialog):
         # Sequence conversion.
         if self.seq_type == 'tuple':
             values = tuple(values)
+
+        # Check that something is set.
+        empty = True
+        for i in range(len(values)):
+            if values[i] != None:
+                empty = False
+                break
+
+        # Return nothing.
+        if empty:
+            return None
 
         # Return the sequence.
         return values
@@ -640,8 +656,13 @@ class Sequence_window(wx.Dialog):
         # The next index.
         next = self.sequence.GetItemCount()
 
+        # Add a new row with the index at the start.
+        if self.variable_length:
+            self.sequence.InsertStringItem(next, int_to_gui(next+1))
+
         # Add a new empty row.
-        self.sequence.InsertStringItem(next, int_to_gui(next+1))
+        else:
+            self.sequence.InsertStringItem(next, str_to_gui(''))
 
 
     def add_list(self, sizer):
