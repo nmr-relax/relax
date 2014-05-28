@@ -193,12 +193,33 @@ class User_functions(GuiTestCase):
 
         # Set the rotation matrix to a number of invalid values, checking that they are ignored.
         for val in ['2', 'die', '[1, 2, 3]', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
-            uf.page.uf_args['R'].SetValue(str_to_gui('2'))
+            uf.page.uf_args['R'].SetValue(str_to_gui(val))
             uf.page.uf_args['R'].selection_win_show()
             uf.page.uf_args['R'].selection_win_data()
             R = uf.page.uf_args['R'].GetValue()
             print("Rotation matrix:\n%s" % R)
             self.assertEqual(R, None)
+
+        # Set the Sequence_2D elements to invalid values.
+        for val in ['x']:
+            uf.page.uf_args['R'].SetValue(str_to_gui(''))
+            uf.page.uf_args['R'].selection_win_show()
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
+            uf.page.uf_args['R'].sel_win.sequence.SetStringItem(index=0, col=0, label=int_to_gui(1))
+            uf.page.uf_args['R'].selection_win_data()
+            R = uf.page.uf_args['R'].GetValue()
+            print("Rotation matrix:\n%s" % R)
+            self.assertEqual(len(R), 3)
+            self.assertEqual(len(R[0]), 3)
+            self.assertEqual(R[0][0], 1.0)
+            self.assertEqual(R[0][1], None)
+            self.assertEqual(R[0][2], None)
+            self.assertEqual(R[1][0], None)
+            self.assertEqual(R[1][1], None)
+            self.assertEqual(R[1][2], None)
+            self.assertEqual(R[2][0], None)
+            self.assertEqual(R[2][1], None)
+            self.assertEqual(R[2][2], None)
 
         # Check the structural data.
         self.assert_(hasattr(cdp, 'structure'))
