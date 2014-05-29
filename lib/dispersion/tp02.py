@@ -60,7 +60,7 @@ More information on the TP02 model can be found in the:
 """
 
 # Python module imports.
-from math import atan2, sin
+from numpy import arctan2, array, isfinite, sin, sum
 
 
 def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
@@ -110,34 +110,31 @@ def r1rho_TP02(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # The numerator.
     numer = pA * pB * dw**2 * kex
 
-    # Loop over the dispersion points, back calculating the R1rho values.
-    for i in range(num_points):
-        # We assume that A resonates at 0 [s^-1], without loss of generality.
-        waeff2 = spin_lock_fields2[i] + da2       # Effective field at A.
-        wbeff2 = spin_lock_fields2[i] + db2       # Effective field at B.
-        weff2 = spin_lock_fields2[i] + d2         # Effective field at pop-average.
+    # We assume that A resonates at 0 [s^-1], without loss of generality.
+    waeff2 = spin_lock_fields2 + da2       # Effective field at A.
+    wbeff2 = spin_lock_fields2 + db2       # Effective field at B.
+    weff2 = spin_lock_fields2 + d2         # Effective field at pop-average.
 
-        # The rotating frame flip angle.
-        theta = atan2(spin_lock_fields[i], d)
+    # The rotating frame flip angle.
+    theta = arctan2(spin_lock_fields, d)
 
-        # Repetitive calculations (to speed up calculations).
-        sin_theta2 = sin(theta)**2
-        R1_cos_theta2 = R1 * (1.0 - sin_theta2)
-        R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
+    # Repetitive calculations (to speed up calculations).
+    sin_theta2 = sin(theta)**2
+    R1_cos_theta2 = R1 * (1.0 - sin_theta2)
+    R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2
-            continue
-
-        # Denominator.
-        denom = waeff2 * wbeff2 / weff2 + kex2
-        #denom_extended = waeff2*wbeff2/weff2+kex2-2*sin_theta2*pA*pB*dw**2
+    # Denominator.
+    denom = waeff2 * wbeff2 / weff2 + kex2
+    #denom_extended = waeff2*wbeff2/weff2+kex2-2*sin_theta2*pA*pB*dw**2
  
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
+    # R1rho calculation.
+    R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
 
-        # R1rho calculation.
-        back_calc[i] = R1_cos_theta2 + R1rho_prime_sin_theta2 + sin_theta2 * numer / denom
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R1rho)):
+        R1rho = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
+    for i in range(num_points):
+        back_calc[i] = R1rho[i]

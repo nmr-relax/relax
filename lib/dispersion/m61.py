@@ -63,6 +63,9 @@ More information on the M61 model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61>}.
 """
 
+# Python module imports.
+from numpy import array, isfinite, sum
+
 
 def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the M61 model.
@@ -90,20 +93,17 @@ def r1rho_M61(r1rho_prime=None, phi_ex=None, kex=None, spin_lock_fields2=None, b
     # The numerator.
     numer = phi_ex * kex
 
-    # Loop over the dispersion points, back calculating the R1rho values.
+    # Denominator.
+    denom = kex2 + spin_lock_fields2
+
+    # R1rho calculation.
+    R1rho = r1rho_prime + numer / denom
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R1rho)):
+        R1rho = array([1e100]*num_points)
+
+    # Parse back the value to update the back_calc class object.
     for i in range(num_points):
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = r1rho_prime
-            continue
-
-        # Denominator.
-        denom = kex2 + spin_lock_fields2[i]
-
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
-
-        # R1rho calculation.
-        back_calc[i] = r1rho_prime + numer / denom
+        back_calc[i] = R1rho[i]
