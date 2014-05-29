@@ -63,7 +63,7 @@ More information on the MP05 model can be found in the:
 from numpy import abs, arctan2, array, isfinite, min, sin, sum
 
 
-def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, num_points=None):
+def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Miloushev and Palmer (2005) equation according to Korzhnev (J. Biomol. NMR (2003), 26, 39-48).
@@ -89,7 +89,9 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
+    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of offset and spin lock field.
+    @type back_calc:            numpy rank-1 float array
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
     @type num_points:           int
     """
 
@@ -122,7 +124,8 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if numer == 0.0:
-        return R1_cos_theta2 + R1rho_prime_sin_theta2
+        back_calc[:] = R1_cos_theta2 + R1rho_prime_sin_theta2
+        return
 
     # Denominator.
     waeff2_wbeff2 = waeff2*wbeff2
@@ -139,5 +142,5 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     if not isfinite(sum(R1rho)):
         R1rho = array([1e100]*num_points)
 
-    return R1rho
+    back_calc[:] = R1rho
 

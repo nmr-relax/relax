@@ -53,6 +53,7 @@ class Test_m61b(TestCase):
 
         # Required data structures.
         self.num_points = 11
+        self.R1rho = zeros(self.num_points, float64)
 
 
     def calc_r1rho(self):
@@ -62,16 +63,16 @@ class Test_m61b(TestCase):
         phi_ex_scaled, dw_frq, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
         # Calculate the R1rho values.
-        R1rho = r1rho_M61b(r1rho_prime=self.r1rho_prime, pA=self.pA, dw=dw_frq, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
+        R1rho = r1rho_M61b(r1rho_prime=self.r1rho_prime, pA=self.pA, dw=dw_frq, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
 
 
         # Check all R1rho values.
         if self.kex > 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1rho_prime, 2)
+                self.assertAlmostEqual(self.R1rho[i], self.r1rho_prime, 2)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], self.r1rho_prime)
+                self.assertAlmostEqual(self.R1rho[i], self.r1rho_prime)
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):

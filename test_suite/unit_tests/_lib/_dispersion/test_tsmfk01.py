@@ -45,6 +45,7 @@ class Test_tsmfk01(TestCase):
         relax_times = 0.04
         self.cpmg_frqs = self.ncyc / relax_times
         self.tau_cpmg = 0.25 / self.cpmg_frqs
+        self.R2eff = zeros(self.num_points, float64)
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
@@ -57,11 +58,11 @@ class Test_tsmfk01(TestCase):
         k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_TSMFK01(r20a=self.r20a, dw=dw_frq, k_AB=k_AB, tcp=self.cpmg_frqs, num_points=self.num_points)
+        r2eff_TSMFK01(r20a=self.r20a, dw=dw_frq, k_AB=k_AB, tcp=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
 
         # Check all R2eff values.
         for i in range(self.num_points):
-            self.assertAlmostEqual(R2eff[i], self.r20a)
+            self.assertAlmostEqual(self.R2eff[i], self.r20a)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):

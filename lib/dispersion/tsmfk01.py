@@ -70,7 +70,7 @@ More information on the TSMFK01 model can be found in the:
 from numpy import array, min, sin, isfinite, sum
 
 
-def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
+def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the TSMFK01 model.
 
     See the module docstring for details.
@@ -84,13 +84,16 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     @type k_AB:             float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array.
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
+    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
+    @type back_calc:        numpy rank-1 float array
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if dw == 0.0 or k_AB == 0.0:
-        return array([r20a]*num_points)
+        back_calc[:] = array([r20a]*num_points)
+        return
 
     # Denominator.
     denom = dw * tcp
@@ -101,7 +104,8 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if min(numer) == 0.0:
-        return array([r20a + k_AB]*num_points) 
+        back_calc[:] = array([r20a + k_AB]*num_points)
+        return
 
     # Calculate R2eff.
     R2eff = r20a + k_AB - k_AB * numer / denom
@@ -111,4 +115,4 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    return R2eff
+    back_calc[:] = R2eff

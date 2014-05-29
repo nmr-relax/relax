@@ -44,6 +44,7 @@ class Test_it99(TestCase):
         self.ncyc = array([2, 4, 8, 10, 20, 40, 500])
         relax_times = 0.04
         self.cpmg_frqs = self.ncyc / relax_times
+        self.R2eff = zeros(self.num_points, float64)
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
@@ -56,15 +57,15 @@ class Test_it99(TestCase):
         pB, dw_frq, tex = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
+        r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.R2eff, num_points=self.num_points)
 
         # Check all R2eff values.
         if self.kex > 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20, 2)
+                self.assertAlmostEqual(self.R2eff[i], self.r20, 2)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20)
+                self.assertAlmostEqual(self.R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):

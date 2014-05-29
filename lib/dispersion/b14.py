@@ -115,7 +115,7 @@ from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power,
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -143,13 +143,16 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
+    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
+    @type back_calc:        numpy rank-1 float array
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        return array([r20a]*num_points)
+        back_calc[:] = array([r20a]*num_points)
+        return
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
@@ -200,7 +203,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Catch math domain error of sinh(val > 710).
     # This is when E0 > 710.
     if max(E0) > 700:
-        return array([r20a]*num_points)
+        back_calc[:] = array([r20a]*num_points)
+        return
 
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
@@ -248,4 +252,4 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    return R2eff
+    back_calc[:] = R2eff

@@ -56,6 +56,7 @@ class Test_dpl94(TestCase):
 
         # Required data structures.
         self.num_points = 11
+        self.R1rho = zeros(self.num_points, float64)
 
 
     def calc_r1rho(self):
@@ -65,7 +66,7 @@ class Test_dpl94(TestCase):
         phi_ex_scaled, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
         # Calculate the R1rho values.
-        R1rho = r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
+        r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
 
         # Compare to function value.
         r1rho_no_rex = self.r1 * cos(self.theta)**2 + self.r1rho_prime * sin(self.theta)**2
@@ -73,10 +74,10 @@ class Test_dpl94(TestCase):
         # Check all R1rho values.
         if self.kex > 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i], 2)
+                self.assertAlmostEqual(self.R1rho[i], r1rho_no_rex[i], 2)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i])
+                self.assertAlmostEqual(self.R1rho[i], r1rho_no_rex[i])
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):
