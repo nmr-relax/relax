@@ -47,6 +47,7 @@ class Test_mmq_cr72(TestCase):
         self.cpmg_frqs = self.ncyc / relax_times
         self.inv_relax_times = 1.0 / relax_times
         self.tau_cpmg = 0.25 / self.cpmg_frqs
+        self.R2eff = zeros(self.num_points, float64)
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
@@ -59,11 +60,11 @@ class Test_mmq_cr72(TestCase):
         k_AB, k_BA, pB, dw_frq, dwH_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, dwH=self.dwH, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_mmq_cr72(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points, power=self.ncyc)
+        r2eff_mmq_cr72(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, dwH=dwH_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points, power=self.ncyc)
 
         # Check all R2eff values.
         for i in range(self.num_points):
-            self.assertAlmostEqual(R2eff[i], self.r20)
+            self.assertAlmostEqual(self.R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, dwH=None, sfrq=None):
