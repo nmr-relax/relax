@@ -59,6 +59,7 @@ class Test_tp02(TestCase):
 
         # Required data structures.
         self.num_points = 11
+        self.R1rho = zeros(self.num_points, float64)
 
 
     def calc_r1rho(self):
@@ -68,7 +69,7 @@ class Test_tp02(TestCase):
         pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
         # Calculate the R1rho values.
-        R1rho = r1rho_TP02(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
+        r1rho_TP02(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
 
         # Compare to function value.
         # Larmor frequency [s^-1].
@@ -89,7 +90,7 @@ class Test_tp02(TestCase):
 
         # Check all R1rho values.
         for i in range(self.num_points):
-            self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i])
+            self.assertAlmostEqual(self.R1rho[i], r1rho_no_rex[i])
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):
