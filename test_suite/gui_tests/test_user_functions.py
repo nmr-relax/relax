@@ -144,6 +144,117 @@ class User_functions(GuiTestCase):
             self.assertEqual(points[0][2], None)
 
 
+    def test_spectrum_read_intensities(self):
+        """Test the operation of the spectrum.read_intensities user function GUI window."""
+
+        # Open the spectrum.read_intensities user function window.
+        uf = uf_store['spectrum.read_intensities']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+
+        # Set the y-value of a single pos, and check.
+        uf.page.uf_args['file'].selection_win_show()
+        uf.page.uf_args['file'].sel_win.SetValue('test_file')
+        uf.page.uf_args['file'].selection_win_data()
+        file = uf.page.uf_args['file'].GetValue()
+        print("File names:  %s" % file)
+        self.assert_(isinstance(file, str))
+        self.assertEqual(file, 'test_file')
+
+        # Set the file to nothing in the wizard, open the Sequence window, close the window, and check that None comes back.
+        uf.page.uf_args['file'].SetValue(str_to_gui(''))
+        uf.page.uf_args['file'].selection_win_show()
+        uf.page.uf_args['file'].selection_win_data()
+        file = uf.page.uf_args['file'].GetValue()
+        print("File names:  %s" % file)
+        self.assertEqual(file, None)
+
+        # Set a valid file list in the wizard, open and close the Sequence window (twice), and check that the file comes back.
+        uf.page.uf_args['file'].SetValue(str_to_gui("['test1', 'test2']"))
+        uf.page.uf_args['file'].selection_win_show()
+        uf.page.uf_args['file'].selection_win_data()
+        uf.page.uf_args['file'].selection_win_show()
+        uf.page.uf_args['file'].selection_win_data()
+        file = uf.page.uf_args['file'].GetValue()
+        print("File names:  %s" % file)
+        self.assertEqual(len(file), 2)
+        self.assertEqual(file[0], 'test1')
+        self.assertEqual(file[1], 'test2')
+
+        # Set the file to a number of invalid values, checking that they are ignored.
+        for val in ["['1', '2', '3'", "['1'"]:
+            uf.page.uf_args['file'].SetValue(str_to_gui(val))
+            uf.page.uf_args['file'].selection_win_show()
+            uf.page.uf_args['file'].selection_win_data()
+            file = uf.page.uf_args['file'].GetValue()
+            print("Invalid file: %s\nFile names:  %s" % (val, file))
+            self.assertEqual(file, None)
+
+
+    def test_structure_add_atom(self):
+        """Test the operation of the structure.add_atom user function GUI window."""
+
+        # Open the structure.add_atom user function window.
+        uf = uf_store['structure.add_atom']
+        uf._sync = True
+        uf.create_wizard(parent=self.app.gui)
+
+        # Set the y-value of a single pos, and check.
+        uf.page.uf_args['pos'].selection_win_show()
+        uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=int_to_gui(2))
+        uf.page.uf_args['pos'].selection_win_data()
+        pos = uf.page.uf_args['pos'].GetValue()
+        print("Pos:  %s" % pos)
+        self.assertEqual(len(pos), 3)
+        self.assertEqual(pos[0], None)
+        self.assertEqual(pos[1], 2.0)
+        self.assertEqual(pos[2], None)
+
+        # Set the pos to nothing in the wizard, open the Sequence window, close the window, and check that None comes back.
+        uf.page.uf_args['pos'].SetValue(str_to_gui(''))
+        uf.page.uf_args['pos'].selection_win_show()
+        uf.page.uf_args['pos'].selection_win_data()
+        pos = uf.page.uf_args['pos'].GetValue()
+        print("Pos:  %s" % pos)
+        self.assertEqual(pos, None)
+
+        # Set a valid pos in the wizard, open and close the Sequence window (twice), and check that the pos comes back.
+        uf.page.uf_args['pos'].SetValue(str_to_gui('[1, 2, -3.]'))
+        uf.page.uf_args['pos'].selection_win_show()
+        uf.page.uf_args['pos'].selection_win_data()
+        uf.page.uf_args['pos'].selection_win_show()
+        uf.page.uf_args['pos'].selection_win_data()
+        pos = uf.page.uf_args['pos'].GetValue()
+        print("Pos:  %s" % pos)
+        self.assertEqual(len(pos), 3)
+        self.assertEqual(pos[0], 1.0)
+        self.assertEqual(pos[1], 2.0)
+        self.assertEqual(pos[2], -3.0)
+
+        # Set the pos to a number of invalid values, checking that they are ignored.
+        for val in ['2', 'die', '[1, 2, 3', '[1]', '[[1, 2, 3], 1, 2, 3], [1, 2, 3]]']:
+            uf.page.uf_args['pos'].SetValue(str_to_gui(val))
+            uf.page.uf_args['pos'].selection_win_show()
+            uf.page.uf_args['pos'].selection_win_data()
+            pos = uf.page.uf_args['pos'].GetValue()
+            print("Invalid pos: %s\nPos:  %s" % (val, pos))
+            self.assertEqual(pos, None)
+
+        # Set the Sequence elements to invalid values.
+        for val in ['x']:
+            uf.page.uf_args['pos'].SetValue(str_to_gui(''))
+            uf.page.uf_args['pos'].selection_win_show()
+            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=1, col=1, label=str_to_gui(val))
+            uf.page.uf_args['pos'].sel_win.sequence.SetStringItem(index=0, col=1, label=int_to_gui(1))
+            uf.page.uf_args['pos'].selection_win_data()
+            pos = uf.page.uf_args['pos'].GetValue()
+            print("Pos:  %s" % pos)
+            self.assertEqual(len(pos), 3)
+            self.assertEqual(pos[0], 1.0)
+            self.assertEqual(pos[1], None)
+            self.assertEqual(pos[2], None)
+
+
     def test_structure_pdb_read(self):
         """Test the full operation of the structure.read_pdb user function GUI window."""
 

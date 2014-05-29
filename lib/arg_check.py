@@ -245,6 +245,8 @@ def is_float_object(arg, name=None, dim=(3, 3), can_be_none=False, raise_error=T
 
     # Init.
     fail = False
+    if isinstance(dim, int):
+        dim = [dim]
 
     # An argument of None is allowed.
     if can_be_none and arg == None:

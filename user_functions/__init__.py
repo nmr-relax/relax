@@ -80,6 +80,7 @@ __all__ += [
     'state',
     'structure',
     'sys_info',
+    'wildcards',
     'value',
     'vmd'
 ]

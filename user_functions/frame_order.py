@@ -34,6 +34,7 @@ from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.frame_order.uf import average_position, num_int_pts, pdb_model, pivot, quad_int, ref_domain, select_model
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.
@@ -104,7 +105,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "average structure file name",
     desc = "The name of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
@@ -115,7 +116,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "PDB representation file name",
     desc = "The name of the PDB file for the geometric object representation of the frame order dynamics.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
@@ -126,7 +127,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "distribution file name",
     desc = "The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
-    wiz_filesel_wildcard = "PDB files (*.pdb)|*.pdb;*.PDB",
+    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
     wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
