@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2009-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,9 +25,9 @@
 # Python module imports.
 from math import cos, sin
 from numpy import dot, inner, sqrt, transpose
-from numpy.linalg import norm
 
 # relax module imports.
+from lib.compat import norm
 from lib.linear_algebra.kronecker_product import transpose_23
 from lib.geometry.rotations import tilt_torsion_to_R
 
