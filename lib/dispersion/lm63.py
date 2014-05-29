@@ -87,7 +87,7 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, num_points=None)
 
     # Catch divide with zeros (to avoid pointless mathematical operations).
     if kex == 0.0:
-        return array([1e100]*num_points)
+        return array([r20]*num_points)
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.

@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arccosh, arctan2, array, cos, cosh, isfinite, log, min, power, sin, sinh, sqrt, sum
+from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -146,6 +146,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
+
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
+        return array([r20a]*num_points)
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
@@ -193,6 +197,11 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # E0 = -2.0 * tcp * (F00R - f11R).
     E0 =  two_tcp * g3
 
+    # Catch math domain error of sinh(val > 710).
+    # This is when E0 > 710.
+    if max(E0) > 700:
+        return array([r20a]*num_points)
+
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
 
@@ -214,24 +223,12 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
-    # Catch math domain error of sqrt(neg val).
-    # This is when abs(v1c) =< 1.
-    if min(abs(v1c)) <= 1.:
-        R2eff = array([1e100]*num_points)
-        return R2eff
-
     # Exact result for v2v3.
     v3 = sqrt(v1c**2 - 1.)
 
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
     Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
-
-    # Catch math domain error of log(neg val or zero).
-    # This is when Tog.real =< 0.
-    if min(Tog.real) <= 0.:
-        R2eff = array([1e100]*num_points)
-        return R2eff
 
     ## -1/Trel * log(LpreDyn).
     # Rpre = (r20a + r20b + kex) / 2.0
