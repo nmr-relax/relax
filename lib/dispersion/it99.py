@@ -76,7 +76,7 @@ More information on the IT99 model can be found in the:
 from numpy import array, isfinite, sqrt, sum
 
 
-def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, num_points=None):
     """Calculate the R2eff values for the IT99 model.
 
     See the module docstring for details.
@@ -94,9 +94,7 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     @type tex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
 
@@ -108,6 +106,11 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
 
     # The numerator.
     numer = padw2 * pB * tex
+
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        return array([r20]*num_points)
 
     # The effective rotating frame field.
     omega_1eff4 = 2304.0 * cpmg_frqs**4
@@ -124,6 +127,4 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff

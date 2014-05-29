@@ -63,10 +63,10 @@ More information on the DPL94 model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, cos, isfinite, sin, sum
+from numpy import abs, array, cos, isfinite, min, sin, sum
 
 
-def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, num_points=None):
     """Calculate the R1rho values for the DPL94 model.
 
     See the module docstring for details.
@@ -84,9 +84,7 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     @type R1:                   float
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
     @type num_points:           int
     """
 
@@ -100,8 +98,20 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     # The numerator.
     numer = sin_theta2 * phi_ex * kex
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if min(numer) == 0.0:
+        return R1_R2
+
     # Denominator.
     denom = kex2 + spin_lock_fields2
+
+    # Catch math domain error of dividing with 0.
+    # This is when denom =0.
+    if min(abs(denom)) == 0:
+        R1rho = array([1e100]*num_points)
+
+        return R1rho
 
     # R1rho calculation.
     R1rho = R1_R2 + numer / denom
@@ -111,6 +121,4 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     if not isfinite(sum(R1rho)):
         R1rho = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R1rho[i]
+    return R1rho

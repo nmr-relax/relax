@@ -60,10 +60,10 @@ More information on the TAP03 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arctan2, array, isfinite, sin, sqrt, sum
+from numpy import abs, arctan2, array, isfinite, min, sin, sqrt, sum
 
 
-def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, num_points=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Trott, Abergel and Palmer (2003) equation.
@@ -89,9 +89,7 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     @type spin_lock_fields:     numpy rank-1 float array
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
     @type num_points:           int
     """
 
@@ -113,7 +111,12 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     # The gamma factor.
     sigma = pB*da + pA*db
     sigma2 = sigma**2
+
     gamma = 1.0 + phi_ex*(sigma2 - kex2 + spin_lock_fields2) / (sigma2 + kex2 + spin_lock_fields2)**2
+
+    # Bad gamma.
+    if min(gamma) < 0.0:
+        return array([1e100]*num_points)
 
     # Special omega values.
     waeff2 = gamma*spin_lock_fields2 + da**2     # Effective field at A.
@@ -130,9 +133,19 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     R1_cos_theta2 = R1 * (1.0 - sin_theta2)
     R1rho_prime_sin_theta2 = r1rho_prime * sin_theta2
 
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if min(numer) == 0.0:
+        return R1_cos_theta2 + R1rho_prime_sin_theta2
+
     # Denominator.
     denom = waeff2*wbeff2/weff2 + kex2 - 2.0*hat_sin_theta2*phi_ex + (1.0 - gamma)*spin_lock_fields2
  
+    # Catch math domain error of dividing with 0.
+    # This is when denom =0.
+    if min(abs(denom)) == 0:
+        return array([1e100]*num_points)
+
     # R1rho calculation.
     R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + hat_sin_theta2 * numer / denom / gamma
 
@@ -141,6 +154,4 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     if not isfinite(sum(R1rho)):
         R1rho = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R1rho[i]
+    return R1rho

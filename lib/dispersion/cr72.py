@@ -92,7 +92,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, max, sqrt, sum
+from numpy import arccosh, array, cos, cosh, isfinite, min, max, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -128,6 +128,10 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_BA = pA * kex
     k_AB = pB * kex
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines.
+    if dw == 0.0 or pA == 1.0 or kex == 0.0:
+        return array([r20_kex]*num_points)
+
     # The Psi and zeta values.
     if r20a != r20b:
         fact = r20a - r20b - k_BA + k_AB
@@ -151,14 +155,20 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
-    if num_points > 0:
-        if max(etapos) > 700:
-            R2eff = array([1e100]*num_points)
+    if max(etapos) > 700:
+        R2eff = array([1e100]*num_points)
 
-            return R2eff
+        return R2eff
+
+    # The arccosh argument - catch invalid values.
+    fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
+    if min(fact) < 1.0:
+        R2eff = array([r20_kex]*num_points)
+
+        return R2eff
 
     # Calculate R2eff.
-    R2eff = r20_kex - cpmg_frqs * arccosh( Dpos * cosh(etapos) - Dneg * cos(etaneg) )
+    R2eff = r20_kex - cpmg_frqs * arccosh( fact )
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).

@@ -47,10 +47,10 @@ More information on the MMQ CR72 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, log, sin, sqrt, sum
+from numpy import arccosh, array, cos, cosh, isfinite, log, max, sin, sqrt, sum
 
 
-def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, num_points=None, power=None):
     """The CR72 model extended to MMQ CPMG data.
 
     This function calculates and stores the R2eff values.
@@ -78,9 +78,7 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
     @type tcp:              numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp.
     @type num_points:       int
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int16, rank-1 array
@@ -122,8 +120,17 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
     etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
 
-    # The full eta+/- values.
+    # The full eta+ values.
     etapos = etapos_part / cpmg_frqs
+
+    # Catch math domain error of cosh(val > 710).
+    # This is when etapos > 710.
+    if max(etapos) > 700:
+        R2eff = array([1e100]*num_points)
+
+        return R2eff
+
+    # The full eta - values.
     etaneg = etaneg_part / cpmg_frqs
 
     # The mD value.
@@ -147,6 +154,4 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff
