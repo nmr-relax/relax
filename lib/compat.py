@@ -369,7 +369,7 @@ else:
 if PY_VERSION == 2:
     # Switch all range() calls to xrange() for increased speed and memory reduction.
     # This should work as all range() usage for Python 3 in relax must match the old xrange() usage.
-    builtins.range = builtins.xrange
+    #builtins.range = builtins.xrange
 
     # The sorted() builtin function for Python 2.3 and earlier.
     if sys.version_info[1] <= 3:
