@@ -43,6 +43,7 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.num_points = 3
         self.tcp = array([0.1, 0.2, 0.3], float64)
         self.num_cpmg = array([1, 2, 3], int16)
+        self.R2eff = zeros(self.num_points, float64)
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
@@ -55,14 +56,14 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         k_AB, k_BA, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
+        r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, back_calc=self.R2eff, num_points=self.num_points, num_cpmg=self.num_cpmg)
 
         if self.kex >= 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20, 5)
+                self.assertAlmostEqual(self.R2eff[i], self.r20, 5)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(R2eff[i], self.r20)
+                self.assertAlmostEqual(self.R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):

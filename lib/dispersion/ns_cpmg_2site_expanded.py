@@ -241,7 +241,7 @@ from numpy import array, argmax, exp, isfinite, power, log, min, sqrt, sum
 from lib.float import isNaN
 
 
-def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, num_points=None, num_cpmg=None):
+def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=None, relax_time=None, inv_relax_time=None, tcp=None, back_calc=None, num_points=None, num_cpmg=None):
     """The 2-site numerical solution to the Bloch-McConnell equation using complex conjugate matrices.
 
     This function calculates and stores the R2eff values.
@@ -263,7 +263,9 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     @type inv_relax_time:       float
     @keyword tcp:               The tau_CPMG times (1 / 4.nu1).
     @type tcp:                  numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp .
+    @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
+    @type back_calc:            numpy rank-1 float array
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
     @type num_points:           int
     @keyword num_cpmg:          The array of numbers of CPMG blocks.
     @type num_cpmg:             numpy int16, rank-1 array
@@ -271,7 +273,8 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        return array([r20]*num_points)
+        back_calc[:] = array([r20]*num_points)
+        return
 
     # Repeditive calculations.
     half_tcp = 0.5 * tcp
@@ -363,4 +366,4 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     if not isfinite(sum(R2eff)) or min(Mx) <= 0.0 or not isfinite(sum(Mx)):
         R2eff = array([1e100]*num_points)
 
-    return R2eff
+    back_calc[:] = R2eff
