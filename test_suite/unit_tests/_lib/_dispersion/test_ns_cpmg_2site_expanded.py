@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, zeros
+from numpy import array, float64, int16, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -35,7 +35,7 @@ class Test_ns_cpmg_2site_expanded(TestCase):
 
         # Default parameter values.
         self.r20 = 2.0
-        self.pA = 0.9
+        self.pA = 0.95
         self.dw = 0.5
         self.kex = 100.0
 
@@ -44,15 +44,18 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         self.tcp = array([0.1, 0.2, 0.3], float64)
         self.num_cpmg = array([1, 2, 3], int16)
 
+        # The spin Larmor frequencies.
+        self.sfrq = 200. * 1E6
+
 
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA = self.param_conversion(pA=self.pA, kex=self.kex)
+        k_AB, k_BA, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=self.dw, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
+        R2eff = r2eff_ns_cpmg_2site_expanded(r20=self.r20, pA=self.pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=0.3, inv_relax_time=1/0.3, tcp=self.tcp, num_points=self.num_points, num_cpmg=self.num_cpmg)
 
         # Check all R2eff values.
         if self.kex >= 1.e5:
@@ -63,14 +66,18 @@ class Test_ns_cpmg_2site_expanded(TestCase):
                 self.assertAlmostEqual(R2eff[i], self.r20)
 
 
-    def param_conversion(self, pA=None, kex=None):
+    def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):
         """Convert the parameters.
 
         @keyword pA:    The population of state A.
         @type pA:       float
         @keyword kex:   The rate of exchange.
         @type kex:      float
-        @return:        The parameters {k_AB, k_BA}.
+        @keyword dw:    The chemical exchange difference between states A and B in ppm.
+        @type dw:       float
+        @keyword sfrq:  The spin Larmor frequencies in Hz.
+        @type sfrq:     float
+        @return:        The parameters {k_AB, k_BA, dw_frq}.
         @rtype:         tuple of float
         """
 
@@ -81,8 +88,14 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         k_BA = pA * kex
         k_AB = pB * kex
 
+        # Calculate spin Larmor frequencies in 2pi.
+        frqs = sfrq * 2 * pi
+
+        # Convert dw from ppm to rad/s.
+        dw_frq = dw * frqs / 1.e6
+
         # Return all values.
-        return k_AB, k_BA
+        return k_AB, k_BA, dw_frq
 
 
     def test_ns_cpmg_2site_expanded_no_rex1(self):
@@ -158,12 +171,3 @@ class Test_ns_cpmg_2site_expanded(TestCase):
         # Calculate and check the R2eff values.
         self.calc_r2eff()
 
-
-    def test_ns_cpmg_2site_expanded_no_rex8(self):
-        """Test the r2eff_ns_cpmg_2site_expanded() function for no exchange when kex = 1e5."""
-
-        # Parameter reset.
-        self.kex = 1e5
-
-        # Calculate and check the R2eff values.
-        self.calc_r2eff()

@@ -35,8 +35,8 @@ class Test_cr72(TestCase):
 
         # Default parameter values.
         self.r20a = 2.0
-        self.r20b = 2.0
-        self.pA = 0.99
+        self.r20b = 4.0
+        self.pA = 0.95
         self.dw = 2.0
         self.kex = 1000.0
 
@@ -49,11 +49,12 @@ class Test_cr72(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_CR72(r20a=self.r20a, r20b=self.r20b, pA=self.pA, dw=dw_frq, kex=self.kex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
@@ -89,7 +90,7 @@ class Test_cr72(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # Return all values.
         return k_AB, k_BA, pB, dw_frq
@@ -167,6 +168,7 @@ class Test_cr72(TestCase):
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
+
 
     def test_cr72_no_rex8(self):
         """Test the r2eff_cr72() function for no exchange when kex = 1e5."""

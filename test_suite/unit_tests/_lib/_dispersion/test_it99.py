@@ -35,7 +35,7 @@ class Test_it99(TestCase):
 
         # Default parameter values.
         self.r20 = 2.0
-        self.pA = 0.99
+        self.pA = 0.95
         self.dw = 2.0
         self.kex = 1000.0
 
@@ -53,7 +53,7 @@ class Test_it99(TestCase):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        pB, dw_frq, tex  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        pB, dw_frq, tex = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
@@ -89,7 +89,7 @@ class Test_it99(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # Time of exchange: 1/(2*kex)
         if kex == 0.0:

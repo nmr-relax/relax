@@ -25,6 +25,7 @@ from unittest import TestCase
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
+from specific_analyses.relax_disp.parameter_object import Relax_disp_params
 
 
 class Test_b14(TestCase):
@@ -35,8 +36,8 @@ class Test_b14(TestCase):
 
         # Default parameter values.
         self.r20a = 2.0
-        self.r20b = 2.0
-        self.pA = 0.99
+        self.r20b = 4.0
+        self.pA = 0.95
         self.dw = 2.0
         self.kex = 1000.0
 
@@ -51,18 +52,23 @@ class Test_b14(TestCase):
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
 
+        # This is to test the default grid values.
+        self.test_val = True
+
+
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        k_AB, k_BA, pB, dw_frq = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
         R2eff = r2eff_B14(r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points)
 
         # Check all R2eff values.
-        for i in range(self.num_points):
-            self.assertAlmostEqual(R2eff[i], self.r20a)
+        if self.test_val:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20a)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):
@@ -91,7 +97,7 @@ class Test_b14(TestCase):
         frqs = sfrq * 2 * pi
 
         # Convert dw from ppm to rad/s.
-        dw_frq = dw * frqs
+        dw_frq = dw * frqs / 1.e6
 
         # Return all values.
         return k_AB, k_BA, pB, dw_frq
@@ -176,6 +182,41 @@ class Test_b14(TestCase):
 
         # Parameter reset.
         self.kex = 1e5
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
+
+
+    def test_b14_no_rex9(self):
+        """Test the r2eff_b14() function for the default lower grid values.  This is to catch un-discovered numpy-raises in calculations. """
+
+        PARAMS = Relax_disp_params()
+
+        # Parameter reset.
+        self.r20a = PARAMS.grid_lower('r2a')
+        self.r20b = PARAMS.grid_lower('r2b')
+        self.pA =  PARAMS.grid_lower('pA')
+        self.kex = PARAMS.grid_lower('kex')
+
+        self.test_val = False
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
+
+
+    def test_b14_no_rex10(self):
+        """Test the r2eff_b14() function for the default lower grid values.  This is to catch un-discovered numpy-raises in calculations. """
+
+        PARAMS = Relax_disp_params()
+
+        # Parameter reset.
+        self.r20a = PARAMS.grid_upper('r2a')
+        self.r20b = PARAMS.grid_upper('r2b')
+        self.dw = PARAMS.grid_upper('dw')
+        self.pA =  PARAMS.grid_upper('pA')
+        self.kex = PARAMS.grid_upper('kex')
+
+        self.test_val = False
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
