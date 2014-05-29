@@ -1163,7 +1163,7 @@ class Dispersion:
                 phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
 
                 # Back calculate the R2eff values.
-                self.back_calc[0][si][mi][0] = r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r1rho_M61(r1rho_prime=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
