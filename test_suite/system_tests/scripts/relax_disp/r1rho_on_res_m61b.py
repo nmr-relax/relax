@@ -47,7 +47,7 @@ spin.create(res_name='Trp', res_num=1, spin_name='NE1')
 spin.isotope(isotope='15N')
 
 # Set the relaxation dispersion experiment type.
-relax_disp.exp_type('R1rho')
+relax_disp.exp_type(spectrum_id='ref', exp_type='R1rho')
 
 # The spectral data - spectrum ID, peak lists, offset frequency (Hz), relaxation time period (s), baseplane RMSD estimate.
 data = []
@@ -68,9 +68,12 @@ spectrometer.frequency(id='ref', frq=800, units='MHz')
 # Loop over the spectral data, loading it and setting the metadata.
 for i in range(len(data)):
     # Load the peak intensities and set the errors.
-    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='N', proton='HN')
-    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height', heteronuc='NE1', proton='HE1')
+    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height')
+    spectrum.read_intensities(file=data[i][1], dir=data_path, spectrum_id=data[i][0], int_method='height')
     spectrum.baseplane_rmsd(spectrum_id=data[i][0], error=data[i][4])
+
+    # Set the relaxation dispersion experiment type.
+    relax_disp.exp_type(spectrum_id=data[i][0], exp_type='R1rho')
 
     # Set the relaxation dispersion spin-lock field strength (nu1).
     relax_disp.spin_lock_field(spectrum_id=data[i][0], field=data[i][2])

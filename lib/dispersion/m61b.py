@@ -59,8 +59,10 @@ More information on the M61 skew model can be found in the:
     - U{relaxation dispersion page of the relax website<http://www.nmr-relax.com/analyses/relaxation_dispersion.html#M61_skew>}.
 """
 
+# Python module imports.
+from numpy import abs, array, isfinite, min, sum
 
-def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=None, back_calc=None, num_points=None):
+def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, num_points=None):
     """Calculate the R1rho values for the M61 skew model.
 
     See the module docstring for details.
@@ -76,9 +78,7 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=No
     @type kex:                  float
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to one of the spin-lock fields.
-    @type back_calc:            numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
     @type num_points:           int
     """
 
@@ -92,20 +92,26 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields=No
     # The numerator.
     numer = pA2dw2 * pB * kex
 
-    # Loop over the dispersion points, back calculating the R1rho values.
-    for i in range(num_points):
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = r1rho_prime
-            continue
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        return array([r1rho_prime]*num_points)
 
-        # Denominator.
-        denom = kex2_pA2dw2 + spin_lock_fields2[i]
+    # Denominator.
+    denom = kex2_pA2dw2 + spin_lock_fields2
 
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
+    # Catch math domain error of dividing with 0.
+    # This is when denom=0.
+    if min(abs(denom)) == 0:
+        return array([1e100]*num_points)
 
-        # R1rho calculation.
-        back_calc[i] = r1rho_prime + numer / denom
+
+    # R1rho calculation.
+    R1rho = r1rho_prime + numer / denom
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R1rho)):
+        return array([1e100]*num_points)
+
+    return R1rho

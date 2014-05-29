@@ -128,11 +128,6 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=N
     waeff2_wbeff2 = waeff2*wbeff2
     fact_denom = waeff2_wbeff2 + weff2*kex2
 
-    # Catch math domain error of dividing with 0.
-    # This is when fact_denom = 0.
-    if min(abs(fact_denom)) == 0:
-        return array([1e100]*num_points)
-
     fact = 1.0 + 2.0*kex2*(pA*waeff2 + pB*wbeff2) / fact_denom
     denom = waeff2_wbeff2/weff2 + kex2 - sin_theta2*phi_ex*(fact)
  

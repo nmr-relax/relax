@@ -88,6 +88,10 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     @type num_points:       int
     """
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or k_AB == 0.0:
+        return array([r20a]*num_points)
+
     # Denominator.
     denom = dw * tcp
 
@@ -97,12 +101,7 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, num_points=None):
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if min(numer) == 0.0:
-        return r20a + k_AB
-
-    # Catch math domain error of dividing with 0.
-    # This is when sin(denom) = 0.
-    if min(denom) == 0.0:
-        return array([1e100]*num_points)
+        return array([r20a + k_AB]*num_points) 
 
     # Calculate R2eff.
     R2eff = r20a + k_AB - k_AB * numer / denom

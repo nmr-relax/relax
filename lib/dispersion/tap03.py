@@ -60,7 +60,7 @@ More information on the TAP03 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, arctan2, array, isfinite, min, sin, sqrt, sum
+from numpy import arctan2, array, isfinite, min, sin, sqrt, sum
 
 
 def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, num_points=None):
@@ -135,17 +135,12 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if min(numer) == 0.0:
+    if numer == 0.0:
         return R1_cos_theta2 + R1rho_prime_sin_theta2
 
     # Denominator.
     denom = waeff2*wbeff2/weff2 + kex2 - 2.0*hat_sin_theta2*phi_ex + (1.0 - gamma)*spin_lock_fields2
  
-    # Catch math domain error of dividing with 0.
-    # This is when denom =0.
-    if min(abs(denom)) == 0:
-        return array([1e100]*num_points)
-
     # R1rho calculation.
     R1rho = R1_cos_theta2 + R1rho_prime_sin_theta2 + hat_sin_theta2 * numer / denom / gamma
 

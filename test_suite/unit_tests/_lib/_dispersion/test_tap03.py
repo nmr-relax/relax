@@ -21,15 +21,15 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import arctan2, array, cos, float64, int16, pi, sin, zeros
 from unittest import TestCase
 
 # relax module imports.
-from lib.dispersion.dpl94 import r1rho_DPL94
+from lib.dispersion.tap03 import r1rho_TAP03
 
 
-class Test_dpl94(TestCase):
-    """Unit tests for the lib.dispersion.dpl94 relax module."""
+class Test_tap03(TestCase):
+    """Unit tests for the lib.dispersion.tap03 relax module."""
 
     def setUp(self):
         """Set up for all unit tests."""
@@ -38,7 +38,12 @@ class Test_dpl94(TestCase):
 
 
         # The R1rho_prime parameter value (R1rho with no exchange).
-        self.r1rho_prime = 2.5
+        self.r1rho_prime = 5.0
+        # The chemical shifts in rad/s.  This is only used for off-resonance R1rho models. 
+        self.omega = -35670.44192
+        # The structure of spin-lock or hard pulse offsets in rad/s.
+        self.offset = -35040.3526693
+
         # Population of ground state.
         self.pA = 0.9
         # The chemical exchange difference between states A and B in ppm.
@@ -48,8 +53,6 @@ class Test_dpl94(TestCase):
         self.r1 = 1.0
         # The spin-lock field strengths in Hertz.
         self.spin_lock_nu1 = array([ 1000., 1500., 2000., 2500., 3000., 3500., 4000., 4500., 5000., 5500., 6000.])
-        # The rotating frame tilt angles for each dispersion point.
-        self.theta = array([1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966, 1.5707963267948966])
 
         # The spin Larmor frequencies.
         self.sfrq = 599.8908617*1E6
@@ -62,14 +65,22 @@ class Test_dpl94(TestCase):
         """Calculate and check the R1rho values."""
 
         # Parameter conversions.
-        phi_ex_scaled, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
+        pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
         # Calculate the R1rho values.
-        R1rho = r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
+        R1rho = r1rho_TAP03(r1rho_prime=self.r1rho_prime, omega=self.omega, offset=self.offset, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, R1=self.r1, spin_lock_fields=spin_lock_omega1, spin_lock_fields2=spin_lock_omega1_squared, num_points=self.num_points)
+
+        # Compare to function value.
+        Wa = self.omega                         # Larmor frequency [s^-1].
+        Wb = self.omega + dw_frq                # Larmor frequency [s^-1].
+        W = self.pA * Wa + pB * Wb              # Pop-averaged Larmor frequency [s^-1].
+        d = W - self.offset                     # Offset of spin-lock from pop-average.
+        theta = arctan2(spin_lock_omega1, d)    # The rotating frame flip angle.
+        r1rho_no_rex = self.r1 * cos(theta)**2 + self.r1rho_prime * sin(theta)**2
 
         # Check all R1rho values.
         for i in range(self.num_points):
-            self.assertAlmostEqual(R1rho[i], self.r1rho_prime)
+            self.assertAlmostEqual(R1rho[i], r1rho_no_rex[i])
 
 
     def param_conversion(self, pA=None, dw=None, sfrq=None, spin_lock_nu1=None):
@@ -83,7 +94,7 @@ class Test_dpl94(TestCase):
         @type sfrq:             float
         @keyword spin_lock_nu1: The spin-lock field strengths in Hertz. 
         @type spin_lock_nu1:    float
-        @return:                The parameters {phi_ex_scaled, k_BA}.
+        @return:                The parameters {pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared}.
         @rtype:                 tuple of float
         """
 
@@ -93,21 +104,21 @@ class Test_dpl94(TestCase):
         # Calculate spin Larmor frequencies in 2pi.
         frqs = sfrq * 2 * pi
 
-        # The phi_ex parameter value (pA * pB * delta_omega^2).
-        phi_ex = pA * pB * dw**2
+        # Convert dw from ppm to rad/s.
+        dw_frq = dw * frqs
 
-        # Convert phi_ex from ppm^2 to (rad/s)^2.
-        phi_ex_scaled = phi_ex * frqs**2
+        # The R1rho spin-lock field strengths (in rad.s-1).
+        spin_lock_omega1 = (2. * pi * spin_lock_nu1)
 
         # The R1rho spin-lock field strengths squared (in rad^2.s^-2).
-        spin_lock_omega1_squared = (2. * pi * spin_lock_nu1)**2
+        spin_lock_omega1_squared = spin_lock_omega1**2
 
         # Return all values.
-        return phi_ex_scaled, spin_lock_omega1_squared
+        return pB, dw_frq, spin_lock_omega1, spin_lock_omega1_squared
 
 
-    def test_dpl94_no_rex1(self):
-        """Test the r1rho_dpl94() function for no exchange when dw = 0.0."""
+    def test_tap03_no_rex1(self):
+        """Test the r1rho_tap03() function for no exchange when dw = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -116,8 +127,8 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex2(self):
-        """Test the r1rho_dpl94() function for no exchange when pA = 1.0."""
+    def test_tap03_no_rex2(self):
+        """Test the r1rho_tap03() function for no exchange when pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -126,8 +137,8 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex3(self):
-        """Test the r1rho_dpl94() function for no exchange when kex = 0.0."""
+    def test_tap03_no_rex3(self):
+        """Test the r1rho_tap03() function for no exchange when kex = 0.0."""
 
         # Parameter reset.
         self.kex = 0.0
@@ -136,8 +147,8 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex4(self):
-        """Test the r1rho_dpl94() function for no exchange when dw = 0.0 and pA = 1.0."""
+    def test_tap03_no_rex4(self):
+        """Test the r1rho_tap03() function for no exchange when dw = 0.0 and pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -147,8 +158,8 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex5(self):
-        """Test the r1rho_dpl94() function for no exchange when dw = 0.0 and kex = 0.0."""
+    def test_tap03_no_rex5(self):
+        """Test the r1rho_tap03() function for no exchange when dw = 0.0 and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -158,8 +169,8 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex6(self):
-        """Test the r1rho_dpl94() function for no exchange when pA = 1.0 and kex = 0.0."""
+    def test_tap03_no_rex6(self):
+        """Test the r1rho_tap03() function for no exchange when pA = 1.0 and kex = 0.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -169,12 +180,22 @@ class Test_dpl94(TestCase):
         self.calc_r1rho()
 
 
-    def test_dpl94_no_rex7(self):
-        """Test the r1rho_dpl94() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
+    def test_tap03_no_rex7(self):
+        """Test the r1rho_tap03() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
         self.kex = 0.0
 
         # Calculate and check the R1rho values.
+        self.calc_r1rho()
+
+
+    def test_tap03_no_rex8(self):
+        """Test the r1rho_tap03() function for no exchange when kex = 1e20."""
+
+        # Parameter reset.
+        self.kex = 1e20
+
+        # Calculate and check the R2eff values.
         self.calc_r1rho()

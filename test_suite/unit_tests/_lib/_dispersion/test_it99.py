@@ -24,18 +24,17 @@ from numpy import array, float64, int16, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
-from lib.dispersion.b14 import r2eff_B14
+from lib.dispersion.it99 import r2eff_IT99
 
 
-class Test_b14(TestCase):
-    """Unit tests for the lib.dispersion.b14 relax module."""
+class Test_it99(TestCase):
+    """Unit tests for the lib.dispersion.it99 relax module."""
 
     def setUp(self):
         """Set up for all unit tests."""
 
         # Default parameter values.
-        self.r20a = 2.0
-        self.r20b = 2.0
+        self.r20 = 2.0
         self.pA = 0.99
         self.dw = 2.0
         self.kex = 1000.0
@@ -44,25 +43,28 @@ class Test_b14(TestCase):
         self.num_points = 7
         self.ncyc = array([2, 4, 8, 10, 20, 40, 500])
         relax_times = 0.04
-        cpmg_frqs = self.ncyc / relax_times
-        self.inv_relax_times = 1.0 / relax_times
-        self.tau_cpmg = 0.25 / cpmg_frqs
+        self.cpmg_frqs = self.ncyc / relax_times
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
+
 
     def calc_r2eff(self):
         """Calculate and check the R2eff values."""
 
         # Parameter conversions.
-        k_AB, k_BA, pB, dw_frq  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
+        pB, dw_frq, tex  = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq)
 
         # Calculate the R2eff values.
-        R2eff = r2eff_B14(r20a=self.r20a, r20b=self.r20b, pA=self.pA, pB=pB, dw=dw_frq, kex=self.kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.ncyc, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, num_points=self.num_points)
+        R2eff = r2eff_IT99(r20=self.r20, pA=self.pA, pB=pB, dw=dw_frq, tex=tex, cpmg_frqs=self.cpmg_frqs, num_points=self.num_points)
 
         # Check all R2eff values.
-        for i in range(self.num_points):
-            self.assertAlmostEqual(R2eff[i], self.r20a)
+        if self.kex > 1.e5:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20, 2)
+        else:
+            for i in range(self.num_points):
+                self.assertAlmostEqual(R2eff[i], self.r20)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None):
@@ -76,16 +78,12 @@ class Test_b14(TestCase):
         @type dw:       float
         @keyword sfrq:  The spin Larmor frequencies in Hz.
         @type sfrq:     float
-        @return:        The parameters {k_AB, k_BA, pB, dw_frq}.
+        @return:        The parameters {pB, dw_frq, tex}.
         @rtype:         tuple of float
         """
 
         # Calculate pB.
         pB = 1.0 - pA
-
-        # Exchange rates.
-        k_BA = pA * kex
-        k_AB = pB * kex
 
         # Calculate spin Larmor frequencies in 2pi.
         frqs = sfrq * 2 * pi
@@ -93,12 +91,18 @@ class Test_b14(TestCase):
         # Convert dw from ppm to rad/s.
         dw_frq = dw * frqs
 
+        # Time of exchange: 1/(2*kex)
+        if kex == 0.0:
+            tex = 0.0
+        else:
+            tex = 1 / (2*kex)
+
         # Return all values.
-        return k_AB, k_BA, pB, dw_frq
+        return pB, dw_frq, tex
 
 
-    def test_b14_no_rex1(self):
-        """Test the r2eff_b14() function for no exchange when dw = 0.0."""
+    def test_it99_no_rex1(self):
+        """Test the r2eff_it99() function for no exchange when dw = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -107,8 +111,8 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex2(self):
-        """Test the r2eff_b14() function for no exchange when pA = 1.0."""
+    def test_it99_no_rex2(self):
+        """Test the r2eff_it99() function for no exchange when pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -117,8 +121,8 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex3(self):
-        """Test the r2eff_b14() function for no exchange when kex = 0.0."""
+    def test_it99_no_rex3(self):
+        """Test the r2eff_it99() function for no exchange when kex = 0.0."""
 
         # Parameter reset.
         self.kex = 0.0
@@ -127,8 +131,8 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex4(self):
-        """Test the r2eff_b14() function for no exchange when dw = 0.0 and pA = 1.0."""
+    def test_it99_no_rex4(self):
+        """Test the r2eff_it99() function for no exchange when dw = 0.0 and pA = 1.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -138,8 +142,8 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex5(self):
-        """Test the r2eff_b14() function for no exchange when dw = 0.0 and kex = 0.0."""
+    def test_it99_no_rex5(self):
+        """Test the r2eff_it99() function for no exchange when dw = 0.0 and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
@@ -149,8 +153,8 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex6(self):
-        """Test the r2eff_b14() function for no exchange when pA = 1.0 and kex = 0.0."""
+    def test_it99_no_rex6(self):
+        """Test the r2eff_it99() function for no exchange when pA = 1.0 and kex = 0.0."""
 
         # Parameter reset.
         self.pA = 1.0
@@ -160,12 +164,22 @@ class Test_b14(TestCase):
         self.calc_r2eff()
 
 
-    def test_b14_no_rex7(self):
-        """Test the r2eff_b14() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
+    def test_it99_no_rex7(self):
+        """Test the r2eff_it99() function for no exchange when dw = 0.0, pA = 1.0, and kex = 0.0."""
 
         # Parameter reset.
         self.dw = 0.0
         self.kex = 0.0
+
+        # Calculate and check the R2eff values.
+        self.calc_r2eff()
+
+
+    def test_it99_no_rex8(self):
+        """Test the r2eff_cr72() function for no exchange when kex = 1e19."""
+
+        # Parameter reset.
+        self.kex = 1e19
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
