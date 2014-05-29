@@ -62,7 +62,7 @@ More information on the M61 skew model can be found in the:
 # Python module imports.
 from numpy import abs, array, isfinite, min, sum
 
-def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, num_points=None):
+def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R1rho values for the M61 skew model.
 
     See the module docstring for details.
@@ -78,7 +78,9 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
     @type kex:                  float
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).
     @type spin_lock_fields2:    numpy rank-1 float array
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields.
+    @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of spin lock field.
+    @type back_calc:            numpy rank-1 float array
+    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
     @type num_points:           int
     """
 
@@ -95,7 +97,8 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if numer == 0.0:
-        return array([r1rho_prime]*num_points)
+        back_calc[:] = array([r1rho_prime]*num_points)
+        return
 
     # Denominator.
     denom = kex2_pA2dw2 + spin_lock_fields2
@@ -103,7 +106,8 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
     # Catch math domain error of dividing with 0.
     # This is when denom=0.
     if min(abs(denom)) == 0:
-        return array([1e100]*num_points)
+        back_calc[:] = array([1e100]*num_points)
+        return
 
 
     # R1rho calculation.
@@ -112,6 +116,6 @@ def r1rho_M61b(r1rho_prime=None, pA=None, dw=None, kex=None, spin_lock_fields2=N
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
     if not isfinite(sum(R1rho)):
-        return array([1e100]*num_points)
+        R1rho = array([1e100]*num_points)
 
-    return R1rho
+    back_calc[:] = R1rho
