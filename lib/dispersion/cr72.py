@@ -92,12 +92,12 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, sqrt, sum
+from numpy import arccosh, array, cos, cosh, isfinite, max, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
 
-def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
+def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -115,9 +115,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
-    @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
+    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs.
     @type num_points:       int
     """
 
@@ -151,6 +149,14 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     etapos = eta_scale * sqrt(Psi + sqrt_psi2_zeta2) / cpmg_frqs
     etaneg = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2) / cpmg_frqs
 
+    # Catch math domain error of cosh(val > 710).
+    # This is when etapos > 710.
+    if num_points > 0:
+        if max(etapos) > 700:
+            R2eff = array([1e100]*num_points)
+
+            return R2eff
+
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( Dpos * cosh(etapos) - Dneg * cos(etaneg) )
 
@@ -159,6 +165,4 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     if not isfinite(sum(R2eff)):
         R2eff = array([1e100]*num_points)
 
-    # Parse back the value to update the back_calc class object.
-    for i in range(num_points):
-        back_calc[i] = R2eff[i]
+    return R2eff
