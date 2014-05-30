@@ -824,8 +824,8 @@ class Selector_file_window(wx.Dialog):
         @type event:    wx event
         """
 
-        # Destroy the window.
-        self.Destroy()
+        # Close the window.
+        self.Close()
 
 
     def delete(self, event=None):

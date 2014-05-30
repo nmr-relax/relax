@@ -92,8 +92,10 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, sqrt
+from numpy import arccosh, array, cos, cosh, isfinite, min, max, sqrt, sum
 
+# Repetitive calculations (to speed up calculations).
+eta_scale = 2.0**(-3.0/2.0)
 
 def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
@@ -118,6 +120,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
+
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or kex == 0.0:
+        back_calc[:] = array([r20a]*num_points)
+        return
 
     # The B population.
     pB = 1.0 - pA
@@ -146,26 +153,27 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     Dneg = 0.5 * (-1.0 + D_part)
 
     # Partial eta+/- values.
-    eta_scale = 2.0**(-3.0/2.0)
-    etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
-    etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
+    etapos = eta_scale * sqrt(Psi + sqrt_psi2_zeta2) / cpmg_frqs
+    etaneg = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2) / cpmg_frqs
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # The full eta+/- values.
-        etapos = etapos_part / cpmg_frqs[i]
-        etaneg = etaneg_part / cpmg_frqs[i]
+    # Catch math domain error of cosh(val > 710).
+    # This is when etapos > 710.
+    if max(etapos) > 700:
+        back_calc[:] = array([r20a]*num_points)
+        return
 
-        # Catch large values of etapos going into the cosh function.
-        if etapos > 100:
-            back_calc[i] = 1e100
-            continue
+    # The arccosh argument - catch invalid values.
+    fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
+    if min(fact) < 1.0:
+        back_calc[:] = array([r20_kex]*num_points)
+        return
 
-        # The arccosh argument - catch invalid values.
-        fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-        if fact < 1.0:
-            back_calc[i] = r20_kex
-            continue
+    # Calculate R2eff.
+    R2eff = r20_kex - cpmg_frqs * arccosh( fact )
 
-        # The full formula.
-        back_calc[i] = r20_kex - cpmg_frqs[i] * arccosh(fact)
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    back_calc[:] = R2eff

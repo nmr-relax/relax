@@ -47,7 +47,7 @@ More information on the MMQ CR72 model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, cos, cosh, log, sin, sqrt
+from numpy import arccosh, array, cos, cosh, isfinite, log, max, sin, sqrt, sum
 
 
 def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -86,6 +86,11 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @type power:            numpy int16, rank-1 array
     """
 
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if (dw == 0.0 and dwH == 0.0) or pA == 1.0 or k_AB == 0.0:
+        back_calc[:] = array([r20]*num_points)
+        return
+
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
     r20_kex = r20 + kex/2.0
@@ -122,27 +127,37 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
     etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Alias delta.
-        delta = tcp[i]
+    # The full eta+ values.
+    etapos = etapos_part / cpmg_frqs
 
-        # The full eta+/- values.
-        etapos = etapos_part / cpmg_frqs[i]
-        etaneg = etaneg_part / cpmg_frqs[i]
+    # Catch math domain error of cosh(val > 710).
+    # This is when etapos > 710.
+    if max(etapos) > 700:
+        back_calc[:] = array([r20]*num_points)
+        return
 
-        # The mD value.
-        mD = isqrt_pApBkex2 / (dpos * zpos) * (zpos + 2.0*dw*sin(zpos*delta)/sin((dpos + zpos)*delta))
+    # The full eta - values.
+    etaneg = etaneg_part / cpmg_frqs
 
-        # The mZ value.
-        mZ = -isqrt_pApBkex2 / (dneg * zneg) * (dneg - 2.0*dw*sin(dneg*delta)/sin((dneg + zneg)*delta))
+    # The mD value.
+    mD = isqrt_pApBkex2 / (dpos * zpos) * (zpos + 2.0*dw*sin(zpos*tcp)/sin((dpos + zpos)*tcp))
 
-        # The Q value.
-        Q = 1 - mD**2 + mD*mZ - mZ**2 + 0.5*(mD + mZ)*sqrt_pBpA
-        Q = Q.real
+    # The mZ value.
+    mZ = -isqrt_pApBkex2 / (dneg * zneg) * (dneg - 2.0*dw*sin(dneg*tcp)/sin((dneg + zneg)*tcp))
 
-        # The first eigenvalue.
-        lambda1 = r20_kex - cpmg_frqs[i] * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
+    # The Q value.
+    Q = 1 - mD**2 + mD*mZ - mZ**2 + 0.5*(mD + mZ)*sqrt_pBpA
+    Q = Q.real
 
-        # The full formula.
-        back_calc[i] = lambda1.real - inv_tcpmg * log(Q)
+    # The first eigenvalue.
+    lambda1 = r20_kex - cpmg_frqs * arccosh(Dpos * cosh(etapos) - Dneg * cos(etaneg))
+
+    # The full formula.
+    R2eff = lambda1.real - inv_tcpmg * log(Q)
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    back_calc[:] = R2eff

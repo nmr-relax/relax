@@ -64,7 +64,7 @@ More information on the LM63 model can be found in the:
 """
 
 # Python module imports.
-from math import tanh
+from numpy import array, isfinite, sum, tanh
 
 
 def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, num_points=None):
@@ -87,20 +87,27 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None, 
     @type num_points:       int
     """
 
+    # Catch divide with zeros (to avoid pointless mathematical operations).
+    if kex == 0.0:
+        back_calc[:] = array([r20]*num_points)
+        return
+
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if phi_ex == 0.0:
+        back_calc[:] = array([r20]*num_points)
+        return
+
     # Repetitive calculations (to speed up calculations).
     rex = phi_ex / kex
     kex_4 = 4.0 / kex
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Catch zeros.
-        if phi_ex == 0.0:
-            back_calc[i] = r20
+    # Calculate R2eff.
+    R2eff = r20 + rex * (1.0 - kex_4 * cpmg_frqs * tanh(kex / (4.0 * cpmg_frqs)))
 
-        # Avoid divide by zero.
-        elif kex == 0.0:
-            back_calc[i] = 1e100
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
 
-        # The full formula.
-        else:
-            back_calc[i] = r20 + rex * (1.0 - kex_4 * cpmg_frqs[i] * tanh(kex / (4.0 * cpmg_frqs[i])))
+    back_calc[:] = R2eff

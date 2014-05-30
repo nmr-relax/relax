@@ -110,6 +110,14 @@ if PY_VERSION == 2:
 else:
     import pickle
 
+# Numpy.
+import numpy
+try:
+    numpy.linalg.norm(numpy.ones((3,3)), axis=1)
+    numpy_norm_axis = True
+except:
+    numpy_norm_axis = False
+
 
 def bz2_open(file, mode='r'):
     """Abstract the numerous ways BZ2 files are handled in Python.
@@ -217,6 +225,25 @@ def gz_open(file, mode='r'):
 
     # Return the file object.
     return file_obj
+
+
+def norm(x, ord=None, axis=None):
+    """Replacement numpy.linalg.norm() function to handle the axis argument for old numpy.
+    @param x:       Input array.  If `axis` is None, `x` must be 1-D or 2-D.
+    @type x:        array_like
+    @keyword ord:   Order of the norm (see table under ``Notes``). inf means numpy's `inf` object.
+    @type ord:      {non-zero int, inf, -inf, 'fro'}, optional
+    @keyword axis:  If `axis` is an integer, it specifies the axis of `x` along which to compute the vector norms.  If `axis` is a 2-tuple, it specifies the axes that hold 2-D matrices, and the matrix norms of these matrices are computed.  If `axis` is None then either a vector norm (when `x` is 1-D) or a matrix norm (when `x` is 2-D) is returned.
+    @type axis:     {int, 2-tuple of ints, None}, optional
+    """
+
+    # The axis argument exists.
+    if numpy_norm_axis:
+        return numpy.linalg.norm(x, ord=ord, axis=axis)
+
+    # Support for older version (this is much slower).
+    else:
+        return numpy.apply_along_axis(numpy.linalg.norm, axis, x)
 
 
 def sorted(data):
@@ -342,7 +369,7 @@ else:
 if PY_VERSION == 2:
     # Switch all range() calls to xrange() for increased speed and memory reduction.
     # This should work as all range() usage for Python 3 in relax must match the old xrange() usage.
-    builtins.range = builtins.xrange
+    #builtins.range = builtins.xrange
 
     # The sorted() builtin function for Python 2.3 and earlier.
     if sys.version_info[1] <= 3:

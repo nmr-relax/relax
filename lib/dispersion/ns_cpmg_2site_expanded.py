@@ -235,8 +235,7 @@ More information on the NS CPMG 2-site expanded model can be found in the:
 """
 
 # Python module imports.
-from math import log
-from numpy import exp, power, sqrt
+from numpy import array, argmax, exp, isfinite, power, log, min, sqrt, sum
 
 # relax module imports.
 from lib.float import isNaN
@@ -274,8 +273,7 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        for i in range(num_points):
-            back_calc[i] = r20
+        back_calc[:] = array([r20]*num_points)
         return
 
     # Repeditive calculations.
@@ -361,8 +359,11 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, k_AB=None, k_BA=Non
     Mx = intensity / intensity0
 
     # Calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential, and store it for each dispersion point.
-    for i in range(num_points):
-        if Mx[i] <= 0.0 or isNaN(Mx[i]):
-            back_calc[i] = 1e99
-        else:
-            back_calc[i]= -inv_relax_time * log(Mx[i])
+    R2eff = -inv_relax_time * log(Mx)
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)) or min(Mx) <= 0.0 or not isfinite(sum(Mx)):
+        R2eff = array([1e100]*num_points)
+
+    back_calc[:] = R2eff

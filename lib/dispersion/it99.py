@@ -73,7 +73,7 @@ More information on the IT99 model can be found in the:
 """
 
 # Python module imports.
-from math import sqrt
+from numpy import array, isfinite, sqrt, sum
 
 
 def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, back_calc=None, num_points=None):
@@ -94,6 +94,7 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     @type tex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy rank-1 float array
+    @type tcp:              numpy rank-1 float array
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
@@ -109,24 +110,25 @@ def r2eff_IT99(r20=None, pA=None, pB=None, dw=None, tex=None, cpmg_frqs=None, ba
     # The numerator.
     numer = padw2 * pB * tex
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = r20
-            continue
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if numer == 0.0:
+        back_calc[:] = array([r20]*num_points)
+        return
 
-        # The effective rotating frame field.
-        omega_1eff4 = 2304.0 * cpmg_frqs[i]**4
+    # The effective rotating frame field.
+    omega_1eff4 = 2304.0 * cpmg_frqs**4
 
-        # Denominator.
-        omega_a2 = sqrt(omega_1eff4 + pa2dw4)
-        denom = 1.0 + omega_a2 * tex2
+    # Denominator.
+    omega_a2 = sqrt(omega_1eff4 + pa2dw4)
+    denom = 1.0 + omega_a2 * tex2
 
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
+    # R2eff calculation.
+    R2eff = r20 + numer / denom
 
-        # R2eff calculation.
-        back_calc[i] = r20 + numer / denom
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    back_calc[:] = R2eff

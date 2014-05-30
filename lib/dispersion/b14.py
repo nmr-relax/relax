@@ -110,8 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-import numpy
-from numpy import arccosh, arctan2, array, cos, cosh, in1d, log, nonzero, sin, sinh, sqrt, power
+from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power, sin, sinh, sqrt, sum
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -149,6 +148,11 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
+
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
+        back_calc[:] = array([r20a]*num_points)
+        return
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
@@ -196,6 +200,12 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # E0 = -2.0 * tcp * (F00R - f11R).
     E0 =  two_tcp * g3
 
+    # Catch math domain error of sinh(val > 710).
+    # This is when E0 > 710.
+    if max(E0) > 700:
+        back_calc[:] = array([r20a]*num_points)
+        return
+
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
 
@@ -217,70 +227,29 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Real. The v_1c in paper.
     v1c = F0 * cosh(E0) - F2 * cos(E2)
 
-    # Catch devision with zero in y, when v3 = 0. v3 is 0, when v1c = 1.
-    # If no 1.0, perform normally.
-    if not in1d(1.0, v1c):
-        # Exact result for v2v3.
-        v3 = sqrt(v1c**2 - 1.)
+    # Exact result for v2v3.
+    v3 = sqrt(v1c**2 - 1.)
 
-        y = power( (v1c - v3) / (v1c + v3), ncyc)
+    y = power( (v1c - v3) / (v1c + v3), ncyc)
 
-        Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+    Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
 
-        # Find where Tog has negative values.
-        neg_index = nonzero(Tog.real < 0.0)[0]
+    ## -1/Trel * log(LpreDyn).
+    # Rpre = (r20a + r20b + kex) / 2.0
 
-        # Do normal calculation
-        if len(neg_index) == 0:
-            ## -1/Trel * log(LpreDyn).
-            # Rpre = (r20a + r20b + kex) / 2.0
+    ## Carver and Richards (1972)
+    # R2eff_CR72 = Rpre - inv_tcpmg * ncyc *  arccosh(v1c.real)
 
-            ## Carver and Richards (1972)
-            # R2eff_CR72 = Rpre - inv_tcpmg * ncyc *  arccosh(v1c.real)
+    ## Baldwin final.
+    # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
+    # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
 
-            ## Baldwin final.
-            # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
-            # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
+    # Fastest calculation.
+    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
 
-            # Fastest calculation.
-            R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
 
-            # Loop over the time points, back calculating the R2eff values.
-            for i in range(num_points):
-
-                # Put values back.
-                back_calc[i] = R2eff[i]
-
-        else:
-            # Loop over each point.
-            for i in range(num_points):
-
-                # Return large value
-                if i in neg_index:
-                    back_calc[i] = 1e100        
-
-                else:
-                    v3 = sqrt(v1c[i]**2 - 1.)
-                    y = power( (v1c[i] - v3) / (v1c[i] + v3), ncyc[i])
-                    Tog = 0.5 * (1. + y) + (1. - y) * v5[i] / (2. * v3 * N )
-                    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc[i] *  arccosh(v1c[i].real) + log(Tog.real) )
-                    back_calc[i] = R2eff
-
-    # This section is for catching math domain errors.
-    else:
-        # Find index where 
-        one_indexes = nonzero(v1c == 1.0)[0]
-
-        # Loop over each point.
-        for i in range(num_points):
-
-            # Return large value
-            if i in one_indexes:
-                back_calc[i] = 1e100
-
-            else:
-                v3 = sqrt(v1c[i]**2 - 1.)
-                y = power( (v1c[i] - v3) / (v1c[i] + v3), ncyc[i])
-                Tog = 0.5 * (1. + y) + (1. - y) * v5[i] / (2. * v3 * N )
-                R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc[i] *  arccosh(v1c[i].real) + log(Tog.real) )
-                back_calc[i] = R2eff
+    back_calc[:] = R2eff

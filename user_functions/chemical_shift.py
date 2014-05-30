@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -35,6 +35,7 @@ from graphics import WIZARD_IMAGE_PATH
 from pipe_control import chemical_shift
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
+from user_functions.wildcards import WILDCARD_SPECTRUM_PEAKLIST
 
 
 # The user function class.
@@ -54,6 +55,7 @@ uf.add_keyarg(
     arg_type = "file sel",
     desc_short = "file name",
     desc = "The name of the peak list of generic formatted file containing the chemical shifts.",
+    wiz_filesel_wildcard = WILDCARD_SPECTRUM_PEAKLIST,
     wiz_filesel_style = FD_OPEN
 )
 uf.add_keyarg(

@@ -24,9 +24,9 @@
 
 # Python module imports.
 from numpy import dot, inner, sqrt, transpose
-from numpy.linalg import norm
 
 # relax module imports.
+from lib.compat import norm
 from lib.linear_algebra.kronecker_product import transpose_23
 
 

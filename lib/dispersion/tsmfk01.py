@@ -67,7 +67,7 @@ More information on the TSMFK01 model can be found in the:
 """
 
 # Python module imports.
-from math import sin
+from numpy import array, min, sin, isfinite, sum
 
 
 def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_points=None):
@@ -83,31 +83,36 @@ def r2eff_TSMFK01(r20a=None, dw=None, k_AB=None, tcp=None, back_calc=None, num_p
     @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
     @type k_AB:             float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array
+    @type tcp:              numpy rank-1 float array.
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy rank-1 float array
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Denominator.
-        denom = dw * tcp[i]
+    # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    if dw == 0.0 or k_AB == 0.0:
+        back_calc[:] = array([r20a]*num_points)
+        return
 
-        # The numerator.
-        numer = sin(denom)
+    # Denominator.
+    denom = dw * tcp
 
-        # Catch zeros (to avoid pointless mathematical operations).
-        if numer == 0.0:
-            back_calc[i] = r20a + k_AB
-            continue
+    # The numerator.
+    numer = sin(denom)
 
-        # Avoid divide by zero.
-        if denom == 0.0:
-            back_calc[i] = 1e100
-            continue
+    # Catch zeros (to avoid pointless mathematical operations).
+    # This will result in no exchange, returning flat lines.
+    if min(numer) == 0.0:
+        back_calc[:] = array([r20a + k_AB]*num_points)
+        return
 
-        # The full formula.
-        else:
-            back_calc[i] = r20a + k_AB - k_AB * numer / denom
+    # Calculate R2eff.
+    R2eff = r20a + k_AB - k_AB * numer / denom
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(R2eff)):
+        R2eff = array([1e100]*num_points)
+
+    back_calc[:] = R2eff
