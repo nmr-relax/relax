@@ -126,7 +126,7 @@ class Sequence_2D(Sequence):
         self.sel_win = Sequence_window_2D(name=self.name, seq_type=self.seq_type, value_type=self.value_type, titles=self.titles, dim=self.dim)
 
         # Set the values.
-        wx.CallAfter(self.sel_win.SetValue, self.GetValue())
+        self.sel_win.SetValue(self.GetValue())
 
         # Show the window.
         if status.show_gui:
