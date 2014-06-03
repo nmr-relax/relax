@@ -1,0 +1,926 @@
+
+
+
+                                  relax repository checkout r23612
+                svn+ssh://bugman@svn.gna.org/svn/relax/branches/frame_order_cleanup
+
+                              Molecular dynamics by NMR data analysis
+
+                             Copyright (C) 2001-2006 Edward d'Auvergne
+                         Copyright (C) 2006-2014 the relax development team
+
+This is free software which you are welcome to modify and redistribute under the conditions of the
+GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
+and comes with absolutely no warranty.  For details type 'GPL' within the relax prompt.
+
+Assistance in using the relax prompt and scripting interface can be accessed by typing 'help' within
+the prompt.
+
+Processor fabric:  Uni-processor.
+
+script = 'rigid_diff.py'
+----------------------------------------------------------------------------------------------------
+from lib.io import extract_data
+
+
+# Print formats.
+format_pcs = "%10s%10s%10s%10s%10s%20.15f"
+format_rdc = "%15s%15s%20.15f"
+
+# Maximum differences.
+max_pcs = 0.0
+max_rdc = 0.0
+
+# Loop over the tensors.
+tensors = ['dy', 'tb', 'tm', 'er']
+for tensor in tensors:
+    # Print out.
+    print("\n\nAlignment %s.\n" % tensor)
+
+    # The PCS file name.
+    file = "pcs_%s.txt" % tensor
+
+    # Process the PCS.
+    pcs_rigid = extract_data(file=file, dir='../rigid')
+    pcs_moving = extract_data(file=file, dir='.')
+
+    # Calculate the PCS differences.
+    print("# %8s%10s%10s%10s%10s%20s" % (pcs_moving[0][1], pcs_moving[0][2], pcs_moving[0][3], pcs_moving[0][4], pcs_moving[0][5], "PCS difference"))
+    for i in range(1, len(pcs_moving)):
+        # The difference.
+        diff = float(pcs_rigid[i+1][5]) - float(pcs_moving[i][5])
+
+        # Printout.
+        print(format_pcs % (pcs_moving[i][0], pcs_moving[i][1], pcs_moving[i][2], pcs_moving[i][3], pcs_moving[i][4], diff))
+
+        # Store the maximum.
+        if abs(diff) > max_pcs:
+            max_pcs = abs(diff)
+
+    # The RDC file name.
+    file = "rdc_%s.txt" % tensor
+
+    # Process the PCS.
+    rdc_rigid = extract_data(file=file, dir='../rigid')
+    rdc_moving = extract_data(file=file, dir='.')
+
+    # Printout.
+    print("# %13s%15s%20s" % (rdc_moving[0][1], rdc_moving[0][2], "RDC difference"))
+    for i in range(1, len(rdc_moving)):
+        # The difference.
+        diff = float(rdc_rigid[i][2]) - float(rdc_moving[i][2])
+
+        # Printout.
+        print(format_rdc % (rdc_moving[i][0], rdc_moving[i][1], diff))
+
+        # Store the maximum.
+        if abs(diff) > max_rdc:
+            max_rdc = abs(diff)
+
+# Final printout.
+print("\n\n")
+print("Maximum PCS difference:  %.15f ppm." % max_pcs)
+print("Maximum RDC difference:  %.15f Hz." % max_rdc)
+----------------------------------------------------------------------------------------------------
+
+
+Alignment dy.
+
+Opening the file '../rigid/pcs_dy.txt' for reading.
+Opening the file './pcs_dy.txt' for reading.
+# mol_name   res_num  res_name  spin_num spin_name      PCS difference
+     C-dom        82       GLU         1         N   0.000000016163325
+     C-dom        83       GLU         2         N   0.000001248935645
+     C-dom        83       GLU         3         H   0.000001304325410
+     C-dom        84       GLU         4         N   0.000001623032527
+     C-dom        84       GLU         5         H   0.000001688215553
+     C-dom        85       ILE         6         N   0.000000864882956
+     C-dom        85       ILE         7         H   0.000000812017332
+     C-dom        86       ARG         8         N   0.000000812815370
+     C-dom        86       ARG         9         H   0.000000820375138
+     C-dom        87       GLU        10         N   0.000001373183032
+     C-dom        87       GLU        11         H   0.000001436667078
+     C-dom        88       ALA        12         N   0.000001106638708
+     C-dom        88       ALA        13         H   0.000001136141956
+     C-dom        89       PHE        14         N   0.000000762210756
+     C-dom        89       PHE        15         H   0.000000788099792
+     C-dom        90       ARG        16         N   0.000000972412955
+     C-dom        90       ARG        17         H   0.000001044597824
+     C-dom        91       VAL        18         N   0.000000955684352
+     C-dom        91       VAL        19         H   0.000000988031275
+     C-dom        92       PHE        20         N   0.000000703715824
+     C-dom        92       PHE        21         H   0.000000721999846
+     C-dom        93       ASP        22         N   0.000000650617464
+     C-dom        93       ASP        23         H   0.000000707750323
+     C-dom        94       LYS        24         N   0.000000623241496
+     C-dom        94       LYS        25         H   0.000000570895015
+     C-dom        95       ASP        26         N   0.000000608178904
+     C-dom        95       ASP        27         H   0.000000574821570
+     C-dom        96       GLY        28         N   0.000000754651161
+     C-dom        96       GLY        29         H   0.000000732048499
+     C-dom        97       ASN        30         N   0.000000735055547
+     C-dom        97       ASN        31         H   0.000000681453666
+     C-dom        98       GLY        32         N   0.000000794165532
+     C-dom        98       GLY        33         H   0.000000812680219
+     C-dom        99       TYR        34         N   0.000000546363791
+     C-dom        99       TYR        35         H   0.000000574664417
+     C-dom       100       ILE        36         N   0.000000276844302
+     C-dom       100       ILE        37         H   0.000000218373708
+     C-dom       101       SER        38         N   0.000000218786979
+     C-dom       101       SER        39         H   0.000000269589580
+     C-dom       102       ALA        40         N   0.000000088048962
+     C-dom       102       ALA        41         H   0.000000078546406
+     C-dom       103       ALA        42         N   0.000000129105816
+     C-dom       103       ALA        43         H   0.000000126710957
+     C-dom       104       GLU        44         N   0.000000225030897
+     C-dom       104       GLU        45         H   0.000000209716406
+     C-dom       105       LEU        46         N   0.000000207443273
+     C-dom       105       LEU        47         H   0.000000178196317
+     C-dom       106       ARG        48         N   0.000000176119848
+     C-dom       106       ARG        49         H   0.000000163162458
+     C-dom       107       HIS        50         N   0.000000267298014
+     C-dom       107       HIS        51         H   0.000000258871194
+     C-dom       108       VAL        52         N   0.000000368363645
+     C-dom       108       VAL        53         H   0.000000346920642
+     C-dom       109       MET        54         N   0.000000320761393
+     C-dom       109       MET        55         H   0.000000289349269
+     C-dom       110       THR        56         N   0.000000281971174
+     C-dom       110       THR        57         H   0.000000272496951
+     C-dom       111       ASN        58         N   0.000000374346739
+     C-dom       111       ASN        59         H   0.000000372063433
+     C-dom       112       LEU        60         N   0.000000473048611
+     C-dom       112       LEU        61         H   0.000000441378895
+     C-dom       113       GLY        62         N   0.000000429451677
+     C-dom       113       GLY        63         H   0.000000407184756
+     C-dom       114       GLU        64         N   0.000000313473671
+     C-dom       114       GLU        65         H   0.000000343325363
+     C-dom       115       LYS        66         N   0.000000164143654
+     C-dom       115       LYS        67         H   0.000000156343383
+     C-dom       116       LEU        68         N   0.000000073540561
+     C-dom       116       LEU        69         H   0.000000100381827
+     C-dom       117       THR        70         N  -0.000000021758128
+     C-dom       117       THR        71         H  -0.000000046848949
+     C-dom       118       ASP        72         N  -0.000000022917957
+     C-dom       118       ASP        73         H  -0.000000012492952
+     C-dom       119       GLU        74         N  -0.000000090317739
+     C-dom       119       GLU        75         H  -0.000000079789597
+     C-dom       120       GLU        76         N  -0.000000148467736
+     C-dom       120       GLU        77         H  -0.000000122205070
+     C-dom       121       VAL        78         N  -0.000000127282605
+     C-dom       121       VAL        79         H  -0.000000099872576
+     C-dom       122       ASP        80         N  -0.000000159188012
+     C-dom       122       ASP        81         H  -0.000000138509339
+     C-dom       123       GLU        82         N  -0.000000280989042
+     C-dom       123       GLU        83         H  -0.000000250612044
+     C-dom       124       MET        84         N  -0.000000361047192
+     C-dom       124       MET        85         H  -0.000000303939517
+     C-dom       125       ILE        86         N  -0.000000326470397
+     C-dom       125       ILE        87         H  -0.000000277769567
+     C-dom       126       ARG        88         N  -0.000000379658288
+     C-dom       126       ARG        89         H  -0.000000343059947
+     C-dom       127       GLU        90         N  -0.000000605604796
+     C-dom       127       GLU        91         H  -0.000000548819832
+     C-dom       128       ALA        92         N  -0.000000764873755
+     C-dom       128       ALA        93         H  -0.000000655659480
+     C-dom       129       ASP        94         N  -0.000000622877504
+     C-dom       129       ASP        95         H  -0.000000580113058
+     C-dom       130       ILE        96         N  -0.000000685446503
+     C-dom       130       ILE        97         H  -0.000000711205794
+     C-dom       131       ASP        98         N  -0.000000431619168
+     C-dom       131       ASP        99         H  -0.000000448941520
+     C-dom       132       GLY       100         N  -0.000000261082180
+     C-dom       132       GLY       101         H  -0.000000340082629
+     C-dom       133       ASP       102         N  -0.000000123528949
+     C-dom       133       ASP       103         H  -0.000000166592553
+     C-dom       134       GLY       104         N  -0.000000098982055
+     C-dom       134       GLY       105         H  -0.000000147871627
+     C-dom       135       GLN       106         N  -0.000000073821436
+     C-dom       135       GLN       107         H  -0.000000097848996
+     C-dom       136       VAL       108         N  -0.000000092625776
+     C-dom       136       VAL       109         H  -0.000000029292497
+     C-dom       137       ASN       110         N  -0.000000172693184
+     C-dom       137       ASN       111         H  -0.000000294096233
+     C-dom       138       TYR       112         N  -0.000000011834246
+     C-dom       138       TYR       113         H   0.000000174744462
+     C-dom       139       GLU       114         N  -0.000000706925175
+     C-dom       139       GLU       115         H  -0.000000441760359
+     C-dom       140       GLU       116         N  -0.000001125769146
+     C-dom       140       GLU       117         H  -0.000000858034800
+     C-dom       141       PHE       118         N  -0.000000867605960
+     C-dom       141       PHE       119         H  -0.000000724209022
+     C-dom       142       VAL       120         N  -0.000001318794730
+     C-dom       142       VAL       121         H  -0.000001248069020
+     C-dom       143       GLN       122         N  -0.000002392068284
+     C-dom       143       GLN       123         H  -0.000002271476406
+     C-dom       144       MET       124         N  -0.000001663793422
+     C-dom       144       MET       125         H  -0.000001570432372
+     C-dom       145       MET       126         N  -0.000001065798344
+     C-dom       145       MET       127         H  -0.000001135080506
+     C-dom       146       THR       128         N  -0.000001548347850
+     C-dom       146       THR       129         H  -0.000001716898755
+     C-dom       147       ALA       130         N  -0.000002282357663
+     C-dom       147       ALA       131         H  -0.000001843896711
+     C-dom       148       LYS       132         N  -0.000003695778851
+     C-dom       148       LYS       133         H  -0.000004245209374
+Opening the file '../rigid/rdc_dy.txt' for reading.
+Opening the file './rdc_dy.txt' for reading.
+#      Spin_ID1       Spin_ID2      RDC difference
+  '#C-dom:83@N'  '#C-dom:83@H'  -0.000017332247644
+  '#C-dom:84@N'  '#C-dom:84@H'   0.000024368675835
+  '#C-dom:85@N'  '#C-dom:85@H'  -0.000011235264875
+  '#C-dom:86@N'  '#C-dom:86@H'  -0.000016234665988
+  '#C-dom:87@N'  '#C-dom:87@H'  -0.000036453035133
+  '#C-dom:88@N'  '#C-dom:88@H'   0.000038997031766
+  '#C-dom:89@N'  '#C-dom:89@H'  -0.000036786802212
+  '#C-dom:90@N'  '#C-dom:90@H'  -0.000005117397308
+  '#C-dom:91@N'  '#C-dom:91@H'   0.000004083085107
+  '#C-dom:92@N'  '#C-dom:92@H'   0.000083597456630
+  '#C-dom:93@N'  '#C-dom:93@H'   0.000001836188972
+  '#C-dom:94@N'  '#C-dom:94@H'  -0.000073825609337
+  '#C-dom:95@N'  '#C-dom:95@H'   0.000358309839967
+  '#C-dom:96@N'  '#C-dom:96@H'  -0.000604383028718
+  '#C-dom:97@N'  '#C-dom:97@H'  -0.000508971279139
+  '#C-dom:98@N'  '#C-dom:98@H'   0.000307486495746
+  '#C-dom:99@N'  '#C-dom:99@H'   0.000337854351390
+ '#C-dom:100@N' '#C-dom:100@H'   0.000323801543169
+ '#C-dom:101@N' '#C-dom:101@H'   0.000618492663833
+ '#C-dom:102@N' '#C-dom:102@H'   0.000007272762971
+ '#C-dom:103@N' '#C-dom:103@H'  -0.000337302928269
+ '#C-dom:104@N' '#C-dom:104@H'  -0.000022331525482
+ '#C-dom:105@N' '#C-dom:105@H'   0.000192113065271
+ '#C-dom:106@N' '#C-dom:106@H'  -0.000228253694731
+ '#C-dom:107@N' '#C-dom:107@H'  -0.000356521807349
+ '#C-dom:108@N' '#C-dom:108@H'  -0.000086499735445
+ '#C-dom:109@N' '#C-dom:109@H'  -0.000089621184156
+ '#C-dom:110@N' '#C-dom:110@H'  -0.000460530438797
+ '#C-dom:111@N' '#C-dom:111@H'  -0.000479839288682
+ '#C-dom:112@N' '#C-dom:112@H'   0.000079919303030
+ '#C-dom:113@N' '#C-dom:113@H'  -0.000183735369007
+ '#C-dom:114@N' '#C-dom:114@H'  -0.000424258757864
+ '#C-dom:115@N' '#C-dom:115@H'  -0.000525837165640
+ '#C-dom:116@N' '#C-dom:116@H'  -0.000113994164498
+ '#C-dom:117@N' '#C-dom:117@H'   0.000095058217500
+ '#C-dom:118@N' '#C-dom:118@H'  -0.000089775050693
+ '#C-dom:119@N' '#C-dom:119@H'  -0.000346042350614
+ '#C-dom:120@N' '#C-dom:120@H'   0.000021409723484
+ '#C-dom:121@N' '#C-dom:121@H'  -0.000014062128454
+ '#C-dom:122@N' '#C-dom:122@H'  -0.000290070424533
+ '#C-dom:123@N' '#C-dom:123@H'  -0.000236786915526
+ '#C-dom:124@N' '#C-dom:124@H'   0.000006351435733
+ '#C-dom:125@N' '#C-dom:125@H'  -0.000206286969203
+ '#C-dom:126@N' '#C-dom:126@H'  -0.000348052313871
+ '#C-dom:127@N' '#C-dom:127@H'  -0.000047144159127
+ '#C-dom:128@N' '#C-dom:128@H'  -0.000033225093691
+ '#C-dom:129@N' '#C-dom:129@H'  -0.000426340889639
+ '#C-dom:130@N' '#C-dom:130@H'   0.000391368092330
+ '#C-dom:131@N' '#C-dom:131@H'   0.000609069782911
+ '#C-dom:132@N' '#C-dom:132@H'  -0.000189034329893
+ '#C-dom:133@N' '#C-dom:133@H'   0.000005310055034
+ '#C-dom:134@N' '#C-dom:134@H'   0.000135794461354
+ '#C-dom:135@N' '#C-dom:135@H'   0.000099323615683
+ '#C-dom:136@N' '#C-dom:136@H'   0.000355164371930
+ '#C-dom:137@N' '#C-dom:137@H'   0.000586856256120
+ '#C-dom:138@N' '#C-dom:138@H'  -0.000456213511004
+ '#C-dom:139@N' '#C-dom:139@H'  -0.000445763885972
+ '#C-dom:140@N' '#C-dom:140@H'  -0.000294547309085
+ '#C-dom:141@N' '#C-dom:141@H'  -0.000455563676510
+ '#C-dom:142@N' '#C-dom:142@H'  -0.000574156900948
+ '#C-dom:143@N' '#C-dom:143@H'  -0.000462025864191
+ '#C-dom:144@N' '#C-dom:144@H'  -0.000379925077526
+ '#C-dom:145@N' '#C-dom:145@H'  -0.000566610925742
+ '#C-dom:146@N' '#C-dom:146@H'  -0.000264025307443
+ '#C-dom:147@N' '#C-dom:147@H'   0.000048174670422
+ '#C-dom:148@N' '#C-dom:148@H'  -0.000622632826166
+
+
+Alignment tb.
+
+Opening the file '../rigid/pcs_tb.txt' for reading.
+Opening the file './pcs_tb.txt' for reading.
+# mol_name   res_num  res_name  spin_num spin_name      PCS difference
+     C-dom        82       GLU         1         N   0.000000279153241
+     C-dom        83       GLU         2         N   0.000001144912982
+     C-dom        83       GLU         3         H   0.000001183214315
+     C-dom        84       GLU         4         N   0.000001521359146
+     C-dom        84       GLU         5         H   0.000001566041665
+     C-dom        85       ILE         6         N   0.000000911871768
+     C-dom        85       ILE         7         H   0.000000871330675
+     C-dom        86       ARG         8         N   0.000000789847505
+     C-dom        86       ARG         9         H   0.000000788099132
+     C-dom        87       GLU        10         N   0.000001411443800
+     C-dom        87       GLU        11         H   0.000001443719203
+     C-dom        88       ALA        12         N   0.000001161962986
+     C-dom        88       ALA        13         H   0.000001172772794
+     C-dom        89       PHE        14         N   0.000000817461941
+     C-dom        89       PHE        15         H   0.000000830585642
+     C-dom        90       ARG        16         N   0.000001084053276
+     C-dom        90       ARG        17         H   0.000001146376254
+     C-dom        91       VAL        18         N   0.000001109096760
+     C-dom        91       VAL        19         H   0.000001120972673
+     C-dom        92       PHE        20         N   0.000000827157802
+     C-dom        92       PHE        21         H   0.000000833715420
+     C-dom        93       ASP        22         N   0.000000778278632
+     C-dom        93       ASP        23         H   0.000000836404348
+     C-dom        94       LYS        24         N   0.000000805298957
+     C-dom        94       LYS        25         H   0.000000726882312
+     C-dom        95       ASP        26         N   0.000000840088882
+     C-dom        95       ASP        27         H   0.000000772508814
+     C-dom        96       GLY        28         N   0.000001044852641
+     C-dom        96       GLY        29         H   0.000000988051171
+     C-dom        97       ASN        30         N   0.000000972207790
+     C-dom        97       ASN        31         H   0.000000892542850
+     C-dom        98       GLY        32         N   0.000000919626612
+     C-dom        98       GLY        33         H   0.000000977247070
+     C-dom        99       TYR        34         N   0.000000487799547
+     C-dom        99       TYR        35         H   0.000000578221805
+     C-dom       100       ILE        36         N   0.000000181807693
+     C-dom       100       ILE        37         H   0.000000075770285
+     C-dom       101       SER        38         N   0.000000188843975
+     C-dom       101       SER        39         H   0.000000268884694
+     C-dom       102       ALA        40         N   0.000000054957477
+     C-dom       102       ALA        41         H   0.000000022457460
+     C-dom       103       ALA        42         N   0.000000150849536
+     C-dom       103       ALA        43         H   0.000000133393053
+     C-dom       104       GLU        44         N   0.000000280445320
+     C-dom       104       GLU        45         H   0.000000248842955
+     C-dom       105       LEU        46         N   0.000000270575070
+     C-dom       105       LEU        47         H   0.000000225379279
+     C-dom       106       ARG        48         N   0.000000260672611
+     C-dom       106       ARG        49         H   0.000000236232542
+     C-dom       107       HIS        50         N   0.000000367087165
+     C-dom       107       HIS        51         H   0.000000352555334
+     C-dom       108       VAL        52         N   0.000000478687498
+     C-dom       108       VAL        53         H   0.000000452712759
+     C-dom       109       MET        54         N   0.000000439084701
+     C-dom       109       MET        55         H   0.000000403650963
+     C-dom       110       THR        56         N   0.000000400090200
+     C-dom       110       THR        57         H   0.000000387606994
+     C-dom       111       ASN        58         N   0.000000486986401
+     C-dom       111       ASN        59         H   0.000000485583855
+     C-dom       112       LEU        60         N   0.000000581310441
+     C-dom       112       LEU        61         H   0.000000553723201
+     C-dom       113       GLY        62         N   0.000000539690898
+     C-dom       113       GLY        63         H   0.000000518486419
+     C-dom       114       GLU        64         N   0.000000446169617
+     C-dom       114       GLU        65         H   0.000000472119645
+     C-dom       115       LYS        66         N   0.000000304896065
+     C-dom       115       LYS        67         H   0.000000301658530
+     C-dom       116       LEU        68         N   0.000000209642675
+     C-dom       116       LEU        69         H   0.000000230587712
+     C-dom       117       THR        70         N   0.000000102142958
+     C-dom       117       THR        71         H   0.000000088621564
+     C-dom       118       ASP        72         N   0.000000057026881
+     C-dom       118       ASP        73         H   0.000000066210688
+     C-dom       119       GLU        74         N  -0.000000016358054
+     C-dom       119       GLU        75         H   0.000000000334110
+     C-dom       120       GLU        76         N  -0.000000028981461
+     C-dom       120       GLU        77         H  -0.000000005423608
+     C-dom       121       VAL        78         N  -0.000000017414848
+     C-dom       121       VAL        79         H   0.000000002620151
+     C-dom       122       ASP        80         N  -0.000000105212362
+     C-dom       122       ASP        81         H  -0.000000076568507
+     C-dom       123       GLU        82         N  -0.000000193404288
+     C-dom       123       GLU        83         H  -0.000000151742093
+     C-dom       124       MET        84         N  -0.000000218879574
+     C-dom       124       MET        85         H  -0.000000164416454
+     C-dom       125       ILE        86         N  -0.000000290237447
+     C-dom       125       ILE        87         H  -0.000000230649611
+     C-dom       126       ARG        88         N  -0.000000435593494
+     C-dom       126       ARG        89         H  -0.000000366424364
+     C-dom       127       GLU        90         N  -0.000000573408203
+     C-dom       127       GLU        91         H  -0.000000487554663
+     C-dom       128       ALA        92         N  -0.000000740240516
+     C-dom       128       ALA        93         H  -0.000000617142004
+     C-dom       129       ASP        94         N  -0.000000853679873
+     C-dom       129       ASP        95         H  -0.000000743889676
+     C-dom       130       ILE        96         N  -0.000001284632908
+     C-dom       130       ILE        97         H  -0.000001341344409
+     C-dom       131       ASP        98         N  -0.000001348439086
+     C-dom       131       ASP        99         H  -0.000001306314621
+     C-dom       132       GLY       100         N  -0.000000963957683
+     C-dom       132       GLY       101         H  -0.000001011449138
+     C-dom       133       ASP       102         N  -0.000000708515518
+     C-dom       133       ASP       103         H  -0.000000791971718
+     C-dom       134       GLY       104         N  -0.000000476784868
+     C-dom       134       GLY       105         H  -0.000000557962849
+     C-dom       135       GLN       106         N  -0.000000363245481
+     C-dom       135       GLN       107         H  -0.000000451950649
+     C-dom       136       VAL       108         N  -0.000000324306380
+     C-dom       136       VAL       109         H  -0.000000207799115
+     C-dom       137       ASN       110         N  -0.000000593624973
+     C-dom       137       ASN       111         H  -0.000000773936408
+     C-dom       138       TYR       112         N  -0.000000515590711
+     C-dom       138       TYR       113         H  -0.000000337092850
+     C-dom       139       GLU       114         N  -0.000001579066113
+     C-dom       139       GLU       115         H  -0.000001395995512
+     C-dom       140       GLU       116         N  -0.000001799124949
+     C-dom       140       GLU       117         H  -0.000001605391111
+     C-dom       141       PHE       118         N  -0.000001089611194
+     C-dom       141       PHE       119         H  -0.000001048498558
+     C-dom       142       VAL       120         N  -0.000001350855375
+     C-dom       142       VAL       121         H  -0.000001448721309
+     C-dom       143       GLN       122         N  -0.000002160472595
+     C-dom       143       GLN       123         H  -0.000002295471243
+     C-dom       144       MET       124         N  -0.000001251318161
+     C-dom       144       MET       125         H  -0.000001329727474
+     C-dom       145       MET       126         N  -0.000000506081910
+     C-dom       145       MET       127         H  -0.000000675365312
+     C-dom       146       THR       128         N  -0.000000581120399
+     C-dom       146       THR       129         H  -0.000000893268718
+     C-dom       147       ALA       130         N  -0.000000820033714
+     C-dom       147       ALA       131         H  -0.000000621988146
+     C-dom       148       LYS       132         N  -0.000000979808213
+     C-dom       148       LYS       133         H  -0.000001592037720
+Opening the file '../rigid/rdc_tb.txt' for reading.
+Opening the file './rdc_tb.txt' for reading.
+#      Spin_ID1       Spin_ID2      RDC difference
+  '#C-dom:83@N'  '#C-dom:83@H'  -0.000117476588468
+  '#C-dom:84@N'  '#C-dom:84@H'   0.000108644888892
+  '#C-dom:85@N'  '#C-dom:85@H'   0.000175913431640
+  '#C-dom:86@N'  '#C-dom:86@H'  -0.000032591455671
+  '#C-dom:87@N'  '#C-dom:87@H'  -0.000116206531420
+  '#C-dom:88@N'  '#C-dom:88@H'   0.000157371077465
+  '#C-dom:89@N'  '#C-dom:89@H'   0.000085139678088
+  '#C-dom:90@N'  '#C-dom:90@H'  -0.000125898307374
+  '#C-dom:91@N'  '#C-dom:91@H'   0.000034737020773
+  '#C-dom:92@N'  '#C-dom:92@H'   0.000357685621614
+  '#C-dom:93@N'  '#C-dom:93@H'  -0.000046035272007
+  '#C-dom:94@N'  '#C-dom:94@H'  -0.000044930567088
+  '#C-dom:95@N'  '#C-dom:95@H'   0.000522269831272
+  '#C-dom:96@N'  '#C-dom:96@H'  -0.000874421716781
+  '#C-dom:97@N'  '#C-dom:97@H'  -0.000490090116676
+  '#C-dom:98@N'  '#C-dom:98@H'   0.000374400872555
+  '#C-dom:99@N'  '#C-dom:99@H'   0.000657524813022
+ '#C-dom:100@N' '#C-dom:100@H'   0.000668308786331
+ '#C-dom:101@N' '#C-dom:101@H'   0.000890950652604
+ '#C-dom:102@N' '#C-dom:102@H'  -0.000298815284097
+ '#C-dom:103@N' '#C-dom:103@H'  -0.000713024934584
+ '#C-dom:104@N' '#C-dom:104@H'  -0.000097671309698
+ '#C-dom:105@N' '#C-dom:105@H'  -0.000018033230585
+ '#C-dom:106@N' '#C-dom:106@H'  -0.000623914321679
+ '#C-dom:107@N' '#C-dom:107@H'  -0.000579067226779
+ '#C-dom:108@N' '#C-dom:108@H'  -0.000255334701542
+ '#C-dom:109@N' '#C-dom:109@H'  -0.000411681479263
+ '#C-dom:110@N' '#C-dom:110@H'  -0.000849626352768
+ '#C-dom:111@N' '#C-dom:111@H'  -0.000726343338585
+ '#C-dom:112@N' '#C-dom:112@H'  -0.000170727297686
+ '#C-dom:113@N' '#C-dom:113@H'  -0.000437898108695
+ '#C-dom:114@N' '#C-dom:114@H'  -0.000505777979810
+ '#C-dom:115@N' '#C-dom:115@H'  -0.000829028754609
+ '#C-dom:116@N' '#C-dom:116@H'  -0.000108505193776
+ '#C-dom:117@N' '#C-dom:117@H'   0.000189310846054
+ '#C-dom:118@N' '#C-dom:118@H'   0.000159609077816
+ '#C-dom:119@N' '#C-dom:119@H'  -0.000219820756301
+ '#C-dom:120@N' '#C-dom:120@H'   0.000333795979945
+ '#C-dom:121@N' '#C-dom:121@H'   0.000232443190956
+ '#C-dom:122@N' '#C-dom:122@H'  -0.000109595371732
+ '#C-dom:123@N' '#C-dom:123@H'  -0.000066767003854
+ '#C-dom:124@N' '#C-dom:124@H'   0.000315930103330
+ '#C-dom:125@N' '#C-dom:125@H'   0.000010028616408
+ '#C-dom:126@N' '#C-dom:126@H'  -0.000199875654239
+ '#C-dom:127@N' '#C-dom:127@H'   0.000174059203603
+ '#C-dom:128@N' '#C-dom:128@H'   0.000268185013338
+ '#C-dom:129@N' '#C-dom:129@H'  -0.000378663779387
+ '#C-dom:130@N' '#C-dom:130@H'   0.000460642614602
+ '#C-dom:131@N' '#C-dom:131@H'   0.000760219569976
+ '#C-dom:132@N' '#C-dom:132@H'  -0.000589835313420
+ '#C-dom:133@N' '#C-dom:133@H'  -0.000108597842530
+ '#C-dom:134@N' '#C-dom:134@H'   0.000310920443702
+ '#C-dom:135@N' '#C-dom:135@H'   0.000366037895411
+ '#C-dom:136@N' '#C-dom:136@H'   0.000720600837777
+ '#C-dom:137@N' '#C-dom:137@H'   0.000887945378700
+ '#C-dom:138@N' '#C-dom:138@H'  -0.000713506302488
+ '#C-dom:139@N' '#C-dom:139@H'  -0.000835655496048
+ '#C-dom:140@N' '#C-dom:140@H'  -0.000542807898950
+ '#C-dom:141@N' '#C-dom:141@H'  -0.000688585018570
+ '#C-dom:142@N' '#C-dom:142@H'  -0.000919349155591
+ '#C-dom:143@N' '#C-dom:143@H'  -0.000856653151110
+ '#C-dom:144@N' '#C-dom:144@H'  -0.000620796268029
+ '#C-dom:145@N' '#C-dom:145@H'  -0.000808872217928
+ '#C-dom:146@N' '#C-dom:146@H'  -0.000681633008320
+ '#C-dom:147@N' '#C-dom:147@H'   0.000370455315501
+ '#C-dom:148@N' '#C-dom:148@H'  -0.000904258894169
+
+
+Alignment tm.
+
+Opening the file '../rigid/pcs_tm.txt' for reading.
+Opening the file './pcs_tm.txt' for reading.
+# mol_name   res_num  res_name  spin_num spin_name      PCS difference
+     C-dom        82       GLU         1         N  -0.000000464246132
+     C-dom        83       GLU         2         N  -0.000000928439896
+     C-dom        83       GLU         3         H  -0.000000992745785
+     C-dom        84       GLU         4         N  -0.000001238605892
+     C-dom        84       GLU         5         H  -0.000001309843872
+     C-dom        85       ILE         6         N  -0.000000787967303
+     C-dom        85       ILE         7         H  -0.000000783455265
+     C-dom        86       ARG         8         N  -0.000000589248988
+     C-dom        86       ARG         9         H  -0.000000597125486
+     C-dom        87       GLU        10         N  -0.000001054534217
+     C-dom        87       GLU        11         H  -0.000001089818302
+     C-dom        88       ALA        12         N  -0.000000876057735
+     C-dom        88       ALA        13         H  -0.000000897195281
+     C-dom        89       PHE        14         N  -0.000000605301892
+     C-dom        89       PHE        15         H  -0.000000619157235
+     C-dom        90       ARG        16         N  -0.000000777729166
+     C-dom        90       ARG        17         H  -0.000000828842435
+     C-dom        91       VAL        18         N  -0.000000793717635
+     C-dom        91       VAL        19         H  -0.000000809175096
+     C-dom        92       PHE        20         N  -0.000000590633066
+     C-dom        92       PHE        21         H  -0.000000599625018
+     C-dom        93       ASP        22         N  -0.000000542290443
+     C-dom        93       ASP        23         H  -0.000000586785146
+     C-dom        94       LYS        24         N  -0.000000551888350
+     C-dom        94       LYS        25         H  -0.000000497764123
+     C-dom        95       ASP        26         N  -0.000000569833014
+     C-dom        95       ASP        27         H  -0.000000523569937
+     C-dom        96       GLY        28         N  -0.000000722203304
+     C-dom        96       GLY        29         H  -0.000000681454952
+     C-dom        97       ASN        30         N  -0.000000675036858
+     C-dom        97       ASN        31         H  -0.000000614683209
+     C-dom        98       GLY        32         N  -0.000000635864338
+     C-dom        98       GLY        33         H  -0.000000678994797
+     C-dom        99       TYR        34         N  -0.000000302261122
+     C-dom        99       TYR        35         H  -0.000000375743294
+     C-dom       100       ILE        36         N  -0.000000081061636
+     C-dom       100       ILE        37         H   0.000000005465200
+     C-dom       101       SER        38         N  -0.000000105541729
+     C-dom       101       SER        39         H  -0.000000165579074
+     C-dom       102       ALA        40         N  -0.000000020088451
+     C-dom       102       ALA        41         H   0.000000008939296
+     C-dom       103       ALA        42         N  -0.000000100399568
+     C-dom       103       ALA        43         H  -0.000000082724404
+     C-dom       104       GLU        44         N  -0.000000192651930
+     C-dom       104       GLU        45         H  -0.000000166325498
+     C-dom       105       LEU        46         N  -0.000000200372035
+     C-dom       105       LEU        47         H  -0.000000163170159
+     C-dom       106       ARG        48         N  -0.000000207098691
+     C-dom       106       ARG        49         H  -0.000000183326869
+     C-dom       107       HIS        50         N  -0.000000273697995
+     C-dom       107       HIS        51         H  -0.000000260104187
+     C-dom       108       VAL        52         N  -0.000000358139386
+     C-dom       108       VAL        53         H  -0.000000338082443
+     C-dom       109       MET        54         N  -0.000000357725684
+     C-dom       109       MET        55         H  -0.000000328808391
+     C-dom       110       THR        56         N  -0.000000325767133
+     C-dom       110       THR        57         H  -0.000000312172363
+     C-dom       111       ASN        58         N  -0.000000368083186
+     C-dom       111       ASN        59         H  -0.000000366044865
+     C-dom       112       LEU        60         N  -0.000000445344827
+     C-dom       112       LEU        61         H  -0.000000428419654
+     C-dom       113       GLY        62         N  -0.000000431704166
+     C-dom       113       GLY        63         H  -0.000000410357241
+     C-dom       114       GLU        64         N  -0.000000393530112
+     C-dom       114       GLU        65         H  -0.000000406204461
+     C-dom       115       LYS        66         N  -0.000000294676291
+     C-dom       115       LYS        67         H  -0.000000299555649
+     C-dom       116       LEU        68         N  -0.000000219973994
+     C-dom       116       LEU        69         H  -0.000000228243684
+     C-dom       117       THR        70         N  -0.000000136614134
+     C-dom       117       THR        71         H  -0.000000136195659
+     C-dom       118       ASP        72         N  -0.000000076675066
+     C-dom       118       ASP        73         H  -0.000000081189118
+     C-dom       119       GLU        74         N  -0.000000025984686
+     C-dom       119       GLU        75         H  -0.000000040466013
+     C-dom       120       GLU        76         N  -0.000000042344251
+     C-dom       120       GLU        77         H  -0.000000057770621
+     C-dom       121       VAL        78         N  -0.000000045198672
+     C-dom       121       VAL        79         H  -0.000000054997537
+     C-dom       122       ASP        80         N   0.000000045486295
+     C-dom       122       ASP        81         H   0.000000021463297
+     C-dom       123       GLU        82         N   0.000000096767617
+     C-dom       123       GLU        83         H   0.000000059731756
+     C-dom       124       MET        84         N   0.000000090821679
+     C-dom       124       MET        85         H   0.000000049329898
+     C-dom       125       ILE        86         N   0.000000190148233
+     C-dom       125       ILE        87         H   0.000000140605596
+     C-dom       126       ARG        88         N   0.000000337500677
+     C-dom       126       ARG        89         H   0.000000272431427
+     C-dom       127       GLU        90         N   0.000000424322309
+     C-dom       127       GLU        91         H   0.000000341995327
+     C-dom       128       ALA        92         N   0.000000555752835
+     C-dom       128       ALA        93         H   0.000000449304547
+     C-dom       129       ASP        94         N   0.000000721840164
+     C-dom       129       ASP        95         H   0.000000615244526
+     C-dom       130       ILE        96         N   0.000001164894875
+     C-dom       130       ILE        97         H   0.000001213630808
+     C-dom       131       ASP        98         N   0.000001258578101
+     C-dom       131       ASP        99         H   0.000001210879688
+     C-dom       132       GLY       100         N   0.000000896895261
+     C-dom       132       GLY       101         H   0.000000937541468
+     C-dom       133       ASP       102         N   0.000000653725208
+     C-dom       133       ASP       103         H   0.000000731072713
+     C-dom       134       GLY       104         N   0.000000439632290
+     C-dom       134       GLY       105         H   0.000000511414578
+     C-dom       135       GLN       106         N   0.000000341497230
+     C-dom       135       GLN       107         H   0.000000421310186
+     C-dom       136       VAL       108         N   0.000000309547439
+     C-dom       136       VAL       109         H   0.000000210095213
+     C-dom       137       ASN       110         N   0.000000569528796
+     C-dom       137       ASN       111         H   0.000000720823480
+     C-dom       138       TYR       112         N   0.000000553097581
+     C-dom       138       TYR       113         H   0.000000414174000
+     C-dom       139       GLU       114         N   0.000001491284369
+     C-dom       139       GLU       115         H   0.000001351387780
+     C-dom       140       GLU       116         N   0.000001608297177
+     C-dom       140       GLU       117         H   0.000001462841735
+     C-dom       141       PHE       118         N   0.000000913922630
+     C-dom       141       PHE       119         H   0.000000914383089
+     C-dom       142       VAL       120         N   0.000001064790726
+     C-dom       142       VAL       121         H   0.000001205796735
+     C-dom       143       GLN       122         N   0.000001640190322
+     C-dom       143       GLN       123         H   0.000001840823065
+     C-dom       144       MET       124         N   0.000000814905768
+     C-dom       144       MET       125         H   0.000000945132350
+     C-dom       145       MET       126         N   0.000000110684753
+     C-dom       145       MET       127         H   0.000000300038008
+     C-dom       146       THR       128         N  -0.000000029291342
+     C-dom       146       THR       129         H   0.000000313830279
+     C-dom       147       ALA       130         N  -0.000000015978251
+     C-dom       147       ALA       131         H  -0.000000090747266
+     C-dom       148       LYS       132         N  -0.000000357117204
+     C-dom       148       LYS       133         H   0.000000247966696
+Opening the file '../rigid/rdc_tm.txt' for reading.
+Opening the file './rdc_tm.txt' for reading.
+#      Spin_ID1       Spin_ID2      RDC difference
+  '#C-dom:83@N'  '#C-dom:83@H'   0.000095419464675
+  '#C-dom:84@N'  '#C-dom:84@H'   0.000051215479635
+  '#C-dom:85@N'  '#C-dom:85@H'  -0.000006087387451
+  '#C-dom:86@N'  '#C-dom:86@H'   0.000060473192363
+  '#C-dom:87@N'  '#C-dom:87@H'   0.000113756734525
+  '#C-dom:88@N'  '#C-dom:88@H'   0.000031912864658
+  '#C-dom:89@N'  '#C-dom:89@H'   0.000019539133373
+  '#C-dom:90@N'  '#C-dom:90@H'   0.000089764193262
+  '#C-dom:91@N'  '#C-dom:91@H'   0.000084917225843
+  '#C-dom:92@N'  '#C-dom:92@H'  -0.000063598926353
+  '#C-dom:93@N'  '#C-dom:93@H'   0.000049228317692
+  '#C-dom:94@N'  '#C-dom:94@H'  -0.000006775707893
+  '#C-dom:95@N'  '#C-dom:95@H'  -0.000187359492791
+  '#C-dom:96@N'  '#C-dom:96@H'   0.000308054040203
+  '#C-dom:97@N'  '#C-dom:97@H'   0.000133828675020
+  '#C-dom:98@N'  '#C-dom:98@H'  -0.000194571052980
+  '#C-dom:99@N'  '#C-dom:99@H'  -0.000163725831589
+ '#C-dom:100@N' '#C-dom:100@H'  -0.000173064392152
+ '#C-dom:101@N' '#C-dom:101@H'  -0.000326583808391
+ '#C-dom:102@N' '#C-dom:102@H'   0.000059706998710
+ '#C-dom:103@N' '#C-dom:103@H'   0.000225703014296
+ '#C-dom:104@N' '#C-dom:104@H'  -0.000028868981282
+ '#C-dom:105@N' '#C-dom:105@H'  -0.000052914211711
+ '#C-dom:106@N' '#C-dom:106@H'   0.000201126277930
+ '#C-dom:107@N' '#C-dom:107@H'   0.000153821986933
+ '#C-dom:108@N' '#C-dom:108@H'   0.000029225751682
+ '#C-dom:109@N' '#C-dom:109@H'   0.000101820099444
+ '#C-dom:110@N' '#C-dom:110@H'   0.000288627189370
+ '#C-dom:111@N' '#C-dom:111@H'   0.000213716033514
+ '#C-dom:112@N' '#C-dom:112@H'   0.000004936377012
+ '#C-dom:113@N' '#C-dom:113@H'   0.000231182132161
+ '#C-dom:114@N' '#C-dom:114@H'   0.000163795181488
+ '#C-dom:115@N' '#C-dom:115@H'   0.000319788218140
+ '#C-dom:116@N' '#C-dom:116@H'   0.000039419764896
+ '#C-dom:117@N' '#C-dom:117@H'   0.000017348819979
+ '#C-dom:118@N' '#C-dom:118@H'  -0.000032341012183
+ '#C-dom:119@N' '#C-dom:119@H'   0.000043078375139
+ '#C-dom:120@N' '#C-dom:120@H'  -0.000116521299357
+ '#C-dom:121@N' '#C-dom:121@H'  -0.000036741366717
+ '#C-dom:122@N' '#C-dom:122@H'   0.000023867860907
+ '#C-dom:123@N' '#C-dom:123@H'  -0.000008765711248
+ '#C-dom:124@N' '#C-dom:124@H'  -0.000109280831587
+ '#C-dom:125@N' '#C-dom:125@H'  -0.000003675224740
+ '#C-dom:126@N' '#C-dom:126@H'   0.000044150255153
+ '#C-dom:127@N' '#C-dom:127@H'  -0.000092279459841
+ '#C-dom:128@N' '#C-dom:128@H'  -0.000082048119377
+ '#C-dom:129@N' '#C-dom:129@H'   0.000100556261119
+ '#C-dom:130@N' '#C-dom:130@H'  -0.000208539584296
+ '#C-dom:131@N' '#C-dom:131@H'  -0.000322417203407
+ '#C-dom:132@N' '#C-dom:132@H'   0.000224443382476
+ '#C-dom:133@N' '#C-dom:133@H'   0.000077838174018
+ '#C-dom:134@N' '#C-dom:134@H'  -0.000014249856246
+ '#C-dom:135@N' '#C-dom:135@H'  -0.000154848140969
+ '#C-dom:136@N' '#C-dom:136@H'  -0.000250696875039
+ '#C-dom:137@N' '#C-dom:137@H'  -0.000309034840697
+ '#C-dom:138@N' '#C-dom:138@H'   0.000292205861191
+ '#C-dom:139@N' '#C-dom:139@H'   0.000326180977237
+ '#C-dom:140@N' '#C-dom:140@H'   0.000267107505112
+ '#C-dom:141@N' '#C-dom:141@H'   0.000278420317319
+ '#C-dom:142@N' '#C-dom:142@H'   0.000330299632100
+ '#C-dom:143@N' '#C-dom:143@H'   0.000327237526731
+ '#C-dom:144@N' '#C-dom:144@H'   0.000276393598543
+ '#C-dom:145@N' '#C-dom:145@H'   0.000292609580400
+ '#C-dom:146@N' '#C-dom:146@H'   0.000248677010221
+ '#C-dom:147@N' '#C-dom:147@H'  -0.000100563974121
+ '#C-dom:148@N' '#C-dom:148@H'   0.000307874573426
+
+
+Alignment er.
+
+Opening the file '../rigid/pcs_er.txt' for reading.
+Opening the file './pcs_er.txt' for reading.
+# mol_name   res_num  res_name  spin_num spin_name      PCS difference
+     C-dom        82       GLU         1         N  -0.000000285118917
+     C-dom        83       GLU         2         N  -0.000000549139871
+     C-dom        83       GLU         3         H  -0.000000599872574
+     C-dom        84       GLU         4         N  -0.000000749077011
+     C-dom        84       GLU         5         H  -0.000000802262929
+     C-dom        85       ILE         6         N  -0.000000465390909
+     C-dom        85       ILE         7         H  -0.000000466487713
+     C-dom        86       ARG         8         N  -0.000000322858342
+     C-dom        86       ARG         9         H  -0.000000332172375
+     C-dom        87       GLU        10         N  -0.000000575841804
+     C-dom        87       GLU        11         H  -0.000000605973306
+     C-dom        88       ALA        12         N  -0.000000490963550
+     C-dom        88       ALA        13         H  -0.000000509686840
+     C-dom        89       PHE        14         N  -0.000000323429635
+     C-dom        89       PHE        15         H  -0.000000333792491
+     C-dom        90       ARG        16         N  -0.000000390459925
+     C-dom        90       ARG        17         H  -0.000000423236671
+     C-dom        91       VAL        18         N  -0.000000408120177
+     C-dom        91       VAL        19         H  -0.000000423048590
+     C-dom        92       PHE        20         N  -0.000000303007443
+     C-dom        92       PHE        21         H  -0.000000309804883
+     C-dom        93       ASP        22         N  -0.000000258652936
+     C-dom        93       ASP        23         H  -0.000000283705385
+     C-dom        94       LYS        24         N  -0.000000251137753
+     C-dom        94       LYS        25         H  -0.000000228663338
+     C-dom        95       ASP        26         N  -0.000000239786757
+     C-dom        95       ASP        27         H  -0.000000221403617
+     C-dom        96       GLY        28         N  -0.000000298538803
+     C-dom        96       GLY        29         H  -0.000000288560334
+     C-dom        97       ASN        30         N  -0.000000264117866
+     C-dom        97       ASN        31         H  -0.000000244028771
+     C-dom        98       GLY        32         N  -0.000000251270053
+     C-dom        98       GLY        33         H  -0.000000275260396
+     C-dom        99       TYR        34         N  -0.000000115823579
+     C-dom        99       TYR        35         H  -0.000000146349019
+     C-dom       100       ILE        36         N  -0.000000030166907
+     C-dom       100       ILE        37         H   0.000000008895593
+     C-dom       101       SER        38         N  -0.000000044382024
+     C-dom       101       SER        39         H  -0.000000071286264
+     C-dom       102       ALA        40         N  -0.000000008474656
+     C-dom       102       ALA        41         H   0.000000005239359
+     C-dom       103       ALA        42         N  -0.000000046806710
+     C-dom       103       ALA        43         H  -0.000000037171359
+     C-dom       104       GLU        44         N  -0.000000091173443
+     C-dom       104       GLU        45         H  -0.000000076880564
+     C-dom       105       LEU        46         N  -0.000000101052969
+     C-dom       105       LEU        47         H  -0.000000080794499
+     C-dom       106       ARG        48         N  -0.000000107780700
+     C-dom       106       ARG        49         H  -0.000000093672527
+     C-dom       107       HIS        50         N  -0.000000143173335
+     C-dom       107       HIS        51         H  -0.000000133797782
+     C-dom       108       VAL        52         N  -0.000000193392126
+     C-dom       108       VAL        53         H  -0.000000179918306
+     C-dom       109       MET        54         N  -0.000000200336901
+     C-dom       109       MET        55         H  -0.000000181509777
+     C-dom       110       THR        56         N  -0.000000184045501
+     C-dom       110       THR        57         H  -0.000000173895693
+     C-dom       111       ASN        58         N  -0.000000211052698
+     C-dom       111       ASN        59         H  -0.000000207182297
+     C-dom       112       LEU        60         N  -0.000000263179949
+     C-dom       112       LEU        61         H  -0.000000249993400
+     C-dom       113       GLY        62         N  -0.000000261706711
+     C-dom       113       GLY        63         H  -0.000000245885511
+     C-dom       114       GLU        64         N  -0.000000235017001
+     C-dom       114       GLU        65         H  -0.000000241722304
+     C-dom       115       LYS        66         N  -0.000000170234386
+     C-dom       115       LYS        67         H  -0.000000174380684
+     C-dom       116       LEU        68         N  -0.000000120261912
+     C-dom       116       LEU        69         H  -0.000000125341243
+     C-dom       117       THR        70         N  -0.000000069023668
+     C-dom       117       THR        71         H  -0.000000067463289
+     C-dom       118       ASP        72         N  -0.000000036701508
+     C-dom       118       ASP        73         H  -0.000000039363079
+     C-dom       119       GLU        74         N  -0.000000008001696
+     C-dom       119       GLU        75         H  -0.000000015553728
+     C-dom       120       GLU        76         N  -0.000000011603018
+     C-dom       120       GLU        77         H  -0.000000021216723
+     C-dom       121       VAL        78         N  -0.000000015673641
+     C-dom       121       VAL        79         H  -0.000000022156057
+     C-dom       122       ASP        80         N   0.000000028927635
+     C-dom       122       ASP        81         H   0.000000016712704
+     C-dom       123       GLU        82         N   0.000000063506208
+     C-dom       123       GLU        83         H   0.000000044370012
+     C-dom       124       MET        84         N   0.000000067305802
+     C-dom       124       MET        85         H   0.000000043139618
+     C-dom       125       ILE        86         N   0.000000105404928
+     C-dom       125       ILE        87         H   0.000000079828665
+     C-dom       126       ARG        88         N   0.000000171850844
+     C-dom       126       ARG        89         H   0.000000141894000
+     C-dom       127       GLU        90         N   0.000000235354950
+     C-dom       127       GLU        91         H   0.000000195030950
+     C-dom       128       ALA        92         N   0.000000304313879
+     C-dom       128       ALA        93         H   0.000000248261829
+     C-dom       129       ASP        94         N   0.000000350618047
+     C-dom       129       ASP        95         H   0.000000304199817
+     C-dom       130       ILE        96         N   0.000000519497419
+     C-dom       130       ILE        97         H   0.000000543666278
+     C-dom       131       ASP        98         N   0.000000506529505
+     C-dom       131       ASP        99         H   0.000000498136692
+     C-dom       132       GLY       100         N   0.000000351917893
+     C-dom       132       GLY       101         H   0.000000380371792
+     C-dom       133       ASP       102         N   0.000000253953138
+     C-dom       133       ASP       103         H   0.000000288550676
+     C-dom       134       GLY       104         N   0.000000179790818
+     C-dom       134       GLY       105         H   0.000000210530901
+     C-dom       135       GLN       106         N   0.000000147830996
+     C-dom       135       GLN       107         H   0.000000179569268
+     C-dom       136       VAL       108         N   0.000000143732543
+     C-dom       136       VAL       109         H   0.000000098743337
+     C-dom       137       ASN       110         N   0.000000264962158
+     C-dom       137       ASN       111         H   0.000000332483772
+     C-dom       138       TYR       112         N   0.000000268371156
+     C-dom       138       TYR       113         H   0.000000201735974
+     C-dom       139       GLU       114         N   0.000000715116511
+     C-dom       139       GLU       115         H   0.000000633811186
+     C-dom       140       GLU       116         N   0.000000777789083
+     C-dom       140       GLU       117         H   0.000000692270212
+     C-dom       141       PHE       118         N   0.000000468205181
+     C-dom       141       PHE       119         H   0.000000458517170
+     C-dom       142       VAL       120         N   0.000000575150166
+     C-dom       142       VAL       121         H   0.000000633680673
+     C-dom       143       GLN       122         N   0.000000924229996
+     C-dom       143       GLN       123         H   0.000000996361726
+     C-dom       144       MET       124         N   0.000000501621851
+     C-dom       144       MET       125         H   0.000000546256746
+     C-dom       145       MET       126         N   0.000000122384520
+     C-dom       145       MET       127         H   0.000000213736145
+     C-dom       146       THR       128         N   0.000000095677236
+     C-dom       146       THR       129         H   0.000000270889584
+     C-dom       147       ALA       130         N   0.000000206840096
+     C-dom       147       ALA       131         H   0.000000121497423
+     C-dom       148       LYS       132         N   0.000000270758440
+     C-dom       148       LYS       133         H   0.000000593864652
+Opening the file '../rigid/rdc_er.txt' for reading.
+Opening the file './rdc_er.txt' for reading.
+#      Spin_ID1       Spin_ID2      RDC difference
+  '#C-dom:83@N'  '#C-dom:83@H'   0.000063017283830
+  '#C-dom:84@N'  '#C-dom:84@H'   0.000115371740952
+  '#C-dom:85@N'  '#C-dom:85@H'   0.000050242518345
+  '#C-dom:86@N'  '#C-dom:86@H'   0.000054283803937
+  '#C-dom:87@N'  '#C-dom:87@H'   0.000097315246778
+  '#C-dom:88@N'  '#C-dom:88@H'   0.000106806615349
+  '#C-dom:89@N'  '#C-dom:89@H'   0.000050756117920
+  '#C-dom:90@N'  '#C-dom:90@H'   0.000048151265295
+  '#C-dom:91@N'  '#C-dom:91@H'   0.000142787002005
+  '#C-dom:92@N'  '#C-dom:92@H'   0.000040850624483
+  '#C-dom:93@N'  '#C-dom:93@H'   0.000031200082528
+  '#C-dom:94@N'  '#C-dom:94@H'   0.000079399612300
+  '#C-dom:95@N'  '#C-dom:95@H'   0.000028400155958
+  '#C-dom:96@N'  '#C-dom:96@H'   0.000137445488383
+  '#C-dom:97@N'  '#C-dom:97@H'   0.000007395927097
+  '#C-dom:98@N'  '#C-dom:98@H'  -0.000223751641405
+  '#C-dom:99@N'  '#C-dom:99@H'   0.000050123382083
+ '#C-dom:100@N' '#C-dom:100@H'   0.000026325367772
+ '#C-dom:101@N' '#C-dom:101@H'  -0.000088858931363
+ '#C-dom:102@N' '#C-dom:102@H'  -0.000134606574013
+ '#C-dom:103@N' '#C-dom:103@H'  -0.000031139751013
+ '#C-dom:104@N' '#C-dom:104@H'  -0.000178281650017
+ '#C-dom:105@N' '#C-dom:105@H'  -0.000186525871808
+ '#C-dom:106@N' '#C-dom:106@H'  -0.000039680690437
+ '#C-dom:107@N' '#C-dom:107@H'  -0.000081399576343
+ '#C-dom:108@N' '#C-dom:108@H'  -0.000158609032987
+ '#C-dom:109@N' '#C-dom:109@H'  -0.000115846360965
+ '#C-dom:110@N' '#C-dom:110@H'   0.000032574164791
+ '#C-dom:111@N' '#C-dom:111@H'  -0.000031299346042
+ '#C-dom:112@N' '#C-dom:112@H'  -0.000165775268018
+ '#C-dom:113@N' '#C-dom:113@H'   0.000146305687363
+ '#C-dom:114@N' '#C-dom:114@H'   0.000131747822257
+ '#C-dom:115@N' '#C-dom:115@H'   0.000172591051355
+ '#C-dom:116@N' '#C-dom:116@H'   0.000130373582936
+ '#C-dom:117@N' '#C-dom:117@H'   0.000171397688599
+ '#C-dom:118@N' '#C-dom:118@H'   0.000003165014324
+ '#C-dom:119@N' '#C-dom:119@H'  -0.000050481470194
+ '#C-dom:120@N' '#C-dom:120@H'  -0.000073503301535
+ '#C-dom:121@N' '#C-dom:121@H'   0.000026455241112
+ '#C-dom:122@N' '#C-dom:122@H'  -0.000013881844586
+ '#C-dom:123@N' '#C-dom:123@H'  -0.000079845056103
+ '#C-dom:124@N' '#C-dom:124@H'  -0.000068642202896
+ '#C-dom:125@N' '#C-dom:125@H'  -0.000010283089928
+ '#C-dom:126@N' '#C-dom:126@H'  -0.000025392293925
+ '#C-dom:127@N' '#C-dom:127@H'  -0.000121753236229
+ '#C-dom:128@N' '#C-dom:128@H'  -0.000038886609654
+ '#C-dom:129@N' '#C-dom:129@H'   0.000037958416095
+ '#C-dom:130@N' '#C-dom:130@H'  -0.000070600374171
+ '#C-dom:131@N' '#C-dom:131@H'  -0.000208579397386
+ '#C-dom:132@N' '#C-dom:132@H'   0.000024323994253
+ '#C-dom:133@N' '#C-dom:133@H'   0.000038295377207
+ '#C-dom:134@N' '#C-dom:134@H'   0.000127422705053
+ '#C-dom:135@N' '#C-dom:135@H'  -0.000138384334886
+ '#C-dom:136@N' '#C-dom:136@H'  -0.000111729372489
+ '#C-dom:137@N' '#C-dom:137@H'  -0.000058641787341
+ '#C-dom:138@N' '#C-dom:138@H'   0.000196429080888
+ '#C-dom:139@N' '#C-dom:139@H'   0.000126826090469
+ '#C-dom:140@N' '#C-dom:140@H'   0.000198031568328
+ '#C-dom:141@N' '#C-dom:141@H'   0.000196453183076
+ '#C-dom:142@N' '#C-dom:142@H'   0.000119376051254
+ '#C-dom:143@N' '#C-dom:143@H'   0.000117011028969
+ '#C-dom:144@N' '#C-dom:144@H'   0.000207211276801
+ '#C-dom:145@N' '#C-dom:145@H'   0.000160176452004
+ '#C-dom:146@N' '#C-dom:146@H'   0.000023665554047
+ '#C-dom:147@N' '#C-dom:147@H'  -0.000020682820242
+ '#C-dom:148@N' '#C-dom:148@H'   0.000104701214116
+
+
+
+Maximum PCS difference:  0.000004245209374 ppm.
+Maximum RDC difference:  0.000919349155591 Hz.
+
