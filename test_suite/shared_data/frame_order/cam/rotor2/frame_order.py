@@ -140,14 +140,14 @@ frame_order.pdb_model(ave_pos_file='ave_pos_true.pdb.gz', rep_file='frame_order_
 
 # Optimise.
 #grid_search(inc=5)
-minimise('simplex', constraints=True)
+minimise('simplex'
 
 # Store the result.
 frame_order.pdb_model(ave_pos_file='ave_pos_fixed_piv.pdb.gz', rep_file='frame_order_fixed_piv.pdb.gz', dist_file=None, force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
-minimise('simplex', constraints=True)
+minimise('simplex'
 
 # The distance from the optimised pivot and the rotation axis.
 opt_piv = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
@@ -164,7 +164,7 @@ print("Optimised axis:  %s" % opt_axis)
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise('simplex')
 eliminate()
 monte_carlo.error_analysis()
 
