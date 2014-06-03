@@ -130,14 +130,14 @@ def pcs_numeric_int_rotor_qrint(points=None, sigma_max=None, c=None, full_in_ref
         # Increment the number of points.
         num += 1
 
-    # Calculate the PCS and error.
-    for i in range(len(pcs_theta)):
-        for j in range(len(pcs_theta[i])):
-            if num == 0:
-                continue
+    # Default to the rigid state if no points lie in the distribution.
+    if num == 0:
+        pcs_pivot_motion_rotor_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, R_eigen=R_eigen, RT_eigen=RT_eigen, Ri_prime=R_eigen, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
-            # The average PCS.
-            pcs_theta[i, j] = c[i] * pcs_theta[i, j] / float(num)
+    # Average the PCS.
+    else:
+        for i in range(len(pcs_theta)):
+            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
 
 
 def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
