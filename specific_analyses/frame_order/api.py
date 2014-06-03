@@ -391,8 +391,8 @@ class Frame_order(API_base, API_common):
 
             # Average domain position translation (in a +/- 5 Angstrom box).
             if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
-                lower = -5
-                upper = 5
+                lower = -50
+                upper = 50
 
             # Linear angle grid from 0 to one inc before 2pi.
             if cdp.params[i] in ['ave_pos_alpha', 'ave_pos_gamma', 'eigen_alpha', 'eigen_gamma', 'axis_phi']:
