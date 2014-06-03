@@ -29,7 +29,7 @@ from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
-from extern.sobol.sobol_lib import i4_sobol
+from extern.sobol.sobol_lib import i4_sobol_generate
 from lib.alignment.alignment_tensor import to_5D, to_tensor
 from lib.alignment.pcs import pcs_tensor
 from lib.alignment.rdc import rdc_tensor
@@ -1173,11 +1173,11 @@ class Frame_order:
         self.sobol_angles = zeros((n, m), float32)
         self.Ri_prime = zeros((n, 3, 3), float64)
 
+        # The Sobol' points.
+        points = i4_sobol_generate(m, n, 0)
+
         # Loop over the points.
         for i in range(n):
-            # The raw point.
-            point, seed = i4_sobol(m, i)
-
             # Loop over the dimensions, converting the points to angles.
             theta = None
             phi = None
@@ -1185,17 +1185,17 @@ class Frame_order:
             for j in range(m):
                 # The tilt angle - the angle of rotation about the x-y plane rotation axis.
                 if dims[j] in ['theta']:
-                    theta = acos(2.0*point[j] - 1.0)
+                    theta = acos(2.0*points[j, i] - 1.0)
                     self.sobol_angles[i, j] = theta
 
                 # The angle defining the x-y plane rotation axis.
                 if dims[j] in ['phi']:
-                    phi = 2.0 * pi * point[j]
+                    phi = 2.0 * pi * points[j, i]
                     self.sobol_angles[i, j] = phi
 
                 # The torsion angle - the angle of rotation about the z' axis.
                 if dims[j] in ['sigma', 'sigma2']:
-                    sigma = 2.0 * pi * (point[j] - 0.5)
+                    sigma = 2.0 * pi * (points[j, i] - 0.5)
                     self.sobol_angles[i, j] = sigma
 
             # Pre-calculate the rotation matrix for the full tilt-torsion.
