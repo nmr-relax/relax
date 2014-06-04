@@ -936,13 +936,14 @@ uf.add_keyarg(
 )
 # Description.
 uf.desc.append(Desc_container())
-uf.desc[-1].add_paragraph("Set the R20 parameter values to that of the minimum R2eff value.  This user function will look through all R2eff values per magnetic field strength, and find the minimum.  This minimum is a very good guess for the minimisation.")
-uf.desc[-1].add_paragraph("Instead of making the grid search find initial values of the R20 parameter, the minimum for the R2eff points are used instead.  For example for a two field CPMG experiment with model CR72, that would drop the number of uniform grid search points from 5D to 3D.  For standard 21 grid increments per dimension, it would make the grid search 441 times faster.")
-uf.desc[-1].add_paragraph("This is an experimental unpublished feature of the dispersion analysis.  If R20 << min(R2eff), the grid search will be performed in a region of the optimisation space quite distant from the true minimum.  If unsure, do not activate this option, and let the grid search find a better starting value.")
+uf.desc[-1].add_paragraph("Set the R20 parameter values to that of the minimum R2eff value.  This user function will look through all R2eff values per magnetic field strength, find the minimum value, and set the R20, R20A, R20B, and R1rho' parameters of the model to this value.  This can serve a number of purposes including using the values for the chi-squared space mapping via the dx.map user function, speeding up optimisation by avoiding the grid search for these parameters, and as initial parameter values for other dispersion software.")
+uf.desc[-1].add_paragraph("Instead of finding the initial values for the R20 parameter using the grid search, the minimum for the R2eff points can be used instead.  This is often a good initial position for minimisation.  For example for a two field CPMG experiment with model CR72, that would drop the number of uniform grid search points from 5D to 3D, i.e. two orders of magnitude faster.  When using the standard 21 grid increments per dimension, it would allow the grid search to be 441 times faster.  Note that the relaxation dispersion auto-analysis will take all pre-set parameter values into account and will automatically exclude these from the grid search.")
+uf.desc[-1].add_paragraph("Note that for optimisation, that this is an experimental and unpublished feature of the dispersion analysis.  If R20 << min(R2eff), the grid search will be performed in a region of the optimisation space quite distant from the true minimum.  If unsure, do not activate this option, and let the grid search find a better starting value.")
 uf.backend = r20_from_min_r2eff
 uf.menu_text = "&r20_from_min_r2eff"
 uf.gui_icon = "relax.grid_search"
-uf.wizard_size = (800, 500)
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 600)
 uf.wizard_apply_button = False
 
 
