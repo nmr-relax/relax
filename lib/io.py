@@ -382,24 +382,18 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     @param file_name:       The name of the file to extract the data from.
     @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory
-                            is assumed.
+    @param dir:             The path where the file is located.  If None, then the current directory is assumed.
     @type dir:              str
-    @param force:           Boolean argument which if True causes the file to be overwritten if it
-                            already exists.
+    @param force:           Boolean argument which if True causes the file to be overwritten if it already exists.
     @type force:            bool
-    @param compress_type:   The compression type.  The integer values correspond to the compression
-                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @param compress_type:   The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.  If no compression is given but the file name ends in '.gz' or '.bz2', then the compression will be automatically set.
     @type compress_type:    int
     @param verbosity:       The verbosity level.
     @type verbosity:        int
-    @param return_path:     If True, the function will return a tuple of the file object and the
-                            full file path.
+    @param return_path:     If True, the function will return a tuple of the file object and the full file path.
     @type return_path:      bool
-    @return:                The open, writable file object and, if the return_path is True, then the
-                            full file path is returned as well.
-    @rtype:                 writable file object (if return_path, then a tuple of the writable file
-                            and the full file path)
+    @return:                The open, writable file object and, if the return_path is True, then the full file path is returned as well.
+    @rtype:                 writable file object (if return_path, then a tuple of the writable file and the full file path)
     """
 
     # No file name?
@@ -436,6 +430,13 @@ def open_write_file(file_name=None, dir=None, force=False, compress_type=0, verb
 
     # File path.
     file_path = get_file_path(file_name, dir)
+
+    # If no compression is supplied, determine the compression to be used from the file extension.
+    if compress_type == 0:
+        if search('.bz2$', file_path):
+            compress_type = 1
+        elif search('.gz$', file_path):
+            compress_type = 2
 
     # Bzip2 compression.
     if compress_type == 1 and not search('.bz2$', file_path):
