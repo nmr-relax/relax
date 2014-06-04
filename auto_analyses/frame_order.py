@@ -568,7 +568,7 @@ class Frame_order_analysis:
         script.write("# PyMOL visualisation.\n")
         script.write("pymol.view()\n")
         script.write("pymol.command('show spheres')\n")
-        script.write("pymol.frame_order(file='frame_order.pdb', dist_file='frame_order_distribution.pdb')\n")
+        script.write("pymol.frame_order()\n")
 
         # Close the file.
         script.close()
