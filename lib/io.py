@@ -23,8 +23,7 @@ from __future__ import absolute_import
 # Module docstring.
 """Module containing advanced IO functions for relax.
 
-This includes IO redirection, automatic loading and writing of compressed files (both Gzip and BZ2
-compression), reading and writing of files, processing of the contents of files, etc.
+This includes IO redirection, automatic loading and writing of compressed files (both Gzip and BZ2 compression), reading and writing of files, processing of the contents of files, etc.
 """
 
 # Python module imports.
@@ -86,9 +85,7 @@ def determine_compression(file_path):
 
     @param file_path:   The full file path of the file.
     @type file_path:    str
-    @return:            A tuple of the compression type and full path of the file (including its
-                        extension).  A value of 0 corresponds to no compression.  Bzip2 compression
-                        corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
+    @return:            A tuple of the compression type and full path of the file (including its extension).  A value of 0 corresponds to no compression.  Bzip2 compression corresponds to a value of 1.  Gzip compression corresponds to a value of 2.
     @rtype:             (int, str)
     """
 
@@ -123,15 +120,11 @@ def extract_data(file=None, dir=None, file_data=None, sep=None):
 
     @param file:            The file to extract the data from.
     @type file:             str or file object
-    @param dir:             The path where the file is located.  If None and the file argument is a
-                            string, then the current directory is assumed.
+    @param dir:             The path where the file is located.  If None and the file argument is a string, then the current directory is assumed.
     @type dir:              str or None
-    @param file_data:       If the file data has already been extracted from the file, it can be
-                            passed into this function using this argument.  If data is supplied
-                            here, then the file_name and dir args are ignored.
+    @param file_data:       If the file data has already been extracted from the file, it can be passed into this function using this argument.  If data is supplied here, then the file_name and dir args are ignored.
     @type file_data:        list of str
-    @param sep:             The character separating the columns in the file data.  If None, then
-                            whitespace is assumed.
+    @param sep:             The character separating the columns in the file data.  If None, then whitespace is assumed.
     @type sep:              str
     @return:                The file data.
     @rtype:                 list of lists of str
@@ -181,8 +174,7 @@ def get_file_path(file_name=None, dir=None):
 
     @param file_name:   The name of the file to extract the data from.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is
-                        assumed.
+    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
     @return:            The full file path.
     @rtype:             str
@@ -227,8 +219,7 @@ def io_streams_log(file_name=None, dir=None, verbosity=1):
 
     @param file_name:   The name of the file.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is
-                        assumed.
+    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
     @param verbosity:   The verbosity level.
     @type verbosity:    int
@@ -263,11 +254,9 @@ def io_streams_tee(file_name=None, dir=None, compress_type=0, verbosity=1):
 
     @param file_name:       The name of the file.
     @type file_name:        str
-    @param dir:             The path where the file is located.  If None, then the current directory
-                            is assumed.
+    @param dir:             The path where the file is located.  If None, then the current directory is assumed.
     @type dir:              str
-    @param compress_type:   The compression type.  The integer values correspond to the compression
-                            type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @param compress_type:   The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
     @type compress_type:    int
     @param verbosity:       The verbosity level.
     @type verbosity:        int
@@ -326,8 +315,7 @@ def open_read_file(file_name=None, dir=None, verbosity=1):
 
     @param file_name:   The name of the file to extract the data from.
     @type file_name:    str
-    @param dir:         The path where the file is located.  If None, then the current directory is
-                        assumed.
+    @param dir:         The path where the file is located.  If None, then the current directory is assumed.
     @type dir:          str
     @param verbosity:   The verbosity level.
     @type verbosity:    int
