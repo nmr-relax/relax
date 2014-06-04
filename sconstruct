@@ -444,9 +444,9 @@ class Main:
 
 
     def det_arch(self):
-        """Nasty hack to make Scons behave properly with cross-compilation on Mac OS X!
+        """Determine which architectures are supported for cross-compilation on Mac OS X.
 
-        @return:    The list of CPU architects to cross compile.
+        @return:    The list of CPU architects to cross-compile.
         @rtype:     list of str
         """
 
