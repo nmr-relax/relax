@@ -4,7 +4,7 @@
 
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2006-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2006-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -25,12 +25,13 @@
 
 
 # Import statements.
-from os import getcwd, path, remove, rmdir, sep, walk
+from os import F_OK, access, getcwd, path, remove, rmdir, sep, walk
 import platform
 from re import search
 from shutil import rmtree
 from subprocess import PIPE, Popen
 import sys
+from tempfile import mkdtemp
 
 # Scons modules.
 from scons.distrib import package, gpg_sign
@@ -449,22 +450,58 @@ class Main:
         @rtype:     list of str
         """
 
+        # Printout.
+        print("\nDetermining which architectures can be cross compiled for.")
+
+        # Create a temporary directory for compilation tests.
+        tempdir = mkdtemp()
+
         # The list of archectures to try.
-        archs = ['i386', 'ppc', 'x86_64']
+        archs = ['i386', 'ppc', 'x86_64', 'ppc64']
         allowed = []
 
-        # Loop over each arch and test it.
-        for arch in archs:
-            # Run gcc.
-            pipe = Popen('gcc -arch %s' % arch, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+        # Safely loop over each arch and test it.
+        try:
+            for arch in archs:
+                # Create a C file to compile.
+                base_name = tempdir + sep + 'test'
+                file = open(base_name + '.c', 'w')
+                file.write("#include<stdio.h>\n\n")
+                file.write("main() {\n")
+                file.write("    printf(\"Compilation with arch '%s' successful.\\n\");\n" % arch)
+                file.write("}\n")
+                file.close()
 
-            # Loop over the error lines.
-            for line in pipe.stderr.readlines():
-                # Successful arch.
-                if search("no input files", line):
-                    allowed.append(arch)
+                # Run gcc.
+                arch_test = ''
+                for name in allowed:
+                    arch_test += '-arch %s ' % name
+                pipe = Popen('gcc %s -arch %s %s.c -o %s' % (arch_test, arch, base_name, base_name), shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+                for line in pipe.stdout.readlines():
+                    pass
+
+                # Execute the file.
+                pipe = Popen('%s' % base_name, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+
+                # Check the output.
+                for line in pipe.stdout.readlines():
+                    # Printout.
+                    print("    %s" % line[:-1])
+
+                    # Successful arch.
+                    if search("successful", line):
+                        allowed.append(arch)
+
+                # Delete the compiled file, if it exists.
+                if access(base_name, F_OK):
+                    remove(base_name)
+
+        # Clean up.
+        finally:
+            rmtree(tempdir)
 
         # Return the list.
+        print("\n")
         return allowed
 
 
@@ -542,8 +579,9 @@ class Main:
         # Relaxation curve fitting build environment.
         env = Environment()
 
-        # Determine the build architectures.
-        archs = self.det_arch()
+        # Determine the cross-compilation architectures for Mac systems.
+        if env['PLATFORM'] == 'darwin':
+            archs = self.det_arch()
 
         # C flags.
         if SYSTEM == 'Windows':
