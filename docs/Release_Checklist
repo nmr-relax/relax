@@ -20,15 +20,6 @@ $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 
 
-* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
-
-$ svn log -v -r18314:HEAD > log
-$ ./devel_scripts/log_converter.py log > log_formatted
-
-The result should be modified and every line checked.  Bugs should be in the 'Bugfixes' section only if it affects previous relax releases, otherwise it should be in the 'Changes' section.  The following should be removed:  minor, insignificant, and unidentifiable changes such as "Import fix." (this is highly subjective); all exclamation marks; message IDs for mailing list posts; svnmerge commits; the messages of all reverted commits; all revision numbers such as 'r19899' or the word 'revision'; the names and email addresses of committers or patch providers; and all email addresses.  Spelling should be checked and proper punctuation used throughout, including two spaces after a period.  Missing spaces after punctuation due to the log_converter.py script need to be corrected.  Commit the changes.  Port the revision back into the main line.
-
-
-
 * Change the version number in file 'version.py' and commit the change.
 
 
@@ -46,6 +37,15 @@ and commit all the changes.  Clean up the temporary files with:
 $ scons clean
 
 Copy the PDF manual to the mirror directory for the relax download site for uploading in one of the steps below.
+
+
+
+* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
+
+$ svn log -v -r18314:HEAD > log
+$ ./devel_scripts/log_converter.py log > log_formatted
+
+The result should be modified and every line checked.  Bugs should be in the 'Bugfixes' section only if it affects previous relax releases, otherwise it should be in the 'Changes' section.  The following should be removed:  minor, insignificant, and unidentifiable changes such as "Import fix." (this is highly subjective); all exclamation marks; message IDs for mailing list posts; svnmerge commits; the messages of all reverted commits; all revision numbers such as 'r19899' or the word 'revision'; the names and email addresses of committers or patch providers; and all email addresses.  Spelling should be checked and proper punctuation used throughout, including two spaces after a period.  Missing spaces after punctuation due to the log_converter.py script need to be corrected.  Commit the changes.  Port the revision back into the main line.
 
 
 
