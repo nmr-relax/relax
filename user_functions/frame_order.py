@@ -52,8 +52,10 @@ uf.add_keyarg(
     name = "pivot",
     default = "com",
     py_type = "str",
+    dim = 3,
     desc_short = "average position pivot",
     desc = "The type of pivot to use for the rotation to the average domain position.  This can be one of 'com' or 'motional'.",
+    list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate'],
     wiz_element_type = "combo",
     wiz_combo_choices = [
         "Centre of Mass (CoM)",
