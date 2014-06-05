@@ -1,4 +1,7 @@
-* Compile the C modules for the major line (trunk) by typing
+Testing
+=======
+
+Compile the C modules for the major line (trunk) by typing:
 
 $ scons
 
@@ -6,25 +9,32 @@ and then run the test suite on all possible architectures to make sure the relea
 
 
 
-* Make a copy of the current head to the tags directory using a command such as:
+Tagging
+=======
+
+Make a copy of the current head to the tags directory using a command such as:
 
 $ svn cp -F svn_msg svn+ssh://bugman@svn.gna.org/svn/relax/trunk svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 In the commit message file 'svn_msg', have a header line which says 'relax version 2.0.1.', followed by a short description of the release.
 
-
-
-* Checkout the tagged version with:
+Checkout the tagged version with:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 
 
 
-* Change the version number in file 'version.py' and commit the change.
+Version number
+==============
+
+Change the version number in file 'version.py' and commit the change.
 
 
 
-* Build the PDF version of the relax user manual by typing:
+PDF manual
+==========
+
+Build the PDF version of the relax user manual by typing:
 
 $ scons user_manual_pdf
 
@@ -40,7 +50,10 @@ Copy the PDF manual to the mirror directory for the relax download site for uplo
 
 
 
-* Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
+CHANGES file
+============
+
+Review the SVN logs and add an entry into the CHANGES file (in the 'docs/' directory) for the current release.  Create three sections titled 'Features', 'Changes', and 'Bugfixes'.  The 'devel_scripts/log_converter.py' script can be used to generate the documentation, which will need major editing (the starting revision is from the CHANGES merge of the previous release):
 
 $ svn log -v -r18314:HEAD > log
 $ ./devel_scripts/log_converter.py log > log_formatted
@@ -49,32 +62,48 @@ The result should be modified and every line checked.  Bugs should be in the 'Bu
 
 
 
-* Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
+Distribution files
+==================
+
+Package bundling
+----------------
+
+Bundle minfx and bmrblib by checking out the latest stable release tags, for example:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/minfx/tags/1.0.6/minfx
 $ svn co svn+ssh://bugman@svn.gna.org/svn/bmrblib/tags/1.0.3/bmrblib
 
 
+Source files
+------------
 
-* Generate the source distribution files (and their GPG signatures) by typing:
+Generate the source distribution files (and their GPG signatures) by typing:
 
 $ scons source_dist key=xxxxx
 
 where xxxxx is the name of your GPG key.
 
 
+Binary files
+------------
 
-* Generate the binary distribution files for each platform (and their GPG signatures) by typing:
+Generate the binary distribution files for each platform (and their GPG signatures) by typing:
 
 $ scons binary_dist key=xxxxx
+
+
+Signing
+-------
 
 If the key is not supplied, or incorrectly supplied, the distribution file will be created but not signed.  To sign the file later, type:
 
 $ gpg --detach-sign --default-key xxxxx relax-2.0.1.GNU-Linux.x86_64.tar.bz2
 
 
+Other files
+-----------
 
-* Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
+Build other distribution packages by checking out the tag and bundling minfx and bmrblib:
 
 $ svn co svn+ssh://bugman@svn.gna.org/svn/relax/tags/2.0.1
 $ cd 2.0.1
@@ -92,7 +121,10 @@ $ scons binary_dist
 
 
 
-* Move the distribution files and their signatures to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  First make sure the mirror directory contains all of the files so that the next command does not accidentally delete files:
+Upload
+======
+
+Move the distribution files and their signatures to the mirror directory for the relax download site.  This directory should contain all the files and directories accessible from 'http://download.gna.org/relax/'.  First make sure the mirror directory contains all of the files so that the next command does not accidentally delete files:
 
 $ rsync -av --progress --no-perms --rsh="ssh" bugman@download.gna.org:/upload/relax/ .
 
@@ -102,19 +134,29 @@ $ rsync --delete -av --progress --no-perms --partial --rsh="ssh" . bugman@downlo
 
 
 
-* Modify the http://www.nmr-relax.com/download.html webpage to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
+Website
+=======
+
+Downloads
+---------
+
+Modify the http://www.nmr-relax.com/download.html webpage to point to the newest version of relax.  Update the MD5 checksums and file sizes on the download page.  Commit the updates.
 
 
+Manual
+------
 
-* Create the HTML version of the manual with the command:
+Create the HTML version of the manual with the command:
 
 $ scons user_manual_html
 
 Replace the old manual with the new in the http://www.nmr-relax.com/manual SVN repository (http://svn.gna.org/viewcvs/relax/website) and commit the new manual.
 
 
+API documentation
+-----------------
 
-* Create the API documentation for the current version with the command:
+Create the API documentation for the current version with the command:
 
 $ scons api_manual_html
 
@@ -122,18 +164,39 @@ Replace the old API documentation in the http://www.nmr-relax.com/api SVN reposi
 
 
 
-* Add the version number to the bug tracker field 'Release' at https://gna.org/bugs/admin/field_values.php?group=relax.
+Gna!
+====
+
+Add the version number to the bug tracker field 'Release' at https://gna.org/bugs/admin/field_values.php?group=relax.
 
 
 
-* Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the Freecode website.
+FSF directory
+=============
+
+Update the version number in the FSF directory (http://directory.fsf.org/wiki/Relax).
+
+
+
+Announcement
+============
+
+Post the release message to the relax-announce mailing list, as a news item on the relax Gna! website, and on the Freecode website.
+
+
+Mailing list
+------------
 
 On the relax-announce mailing list, write a detailed and full description of the release.  Also add a paragraph with links for downloading the release.  At the end, add a section titled 'The full list of changes is:' and cut and paste the part of the CHANGES file for this release.  Include links to the trackers in the full list of changes.
 
+
+Gna! news item
+--------------
+
 For the news item, firstly cut and paste the mailing list message.  Item references such as bug #7641, task #3122, etc. are automatically converted into links.  Create three sections using the Savane markup (recipe #236).  Call these = Description =, = Download =, and = Full list of changes =.  For the last section, use the subtitles == Features == ,  == Changes == , and  == Bugfixes ==.  The items in this section start with '* ' to create an unnumbered list.  Strip all leading whitespace from the full list of changes and remove all the links to the trackers (as these will be automatically created).
 
+
+Freecode message
+----------------
+
 For Freecode (http://freecode.com, formally Freshmeat), go to the relax project page at http://freecode.com/projects/nmr-relax.  Click on 'All releases' in the 'Recent releases' section, then on 'Submit new release'.  Add the version number, a brief and concise summary of the release, type/select the release focus category, and update the distribution package URLs.
-
-
-
-* Update the version number in the FSF directory (http://directory.fsf.org/wiki/Relax).
