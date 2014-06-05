@@ -706,8 +706,8 @@ class Sequence_window(wx.Dialog):
 
         # Add the index column.
         if self.titles:
-            self.sequence.InsertColumn(0, "")
-            self.sequence.SetColumnWidth(0, wx.LIST_AUTOSIZE)
+            self.sequence.InsertColumn(0, "Title")
+            self.sequence.SetColumnWidth(0, 200)
         else:
             self.sequence.InsertColumn(0, "Number")
             self.sequence.SetColumnWidth(0, 70)
