@@ -132,6 +132,10 @@ Then rsync the entire directory contents to download.gna.org/upload/relax/ using
 
 $ rsync --delete -av --progress --no-perms --partial --rsh="ssh" . bugman@download.gna.org:/upload/relax/
 
+The upload script simplifies the upload process:
+
+$ ./upload
+
 
 
 Website
