@@ -575,6 +575,14 @@ class Relax_disp(API_base, API_common):
         check_mol_res_spin_data()
         check_model_type()
 
+        # Check the optimisation algorithm.
+        algor = min_algor
+        if min_algor == 'Log barrier':
+            algor = min_options[0]
+        allowed = ['grid', 'simplex']
+        if algor not in allowed:
+            raise RelaxError("Only the 'simplex' minimisation algorithm is supported for the relaxation dispersion analysis as function gradients are not implemented.")
+
         # Initialise some empty data pipe structures so that the target function set up does not fail.
         if not hasattr(cdp, 'cpmg_frqs_list'):
             cdp.cpmg_frqs_list = []
