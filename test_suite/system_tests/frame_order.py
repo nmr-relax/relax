@@ -634,7 +634,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
-        self.check_chi2(0.24293662685639067)
+        self.check_chi2(0.075040490418167072)
 
 
     def test_cam_rotor2_pcs(self):
@@ -643,7 +643,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
-        self.check_chi2(0.0017542810437989119)
+        self.check_chi2(1.5787105392036996e-06)
 
 
     def test_cam_rotor2_rdc(self):
@@ -652,7 +652,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'rotor2.py')
-        self.check_chi2(0.080669539157379247)
+        self.check_chi2(0.075038911707627859)
 
 
     def test_generate_rotor2_distribution(self):
