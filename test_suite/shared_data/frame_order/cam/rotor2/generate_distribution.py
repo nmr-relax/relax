@@ -16,9 +16,11 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    ANGLE = 60.0
     N = 20000000
-    INC = ANGLE / (N - 1.0)
+    INC = 60.0 / N
+
+    # The axis tilt.
+    TILT_ANGLE = 15.0
 
     # The rotations file.
     ROT_FILE = False
@@ -35,7 +37,7 @@ class Generate(Main):
         """Set up the rotation for state i."""
 
         # The rotation angle.
-        angle = (i - (self.N-1)/2) * self.INC[motion_index] / 360.0 * 2.0 * pi
+        angle = (i - self.N/2) * self.INC[motion_index] / 360.0 * 2.0 * pi
 
         # The rotation matrix.
         axis_angle_to_R(self.axes[:, 2], angle, self.R)
