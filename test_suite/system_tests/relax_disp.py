@@ -78,6 +78,162 @@ class Relax_disp(SystemTestCase):
         self.tmpdir = ds.tmpdir
 
 
+    def setup_bug_22146_unpacking_r2a_r2b_cluster(self, folder=None, model_analyse=None):
+        """Setup data for the catch of U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered full dispersion models.
+
+        @keyword folder:            The name of the folder for the test data.
+        @type folder:               str
+        @keyword model_analyse:     The name of the model which will be tested.
+        @type model_analyse:        str
+        """
+
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'Hansen'
+
+        # Data.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+folder
+
+        ## Experiments
+        # Exp 1
+        sfrq_1 = 500.0*1E6
+        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
+        time_T2_1 = 0.05
+        ncycs_1 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 50]
+        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
+        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
+        r2eff_errs_1 = [0.0] * len(ncycs_1)
+        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
+
+        sfrq_2 = 600.0*1E6
+        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
+        time_T2_2 = 0.06
+        ncycs_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 60]
+        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
+        r2eff_errs_2 = [0.0] * len(ncycs_2)
+        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
+
+        sfrq_3 = 700.0*1E6
+        r20_key_3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_3)
+        time_T2_3 = 0.07
+        ncycs_3 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 50, 70]
+        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
+        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
+        r2eff_errs_3 = [0.0] * len(ncycs_3)
+        exp_3 = [sfrq_3, time_T2_3, ncycs_3, r2eff_errs_3]
+
+        # Collect all exps
+        exps = [exp_1, exp_2, exp_3]
+
+        R20 = [5.1, 5.2, 5.3, 10.1, 10.2, 10.3, 6.1, 6.2, 6.3, 11.1, 11.2, 11.3, 7.1, 7.2, 7.3, 12.1, 12.2, 12.3, 8.1, 8.2, 8.3, 13.1, 13.2, 13.3]
+        dw_arr = [1.0, 2.0, 3.0, 4.0]
+        pA_arr = [0.9]
+        kex_arr = [1000.]
+
+        spins = [
+                ['Ala', 1, 'N', {'r2a': {r20_key_1: R20[0], r20_key_2: R20[1], r20_key_3: R20[2]}, 'r2b': {r20_key_1: R20[3], r20_key_2: R20[4], r20_key_3: R20[5]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[0]}],
+                ['Ala', 2, 'N', {'r2a': {r20_key_1: R20[6], r20_key_2: R20[7], r20_key_3: R20[8]}, 'r2b': {r20_key_1: R20[9], r20_key_2: R20[10], r20_key_3: R20[11]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[1]}],
+                ['Ala', 3, 'N', {'r2a': {r20_key_1: R20[12], r20_key_2: R20[13], r20_key_3: R20[14]}, 'r2b': {r20_key_1: R20[15], r20_key_2: R20[16], r20_key_3: R20[17]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[2]}],
+                ['Ala', 4, 'N', {'r2a': {r20_key_1: R20[18], r20_key_2: R20[19], r20_key_3: R20[20]}, 'r2b': {r20_key_1: R20[21], r20_key_2: R20[22], r20_key_3: R20[23]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[3]}],
+                ]
+
+        # Create the data pipe.
+        pipe_name = 'base pipe'
+        pipe_type = 'relax_disp'
+        pipe_bundle = 'relax_disp'
+        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type, bundle = pipe_bundle)
+
+        # Generate the sequence.
+        for res_name, res_num, spin_name, params in spins:
+            self.interpreter.spin.create(res_name=res_name, res_num=res_num, spin_name=spin_name)
+
+        # Set isotope
+        self.interpreter.spin.isotope('15N', spin_id='@N')
+
+        # Now loop over the experiments, to set the variables in relax.
+        exp_ids = []
+        for exp in exps:
+            sfrq, time_T2, ncycs, r2eff_errs = exp
+            exp_id = 'CPMG_%3.1f' % (sfrq/1E6)
+            exp_ids.append(exp_id)
+
+            ids = []
+            for ncyc in ncycs:
+                nu_cpmg = ncyc / time_T2
+                cur_id = '%s_%.1f' % (exp_id, nu_cpmg)
+                ids.append(cur_id)
+
+                # Set the spectrometer frequency.
+                self.interpreter.spectrometer.frequency(id=cur_id, frq=sfrq)
+
+                # Set the experiment type.
+                self.interpreter.relax_disp.exp_type(spectrum_id=cur_id, exp_type=EXP_TYPE_CPMG_SQ)
+
+                # Set the relaxation dispersion CPMG constant time delay T (in s).
+                self.interpreter.relax_disp.relax_time(spectrum_id=cur_id, time=time_T2)
+
+                # Set the relaxation dispersion CPMG frequencies.
+                self.interpreter.relax_disp.cpmg_setup(spectrum_id=cur_id, cpmg_frq=nu_cpmg)
+
+        print("\n\nThe experiment IDs are %s." % cdp.spectrum_ids)
+
+        ### Now do fitting.
+        # Change pipe.
+
+        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
+        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
+
+        # Now read data in.
+        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+            exp_id = exp_ids[mi]
+            exp = exps[mi]
+            sfrq, time_T2, ncycs, r2eff_errs = exp
+
+            # Then loop over the spins.
+            for res_name, res_num, spin_name, params in spins:
+                cur_spin_id = ":%i@%s"%(res_num, spin_name)
+
+                # Define file name
+                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                # Read in the R2eff file to put into spin structure.
+                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path, disp_point_col=1, data_col=2, error_col=3)
+
+        # Then select model.
+        self.interpreter.relax_disp.select_model(model=model_analyse)
+
+        # Then cluster
+        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
+
+        # Grid search
+        low_arr = R20 + dw_arr + pA_arr + kex_arr
+        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
+
+        # Then loop over the defined spins and read the parameters.
+        for i in range(len(spins)):
+            res_name, res_num, spin_name, params = spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            for mo_param in cur_spin.params:
+                print(mo_param)
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    for key, val in getattr(cur_spin, mo_param).items():
+                        should_be = params[mo_param][key]
+                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
+                        self.assertAlmostEqual(val, should_be)
+                else:
+                    should_be = float(params[mo_param])
+                    val = getattr(cur_spin, mo_param)
+                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
+                    self.assertAlmostEqual(val, should_be)
+
+            # Test chi2.
+            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
+            self.assertAlmostEqual(cur_spin.chi2, 0.0)
+
+
     def setup_hansen_cpmg_data(self, model=None):
         """Set up the data for the test_hansen_cpmg_data_*() system tests.
 
@@ -816,331 +972,6 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp(pipe_name="compare_128_FT_R2eff", pipe_bundle="cpmg_disp_sod1d90a", results_dir=self.tmpdir, models=['R2eff'], grid_inc=3, mc_sim_num=5, modsel='AIC', pre_run_dir=None, insignificance=1.0, numeric_only=False, mc_sim_all_models=False, eliminate=True)
 
 
-    def test_bug_22146_unpacking_r2a_r2b_cluster(self):
-        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered full dispersion models"""
-
-        # Clear the data store.
-        self.interpreter.reset()
-
-        # Data.
-        data_path_cr72 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'CR72_full'
-        data_path_b14 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'B14_full'
-        data_path_ns_3d = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'ns_cpmg_2site_3d_full'
-        data_path_ns_star = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'ns_cpmg_2site_star_full'
-
-        ## Experiments
-        # Exp 1
-        sfrq_1 = 500.0*1E6
-        r20_key_1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_1)
-        time_T2_1 = 0.05
-        ncycs_1 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 50]
-        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
-        #r2eff_errs_1 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
-        r2eff_errs_1 = [0.0] * len(ncycs_1)
-        exp_1 = [sfrq_1, time_T2_1, ncycs_1, r2eff_errs_1]
-
-        sfrq_2 = 600.0*1E6
-        r20_key_2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_2)
-        time_T2_2 = 0.06
-        ncycs_2 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 40, 60]
-        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
-        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
-        r2eff_errs_2 = [0.0] * len(ncycs_2)
-        exp_2 = [sfrq_2, time_T2_2, ncycs_2, r2eff_errs_2]
-
-        sfrq_3 = 700.0*1E6
-        r20_key_3 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=sfrq_3)
-        time_T2_3 = 0.07
-        ncycs_3 = [2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 50, 70]
-        # Here you define the direct R2eff errors (rad/s), as being added or subtracted for the created R2eff point in the corresponding ncyc cpmg frequence.
-        #r2eff_errs_2 = [0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05, -0.05, 0.05]
-        r2eff_errs_3 = [0.0] * len(ncycs_3)
-        exp_3 = [sfrq_3, time_T2_3, ncycs_3, r2eff_errs_3]
-
-        # Collect all exps
-        exps = [exp_1, exp_2, exp_3]
-
-        R20 = [5.1, 5.2, 5.3, 10.1, 10.2, 10.3, 6.1, 6.2, 6.3, 11.1, 11.2, 11.3, 7.1, 7.2, 7.3, 12.1, 12.2, 12.3, 8.1, 8.2, 8.3, 13.1, 13.2, 13.3]
-        dw_arr = [1.0, 2.0, 3.0, 4.0]
-        pA_arr = [0.9]
-        kex_arr = [1000.]
-
-        spins = [
-                ['Ala', 1, 'N', {'r2a': {r20_key_1: R20[0], r20_key_2: R20[1], r20_key_3: R20[2]}, 'r2b': {r20_key_1: R20[3], r20_key_2: R20[4], r20_key_3: R20[5]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[0]}],
-                ['Ala', 2, 'N', {'r2a': {r20_key_1: R20[6], r20_key_2: R20[7], r20_key_3: R20[8]}, 'r2b': {r20_key_1: R20[9], r20_key_2: R20[10], r20_key_3: R20[11]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[1]}],
-                ['Ala', 3, 'N', {'r2a': {r20_key_1: R20[12], r20_key_2: R20[13], r20_key_3: R20[14]}, 'r2b': {r20_key_1: R20[15], r20_key_2: R20[16], r20_key_3: R20[17]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[2]}],
-                ['Ala', 4, 'N', {'r2a': {r20_key_1: R20[18], r20_key_2: R20[19], r20_key_3: R20[20]}, 'r2b': {r20_key_1: R20[21], r20_key_2: R20[22], r20_key_3: R20[23]}, 'kex': kex_arr[0], 'pA': pA_arr[0], 'dw': dw_arr[3]}],
-                ]
-
-        # Create the data pipe.
-        pipe_name = 'base pipe'
-        pipe_type = 'relax_disp'
-        pipe_bundle = 'relax_disp'
-        self.interpreter.pipe.create(pipe_name=pipe_name, pipe_type=pipe_type, bundle = pipe_bundle)
-
-        # Generate the sequence.
-        for res_name, res_num, spin_name, params in spins:
-            self.interpreter.spin.create(res_name=res_name, res_num=res_num, spin_name=spin_name)
-
-        # Set isotope
-        self.interpreter.spin.isotope('15N', spin_id='@N')
-
-        # Now loop over the experiments, to set the variables in relax.
-        exp_ids = []
-        for exp in exps:
-            sfrq, time_T2, ncycs, r2eff_errs = exp
-            exp_id = 'CPMG_%3.1f' % (sfrq/1E6)
-            exp_ids.append(exp_id)
-
-            ids = []
-            for ncyc in ncycs:
-                nu_cpmg = ncyc / time_T2
-                cur_id = '%s_%.1f' % (exp_id, nu_cpmg)
-                ids.append(cur_id)
-
-                # Set the spectrometer frequency.
-                self.interpreter.spectrometer.frequency(id=cur_id, frq=sfrq)
-
-                # Set the experiment type.
-                self.interpreter.relax_disp.exp_type(spectrum_id=cur_id, exp_type=EXP_TYPE_CPMG_SQ)
-
-                # Set the relaxation dispersion CPMG constant time delay T (in s).
-                self.interpreter.relax_disp.relax_time(spectrum_id=cur_id, time=time_T2)
-
-                # Set the relaxation dispersion CPMG frequencies.
-                self.interpreter.relax_disp.cpmg_setup(spectrum_id=cur_id, cpmg_frq=nu_cpmg)
-
-        print("\n\nThe experiment IDs are %s." % cdp.spectrum_ids)
-
-        ### Now do fitting.
-        # Change pipe.
-        model_analyse = MODEL_CR72_FULL
-        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
-        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
-        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
-
-        # Now read data in.
-        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            exp_id = exp_ids[mi]
-            exp = exps[mi]
-            sfrq, time_T2, ncycs, r2eff_errs = exp
-
-            # Then loop over the spins.
-            for res_name, res_num, spin_name, params in spins:
-                cur_spin_id = ":%i@%s"%(res_num, spin_name)
-
-                # Define file name
-                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-
-                # Read in the R2eff file to put into spin structure.
-                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_cr72, disp_point_col=1, data_col=2, error_col=3)
-
-        # Then select model.
-        self.interpreter.relax_disp.select_model(model=model_analyse)
-
-        # Then cluster
-        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
-
-        # Grid search
-        low_arr = R20 + dw_arr + pA_arr + kex_arr
-        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
-
-        # Then loop over the defined spins and read the parameters.
-        for i in range(len(spins)):
-            res_name, res_num, spin_name, params = spins[i]
-            cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
-
-            for mo_param in cur_spin.params:
-                print(mo_param)
-                # The R2 is a dictionary, depending on spectrometer frequency.
-                if isinstance(getattr(cur_spin, mo_param), dict):
-                    for key, val in getattr(cur_spin, mo_param).items():
-                        should_be = params[mo_param][key]
-                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
-                        self.assertAlmostEqual(val, should_be)
-                else:
-                    should_be = float(params[mo_param])
-                    val = getattr(cur_spin, mo_param)
-                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
-                    self.assertAlmostEqual(val, should_be)
-
-            # Test chi2.
-            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
-            self.assertAlmostEqual(cur_spin.chi2, 0.0)
-
-        ### Now do fitting.
-        # Change pipe.
-        model_analyse = MODEL_B14_FULL
-        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
-        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
-        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
-
-        # Now read data in.
-        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            exp_id = exp_ids[mi]
-            exp = exps[mi]
-            sfrq, time_T2, ncycs, r2eff_errs = exp
-
-            # Then loop over the spins.
-            for res_name, res_num, spin_name, params in spins:
-                cur_spin_id = ":%i@%s"%(res_num, spin_name)
-
-                # Define file name
-                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-
-                # Read in the R2eff file to put into spin structure.
-                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_b14, disp_point_col=1, data_col=2, error_col=3)
-
-        # Then select model.
-        self.interpreter.relax_disp.select_model(model=model_analyse)
-
-        # Then cluster
-        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
-
-        # Grid search
-        low_arr = R20 + dw_arr + pA_arr + kex_arr
-        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
-
-        # Then loop over the defined spins and read the parameters.
-        for i in range(len(spins)):
-            res_name, res_num, spin_name, params = spins[i]
-            cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
-
-            for mo_param in cur_spin.params:
-                print(mo_param)
-                # The R2 is a dictionary, depending on spectrometer frequency.
-                if isinstance(getattr(cur_spin, mo_param), dict):
-                    for key, val in getattr(cur_spin, mo_param).items():
-                        should_be = params[mo_param][key]
-                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
-                        self.assertAlmostEqual(val, should_be)
-                else:
-                    should_be = float(params[mo_param])
-                    val = getattr(cur_spin, mo_param)
-                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
-                    self.assertAlmostEqual(val, should_be)
-
-            # Test chi2.
-            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
-            self.assertAlmostEqual(cur_spin.chi2, 0.0)
-
-        ### Now do fitting.
-        # Change pipe.
-        model_analyse = MODEL_NS_CPMG_2SITE_3D_FULL
-        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
-        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
-        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
-
-        # Now read data in.
-        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            exp_id = exp_ids[mi]
-            exp = exps[mi]
-            sfrq, time_T2, ncycs, r2eff_errs = exp
-
-            # Then loop over the spins.
-            for res_name, res_num, spin_name, params in spins:
-                cur_spin_id = ":%i@%s"%(res_num, spin_name)
-
-                # Define file name
-                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-
-                # Read in the R2eff file to put into spin structure.
-                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_ns_3d, disp_point_col=1, data_col=2, error_col=3)
-
-        # Then select model.
-        self.interpreter.relax_disp.select_model(model=model_analyse)
-
-        # Then cluster
-        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
-
-        # Grid search
-        low_arr = R20 + dw_arr + pA_arr + kex_arr
-        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
-
-        # Then loop over the defined spins and read the parameters.
-        for i in range(len(spins)):
-            res_name, res_num, spin_name, params = spins[i]
-            cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
-
-            for mo_param in cur_spin.params:
-                print(mo_param)
-                # The R2 is a dictionary, depending on spectrometer frequency.
-                if isinstance(getattr(cur_spin, mo_param), dict):
-                    for key, val in getattr(cur_spin, mo_param).items():
-                        should_be = params[mo_param][key]
-                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
-                        self.assertAlmostEqual(val, should_be)
-                else:
-                    should_be = float(params[mo_param])
-                    val = getattr(cur_spin, mo_param)
-                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
-                    self.assertAlmostEqual(val, should_be)
-
-            # Test chi2.
-            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
-            self.assertAlmostEqual(cur_spin.chi2, 0.0)
-
-        ### Now do fitting.
-        # Change pipe.
-        model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL
-        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
-        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
-        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
-
-        # Now read data in.
-        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
-            exp_id = exp_ids[mi]
-            exp = exps[mi]
-            sfrq, time_T2, ncycs, r2eff_errs = exp
-
-            # Then loop over the spins.
-            for res_name, res_num, spin_name, params in spins:
-                cur_spin_id = ":%i@%s"%(res_num, spin_name)
-
-                # Define file name
-                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
-
-                # Read in the R2eff file to put into spin structure.
-                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_ns_star, disp_point_col=1, data_col=2, error_col=3)
-
-        # Then select model.
-        self.interpreter.relax_disp.select_model(model=model_analyse)
-
-        # Then cluster
-        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
-
-        # Grid search
-        low_arr = R20 + dw_arr + pA_arr + kex_arr
-        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
-
-        # Then loop over the defined spins and read the parameters.
-        for i in range(len(spins)):
-            res_name, res_num, spin_name, params = spins[i]
-            cur_spin_id = ":%i@%s"%(res_num, spin_name)
-            cur_spin = return_spin(cur_spin_id)
-
-            for mo_param in cur_spin.params:
-                print(mo_param)
-                # The R2 is a dictionary, depending on spectrometer frequency.
-                if isinstance(getattr(cur_spin, mo_param), dict):
-                    for key, val in getattr(cur_spin, mo_param).items():
-                        should_be = params[mo_param][key]
-                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
-                        self.assertAlmostEqual(val, should_be)
-                else:
-                    should_be = float(params[mo_param])
-                    val = getattr(cur_spin, mo_param)
-                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
-                    self.assertAlmostEqual(val, should_be)
-
-            # Test chi2.
-            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
-            self.assertAlmostEqual(cur_spin.chi2, 0.0)
-
-
     def test_bug_21715_clustered_indexerror(self):
         """Catch U{bug #21715<https://gna.org/bugs/?21715>}, the failure of a clustered auto-analysis due to an IndexError."""
 
@@ -1156,6 +987,34 @@ class Relax_disp(SystemTestCase):
         relax_disp.Relax_disp.opt_func_tol = 1e-5
         relax_disp.Relax_disp.opt_max_iterations = 1000
         relax_disp.Relax_disp(pipe_name='origin - relax_disp (Sun Feb 23 19:36:51 2014)', pipe_bundle='relax_disp (Sun Feb 23 19:36:51 2014)', results_dir=self.tmpdir, models=['R2eff', 'No Rex'], grid_inc=11, mc_sim_num=2, modsel='AIC', pre_run_dir=pre_run_dir, insignificance=1.0, numeric_only=True, mc_sim_all_models=False, eliminate=True)
+
+
+    def test_bug_22146_unpacking_r2a_r2b_cluster_B14(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered B14 full analysis."""
+
+        # Base data setup.
+        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='B14_full', model_analyse = MODEL_B14_FULL)
+
+
+    def test_bug_22146_unpacking_r2a_r2b_cluster_CR72(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered CR72 full analysis."""
+
+        # Base data setup.
+        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='CR72_full', model_analyse = MODEL_CR72_FULL)
+
+
+    def test_bug_22146_unpacking_r2a_r2b_cluster_NS_3D(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE 3D full analysis."""
+
+        # Base data setup.
+        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_3d_full', model_analyse = MODEL_NS_CPMG_2SITE_3D_FULL)
+
+
+    def test_bug_22146_unpacking_r2a_r2b_cluster_NS_STAR(self):
+        """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE STAR full analysis."""
+
+        # Base data setup.
+        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL)
 
 
     def test_cpmg_synthetic_ns3d_to_cr72(self):
