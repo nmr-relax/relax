@@ -824,6 +824,7 @@ class Relax_disp(SystemTestCase):
 
         # Data.
         data_path_cr72 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'CR72_full'
+        data_path_b14 = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'bug_22146_unpacking_r2a_r2b_cluster'+sep+'B14_full'
 
         ## Experiments
         # Exp 1
@@ -931,6 +932,63 @@ class Relax_disp(SystemTestCase):
 
                 # Read in the R2eff file to put into spin structure.
                 self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_cr72, disp_point_col=1, data_col=2, error_col=3)
+
+        # Then select model.
+        self.interpreter.relax_disp.select_model(model=model_analyse)
+
+        # Then cluster
+        self.interpreter.relax_disp.cluster('model_cluster', ":1-100")
+
+        # Grid search
+        low_arr = R20 + dw_arr + pA_arr + kex_arr
+        self.interpreter.grid_search(lower=low_arr, upper=low_arr, inc=1, constraints=True, verbosity=1)
+
+        # Then loop over the defined spins and read the parameters.
+        for i in range(len(spins)):
+            res_name, res_num, spin_name, params = spins[i]
+            cur_spin_id = ":%i@%s"%(res_num, spin_name)
+            cur_spin = return_spin(cur_spin_id)
+
+            for mo_param in cur_spin.params:
+                print(mo_param)
+                # The R2 is a dictionary, depending on spectrometer frequency.
+                if isinstance(getattr(cur_spin, mo_param), dict):
+                    for key, val in getattr(cur_spin, mo_param).items():
+                        should_be = params[mo_param][key]
+                        print(cur_spin.model, res_name, cur_spin_id, mo_param, key, float(val), should_be)
+                        self.assertAlmostEqual(val, should_be)
+                else:
+                    should_be = float(params[mo_param])
+                    val = getattr(cur_spin, mo_param)
+                    print(cur_spin.model, res_name, cur_spin_id, mo_param, val, should_be)
+                    self.assertAlmostEqual(val, should_be)
+
+            # Test chi2.
+            # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
+            self.assertAlmostEqual(cur_spin.chi2, 0.0)
+
+        ### Now do fitting.
+        # Change pipe.
+        model_analyse = MODEL_B14_FULL
+        pipe_name_MODEL = "%s_%s"%(pipe_name, model_analyse)
+        self.interpreter.pipe.copy(pipe_from=pipe_name, pipe_to=pipe_name_MODEL, bundle_to = pipe_bundle)
+        self.interpreter.pipe.switch(pipe_name=pipe_name_MODEL)
+
+        # Now read data in.
+        for exp_type, frq, ei, mi in loop_exp_frq(return_indices=True):
+            exp_id = exp_ids[mi]
+            exp = exps[mi]
+            sfrq, time_T2, ncycs, r2eff_errs = exp
+
+            # Then loop over the spins.
+            for res_name, res_num, spin_name, params in spins:
+                cur_spin_id = ":%i@%s"%(res_num, spin_name)
+
+                # Define file name
+                file_name = "%s%s.txt" % (exp_id, cur_spin_id .replace('#', '_').replace(':', '_').replace('@', '_'))
+
+                # Read in the R2eff file to put into spin structure.
+                self.interpreter.relax_disp.r2eff_read_spin(id=exp_id, spin_id=cur_spin_id, file=file_name, dir=data_path_b14, disp_point_col=1, data_col=2, error_col=3)
 
         # Then select model.
         self.interpreter.relax_disp.select_model(model=model_analyse)
