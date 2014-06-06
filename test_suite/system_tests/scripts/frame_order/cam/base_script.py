@@ -87,6 +87,8 @@ class Base_script:
         # Parameter conversions.
         if self.MODEL in ['rotor', 'free rotor']:
             self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
+            self.AXIS_THETA = None
+            self.AXIS_PHI = None
 
         # Alias the user function executor method.
         self._execute_uf = exec_fn
@@ -238,9 +240,8 @@ class Base_script:
         self._execute_uf(uf_name='structure.read_pdb', file='1J7O_1st_NH.pdb', dir=BASE_PATH)
         self._execute_uf(uf_name='structure.read_pdb', file='1J7P_1st_NH_rot.pdb', dir=BASE_PATH)
 
-        # Create the cone PDB file.
-        if self.CONE:
-            self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
+        # Create the PDB representation.
+        self._execute_uf(uf_name='frame_order.pdb_model', ave_pos_file='devnull', rep_file='devnull', dist_file='devnull', force=True)
 
 
     def setup_full(self):
