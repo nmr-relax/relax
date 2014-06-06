@@ -1,0 +1,50 @@
+Checked on MacBook Pro
+2.4 GHz Intel Core i5
+8 GB 1067 Mhz DDR3 RAM.
+Python Distribution -- Python 2.7.3 |EPD 7.3-2 (32-bit)| 
+
+Timing for:
+2 fields
+20 dispersion points
+iterations of function call: 1000
+
+Timed for simulating 1 or 100 clustered spins.
+
+svn ls "^/tags"
+
+########
+For tag 3.2.2
+svn switch ^/tags/3.2.2
+########
+
+1 spin:
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     2000    0.168    0.000    0.198    0.000 cr72.py:100(r2eff_CR72)
+     1000    0.040    0.000    0.280    0.000 relax_disp.py:456(calc_CR72_chi2)
+     2000    0.028    0.000    0.039    0.000 chi2.py:32(chi2)
+
+100 spins:
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   200000   16.810    0.000   19.912    0.000 cr72.py:100(r2eff_CR72)
+     1000    4.185    0.004   28.518    0.029 relax_disp.py:456(calc_CR72_chi2)
+   200000    3.018    0.000    4.144    0.000 chi2.py:32(chi2)
+
+
+########
+For tag 3.2.1
+svn switch ^/tags/3.2.1
+########
+
+1 spin:
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     2000    0.696    0.000    0.697    0.000 cr72.py:98(r2eff_CR72)
+     1000    0.038    0.000    0.781    0.001 relax_disp.py:456(calc_CR72_chi2)
+     2000    0.031    0.000    0.043    0.000 chi2.py:32(chi2)
+
+100 spins:
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+   200000   75.880    0.000   76.078    0.000 cr72.py:98(r2eff_CR72)
+     1000    4.201    0.004   85.519    0.086 relax_disp.py:456(calc_CR72_chi2)
+   200000    3.513    0.000    4.940    0.000 chi2.py:32(chi2)
+
+

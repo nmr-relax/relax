@@ -46,6 +46,7 @@ uf.add_keyarg(
     dim = 3,
     desc_short = "atomic position",
     desc = "The atomic position of the paramagnetic centre.",
+    list_titles = ['X coordinate', 'Y coordinate', 'Z coordinate'],
     can_be_none = True
 )
 uf.add_keyarg(
