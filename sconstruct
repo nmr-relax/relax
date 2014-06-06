@@ -631,7 +631,6 @@ class Main:
             nodes.append(env.SharedObject(dir + path.sep + file, CCFLAGS=cflags))
 
         # Respect the user environment, specifically compiler, compiler- and linkerflags.
-        print environ
         if 'LDFLAGS' in environ:
             env.Append(LINKFLAGS = environ['LDFLAGS'])
         if 'CFLAGS' in environ:
