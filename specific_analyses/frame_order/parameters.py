@@ -226,7 +226,7 @@ def update_model():
     cdp.params.append('ave_pos_z')
 
     # The tensor rotation, or average domain position.
-    if cdp.model not in ['free rotor', 'iso cone, free rotor']:
+    if cdp.model not in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
         cdp.params.append('ave_pos_alpha')
     cdp.params.append('ave_pos_beta')
     cdp.params.append('ave_pos_gamma')
