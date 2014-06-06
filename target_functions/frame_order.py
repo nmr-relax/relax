@@ -131,6 +131,7 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
+        print com
         self.com = com
         self.ave_pos_pivot = ave_pos_pivot
         self._param_pivot = pivot
@@ -467,13 +468,13 @@ class Frame_order:
         if self.pivot_opt:
             self._param_pivot = params[:3]
             self._translation_vector = params[3:6]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[6:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[6:]
         else:
             self._translation_vector = params[:3]
-            ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi = params[3:]
+            ave_pos_beta, ave_pos_gamma, axis_alpha = params[3:]
 
-        # Generate the cone axis from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.cone_axis)
+        # Generate the rotor axis.
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=array(self._param_pivot, float64), point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
