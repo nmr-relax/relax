@@ -131,7 +131,6 @@ class Frame_order:
         self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
-        print com
         self.com = com
         self.ave_pos_pivot = ave_pos_pivot
         self._param_pivot = pivot
