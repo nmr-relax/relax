@@ -217,7 +217,7 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
         print("\nGenerating the z-axis system.")
 
         # The axis.
-        if cdp.model in ['rotor']:
+        if cdp.model in ['rotor', 'free rotor']:
             axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
         else:
             axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
