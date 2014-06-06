@@ -1537,8 +1537,9 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20A = params[:self.end_index[0]]
-        R20B = params[self.end_index[0]:self.end_index[1]]
+        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20A = R20[::2].flatten()
+        R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
