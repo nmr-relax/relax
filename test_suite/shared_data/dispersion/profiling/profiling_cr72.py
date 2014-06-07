@@ -373,6 +373,7 @@ def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
         chi2 = C1.calc(params)
+    print("chi2 single:", chi2)
 
 
 def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
@@ -397,6 +398,7 @@ def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
         chi2 = C1.calc(params)
+    print("chi2 cluster:", chi2)
 
 
 # Execute main function.
