@@ -394,6 +394,43 @@ class Dispersion:
         if model == MODEL_NS_MMQ_3SITE_LINEAR:
             self.func = self.func_ns_mmq_3site_linear
 
+        # Setup special numpy array structures, for higher dimensional computation.
+        if model == MODEL_CR72_FULL:
+            # Get the shape of back_calc structure.
+            back_calc_shape = list( np.asarray(self.back_calc).shape )
+
+            # Find which frequency has the maximum number of disp points.
+            # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
+            self.max_num_disp_points = np.max(self.num_disp_points)
+
+            # Create numpy arrays to pass to the lib function.
+            # All numpy arrays have to have same shape to allow to multiply together.
+            # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
+            # The number of disp point can change per spectrometer, so we make the maximum size.
+            self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.pA_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+
+            # Loop over the experiment types.
+            for ei in range(self.num_exp):
+                # Loop over the spins.
+                for si in range(self.num_spins):
+                    # Loop over the spectrometer frequencies.
+                    for mi in range(self.num_frq):
+                        # Loop over the offsets.
+                        for oi in range(self.num_offsets[ei][si][mi]):
+                            # Extract number of dispersion points.
+                            num_disp_points = self.num_disp_points[ei][si][mi][oi]
+
+                            # Extract cpmg_frqs and num_disp_points from lists.
+                            self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
+                            self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
         """Calculate the chi-squared value of the Baldwin (2014) 2-site exact solution model for all time scales.
@@ -471,26 +508,6 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Get the shape of back_calc structure.
-        back_calc_shape = list( np.asarray(self.back_calc).shape )
-
-        # Find which frequency has the maximum number of disp points.
-        # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
-        max_num_disp_points = np.max(self.num_disp_points)
-
-        # Create numpy arrays to pass to the lib function.
-        # All numpy arrays have to have same shape to allow to multiply together.
-        # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
-        # The number of disp point can change per spectrometer, so we make the maximum size.
-        R20A_a = np.ones(back_calc_shape + [max_num_disp_points])
-        R20B_a = np.ones(back_calc_shape + [max_num_disp_points])
-        pA_a = np.ones(back_calc_shape + [max_num_disp_points])
-        dw_frq_a = np.ones(back_calc_shape + [max_num_disp_points])
-        kex_a = np.ones(back_calc_shape + [max_num_disp_points])
-        cpmg_frqs_a = np.ones(back_calc_shape + [max_num_disp_points])
-        num_disp_points_a = np.ones(back_calc_shape + [max_num_disp_points])
-        back_calc_a = np.ones(back_calc_shape + [max_num_disp_points])
-
         # Loop over the experiment types.
         for ei in range(self.num_exp):
             # Loop over the spins.
@@ -506,25 +523,21 @@ class Dispersion:
                         r20_index = mi + si*self.num_frq
 
                         # Store r20a and r20b values per disp point.
-                        R20A_a[ei][si][mi][oi] = np.array( [R20A[r20_index]] * max_num_disp_points, float64)
-                        R20B_a[ei][si][mi][oi]  = np.array( [R20B[r20_index]] * max_num_disp_points, float64)
+                        self.R20A_a[ei][si][mi][oi] = np.array( [R20A[r20_index]] * self.max_num_disp_points, float64)
+                        self.R20B_a[ei][si][mi][oi]  = np.array( [R20B[r20_index]] * self.max_num_disp_points, float64)
 
                         # Convert dw from ppm to rad/s.
                         dw_frq = dw[si] * self.frqs[ei][si][mi]
 
                         # Store dw_frq per disp point.
-                        dw_frq_a[ei][si][mi][oi] = np.array( [dw_frq] * max_num_disp_points, float64)
+                        self.dw_frq_a[ei][si][mi][oi] = np.array( [dw_frq] * self.max_num_disp_points, float64)
 
                         # Store pA and kex per disp point.
-                        pA_a[ei][si][mi][oi] = np.array( [pA] * max_num_disp_points, float64)
-                        kex_a[ei][si][mi][oi] = np.array( [kex] * max_num_disp_points, float64)
-
-                        # Extract cpmg_frqs and num_disp_points from lists.
-                        cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
-                        num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+                        self.pA_a[ei][si][mi][oi] = np.array( [pA] * self.max_num_disp_points, float64)
+                        self.kex_a[ei][si][mi][oi] = np.array( [kex] * self.max_num_disp_points, float64)
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=R20A_a, r20b=R20B_a, pA=pA_a, dw=dw_frq_a, kex=kex_a, cpmg_frqs=cpmg_frqs_a, back_calc = back_calc_a, num_points=num_disp_points_a)
+        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Initialise.
         chi2_sum = 0.0
@@ -542,7 +555,7 @@ class Dispersion:
                         # Extract number of dispersion points.
                         num_disp_points = self.num_disp_points[ei][si][mi][oi]
 
-                        self.back_calc[ei][si][mi][oi] = back_calc_a[ei][si][mi][oi][:num_disp_points]
+                        self.back_calc[ei][si][mi][oi] = self.back_calc_a[ei][si][mi][oi][:num_disp_points]
 
 
                         for di in range(self.num_disp_points[ei][si][mi][oi]):
