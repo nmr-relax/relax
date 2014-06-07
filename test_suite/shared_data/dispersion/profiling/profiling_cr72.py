@@ -27,6 +27,7 @@ from os import getcwd, path
 from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
 import pstats
 import sys
+import tempfile
 
 # Add to system path, according to 
 if len(sys.argv) == 1:
@@ -49,28 +50,39 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_F
 
 # Alter setup.
 def main():
-    s_filename = 'single'
+    # Calc for single.
+    s_filename = tempfile.NamedTemporaryFile(delete=False).name
     # Profile for a single spin.
     cProfile.run('single(iter=1000)', s_filename)
 
-    c_filename = 'cluster'
+    # Read all stats files into a single object
+    s_stats = pstats.Stats(s_filename)
+
+    # Clean up filenames for the report
+    s_stats.strip_dirs()
+
+    # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
+    s_stats.sort_stats('cumulative')
+
+    # Print report for single.
+    s_stats.print_stats()
+
+    # Calc for cluster.
+    c_filename = tempfile.NamedTemporaryFile(delete=False).name
     # Profile for a cluster of 100 spins.
     cProfile.run('cluster(iter=1000)', c_filename)
 
     # Read all stats files into a single object
-    s_stats = pstats.Stats(s_filename)
     c_stats = pstats.Stats(c_filename)
     #stats.add(c_filename)
 
     # Clean up filenames for the report
-    s_stats.strip_dirs()
     c_stats.strip_dirs()
 
     # Sort the statistics by the cumulative time spent in the function. cumulative, time, calls
-    s_stats.sort_stats('time')
-    c_stats.sort_stats('time')
+    c_stats.sort_stats('cumulative')
 
-    s_stats.print_stats()
+    # Print report for clustered.
     c_stats.print_stats()
 
 
