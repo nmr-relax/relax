@@ -27,6 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
+import numpy as np
 from numpy import complex64, dot, float64, int16, sqrt, zeros
 
 # relax module imports.
@@ -470,29 +471,86 @@ class Dispersion:
         @rtype:         float
         """
 
+        # Get the shape of back_calc structure.
+        back_calc_shape = list( np.asarray(self.back_calc).shape )
+
+        # Find which frequency has the maximum number of disp points.
+        # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
+        max_num_disp_points = np.max(self.num_disp_points)
+
+        # Create numpy arrays to pass to the lib function.
+        # All numpy arrays have to have same shape to allow to multiply together.
+        # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
+        # The number of disp point can change per spectrometer, so we make the maximum size.
+        R20A_a = np.ones(back_calc_shape + [max_num_disp_points])
+        R20B_a = np.ones(back_calc_shape + [max_num_disp_points])
+        pA_a = np.ones(back_calc_shape + [max_num_disp_points])
+        dw_frq_a = np.ones(back_calc_shape + [max_num_disp_points])
+        kex_a = np.ones(back_calc_shape + [max_num_disp_points])
+        cpmg_frqs_a = np.ones(back_calc_shape + [max_num_disp_points])
+        num_disp_points_a = np.ones(back_calc_shape + [max_num_disp_points])
+        back_calc_a = np.ones(back_calc_shape + [max_num_disp_points])
+
+        # Loop over the experiment types.
+        for ei in range(self.num_exp):
+            # Loop over the spins.
+            for si in range(self.num_spins):
+                # Loop over the spectrometer frequencies.
+                for mi in range(self.num_frq):
+                    # Loop over the offsets.
+                    for oi in range(self.num_offsets[ei][si][mi]):
+                        # Extract number of dispersion points.
+                        num_disp_points = self.num_disp_points[ei][si][mi][oi]
+
+                         # The R20 index.
+                        r20_index = mi + si*self.num_frq
+
+                        # Store r20a and r20b values per disp point.
+                        R20A_a[ei][si][mi][oi] = np.array( [R20A[r20_index]] * max_num_disp_points, float64)
+                        R20B_a[ei][si][mi][oi]  = np.array( [R20B[r20_index]] * max_num_disp_points, float64)
+
+                        # Convert dw from ppm to rad/s.
+                        dw_frq = dw[si] * self.frqs[ei][si][mi]
+
+                        # Store dw_frq per disp point.
+                        dw_frq_a[ei][si][mi][oi] = np.array( [dw_frq] * max_num_disp_points, float64)
+
+                        # Store pA and kex per disp point.
+                        pA_a[ei][si][mi][oi] = np.array( [pA] * max_num_disp_points, float64)
+                        kex_a[ei][si][mi][oi] = np.array( [kex] * max_num_disp_points, float64)
+
+                        # Extract cpmg_frqs and num_disp_points from lists.
+                        cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
+                        num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+
+        ## Back calculate the R2eff values.
+        r2eff_CR72(r20a=R20A_a, r20b=R20B_a, pA=pA_a, dw=dw_frq_a, kex=kex_a, cpmg_frqs=cpmg_frqs_a, back_calc = back_calc_a, num_points=num_disp_points_a)
+
         # Initialise.
         chi2_sum = 0.0
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Now return the values back to the structure of self.back_calc object.
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        # Loop over the experiment types.
+        for ei in range(self.num_exp):
+            # Loop over the spins.
+            for si in range(self.num_spins):
+                # Loop over the spectrometer frequencies.
+                for mi in range(self.num_frq):
+                    # Loop over the offsets.
+                    for oi in range(self.num_offsets[ei][si][mi]):
+                        # Extract number of dispersion points.
+                        num_disp_points = self.num_disp_points[ei][si][mi][oi]
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+                        self.back_calc[ei][si][mi][oi] = back_calc_a[ei][si][mi][oi][:num_disp_points]
 
-                # Back calculate the R2eff values.
-                r2eff_CR72(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc = self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+                        for di in range(self.num_disp_points[ei][si][mi][oi]):
+                            if self.missing[ei][si][mi][oi][di]:
+                                self.back_calc[ei][si][mi][oi][di] = self.values[ei][si][mi][oi][di]
 
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+                        ## Calculate and return the chi-squared value.
+                        chi2_sum += chi2(self.values[ei][si][mi][oi], self.back_calc[ei][si][mi][oi], self.errors[ei][si][mi][oi])
 
         # Return the total chi-squared value.
         return chi2_sum
