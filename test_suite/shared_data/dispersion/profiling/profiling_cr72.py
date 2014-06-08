@@ -247,10 +247,14 @@ class Profile(Dispersion):
                     exp_types.append(exp_type)
 
                 for mi in range(len(self.fields)):
+                    # Get the frq.
                     frq = self.fields[mi]
 
+                    # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
+                    frqs[ei][si][mi] = 2.0 * pi * frq / g1H * g15N * 1e-6
+
+                    # Get the cpmg frq.
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
-                    #print len(self.points[mi]), self.points[mi]
 
                     # Calculate how the value should be, so chi2 gets zero.
                     # The R20 index.
@@ -260,13 +264,12 @@ class Profile(Dispersion):
                     r20a=R20A[r20_index]
                     r20b=R20B[r20_index]
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
-                    r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=cpmg_frqs[ei][mi][oi], back_calc=back_calc, num_points=len(cpmg_frqs[ei][mi][oi]))
 
+                    # Initialise call to function.
+                    r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
 
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
-                            # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
-                            frqs[ei][si][mi] = 2.0 * pi * frq / g1H * g15N * 1e-6
 
                             missing[ei][si][mi][oi].append(0)
 
