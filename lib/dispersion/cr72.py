@@ -92,7 +92,6 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-import numpy as np
 from numpy import allclose, arccosh, array, cos, cosh, isfinite, min, max, ndarray, ones, sqrt, sum, zeros
 
 # Repetitive calculations (to speed up calculations).
