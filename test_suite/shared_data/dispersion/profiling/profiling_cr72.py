@@ -252,6 +252,17 @@ class Profile(Dispersion):
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
                     #print len(self.points[mi]), self.points[mi]
 
+                    # Calculate how the value should be, so chi2 gets zero.
+                    # The R20 index.
+                    r20_index = mi + si*len(self.fields)
+                    # Convert dw from ppm to rad/s.
+                    dw_frq = dw[si] * frqs[ei][si][mi]
+                    r20a=R20A[r20_index]
+                    r20b=R20B[r20_index]
+                    back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
+                    r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=cpmg_frqs[ei][mi][oi], back_calc=back_calc, num_points=len(cpmg_frqs[ei][mi][oi]))
+
+
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
                             # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
@@ -259,19 +270,9 @@ class Profile(Dispersion):
 
                             missing[ei][si][mi][oi].append(0)
 
-                            # Calculate how the value should be, so chi2 gets zero.
-                            # The R20 index.
-                            r20_index = mi + si*len(self.fields)
-                            # Convert dw from ppm to rad/s.
-                            dw_frq = dw[si] * frqs[ei][si][mi]
-                            r20a=R20A[r20_index]
-                            r20b=R20B[r20_index]
-                            back_calc = array([0.0])
-                            r2eff_CR72(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, cpmg_frqs=cpmg_frqs[ei][mi][oi][di], back_calc=back_calc, num_points=1)
-
                             # Values
                             #values[ei][si][mi][oi].append(self.value[mi][di])
-                            values[ei][si][mi][oi].append(back_calc[0])
+                            values[ei][si][mi][oi].append(back_calc[di])
                             # The errors.
                             errors[ei][si][mi][oi].append(self.error[mi][di])
                             #print self.value[mi][di], self.error[mi][di]
