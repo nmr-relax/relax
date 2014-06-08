@@ -397,7 +397,9 @@ class Dispersion:
         # Setup special numpy array structures, for higher dimensional computation.
         if model == MODEL_CR72_FULL:
             # Get the shape of back_calc structure.
-            back_calc_shape = list( np.asarray(self.back_calc).shape )
+            # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
+            # Shape has to be: [ei][si][mi][oi].
+            back_calc_shape = list( np.asarray(self.back_calc).shape )[:4]
 
             # Find which frequency has the maximum number of disp points.
             # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
