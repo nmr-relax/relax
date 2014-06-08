@@ -128,9 +128,15 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         rank_1 = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
+    # For rank-1 float array.
     if rank_1:
         if dw == 0.0 or pA == 1.0 or kex == 0.0:
             back_calc[:] = array([r20a]*num_points)
+            return
+    # For higher dimensions, return same structure.
+    else:
+        if np.allclose(dw, np.zeros(dw.shape)) or np.allclose(pA, np.ones(dw.shape)) or np.allclose(kex, np.zeros(dw.shape)):
+            back_calc[:] = r20a
             return
 
     # The B population.
@@ -165,16 +171,23 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
-    if rank_1:
-        if max(etapos) > 700:
+    if max(etapos) > 700:
+        if rank_1:
             back_calc[:] = array([r20a]*num_points)
+            return
+        # For higher dimensions, return same structure.
+        else:
+            back_calc[:] = r20a
             return
 
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
-    if rank_1:
-        if min(fact) < 1.0:
+    if min(fact) < 1.0:
+        if rank_1:
             back_calc[:] = array([r20_kex]*num_points)
+            return
+        else:
+            back_calc[:] = r20_kex
             return
 
     # Calculate R2eff.
@@ -182,8 +195,10 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if rank_1:
-        if not isfinite(sum(R2eff)):
+    if not isfinite(sum(R2eff)):
+        if rank_1:
             R2eff = array([1e100]*num_points)
+        else:
+            R2eff = np.ones(R2eff.shape) * 1e100
 
     back_calc[:] = R2eff
