@@ -411,7 +411,7 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points])
             self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.pA_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.pA_a = np.zeros(back_calc_shape + [self.max_num_disp_points])
             self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points])
             self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points])
             self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points])
