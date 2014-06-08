@@ -28,7 +28,7 @@
 from copy import deepcopy
 from math import pi
 import numpy as np
-from numpy import complex64, dot, float64, int16, sqrt, zeros
+from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, zeros
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -399,26 +399,26 @@ class Dispersion:
             # Get the shape of back_calc structure.
             # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
             # Shape has to be: [ei][si][mi][oi].
-            back_calc_shape = list( np.asarray(self.back_calc).shape )[:4]
+            back_calc_shape = list( asarray(self.back_calc).shape )[:4]
 
             # Find which frequency has the maximum number of disp points.
             # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
-            self.max_num_disp_points = np.max(self.num_disp_points)
+            self.max_num_disp_points = max(self.num_disp_points)
 
             # Create numpy arrays to pass to the lib function.
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.pA_a = np.zeros(back_calc_shape + [self.max_num_disp_points], float64)
-            self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.errors_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.values_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.R20A_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.R20B_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.pA_a = zeros(back_calc_shape + [self.max_num_disp_points], float64)
+            self.dw_frq_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.kex_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.cpmg_frqs_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.num_disp_points_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.back_calc_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.errors_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.values_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
             self.has_missing = False
 
             # Loop over the experiment types.
@@ -528,8 +528,8 @@ class Dispersion:
             num_disp_points = self.num_disp_points[0][0][mi][0]
 
             # Calculate pA and kex per frequency.
-            pA_arr = np.array( [pA] * num_disp_points, float64)
-            kex_arr =  np.array( [kex] * num_disp_points, float64)
+            pA_arr = array( [pA] * num_disp_points, float64)
+            kex_arr =  array( [kex] * num_disp_points, float64)
 
             # Loop over the spins.
             for si in range(self.num_spins):
@@ -537,14 +537,14 @@ class Dispersion:
                 r20_index = mi + si*self.num_frq
 
                 # Store r20a and r20b values per disp point.
-                self.R20A_a[0][si][mi][0][:num_disp_points] = np.array( [R20A[r20_index]] * num_disp_points, float64)
-                self.R20B_a[0][si][mi][0][:num_disp_points]  = np.array( [R20B[r20_index]] * num_disp_points, float64)
+                self.R20A_a[0][si][mi][0][:num_disp_points] = array( [R20A[r20_index]] * num_disp_points, float64)
+                self.R20B_a[0][si][mi][0][:num_disp_points]  = array( [R20B[r20_index]] * num_disp_points, float64)
 
                 # Convert dw from ppm to rad/s.
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Store dw_frq per disp point.
-                self.dw_frq_a[0][si][mi][0][:num_disp_points] = np.array( [dw_frq] * num_disp_points, float64)
+                self.dw_frq_a[0][si][mi][0][:num_disp_points] = array( [dw_frq] * num_disp_points, float64)
 
                 # Store pA and kex per disp point.
                 self.pA_a[0][si][mi][0][:num_disp_points] = pA_arr
@@ -566,7 +566,7 @@ class Dispersion:
                             self.back_calc_a[0][si][mi][0][di] = self.values[0][si][mi][0][di]
 
         ## Calculate the chi-squared statistic.
-        return chi2_sum = np.sum((1.0 / self.errors_a * (self.values_a - self.back_calc_a))**2)
+        return sum((1.0 / self.errors_a * (self.values_a - self.back_calc_a))**2)
 
 
     def calc_ns_cpmg_2site_3D_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
