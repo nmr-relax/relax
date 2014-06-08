@@ -521,18 +521,18 @@ class Dispersion:
                 r20_index = mi + si*self.num_frq
 
                 # Store r20a and r20b values per disp point.
-                self.R20A_a[0][si][mi][0] = np.array( [R20A[r20_index]] * self.max_num_disp_points, float64)
-                self.R20B_a[0][si][mi][0]  = np.array( [R20B[r20_index]] * self.max_num_disp_points, float64)
+                self.R20A_a[0][si][mi][0][:num_disp_points] = np.array( [R20A[r20_index]] * num_disp_points, float64)
+                self.R20B_a[0][si][mi][0][:num_disp_points]  = np.array( [R20B[r20_index]] * num_disp_points, float64)
 
                 # Convert dw from ppm to rad/s.
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Store dw_frq per disp point.
-                self.dw_frq_a[0][si][mi][0] = np.array( [dw_frq] * self.max_num_disp_points, float64)
+                self.dw_frq_a[0][si][mi][0][:num_disp_points] = np.array( [dw_frq] * num_disp_points, float64)
 
                 # Store pA and kex per disp point.
-                self.pA_a[0][si][mi][0] = np.array( [pA] * self.max_num_disp_points, float64)
-                self.kex_a[0][si][mi][0] = np.array( [kex] * self.max_num_disp_points, float64)
+                self.pA_a[0][si][mi][0][:num_disp_points] = np.array( [pA] * num_disp_points, float64)
+                self.kex_a[0][si][mi][0][:num_disp_points] = np.array( [kex] * num_disp_points, float64)
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
