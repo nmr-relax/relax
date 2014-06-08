@@ -26,6 +26,7 @@ __all__ = [
     'test_b14',
     'test_cr72',
     'test_cr72_full_cluster_one_field',
+    'test_cr72_full_cluster_three_fields',
     'test_dpl94',
     'test_it99',
     'test_lm63',
