@@ -417,6 +417,7 @@ class Dispersion:
             self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points])
             self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points])
             self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.has_missing = False
 
             # Loop over the experiment types.
             for ei in range(self.num_exp):
@@ -432,6 +433,10 @@ class Dispersion:
                             # Extract cpmg_frqs and num_disp_points from lists.
                             self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                             self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+
+                            for di in range(self.num_disp_points[ei][si][mi][oi]):
+                                if self.missing[ei][si][mi][oi][di]:
+                                    self.has_missing = True
 
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -541,7 +546,6 @@ class Dispersion:
         chi2_sum = 0.0
 
         # Now return the values back to the structure of self.back_calc object.
-        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         # Loop over the spins.
         for si in range(self.num_spins):
             # Loop over the spectrometer frequencies.
@@ -551,10 +555,11 @@ class Dispersion:
 
                 self.back_calc[0][si][mi][0] = self.back_calc_a[0][si][mi][0][:num_disp_points]
 
-
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+                ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+                if self.has_missing:
+                    for di in range(self.num_disp_points[0][si][mi][0]):
+                        if self.missing[0][si][mi][0][di]:
+                            self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
 
                 ## Calculate and return the chi-squared value.
                 chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
