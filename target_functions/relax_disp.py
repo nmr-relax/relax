@@ -409,16 +409,16 @@ class Dispersion:
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.pA_a = np.zeros(back_calc_shape + [self.max_num_disp_points])
-            self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.errors_a = np.ones(back_calc_shape + [self.max_num_disp_points])
-            self.values_a = np.ones(back_calc_shape + [self.max_num_disp_points])
+            self.R20A_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.R20B_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.pA_a = np.zeros(back_calc_shape + [self.max_num_disp_points], float64)
+            self.dw_frq_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.kex_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.cpmg_frqs_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.num_disp_points_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.back_calc_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.errors_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.values_a = np.ones(back_calc_shape + [self.max_num_disp_points], float64)
             self.has_missing = False
 
             # Loop over the experiment types.
