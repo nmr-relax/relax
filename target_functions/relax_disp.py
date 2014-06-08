@@ -436,6 +436,10 @@ class Dispersion:
                             self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                             self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
 
+                            # Extract the errors and values to numpy array.
+                            self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[0][si][mi][0]
+                            self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[0][si][mi][0]
+
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
@@ -545,10 +549,6 @@ class Dispersion:
                 # Store pA and kex per disp point.
                 self.pA_a[0][si][mi][0][:num_disp_points] = pA_arr
                 self.kex_a[0][si][mi][0][:num_disp_points] = kex_arr
-
-                # Extract the errors and values to numpy array.
-                self.errors_a[0][si][mi][0][:num_disp_points] = self.errors[0][si][mi][0]
-                self.values_a[0][si][mi][0][:num_disp_points] = self.values[0][si][mi][0]
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
