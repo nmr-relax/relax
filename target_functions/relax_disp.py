@@ -508,33 +508,29 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # Loop over the offsets.
-                    for oi in range(self.num_offsets[ei][si][mi]):
-                        # Extract number of dispersion points.
-                        num_disp_points = self.num_disp_points[ei][si][mi][oi]
+        # Loop over the spins.
+        for si in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for mi in range(self.num_frq):
+                # Extract number of dispersion points.
+                num_disp_points = self.num_disp_points[0][si][mi][0]
 
-                         # The R20 index.
-                        r20_index = mi + si*self.num_frq
+                 # The R20 index.
+                r20_index = mi + si*self.num_frq
 
-                        # Store r20a and r20b values per disp point.
-                        self.R20A_a[ei][si][mi][oi] = np.array( [R20A[r20_index]] * self.max_num_disp_points, float64)
-                        self.R20B_a[ei][si][mi][oi]  = np.array( [R20B[r20_index]] * self.max_num_disp_points, float64)
+                # Store r20a and r20b values per disp point.
+                self.R20A_a[0][si][mi][0] = np.array( [R20A[r20_index]] * self.max_num_disp_points, float64)
+                self.R20B_a[0][si][mi][0]  = np.array( [R20B[r20_index]] * self.max_num_disp_points, float64)
 
-                        # Convert dw from ppm to rad/s.
-                        dw_frq = dw[si] * self.frqs[ei][si][mi]
+                # Convert dw from ppm to rad/s.
+                dw_frq = dw[si] * self.frqs[0][si][mi]
 
-                        # Store dw_frq per disp point.
-                        self.dw_frq_a[ei][si][mi][oi] = np.array( [dw_frq] * self.max_num_disp_points, float64)
+                # Store dw_frq per disp point.
+                self.dw_frq_a[0][si][mi][0] = np.array( [dw_frq] * self.max_num_disp_points, float64)
 
-                        # Store pA and kex per disp point.
-                        self.pA_a[ei][si][mi][oi] = np.array( [pA] * self.max_num_disp_points, float64)
-                        self.kex_a[ei][si][mi][oi] = np.array( [kex] * self.max_num_disp_points, float64)
+                # Store pA and kex per disp point.
+                self.pA_a[0][si][mi][0] = np.array( [pA] * self.max_num_disp_points, float64)
+                self.kex_a[0][si][mi][0] = np.array( [kex] * self.max_num_disp_points, float64)
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
@@ -544,26 +540,22 @@ class Dispersion:
 
         # Now return the values back to the structure of self.back_calc object.
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # Loop over the offsets.
-                    for oi in range(self.num_offsets[ei][si][mi]):
-                        # Extract number of dispersion points.
-                        num_disp_points = self.num_disp_points[ei][si][mi][oi]
+        # Loop over the spins.
+        for si in range(self.num_spins):
+            # Loop over the spectrometer frequencies.
+            for mi in range(self.num_frq):
+                # Extract number of dispersion points.
+                num_disp_points = self.num_disp_points[0][si][mi][0]
 
-                        self.back_calc[ei][si][mi][oi] = self.back_calc_a[ei][si][mi][oi][:num_disp_points]
+                self.back_calc[0][si][mi][0] = self.back_calc_a[0][si][mi][0][:num_disp_points]
 
 
-                        for di in range(self.num_disp_points[ei][si][mi][oi]):
-                            if self.missing[ei][si][mi][oi][di]:
-                                self.back_calc[ei][si][mi][oi][di] = self.values[ei][si][mi][oi][di]
+                for di in range(self.num_disp_points[0][si][mi][0]):
+                    if self.missing[0][si][mi][0][di]:
+                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
 
-                        ## Calculate and return the chi-squared value.
-                        chi2_sum += chi2(self.values[ei][si][mi][oi], self.back_calc[ei][si][mi][oi], self.errors[ei][si][mi][oi])
+                ## Calculate and return the chi-squared value.
+                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
 
         # Return the total chi-squared value.
         return chi2_sum
