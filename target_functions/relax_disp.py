@@ -517,14 +517,19 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # Extract number of dispersion points.
-                num_disp_points = self.num_disp_points[0][si][mi][0]
 
-                 # The R20 index.
+        # Loop over the spectrometer frequencies.
+        for mi in range(self.num_frq):
+            # Extract number of dispersion points. Always the same per sin.
+            num_disp_points = self.num_disp_points[0][0][mi][0]
+
+            # Calculate pA and kex per frequency.
+            pA_arr = np.array( [pA] * num_disp_points, float64)
+            kex_arr =  np.array( [kex] * num_disp_points, float64)
+
+            # Loop over the spins.
+            for si in range(self.num_spins):
+                # The R20 index.
                 r20_index = mi + si*self.num_frq
 
                 # Store r20a and r20b values per disp point.
@@ -538,8 +543,8 @@ class Dispersion:
                 self.dw_frq_a[0][si][mi][0][:num_disp_points] = np.array( [dw_frq] * num_disp_points, float64)
 
                 # Store pA and kex per disp point.
-                self.pA_a[0][si][mi][0][:num_disp_points] = np.array( [pA] * num_disp_points, float64)
-                self.kex_a[0][si][mi][0][:num_disp_points] = np.array( [kex] * num_disp_points, float64)
+                self.pA_a[0][si][mi][0][:num_disp_points] = pA_arr
+                self.kex_a[0][si][mi][0][:num_disp_points] = kex_arr
 
                 # Extract the errors and values to numpy array.
                 self.errors_a[0][si][mi][0][:num_disp_points] = self.errors[0][si][mi][0]
