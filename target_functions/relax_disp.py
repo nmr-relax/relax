@@ -27,7 +27,6 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-import numpy as np
 from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, zeros
 
 # relax module imports.
