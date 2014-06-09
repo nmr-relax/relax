@@ -417,15 +417,17 @@ class Dispersion:
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
+            self.values_a = deepcopy(self.ones_a)
+            self.errors_a = deepcopy(self.ones_a)
+            self.back_calc_a = deepcopy(self.ones_a)
+            
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.ones_a)
-            self.back_calc_a = deepcopy(self.ones_a)
-            self.errors_a = deepcopy(self.ones_a)
-            self.values_a = deepcopy(self.ones_a)
-            self.has_missing = False
+
             self.frqs_a = deepcopy(self.zeros_a)
             self.spins_a = deepcopy(self.zeros_a)
             self.not_spins_a = deepcopy(self.ones_a)
+            self.has_missing = False
 
             # Loop over the experiment types.
             for ei in range(self.num_exp):
