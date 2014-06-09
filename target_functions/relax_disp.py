@@ -424,6 +424,8 @@ class Dispersion:
             self.errors_a = deepcopy(self.ones_a)
             self.values_a = deepcopy(self.ones_a)
             self.has_missing = False
+            self.frqs_a = deepcopy(self.zeros_a)
+
 
             # Loop over the experiment types.
             for ei in range(self.num_exp):
@@ -443,6 +445,9 @@ class Dispersion:
                             # Extract the errors and values to numpy array.
                             self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[0][si][mi][0]
                             self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[0][si][mi][0]
+
+                            # Extract the frequencies to numpy array.
+                            self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
