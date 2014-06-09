@@ -93,6 +93,7 @@ More information on the CR72 full model can be found in the:
 
 # Python module imports.
 from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, min, max, ndarray, ones, sqrt, sum, zeros
+import numpy.ma as ma
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -121,6 +122,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     @type num_points:       int
     """
 
+    # Initiate test masks.
+    #mask_dw_t = False
+    #mask_pA_t = False
+    #mask_kex_t = False
+
     # Determine if calculating in numpy rank-1 float array, of higher dimensions.
     rank_1 = True
     if isinstance(num_points, ndarray):
@@ -134,7 +140,24 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             return
     # For higher dimensions, return same structure.
     else:
-        if allclose(dw, zeros(dw.shape)) or allclose(pA, ones(dw.shape)) or allclose(kex, zeros(dw.shape)):
+        # Test if dw is zero.
+        if allclose(dw, zeros(dw.shape)):
+            #mask_dw_t = True
+            #mask_dw = ma.masked_values(dw, 0.0)
+            back_calc[:] = r20a
+            return
+            
+        # Test if pA is zero.
+        elif allclose(pA, ones(pA.shape), rtol=1e-07):
+            #mask_pA_t = True
+            #mask_pA = ma.masked_values(pA, 1.0)
+            back_calc[:] = r20a
+            return
+
+       # Test if kex is zero.       
+        elif allclose(kex, zeros(kex.shape)):
+            #mask_kex_t = True
+            #mask_kex = ma.masked_values(kex, 0.0)
             back_calc[:] = r20a
             return
 
@@ -191,6 +214,14 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
+
+    # Replace data in array.
+    #if mask_dw_t:
+    #    R2eff[mask_dw] = r20a
+    #if mask_pA_t:
+    #    R2eff[mask_pA] = r20a
+    #if mask_kex_t:
+    #    R2eff[mask_kex] = r20a
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
