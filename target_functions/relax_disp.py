@@ -419,9 +419,7 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.R20A_a = deepcopy(self.ones_a)
             self.R20B_a = deepcopy(self.ones_a)
-            self.pA_a = deepcopy(self.zeros_a)
             self.dw_frq_a = deepcopy(self.ones_a)
-            self.kex_a = deepcopy(self.ones_a)
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.ones_a)
             self.back_calc_a = deepcopy(self.ones_a)
@@ -430,6 +428,7 @@ class Dispersion:
             self.has_missing = False
             self.frqs_a = deepcopy(self.zeros_a)
             self.spins_a = deepcopy(self.zeros_a)
+            self.not_spins_a = deepcopy(self.ones_a)
 
 
             # Loop over the experiment types.
@@ -456,6 +455,7 @@ class Dispersion:
                             
                             # Make a spin 1/0 file.
                             self.spins_a[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
+                            self.not_spins_a[ei][si][mi][oi][:num_disp_points] = zeros(num_disp_points)
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
@@ -546,14 +546,14 @@ class Dispersion:
         # Convert dw from ppm to rad/s.
         self.dw_frq_a = dw_axis*self.spins_a*self.frqs_a
 
+        # Calculate pA and kex per frequency.
+        pA_arr = pA*self.spins_a
+        kex_arr = kex*self.spins_a + self.not_spins_a
+
         # Loop over the spectrometer frequencies.
         for mi in range(self.num_frq):
             # Extract number of dispersion points. Always the same per sin.
             num_disp_points = self.num_disp_points[0][0][mi][0]
-
-            # Calculate pA and kex per frequency.
-            pA_arr = array( [pA] * num_disp_points, float64)
-            kex_arr =  array( [kex] * num_disp_points, float64)
 
             # Loop over the spins.
             for si in range(self.num_spins):
@@ -564,12 +564,8 @@ class Dispersion:
                 self.R20A_a[0][si][mi][0][:num_disp_points] = array( [R20A[r20_index]] * num_disp_points, float64)
                 self.R20B_a[0][si][mi][0][:num_disp_points]  = array( [R20B[r20_index]] * num_disp_points, float64)
 
-                # Store pA and kex per disp point.
-                self.pA_a[0][si][mi][0][:num_disp_points] = pA_arr
-                self.kex_a[0][si][mi][0][:num_disp_points] = kex_arr
-
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=self.pA_a, dw=self.dw_frq_a, kex=self.kex_a, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA_arr, dw=self.dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
