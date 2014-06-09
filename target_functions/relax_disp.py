@@ -538,10 +538,14 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Expand dw to number of axis.
-        dw_axis = dw[None,:,None,None,None]
+        # Reshape dw to per experiment and nr spins.
+        dw_axis = asarray(dw).reshape(self.numpy_array_shape[0], self.numpy_array_shape[1])
+
+        # Expand dw to number of axis for frequency, offset and dispersion points.
+        dw_axis = dw_axis[:,:,None,None,None]
+
         # Tile dw according to dimensions.
-        dw_axis = np.tile(dw_axis, (self.numpy_array_shape[0], self.numpy_array_shape[2],self.numpy_array_shape[3], self.numpy_array_shape[4]))
+        dw_axis = np.tile(dw_axis, (1, 1, self.numpy_array_shape[2], self.numpy_array_shape[3], self.numpy_array_shape[4]))
 
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.spins_a*self.frqs_a
@@ -560,8 +564,8 @@ class Dispersion:
         R20B_axis = R20B_axis[:,:,:,None,None]
 
         # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = np.tile(R20A_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a
-        R20B_axis = np.tile(R20B_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a
+        R20A_axis = np.tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
+        R20B_axis = np.tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA_arr, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
