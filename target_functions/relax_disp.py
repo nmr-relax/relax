@@ -443,8 +443,8 @@ class Dispersion:
                             self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
 
                             # Extract the errors and values to numpy array.
-                            self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[0][si][mi][0]
-                            self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[0][si][mi][0]
+                            self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
+                            self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[ei][si][mi][oi]
 
                             # Extract the frequencies to numpy array.
                             self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
