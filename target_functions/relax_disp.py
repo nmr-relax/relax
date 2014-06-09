@@ -419,7 +419,6 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.R20A_a = deepcopy(self.ones_a)
             self.R20B_a = deepcopy(self.ones_a)
-            self.dw_frq_a = deepcopy(self.ones_a)
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.ones_a)
             self.back_calc_a = deepcopy(self.ones_a)
@@ -429,7 +428,6 @@ class Dispersion:
             self.frqs_a = deepcopy(self.zeros_a)
             self.spins_a = deepcopy(self.zeros_a)
             self.not_spins_a = deepcopy(self.ones_a)
-
 
             # Loop over the experiment types.
             for ei in range(self.num_exp):
@@ -544,7 +542,7 @@ class Dispersion:
         dw_axis = np.tile(dw_axis, (self.numpy_array_shape[0], self.numpy_array_shape[2],self.numpy_array_shape[3], self.numpy_array_shape[4]))
 
         # Convert dw from ppm to rad/s.
-        self.dw_frq_a = dw_axis*self.spins_a*self.frqs_a
+        dw_frq_a = dw_axis*self.spins_a*self.frqs_a
 
         # Calculate pA and kex per frequency.
         pA_arr = pA*self.spins_a
@@ -565,7 +563,7 @@ class Dispersion:
                 self.R20B_a[0][si][mi][0][:num_disp_points]  = array( [R20B[r20_index]] * num_disp_points, float64)
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA_arr, dw=self.dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA_arr, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
