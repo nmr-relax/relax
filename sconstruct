@@ -572,6 +572,18 @@ class Main:
         py_include_minpath = sys.prefix + path.sep + 'include'
         py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
+        # Test if Python.h resides here.
+        f_name_pyth = py_include_minpath + path.sep + 'Python.h'
+        if not access(f_name_pyth, F_OK):
+
+            # Test if 'PYTHON_INCLUDE_DIR' has been set to system environment.
+            if 'PYTHON_INCLUDE_DIR' in environ:
+
+                # Test if Python.h is here.
+                f_name_pyth = environ['PYTHON_INCLUDE_DIR'] + path.sep + 'Python.h'
+                if access(f_name_pyth, F_OK):
+                    py_include_fullpath = environ['PYTHON_INCLUDE_DIR']
+
         # Construct the python bin path.
         py_bin_minpath = sys.prefix + path.sep + 'bin'
         py_bin_fullpath = py_bin_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
