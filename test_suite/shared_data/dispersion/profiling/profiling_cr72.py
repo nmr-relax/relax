@@ -57,7 +57,7 @@ def main():
         # Calc for single.
         s_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a single spin.
-        cProfile.run('single(iter=1)', s_filename)
+        cProfile.run('single(iter=1000)', s_filename)
 
         # Read all stats files into a single object
         s_stats = pstats.Stats(s_filename)
@@ -69,13 +69,13 @@ def main():
         s_stats.sort_stats('cumulative')
 
         # Print report for single.
-        #s_stats.print_stats()
+        s_stats.print_stats()
 
     if True:
         # Calc for cluster.
         c_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a cluster of 100 spins.
-        cProfile.run('cluster(iter=1)', c_filename)
+        cProfile.run('cluster(iter=1000)', c_filename)
 
         # Read all stats files into a single object
         c_stats = pstats.Stats(c_filename)
@@ -87,7 +87,7 @@ def main():
         c_stats.sort_stats('cumulative')
 
         # Print report for clustered.
-        #_stats.print_stats()
+        c_stats.print_stats()
 
 
 class Profile(Dispersion):
