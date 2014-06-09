@@ -419,7 +419,6 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.values_a = deepcopy(self.ones_a)
             self.errors_a = deepcopy(self.ones_a)
-            self.back_calc_a = deepcopy(self.ones_a)
             
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.ones_a)
@@ -458,6 +457,9 @@ class Dispersion:
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
+
+            # Make copy of values structure.
+            self.back_calc_a = deepcopy(self.values_a)
 
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
