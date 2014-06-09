@@ -29,6 +29,7 @@
 from copy import deepcopy
 from math import pi
 from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, zeros
+import numpy as np
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -405,9 +406,12 @@ class Dispersion:
             # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
             self.max_num_disp_points = max(self.num_disp_points)
 
+            # Define the shape of all the numpy arrays.
+            self.numpy_array_shape = back_calc_shape + [self.max_num_disp_points]
+
             # Create zero and one numpy structure.
-            self.zeros_a = zeros(back_calc_shape + [self.max_num_disp_points], float64)
-            self.ones_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.zeros_a = zeros(self.numpy_array_shape, float64)
+            self.ones_a = ones(self.numpy_array_shape, float64)
 
             # Create numpy arrays to pass to the lib function.
             # All numpy arrays have to have same shape to allow to multiply together.
@@ -425,6 +429,7 @@ class Dispersion:
             self.values_a = deepcopy(self.ones_a)
             self.has_missing = False
             self.frqs_a = deepcopy(self.zeros_a)
+            self.spins_a = deepcopy(self.zeros_a)
 
 
             # Loop over the experiment types.
@@ -448,6 +453,9 @@ class Dispersion:
 
                             # Extract the frequencies to numpy array.
                             self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
+                            
+                            # Make a spin 1/0 file.
+                            self.spins_a[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
@@ -530,6 +538,14 @@ class Dispersion:
         @rtype:         float
         """
 
+        # Expand dw to number of axis.
+        dw_axis = dw[None,:,None,None,None]
+        # Tile tw according to dimensions.
+        dw_axis = np.tile(dw_axis, (self.numpy_array_shape[0], self.numpy_array_shape[2],self.numpy_array_shape[3], self.numpy_array_shape[4]))
+
+        # Convert dw from ppm to rad/s.
+        self.dw_frq_a = dw_axis*self.spins_a*self.frqs_a
+
         # Loop over the spectrometer frequencies.
         for mi in range(self.num_frq):
             # Extract number of dispersion points. Always the same per sin.
@@ -547,12 +563,6 @@ class Dispersion:
                 # Store r20a and r20b values per disp point.
                 self.R20A_a[0][si][mi][0][:num_disp_points] = array( [R20A[r20_index]] * num_disp_points, float64)
                 self.R20B_a[0][si][mi][0][:num_disp_points]  = array( [R20B[r20_index]] * num_disp_points, float64)
-
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
-
-                # Store dw_frq per disp point.
-                self.dw_frq_a[0][si][mi][0][:num_disp_points] = array( [dw_frq] * num_disp_points, float64)
 
                 # Store pA and kex per disp point.
                 self.pA_a[0][si][mi][0][:num_disp_points] = pA_arr
