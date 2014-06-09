@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
@@ -404,20 +405,24 @@ class Dispersion:
             # To let the numpy array operate well together, the broadcast size has to be equal for all shapes.
             self.max_num_disp_points = max(self.num_disp_points)
 
+            # Create zero and one numpy structure.
+            self.zeros_a = zeros(back_calc_shape + [self.max_num_disp_points], float64)
+            self.ones_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+
             # Create numpy arrays to pass to the lib function.
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.R20A_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.R20B_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.pA_a = zeros(back_calc_shape + [self.max_num_disp_points], float64)
-            self.dw_frq_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.kex_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.cpmg_frqs_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.num_disp_points_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.back_calc_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.errors_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
-            self.values_a = ones(back_calc_shape + [self.max_num_disp_points], float64)
+            self.R20A_a = deepcopy(self.ones_a)
+            self.R20B_a = deepcopy(self.ones_a)
+            self.pA_a = deepcopy(self.zeros_a)
+            self.dw_frq_a = deepcopy(self.ones_a)
+            self.kex_a = deepcopy(self.ones_a)
+            self.cpmg_frqs_a = deepcopy(self.ones_a)
+            self.num_disp_points_a = deepcopy(self.ones_a)
+            self.back_calc_a = deepcopy(self.ones_a)
+            self.errors_a = deepcopy(self.ones_a)
+            self.values_a = deepcopy(self.ones_a)
             self.has_missing = False
 
             # Loop over the experiment types.
@@ -519,7 +524,6 @@ class Dispersion:
         @return:        The chi-squared value.
         @rtype:         float
         """
-
 
         # Loop over the spectrometer frequencies.
         for mi in range(self.num_frq):
