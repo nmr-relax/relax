@@ -417,11 +417,11 @@ class Dispersion:
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.values_a = deepcopy(self.ones_a)
+            self.values_a = deepcopy(self.zeros_a)
             self.errors_a = deepcopy(self.ones_a)
             
             self.cpmg_frqs_a = deepcopy(self.ones_a)
-            self.num_disp_points_a = deepcopy(self.ones_a)
+            self.num_disp_points_a = deepcopy(self.zeros_a)
 
             self.frqs_a = deepcopy(self.zeros_a)
             self.spins_a = deepcopy(self.zeros_a)
@@ -548,6 +548,7 @@ class Dispersion:
 
         # Calculate pA and kex per frequency.
         pA_arr = pA*self.spins_a
+        # To kex, add 1 at end of array to prevent math errors.
         kex_arr = kex*self.spins_a + self.not_spins_a
         
         # Reshape R20A and R20B to per experiment, spin and frequency.
@@ -558,12 +559,15 @@ class Dispersion:
         R20A_axis = R20A_axis[:,:,:,None,None]
         R20B_axis = R20B_axis[:,:,:,None,None]
 
-        # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin ON array. Add 1.
-        R20A_axis = np.tile(R20A_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a + self.not_spins_a
-        R20B_axis = np.tile(R20B_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a + self.not_spins_a
+        # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
+        R20A_axis = np.tile(R20A_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a
+        R20B_axis = np.tile(R20B_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA_arr, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.spins_a
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
