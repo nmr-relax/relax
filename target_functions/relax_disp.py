@@ -417,8 +417,6 @@ class Dispersion:
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.R20A_a = deepcopy(self.ones_a)
-            self.R20B_a = deepcopy(self.ones_a)
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.ones_a)
             self.back_calc_a = deepcopy(self.ones_a)
@@ -538,7 +536,7 @@ class Dispersion:
 
         # Expand dw to number of axis.
         dw_axis = dw[None,:,None,None,None]
-        # Tile tw according to dimensions.
+        # Tile dw according to dimensions.
         dw_axis = np.tile(dw_axis, (self.numpy_array_shape[0], self.numpy_array_shape[2],self.numpy_array_shape[3], self.numpy_array_shape[4]))
 
         # Convert dw from ppm to rad/s.
@@ -547,23 +545,21 @@ class Dispersion:
         # Calculate pA and kex per frequency.
         pA_arr = pA*self.spins_a
         kex_arr = kex*self.spins_a + self.not_spins_a
+        
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        R20A_axis = R20A.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
+        R20B_axis = R20B.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
 
-        # Loop over the spectrometer frequencies.
-        for mi in range(self.num_frq):
-            # Extract number of dispersion points. Always the same per sin.
-            num_disp_points = self.num_disp_points[0][0][mi][0]
+        # Expand R20A and R20B axis to offset and dispersion points.
+        R20A_axis = R20A_axis[:,:,:,None,None]
+        R20B_axis = R20B_axis[:,:,:,None,None]
 
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
-
-                # Store r20a and r20b values per disp point.
-                self.R20A_a[0][si][mi][0][:num_disp_points] = array( [R20A[r20_index]] * num_disp_points, float64)
-                self.R20B_a[0][si][mi][0][:num_disp_points]  = array( [R20B[r20_index]] * num_disp_points, float64)
+        # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin ON array. Add 1.
+        R20A_axis = np.tile(R20A_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a + self.not_spins_a
+        R20B_axis = np.tile(R20B_axis, (1, 1, 1, 1, self.max_num_disp_points)) * self.spins_a + self.not_spins_a
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.R20A_a, r20b=self.R20B_a, pA=pA_arr, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA_arr, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
