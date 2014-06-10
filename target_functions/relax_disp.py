@@ -552,9 +552,6 @@ class Dispersion:
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.spins_a*self.frqs_a
 
-        # To kex, add 1 at end of array to prevent math errors.
-        kex_arr = kex*self.spins_a + self.not_spins_a
-        
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
         R20B_axis = R20B.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
@@ -568,7 +565,7 @@ class Dispersion:
         R20B_axis = np.tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex_arr, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.spins_a
