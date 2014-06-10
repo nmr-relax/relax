@@ -413,6 +413,12 @@ class Dispersion:
             self.zeros_a = zeros(self.numpy_array_shape, float64)
             self.ones_a = ones(self.numpy_array_shape, float64)
 
+            # Create special numpy structures.
+            self.ei_struct = zeros(self.numpy_array_shape[:1], float64)
+            self.si_struct = zeros(self.numpy_array_shape[:2], float64)
+            self.mi_struct = zeros(self.numpy_array_shape[:3], float64)
+            self.oi_struct = zeros(self.numpy_array_shape[:4], float64)
+
             # Create numpy arrays to pass to the lib function.
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
