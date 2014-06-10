@@ -468,10 +468,10 @@ class Test_cr72_full_cluster_one_field(TestCase):
 
 
     def test_cr72_full_cluster_one_field_no_rex8(self):
-        """Test the r2eff_cr72() function for no exchange when kex = 1e5."""
+        """Test the r2eff_cr72() function for no exchange when kex = 1e7."""
 
         # Parameter reset.
-        self.kex = 1e5
+        self.kex = 1e7
 
         # Calculate and check the R2eff values.
         self.calc_r2eff()
