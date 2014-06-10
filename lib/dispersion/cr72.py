@@ -122,11 +122,6 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     @type num_points:       int
     """
 
-    # Initiate test masks.
-    #mask_dw_t = False
-    #mask_pA_t = False
-    #mask_kex_t = False
-
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
     t_max_etapos = False
 
@@ -141,6 +136,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         if dw == 0.0 or pA == 1.0 or kex == 0.0:
             back_calc[:] = array([r20a]*num_points)
             return
+
     # For higher dimensions, return same structure.
     else:
        # Test if kex is zero.       
@@ -148,17 +144,15 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[:] = r20a
             return
 
-        # Test if dw is zero.
-        if allclose(dw, zeros(dw.shape)):
-            #mask_dw_t = True
-            #mask_dw = ma.masked_values(dw, 0.0)
-            back_calc[:] = r20a
-            return
-
         # Test if pA is 1.
         if pA == 1.0:
             back_calc[:] = r20a
-            return            
+            return      
+
+        # Test if dw is zero.
+        if allclose(dw, zeros(dw.shape)):
+            back_calc[:] = r20a
+            return
 
     # The B population.
     pB = 1.0 - pA
@@ -220,12 +214,6 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
 
     # Replace data in array.
-    #if mask_dw_t:
-    #    R2eff[mask_dw] = r20a
-    #if mask_pA_t:
-    #    R2eff[mask_pA] = r20a
-    #if mask_kex_t:
-    #    R2eff[mask_kex] = r20a
     if t_max_etapos:
         R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
