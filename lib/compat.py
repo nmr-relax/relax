@@ -237,13 +237,16 @@ def norm(x, ord=None, axis=None):
     @type axis:     {int, 2-tuple of ints, None}, optional
     """
 
+    # No axis argument given.
+    if axis == None:
+        return numpy.linalg.norm(x, ord=ord)
+
     # The axis argument exists.
     if numpy_norm_axis:
         return numpy.linalg.norm(x, ord=ord, axis=axis)
 
     # Support for older version (this is much slower).
-    else:
-        return numpy.apply_along_axis(numpy.linalg.norm, axis, x)
+    return numpy.apply_along_axis(numpy.linalg.norm, axis, x)
 
 
 def sorted(data):
