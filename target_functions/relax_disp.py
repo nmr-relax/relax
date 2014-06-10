@@ -27,8 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, zeros
-import numpy as np
+from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, tile, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -553,7 +552,7 @@ class Dispersion:
         dw_axis = dw_axis[:,:,None,None,None]
 
         # Tile dw according to dimensions.
-        dw_axis = np.tile(dw_axis, (1, 1, self.numpy_array_shape[2], self.numpy_array_shape[3], self.numpy_array_shape[4]))
+        dw_axis = tile(dw_axis, (1, 1, self.numpy_array_shape[2], self.numpy_array_shape[3], self.numpy_array_shape[4]))
 
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.spins_a*self.frqs_a
@@ -567,8 +566,8 @@ class Dispersion:
         R20B_axis = R20B_axis[:,:,:,None,None]
 
         # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = np.tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
-        R20B_axis = np.tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
+        R20A_axis = tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
+        R20B_axis = tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
