@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2007-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2007-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,6 +29,28 @@ import lib.io
 
 class Test_io(TestCase):
     """Unit tests for the functions of the 'lib.io' module."""
+
+
+    def test_file_root(self):
+        """Test the lib.io.file_root() function with '/tmp/test.xyz'."""
+
+        # The data.
+        file = '/tmp/test.xyz'
+        root = 'test'
+
+        # Check the function.
+        self.assertEqual(lib.io.file_root(file), root)
+
+
+    def test_file_root2(self):
+        """Test the lib.io.file_root() function with '/tmp/test.xyz.gz'."""
+
+        # The data.
+        file = '/tmp/test.xyz.gz'
+        root = 'test'
+
+        # Check the function.
+        self.assertEqual(lib.io.file_root(file), root)
 
 
     def test_get_file_path(self):
