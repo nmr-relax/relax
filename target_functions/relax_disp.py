@@ -29,6 +29,7 @@ from copy import deepcopy
 from math import pi
 from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, zeros
 import numpy as np
+from numpy.ma import masked_equal
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -418,6 +419,7 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.values_a = deepcopy(self.zeros_a)
             self.errors_a = deepcopy(self.ones_a)
+            self.missing_a = zeros(self.numpy_array_shape)
             
             self.cpmg_frqs_a = deepcopy(self.ones_a)
             self.num_disp_points_a = deepcopy(self.zeros_a)
@@ -456,6 +458,7 @@ class Dispersion:
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
+                                    self.missing_a[ei][si][mi][oi][di] = 1.0
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
@@ -574,15 +577,11 @@ class Dispersion:
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # Loop over the dispersion points.
-                    for di in range(self.num_disp_points[0][si][mi][0]):
-                        if self.missing[0][si][mi][0][di]:
-                            #self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-                            self.back_calc_a[0][si][mi][0][di] = self.values[0][si][mi][0][di]
+            # Find the numpy mask, which tells where values should be replaced.
+            mask_replace = masked_equal(self.missing_a, 1.0)
+
+            # Replace with values.
+            self.back_calc_a[mask_replace.mask] = self.values_a[mask_replace.mask]
 
         ## Calculate the chi-squared statistic.
         return sum((1.0 / self.errors_a * (self.values_a - self.back_calc_a))**2)
