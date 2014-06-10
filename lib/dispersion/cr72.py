@@ -146,14 +146,12 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             #mask_dw = ma.masked_values(dw, 0.0)
             back_calc[:] = r20a
             return
-            
-        # Test if pA is zero.
-        elif allclose(pA, ones(pA.shape), rtol=1e-07):
-            #mask_pA_t = True
-            #mask_pA = ma.masked_values(pA, 1.0)
-            back_calc[:] = r20a
-            return
 
+        # Test if pA is 1.
+        if pA == 1.0:
+            back_calc[:] = r20a
+            return            
+                                    
        # Test if kex is zero.       
         elif allclose(kex, zeros(kex.shape)):
             #mask_kex_t = True
