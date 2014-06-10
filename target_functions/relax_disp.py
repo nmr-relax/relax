@@ -430,7 +430,7 @@ class Dispersion:
             self.num_disp_points_a = deepcopy(self.zeros_a)
 
             self.frqs_a = deepcopy(self.zeros_a)
-            self.spins_a = deepcopy(self.zeros_a)
+            self.disp_struct = deepcopy(self.zeros_a)
             self.not_spins_a = deepcopy(self.ones_a)
             self.has_missing = False
 
@@ -457,7 +457,7 @@ class Dispersion:
                             self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
                             
                             # Make a spin 1/0 file.
-                            self.spins_a[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
+                            self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
                             self.not_spins_a[ei][si][mi][oi][:num_disp_points] = zeros(num_disp_points)
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
@@ -555,7 +555,7 @@ class Dispersion:
         dw_axis = tile(dw_axis, (1, 1, self.numpy_array_shape[2], self.numpy_array_shape[3], self.numpy_array_shape[4]))
 
         # Convert dw from ppm to rad/s.
-        dw_frq_a = dw_axis*self.spins_a*self.frqs_a
+        dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
@@ -566,14 +566,14 @@ class Dispersion:
         R20B_axis = R20B_axis[:,:,:,None,None]
 
         # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
-        R20B_axis = tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.spins_a
+        R20A_axis = tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.disp_struct
+        R20B_axis = tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.disp_struct
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc_a = self.back_calc_a*self.spins_a
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
