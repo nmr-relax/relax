@@ -409,29 +409,22 @@ class Dispersion:
             self.numpy_array_shape = back_calc_shape + [self.max_num_disp_points]
 
             # Create zero and one numpy structure.
-            self.zeros_a = zeros(self.numpy_array_shape, float64)
-            self.ones_a = ones(self.numpy_array_shape, float64)
-
-            # Create special numpy structures.
-            self.ei_struct = zeros(self.numpy_array_shape[:1], float64)
-            self.si_struct = zeros(self.numpy_array_shape[:2], float64)
-            self.mi_struct = zeros(self.numpy_array_shape[:3], float64)
-            self.oi_struct = zeros(self.numpy_array_shape[:4], float64)
+            zeros_a = zeros(self.numpy_array_shape, float64)
+            ones_a = ones(self.numpy_array_shape, float64)
 
             # Create numpy arrays to pass to the lib function.
             # All numpy arrays have to have same shape to allow to multiply together.
             # The dimensions should be [ei][si][mi][oi][di]. [Experiment][spins][spec. frq][offset][disp points].
             # The number of disp point can change per spectrometer, so we make the maximum size.
-            self.values_a = deepcopy(self.zeros_a)
-            self.errors_a = deepcopy(self.ones_a)
+            self.values_a = deepcopy(zeros_a)
+            self.errors_a = deepcopy(ones_a)
             self.missing_a = zeros(self.numpy_array_shape)
             
-            self.cpmg_frqs_a = deepcopy(self.ones_a)
-            self.num_disp_points_a = deepcopy(self.zeros_a)
+            self.cpmg_frqs_a = deepcopy(ones_a)
+            self.num_disp_points_a = deepcopy(zeros_a)
 
-            self.frqs_a = deepcopy(self.zeros_a)
-            self.disp_struct = deepcopy(self.zeros_a)
-            self.not_spins_a = deepcopy(self.ones_a)
+            self.frqs_a = deepcopy(zeros_a)
+            self.disp_struct = deepcopy(zeros_a)
             self.has_missing = False
 
             # Loop over the experiment types.
@@ -458,7 +451,6 @@ class Dispersion:
                             
                             # Make a spin 1/0 file.
                             self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
-                            self.not_spins_a[ei][si][mi][oi][:num_disp_points] = zeros(num_disp_points)
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
