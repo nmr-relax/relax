@@ -165,8 +165,13 @@ def file_root(file_path):
     @rtype:             str
     """
 
-    root, ext = splitext(file_path)
-    return basename(root)
+    # Loop over all file extensions, stopping when none are left.
+    ext = None
+    while ext != '':
+        file_path, ext = splitext(file_path)
+
+    # Return the file root with the directories stripped.
+    return basename(file_path)
 
 
 def get_file_path(file_name=None, dir=None):

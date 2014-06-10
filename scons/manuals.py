@@ -503,7 +503,7 @@ def version_file(target, source, env):
     # Add the repository revision if not a normal release.
     text = version.version
     if text == 'repository checkout':
-        text += ' r%s' % version.revision()
+        text += ' r%s' % version.repo_revision
 
     # Place the program version number into a LaTeX file.
     file = open(env['LATEX_DIR'] + sep + 'relax_version.tex', 'w')
