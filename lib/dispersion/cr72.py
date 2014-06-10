@@ -140,6 +140,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             return
     # For higher dimensions, return same structure.
     else:
+       # Test if kex is zero.       
+        if kex == 1.0:
+            back_calc[:] = r20a
+            return
+
         # Test if dw is zero.
         if allclose(dw, zeros(dw.shape)):
             #mask_dw_t = True
@@ -151,13 +156,6 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         if pA == 1.0:
             back_calc[:] = r20a
             return            
-                                    
-       # Test if kex is zero.       
-        elif allclose(kex, zeros(kex.shape)):
-            #mask_kex_t = True
-            #mask_kex = ma.masked_values(kex, 0.0)
-            back_calc[:] = r20a
-            return
 
     # The B population.
     pB = 1.0 - pA
