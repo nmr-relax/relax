@@ -573,7 +573,7 @@ class Main:
         py_include_fullpath = py_include_minpath + path.sep + 'python' + `sys.version_info[0]` + '.' + `sys.version_info[1]`
 
         # Test if Python.h resides here.
-        f_name_pyth = py_include_minpath + path.sep + 'Python.h'
+        f_name_pyth = py_include_fullpath + path.sep + 'Python.h'
         if not access(f_name_pyth, F_OK):
 
             # Test if 'PYTHON_INCLUDE_DIR' has been set to system environment.
