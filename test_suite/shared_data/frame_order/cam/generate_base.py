@@ -26,7 +26,7 @@
 import locale
 from math import pi
 from numpy import array, cross, dot, eye, float32, float64, inner, tensordot, transpose, zeros
-from numpy.linalg import norm
+from lib.compat import norm
 from os import getcwd, sep
 import sys
 
