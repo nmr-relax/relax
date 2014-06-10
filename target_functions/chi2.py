@@ -69,7 +69,7 @@ def chi2(data, back_calc_vals, errors):
 ####################
 
 
-def chi2_ND(data, back_calc_vals, errors):
+def chi2_rankN(data, back_calc_vals, errors):
     """Function to calculate the chi-squared value for multiple numpy array axis.
 
     The chi-squared equation
