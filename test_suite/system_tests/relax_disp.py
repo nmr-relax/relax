@@ -78,7 +78,7 @@ class Relax_disp(SystemTestCase):
         self.tmpdir = ds.tmpdir
 
 
-    def setup_bug_22146_unpacking_r2a_r2b_cluster(self, folder=None, model_analyse=None):
+    def setup_bug_22146_unpacking_r2a_r2b_cluster(self, folder=None, model_analyse=None, places = 7):
         """Setup data for the catch of U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered full dispersion models.
 
         @keyword folder:            The name of the folder for the test data.
@@ -231,7 +231,7 @@ class Relax_disp(SystemTestCase):
 
             # Test chi2.
             # At this point the chi-squared value at the solution should be zero, as the relaxation data was created with the same parameter values.
-            self.assertAlmostEqual(cur_spin.chi2, 0.0)
+            self.assertAlmostEqual(cur_spin.chi2, 0.0, places = places)
 
 
     def setup_hansen_cpmg_data(self, model=None):
@@ -1014,7 +1014,7 @@ class Relax_disp(SystemTestCase):
         """Catch U{bug #22146<https://gna.org/bugs/?22146>}, the failure of unpacking R2A and R2B, when performing a clustered NS CPMG 2SITE STAR full analysis."""
 
         # Base data setup.
-        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL)
+        self.setup_bug_22146_unpacking_r2a_r2b_cluster(folder='ns_cpmg_2site_star_full', model_analyse = MODEL_NS_CPMG_2SITE_STAR_FULL, places = 4)
 
 
     def test_cpmg_synthetic_ns3d_to_cr72(self):
