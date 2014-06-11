@@ -432,7 +432,7 @@ class Dispersion:
             self.num_disp_points_a = deepcopy(zeros_a)
 
             self.frqs_a = deepcopy(zeros_a)
-            disp_struct = deepcopy(zeros_a)
+            self.disp_struct = deepcopy(zeros_a)
             self.has_missing = False
 
             # Create special numpy structures.
@@ -468,7 +468,7 @@ class Dispersion:
                             self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
                             
                             # Make a spin 1/0 file.
-                            disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
+                            self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
 
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
@@ -479,13 +479,10 @@ class Dispersion:
             self.back_calc_a = deepcopy(self.values_a)
 
             # Pre calculate frqs structure
-            self.frqs_struct = self.frqs_a * disp_struct
+            self.frqs_struct = self.frqs_a * self.disp_struct
 
             # Find the numpy mask, which tells where values should be replaced.
             self.mask_replace_blank = masked_equal(missing_a, 1.0)
-
-            # Find the numpy mask, which tells where values should be set to zero.
-            self.mask_set_blank = masked_equal(disp_struct, 0.0)
 
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -575,7 +572,7 @@ class Dispersion:
         r2eff_CR72(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
-        self.back_calc_a[self.mask_set_blank.mask] = 0.0
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
