@@ -559,6 +559,9 @@ class Dispersion:
         """
 
         # Loop over the dw elements (one per spin).
+        # First clear the data from last call.
+        self.dw_struct[:] = 0.0
+
         for si in range(self.NS):
             # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
             multiply(dw[si], self.dw_mask[si], self.dw_temp)
