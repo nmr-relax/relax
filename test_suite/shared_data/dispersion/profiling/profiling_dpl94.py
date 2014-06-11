@@ -45,10 +45,10 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from lib.dispersion.cr72 import r2eff_CR72
+from lib.dispersion.dpl94 import r1rho_DPL94
 from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_DPL94
 
 
 # Alter setup.
@@ -139,7 +139,7 @@ class Profile(Dispersion):
         #self.fields = array([800. * 1E6])
         #self.fields = array([600. * 1E6, 800. * 1E6])
         self.fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
-        self.exp_type = [EXP_TYPE_CPMG_SQ]
+        self.exp_type = [EXP_TYPE_R1RHO]
         self.offset = [0]
 
         # Required data structures.
@@ -182,7 +182,7 @@ class Profile(Dispersion):
         end_index = []
         # The spin and frequency dependent R2 parameters.
         end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
+        if self.model in [MODEL_DPL94]:
             end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
         # The spin and dependent parameters (phi_ex, dw, padw2).
         end_index.append(end_index[-1] + self.num_spins)
@@ -424,7 +424,7 @@ class Profile(Dispersion):
         return chi2
 
 
-def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
+def single(num_spins=1, model=MODEL_DPL94, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -446,7 +446,7 @@ def single(num_spins=1, model=MODEL_CR72_FULL, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
+def cluster(num_spins=100, model=MODEL_DPL94, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -469,11 +469,11 @@ def cluster(num_spins=100, model=MODEL_CR72_FULL, iter=None):
 
 
 # Execute main function.
-if __name__ == "__main__":
-    main()
+#if __name__ == "__main__":
+#    main()
 
 def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_CR72_FULL, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=1, model=MODEL_DPL94, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
     end_index = C1.model.end_index
     #print("end_index:", end_index)
     num_spins = C1.model.num_spins
@@ -502,7 +502,7 @@ def test_reshape():
             r20b=R20B[r20_index]
             print("r20a", r20a, "r20b", r20b)
 
-    model = C1.calc(params)
-    print(model)
+    #model = C1.calc(params)
+    #print(model)
 
-#test_reshape()
+test_reshape()
