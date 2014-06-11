@@ -440,10 +440,10 @@ class Dispersion:
             self.dw_struct = deepcopy(zeros_a)
 
             # Temporary storage to avoid memory allocations and garbage collection.
-            self.dw_temp = zeros([self.NS] + self.numpy_array_shape, float64)
+            self.dw_temp = deepcopy(zeros_a)
 
             # The structure for multiplication with dw to piecewise build up the full dw structure.
-            self.dw_mask = deepcopy(self.dw_temp)
+            self.dw_mask = zeros(tuple([self.NS] + self.numpy_array_shape), float64)
 
             # Loop over the experiment types.
             for ei in range(self.NE):
@@ -561,10 +561,10 @@ class Dispersion:
         # Loop over the dw elements (one per spin).
         for si in range(self.NS):
             # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
-            multiply(dw[si], self.dw_mask[si], self.dw_temp[si])
+            multiply(dw[si], self.dw_mask[si], self.dw_temp)
 
             # Then add to the total, using temporary storage.
-            add(self.dw_struct, self.dw_temp[si], self.dw_struct)
+            add(self.dw_struct, self.dw_temp, self.dw_struct)
 
         # Reshape dw to per experiment and nr spins.
         dw_axis = asarray(dw).reshape(self.NE, self.NS)
