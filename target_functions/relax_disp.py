@@ -560,33 +560,29 @@ class Dispersion:
 
         # Loop over the dw elements (one per spin).
         # First clear the data from last call.
-        self.dw_struct[:] = 0.0
+        new = True
+        if new:
+            self.dw_struct[:] = 0.0
 
-        for si in range(self.NS):
-            # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
-            multiply(dw[si], self.dw_mask[si], self.dw_temp)
+            for si in range(self.NS):
+                # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
+                multiply(dw[si], self.dw_mask[si], self.dw_temp)
 
-            # Then add to the total, using temporary storage.
-            add(self.dw_struct, self.dw_temp, self.dw_struct)
+                # Then add to the total, using temporary storage.
+                add(self.dw_struct, self.dw_temp, self.dw_struct)
 
-        # Reshape dw to per experiment and nr spins.
-        dw_axis = asarray(dw).reshape(self.NE, self.NS)
+        else:
+            # Reshape dw to per experiment and nr spins.
+            dw_axis = asarray(dw).reshape(self.NE, self.NS)
 
-        # Expand dw to number of axis for frequency, offset and dispersion points.
-        dw_axis = dw_axis[:,:,None,None,None]
+            # Expand dw to number of axis for frequency, offset and dispersion points.
+            dw_axis = dw_axis[:,:,None,None,None]
 
-        # Tile dw according to dimensions.
-        dw_axis = tile(dw_axis, (1, 1, self.NM, self.NO, self.ND))
+            # Tile dw according to dimensions.
+            dw_axis = tile(dw_axis, (1, 1, self.NM, self.NO, self.ND))
 
-        # Convert dw from ppm to rad/s.
-        dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
-
-        ## Show that the structure is reproduced perfectly.
-        diff = sum(self.dw_struct - dw_frq_a)
-        if diff != 0.0:
-            print "WOOOPS", diff
-            #import sys
-            #sys.exit()
+            # Convert dw from ppm to rad/s.
+            dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
@@ -601,7 +597,10 @@ class Dispersion:
         R20B_axis = tile(R20B_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        if new:
+            r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        else:
+            r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_axis, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
