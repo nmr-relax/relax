@@ -452,7 +452,7 @@ class Dispersion:
                     # Loop over the spectrometer frequencies.
                     for mi in range(self.NM):
                         # Fill dw_mask with frequencies.
-                        self.dw_mask[si, :, si, mi] = self.frqs[ei][si][mi]
+                        self.dw_mask[si, ei, si, mi] = self.frqs[ei][si][mi]
 
                         # Loop over the offsets.
                         for oi in range(self.num_offsets[ei][si][mi]):
