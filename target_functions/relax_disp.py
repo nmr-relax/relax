@@ -566,13 +566,13 @@ class Dispersion:
             add(self.dw_struct, self.dw_temp[si], self.dw_struct)
 
         # Reshape dw to per experiment and nr spins.
-        dw_axis = asarray(dw).reshape(self.numpy_array_shape[0], self.numpy_array_shape[1])
+        dw_axis = asarray(dw).reshape(self.ei, self.si)
 
         # Expand dw to number of axis for frequency, offset and dispersion points.
         dw_axis = dw_axis[:,:,None,None,None]
 
         # Tile dw according to dimensions.
-        dw_axis = tile(dw_axis, (1, 1, self.numpy_array_shape[2], self.numpy_array_shape[3], self.numpy_array_shape[4]))
+        dw_axis = tile(dw_axis, (1, 1, self.mi, self.oi, self.di))
 
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
@@ -585,16 +585,16 @@ class Dispersion:
             sys.exit()
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        R20A_axis = R20A.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
-        R20B_axis = R20B.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
+        R20A_axis = R20A.reshape(self.ei, self.si, self.mi)
+        R20B_axis = R20B.reshape(self.ei, self.si, self.mi)
 
         # Expand R20A and R20B axis to offset and dispersion points.
         R20A_axis = R20A_axis[:,:,:,None,None]
         R20B_axis = R20B_axis[:,:,:,None,None]
 
         # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = tile(R20A_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.disp_struct
-        R20B_axis = tile(R20B_axis, (1, 1, 1, self.numpy_array_shape[3], self.numpy_array_shape[4])) * self.disp_struct
+        R20A_axis = tile(R20A_axis, (1, 1, 1, self.oi, self.di)) * self.disp_struct
+        R20B_axis = tile(R20B_axis, (1, 1, 1, self.oi, self.di)) * self.disp_struct
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
