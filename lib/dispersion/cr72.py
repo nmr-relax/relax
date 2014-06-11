@@ -92,7 +92,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, fabs, min, max, ndarray, ones, sqrt, sum, zeros
+from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, sqrt, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
 
 # Repetitive calculations (to speed up calculations).
@@ -147,7 +147,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     k_AB = pB * kex
 
     # The Psi and zeta values.
-    if not allclose(r20a, r20b):
+    if sum(r20a - r20b) != 0.0:
         fact = r20a - r20b - k_BA + k_AB
         Psi = fact**2 - dw2 + 4.0*pA*pB*kex**2
         zeta = 2.0*dw * fact
