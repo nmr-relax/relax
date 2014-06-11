@@ -408,6 +408,13 @@ class Dispersion:
             # Define the shape of all the numpy arrays.
             self.numpy_array_shape = back_calc_shape + [self.max_num_disp_points]
 
+            # Set the dimensions to paramater.
+            self.ei = self.numpy_array_shape[0]
+            self.si = self.numpy_array_shape[1]
+            self.mi = self.numpy_array_shape[2]
+            self.oi = self.numpy_array_shape[3]
+            self.di = self.numpy_array_shape[4]
+
             # Create zero and one numpy structure.
             zeros_a = zeros(self.numpy_array_shape, float64)
             ones_a = ones(self.numpy_array_shape, float64)
@@ -427,12 +434,25 @@ class Dispersion:
             self.disp_struct = deepcopy(zeros_a)
             self.has_missing = False
 
+            # Create special numpy structures.
+            # Structure of dw.
+            self.dw_struct = deepcopy(zeros_a)
+
+            # Temporary storage to avoid memory allocations and garbage collection.
+            self.dw_temp = zeros([self.si] + self.numpy_array_shape, float64)
+
+            # The structure for multiplication with dw to piecewise build up the full dw structure.
+            self.dw_mask = deepcopy(self.dw_temp)
+
             # Loop over the experiment types.
             for ei in range(self.num_exp):
                 # Loop over the spins.
                 for si in range(self.num_spins):
                     # Loop over the spectrometer frequencies.
                     for mi in range(self.num_frq):
+                        # Fill dw_mask with frequencies.
+                        self.dw_mask[si, :, si, mi] = self.frqs[ei][si][mi]
+
                         # Loop over the offsets.
                         for oi in range(self.num_offsets[ei][si][mi]):
                             # Extract number of dispersion points.
