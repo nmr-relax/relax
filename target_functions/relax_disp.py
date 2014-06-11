@@ -601,7 +601,7 @@ class Dispersion:
         R20B_axis = tile(R20B_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
