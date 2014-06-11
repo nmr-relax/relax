@@ -437,16 +437,8 @@ class Dispersion:
             self.has_missing = False
 
             # Create special numpy structures.
-            # Structure of dw.
+            # Structure of dw. The full and the outer dimensions structures.
             self.dw_struct = deepcopy(zeros_a)
-
-            # Temporary storage to avoid memory allocations and garbage collection.
-            self.dw_temp = deepcopy(zeros_a)
-
-            # The structure for multiplication with dw to piecewise build up the full dw structure.
-            self.dw_mask = zeros(tuple([self.NS] + self.numpy_array_shape), float64)
-
-            # Create the outer dw array structure.
             self.dw_outer = ones([self.NM, self.NO, self.ND], float64)
 
             # Loop over the experiment types.
@@ -455,9 +447,6 @@ class Dispersion:
                 for si in range(self.NS):
                     # Loop over the spectrometer frequencies.
                     for mi in range(self.NM):
-                        # Fill dw_mask with frequencies.
-                        self.dw_mask[si, ei, si, mi] = self.frqs[ei][si][mi]
-
                         # Loop over the offsets.
                         for oi in range(self.num_offsets[ei][si][mi]):
                             # Extract number of dispersion points.
@@ -484,6 +473,9 @@ class Dispersion:
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
+
+            # Pre calculate frqs structure
+            self.frqs_struct = self.frqs_a * self.disp_struct
 
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -562,26 +554,8 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Loop over the dw elements (one per spin).
-        # First clear the data from last call.
-        new = False
-        if new:
-            self.dw_struct[:] = 0.0
-
-            for si in range(self.NS):
-                # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
-                multiply(dw[si], self.dw_mask[si], self.dw_temp)
-
-                # Then add to the total, using temporary storage.
-                add(self.dw_struct, self.dw_temp, self.dw_struct)
-
-        else:
-            # Reshape dw to per experiment and nr spins.
-            # Expand dw to number of axis for frequency, offset and dispersion points.
-            # Tile dw according to dimensions.
-            # Convert dw from ppm to rad/s.
-            #self.dw_struct[:] = tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)) * self.disp_struct * self.frqs_a
-            self.dw_struct = multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.dw_outer ) * self.disp_struct * self.frqs_a
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.dw_outer ), self.frqs_struct, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
