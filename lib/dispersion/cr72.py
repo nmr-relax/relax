@@ -187,19 +187,11 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Replace data in array.
     # If dw is zero.
     if t_dw_zero:
-        if isinstance(r20a, float):
-            back_calc[:] = array([r20a]*num_points)
-            return
-        else:
-            back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
     # If eta_pos above 700.
     if t_max_etapos:
-        if isinstance(r20a, float):
-            back_calc[:] = array([r20a]*num_points)
-            return
-        else:
-            back_calc[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
+        back_calc[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
