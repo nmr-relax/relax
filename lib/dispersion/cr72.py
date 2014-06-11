@@ -92,8 +92,8 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, min, max, ndarray, ones, sqrt, sum, zeros
-from numpy.ma import masked_greater_equal
+from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, fabs, min, max, ndarray, ones, sqrt, sum, zeros
+from numpy.ma import masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -123,6 +123,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     """
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
+    t_dw_zero = False
     t_max_etapos = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
@@ -131,10 +132,10 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[:] = r20a
             return
 
-    # Test if dw is zero.
-    if allclose(dw, zeros(dw.shape)):
-        back_calc[:] = r20a
-        return
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
 
     # The B population.
     pB = 1.0 - pA
@@ -188,8 +189,19 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
 
     # Replace data in array.
+    if t_dw_zero:
+        if isinstance(r20a, float):
+            back_calc[:] = array([r20a]*num_points)
+            return
+        else:
+            R2eff[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+
     if t_max_etapos:
-        R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
+        if isinstance(r20a, float):
+            back_calc[:] = array([r20a]*num_points)
+            return
+        else:
+            R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
