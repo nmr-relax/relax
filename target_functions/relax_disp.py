@@ -29,6 +29,7 @@ from copy import deepcopy
 from math import pi
 from numpy import add, array, asarray, complex64, dot, float64, int16, max, multiply, ones, sqrt, sum, tile, zeros
 from numpy.ma import masked_equal
+from numpy import multiply
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14
@@ -445,6 +446,9 @@ class Dispersion:
             # The structure for multiplication with dw to piecewise build up the full dw structure.
             self.dw_mask = zeros(tuple([self.NS] + self.numpy_array_shape), float64)
 
+            # Create the outer dw array structure.
+            self.dw_outer = ones([self.NM, self.NO, self.ND], float64)
+
             # Loop over the experiment types.
             for ei in range(self.NE):
                 # Loop over the spins.
@@ -576,7 +580,8 @@ class Dispersion:
             # Expand dw to number of axis for frequency, offset and dispersion points.
             # Tile dw according to dimensions.
             # Convert dw from ppm to rad/s.
-            self.dw_struct[:] = tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)) * self.disp_struct * self.frqs_a
+            #self.dw_struct[:] = tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)) * self.disp_struct * self.frqs_a
+            self.dw_struct = multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.dw_outer ) * self.disp_struct * self.frqs_a
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
