@@ -93,7 +93,7 @@ More information on the CR72 full model can be found in the:
 
 # Python module imports.
 from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, fabs, min, max, ndarray, ones, sqrt, sum, zeros
-from numpy.ma import masked_greater_equal, masked_less, masked_where
+from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -219,8 +219,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
     if not isfinite(sum(R2eff)):
-        # Find the data mask which has nan values, and replace.
-        mask = isnan(R2eff)
-        R2eff[mask] = 1e100
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(R2eff, copy=False, fill_value=1e100)
 
     back_calc[:] = R2eff
