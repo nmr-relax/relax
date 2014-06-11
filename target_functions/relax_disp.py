@@ -27,7 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, asarray, complex64, dot, float64, int16, max, ones, sqrt, sum, tile, zeros
+from numpy import add, array, asarray, complex64, dot, float64, int16, max, multiply, ones, sqrt, sum, tile, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -557,6 +557,14 @@ class Dispersion:
         @rtype:         float
         """
 
+        # Loop over the dw elements (one per spin).
+        for si in range(self.si):
+            # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
+            multiply(dw[si], self.dw_mask[si], self.dw_temp[si])
+
+            # Then add to the total, using temporary storage.
+            add(self.dw_struct, self.dw_temp[si], self.dw_struct)
+
         # Reshape dw to per experiment and nr spins.
         dw_axis = asarray(dw).reshape(self.numpy_array_shape[0], self.numpy_array_shape[1])
 
@@ -568,6 +576,13 @@ class Dispersion:
 
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
+
+        ## Show that the structure is reproduced perfectly.
+        diff = sum(self.dw_struct - dw_frq_a)
+        if diff != 0.0:
+            print "WOOOPS", diff
+            import sys
+            sys.exit()
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.numpy_array_shape[0], self.numpy_array_shape[1], self.numpy_array_shape[2])
