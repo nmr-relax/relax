@@ -395,7 +395,7 @@ class Dispersion:
             self.func = self.func_ns_mmq_3site_linear
 
         # Setup special numpy array structures, for higher dimensional computation.
-        if model in [MODEL_CR72, MODEL_CR72_FULL]:
+        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL]:
             # Get the shape of back_calc structure.
             # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
             # Shape has to be: [ei][si][mi][oi].
@@ -430,6 +430,9 @@ class Dispersion:
             
             self.cpmg_frqs_a = deepcopy(ones_a)
             self.num_disp_points_a = deepcopy(zeros_a)
+            self.inv_relax_times_a = deepcopy(zeros_a)
+            self.tau_cpmg_a = deepcopy(zeros_a)
+            self.power_a = ones(self.numpy_array_shape, int16)
 
             self.frqs_a = deepcopy(zeros_a)
             self.disp_struct = deepcopy(zeros_a)
@@ -459,6 +462,7 @@ class Dispersion:
                             # Extract cpmg_frqs and num_disp_points from lists.
                             self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                             self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
+                            self.inv_relax_times_a[ei][si][mi][oi][:num_disp_points] = 1.0 / self.relax_times[ei][mi]
 
                             # Extract the errors and values to numpy array.
                             self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
@@ -474,6 +478,9 @@ class Dispersion:
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
                                     missing_a[ei][si][mi][oi][di] = 1.0
+                                if model in [MODEL_B14, MODEL_B14_FULL]:
+                                    self.power_a[ei][si][mi][oi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
+                                    self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
@@ -508,40 +515,26 @@ class Dispersion:
         k_BA = pA * kex
         k_AB = pB * kex
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
 
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + si*self.num_frq
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20a_struct[:] = multiply.outer( asarray(R20A).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20b_struct[:] = multiply.outer( asarray(R20B).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * self.frqs[ei][si][mi]
+        # Back calculate the R2eff values.
+        r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, pB=pB, dw=self.dw_struct, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
-                    # Alias the dw frequency combinations.
-                    if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
-                        aliased_dw = dw_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
-                        aliased_dw = dw_frq
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                    # Back calculate the R2eff values.
-                    r2eff_B14(r20a=R20A[r20_index], r20b=R20B[r20_index], pA=pA, pB=pB, dw=aliased_dw, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power[ei][mi], inv_tcpmg=self.inv_relax_times[ei][mi], tcp=self.tau_cpmg[ei][mi], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0])
-
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[ei][si][mi][0]):
-                        if self.missing[ei][si][mi][0][di]:
-                            self.back_calc[ei][si][mi][0][di] = self.values[ei][si][mi][0][di]
-
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[ei][si][mi][0], self.back_calc[ei][si][mi][0], self.errors[ei][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def calc_CR72_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
