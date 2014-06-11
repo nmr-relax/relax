@@ -427,7 +427,7 @@ class Dispersion:
             # The number of disp point can change per spectrometer, so we make the maximum size.
             self.values_a = deepcopy(zeros_a)
             self.errors_a = deepcopy(ones_a)
-            self.missing_a = zeros(self.numpy_array_shape)
+            missing_a = zeros(self.numpy_array_shape)
             
             self.cpmg_frqs_a = deepcopy(ones_a)
             self.num_disp_points_a = deepcopy(zeros_a)
@@ -474,13 +474,16 @@ class Dispersion:
                             for di in range(self.num_disp_points[ei][si][mi][oi]):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
-                                    self.missing_a[ei][si][mi][oi][di] = 1.0
+                                    missing_a[ei][si][mi][oi][di] = 1.0
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
 
             # Pre calculate frqs structure
             self.frqs_struct = self.frqs_a * self.disp_struct
+
+            # Find the numpy mask, which tells where values should be replaced.
+            self.mask_replace_blank = masked_equal(missing_a, 1.0)
 
 
     def calc_B14_chi2(self, R20A=None, R20B=None, dw=None, pA=None, kex=None):
@@ -574,11 +577,8 @@ class Dispersion:
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
-            # Find the numpy mask, which tells where values should be replaced.
-            mask_replace = masked_equal(self.missing_a, 1.0)
-
             # Replace with values.
-            self.back_calc_a[mask_replace.mask] = self.values_a[mask_replace.mask]
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         ## Calculate the chi-squared statistic.
         return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
