@@ -110,7 +110,8 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, arctan2, array, cos, cosh, isfinite, log, max, power, sin, sinh, sqrt, sum
+from numpy import arccosh, arctan2, array, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
@@ -122,15 +123,15 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             float
+    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -138,21 +139,31 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword ncyc:          The matrix exponential power array. The number of CPMG blocks.
-    @type ncyc:             numpy int16, rank-1 array
+    @type ncyc:             numpy int16 array of rank [NE][NS][[NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        float
+    @type inv_tcpmg:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array
+    @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
 
+    # Flag to tell if values should be replaced if max_e_zero in cosh function is violated.
+    t_dw_zero = False
+    t_max_e_zero = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20a]*num_points)
-        return
+    # Test if pA or kex is zero.
+    if kex == 0.0 or pA == 1.0:
+            back_calc[:] = r20a
+            return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw == 0.0, dw)
 
     # Repetitive calculations (to speed up calculations).
     deltaR2 = r20a - r20b
@@ -203,8 +214,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Catch math domain error of sinh(val > 710).
     # This is when E0 > 710.
     if max(E0) > 700:
-        back_calc[:] = array([r20a]*num_points)
-        return
+        t_max_e_zero = True
+        mask_max_e_zero = masked_greater_equal(E0, 700.0)
+        # To prevent math errors, set e_zero to 1.
+        E0[mask_max_e_zero.mask] = 1.0
 
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
@@ -245,11 +258,19 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
 
     # Fastest calculation.
-    R2eff = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+    back_calc[:] = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+
+    # If eta_pos above 700.
+    if t_max_e_zero:
+        back_calc[mask_max_e_zero.mask] = r20a[mask_max_e_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
-        R2eff = array([1e100]*num_points)
-
-    back_calc[:] = R2eff
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
