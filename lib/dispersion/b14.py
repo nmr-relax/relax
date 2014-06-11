@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, arctan2, array, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
+from numpy import any, arccosh, arctan2, array, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
@@ -153,6 +153,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Flag to tell if values should be replaced if max_e_zero in cosh function is violated.
     t_dw_zero = False
     t_max_e_zero = False
+    t_v3_N_zero = False
+    t_log_tog_neg = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
@@ -245,7 +247,16 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
 
     y = power( (v1c - v3) / (v1c + v3), ncyc)
 
-    Tog = 0.5 * (1. + y) + (1. - y) * v5 / (2. * v3 * N )
+    Tog_div = 2. * v3 * N
+
+    # Catch math domain error of division with 0.
+    # This is when Tog_div is zero.
+    mask_v3_N_zero = Tog_div == 0.0
+    if any(mask_v3_N_zero):
+        t_v3_N_zero = True
+        Tog_div[mask_v3_N_zero] = 1.0
+
+    Tog = 0.5 * (1. + y) + (1. - y) * v5 / Tog_div
 
     ## -1/Trel * log(LpreDyn).
     # Rpre = (r20a + r20b + kex) / 2.0
@@ -256,6 +267,13 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     ## Baldwin final.
     # Estimate R2eff. relax_time = Trel = 1/inv_tcpmg.
     # R2eff = R2eff_CR72 - inv_tcpmg * log(Tog.real)
+
+    # Catch math domain error of log of negative.
+    # This is when Tog.real is negative.
+    mask_log_tog_neg = Tog.real < 0.0
+    if any(mask_log_tog_neg):
+        t_log_tog_neg = True
+        Tog.real[mask_log_tog_neg] = 1.0
 
     # Fastest calculation.
     back_calc[:] = (r20a + r20b + kex) / 2.0  - inv_tcpmg * ( ncyc *  arccosh(v1c.real) + log(Tog.real) )
@@ -268,6 +286,14 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # If eta_pos above 700.
     if t_max_e_zero:
         back_calc[mask_max_e_zero.mask] = r20a[mask_max_e_zero.mask]
+
+    # If Tog_div is zero.
+    if t_v3_N_zero:
+        back_calc[mask_v3_N_zero] = 1e100
+
+    # If Tog.real is negative.
+    if t_log_tog_neg:
+        back_calc[mask_log_tog_neg] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
