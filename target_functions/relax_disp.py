@@ -516,11 +516,11 @@ class Dispersion:
         k_AB = pB * kex
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        self.r20a_struct[:] = multiply.outer( asarray(R20A).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
-        self.r20b_struct[:] = multiply.outer( asarray(R20B).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
         r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, pB=pB, dw=self.dw_struct, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
@@ -555,11 +555,11 @@ class Dispersion:
         """
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        self.r20a_struct[:] = multiply.outer( asarray(R20A).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
-        self.r20b_struct[:] = multiply.outer( asarray(R20B).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
