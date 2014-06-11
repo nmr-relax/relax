@@ -150,9 +150,9 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type num_points:       int
     """
 
-    # Flag to tell if values should be replaced if max_e_zero in cosh function is violated.
+    # Flag to tell if values should be replaced if math function is violated.
     t_dw_zero = False
-    t_max_e_zero = False
+    t_max_e = False
     t_v3_N_zero = False
     t_log_tog_neg = False
 
@@ -216,10 +216,10 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     # Catch math domain error of sinh(val > 710).
     # This is when E0 > 710.
     if max(E0) > 700:
-        t_max_e_zero = True
-        mask_max_e_zero = masked_greater_equal(E0, 700.0)
+        t_max_e = True
+        mask_max_e = masked_greater_equal(E0, 700.0)
         # To prevent math errors, set e_zero to 1.
-        E0[mask_max_e_zero.mask] = 1.0
+        E0[mask_max_e.mask] = 1.0
 
     # Derived from chemical shifts  #E2 = complex(0,-2.0 * tcp * (F00I - f11I)).
     E2 =  two_tcp * g4
@@ -283,9 +283,9 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     if t_dw_zero:
         back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
-    # If eta_pos above 700.
-    if t_max_e_zero:
-        back_calc[mask_max_e_zero.mask] = r20a[mask_max_e_zero.mask]
+    # If E0 is above 700.
+    if t_max_e:
+        back_calc[mask_max_e.mask] = r20a[mask_max_e.mask]
 
     # If Tog_div is zero.
     if t_v3_N_zero:
