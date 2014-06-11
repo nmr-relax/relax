@@ -128,7 +128,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
-    if kex == 1.0 or pA == 1:
+    if kex == 0.0 or pA == 1.0:
             back_calc[:] = r20a
             return
 
