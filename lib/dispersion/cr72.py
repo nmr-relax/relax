@@ -93,7 +93,7 @@ More information on the CR72 full model can be found in the:
 
 # Python module imports.
 from numpy import allclose, arccosh, array, cos, cosh, isfinite, isnan, fabs, min, max, ndarray, ones, sqrt, sum, zeros
-from numpy.ma import masked_greater_equal, masked_where
+from numpy.ma import masked_greater_equal, masked_less, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)
@@ -125,6 +125,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
     t_dw_zero = False
     t_max_etapos = False
+    t_min_fact = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
@@ -182,13 +183,16 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
     if min(fact) < 1.0:
-        back_calc[:] = r20_kex
-        return
+        t_min_fact = True
+        mask_min_fact = masked_less(fact, 1.0)
+        # To prevent math errors, set fact to 1.
+        fact[mask_min_etapos.mask] = 1.0
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
 
     # Replace data in array.
+    # If dw is zero.
     if t_dw_zero:
         if isinstance(r20a, float):
             back_calc[:] = array([r20a]*num_points)
@@ -196,12 +200,21 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         else:
             R2eff[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
+    # If eta_pos above 700.
     if t_max_etapos:
         if isinstance(r20a, float):
             back_calc[:] = array([r20a]*num_points)
             return
         else:
             R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
+
+    # If fact < 1.0
+    if t_min_fact:
+        if isinstance(r20a, float):
+            back_calc[:] = array([r20a]*num_points)
+            return
+        else:
+            R2eff[mask_min_fact.mask] = r20a[mask_min_fact.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
