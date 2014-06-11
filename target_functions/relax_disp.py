@@ -560,7 +560,7 @@ class Dispersion:
 
         # Loop over the dw elements (one per spin).
         # First clear the data from last call.
-        new = True
+        new = False
         if new:
             self.dw_struct[:] = 0.0
 
@@ -573,16 +573,12 @@ class Dispersion:
 
         else:
             # Reshape dw to per experiment and nr spins.
-            dw_axis = asarray(dw).reshape(self.NE, self.NS)
-
             # Expand dw to number of axis for frequency, offset and dispersion points.
-            dw_axis = dw_axis[:,:,None,None,None]
-
             # Tile dw according to dimensions.
-            dw_axis = tile(dw_axis, (1, 1, self.NM, self.NO, self.ND))
-
             # Convert dw from ppm to rad/s.
-            dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
+            # First clear the data from last call.
+            self.dw_struct[:] = 1.0
+            self.dw_struct[:] = multiply(self.dw_struct, tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)), ) * self.disp_struct * self.frqs_a
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
@@ -597,10 +593,7 @@ class Dispersion:
         R20B_axis = tile(R20B_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
 
         ## Back calculate the R2eff values.
-        if new:
-            r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
-        else:
-            r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_axis, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
