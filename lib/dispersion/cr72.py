@@ -92,7 +92,7 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, sqrt, sum
+from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, sqrt, subtract, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
 
 # Repetitive calculations (to speed up calculations).
@@ -181,8 +181,8 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         back_calc[:] = r20_kex
         return
 
-    # Calculate R2eff.
-    R2eff = r20_kex - cpmg_frqs * arccosh( fact )
+    # Calculate R2eff. This uses the temporary buffer and fill directly to back_calc.
+    subtract(r20_kex, cpmg_frqs * arccosh( fact ), out=back_calc)
 
     # Replace data in array.
     # If dw is zero.
@@ -191,7 +191,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[:] = array([r20a]*num_points)
             return
         else:
-            R2eff[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
+            back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
     # If eta_pos above 700.
     if t_max_etapos:
@@ -199,12 +199,10 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
             back_calc[:] = array([r20a]*num_points)
             return
         else:
-            R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
+            back_calc[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R2eff)):
+    if not isfinite(sum(back_calc)):
         # Replaces nan, inf, etc. with fill value.
-        fix_invalid(R2eff, copy=False, fill_value=1e100)
-
-    back_calc[:] = R2eff
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
