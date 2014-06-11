@@ -439,7 +439,7 @@ class Dispersion:
             # Create special numpy structures.
             # Structure of dw. The full and the outer dimensions structures.
             self.dw_struct = deepcopy(zeros_a)
-            self.dw_outer = ones([self.NM, self.NO, self.ND], float64)
+            self.nm_no_nd_struct = ones([self.NM, self.NO, self.ND], float64)
 
             # Loop over the experiment types.
             for ei in range(self.NE):
@@ -555,7 +555,7 @@ class Dispersion:
         """
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.dw_outer ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
