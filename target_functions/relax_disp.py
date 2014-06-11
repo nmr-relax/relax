@@ -581,8 +581,8 @@ class Dispersion:
         diff = sum(self.dw_struct - dw_frq_a)
         if diff != 0.0:
             print "WOOOPS", diff
-            import sys
-            sys.exit()
+            #import sys
+            #sys.exit()
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.ei, self.si, self.mi)
