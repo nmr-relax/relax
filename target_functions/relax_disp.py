@@ -409,11 +409,12 @@ class Dispersion:
             self.numpy_array_shape = back_calc_shape + [self.max_num_disp_points]
 
             # Set the dimensions to paramater.
-            self.ei = self.numpy_array_shape[0]
-            self.si = self.numpy_array_shape[1]
-            self.mi = self.numpy_array_shape[2]
-            self.oi = self.numpy_array_shape[3]
-            self.di = self.numpy_array_shape[4]
+            # The total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
+            self.NE = self.numpy_array_shape[0]
+            self.NS = self.numpy_array_shape[1]
+            self.NM = self.numpy_array_shape[2]
+            self.NO = self.numpy_array_shape[3]
+            self.ND = self.numpy_array_shape[4]
 
             # Create zero and one numpy structure.
             zeros_a = zeros(self.numpy_array_shape, float64)
@@ -439,17 +440,17 @@ class Dispersion:
             self.dw_struct = deepcopy(zeros_a)
 
             # Temporary storage to avoid memory allocations and garbage collection.
-            self.dw_temp = zeros([self.si] + self.numpy_array_shape, float64)
+            self.dw_temp = zeros([self.NS] + self.numpy_array_shape, float64)
 
             # The structure for multiplication with dw to piecewise build up the full dw structure.
             self.dw_mask = deepcopy(self.dw_temp)
 
             # Loop over the experiment types.
-            for ei in range(self.num_exp):
+            for ei in range(self.NE):
                 # Loop over the spins.
-                for si in range(self.num_spins):
+                for si in range(self.NS):
                     # Loop over the spectrometer frequencies.
-                    for mi in range(self.num_frq):
+                    for mi in range(self.NM):
                         # Fill dw_mask with frequencies.
                         self.dw_mask[si, :, si, mi] = self.frqs[ei][si][mi]
 
@@ -558,7 +559,7 @@ class Dispersion:
         """
 
         # Loop over the dw elements (one per spin).
-        for si in range(self.si):
+        for si in range(self.NS):
             # First multiply the spin specific dw with the spin specific frequency mask, using temporary storage.
             multiply(dw[si], self.dw_mask[si], self.dw_temp[si])
 
@@ -566,13 +567,13 @@ class Dispersion:
             add(self.dw_struct, self.dw_temp[si], self.dw_struct)
 
         # Reshape dw to per experiment and nr spins.
-        dw_axis = asarray(dw).reshape(self.ei, self.si)
+        dw_axis = asarray(dw).reshape(self.NE, self.NS)
 
         # Expand dw to number of axis for frequency, offset and dispersion points.
         dw_axis = dw_axis[:,:,None,None,None]
 
         # Tile dw according to dimensions.
-        dw_axis = tile(dw_axis, (1, 1, self.mi, self.oi, self.di))
+        dw_axis = tile(dw_axis, (1, 1, self.NM, self.NO, self.ND))
 
         # Convert dw from ppm to rad/s.
         dw_frq_a = dw_axis*self.disp_struct*self.frqs_a
@@ -585,16 +586,16 @@ class Dispersion:
             #sys.exit()
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        R20A_axis = R20A.reshape(self.ei, self.si, self.mi)
-        R20B_axis = R20B.reshape(self.ei, self.si, self.mi)
+        R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
+        R20B_axis = R20B.reshape(self.NE, self.NS, self.NM)
 
         # Expand R20A and R20B axis to offset and dispersion points.
         R20A_axis = R20A_axis[:,:,:,None,None]
         R20B_axis = R20B_axis[:,:,:,None,None]
 
         # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = tile(R20A_axis, (1, 1, 1, self.oi, self.di)) * self.disp_struct
-        R20B_axis = tile(R20B_axis, (1, 1, 1, self.oi, self.di)) * self.disp_struct
+        R20A_axis = tile(R20A_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
+        R20B_axis = tile(R20B_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
 
         ## Back calculate the R2eff values.
         r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=dw_frq_a, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
