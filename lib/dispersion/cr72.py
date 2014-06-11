@@ -105,19 +105,19 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword r20b:          The R20 parameter value of state B (R2 with no exchange).
-    @type r20b:             float
+    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
-    @type cpmg_frqs:        numpy rank-1 float array
+    @type cpmg_frqs:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
     @type num_points:       int
     """
@@ -125,34 +125,16 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
     t_max_etapos = False
 
-    # Determine if calculating in numpy rank-1 float array, of higher dimensions.
-    rank_1 = True
-    if isinstance(num_points, ndarray):
-        rank_1 = False
-
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    # For rank-1 float array.
-    if rank_1:
-        if dw == 0.0 or pA == 1.0 or kex == 0.0:
-            back_calc[:] = array([r20a]*num_points)
-            return
-
-    # For higher dimensions, return same structure.
-    else:
-       # Test if kex is zero.       
-        if kex == 1.0:
+    # Test if pA or kex is zero.
+    if kex == 1.0 or pA == 1:
             back_calc[:] = r20a
             return
 
-        # Test if pA is 1.
-        if pA == 1.0:
-            back_calc[:] = r20a
-            return      
-
-        # Test if dw is zero.
-        if allclose(dw, zeros(dw.shape)):
-            back_calc[:] = r20a
-            return
+    # Test if dw is zero.
+    if allclose(dw, zeros(dw.shape)):
+        back_calc[:] = r20a
+        return
 
     # The B population.
     pB = 1.0 - pA
@@ -187,28 +169,20 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        if rank_1:
-            back_calc[:] = array([r20a]*num_points)
-            return
         # For higher dimensions, find the mask to replace values.
         # Reset to 1.0 and wait for replacement to later.
-        else:
-            # Set the flag to tell to replace values.
-            t_max_etapos = True
-            # Find the mask, where to replace values.            
-            mask_max_etapos = masked_greater_equal(etapos, 700.0)
-            # To prevent math errors, set etapos to 1.
-            etapos[mask_max_etapos.mask] = 1.0
+        # Set the flag to tell to replace values.
+        t_max_etapos = True
+        # Find the mask, where to replace values.
+        mask_max_etapos = masked_greater_equal(etapos, 700.0)
+        # To prevent math errors, set etapos to 1.
+        etapos[mask_max_etapos.mask] = 1.0
 
     # The arccosh argument - catch invalid values.
     fact = Dpos * cosh(etapos) - Dneg * cos(etaneg)
     if min(fact) < 1.0:
-        if rank_1:
-            back_calc[:] = array([r20_kex]*num_points)
-            return
-        else:
-            back_calc[:] = r20_kex
-            return
+        back_calc[:] = r20_kex
+        return
 
     # Calculate R2eff.
     R2eff = r20_kex - cpmg_frqs * arccosh( fact )
