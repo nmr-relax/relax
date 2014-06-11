@@ -441,6 +441,11 @@ class Dispersion:
             self.dw_struct = deepcopy(zeros_a)
             self.nm_no_nd_struct = ones([self.NM, self.NO, self.ND], float64)
 
+            # Structure of r20a and r20b. The full and outer dimensions structures.
+            self.r20a_struct = deepcopy(zeros_a)
+            self.r20b_struct = deepcopy(zeros_a)
+            self.no_nd_struct = ones([self.NO, self.ND], float64)
+
             # Loop over the experiment types.
             for ei in range(self.NE):
                 # Loop over the spins.
@@ -558,19 +563,11 @@ class Dispersion:
         multiply( multiply.outer( asarray(dw).reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
-        R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
-        R20B_axis = R20B.reshape(self.NE, self.NS, self.NM)
-
-        # Expand R20A and R20B axis to offset and dispersion points.
-        R20A_axis = R20A_axis[:,:,:,None,None]
-        R20B_axis = R20B_axis[:,:,:,None,None]
-
-        # Tile R20A and R20B according to maximum of dispersion points. Multiply with spin structure array.
-        R20A_axis = tile(R20A_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
-        R20B_axis = tile(R20B_axis, (1, 1, 1, self.NO, self.ND)) * self.disp_struct
+        self.r20a_struct[:] = multiply.outer( asarray(R20A).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.r20b_struct[:] = multiply.outer( asarray(R20B).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=R20A_axis, r20b=R20B_axis, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
