@@ -576,9 +576,7 @@ class Dispersion:
             # Expand dw to number of axis for frequency, offset and dispersion points.
             # Tile dw according to dimensions.
             # Convert dw from ppm to rad/s.
-            # First clear the data from last call.
-            self.dw_struct[:] = 1.0
-            self.dw_struct[:] = multiply(self.dw_struct, tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)), ) * self.disp_struct * self.frqs_a
+            self.dw_struct[:] = tile(asarray(dw).reshape(self.NE, self.NS)[:,:,None,None,None], (1, 1, self.NM, self.NO, self.ND)) * self.disp_struct * self.frqs_a
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         R20A_axis = R20A.reshape(self.NE, self.NS, self.NM)
