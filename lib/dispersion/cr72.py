@@ -171,11 +171,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
     # Catch math domain error of cosh(val > 710).
     # This is when etapos > 710.
     if max(etapos) > 700:
-        # For higher dimensions, find the mask to replace values.
-        # Reset to 1.0 and wait for replacement to later.
-        # Set the flag to tell to replace values.
         t_max_etapos = True
-        # Find the mask, where to replace values.
         mask_max_etapos = masked_greater_equal(etapos, 700.0)
         # To prevent math errors, set etapos to 1.
         etapos[mask_max_etapos.mask] = 1.0
@@ -208,7 +204,7 @@ def r2eff_CR72(r20a=None, r20b=None, pA=None, dw=None, kex=None, cpmg_frqs=None,
         else:
             R2eff[mask_max_etapos.mask] = r20a[mask_max_etapos.mask]
 
-    # If fact < 1.0
+    # If fact < 1.0.
     if t_min_fact:
         if isinstance(r20a, float):
             back_calc[:] = array([r20a]*num_points)
