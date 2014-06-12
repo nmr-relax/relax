@@ -462,6 +462,9 @@ class Dispersion:
             if model in [MODEL_DPL94]:
                 self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
+            # Extract the frequencies to numpy array.
+            self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+
             # Loop over the experiment types.
             for ei in range(self.NE):
                 # Loop over the spins.
@@ -477,8 +480,6 @@ class Dispersion:
                                 # Extract cpmg_frqs and num_disp_points from lists.
                                 self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                                 self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
-                                # Extract the frequencies to numpy array.
-                                self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
 
                                 # Make a spin 1/0 file.
                                 self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
@@ -501,7 +502,6 @@ class Dispersion:
                                     self.disp_struct[ei][si][mi][oi][di] = 1.0
 
                                     # Extract the frequencies to numpy array.
-                                    self.frqs_a[ei][si][mi][oi][di] = self.frqs[ei][si][mi]
                                     self.tilt_angles_a[ei][si][mi][oi][di] = self.tilt_angles[ei][si][mi][oi][di]
                                     self.spin_lock_omega1_squared_a[ei][si][mi][oi][di] = self.spin_lock_omega1_squared[ei][mi][oi][di]
 
