@@ -161,8 +161,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, dw_orig=None, kex
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     # Test if pA or kex is zero.
     if kex == 0.0 or pA == 1.0:
-            back_calc[:] = r20a
-            return
+        back_calc[:] = r20a
+        return
 
     # Test if dw is zero. Wait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
