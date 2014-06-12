@@ -281,8 +281,11 @@ class Base_script:
         # Set the reference domain.
         self._execute_uf(uf_name='frame_order.ref_domain', ref='N')
 
-        # Set the initial pivot point(s).
-        self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=True)
+        # Set the initial pivot point - fixed when optimising, unfixed otherwise to check different code paths.
+        fix = False
+        if hasattr(status, 'flag_opt') and status.flag_opt:
+            fix = True
+        self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=fix)
 
         # Set the paramagnetic centre.
         self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
