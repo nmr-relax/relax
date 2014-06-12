@@ -562,7 +562,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_CR72(r20a=self.r20a_struct, r20a_orig=R20A, r20b=self.r20b_struct, r20b_orig=R20B, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
