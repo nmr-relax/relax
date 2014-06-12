@@ -780,10 +780,10 @@ class Frame_order:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
 
-        # Average position rotation.
+        # Reconstruct the full eigenframe of the motion.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
 
-        # The Kronecker product of the eigenframe rotation.
+        # The Kronecker product of the eigenframe.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
@@ -854,10 +854,10 @@ class Frame_order:
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
-        # Average position rotation.
+        # Reconstruct the full eigenframe of the motion.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
 
-        # The Kronecker product of the eigenframe rotation.
+        # The Kronecker product of the eigenframe.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
@@ -928,10 +928,10 @@ class Frame_order:
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
-        # Average position rotation.
+        # Reconstruct the full eigenframe of the motion.
         euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
 
-        # The Kronecker product of the eigenframe rotation.
+        # The Kronecker product of the eigenframe.
         Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
