@@ -2003,7 +2003,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0][si][mi]
 
                 # Back calculate the R2eff values.
-                r2eff_TSMFK01(r20a=R20A[r20a_index], dw=dw_frq, k_AB=k_AB, tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+                r2eff_TSMFK01(r20a=R20A[r20a_index], dw=dw_frq, dw_orig=dw, k_AB=k_AB, tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0][si][mi][0]):
