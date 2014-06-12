@@ -27,6 +27,7 @@ import os
 import sys
 if dep_check.wx_module:
     import wx
+import unittest
 
 # Formatting.
 from test_suite.formatting import summary_line
@@ -87,28 +88,41 @@ class Test_suite_runner:
         else:
             self.runner = RelaxTestRunner(stream=sys.stdout, timing=timing)
 
+        # Let the tests handle the keyboard interrupt (for Python 2.7 and higher).
+        if hasattr(unittest, 'installHandler'):
+            unittest.installHandler()
+
 
     def run_all_tests(self):
         """Execute all of the test suite test types."""
 
         # Execute the system/functional tests.
         if 'system' in self.categories:
-            self.run_system_tests(summary=False)
+            status = self.run_system_tests(summary=False)
+            if not status:
+                return
 
         # Execute the unit tests.
         if 'unit' in self.categories:
-            self.run_unit_tests(summary=False)
+            status = self.run_unit_tests(summary=False)
+            if not status:
+                return
 
         # Execute the GUI tests.
         if 'gui' in self.categories:
-            self.run_gui_tests(summary=False)
+            status = self.run_gui_tests(summary=False)
+            if not status:
+                return
 
         # Execute the GUI tests.
         if 'verification' in self.categories:
-            self.run_verification_tests(summary=False)
+            status = self.run_verification_tests(summary=False)
+            if not status:
+                return
 
         # Print out a summary of the test suite.
         self.summary()
+
 
 
     def run_gui_tests(self, summary=True):
@@ -116,44 +130,56 @@ class Test_suite_runner:
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
+        @rtype:             bool
         """
 
-        # Print a header.
-        title(file=sys.stdout, text='GUI tests')
+        # Run the tests, catching the keyboard interrupt.
+        try:
+            # Print a header.
+            title(file=sys.stdout, text='GUI tests')
 
-        # Run the tests.
-        if dep_check.wx_module:
-            # Set up the GUI if needed (i.e. not in GUI mode already).
-            app = wx.GetApp()
-            if app == None:
-                # Initialise.
-                app = wx.App(redirect=False)
+            # Run the tests.
+            if dep_check.wx_module:
+                # Set up the GUI if needed (i.e. not in GUI mode already).
+                app = wx.GetApp()
+                if app == None:
+                    # Initialise.
+                    app = wx.App(redirect=False)
 
-                # Build the GUI.
-                app.gui = relax_gui.Main(parent=None, id=-1, title="")
+                    # Build the GUI.
+                    app.gui = relax_gui.Main(parent=None, id=-1, title="")
 
-            # Execute the GUI tests.
-            gui_runner = GUI_test_runner()
-            self.runner.category = 'gui'
-            self.gui_result = gui_runner.run(self.tests, runner=self.runner)
+                # Execute the GUI tests.
+                gui_runner = GUI_test_runner()
+                self.runner.category = 'gui'
+                self.gui_result = gui_runner.run(self.tests, runner=self.runner)
 
-            # Clean up for the GUI, if not in GUI mode.
-            if status.test_mode:
-                # Terminate the interpreter thread to allow the tests to cleanly exit.
-                interpreter_thread = interpreter.Interpreter()
-                interpreter_thread.exit()
+                # Clean up for the GUI, if not in GUI mode.
+                if status.test_mode:
+                    # Terminate the interpreter thread to allow the tests to cleanly exit.
+                    interpreter_thread = interpreter.Interpreter()
+                    interpreter_thread.exit()
 
-                # Stop the GUI main loop.
-                app.ExitMainLoop()
+                    # Stop the GUI main loop.
+                    app.ExitMainLoop()
 
-        # No wx module installed.
-        else:
-            print("All GUI tests skipped due to the missing/broken wx module.\n")
-            self.gui_result = 'skip'
+            # No wx module installed.
+            else:
+                print("All GUI tests skipped due to the missing/broken wx module.\n")
+                self.gui_result = 'skip'
 
-        # Print out a summary of the test suite.
-        if summary:
-            self.summary()
+            # Print out a summary of the test suite.
+            if summary:
+                self.summary()
+
+        # Catch the keyboard interrupt.
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt:  Terminating all tests.\n")
+            return False
+
+        # All tests were run successfully.
+        return True
 
 
     def run_system_tests(self, summary=True):
@@ -161,19 +187,31 @@ class Test_suite_runner:
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
+        @rtype:             bool
         """
 
-        # Print a header.
-        title(file=sys.stdout, text='System / functional tests')
+        # Run the tests, catching the keyboard interrupt.
+        try:
+            # Print a header.
+            title(file=sys.stdout, text='System / functional tests')
 
-        # Run the tests.
-        system_runner = System_test_runner()
-        self.runner.category = 'system'
-        self.system_result = system_runner.run(self.tests, runner=self.runner)
+            # Run the tests.
+            system_runner = System_test_runner()
+            self.runner.category = 'system'
+            self.system_result = system_runner.run(self.tests, runner=self.runner)
 
-        # Print out a summary of the test suite.
-        if summary:
-            self.summary()
+            # Print out a summary of the test suite.
+            if summary:
+                self.summary()
+
+        # Catch the keyboard interrupt.
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt:  Terminating all tests.\n")
+            return False
+
+        # All tests were run successfully.
+        return True
 
 
     def run_unit_tests(self, summary=True):
@@ -181,19 +219,31 @@ class Test_suite_runner:
 
         @keyword summary:   A flag which if True will cause a summary to be printed.
         @type summary:      bool
+        @return:            True if the tests were run, False if a KeyboardInterrupt occurred.
+        @rtype:             bool
         """
 
-        # Print a header.
-        title(file=sys.stdout, text='Unit tests')
+        # Run the tests, catching the keyboard interrupt.
+        try:
+            # Print a header.
+            title(file=sys.stdout, text='Unit tests')
 
-        # Run the tests.
-        unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
-        self.runner.category = 'unit'
-        self.unit_result = unit_runner.run(runner=self.runner)
+            # Run the tests.
+            unit_runner = Unit_test_runner(root_path=status.install_path+os.sep+'test_suite'+os.sep+'unit_tests')
+            self.runner.category = 'unit'
+            self.unit_result = unit_runner.run(runner=self.runner)
 
-        # Print out a summary of the test suite.
-        if summary:
-            self.summary()
+            # Print out a summary of the test suite.
+            if summary:
+                self.summary()
+
+        # Catch the keyboard interrupt.
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt:  Terminating all tests.\n")
+            return False
+
+        # All tests were run successfully.
+        return True
 
 
     def run_verification_tests(self, summary=True):
@@ -203,17 +253,27 @@ class Test_suite_runner:
         @type summary:      bool
         """
 
-        # Print a header.
-        title(file=sys.stdout, text='Software verification tests')
+        # Run the tests, catching the keyboard interrupt.
+        try:
+            # Print a header.
+            title(file=sys.stdout, text='Software verification tests')
 
-        # Run the tests.
-        verification_runner = Verification_test_runner()
-        self.runner.category = 'verification'
-        self.verification_result = verification_runner.run(self.tests, runner=self.runner)
+            # Run the tests.
+            verification_runner = Verification_test_runner()
+            self.runner.category = 'verification'
+            self.verification_result = verification_runner.run(self.tests, runner=self.runner)
 
-        # Print out a summary of the test suite.
-        if summary:
-            self.summary()
+            # Print out a summary of the test suite.
+            if summary:
+                self.summary()
+
+        # Catch the keyboard interrupt.
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt:  Terminating all tests.\n")
+            return False
+
+        # All tests were run successfully.
+        return True
 
 
     def summary(self):
