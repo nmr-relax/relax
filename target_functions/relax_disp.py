@@ -1056,7 +1056,7 @@ class Dispersion:
         kex = params[self.end_index[1]]
 
         # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.phi_ex_struct )
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct*self.frqs_struct, out=self.phi_ex_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
