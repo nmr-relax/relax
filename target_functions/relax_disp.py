@@ -436,7 +436,6 @@ class Dispersion:
 
             # For R1rho data.
             if model in [MODEL_DPL94]:
-                self.r1_a = deepcopy(zeros_a)
                 self.tilt_angles_a = deepcopy(zeros_a)
                 self.spin_lock_omega1_squared_a = deepcopy(zeros_a)
                 self.phi_ex_struct = deepcopy(zeros_a)
@@ -455,6 +454,9 @@ class Dispersion:
             self.r20a_struct = deepcopy(zeros_a)
             self.r20b_struct = deepcopy(zeros_a)
             self.no_nd_struct = ones([self.NO, self.ND], float64)
+
+            if model in [MODEL_DPL94]:
+                self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
             # Loop over the experiment types.
             for ei in range(self.NE):
@@ -499,7 +501,6 @@ class Dispersion:
 
                                     # Extract the frequencies to numpy array.
                                     self.frqs_a[ei][si][mi][oi][di] = self.frqs[ei][si][mi]
-                                    self.r1_a[ei][si][mi][oi][di] = self.r1[si][mi]
                                     self.tilt_angles_a[ei][si][mi][oi][di] = self.tilt_angles[ei][si][mi][oi][di]
                                     self.spin_lock_omega1_squared_a[ei][si][mi][oi][di] = self.spin_lock_omega1_squared[ei][mi][oi][di]
 
