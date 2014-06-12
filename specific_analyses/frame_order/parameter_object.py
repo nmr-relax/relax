@@ -69,6 +69,7 @@ class Frame_order_params(Param_list):
         self._add('cone_theta', scope='global', units='rad', desc='The isotropic cone opening half-angle', py_type=float, set='params', err=True, sim=True)
         self._add('cone_s1', scope='global', units='', desc='The isotropic cone order parameter', py_type=float, set='params', err=True, sim=True)
         self._add('cone_sigma_max', scope='global', units='rad', desc='The torsion angle', py_type=float, set='params', err=True, sim=True)
+        self._add('cone_sigma_max2', scope='global', units='rad', desc='The torsion angle of the 2nd motional mode', py_type=float, set='params', err=True, sim=True)
 
         # Add minimisation structures.
         self._add_min_data(min_stats_global=True)
