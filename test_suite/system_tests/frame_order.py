@@ -1193,7 +1193,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 94336.297626701955)
+        self.assertAlmostEqual(cdp.chi2, 214008.08232024356)
 
 
     def test_rigid_data_to_iso_cone_model(self):
