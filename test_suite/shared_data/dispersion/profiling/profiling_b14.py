@@ -284,7 +284,7 @@ class Profile(Dispersion):
 
                     # Initialise call to function.
                     #r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, k_AB=None, k_BA=None, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
-                    r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, pB=pB, dw=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=array(self.ncycs[mi]), inv_tcpmg=self.inv_relax_times[mi], tcp=array(self.tau_cpmg_list[mi]), back_calc=back_calc, num_points=len(back_calc))
+                    r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, pB=pB, dw=dw_frq, dw_orig=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=array(self.ncycs[mi]), inv_tcpmg=self.inv_relax_times[mi], tcp=array(self.tau_cpmg_list[mi]), back_calc=back_calc, num_points=len(back_calc))
 
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
