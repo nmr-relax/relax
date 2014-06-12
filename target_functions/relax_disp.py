@@ -475,12 +475,13 @@ class Dispersion:
                                 # Extract the frequencies to numpy array.
                                 self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
 
-                            # Extract the errors and values to numpy array.
-                            self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
-                            self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[ei][si][mi][oi]
+                                # Make a spin 1/0 file.
+                                self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
+
+                                # Extract the errors and values to numpy array.
+                                self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
+                                self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[ei][si][mi][oi]
                             
-                            # Make a spin 1/0 file.
-                            self.disp_struct[ei][si][mi][oi][:num_disp_points] = ones(num_disp_points)
 
                             # Loop over dispersion points.
                             for di in range(num_disp_points):
@@ -492,6 +493,10 @@ class Dispersion:
                                     self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
                                 # For R1rho data.
                                 if model in [MODEL_DPL94]:
+                                    self.errors_a[ei][si][mi][oi][di] = self.errors[ei][si][mi][oi][di]
+                                    self.values_a[ei][si][mi][oi][di] = self.values[ei][si][mi][oi][di]
+                                    self.disp_struct[ei][si][mi][oi][di] = 1.0
+
                                     # Extract the frequencies to numpy array.
                                     self.frqs_a[ei][si][mi][oi][di] = self.frqs[ei][si][mi]
                                     self.r1_a[ei][si][mi][oi][di] = self.r1[si][mi]
