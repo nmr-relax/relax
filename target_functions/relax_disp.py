@@ -455,6 +455,10 @@ class Dispersion:
             self.r20b_struct = deepcopy(zeros_a)
             self.no_nd_struct = ones([self.NO, self.ND], float64)
 
+            if model not in [MODEL_DPL94]:
+                # Expand relax times.
+                self.inv_relax_times_a = 1.0 / multiply.outer( self.relax_times.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+
             if model in [MODEL_DPL94]:
                 self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
@@ -472,7 +476,6 @@ class Dispersion:
                             if model not in [MODEL_DPL94]:
                                 # Extract cpmg_frqs and num_disp_points from lists.
                                 self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
-                                self.inv_relax_times_a[ei][si][mi][oi][:num_disp_points] = 1.0 / self.relax_times[ei][mi]
                                 self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
                                 # Extract the frequencies to numpy array.
                                 self.frqs_a[ei][si][mi][oi][:num_disp_points] = self.frqs[ei][si][mi]
