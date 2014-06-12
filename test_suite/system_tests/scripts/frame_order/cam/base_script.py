@@ -283,8 +283,6 @@ class Base_script:
 
         # Set the initial pivot point(s).
         self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT, fix=True)
-        if self.PIVOT2 != None:
-            self._execute_uf(uf_name='frame_order.pivot', pivot=self.PIVOT2, order=2, fix=True)
 
         # Set the paramagnetic centre.
         self._execute_uf(uf_name='paramag.centre', pos=[35.934, 12.194, -4.206])
