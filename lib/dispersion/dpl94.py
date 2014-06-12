@@ -64,7 +64,7 @@ More information on the DPL94 model can be found in the:
 
 # Python module imports.
 from numpy import abs, array, cos, isfinite, min, sin, sum
-
+from numpy.ma import fix_invalid, masked_where
 
 def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None, num_points=None):
     """Calculate the R1rho values for the DPL94 model.
@@ -90,6 +90,10 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     @type num_points:           int
     """
 
+    # Flag to tell if values should be replaced if numer is zero.
+    t_numer_zero = False
+    t_denom_zero = False
+
     # Repetitive calculations (to speed up calculations).
     kex2 = kex**2
 
@@ -103,24 +107,33 @@ def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spi
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
     if min(numer) == 0.0:
-        back_calc[:] = R1_R2
-        return
+        t_numer_zero = True
+        mask_numer_zero = masked_where(numer == 0.0, numer)
 
     # Denominator.
     denom = kex2 + spin_lock_fields2
 
     # Catch math domain error of dividing with 0.
     # This is when denom =0.
-    if min(abs(denom)) == 0:
-        back_calc[:] = array([1e100]*num_points)
-        return
+    mask_denom_zero = denom == 0.0
+    if any(mask_denom_zero):
+        t_denom_zero = True
+        denom[mask_denom_zero] = 1.0
 
     # R1rho calculation.
-    R1rho = R1_R2 + numer / denom
+    back_calc[:] = R1_R2 + numer / denom
+
+    # Replace data in array.
+    # If numer is zero.
+    if t_numer_zero:
+        back_calc[mask_numer_zero.mask] = R1_R2[mask_numer_zero.mask]
+
+    # If denom is zero.
+    if t_denom_zero:
+        back_calc[mask_denom_zero] = 1e100
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
-    if not isfinite(sum(R1rho)):
-        R1rho = array([1e100]*num_points)
-
-    back_calc[:] = R1rho
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
