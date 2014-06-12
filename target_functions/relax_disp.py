@@ -457,7 +457,7 @@ class Dispersion:
 
             if model not in [MODEL_DPL94]:
                 # Expand relax times.
-                self.inv_relax_times_a = 1.0 / multiply.outer( self.relax_times.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+                self.inv_relax_times_a = 1.0 / multiply.outer( tile(self.relax_times[:,None],(1, 1, self.NS)).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
             if model in [MODEL_DPL94]:
                 self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
