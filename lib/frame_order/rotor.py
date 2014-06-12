@@ -168,18 +168,18 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
     """
 
     # The rotation.
-    R_i = dot(R_eigen, dot(Ri_prime, RT_eigen))
+    R_i = transpose(dot(R_eigen, dot(Ri_prime, RT_eigen)))
 
     # Pre-calculate all the new vectors (forwards and reverse).
-    rot_vect_rev = transpose(dot(R_i, r_pivot_atom_rev) + r_ln_pivot)
-    rot_vect = transpose(dot(R_i, r_pivot_atom) + r_ln_pivot)
+    rot_vect_rev = dot(r_pivot_atom_rev, R_i) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, R_i) + r_ln_pivot
+
+    # The vector length (to the 5th power).
+    length_rev = 1.0 / norm(rot_vect_rev, axis=1)**5
+    length = 1.0 / norm(rot_vect, axis=1)**5
 
     # Loop over the atoms.
-    for j in range(len(r_pivot_atom[0])):
-        # The vector length (to the 5th power).
-        length_rev = 1.0 / sqrt(inner(rot_vect_rev[j], rot_vect_rev[j]))**5
-        length = 1.0 / sqrt(inner(rot_vect[j], rot_vect[j]))**5
-
+    for j in range(len(r_pivot_atom[:, 0])):
         # Loop over the alignments.
         for i in range(len(pcs_theta)):
             # Skip missing data.
@@ -189,10 +189,10 @@ def pcs_pivot_motion_rotor_qrint(full_in_ref_frame=None, r_pivot_atom=None, r_pi
             # The projection.
             if full_in_ref_frame[i]:
                 proj = dot(rot_vect[j], dot(A[i], rot_vect[j]))
-                length_i = length
+                length_i = length[j]
             else:
                 proj = dot(rot_vect_rev[j], dot(A[i], rot_vect_rev[j]))
-                length_i = length_rev
+                length_i = length_rev[j]
 
             # The PCS.
             pcs_theta[i, j] += proj * length_i

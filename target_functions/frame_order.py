@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
-from numpy import array, dot, float32, float64, ones, transpose, uint8, zeros
+from numpy import add, array, dot, float32, float64, ones, outer, subtract, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
@@ -126,12 +126,9 @@ class Frame_order:
         self.atomic_pos = atomic_pos
         self.temp = temp
         self.frq = frq
-        self.paramag_centre = paramag_centre
         self.total_num_params = len(init_params)
         self.num_int_pts = num_int_pts
         self.com = com
-        self.ave_pos_pivot = ave_pos_pivot
-        self._param_pivot = pivot
         self.pivot_opt = pivot_opt
 
         # Tensor setup.
@@ -180,6 +177,12 @@ class Frame_order:
         self.num_interatom = 0
         if self.rdc_flag:
             self.num_interatom = len(rdcs[0])
+
+        # Create multi-dimensional versions of certain structures for faster calculations.
+        self.spin_ones_struct = ones(self.num_spins, float64)
+        self.pivot = outer(self.spin_ones_struct, pivot)
+        self.paramag_centre = outer(self.spin_ones_struct, paramag_centre)
+        self.ave_pos_pivot = outer(self.spin_ones_struct, ave_pos_pivot)
 
         # Set up the alignment data.
         for align_index in range(self.num_align):
@@ -268,13 +271,9 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros(self.num_align, float64)
-            self.r_pivot_atom = zeros((3, self.num_spins), float32)
-            self.r_pivot_atom_rev = zeros((3, self.num_spins), float32)
-            self.r_ln_pivot = zeros((3, self.num_spins), float32)
-            for j in range(self.num_spins):
-                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
-            if self.paramag_centre == None:
-                self.paramag_centre = zeros(3, float32)
+            self.r_pivot_atom = zeros((self.num_spins, 3), float32)
+            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
+            self.r_ln_pivot = self.pivot - self.paramag_centre
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
             for align_index in range(self.num_align):
@@ -379,11 +378,12 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             param_disp = params[3]
             self._translation_vector = params[4:7]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[6:]
         else:
+            pivot = self.pivot
             param_disp = params[0]
             self._translation_vector = params[1:4]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[4:]
@@ -407,10 +407,10 @@ class Frame_order:
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
             # The second pivot point (sum of the first pivot and the displacement along the eigenframe z-axis).
-            pivot2 = self._param_pivot + param_disp * self.R_eigen[:,2]
+            pivot2 = pivot + param_disp * self.R_eigen[:,2]
 
             # Calculate the vectors.
-            self.calc_vectors(pivot=self._param_pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
+            self.calc_vectors(pivot=pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -459,15 +459,16 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_alpha = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_alpha = params[3:]
 
         # Generate the rotor axis.
-        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=array(self._param_pivot, float64), point=self.com)
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=pivot[0], point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
@@ -487,7 +488,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -537,10 +538,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta, sigma_max = params[3:]
 
@@ -565,7 +567,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -614,10 +616,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_s1 = params[3:]
 
@@ -645,7 +648,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -694,10 +697,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, cone_theta = params[3:]
 
@@ -722,7 +726,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -771,10 +775,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y, cone_sigma_max = params[3:]
 
@@ -796,7 +801,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -845,10 +850,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
@@ -870,7 +876,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -919,10 +925,11 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_theta_x, cone_theta_y = params[3:]
 
@@ -944,7 +951,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1003,7 +1010,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(self.pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1031,12 +1038,12 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[:, j]
+                            r_pivot_atom = self.r_pivot_atom[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[:, j]
+                            r_pivot_atom = self.r_pivot_atom_rev[j]
 
                         # The PCS calculation.
-                        vect = self.r_ln_pivot[:, 0] + r_pivot_atom
+                        vect = self.r_ln_pivot[0] + r_pivot_atom
                         length = norm(vect)
                         self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index] / length**5, vect, self.A_3D[align_index])
 
@@ -1065,15 +1072,16 @@ class Frame_order:
 
         # Unpack the parameters.
         if self.pivot_opt:
-            self._param_pivot = params[:3]
+            pivot = outer(self.spin_ones_struct, params[:3])
             self._translation_vector = params[3:6]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[6:]
         else:
+            pivot = self.pivot
             self._translation_vector = params[:3]
             ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_alpha, sigma_max = params[3:]
 
         # Generate the rotor axis.
-        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=array(self._param_pivot, float64), point=self.com)
+        self.cone_axis = create_rotor_axis_alpha(alpha=axis_alpha, pivot=pivot[0], point=self.com)
 
         # Pre-calculate the eigenframe rotation matrix.
         two_vect_to_R(self.z_axis, self.cone_axis, self.R_eigen)
@@ -1093,7 +1101,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            self.calc_vectors(pivot, self.R_ave, RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
@@ -1135,19 +1143,24 @@ class Frame_order:
         @type RT_ave:       numpy rank-2, 3D array
         """
 
-        # The pivot to atom vectors.
-        for j in range(self.num_spins):
-            # The lanthanide to pivot vector.
-            if self.pivot_opt:
-                self.r_ln_pivot[:, j] = pivot - self.paramag_centre
+        # The lanthanide to pivot vector.
+        if self.pivot_opt:
+            subtract(pivot, self.paramag_centre, self.r_ln_pivot)
 
-            # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
-            self.r_pivot_atom[:, j] = dot(R_ave, self.atomic_pos[j] - self.ave_pos_pivot) + self.ave_pos_pivot
-            self.r_pivot_atom[:, j] += self._translation_vector
-            self.r_pivot_atom[:, j] -= pivot
-            self.r_pivot_atom_rev[:, j] = dot(RT_ave, self.atomic_pos[j] - self.ave_pos_pivot) + self.ave_pos_pivot
-            self.r_pivot_atom_rev[:, j] += self._translation_vector
-            self.r_pivot_atom_rev[:, j] -= pivot
+        # Calculate the average position pivot point to atomic positions vectors once.
+        vect = self.atomic_pos - self.ave_pos_pivot
+
+        # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
+        self.r_pivot_atom[:] = dot(vect, RT_ave)
+        add(self.r_pivot_atom, self.ave_pos_pivot, self.r_pivot_atom)
+        add(self.r_pivot_atom, self._translation_vector, self.r_pivot_atom)
+        subtract(self.r_pivot_atom, pivot, self.r_pivot_atom)
+
+        # And the reverse vectors.
+        self.r_pivot_atom_rev[:] = dot(vect, R_ave)
+        add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
+        add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
+        subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
 
 
     def create_sobol_data(self, n=10000, dims=None):
