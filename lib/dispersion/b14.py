@@ -116,7 +116,7 @@ from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 # Repetitive calculations (to speed up calculations).
 g_fact = 1/sqrt(2)
 
-def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, dw_orig=None, kex=None, k_AB=None, k_BA=None, ncyc=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None):
     """Calculate the R2eff values for the CR72 model.
 
     See the module docstring for details.
@@ -132,6 +132,8 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
@@ -163,7 +165,7 @@ def r2eff_B14(r20a=None, r20b=None, pA=None, pB=None, dw=None, kex=None, k_AB=No
             return
 
     # Test if dw is zero. Wait for replacement, since this is spin specific.
-    if min(fabs(dw)) == 0.0:
+    if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
 
