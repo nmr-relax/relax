@@ -367,7 +367,7 @@ class Frame_order:
         This function optimises the model parameters using the RDC and PCS base data.  Quasi-random, Sobol' sequence based, numerical integration is used for the PCS.
 
 
-        @param params:  The vector of parameter values.  These are the tensor rotation angles {alpha, beta, gamma, theta, phi, sigma_max}.
+        @param params:  The vector of parameter values.  These can include {pivot_x, pivot_y, pivot_z, pivot_disp, ave_pos_x, ave_pos_y, ave_pos_z, ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, cone_sigma_max, cone_sigma_max2}.
         @type params:   list of float
         @return:        The chi-squared or SSE value.
         @rtype:         float
@@ -380,25 +380,19 @@ class Frame_order:
         # Unpack the parameters.
         if self.pivot_opt:
             self._param_pivot = params[:3]
-            self._translation_vector = params[3:6]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[6:]
+            param_disp = params[3]
+            self._translation_vector = params[4:7]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[6:]
         else:
-            self._translation_vector = params[:3]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, axis_theta, axis_phi, axis_theta_2, axis_phi_2, sigma_max, sigma_max_2 = params[3:]
+            param_disp = params[0]
+            self._translation_vector = params[1:4]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[4:]
 
-        # Generate both rotation axes from the spherical angles.
-        spherical_to_cartesian([1.0, axis_theta, axis_phi], self.rotor_axis)
-        spherical_to_cartesian([1.0, axis_theta_2, axis_phi_2], self.rotor_axis_2)
+        # Reconstruct the full eigenframe of the motion.
+        euler_to_R_zyz(eigen_alpha, eigen_beta, eigen_gamma, self.R_eigen)
 
-        # Pre-calculate the eigenframe rotation matrix.
-        two_vect_to_R(self.z_axis, self.rotor_axis, self.R_eigen)
-        two_vect_to_R(self.z_axis, self.rotor_axis_2, self.R_eigen_2)
-
-        # Combine the rotations.
-        R_eigen_full = dot(self.R_eigen_2, self.R_eigen)
-
-        # The Kronecker product of the eigenframe rotation.
-        Rx2_eigen = kron_prod(R_eigen_full, R_eigen_full)
+        # The Kronecker product of the eigenframe.
+        Rx2_eigen = kron_prod(self.R_eigen, self.R_eigen)
 
         # Generate the 2nd degree Frame Order super matrix.
         frame_order_2nd = compile_2nd_matrix_double_rotor(self.frame_order_2nd, Rx2_eigen, sigma_max, sigma_max_2)
@@ -407,12 +401,16 @@ class Frame_order:
         self.reduce_and_rot(ave_pos_alpha, ave_pos_beta, ave_pos_gamma, frame_order_2nd)
 
         # Pre-transpose matrices for faster calculations.
-        RT_eigen = transpose(R_eigen_full)
+        RT_eigen = transpose(self.R_eigen)
         RT_ave = transpose(self.R_ave)
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(self._param_pivot, self.R_ave, RT_ave)
+            # The second pivot point (sum of the first pivot and the displacement along the eigenframe z-axis).
+            pivot2 = self._param_pivot + param_disp * self.R_eigen[:,2]
+
+            # Calculate the vectors.
+            self.calc_vectors(pivot=self._param_pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
