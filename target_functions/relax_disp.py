@@ -396,7 +396,7 @@ class Dispersion:
 
 
         # Setup special numpy array structures, for higher dimensional computation.
-        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
+        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
 
         if model in test_models + [MODEL_NOREX]:
             # Get the shape of back_calc structure.
@@ -457,10 +457,10 @@ class Dispersion:
                 self.phi_ex_struct = deepcopy(zeros_a)
 
             if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-                # Expand relax times.
-                self.inv_relax_times_a = 1.0 / multiply.outer( tile(self.relax_times[:,None],(1, 1, self.NS)).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
-                self.power_a = ones(self.numpy_array_shape, int16)
+                self.relax_times_a = deepcopy(zeros_a)
+                self.inv_relax_times_a = deepcopy(zeros_a)
                 self.tau_cpmg_a = deepcopy(zeros_a)
+                self.power_a = zeros(self.numpy_array_shape, int16)
 
             # For R1rho data.
             if model in MODEL_LIST_R1RHO_FULL:
@@ -501,8 +501,13 @@ class Dispersion:
                                     self.has_missing = True
                                     missing_a[ei][si][mi][oi][di] = 1.0
                                 if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-                                    self.power_a[ei][si][mi][oi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
-                                    self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
+                                    self.relax_times_a[ei][si][mi][oi][di] = self.relax_times[ei][mi]
+                                    self.tau_cpmg_a[ei][si][mi][oi][di] = self.tau_cpmg[ei][mi][di]
+                                    self.power_a[ei][si][mi][oi][di] = self.power[ei][mi][di]
+
+                                    if model != MODEL_TSMFK01:
+                                        self.inv_relax_times_a[ei][si][mi][oi][di] = self.inv_relax_times[ei][mi]
+
                                 # For R1rho data.
                                 if model in MODEL_LIST_R1RHO_FULL and model != MODEL_NOREX:
                                     self.disp_struct[ei][si][mi][oi][di] = 1.0
@@ -1500,37 +1505,25 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
-        # Chi-squared initialisation.
-        chi2_sum = 0.0
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Back calculate the R2eff values.
+        r2eff_ns_cpmg_2site_expanded(r20=self.r20_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, relax_time=self.relax_times_a, inv_relax_time=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_cpmg=self.power_a)
 
-                # Convert dw from ppm to rad/s.
-                dw_frq = dw[si] * self.frqs[0][si][mi]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # Back calculate the R2eff values.
-                r2eff_ns_cpmg_2site_expanded(r20=R20[r20_index], pA=pA, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, relax_time=self.relax_times[0][mi], inv_relax_time=self.inv_relax_times[0][mi], tcp=self.tau_cpmg[0][mi], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0], num_cpmg=self.power[0][mi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
-
-        # Return the total chi-squared value.
-        return chi2_sum
+        ## Calculate the chi-squared statistic.
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_ns_cpmg_2site_star(self, params):
