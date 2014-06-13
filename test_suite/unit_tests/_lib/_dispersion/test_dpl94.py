@@ -66,7 +66,7 @@ class Test_dpl94(TestCase):
         phi_ex_scaled, spin_lock_omega1_squared = self.param_conversion(pA=self.pA, dw=self.dw, sfrq=self.sfrq, spin_lock_nu1=self.spin_lock_nu1)
 
         # Calculate the R1rho values.
-        r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
+        r1rho_DPL94(r1rho_prime=self.r1rho_prime, phi_ex=phi_ex_scaled, kex=self.kex, theta=self.theta, R1=self.r1, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho)
 
         # Compare to function value.
         r1rho_no_rex = self.r1 * cos(self.theta)**2 + self.r1rho_prime * sin(self.theta)**2
