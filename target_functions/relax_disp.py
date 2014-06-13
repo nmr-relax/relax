@@ -542,11 +542,6 @@ class Dispersion:
         @rtype:         float
         """
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
@@ -555,7 +550,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
-        r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, pB=pB, dw=self.dw_struct, dw_orig=dw, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r2eff_B14(r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, ncyc=self.power_a, inv_tcpmg=self.inv_relax_times_a, tcp=self.tau_cpmg_a, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
