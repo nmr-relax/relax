@@ -55,7 +55,7 @@ from lib.dispersion.tsmfk01 import r2eff_TSMFK01
 from lib.errors import RelaxError
 from lib.float import isNaN
 from target_functions.chi2 import chi2, chi2_rankN
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
 
 class Dispersion:
@@ -427,47 +427,43 @@ class Dispersion:
             self.values_a = deepcopy(zeros_a)
             self.errors_a = deepcopy(ones_a)
             missing_a = zeros(self.numpy_array_shape)
-            
-            self.cpmg_frqs_a = deepcopy(ones_a)
+
             self.num_disp_points_a = deepcopy(zeros_a)
-            self.inv_relax_times_a = deepcopy(zeros_a)
-            self.tau_cpmg_a = deepcopy(zeros_a)
-            self.power_a = ones(self.numpy_array_shape, int16)
+            self.disp_struct = deepcopy(zeros_a)
+            self.has_missing = False
+
+            # Create special numpy structures.
+            self.no_nd_struct = ones([self.NO, self.ND], float64)
+            self.nm_no_nd_struct = ones([self.NM, self.NO, self.ND], float64)
+
+            # Structure of r20a and r20b. The full and outer dimensions structures.
+            # Structure of dw. The full and the outer dimensions structures.
+            self.r20_struct = deepcopy(zeros_a)
+            self.r20a_struct = deepcopy(zeros_a)
+            self.r20b_struct = deepcopy(zeros_a)
+            self.dw_struct = deepcopy(zeros_a)
+
+            # Extract the frequencies to numpy array.
+            self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+
+            if model in MODEL_LIST_CPMG_FULL:
+                self.cpmg_frqs_a = deepcopy(ones_a)
+
+            if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
+                # Expand relax times.
+                self.inv_relax_times_a = 1.0 / multiply.outer( tile(self.relax_times[:,None],(1, 1, self.NS)).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+                self.power_a = ones(self.numpy_array_shape, int16)
+                self.tau_cpmg_a = deepcopy(zeros_a)
 
             # For R1rho data.
-            if model in [MODEL_DPL94, MODEL_TAP03]:
+            if model in MODEL_LIST_R1RHO_FULL:
                 self.tilt_angles_a = deepcopy(zeros_a)
                 self.spin_lock_omega1_squared_a = deepcopy(zeros_a)
                 self.spin_lock_omega1_a = deepcopy(zeros_a)
                 self.phi_ex_struct = deepcopy(zeros_a)
                 self.offset_a = deepcopy(zeros_a)
-
-            self.frqs_a = deepcopy(zeros_a)
-            self.disp_struct = deepcopy(zeros_a)
-            self.has_missing = False
-
-            # Create special numpy structures.
-            # Structure of dw. The full and the outer dimensions structures.
-            self.dw_struct = deepcopy(zeros_a)
-            self.no_nd_struct = ones([self.NO, self.ND], float64)
-            self.nm_no_nd_struct = ones([self.NM, self.NO, self.ND], float64)
-
-            # Structure of r20a and r20b. The full and outer dimensions structures.
-            self.r20_struct = deepcopy(zeros_a)
-            self.r20a_struct = deepcopy(zeros_a)
-            self.r20b_struct = deepcopy(zeros_a)
-            self.no_nd_struct = ones([self.NO, self.ND], float64)
-
-            if model not in [MODEL_DPL94]:
-                # Expand relax times.
-                self.inv_relax_times_a = 1.0 / multiply.outer( tile(self.relax_times[:,None],(1, 1, self.NS)).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
-
-            if model in [MODEL_DPL94, MODEL_TAP03]:
                 self.r1_a = multiply.outer( self.r1.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
                 self.chemical_shifts_a = multiply.outer( self.chemical_shifts, self.no_nd_struct )
-
-           # Extract the frequencies to numpy array.
-            self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
             # Loop over the experiment types.
             for ei in range(self.NE):
@@ -480,7 +476,7 @@ class Dispersion:
                             # Extract number of dispersion points.
                             num_disp_points = self.num_disp_points[ei][si][mi][oi]
 
-                            if model not in [MODEL_DPL94, MODEL_TAP03]:
+                            if model in MODEL_LIST_CPMG_FULL:
                                 # Extract cpmg_frqs and num_disp_points from lists.
                                 self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                                 self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
@@ -491,18 +487,17 @@ class Dispersion:
                             # Extract the errors and values to numpy array.
                             self.errors_a[ei][si][mi][oi][:num_disp_points] = self.errors[ei][si][mi][oi]
                             self.values_a[ei][si][mi][oi][:num_disp_points] = self.values[ei][si][mi][oi]
-                            
 
                             # Loop over dispersion points.
                             for di in range(num_disp_points):
                                 if self.missing[ei][si][mi][oi][di]:
                                     self.has_missing = True
                                     missing_a[ei][si][mi][oi][di] = 1.0
-                                if model in [MODEL_B14, MODEL_B14_FULL, MODEL_TSMFK01]:
+                                if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
                                     self.power_a[ei][si][mi][oi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
                                     self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
                                 # For R1rho data.
-                                if model in [MODEL_DPL94, MODEL_TAP03]:
+                                if model in MODEL_LIST_R1RHO_FULL:
                                     self.disp_struct[ei][si][mi][oi][di] = 1.0
 
                                     # Extract the frequencies to numpy array.
