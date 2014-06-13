@@ -24,6 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
+from numpy import divide, multiply
 try:
     from scipy.integrate import quad
 except ImportError:
@@ -320,5 +321,5 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)

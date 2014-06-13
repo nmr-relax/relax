@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import sinc
+from numpy import divide, multiply, repeat, sinc, tile
 try:
     from scipy.integrate import quad
 except ImportError:
@@ -659,8 +659,8 @@ def pcs_numeric_int_pseudo_ellipse_qrint(points=None, theta_x=None, theta_y=None
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)
 
 
 def tmax_pseudo_ellipse(phi, theta_x, theta_y):

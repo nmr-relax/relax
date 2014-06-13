@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sqrt
-from numpy import sinc
+from numpy import divide, multiply, sinc
 
 # relax module imports.
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qrint, rotate_daeg
@@ -115,8 +115,8 @@ def pcs_numeric_int_iso_cone_qrint(points=None, theta_max=None, sigma_max=None, 
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)
 
 
 def populate_1st_eigenframe_iso_cone(matrix, angle):

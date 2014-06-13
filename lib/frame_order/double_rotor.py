@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import pi, sqrt
-from numpy import dot, inner, sinc, transpose
+from numpy import divide, dot, inner, multiply, sinc, transpose
 
 # relax module imports.
 from lib.frame_order.matrix_ops import rotate_daeg
@@ -135,8 +135,8 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
 
     # Average the PCS.
     else:
-        for i in range(len(pcs_theta)):
-            pcs_theta[i] = c[i] * pcs_theta[i] / float(num)
+        multiply(c, pcs_theta, pcs_theta)
+        divide(pcs_theta, float(num), pcs_theta)
 
 
 def pcs_pivot_motion_double_rotor(full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):

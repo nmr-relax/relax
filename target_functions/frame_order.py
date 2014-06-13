@@ -270,7 +270,7 @@ class Frame_order:
             # Initialise the data structures.
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
-            self.pcs_const = zeros(self.num_align, float64)
+            self.pcs_const = zeros((self.num_align, self.num_spins), float64)
             self.r_pivot_atom = zeros((self.num_spins, 3), float32)
             self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
             self.r_ln_pivot = self.pivot - self.paramag_centre
@@ -1045,7 +1045,7 @@ class Frame_order:
                         # The PCS calculation.
                         vect = self.r_ln_pivot[0] + r_pivot_atom
                         length = norm(vect)
-                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index] / length**5, vect, self.A_3D[align_index])
+                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] / length**5, vect, self.A_3D[align_index])
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
