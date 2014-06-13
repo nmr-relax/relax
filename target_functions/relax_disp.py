@@ -395,7 +395,7 @@ class Dispersion:
             self.func = self.func_ns_mmq_3site_linear
 
         # Setup special numpy array structures, for higher dimensional computation.
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_TAP03, MODEL_TSMFK01]:
+        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]:
             # Get the shape of back_calc structure.
             # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
             # Shape has to be: [ei][si][mi][oi].
