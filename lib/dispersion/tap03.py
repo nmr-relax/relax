@@ -64,7 +64,7 @@ from numpy import any, arctan2, array, isfinite, min, sin, sqrt, sum
 from numpy.ma import fix_invalid, masked_where
 
 
-def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None, num_points=None):
+def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=None, R1=0.0, spin_lock_fields=None, spin_lock_fields2=None, back_calc=None):
     """Calculate the R1rho' values for the TP02 model.
 
     See the module docstring for details.  This is the Trott, Abergel and Palmer (2003) equation.
@@ -78,8 +78,6 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     @type offset:               numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
-    @keyword pB:                The population of state B.
-    @type pB:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
     @type dw:                   numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
@@ -92,13 +90,14 @@ def r1rho_TAP03(r1rho_prime=None, omega=None, offset=None, pA=None, pB=None, dw=
     @type spin_lock_fields2:    numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of offset and spin lock field.
     @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
-    @keyword num_points:        The number of points on the dispersion curve, equal to the length of the spin_lock_fields and back_calc arguments.
-    @type num_points:           numpy int array of rank [NE][NS][[NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if it is zero.
     t_gamma_neg = False
     t_numer_zero = False
+
+    # Parameter conversions.
+    pB = 1.0 - pA
 
     # Repetitive calculations (to speed up calculations).
     Wa = omega                  # Larmor frequency [s^-1].

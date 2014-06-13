@@ -1872,9 +1872,6 @@ class Dispersion:
         pA = params[self.end_index[1]]
         kex = params[self.end_index[1]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
@@ -1882,7 +1879,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R1rho values.
-        r1rho_TAP03(r1rho_prime=self.r20_struct, omega=self.chemical_shifts_a, offset=self.offset_a, pA=pA, pB=pB, dw=self.dw_struct, kex=kex, R1=self.r1_a, spin_lock_fields=self.spin_lock_omega1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r1rho_TAP03(r1rho_prime=self.r20_struct, omega=self.chemical_shifts_a, offset=self.offset_a, pA=pA, dw=self.dw_struct, kex=kex, R1=self.r1_a, spin_lock_fields=self.spin_lock_omega1_a, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
