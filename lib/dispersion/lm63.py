@@ -64,8 +64,8 @@ More information on the LM63 model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, array, isfinite, sum, tanh
-
+from numpy import any, array, isfinite, min, sum, tanh
+from numpy.ma import fix_invalid, masked_where
 
 def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
     """Calculate the R2eff values for the LM63 model.
@@ -85,6 +85,9 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
     @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     """
 
+    # Flag to tell if values should be replaced if phi_ex is zero.
+    t_phi_ex_zero = False
+
     # Catch divide with zeros (to avoid pointless mathematical operations).
     if kex == 0.0:
         back_calc[:] = r20
@@ -92,9 +95,9 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
 
     # Catch zeros (to avoid pointless mathematical operations).
     # This will result in no exchange, returning flat lines.
-    if any(phi_ex) == 0.0:
-        back_calc[:] = r20
-        return
+    if min(phi_ex) == 0.0:
+        t_phi_ex_zero = True
+        mask_phi_ex_zero = masked_where(phi_ex == 0.0, phi_ex)
 
     # Repetitive calculations (to speed up calculations).
     rex = phi_ex / kex
@@ -102,6 +105,11 @@ def r2eff_LM63(r20=None, phi_ex=None, kex=None, cpmg_frqs=None, back_calc=None):
 
     # Calculate R2eff.
     back_calc[:] = r20 + rex * (1.0 - kex_4 * cpmg_frqs * tanh(kex / (4.0 * cpmg_frqs)))
+
+    # Replace data in array.
+    # If phi_ex is zero.
+    if t_phi_ex_zero:
+        back_calc[mask_phi_ex_zero.mask] = r20[mask_phi_ex_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
