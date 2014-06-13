@@ -1254,7 +1254,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
-        r1rho_M61(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a, num_points=self.num_disp_points_a)
+        r1rho_M61(r1rho_prime=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, spin_lock_fields2=self.spin_lock_omega1_squared_a, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct

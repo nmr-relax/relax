@@ -65,7 +65,7 @@ class Test_m61(TestCase):
         a = ones([self.num_points])
 
         # Calculate the R1rho values.
-        r1rho_M61(r1rho_prime=self.r1rho_prime*a, phi_ex=phi_ex_scaled*a, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho, num_points=self.num_points)
+        r1rho_M61(r1rho_prime=self.r1rho_prime*a, phi_ex=phi_ex_scaled*a, kex=self.kex, spin_lock_fields2=spin_lock_omega1_squared, back_calc=self.R1rho)
 
         # Check all R1rho values.
         if self.kex > 1.e5:
