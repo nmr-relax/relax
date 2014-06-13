@@ -517,10 +517,6 @@ class Dispersion:
                                     else:
                                         self.num_disp_points_a[ei][si][mi][oi][di] = 0
 
-            if model in test_models:
-                # Pre calculate frqs structure
-                self.frqs_struct = self.frqs_a * self.disp_struct
-
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
 
@@ -552,7 +548,7 @@ class Dispersion:
         k_AB = pB * kex
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
@@ -591,7 +587,7 @@ class Dispersion:
         """
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
@@ -1066,7 +1062,7 @@ class Dispersion:
         kex = params[self.end_index[1]]
 
         # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct*self.frqs_struct, out=self.phi_ex_struct )
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a*self.frqs_a, out=self.phi_ex_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
@@ -1899,7 +1895,7 @@ class Dispersion:
         pB = 1.0 - pA
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
@@ -1942,7 +1938,7 @@ class Dispersion:
         pB = 1.0 - pA
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
@@ -1982,7 +1978,7 @@ class Dispersion:
         k_AB = params[self.end_index[1]]
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_struct, out=self.dw_struct )
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a, out=self.dw_struct )
 
         # Reshape R20A and R20B to per experiment, spin and frequency.
         self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
