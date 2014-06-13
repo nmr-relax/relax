@@ -394,8 +394,11 @@ class Dispersion:
         if model == MODEL_NS_MMQ_3SITE_LINEAR:
             self.func = self.func_ns_mmq_3site_linear
 
+
         # Setup special numpy array structures, for higher dimensional computation.
-        if model in [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]:
+        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
+
+        if model in test_models + [MODEL_NOREX]:
             # Get the shape of back_calc structure.
             # If using just one field, or having the same number of dispersion points, the shape would extend to that number.
             # Shape has to be: [ei][si][mi][oi].
@@ -443,8 +446,11 @@ class Dispersion:
             self.r20b_struct = deepcopy(zeros_a)
             self.dw_struct = deepcopy(zeros_a)
 
-            # Extract the frequencies to numpy array.
-            self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        # Setup special numpy array structures, for higher dimensional computation.
+        if model in test_models + [MODEL_NOREX]:
+            if model in test_models:
+                # Extract the frequencies to numpy array.
+                self.frqs_a = multiply.outer( asarray(self.frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
             if model in MODEL_LIST_CPMG_FULL:
                 self.cpmg_frqs_a = deepcopy(ones_a)
@@ -476,7 +482,7 @@ class Dispersion:
                             # Extract number of dispersion points.
                             num_disp_points = self.num_disp_points[ei][si][mi][oi]
 
-                            if model in MODEL_LIST_CPMG_FULL:
+                            if model in MODEL_LIST_CPMG_FULL and model != MODEL_NOREX:
                                 # Extract cpmg_frqs and num_disp_points from lists.
                                 self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                                 self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
@@ -497,7 +503,7 @@ class Dispersion:
                                     self.power_a[ei][si][mi][oi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
                                     self.tau_cpmg_a[ei][si][mi][oi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
                                 # For R1rho data.
-                                if model in MODEL_LIST_R1RHO_FULL:
+                                if model in MODEL_LIST_R1RHO_FULL and model != MODEL_NOREX:
                                     self.disp_struct[ei][si][mi][oi][di] = 1.0
 
                                     # Extract the frequencies to numpy array.
@@ -511,11 +517,12 @@ class Dispersion:
                                     else:
                                         self.num_disp_points_a[ei][si][mi][oi][di] = 0
 
+            if model in test_models:
+                # Pre calculate frqs structure
+                self.frqs_struct = self.frqs_a * self.disp_struct
+
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
-
-            # Pre calculate frqs structure
-            self.frqs_struct = self.frqs_a * self.disp_struct
 
             # Find the numpy mask, which tells where values should be replaced.
             self.mask_replace_blank = masked_equal(missing_a, 1.0)
@@ -1465,34 +1472,16 @@ class Dispersion:
         # Unpack the parameter values.
         R20 = params
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Reshape R20 to per experiment, spin and frequency.
+        self.back_calc_a[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-        # Loop over the experiment types.
-        for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + si*self.num_frq
-
-                    # Loop over the offsets.
-                    for oi in range(self.num_offsets[ei][si][mi]):
-                        # The R2eff values as R20 values.
-                        for di in range(self.num_disp_points[ei][si][mi][oi]):
-                            self.back_calc[ei][si][mi][oi][di] = R20[r20_index]
-
-                        # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                        for di in range(self.num_disp_points[ei][si][mi][oi]):
-                            if self.missing[ei][si][mi][oi][di]:
-                                self.back_calc[ei][si][mi][oi][di] = self.values[ei][si][mi][oi][di]
-
-                        # Calculate and return the chi-squared value.
-                        chi2_sum += chi2(self.values[ei][si][mi][oi], self.back_calc[ei][si][mi][oi], self.errors[ei][si][mi][oi])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_ns_cpmg_2site_3D(self, params):
