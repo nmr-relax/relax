@@ -396,7 +396,7 @@ class Dispersion:
 
 
         # Setup special numpy array structures, for higher dimensional computation.
-        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
+        test_models = [MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_LM63, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01]
 
         if model in test_models + [MODEL_NOREX]:
             # Get the shape of back_calc structure.
@@ -454,6 +454,7 @@ class Dispersion:
 
             if model in MODEL_LIST_CPMG_FULL:
                 self.cpmg_frqs_a = deepcopy(ones_a)
+                self.phi_ex_struct = deepcopy(zeros_a)
 
             if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
                 # Expand relax times.
@@ -1201,32 +1202,25 @@ class Dispersion:
         phi_ex = params[self.end_index[0]:self.end_index[1]]
         kex = params[self.end_index[1]]
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_struct ), self.frqs_a*self.frqs_a, out=self.phi_ex_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
-                # Convert phi_ex from ppm^2 to (rad/s)^2.
-                phi_ex_scaled = phi_ex[si] * self.frqs[0][si][mi]**2
+        # Back calculate the R2eff values.
+        r2eff_LM63(r20=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
 
-                # Back calculate the R2eff values.
-                r2eff_LM63(r20=R20[r20_index], phi_ex=phi_ex_scaled, kex=kex, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc_a = self.back_calc_a*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0][si][mi][0]):
-                    if self.missing[0][si][mi][0][di]:
-                        self.back_calc[0][si][mi][0][di] = self.values[0][si][mi][0][di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0][si][mi][0], self.back_calc[0][si][mi][0], self.errors[0][si][mi][0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc_a[self.mask_replace_blank.mask] = self.values_a[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values_a, self.back_calc_a, self.errors_a)
 
 
     def func_M61(self, params):
