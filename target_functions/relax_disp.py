@@ -525,6 +525,7 @@ class Dispersion:
 
             # Make copy of values structure.
             self.back_calc_a = deepcopy(self.values_a)
+            self.back_calc = self.back_calc_a
 
             # Find the numpy mask, which tells where values should be replaced.
             self.mask_replace_blank = masked_equal(missing_a, 1.0)
