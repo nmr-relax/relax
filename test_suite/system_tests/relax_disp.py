@@ -2482,9 +2482,9 @@ class Relax_disp(SystemTestCase):
 
         # Checks for residue :70.
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
         self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
-        self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000)
+        self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000, 6)
         self.assertAlmostEqual(spin70.chi2, 363.534044873483)
 
         # Checks for residue :71.
