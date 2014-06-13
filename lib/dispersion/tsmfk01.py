@@ -71,7 +71,7 @@ from numpy import array, fabs, min, sin, isfinite, sum
 from numpy.ma import fix_invalid, masked_where
 
 
-def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_calc=None, num_points=None):
+def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_calc=None):
     """Calculate the R2eff values for the TSMFK01 model.
 
     See the module docstring for details.
@@ -89,8 +89,6 @@ def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_ca
     @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
-    @keyword num_points:    The number of points on the dispersion curve, equal to the length of the cpmg_frqs and back_calc arguments.
-    @type num_points:       numpy int array of rank [NE][NS][[NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
