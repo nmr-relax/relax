@@ -54,8 +54,8 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from math import log
-from numpy import dot
+from numpy import dot, fabs, isfinite, log, min, ones, ndarray
+from numpy.ma import fix_invalid, masked_less_equal, masked_where
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
@@ -63,7 +63,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -83,14 +83,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     @type r20b:             float
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
+    @keyword kex:           The kex parameter value (the exchange rate in rad/s).
+    @type kex:              float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -103,11 +99,31 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     @type power:            numpy int16, rank-1 array
     """
 
+    # This is temporary hack between rank 1 and multi rank.
+    dw_a = ones([num_points]) * dw
+    r20a_a = ones([num_points]) * r20a
+
+    # Flag to tell if values should be replaced if math function is violated.
+    t_dw_zero = False
+
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if dw == 0.0 or pA == 1.0 or k_AB == 0.0:
-        for i in range(num_points):
-            back_calc[i] = r20a
+    if pA == 1.0 or kex == 0.0:
+        back_calc[:] = r20a_a
         return
+
+    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    if min(fabs(dw_a)) == 0.0:
+        t_dw_zero = True
+        mask_dw_zero = masked_where(dw_a == 0.0, dw_a)
+
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
+
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0[1] = pA
+    M0[4] = pB
 
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA)
@@ -132,3 +148,19 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
             back_calc[i] = r20a
         else:
             back_calc[i]= -inv_tcpmg * log(Mx)
+
+    # Replace data in array.
+    # If dw is zero.
+    if t_dw_zero:
+        back_calc[mask_dw_zero.mask] = r20a_a[mask_dw_zero.mask]
+
+    # If Mx is less than 0.0
+    if min(Mx) <= 0.0:
+        mask_min_mx = masked_less_equal(Mx, 0.0)
+        back_calc[mask_min_mx.mask] = r20a_a[mask_min_mx.mask]
+
+    # Catch errors, taking a sum over array is the fastest way to check for
+    # +/- inf (infinity) and nan (not a number).
+    if not isfinite(sum(back_calc)):
+        # Replaces nan, inf, etc. with fill value.
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
