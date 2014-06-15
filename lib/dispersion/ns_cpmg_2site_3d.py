@@ -56,7 +56,6 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 # Python module imports.
 from numpy import asarray, dot, fabs, isfinite, log, min, sum
 from numpy.ma import fix_invalid, masked_where
-from scipy.linalg.blas import dgemm as blas_dot
 
 
 # relax module imports.
@@ -154,43 +153,26 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 r20a_si_mi_di = r20a[0][si][mi][0][di]
 
                 # Initial magnetisation.
-                Mint = M0.reshape(7, 1)
+                Mint = M0
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 Rexpo = matrix_exponential(R*tcp_si_mi_di)
 
-                # The numpy way. Give dot two matrices that are both C_CONTIGUOUS, then the performance is better:
                 # The essential evolution matrix.
                 # This is the first round.
-                #dot(Rexpo, r180x, evolution_matrix)
-                #evolution_matrix = dot(evolution_matrix, Rexpo)
+                dot(Rexpo, r180x, evolution_matrix)
+                dot(evolution_matrix * 1.0, Rexpo, evolution_matrix)
                 # The second round.
-                #evolution_matrix = dot(evolution_matrix, evolution_matrix)
+                dot(evolution_matrix * 1.0, evolution_matrix * 1.0, evolution_matrix)
                 # The third and fourth round,
-                #evolution_matrix = dot(evolution_matrix, evolution_matrix)
-
-                # Give dot two matrices that are both F_CONTIGUOUS, we can use BLAS through the method: 
-                # The become F_CONTIGUOUS by transposing them.
-                # See by: print Rexpo.flags.c_contiguous, Rexpo.T.flags.c_contiguous
-                # http://wiki.scipy.org/PerformanceTips
-                # The FORTRAN code.
-                # tchar=s,d,c,z>gemm(m,n,k,alpha,a,b,beta,c,trans_a,trans_b,lda,ka,ldb,kb)
-                #   ! c = gemm(alpha,a,b,beta=0,c=0,trans_a=0,trans_b=0,overwrite_c=0)
-                #   ! Calculate C <- alpha * op(A) * op(B) + beta * C
-                # This is the first round.
-                evolution_matrix[:] = blas_dot(alpha=1.0, a=Rexpo.T, b=r180x.T, trans_a=True, trans_b=True)
-                evolution_matrix[:] = blas_dot(alpha=1.0, a=evolution_matrix.T, b=Rexpo.T, trans_a=True, trans_b=True)
-                # The second round.
-                evolution_matrix[:] = blas_dot(alpha=1.0, a=evolution_matrix.T, b=evolution_matrix.T, trans_a=True, trans_b=True)
-                # The third and fourth round.
-                evolution_matrix[:] = blas_dot(alpha=1.0, a=evolution_matrix.T, b=evolution_matrix.T, trans_a=True, trans_b=True)
+                dot(evolution_matrix * 1.0, evolution_matrix * 1.0, evolution_matrix)
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di/2):
-                    Mint = blas_dot(alpha=1.0, a=evolution_matrix.T, b=Mint.T, trans_a=True, trans_b=True)
+                    Mint = dot(evolution_matrix, Mint)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint[1][0] / pA
+                Mx = Mint[1] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0][si][mi][0][di] = r20a_si_mi_di
                 else:
