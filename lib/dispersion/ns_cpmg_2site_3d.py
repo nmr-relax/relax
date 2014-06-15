@@ -54,9 +54,9 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import dot, fabs, isfinite, log, min, ones, ndarray
-from numpy.ma import fix_invalid, masked_less_equal, masked_where
-import numpy as np
+from numpy import dot, fabs, isfinite, log, min, sum
+from numpy.ma import fix_invalid, masked_where
+
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
@@ -64,7 +64,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -79,43 +79,41 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     @keyword r10b:          The R1 value for state B.
     @type r10b:             float
     @keyword r20a:          The R2 value for state A in the absence of exchange.
-    @type r20a:             float
+    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword r20b:          The R2 value for state B in the absence of exchange.
-    @type r20b:             float
+    @type r20b:             numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               float
+    @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
+    @type dw_orig:          numpy float array of rank-1
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        float
+    @type inv_tcpmg:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy rank-1 float array
+    @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy rank-1 float array
+    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       int
+    @type num_points:       numpy int array of rank [NE][NS][[NM][NO][ND]
     @keyword power:         The matrix exponential power array.
-    @type power:            numpy int16, rank-1 array
+    @type power:            numpy int array of rank [NE][NS][[NM][NO][ND]
     """
-
-    # This is temporary hack between rank 1 and multi rank.
-    dw_a = ones([num_points]) * dw
-    r20a_a = ones([num_points]) * r20a
 
     # Flag to tell if values should be replaced if math function is violated.
     t_dw_zero = False
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
     if pA == 1.0 or kex == 0.0:
-        back_calc[:] = r20a_a
+        back_calc[:] = r20a
         return
 
     # Test if dw is zero. Wait for replacement, since this is spin specific.
-    if min(fabs(dw_a)) == 0.0:
+    if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
-        mask_dw_zero = masked_where(dw_a == 0.0, dw_a)
+        mask_dw_zero = masked_where(dw == 0.0, dw)
 
     # Once off parameter conversions.
     pB = 1.0 - pA
@@ -126,40 +124,58 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     M0[1] = pA
     M0[4] = pB
 
-    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA)
+    # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
+    NE, NS, NM, NO, ND = back_calc.shape
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # Initial magnetisation.
-        Mint = M0.reshape(7, 1)
+    # Loop over the spins
+    for si in range(NS):
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
 
-        # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-        Rexpo = matrix_exponential(R*tcp[i])
+            # Extract the values from the higher dimensional arrays.
+            R2A_si_mi=r20a[0][si][mi][0][0]
+            R2B_si_mi=r20b[0][si][mi][0][0]
+            dw_si_mi = dw[0][si][mi][0][0]
+            num_points_si_mi = int(num_points[0][si][mi][0][0])
 
-        # Temp matrix.
-        t_mat = Rexpo.dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo)
+            # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+            R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=R2A_si_mi, R2B=R2B_si_mi, pA=pA, pB=pB, dw=dw_si_mi, k_AB=k_AB, k_BA=k_BA)
 
-        # Loop over the CPMG elements, propagating the magnetisation.
-        for j in range(power[i]/2):
-            Mint = t_mat.dot(Mint)
+            # Loop over the time points, back calculating the R2eff values.
+            for di in range(num_points_si_mi):
+                # Extract the values from the higher dimensional arrays.
+                tcp_si_mi_di = tcp[0][si][mi][0][di]
+                inv_tcpmg_si_mi_di = inv_tcpmg[0][si][mi][0][di]
+                power_si_mi_di = int(power[0][si][mi][0][di])
+                r20a_si_mi_di = r20a[0][si][mi][0][di]
 
-        # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        Mx = Mint[1][0] / pA
-        if Mx <= 0.0 or isNaN(Mx):
-            back_calc[i] = r20a
-        else:
-            back_calc[i]= -inv_tcpmg * log(Mx)
+                # Initial magnetisation.
+                Mint = M0
+
+                # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
+                Rexpo = matrix_exponential(R*tcp_si_mi_di)
+
+                # Temp matrix.
+                t_mat = Rexpo.dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo).dot(Rexpo).dot(r180x).dot(Rexpo)
+
+                # Loop over the CPMG elements, propagating the magnetisation.
+                for j in range(power_si_mi_di/2):
+                    Mint = t_mat.dot(Mint)
+
+                # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+                Mx = Mint[1] / pA
+                #print back_calc[0][si][mi][0]
+                #print lkhj
+
+                if Mx <= 0.0 or isNaN(Mx):
+                    back_calc[0][si][mi][0][di] = r20a_si_mi_di
+                else:
+                    back_calc[0][si][mi][0][di] = - inv_tcpmg_si_mi_di * log(Mx)
 
     # Replace data in array.
     # If dw is zero.
     if t_dw_zero:
-        back_calc[mask_dw_zero.mask] = r20a_a[mask_dw_zero.mask]
-
-    # If Mx is less than 0.0
-    if min(Mx) <= 0.0:
-        mask_min_mx = masked_less_equal(Mx, 0.0)
-        back_calc[mask_min_mx.mask] = r20a_a[mask_min_mx.mask]
+        back_calc[mask_dw_zero.mask] = r20a[mask_dw_zero.mask]
 
     # Catch errors, taking a sum over array is the fastest way to check for
     # +/- inf (infinity) and nan (not a number).
