@@ -154,7 +154,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 r20a_si_mi_di = r20a[0][si][mi][0][di]
 
                 # Initial magnetisation.
-                Mint = M0
+                Mint = M0.reshape(7, 1)
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 Rexpo = matrix_exponential(R*tcp_si_mi_di)
@@ -162,7 +162,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 # The numpy way. Give dot two matrices that are both C_CONTIGUOUS, then the performance is better:
                 # The essential evolution matrix.
                 # This is the first round.
-                #dot(Rexpo.T, r180x.T, evolution_matrix)
+                #dot(Rexpo, r180x, evolution_matrix)
                 #evolution_matrix = dot(evolution_matrix, Rexpo)
                 # The second round.
                 #evolution_matrix = dot(evolution_matrix, evolution_matrix)
@@ -187,10 +187,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di/2):
-                    Mint = dot(evolution_matrix, Mint)
+                    Mint = blas_dot(alpha=1.0, a=evolution_matrix.T, b=Mint.T, trans_a=True, trans_b=True)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint[1] / pA
+                Mx = Mint[1][0] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0][si][mi][0][di] = r20a_si_mi_di
                 else:
