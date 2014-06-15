@@ -164,11 +164,9 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 dot(evolution_matrix * 1.0, Rexpo, evolution_matrix)
                 # The second round.
                 dot(evolution_matrix * 1.0, evolution_matrix * 1.0, evolution_matrix)
-                # The third and fourth round,
-                dot(evolution_matrix * 1.0, evolution_matrix * 1.0, evolution_matrix)
 
                 # Loop over the CPMG elements, propagating the magnetisation.
-                for j in range(power_si_mi_di/2):
+                for j in range(power_si_mi_di):
                     Mint = dot(evolution_matrix, Mint)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
