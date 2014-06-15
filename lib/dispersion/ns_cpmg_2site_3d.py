@@ -137,9 +137,12 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
         Rexpo = matrix_exponential(R*tcp[i])
 
+        # Temp matrix.
+        t_mat = Rexpo.dot(r180x).dot(Rexpo)
+
         # Loop over the CPMG elements, propagating the magnetisation.
         for j in range(2*power[i]):
-            Mint = Rexpo.dot(r180x).dot(Rexpo).dot(Mint)
+            Mint = t_mat.dot(Mint)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mx = Mint[1] / pA
