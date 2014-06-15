@@ -56,6 +56,7 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 # Python module imports.
 from numpy import dot, fabs, isfinite, log, min, ones, ndarray
 from numpy.ma import fix_invalid, masked_less_equal, masked_where
+import numpy as np
 
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d
@@ -138,9 +139,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
 
         # Loop over the CPMG elements, propagating the magnetisation.
         for j in range(2*power[i]):
-            Mint = dot(Rexpo, Mint)
-            Mint = dot(r180x, Mint)
-            Mint = dot(Rexpo, Mint)
+            Mint = Rexpo.dot(r180x).dot(Rexpo).dot(Mint)
 
         # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
         Mx = Mint[1] / pA
