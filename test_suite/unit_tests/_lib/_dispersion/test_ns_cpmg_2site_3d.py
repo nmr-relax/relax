@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import array, float64, int16, ones, pi, zeros
 from unittest import TestCase
 
 # relax module imports.
@@ -55,7 +55,9 @@ class Test_ns_cpmg_2site_3d(TestCase):
         cpmg_frqs = self.ncyc / relax_times
         self.inv_relax_times = 1.0 / relax_times
         self.tau_cpmg = 0.25 / cpmg_frqs
-        self.R2eff = zeros(self.num_points, float64)
+
+        self.array_shape = [1, 1, 1, 1, self.num_points]
+        self.R2eff = zeros(self.num_points, float64) * ones(self.array_shape)
 
         # The spin Larmor frequencies.
         self.sfrq = 200. * 1E6
@@ -67,15 +69,17 @@ class Test_ns_cpmg_2site_3d(TestCase):
         # Parameter conversions.
         k_AB, k_BA, pB, dw_frq, M0 = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq, M0=self.M0)
 
+        a = ones(self.array_shape)
+
         # Calculate the R2eff values.
-        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a, r20b=self.r20b, pA=self.pA, dw=dw_frq, kex=self.kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.R2eff, num_points=self.num_points, power=self.ncyc)
+        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, inv_tcpmg=self.inv_relax_times*a, tcp=self.tau_cpmg*a, back_calc=self.R2eff, num_points=self.num_points*a, power=self.ncyc*a)
 
         if self.kex >= 1.e5:
             for i in range(self.num_points):
-                self.assertAlmostEqual(self.R2eff[i], self.r20a, 5)
+                self.assertAlmostEqual(self.R2eff[0][0][0][0][i], self.r20a, 5)
         else:
             for i in range(self.num_points):
-                self.assertAlmostEqual(self.R2eff[i], self.r20a)
+                self.assertAlmostEqual(self.R2eff[0][0][0][0][i], self.r20a)
 
 
     def param_conversion(self, pA=None, kex=None, dw=None, sfrq=None, M0=None):
