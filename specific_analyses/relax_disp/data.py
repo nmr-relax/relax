@@ -1854,6 +1854,9 @@ def plot_disp_curves(dir=None, num_points=1000, extend=500.0, force=False):
 
                     # Loop over the dispersion points.
                     for di in range(len(back_calc[ei][0][mi][oi])):
+                        # Back calc can have more points in end of array.
+                        if di > len(cpmg_frqs_new[ei][mi][oi]) - 1:
+                            continue
                         # Skip invalid points (values of 1e100).
                         if back_calc[ei][0][mi][oi][di] > 1e50:
                             continue
