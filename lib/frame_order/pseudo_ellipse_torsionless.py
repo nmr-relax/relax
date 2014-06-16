@@ -49,11 +49,18 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, th
     @type theta_y:      float
     """
 
-    # The surface area normalisation factor.
+    # The rigid case.
     if theta_x == 0.0:
-        fact = 0.0
-    else:
-        fact = 1.0 / (6.0 * pec(theta_x, theta_y))
+        # Set up the matrix as the identity.
+        matrix[:] = 0.0
+        for i in range(len(matrix)):
+            matrix[i, i] = 1.0
+
+        # Rotate and return the frame order matrix.
+        return rotate_daeg(matrix, Rx2_eigen)
+
+    # The surface area normalisation factor.
+    fact = 1.0 / (6.0 * pec(theta_x, theta_y))
 
     # Diagonal.
     matrix[0, 0] = fact * (6.0*pi + quad(part_int_daeg2_pseudo_ellipse_torsionless_00, -pi, pi, args=(theta_x, theta_y), full_output=1)[0])

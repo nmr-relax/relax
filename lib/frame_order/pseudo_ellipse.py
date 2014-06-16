@@ -72,6 +72,16 @@ def compile_2nd_matrix_pseudo_ellipse(matrix, Rx2_eigen, theta_x, theta_y, sigma
     @type sigma_max:    float
     """
 
+    # The rigid case.
+    if theta_x == 0.0 and sigma_max == 0.0:
+        # Set up the matrix as the identity.
+        matrix[:] = 0.0
+        for i in range(len(matrix)):
+            matrix[i, i] = 1.0
+
+        # Rotate and return the frame order matrix.
+        return rotate_daeg(matrix, Rx2_eigen)
+
     # The surface area normalisation factor.
     fact = 12.0 * pec(theta_x, theta_y)
 
