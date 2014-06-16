@@ -431,7 +431,7 @@ class Frame_order:
         # PCS via numerical integration.
         if self.pcs_flag:
             # Numerical integration of the PCSs.
-            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=R_eigen_full, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
+            pcs_numeric_int_double_rotor(points=self.sobol_angles, sigma_max=sigma_max, sigma_max_2=sigma_max_2, c=self.pcs_const, full_in_ref_frame=self.full_in_ref_frame, r_pivot_atom=self.r_pivot_atom, r_pivot_atom_rev=self.r_pivot_atom_rev, r_ln_pivot=self.r_ln_pivot, A=self.A_3D, R_eigen=self.R_eigen, RT_eigen=RT_eigen, Ri_prime=self.Ri_prime, pcs_theta=self.pcs_theta, pcs_theta_err=self.pcs_theta_err, missing_pcs=self.missing_pcs)
 
             # Calculate and sum the single alignment chi-squared value (for the PCS).
             for align_index in range(self.num_align):
@@ -1132,11 +1132,13 @@ class Frame_order:
         return chi2_sum
 
 
-    def calc_vectors(self, pivot=None, R_ave=None, RT_ave=None):
+    def calc_vectors(self, pivot=None, pivot2=None, R_ave=None, RT_ave=None):
         """Calculate the pivot to atom and lanthanide to pivot vectors for the target functions.
 
         @keyword pivot:     The pivot point.
         @type pivot:        numpy rank-1, 3D array
+        @keyword pivot2:    The 2nd pivot point.
+        @type pivot2:       numpy rank-1, 3D array
         @keyword R_ave:     The rotation matrix for rotating from the reference frame to the average position.
         @type R_ave:        numpy rank-2, 3D array
         @keyword RT_ave:    The transpose of R_ave.
