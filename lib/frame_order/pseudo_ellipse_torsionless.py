@@ -306,6 +306,10 @@ def pcs_numeric_int_pseudo_ellipse_torsionless_qrint(points=None, theta_x=None, 
     # Loop over the samples.
     num = 0
     for i in range(len(points)):
+        # As theta_x <= theta_y, check if theta is outside of the isotropic cone defined by theta_y to minimise calculations for speed.
+        if theta[i] > theta_y:
+            continue
+
         # Calculate theta_max.
         theta_max = tmax_pseudo_ellipse(phi[i], theta_x, theta_y)
 
