@@ -1010,7 +1010,7 @@ class Frame_order:
 
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
-            self.calc_vectors(pivot=pivot, R_ave=self.R_ave, RT_ave=RT_ave)
+            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
 
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
