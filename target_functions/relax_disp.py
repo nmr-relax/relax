@@ -227,6 +227,7 @@ class Dispersion:
         self.r20b_struct = deepcopy(numpy_array_zeros)
         # Structure of dw. The full and the outer dimensions structures.
         self.dw_struct = deepcopy(numpy_array_zeros)
+        self.dwH_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
 
         # Structure of values, errors and missing.
@@ -1271,6 +1272,13 @@ class Dispersion:
         k_BA = pA * kex
         k_AB = pB * kex
 
+        # Convert dw and dwH from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        multiply( multiply.outer( dwH.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_struct )
+
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
         # Initialise.
         chi2_sum = 0.0
 
@@ -1280,12 +1288,10 @@ class Dispersion:
             for si in range(self.num_spins):
                 # Loop over the spectrometer frequencies.
                 for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + ei*self.num_frq + si*self.num_frq*self.num_exp
 
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * self.frqs[ei][si][mi][0][0]
-                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi][0][0]
+                    r20 = self.r20_struct[ei][si][mi][0][0]
+                    dw_frq = self.dw_struct[ei][si][mi][0][0]
+                    dwH_frq = self.dwH_struct[ei][si][mi][0][0]
 
                     # Alias the dw frequency combinations.
                     aliased_dwH = 0.0
@@ -1305,7 +1311,7 @@ class Dispersion:
                         aliased_dwH = dw_frq
 
                     # Back calculate the R2eff values.
-                    r2eff_mmq_cr72(r20=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei][si][mi][0], inv_tcpmg=self.inv_relax_times[ei][si][mi][0], tcp=self.tau_cpmg[ei][si][mi][0], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0], power=self.power[ei][si][mi][0])
+                    r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei][si][mi][0], inv_tcpmg=self.inv_relax_times[ei][si][mi][0], tcp=self.tau_cpmg[ei][si][mi][0], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0], power=self.power[ei][si][mi][0])
 
                     # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                     for di in range(self.num_disp_points[ei][si][mi][0]):
