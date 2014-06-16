@@ -171,7 +171,6 @@ class Dispersion:
         self.num_spins = num_spins
         self.num_frq = num_frq
         self.exp_types = exp_types
-        self.frqs_H = frqs_H
         self.scaling_matrix = scaling_matrix
 
         ### Initialise higher order numpy structures.
@@ -240,6 +239,7 @@ class Dispersion:
         self.cpmg_frqs = deepcopy(numpy_array_ones)
         self.frqs = deepcopy(numpy_array_zeros)
         self.frqs_squared = deepcopy(numpy_array_zeros)
+        self.frqs_H = deepcopy(numpy_array_zeros)
         self.relax_times = deepcopy(numpy_array_zeros)
         self.inv_relax_times = deepcopy(numpy_array_zeros)
         self.tau_cpmg = deepcopy(numpy_array_zeros)
@@ -264,6 +264,8 @@ class Dispersion:
                     frq = frqs[ei][si][mi]
                     self.frqs[ei][si][mi][:] = frq
                     self.frqs_squared[ei][si][mi][:] = frq**2
+                    frq_H = frqs_H[ei][si][mi]
+                    self.frqs_H[ei][si][mi][:] = frq_H
 
                     # Fill the relaxation time.
                     relax_time = relax_times[ei][mi]
@@ -694,8 +696,8 @@ class Dispersion:
                     # Convert dw from ppm to rad/s.
                     dw_AB_frq = dw_AB[si] * self.frqs[ei][si][mi][0][0]
                     dw_AC_frq = dw_AC[si] * self.frqs[ei][si][mi][0][0]
-                    dwH_AB_frq = dwH_AB[si] * self.frqs_H[ei][si][mi]
-                    dwH_AC_frq = dwH_AC[si] * self.frqs_H[ei][si][mi]
+                    dwH_AB_frq = dwH_AB[si] * self.frqs_H[ei][si][mi][0][0]
+                    dwH_AC_frq = dwH_AC[si] * self.frqs_H[ei][si][mi][0][0]
 
                     # Alias the dw frequency combinations.
                     aliased_dwH_AB = 0.0
@@ -1283,7 +1285,7 @@ class Dispersion:
 
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[si] * self.frqs[ei][si][mi][0][0]
-                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi]
+                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi][0][0]
 
                     # Alias the dw frequency combinations.
                     aliased_dwH = 0.0
@@ -1527,7 +1529,7 @@ class Dispersion:
 
                     # Convert dw from ppm to rad/s.
                     dw_frq = dw[si] * self.frqs[ei][si][mi][0][0]
-                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi]
+                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi][0][0]
 
                     # Alias the dw frequency combinations.
                     aliased_dwH = 0.0
