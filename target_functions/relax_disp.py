@@ -1514,6 +1514,13 @@ class Dispersion:
         k_BA = pA * kex
         k_AB = pB * kex
 
+        # Convert dw and dwH from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
+        multiply( multiply.outer( dwH.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_struct )
+
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
         # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
         self.M0[0] = pA
         self.M0[1] = pB
@@ -1523,44 +1530,39 @@ class Dispersion:
 
         # Loop over the experiment types.
         for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + ei*self.num_frq + si*self.num_frq*self.num_exp
 
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * self.frqs[ei][si][mi][0][0]
-                    dwH_frq = dwH[si] * self.frqs_H[ei][si][mi][0][0]
+            r20 = self.r20_struct[ei]
+            dw_frq = self.dw_struct[ei]
+            dwH_frq = self.dwH_struct[ei]
 
-                    # Alias the dw frequency combinations.
-                    aliased_dwH = 0.0
-                    if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
-                        aliased_dw = dw_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
-                        aliased_dw = dwH_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
-                        aliased_dw = dw_frq + dwH_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
-                        aliased_dw = dw_frq - dwH_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
-                        aliased_dw = dw_frq
-                        aliased_dwH = dwH_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
-                        aliased_dw = dwH_frq
-                        aliased_dwH = dw_frq
+            # Alias the dw frequency combinations.
+            aliased_dwH = 0.0
+            if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
+                aliased_dw = dw_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
+                aliased_dw = dwH_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
+                aliased_dw = dw_frq + dwH_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
+                aliased_dw = dw_frq - dwH_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
+                aliased_dw = dw_frq
+                aliased_dwH = dwH_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
+                aliased_dw = dwH_frq
+                aliased_dwH = dw_frq
 
-                    # Back calculate the R2eff values for each experiment type.
-                    self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20[r20_index], R20B=R20[r20_index], pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[ei][si][mi][0], tcp=self.tau_cpmg[ei][si][mi][0], back_calc=self.back_calc[ei][si][mi][0], num_points=self.num_disp_points[ei][si][mi][0], power=self.power[ei][si][mi][0])
+            # Back calculate the R2eff values for each experiment type.
+            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20, R20B=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[ei][si][mi][0]):
-                        if self.missing[ei][si][mi][0][di]:
-                            self.back_calc[ei][si][mi][0][di] = self.values[ei][si][mi][0][di]
+            # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+            if self.has_missing:
+                # Replace with values.
+                mask_replace_blank_ei = masked_equal(self.missing[ei], 1.0)
+                self.back_calc[ei][mask_replace_blank_ei.mask] = self.values[ei][mask_replace_blank_ei.mask]
 
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[ei][si][mi][0], self.back_calc[ei][si][mi][0], self.errors[ei][si][mi][0])
+            # Calculate and return the chi-squared value.
+            chi2_sum += chi2_rankN(self.values[ei], self.back_calc[ei], self.errors[ei])
 
         # Return the total chi-squared value.
         return chi2_sum
