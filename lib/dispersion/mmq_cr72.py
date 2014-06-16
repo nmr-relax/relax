@@ -87,9 +87,9 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     """
 
     # Catch parameter values that will result in no exchange, returning flat R2eff = R20 lines (when kex = 0.0, k_AB = 0.0).
-    if (dw == 0.0 and dwH == 0.0) or pA == 1.0 or k_AB == 0.0:
-        back_calc[:] = array([r20]*num_points)
-        return
+    #if (dw == 0.0 and dwH == 0.0) or pA == 1.0 or k_AB == 0.0:
+    #    back_calc[:] = array([r20]*num_points)
+    #    return
 
     # Repetitive calculations (to speed up calculations).
     dw2 = dw**2
