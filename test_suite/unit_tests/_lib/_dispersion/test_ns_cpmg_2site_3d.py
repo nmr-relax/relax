@@ -70,9 +70,11 @@ class Test_ns_cpmg_2site_3d(TestCase):
         k_AB, k_BA, pB, dw_frq, M0 = self.param_conversion(pA=self.pA, kex=self.kex, dw=self.dw, sfrq=self.sfrq, M0=self.M0)
 
         a = ones(self.array_shape)
+        b = ones([1, 1, 1, 1])
+        print self.num_points*b
 
         # Calculate the R2eff values.
-        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, inv_tcpmg=self.inv_relax_times*a, tcp=self.tau_cpmg*a, back_calc=self.R2eff, num_points=self.num_points*a, power=self.ncyc*a)
+        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=M0, r20a=self.r20a*a, r20b=self.r20b*a, pA=self.pA, dw=dw_frq*a, dw_orig=dw_frq*a, kex=self.kex, inv_tcpmg=self.inv_relax_times*a, tcp=self.tau_cpmg*a, back_calc=self.R2eff, num_points=self.num_points*b, power=self.ncyc*a)
 
         if self.kex >= 1.e5:
             for i in range(self.num_points):
