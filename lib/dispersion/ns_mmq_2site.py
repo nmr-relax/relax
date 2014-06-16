@@ -216,7 +216,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
         else:
-            back_calc[i]= -inv_tcpmg * log(Mx / pA)
+            back_calc[i]= -inv_tcpmg[i] * log(Mx / pA)
 
 
 def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, pB=None, dw=None, dwH=None, k_AB=None, k_BA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -287,4 +287,4 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
         if Mx <= 0.0 or isNaN(Mx):
             back_calc[i] = 1e99
         else:
-            back_calc[i] = -inv_tcpmg * log(Mx / pA)
+            back_calc[i] = -inv_tcpmg[i] * log(Mx / pA)
