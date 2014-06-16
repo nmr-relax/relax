@@ -1307,11 +1307,13 @@ class Dispersion:
                 aliased_dwH = dw_frq
 
             # Back calculate the R2eff values.
-            r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], power=self.power[ei])
 
             # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
             if self.has_missing:
-                print asdf
+                # Replace with values.
+                mask_replace_blank_ei = masked_equal(self.missing[ei], 1.0)
+                self.back_calc[ei][mask_replace_blank_ei.mask] = self.values[ei][mask_replace_blank_ei.mask]
 
             # Calculate and return the chi-squared value.
             chi2_sum += chi2_rankN(self.values[ei], self.back_calc[ei], self.errors[ei])
