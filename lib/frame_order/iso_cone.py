@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sqrt
-from numpy import divide, dot, multiply, sinc, swapaxes, tensordot
+from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
 
 # relax module imports.
 from lib.frame_order.matrix_ops import pcs_pivot_motion_full_qrint, rotate_daeg
@@ -115,11 +115,16 @@ def pcs_numeric_int_iso_cone_qrint(points=None, theta_max=None, sigma_max=None, 
 
     # Default to the rigid state if no points lie in the distribution.
     if num == 0:
-        # Fast frame shift.
-        Ri = dot(R_eigen, tensordot(R_eigen, RT_eigen, axes=1))
+        # Fast identity frame shift.
+        Ri_prime = eye(3, dtype=float64)
+        Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
+        Ri = swapaxes(Ri, 0, 1)
 
         # Calculate the PCSs for this state.
         pcs_pivot_motion_full_qrint(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, A=A, Ri=Ri, pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+
+        # Multiply the constant.
+        multiply(c, pcs_theta, pcs_theta)
 
     # Average the PCS.
     else:
