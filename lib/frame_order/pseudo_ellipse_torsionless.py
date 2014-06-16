@@ -50,7 +50,7 @@ def compile_2nd_matrix_pseudo_ellipse_torsionless(matrix, Rx2_eigen, theta_x, th
     """
 
     # The surface area normalisation factor.
-    if theta_y == 0.0:
+    if theta_x == 0.0:
         fact = 0.0
     else:
         fact = 1.0 / (6.0 * pec(theta_x, theta_y))
