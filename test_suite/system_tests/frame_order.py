@@ -1271,7 +1271,7 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 177.19654222741323, 5)
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
 
 
     def test_rigid_data_to_pseudo_ellipse_torsionless_model(self):
@@ -1284,4 +1284,4 @@ class Frame_order(SystemTestCase):
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
 
         # Check the chi2 value.
-        self.assertAlmostEqual(cdp.chi2, 2.4741390373203678)
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365)
