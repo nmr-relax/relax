@@ -281,26 +281,42 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @type power:            numpy int16, rank-1 array
     """
 
-    # Populate the m1 and m2 matrices (only once per function call for speed).
-    populate_matrix(matrix=m1, R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA)
-    populate_matrix(matrix=m2, R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA)
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # The A+/- matrices.
-        A_pos = matrix_exponential(m1*tcp[i])
-        A_neg = matrix_exponential(m2*tcp[i])
+    # Extract shape of experiment.
+    NS, NM, NO = num_points.shape
 
-        # The evolution for one n.
-        evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+    # Loop over spins.
+    for si in range(NS):
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
+            # Loop over offsets:
+            for oi in range(NO):
 
-        # The full evolution.
-        evol = square_matrix_power(evol_block, power[i])
+                r20a_si_mi_oi = R20A[si][mi][oi][0]
+                r20b_si_mi_oi = R20B[si][mi][oi][0]
+                dw_si_mi_oi = dw[si][mi][oi][0]
+                num_points_si_mi_oi = num_points[si][mi][oi]
 
-        # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        Mx = dot(F_vector, dot(evol, M0))
-        Mx = Mx.real
-        if Mx <= 0.0 or isNaN(Mx):
-            back_calc[i] = 1e99
-        else:
-            back_calc[i] = -inv_tcpmg[i] * log(Mx / pA)
+                # Populate the m1 and m2 matrices (only once per function call for speed).
+                populate_matrix(matrix=m1, R20A=r20a_si_mi_oi , R20B=r20b_si_mi_oi, dw=dw_si_mi_oi, k_AB=k_AB, k_BA=k_BA)
+                populate_matrix(matrix=m2, R20A=r20a_si_mi_oi , R20B=r20b_si_mi_oi, dw=-dw_si_mi_oi, k_AB=k_AB, k_BA=k_BA)
+
+                # Loop over the time points, back calculating the R2eff values.
+                for i in range(num_points_si_mi_oi):
+                    # The A+/- matrices.
+                    A_pos = matrix_exponential(m1*tcp[si][mi][oi][i])
+                    A_neg = matrix_exponential(m2*tcp[si][mi][oi][i])
+
+                    # The evolution for one n.
+                    evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+
+                    # The full evolution.
+                    evol = square_matrix_power(evol_block, power[si][mi][oi][i])
+
+                    # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+                    Mx = dot(F_vector, dot(evol, M0))
+                    Mx = Mx.real
+                    if Mx <= 0.0 or isNaN(Mx):
+                        back_calc[si][mi][oi][i] = 1e99
+                    else:
+                        back_calc[si][mi][oi][i] = -inv_tcpmg[si][mi][oi][i] * log(Mx / pA)
