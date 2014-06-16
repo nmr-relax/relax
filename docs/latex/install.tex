@@ -14,6 +14,9 @@ The following packages need to be installed before using relax:
   \item[\href{http://python.org/}{Python}\index{Python}:]  Version 2.5 or higher.
   \item[\href{http://numpy.scipy.org/}{NumPy}\index{NumPy}:]  Version 1.0.4 or higher.
     This package is used for most of the numerical calculations within relax.
+  \item[\href{http://www.scipy.org/}{SciPy}\index{SciPy}:]  Version 0.7.1 or higher.
+    This package is optional.
+    It is required only for the frame order theory analyses.
   \item[\href{http://wxpython.org/}{wxPython}\index{wxPython}:]  Version 2.8 or higher.
     This package is also optional.
     It is required for the operation of the graphical user interface (GUI)\index{User interface!GUI}.
@@ -137,7 +140,7 @@ The relax releases packaged within Fink can been browsed at \href{http://pdb.fin
 If the desired version is not available, please download the relevant source package below or contact the fink project using the ``Maintainer'' email address given in the relax fink pages.
 
 Note that when installing via fink, all the dependencies will be automatically selected and installed as well.
-Although automatic, when starting from scratch that there could be well over 250 source packages that need to be compiled (to set up the full GNU compilation chain and other libraries which are then required to build Python, numpy, etc.).
+Although automatic, when starting from scratch that there could be well over 250 source packages that need to be compiled (to set up the full GNU compilation chain and other libraries which are then required to build Python, numpy, scipy, etc.).
 This may take anywhere between 2 days to over a week (don't forget to mention this fact to your poor sys-admin).
 
 The fink relax packages for different Python versions are \href{http://pdb.finkproject.org/pdb/package.php/relax-py27}{relax-py27}, \href{http://pdb.finkproject.org/pdb/package.php/relax-py26}{relax-py26}, \href{http://pdb.finkproject.org/pdb/package.php/relax-py25}{relax-py25} and \href{http://pdb.finkproject.org/pdb/package.php/relax-py24}{relax-py24}.
