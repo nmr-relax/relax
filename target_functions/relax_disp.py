@@ -239,6 +239,7 @@ class Dispersion:
         # Create the data structures to fill in.
         self.cpmg_frqs = deepcopy(numpy_array_ones)
         self.frqs = deepcopy(numpy_array_zeros)
+        self.frqs_squared = deepcopy(numpy_array_zeros)
         self.relax_times = deepcopy(numpy_array_zeros)
         self.inv_relax_times = deepcopy(numpy_array_zeros)
         self.tau_cpmg = deepcopy(numpy_array_zeros)
@@ -262,6 +263,7 @@ class Dispersion:
                     # Fill the frequency.
                     frq = frqs[ei][si][mi]
                     self.frqs[ei][si][mi][:] = frq
+                    self.frqs_squared[ei][si][mi][:] = frq**2
 
                     # Fill the relaxation time.
                     relax_time = relax_times[ei][mi]
@@ -969,7 +971,7 @@ class Dispersion:
         kex = params[self.end_index[1]]
 
         # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs*self.frqs, out=self.phi_ex_struct )
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
@@ -1066,9 +1068,8 @@ class Dispersion:
                 r20_index = mi + si*self.num_frq
 
                 # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-                frq2 = self.frqs[0][si][mi][0][0]**2
-                rex_B_scaled = rex_B[si] * frq2
-                rex_C_scaled = rex_C[si] * frq2
+                rex_B_scaled = rex_B[si] * self.frqs_squared[0][si][mi][0][0]
+                rex_C_scaled = rex_C[si] * self.frqs_squared[0][si][mi][0][0]
 
                 # Back calculate the R2eff values.
                 r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs[0][mi][0], back_calc=self.back_calc[0][si][mi][0], num_points=self.num_disp_points[0][si][mi][0])
@@ -1104,7 +1105,7 @@ class Dispersion:
         kex = params[self.end_index[1]]
 
         # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs*self.frqs, out=self.phi_ex_struct )
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
@@ -1143,7 +1144,7 @@ class Dispersion:
         kex = params[self.end_index[1]]
 
         # Convert phi_ex from ppm^2 to (rad/s)^2. Use the out argument, to pass directly to structure.
-        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs*self.frqs, out=self.phi_ex_struct )
+        multiply( multiply.outer( phi_ex.reshape(self.NE, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
