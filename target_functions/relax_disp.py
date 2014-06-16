@@ -177,8 +177,12 @@ class Dispersion:
         self.NO = self.numpy_array_shape[3]
         self.ND = self.numpy_array_shape[4]
 
+        # Create zero and one numpy structure.
+        numpy_array_zeros = zeros(self.numpy_array_shape, float64)
+        numpy_array_ones = ones(self.numpy_array_shape, float64)
+
         # Create special numpy structures.
-        self.no_nd_struct = ones([self.NO, self.ND], float64)
+        self.no_nd_ones = ones([self.NO, self.ND], float64)
 
         # Store the arguments.
         self.model = model
@@ -189,9 +193,9 @@ class Dispersion:
         self.values = values
         self.errors = errors
         self.missing = missing
-        self.frqs = multiply.outer( asarray(frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
+        self.frqs = multiply.outer( asarray(frqs).reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
         self.frqs_H = frqs_H
-        self.cpmg_frqs = cpmg_frqs
+        self.cpmg_frqs = deepcopy(numpy_array_ones)
         self.spin_lock_nu1 = spin_lock_nu1
         self.chemical_shifts = chemical_shifts
         self.offset = offset
@@ -229,7 +233,9 @@ class Dispersion:
                     for oi in range(self.num_offsets[ei][si][mi]):
                         self.num_disp_points[ei][si][mi].append([])
                         if cpmg_frqs != None and len(cpmg_frqs[ei][mi][oi]):
-                            self.num_disp_points[ei][si][mi][oi] = len(self.cpmg_frqs[ei][mi][oi])
+                            num_disp_points = len(cpmg_frqs[ei][mi][oi])
+                            self.num_disp_points[ei][si][mi][oi] = num_disp_points
+                            self.cpmg_frqs[ei][si][mi][oi][:num_disp_points] = cpmg_frqs[ei][mi][oi]
                         elif spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
                             self.num_disp_points[ei][si][mi][oi] = len(self.spin_lock_nu1[ei][mi][oi])
                         else:
@@ -306,7 +312,7 @@ class Dispersion:
 
                         # Normal value.
                         else:
-                            self.power[ei][mi][di] = int(round(self.cpmg_frqs[ei][mi][0][di] * self.relax_times[ei][mi]))
+                            self.power[ei][mi][di] = int(round(self.cpmg_frqs[ei][0][mi][0][di] * self.relax_times[ei][mi]))
 
             # The tau_cpmg times.
             self.tau_cpmg = []
@@ -319,7 +325,7 @@ class Dispersion:
                         if recalc_tau:
                             self.tau_cpmg[ei][mi][di] = 0.25 * self.relax_times[ei][mi] / self.power[ei][mi][di]
                         else:
-                            self.tau_cpmg[ei][mi][di] = 0.25 / self.cpmg_frqs[ei][mi][0][di]
+                            self.tau_cpmg[ei][mi][di] = 0.25 / self.cpmg_frqs[ei][0][mi][0][di]
 
         # Convert the spin-lock data to rad.s^-1.
         if spin_lock_nu1 != None:
@@ -464,7 +470,6 @@ class Dispersion:
         # Setup special numpy array structures, for higher dimensional computation.
         if model in test_models + [MODEL_NOREX]:
             if model in MODEL_LIST_CPMG_FULL:
-                self.cpmg_frqs_a = deepcopy(ones_a)
                 self.phi_ex_struct = deepcopy(zeros_a)
 
             if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_TSMFK01, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
@@ -496,7 +501,6 @@ class Dispersion:
 
                             if model in MODEL_LIST_CPMG_FULL and model != MODEL_NOREX:
                                 # Extract cpmg_frqs and num_disp_points from lists.
-                                self.cpmg_frqs_a[ei][si][mi][oi][:num_disp_points] = self.cpmg_frqs[ei][mi][oi]
                                 self.num_disp_points_a[ei][si][mi][oi][:num_disp_points] = self.num_disp_points[ei][si][mi][oi]
 
                                 # Make a spin 1/0 file.
@@ -607,7 +611,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         ## Back calculate the R2eff values.
-        r2eff_CR72(r20a=self.r20a_struct, r20a_orig=R20A, r20b=self.r20b_struct, r20b_orig=R20B, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
+        r2eff_CR72(r20a=self.r20a_struct, r20a_orig=R20A, r20b=self.r20b_struct, r20b_orig=R20B, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
@@ -1085,7 +1089,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
-        r2eff_IT99(r20=self.r20_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, tex=tex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
+        r2eff_IT99(r20=self.r20_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, tex=tex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
@@ -1180,7 +1184,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_struct )
 
         # Back calculate the R2eff values.
-        r2eff_LM63(r20=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, cpmg_frqs=self.cpmg_frqs_a, back_calc=self.back_calc_a)
+        r2eff_LM63(r20=self.r20_struct, phi_ex=self.phi_ex_struct, kex=kex, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc_a)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc_a = self.back_calc_a*self.disp_struct
