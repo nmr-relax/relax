@@ -141,9 +141,6 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
             # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
             R = rcpmg_3d(R1A=r10a, R1B=r10b, R2A=R2A_si_mi, R2B=R2B_si_mi, pA=pA, pB=pB, dw=dw_si_mi, k_AB=k_AB, k_BA=k_BA)
 
-            # The essential evolution matrix. This initialises the structure.
-            evolution_matrix = asarray(R) * 0.0
-
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
@@ -160,10 +157,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
 
                 # The essential evolution matrix.
                 # This is the first round.
-                dot(Rexpo, r180x, evolution_matrix)
-                dot(evolution_matrix * 1.0, Rexpo, evolution_matrix)
+                evolution_matrix = dot(Rexpo, r180x)
+                evolution_matrix = dot(evolution_matrix, Rexpo)
                 # The second round.
-                dot(evolution_matrix * 1.0, evolution_matrix * 1.0, evolution_matrix)
+                evolution_matrix = dot(evolution_matrix, evolution_matrix )
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di):
