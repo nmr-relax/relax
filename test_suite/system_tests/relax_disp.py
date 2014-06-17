@@ -2234,9 +2234,9 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g %20.15g\n" % ("chi2", spin4.chi2, spin70.chi2, spin71.chi2))
         self.assertAlmostEqual(spin4.r2[r20_key1], 1.60463650370664, 2)
         self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221675941434, 3)
-        self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)
-        self.assertAlmostEqual(spin4.dw, 5.07483389476542e-14, 3)
-        self.assertAlmostEqual(spin4.kex/10000, 2.29004732365492e-12/10000, 3)
+        #self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)    # As dw (and kex) is zero, this parameter is not stable.
+        self.assertAlmostEqual(spin4.dw, 0.0, 6)
+        self.assertAlmostEqual(spin4.kex/10000, 0.0, 3)
         self.assertAlmostEqual(spin4.chi2, 26.7356711142038, 3)
         self.assertAlmostEqual(spin70.r2[r20_key1], 6.97268077496405, 3)
         self.assertAlmostEqual(spin70.r2[r20_key2], 9.41028133407727, 3)
