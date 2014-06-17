@@ -142,10 +142,10 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
         for mi in range(NM):
 
             # Extract the values from the higher dimensional arrays.
-            R2A_si_mi=r20a[0][si][mi][0][0]
-            R2B_si_mi=r20b[0][si][mi][0][0]
-            dw_si_mi = dw[0][si][mi][0][0]
-            num_points_si_mi = int(num_points[0][si][mi][0])
+            R2A_si_mi=r20a[0, si, mi, 0, 0]
+            R2B_si_mi=r20b[0, si, mi, 0, 0]
+            dw_si_mi = dw[0, si, mi, 0, 0]
+            num_points_si_mi = int(num_points[0, si, mi, 0])
 
             # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
             Rr[0, 0] = -R2A_si_mi
@@ -164,10 +164,10 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
-                tcp_si_mi_di = tcp[0][si][mi][0][di]
-                inv_tcpmg_si_mi_di = inv_tcpmg[0][si][mi][0][di]
-                power_si_mi_di = int(power[0][si][mi][0][di])
-                r20a_si_mi_di = r20a[0][si][mi][0][di]
+                tcp_si_mi_di = tcp[0, si, mi, 0, di]
+                inv_tcpmg_si_mi_di = inv_tcpmg[0, si, mi, 0, di]
+                power_si_mi_di = int(power[0, si, mi, 0, di])
+                r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 eR_tcp = matrix_exponential(R*tcp_si_mi_di)
@@ -184,9 +184,9 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                 Mx = Moft[0].real / M0[0]
                 if Mx <= 0.0 or isNaN(Mx):
-                    back_calc[0][si][mi][0][di] = 1e99
+                    back_calc[0, si, mi, 0, di] = 1e99
                 else:
-                    back_calc[0][si][mi][0][di]= -inv_tcpmg_si_mi_di * log(Mx)
+                    back_calc[0, si, mi, 0, di]= -inv_tcpmg_si_mi_di * log(Mx)
 
     # Replace data in array.
     # If dw is zero.
