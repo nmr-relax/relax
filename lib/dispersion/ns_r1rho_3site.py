@@ -75,13 +75,13 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword matrix:            A numpy array to be populated to create the evolution matrix.
     @type matrix:               numpy rank-2, 9D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          float
+    @type r1rho_prime:          numpy float array of rank [NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
-    @type omega:                float
+    @type omega:                numpy float array of rank [NS][NM][NO][ND]
     @keyword offset:            The spin-lock offsets for the data.
-    @type offset:               numpy rank-1 float array
+    @type offset:               numpy float array of rank [NS][NM][NO][ND]
     @keyword r1:                The R1 relaxation rate.
-    @type r1:                   float
+    @type r1:                   numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword pB:                The population of state B.
@@ -89,9 +89,9 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword pC:                The population of state C.
     @type pC:                   float
     @keyword dw_AB:             The chemical exchange difference between states A and B in rad/s.
-    @type dw_AB:                float
+    @type dw_AB:                numpy float array of rank [NS][NM][NO][ND]
     @keyword dw_AC:             The chemical exchange difference between states A and C in rad/s.
-    @type dw_AC:                float
+    @type dw_AC:                numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:              The rate of exchange from site A to B (rad/s).
     @type k_AB:                 float
     @keyword k_BA:              The rate of exchange from site B to A (rad/s).
@@ -105,45 +105,68 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword k_CA:              The rate of exchange from site C to A (rad/s).
     @type k_CA:                 float
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
-    @type spin_lock_fields:     numpy rank-1 float array
+    @type spin_lock_fields:     numpy float array of rank [NS][NM][NO][ND]
     @keyword relax_time:        The total relaxation time period for each spin-lock field strength (in seconds).
-    @type relax_time:           float
+    @type relax_time:           numpy float array of rank [NS][NM][NO][ND]
     @keyword inv_relax_time:    The inverse of the relaxation time period for each spin-lock field strength (in inverse seconds).  This is used for faster calculations.
-    @type inv_relax_time:       float
+    @type inv_relax_time:       numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy rank-1 float array
+    @type back_calc:            numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:           int
+    @type num_points:           numpy int array of rank [NS][NM][NO]
     """
 
-    # Repetitive calculations (to speed up calculations).
-    Wa = omega                  # Larmor frequency for state A [s^-1].
-    Wb = omega + dw_AB          # Larmor frequency for state B [s^-1].
-    Wc = omega + dw_AC          # Larmor frequency for state C [s^-1].
-    W = pA*Wa + pB*Wb + pC*Wc   # Population-averaged Larmor frequency [s^-1].
-    dA = Wa - offset            # Offset of spin-lock from A.
-    dB = Wb - offset            # Offset of spin-lock from B.
-    dC = Wc - offset            # Offset of spin-lock from C.
-    d = W - offset              # Offset of spin-lock from population-average.
+    # Extract shape of experiment.
+    NE, NS, NM, NO = num_points.shape
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-        rr1rho_3d_3site(matrix=matrix, R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, pC=pC, wA=dA, wB=dB, wC=dC, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+    # Loop over spins.
+    for si in range(NS):
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
+            # Loop over offsets:
+            for oi in range(NO):
 
-        # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        theta = atan2(spin_lock_fields[i], dA)
-        M0[0] = sin(theta)    # The A state initial X magnetisation.
-        M0[2] = cos(theta)    # The A state initial Z magnetisation.
+                omega_i = omega[0, si, mi, oi, 0]
+                offset_i = offset[0, si, mi, oi, 0]
+                r1_i = r1[0, si, mi, oi, 0]
+                dw_AB_i = dw_AB[0, si, mi, oi, 0]
+                dw_AC_i = dw_AC[0, si, mi, oi, 0]
 
-        # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = matrix_exponential(matrix*relax_time)
+                r1rho_prime_i = r1rho_prime[0, si, mi, oi]
+                spin_lock_fields_i = spin_lock_fields[0, si, mi, oi]
+                relax_time_i = relax_time[0, si, mi, oi]
+                inv_relax_time_i = inv_relax_time[0, si, mi, oi]
+                back_calc_i = back_calc[0, si, mi, oi]
+                num_points_i = num_points[0, si, mi, oi]
 
-        # Magnetization evolution.
-        MA = dot(M0, dot(Rexpo, M0))
+                # Repetitive calculations (to speed up calculations).
+                Wa = omega_i                # Larmor frequency for state A [s^-1].
+                Wb = omega_i + dw_AB_i      # Larmor frequency for state B [s^-1].
+                Wc = omega_i + dw_AC_i      # Larmor frequency for state C [s^-1].
+                W = pA*Wa + pB*Wb + pC*Wc   # Population-averaged Larmor frequency [s^-1].
+                dA = Wa - offset_i          # Offset of spin-lock from A.
+                dB = Wb - offset_i          # Offset of spin-lock from B.
+                dC = Wc - offset_i          # Offset of spin-lock from C.
+                d = W - offset_i            # Offset of spin-lock from population-average.
 
-        # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        if MA <= 0.0 or isNaN(MA):
-            back_calc[i] = 1e99
-        else:
-            back_calc[i]= -inv_relax_time[i] * log(MA)
+                # Loop over the time points, back calculating the R2eff values.
+                for j in range(num_points_i):
+                    # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+                    rr1rho_3d_3site(matrix=matrix, R1=r1_i, r1rho_prime=r1rho_prime_i[j], pA=pA, pB=pB, pC=pC, wA=dA, wB=dB, wC=dC, w1=spin_lock_fields_i[j], k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+
+                    # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+                    theta = atan2(spin_lock_fields_i[j], dA)
+                    M0[0] = sin(theta)    # The A state initial X magnetisation.
+                    M0[2] = cos(theta)    # The A state initial Z magnetisation.
+
+                    # This matrix is a propagator that will evolve the magnetization with the matrix R.
+                    Rexpo = matrix_exponential(matrix*relax_time_i[j])
+
+                    # Magnetization evolution.
+                    MA = dot(M0, dot(Rexpo, M0))
+
+                    # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+                    if MA <= 0.0 or isNaN(MA):
+                        back_calc[0, si, mi, oi, j] = 1e99
+                    else:
+                        back_calc[0, si, mi, oi, j]= -inv_relax_time_i[j] * log(MA)
