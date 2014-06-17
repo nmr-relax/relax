@@ -127,7 +127,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       numpy int array of rank [NS][NM][NO][ND]
+    @type num_points:       numpy int array of rank [NS][NM][NO]
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
