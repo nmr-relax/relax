@@ -1159,10 +1159,11 @@ class Frame_order:
         subtract(self.r_pivot_atom, pivot, self.r_pivot_atom)
 
         # And the reverse vectors.
-        self.r_pivot_atom_rev[:] = dot(vect, R_ave)
-        add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
-        add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
-        subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
+        if min(self.full_in_ref_frame) == 0:
+            self.r_pivot_atom_rev[:] = dot(vect, R_ave)
+            add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
+            add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
+            subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
 
 
     def create_sobol_data(self, n=10000, dims=None):
