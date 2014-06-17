@@ -2481,17 +2481,17 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.7436229263957)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406788826655)
-        self.assertAlmostEqual(spin70.phi_ex, 0.31273301746411)
-        self.assertAlmostEqual(spin70.kex/1000, 4723.09901154387/1000)
-        self.assertAlmostEqual(spin70.chi2, 363.534044873483)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.7436229263957, 5)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406788826655, 5)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31273301746411, 5)
+        self.assertAlmostEqual(spin70.kex/1000, 4723.09901154387/1000, 5)
+        self.assertAlmostEqual(spin70.chi2, 363.534044873483, 5)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657729728)
-        self.assertAlmostEqual(spin71.phi_ex, 0.0553787825650613)
-        self.assertAlmostEqual(spin71.kex/1000, 2781.72292994154/1000)
-        self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657729728, 5)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0553787825650613, 5)
+        self.assertAlmostEqual(spin71.kex/1000, 2781.72292994154/1000, 5)
+        self.assertAlmostEqual(spin71.chi2, 17.0776399916287, 5)
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
