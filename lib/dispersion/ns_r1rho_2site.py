@@ -69,33 +69,33 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword matrix:            A numpy array to be populated to create the evolution matrix.
     @type matrix:               numpy rank-2, 6D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          float
+    @type r1rho_prime:          numpy float array of rank [NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
-    @type omega:                float
+    @type omega:                numpy float array of rank [NS][NM][NO][ND]
     @keyword offset:            The spin-lock offsets for the data.
-    @type offset:               numpy rank-1 float array
+    @type offset:               numpy float array of rank [NS][NM][NO][ND]
     @keyword r1:                The R1 relaxation rate.
-    @type r1:                   float
+    @type r1:                   numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword pB:                The population of state B.
     @type pB:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   float
+    @type dw:                   numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:              The rate of exchange from site A to B (rad/s).
     @type k_AB:                 float
     @keyword k_BA:              The rate of exchange from site B to A (rad/s).
     @type k_BA:                 float
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
-    @type spin_lock_fields:     numpy rank-1 float array
+    @type spin_lock_fields:     numpy float array of rank [NS][NM][NO][ND]
     @keyword relax_time:        The total relaxation time period for each spin-lock field strength (in seconds).
-    @type relax_time:           float
+    @type relax_time:           numpy float array of rank [NS][NM][NO][ND]
     @keyword inv_relax_time:    The inverse of the relaxation time period for each spin-lock field strength (in inverse seconds).  This is used for faster calculations.
-    @type inv_relax_time:       float
+    @type inv_relax_time:       numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:            numpy rank-1 float array
+    @type back_calc:            numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:           int
+    @type num_points:           numpy int array of rank [NS][NM][NO]
     """
 
     # Extract shape of experiment.
