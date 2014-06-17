@@ -1309,6 +1309,9 @@ class Dispersion:
             # Back calculate the R2eff values.
             r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
 
+            # Clean the data for all values, which is left over at the end of arrays.
+            self.back_calc[ei] = self.back_calc[ei]*self.disp_struct[ei]
+
             # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
             if self.has_missing:
                 # Replace with values.
@@ -1340,6 +1343,9 @@ class Dispersion:
 
         # Reshape R20 to per experiment, spin and frequency.
         self.back_calc[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
         ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
         if self.has_missing:
@@ -1553,6 +1559,9 @@ class Dispersion:
 
             # Back calculate the R2eff values for each experiment type.
             self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20, R20B=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+
+            # Clean the data for all values, which is left over at the end of arrays.
+            self.back_calc[ei] = self.back_calc[ei]*self.disp_struct[ei]
 
             # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
             if self.has_missing:
@@ -1809,7 +1818,6 @@ class Dispersion:
 
         # Return the total chi-squared value.
         return chi2_rankN(self.values, self.back_calc, self.errors)
-
 
 
     def func_TSMFK01(self, params):
