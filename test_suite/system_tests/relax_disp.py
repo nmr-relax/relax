@@ -3781,7 +3781,7 @@ class Relax_disp(SystemTestCase):
 
         # Set up the model data.
         self.interpreter.relax_disp.select_model(model='LM63 3-site')
-        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='LM63 3-site', param='r2eff')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='LM63 3-site', param='r2eff')
         self.interpreter.spin.isotope('15N')
 
         # Alias the spins.
@@ -3807,7 +3807,17 @@ class Relax_disp(SystemTestCase):
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
-        # Printout.
+        # Monte Carlo simulations.
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Save the results.
+        self.interpreter.results.write(file='devnull', compress_type=1, force=True)
+
+        # The model checks.
         print("\n\nOptimised parameters:\n")
         print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
         print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
@@ -3817,16 +3827,20 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("kB", spin1.kB, spin2.kB))
         print("%-20s %20.15g %20.15g" % ("kC", spin1.kC, spin2.kC))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
-
-        # Monte Carlo simulations.
-        self.interpreter.monte_carlo.setup(number=3)
-        self.interpreter.self.interpreter.monte_carlo.create_data(method='back_calc')
-        self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
-        self.interpreter.monte_carlo.error_analysis()
-
-        # Save the results.
-        self.interpreter.results.write(file='devnull', compress_type=1, force=True)
+        self.assertAlmostEqual(spin1.r2[r20_key1], 12.0, 2)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 12.0, 2)
+        self.assertAlmostEqual(spin1.phi_ex_B, 0.1, 3)
+        self.assertAlmostEqual(spin1.phi_ex_C, 0.5, 3)
+        self.assertAlmostEqual(spin1.kB/1000, 1500.0/1000, 3)
+        self.assertAlmostEqual(spin1.kC/1000, 2500.0/1000, 3)
+        self.assertAlmostEqual(spin1.chi2, 0.0, 3)
+        self.assertAlmostEqual(spin2.r2[r20_key1], 15.0, 3)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 15.0, 3)
+        self.assertAlmostEqual(spin1.phi_ex_B, 0.1, 3)
+        self.assertAlmostEqual(spin1.phi_ex_C, 0.5, 3)
+        self.assertAlmostEqual(spin1.kB/1000, 1500.0/1000, 3)
+        self.assertAlmostEqual(spin1.kC/1000, 2500.0/1000, 3)
+        self.assertAlmostEqual(spin2.chi2, 0.0, 3)
 
 
     def test_m61_data_to_m61(self):
