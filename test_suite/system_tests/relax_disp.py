@@ -2494,6 +2494,70 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
 
 
+    def test_hansen_cpmg_data_to_lm63_3site(self):
+        """Optimisation of Dr. Flemming Hansen's CPMG data to the LM63 dispersion model.
+
+        This uses the data from Dr. Flemming Hansen's paper at http://dx.doi.org/10.1021/jp074793o.  This is CPMG data with a fixed relaxation time period.
+        """
+
+        # Base data setup.
+        self.setup_hansen_cpmg_data(model='LM63 3-site')
+
+        # Alias the spins.
+        spin70 = return_spin(":70")
+        spin71 = return_spin(":71")
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+
+        ## Set the initial parameter values.
+        spin70.r2 = {r20_key1: 7.570370921220954, r20_key2: 8.694446951909107}
+        spin70.phi_ex_B = 0.14872003058250227
+        spin70.phi_ex_C = 0.1319419923472704
+        spin70.kB = 4103.672910444741
+        spin70.kC = 7029.001690726248
+        spin71.r2 = {r20_key1: 5.1347793381636, r20_key2: 7.156573986051575}
+        spin71.phi_ex_B = 0.04013553485505605
+        spin71.phi_ex_C = 0.020050748406928887
+        spin71.kB = 4045.3007136121364
+        spin71.kC = 3586.38798270774
+
+        #self.interpreter.relax_disp.r20_from_min_r2eff(force=False)
+        #self.interpreter.grid_search(lower=None, upper=None, inc=41, constraints=True, verbosity=1)
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-25, grad_tol=None, max_iter=10000000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:70)", "Value (:71)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin70.r2[r20_key1], spin71.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin70.r2[r20_key2], spin71.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_B", spin70.phi_ex_B, spin71.phi_ex_B))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_C", spin70.phi_ex_C, spin71.phi_ex_C))
+        print("%-20s %20.15g %20.15g" % ("kB", spin70.kB, spin71.kB))
+        print("%-20s %20.15g %20.15g" % ("kC", spin70.kC, spin71.kC))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
+
+        # Checks for residue :70.
+        #self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
+        #self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481, 6)
+        self.assertAlmostEqual(spin70.phi_ex_B, 0.148720030582502)
+        self.assertAlmostEqual(spin70.phi_ex_C, 0.13194199234727)
+        self.assertAlmostEqual(spin70.kB/1000, 4103.67291044474/1000, 6)
+        self.assertAlmostEqual(spin70.kC/1000, 7029.00169072625/1000, 6)
+        #self.assertAlmostEqual(spin70.chi2, 363.534044873483)
+
+        # Checks for residue :71.
+        #self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657712558)
+        self.assertAlmostEqual(spin71.phi_ex_B, 0.040135534855056)
+        self.assertAlmostEqual(spin71.phi_ex_C, 0.0200507484069289)
+        self.assertAlmostEqual(spin71.kB/1000, 4045.30071361214/1000)
+        self.assertAlmostEqual(spin71.kC/1000, 3586.38798270774/1000)
+        #self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
+
+
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
         """Optimisation of Dr. Flemming Hansen's CPMG data to the 'NS CPMG 2-site 3D' dispersion model.
 
@@ -3699,6 +3763,84 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(res61L.r2a[r20_key1], 8.4, 0)
         self.assertAlmostEqual(res61L.dw, 6.41, 0)
         self.assertAlmostEqual(res61L.k_AB, 10.55, 0)
+
+
+    def test_lm63_3site_synthetic(self):
+        """Test the 'LM63 3-site' dispersion model using the pure noise-free synthetic data."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'lm63_3site'
+
+        # Load the state file.
+        self.interpreter.reset()
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # A new data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='LM63 3-site', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='LM63 3-site')
+
+        # Set up the model data.
+        self.interpreter.relax_disp.select_model(model='LM63 3-site')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='LM63 3-site', param='r2eff')
+        self.interpreter.spin.isotope('15N')
+
+        # Alias the spins.
+        spin1 = return_spin(":1")
+        spin2 = return_spin(":2")
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+
+        # Manually set the parameter values.
+        spin1.r2 = {r20_key1: 12.0, r20_key2: 12.0}
+        spin1.phi_ex_B = 0.1
+        spin1.phi_ex_C = 0.5
+        spin1.kB = 1500.0
+        spin1.kC = 2500.0
+        spin2.r2 = {r20_key1: 15.0, r20_key2: 15.0}
+        spin2.phi_ex_B = 0.1
+        spin2.phi_ex_C = 0.5
+        spin2.kB = 1500.0
+        spin2.kC = 2500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Monte Carlo simulations.
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Save the results.
+        self.interpreter.results.write(file='devnull', compress_type=1, force=True)
+
+        # The model checks.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_B", spin1.phi_ex_B, spin2.phi_ex_B))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_C", spin1.phi_ex_C, spin2.phi_ex_C))
+        print("%-20s %20.15g %20.15g" % ("kB", spin1.kB, spin2.kB))
+        print("%-20s %20.15g %20.15g" % ("kC", spin1.kC, spin2.kC))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
+        self.assertAlmostEqual(spin1.r2[r20_key1], 12.0, 2)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 12.0, 2)
+        self.assertAlmostEqual(spin1.phi_ex_B, 0.1, 3)
+        self.assertAlmostEqual(spin1.phi_ex_C, 0.5, 3)
+        self.assertAlmostEqual(spin1.kB/1000, 1500.0/1000, 3)
+        self.assertAlmostEqual(spin1.kC/1000, 2500.0/1000, 3)
+        self.assertAlmostEqual(spin1.chi2, 0.0, 3)
+        self.assertAlmostEqual(spin2.r2[r20_key1], 15.0, 3)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 15.0, 3)
+        self.assertAlmostEqual(spin1.phi_ex_B, 0.1, 3)
+        self.assertAlmostEqual(spin1.phi_ex_C, 0.5, 3)
+        self.assertAlmostEqual(spin1.kB/1000, 1500.0/1000, 3)
+        self.assertAlmostEqual(spin1.kC/1000, 2500.0/1000, 3)
+        self.assertAlmostEqual(spin2.chi2, 0.0, 3)
 
 
     def test_m61_data_to_m61(self):

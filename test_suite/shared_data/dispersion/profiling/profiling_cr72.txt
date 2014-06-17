@@ -1,7 +1,6 @@
 Checked on MacBook Pro
 2.4 GHz Intel Core i5
 8 GB 1067 Mhz DDR3 RAM.
-Python Distribution -- Python 2.7.3 |EPD 7.3-2 (32-bit)| 
 
 Timing for:
 3 fields
@@ -21,52 +20,132 @@ svn switch ^/tags/3.2.2
    ncalls  tottime  percall  cumtime  percall filename:lineno(function)
 
 ############################
-For disp_spin_speed r23742 #
+For disp_spin_speed r23841 #
 ############################
 1 spin:
-        1    0.000    0.000    0.687    0.687 <string>:1(<module>)
-        1    0.001    0.001    0.687    0.687 pf:419(single)
-     1000    0.002    0.000    0.682    0.001 pf:405(calc)
-     1000    0.008    0.000    0.680    0.001 relax_disp.py:981(func_CR72_full)
-     1000    0.121    0.000    0.666    0.001 relax_disp.py:503(calc_CR72_chi2)
-     1003    0.157    0.000    0.360    0.000 cr72.py:101(r2eff_CR72)
-    23029    0.187    0.000    0.187    0.000 {numpy.core.multiarray.array}
-     4003    0.118    0.000    0.180    0.000 numeric.py:1862(allclose)
+        1    0.000    0.000    0.373    0.373 <string>:1(<module>)
+        1    0.001    0.001    0.373    0.373 pf:427(single)
+     1000    0.002    0.000    0.366    0.000 pf:413(calc)
+     1000    0.012    0.000    0.363    0.000 relax_disp.py:994(func_CR72_full)
+     1000    0.027    0.000    0.345    0.000 relax_disp.py:545(calc_CR72_chi2)
+     1003    0.148    0.000    0.260    0.000 cr72.py:101(r2eff_CR72)
+     7043    0.059    0.000    0.059    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     1000    0.004    0.000    0.052    0.000 core.py:1701(masked_where)
+     3006    0.006    0.000    0.036    0.000 fromnumeric.py:1621(sum)
+     3006    0.004    0.000    0.028    0.000 _methods.py:23(_sum)
+     3000    0.024    0.000    0.024    0.000 {method 'outer' of 'numpy.ufunc' objects}
+     1000    0.013    0.000    0.024    0.000 chi2.py:72(chi2_rankN)
+     1000    0.002    0.000    0.024    0.000 {method 'view' of 'numpy.ndarray' objects}
+     2006    0.003    0.000    0.023    0.000 fromnumeric.py:2132(amin)
+     1000    0.003    0.000    0.021    0.000 core.py:2774(__array_finalize__)
 
 100 spins:
-        1    0.000    0.000   29.834   29.834 <string>:1(<module>)
-        1    0.003    0.003   29.834   29.834 pf:441(cluster)
-     1000    0.003    0.000   29.712    0.030 pf:405(calc)
-     1000    0.012    0.000   29.709    0.030 relax_disp.py:981(func_CR72_full)
-     1000    9.752    0.010   29.682    0.030 relax_disp.py:503(calc_CR72_chi2)
-  1510108   17.942    0.000   17.942    0.000 {numpy.core.multiarray.array}
-     1300    1.300    0.001    1.990    0.002 cr72.py:101(r2eff_CR72)
-     4300    0.489    0.000    0.625    0.000 numeric.py:1862(allclose)
+        1    0.000    0.000    1.630    1.630 <string>:1(<module>)
+        1    0.003    0.003    1.630    1.630 pf:449(cluster)
+     1000    0.004    0.000    1.532    0.002 pf:413(calc)
+     1000    0.020    0.000    1.528    0.002 relax_disp.py:994(func_CR72_full)
+     1000    0.073    0.000    1.495    0.001 relax_disp.py:545(calc_CR72_chi2)
+     1300    1.071    0.001    1.285    0.001 cr72.py:101(r2eff_CR72)
+     8528    0.131    0.000    0.131    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+        1    0.000    0.000    0.094    0.094 pf:106(__init__)
+     3000    0.083    0.000    0.083    0.000 {method 'outer' of 'numpy.ufunc' objects}
+     3600    0.009    0.000    0.082    0.000 fromnumeric.py:1621(sum)
+     1000    0.055    0.000    0.079    0.000 chi2.py:72(chi2_rankN)
+     1000    0.006    0.000    0.078    0.000 core.py:1701(masked_where)
+        1    0.019    0.019    0.069    0.069 pf:173(return_r2eff_arrays)
+     3600    0.006    0.000    0.067    0.000 _methods.py:23(_sum)
+     2600    0.006    0.000    0.049    0.000 fromnumeric.py:2132(amin)
+     2600    0.005    0.000    0.042    0.000 _methods.py:19(_amin)
+     1000    0.004    0.000    0.032    0.000 {method 'view' of 'numpy.ndarray' objects}
+
 
 ############################
-For trunk           r23720 #
+For disp_spin_speed r23806 #
 ############################
 1 spin:
-        1    0.000    0.000    0.565    0.565 <string>:1(<module>)
-        1    0.001    0.001    0.565    0.565 pf:419(single)
-     1000    0.002    0.000    0.561    0.001 pf:405(calc)
-     1000    0.008    0.000    0.558    0.001 relax_disp.py:908(func_CR72_full)
-     1000    0.054    0.000    0.545    0.001 relax_disp.py:456(calc_CR72_chi2)
-     3003    0.387    0.000    0.430    0.000 cr72.py:100(r2eff_CR72)
-     3000    0.042    0.000    0.057    0.000 chi2.py:32(chi2)
-     6003    0.007    0.000    0.030    0.000 fromnumeric.py:1379(sum)
-     6003    0.019    0.000    0.019    0.000 {method 'sum' of 'numpy.ndarray' objects}
+        1    0.000    0.000    0.546    0.546 <string>:1(<module>)
+        1    0.002    0.002    0.546    0.546 pf:427(single)
+     1000    0.003    0.000    0.538    0.001 pf:413(calc)
+     1000    0.015    0.000    0.535    0.001 relax_disp.py:989(func_CR72_full)
+     1000    0.042    0.000    0.513    0.001 relax_disp.py:523(calc_CR72_chi2)
+     1003    0.142    0.000    0.365    0.000 cr72.py:101(r2eff_CR72)
+     2003    0.055    0.000    0.181    0.000 numeric.py:2056(allclose)
+    10046    0.083    0.000    0.083    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     3000    0.045    0.000    0.076    0.000 shape_base.py:761(tile)
+     4015    0.006    0.000    0.053    0.000 fromnumeric.py:1762(any)
+     4015    0.004    0.000    0.039    0.000 {method 'any' of 'numpy.ndarray' objects}
+     4015    0.005    0.000    0.035    0.000 _methods.py:31(_any)
+     2003    0.003    0.000    0.028    0.000 fromnumeric.py:1842(all)
+     1000    0.014    0.000    0.026    0.000 chi2.py:72(chi2_rankN)
+     2003    0.004    0.000    0.026    0.000 fromnumeric.py:1621(sum)
+     4138    0.012    0.000    0.025    0.000 numeric.py:2320(seterr)
+     2003    0.002    0.000    0.020    0.000 {method 'all' of 'numpy.ndarray' objects}
+     2003    0.003    0.000    0.019    0.000 _methods.py:23(_sum)
+     2003    0.003    0.000    0.018    0.000 _methods.py:35(_all)
+    14046    0.016    0.000    0.016    0.000 {numpy.core.multiarray.array}
 
 100 spins:
-        1    0.000    0.000   54.982   54.982 <string>:1(<module>)
-        1    0.002    0.002   54.982   54.982 pf:441(cluster)
-     1000    0.004    0.000   54.895    0.055 pf:405(calc)
-     1000    0.012    0.000   54.892    0.055 relax_disp.py:908(func_CR72_full)
-     1000    5.353    0.005   54.865    0.055 relax_disp.py:456(calc_CR72_chi2)
-   300300   39.112    0.000   43.429    0.000 cr72.py:100(r2eff_CR72)
-   300000    4.218    0.000    5.740    0.000 chi2.py:32(chi2)
-   600300    0.700    0.000    3.049    0.000 fromnumeric.py:1379(sum)
-   600300    1.952    0.000    1.952    0.000 {method 'sum' of 'numpy.ndarray' objects}
+        1    0.000    0.000    2.036    2.036 <string>:1(<module>)
+        1    0.003    0.003    2.036    2.036 pf:449(cluster)
+     1000    0.004    0.000    1.905    0.002 pf:413(calc)
+     1000    0.022    0.000    1.901    0.002 relax_disp.py:989(func_CR72_full)
+     1000    0.098    0.000    1.865    0.002 relax_disp.py:523(calc_CR72_chi2)
+     1300    0.986    0.001    1.511    0.001 cr72.py:101(r2eff_CR72)
+     2300    0.238    0.000    0.434    0.000 numeric.py:2056(allclose)
+     3000    0.058    0.000    0.238    0.000 shape_base.py:761(tile)
+     4000    0.154    0.000    0.154    0.000 {method 'repeat' of 'numpy.ndarray' objects}
+    11828    0.147    0.000    0.147    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+        1    0.000    0.000    0.129    0.129 pf:106(__init__)
+        1    0.021    0.021    0.098    0.098 pf:173(return_r2eff_arrays)
+     1000    0.054    0.000    0.078    0.000 chi2.py:72(chi2_rankN)
+     4609    0.008    0.000    0.073    0.000 fromnumeric.py:1762(any)
+     2300    0.007    0.000    0.055    0.000 fromnumeric.py:1621(sum)
+     4609    0.005    0.000    0.054    0.000 {method 'any' of 'numpy.ndarray' objects}
+     4609    0.006    0.000    0.049    0.000 _methods.py:31(_any)
+     2300    0.004    0.000    0.044    0.000 _methods.py:23(_sum)
+     2300    0.005    0.000    0.039    0.000 fromnumeric.py:1842(all)
+     4732    0.016    0.000    0.035    0.000 numeric.py:2320(seterr)
+     4600    0.032    0.000    0.032    0.000 {abs}
+     1301    0.004    0.000    0.030    0.000 fromnumeric.py:2048(amax)
+    17016    0.028    0.000    0.028    0.000 {numpy.core.multiarray.array}
+
+############################
+For trunk           r23785 #
+############################
+1 spin:
+        1    0.000    0.000    0.572    0.572 <string>:1(<module>)
+        1    0.002    0.002    0.572    0.572 pf:427(single)
+     1000    0.002    0.000    0.565    0.001 pf:413(calc)
+     1000    0.013    0.000    0.563    0.001 relax_disp.py:908(func_CR72_full)
+     1000    0.061    0.000    0.543    0.001 relax_disp.py:456(calc_CR72_chi2)
+     3003    0.294    0.000    0.400    0.000 cr72.py:100(r2eff_CR72)
+    12036    0.100    0.000    0.100    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     3000    0.042    0.000    0.078    0.000 chi2.py:32(chi2)
+     6003    0.011    0.000    0.072    0.000 fromnumeric.py:1621(sum)
+     6003    0.008    0.000    0.055    0.000 _methods.py:23(_sum)
+     3003    0.005    0.000    0.037    0.000 fromnumeric.py:2048(amax)
+     3003    0.004    0.000    0.033    0.000 fromnumeric.py:2132(amin)
+     3003    0.004    0.000    0.032    0.000 _methods.py:15(_amax)
+     3003    0.004    0.000    0.029    0.000 _methods.py:19(_amin)
+     6003    0.006    0.000    0.006    0.000 {isinstance}
+
+100 spins:
+        1    0.000    0.000   53.864   53.864 <string>:1(<module>)
+        1    0.004    0.004   53.864   53.864 pf:449(cluster)
+     1000    0.005    0.000   53.777    0.054 pf:413(calc)
+     1000    0.022    0.000   53.772    0.054 relax_disp.py:908(func_CR72_full)
+     1000    6.340    0.006   53.735    0.054 relax_disp.py:456(calc_CR72_chi2)
+   300300   28.936    0.000   39.278    0.000 cr72.py:100(r2eff_CR72)
+  1200927    9.811    0.000    9.811    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+   300000    4.227    0.000    7.738    0.000 chi2.py:32(chi2)
+   600300    1.047    0.000    7.051    0.000 fromnumeric.py:1621(sum)
+   600300    0.752    0.000    5.434    0.000 _methods.py:23(_sum)
+   300300    0.445    0.000    3.580    0.000 fromnumeric.py:2048(amax)
+   300300    0.413    0.000    3.221    0.000 fromnumeric.py:2132(amin)
+   300300    0.431    0.000    3.134    0.000 _methods.py:15(_amax)
+   300300    0.383    0.000    2.808    0.000 _methods.py:19(_amin)
+   600300    0.570    0.000    0.570    0.000 {isinstance}
+
 
 ############################
 For tag 3.2.2              #
@@ -74,45 +153,136 @@ svn switch ^/tags/3.2.2    #
 ############################
 
 1 spin:
-        1    0.000    0.000    0.544    0.544 <string>:1(<module>)
-        1    0.001    0.001    0.544    0.544 pf:419(single)
-     1000    0.002    0.000    0.539    0.001 pf:405(calc)
-     1000    0.004    0.000    0.537    0.001 relax_disp.py:907(func_CR72_full)
-     1000    0.052    0.000    0.534    0.001 relax_disp.py:456(calc_CR72_chi2)
-     3003    0.379    0.000    0.422    0.000 cr72.py:100(r2eff_CR72)
-     3000    0.041    0.000    0.056    0.000 chi2.py:32(chi2)
-     6003    0.007    0.000    0.030    0.000 fromnumeric.py:1379(sum)
+        1    0.000    0.000    0.569    0.569 <string>:1(<module>)
+        1    0.002    0.002    0.569    0.569 pf:427(single)
+     1000    0.002    0.000    0.562    0.001 pf:413(calc)
+     1000    0.005    0.000    0.560    0.001 relax_disp.py:907(func_CR72_full)
+     1000    0.062    0.000    0.555    0.001 relax_disp.py:456(calc_CR72_chi2)
+     3003    0.299    0.000    0.407    0.000 cr72.py:100(r2eff_CR72)
+    12036    0.103    0.000    0.103    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     3000    0.044    0.000    0.082    0.000 chi2.py:32(chi2)
+     6003    0.011    0.000    0.074    0.000 fromnumeric.py:1621(sum)
+     6003    0.008    0.000    0.057    0.000 _methods.py:23(_sum)
+     3003    0.005    0.000    0.037    0.000 fromnumeric.py:2048(amax)
+     3003    0.004    0.000    0.034    0.000 fromnumeric.py:2132(amin)
+     3003    0.004    0.000    0.033    0.000 _methods.py:15(_amax)
+     3003    0.004    0.000    0.029    0.000 _methods.py:19(_amin)
+     6003    0.006    0.000    0.006    0.000 {isinstance}
 
 100 spins:
-        1    0.000    0.000   55.271   55.271 <string>:1(<module>)
-        1    0.002    0.002   55.271   55.271 pf:441(cluster)
-     1000    0.003    0.000   55.168    0.055 pf:405(calc)
-     1000    0.005    0.000   55.165    0.055 relax_disp.py:907(func_CR72_full)
-     1000    5.417    0.005   55.160    0.055 relax_disp.py:456(calc_CR72_chi2)
-   300300   39.179    0.000   43.577    0.000 cr72.py:100(r2eff_CR72)
-   300000    4.293    0.000    5.823    0.000 chi2.py:32(chi2)
-   600300    0.706    0.000    3.076    0.000 fromnumeric.py:1379(sum)
+        1    0.000    0.000   53.987   53.987 <string>:1(<module>)
+        1    0.004    0.004   53.987   53.987 pf:449(cluster)
+     1000    0.004    0.000   53.907    0.054 pf:413(calc)
+     1000    0.008    0.000   53.903    0.054 relax_disp.py:907(func_CR72_full)
+     1000    6.367    0.006   53.895    0.054 relax_disp.py:456(calc_CR72_chi2)
+   300300   28.870    0.000   39.278    0.000 cr72.py:100(r2eff_CR72)
+  1200927    9.917    0.000    9.917    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+   300000    4.283    0.000    7.853    0.000 chi2.py:32(chi2)
+   600300    1.066    0.000    7.154    0.000 fromnumeric.py:1621(sum)
+   600300    0.745    0.000    5.516    0.000 _methods.py:23(_sum)
+   300300    0.447    0.000    3.565    0.000 fromnumeric.py:2048(amax)
+   300300    0.417    0.000    3.259    0.000 fromnumeric.py:2132(amin)
+   300300    0.422    0.000    3.118    0.000 _methods.py:15(_amax)
+   300300    0.392    0.000    2.841    0.000 _methods.py:19(_amin)
+   600300    0.572    0.000    0.572    0.000 {isinstance}
 
 ############################
 For tag 3.2.1              #
 svn switch ^/tags/3.2.1    #
 ############################
 1 spin:
-        1    0.000    0.000    1.183    1.183 <string>:1(<module>)
-        1    0.001    0.001    1.183    1.183 pf:419(single)
-     1000    0.002    0.000    1.178    0.001 pf:405(calc)
-     1000    0.004    0.000    1.176    0.001 relax_disp.py:907(func_CR72_full)
-     1000    0.057    0.000    1.172    0.001 relax_disp.py:456(calc_CR72_chi2)
-     3003    1.041    0.000    1.044    0.000 cr72.py:98(r2eff_CR72)
-     3000    0.049    0.000    0.067    0.000 chi2.py:32(chi2)
-     3000    0.004    0.000    0.019    0.000 fromnumeric.py:1379(sum)
+        1    0.000    0.000    1.021    1.021 <string>:1(<module>)
+        1    0.002    0.002    1.021    1.021 pf:427(single)
+     1000    0.002    0.000    1.014    0.001 pf:413(calc)
+     1000    0.005    0.000    1.012    0.001 relax_disp.py:907(func_CR72_full)
+     1000    0.055    0.000    1.007    0.001 relax_disp.py:456(calc_CR72_chi2)
+     3003    0.861    0.000    0.864    0.000 cr72.py:98(r2eff_CR72)
+     3000    0.043    0.000    0.084    0.000 chi2.py:32(chi2)
+     3000    0.006    0.000    0.042    0.000 fromnumeric.py:1621(sum)
+     3000    0.004    0.000    0.032    0.000 _methods.py:23(_sum)
+     3027    0.028    0.000    0.028    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+     8049    0.007    0.000    0.007    0.000 {range}
+        1    0.000    0.000    0.006    0.006 pf:106(__init__)
+        3    0.000    0.000    0.004    0.001 numeric.py:1509(array_repr)
+        3    0.000    0.000    0.004    0.001 arrayprint.py:343(array2string)
+        3    0.000    0.000    0.004    0.001 arrayprint.py:233(_array2string)
+     3000    0.004    0.000    0.004    0.000 {isinstance}
 
 100 spins:
-        1    0.000    0.000  102.754  102.754 <string>:1(<module>)
-        1    0.002    0.002  102.754  102.754 pf:441(cluster)
-     1000    0.003    0.000  102.576    0.103 pf:405(calc)
-     1000    0.006    0.000  102.574    0.103 relax_disp.py:907(func_CR72_full)
-     1000    4.999    0.005  102.568    0.103 relax_disp.py:456(calc_CR72_chi2)
-   300300   91.151    0.000   91.401    0.000 cr72.py:98(r2eff_CR72)
-   300000    4.316    0.000    5.952    0.000 chi2.py:32(chi2)
-   300000    0.369    0.000    1.636    0.000 fromnumeric.py:1379(sum)
+        1    0.000    0.000  104.086  104.086 <string>:1(<module>)
+        1    0.004    0.004  104.086  104.086 pf:449(cluster)
+     1000    0.004    0.000  103.944    0.104 pf:413(calc)
+     1000    0.009    0.000  103.940    0.104 relax_disp.py:907(func_CR72_full)
+     1000    6.057    0.006  103.931    0.104 relax_disp.py:456(calc_CR72_chi2)
+   300300   88.604    0.000   88.888    0.000 cr72.py:98(r2eff_CR72)
+   300000    4.408    0.000    8.695    0.000 chi2.py:32(chi2)
+   300000    0.627    0.000    4.287    0.000 fromnumeric.py:1621(sum)
+   300000    0.458    0.000    3.296    0.000 _methods.py:23(_sum)
+   300027    2.839    0.000    2.839    0.000 {method 'reduce' of 'numpy.ufunc' objects}
+   703722    0.672    0.000    0.672    0.000 {range}
+   300000    0.364    0.000    0.364    0.000 {isinstance}
+        1    0.000    0.000    0.139    0.139 pf:106(__init__)
+
+
+################# System information ######################
+Processor fabric:  Uni-processor.
+
+
+Hardware information:
+    Machine:                 x86_64
+    Processor:               i386
+    Processor name:          Intel(R) Core(TM) i5-2435M CPU @ 2.40GHz
+    Endianness:              little
+    Total RAM size:          2048.0 Mb
+    Total swap size:         6144.0 Mb
+
+Operating system information:
+    System:                  Darwin
+    Release:                 13.2.0
+    Version:                 Darwin Kernel Version 13.2.0: Thu Apr 17 23:03:13 PDT 2014; root:xnu-2422.100.13~1/RELEASE_X86_64
+    Mac version:             10.9.3 (, , ) x86_64
+    Distribution:              
+    Full platform string:    Darwin-13.2.0-x86_64-i386-64bit
+
+Python information:
+    Architecture:            64bit 
+    Python version:          2.7.6
+    Python branch:           
+    Python build:            default, Apr 11 2014 11:55:30
+    Python compiler:         GCC 4.2.1 (Apple Inc. build 5666) (dot 3)
+    Libc version:             
+    Python implementation:   CPython
+    Python revision:         
+    Python executable:       /Users/tlinnet/Library/Enthought/Canopy_64bit/User/bin/python
+    Python flags:            sys.flags(debug=0, py3k_warning=0, division_warning=0, division_new=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=0, no_user_site=0, no_site=0, ignore_environment=0, tabcheck=0, verbose=0, unicode=0, bytes_warning=0, hash_randomization=0)
+    Python float info:       sys.float_info(max=1.7976931348623157e+308, max_exp=1024, max_10_exp=308, min=2.2250738585072014e-308, min_exp=-1021, min_10_exp=-307, dig=15, mant_dig=53, epsilon=2.220446049250313e-16, radix=2, rounds=1)
+    Python module path:      ['/Users/tlinnet/software/relax_trunk', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python27.zip', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/plat-darwin', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/plat-mac', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/plat-mac/lib-scriptpackages', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/lib-tk', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/lib-old', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/lib-dynload', '/Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages', '/Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/PIL', '/Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/site-packages']
+
+Python packages and modules (most are optional):
+
+Name               Installed    Version                        Path                                                                                                                      
+minfx              True         1.0.6                          /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/minfx                                      
+bmrblib            True         1.0.3                          /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/bmrblib                                    
+numpy              True         1.8.0                          /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/numpy                                      
+scipy              True         0.13.3                         /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/scipy                                      
+wxPython           True         2.9.2.4 osx-cocoa (classic)    /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/wx                                         
+matplotlib         True         1.3.1                          /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/matplotlib                                 
+mpi4py             False                                                                                                                                                                 
+epydoc             True         3.0.1                          /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/epydoc                                     
+optparse           True         1.5.3                          /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/optparse.pyc           
+readline           True                                        /Users/tlinnet/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/readline.so                                
+profile            True                                        /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/profile.pyc            
+bz2                True                                        /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/lib-dynload/bz2.so     
+gzip               True                                        /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/gzip.pyc               
+io                 True                                        /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/io.pyc                 
+xml                True         0.8.4 (internal)               /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/xml/__init__.pyc       
+xml.dom.minidom    True                                        /Applications/Canopy.app/appdata/canopy-1.4.0.1938.macosx-x86_64/Canopy.app/Contents/lib/python2.7/xml/dom/minidom.pyc    
+
+relax information:
+    Version:                 repository checkout r23785 svn+ssh://svn.gna.org/svn/relax/trunk
+    Processor fabric:        Uni-processor.
+
+relax C modules:
+
+Module                        Compiled    File type                                                      Path                                                                 
+target_functions.relax_fit    True        2-way ['Mach-O 64-bit bundle x86_64', 'Mach-O bundle i386']    /Users/tlinnet/software/relax_trunk/target_functions/relax_fit.so    
