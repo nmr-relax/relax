@@ -32,6 +32,7 @@ from unittest import TestCase
 
 # relax module imports.
 from status import Status; status = Status()
+from test_suite.clean_up import deletion
 
 
 class Library(TestCase):
@@ -48,7 +49,7 @@ class Library(TestCase):
         """Clean up after the library tests."""
 
         # Remove the temporary directory and all its contents.
-        rmtree(self.tmpdir)
+        deletion(obj=self, name='tmpdir', dir=True)
 
 
     def test_library_independence(self):
