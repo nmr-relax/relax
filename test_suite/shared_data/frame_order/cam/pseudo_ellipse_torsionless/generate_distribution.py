@@ -10,7 +10,7 @@ from numpy import dot, transpose
 
 # relax module imports.
 from lib.geometry.angles import wrap_angles
-from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion
+from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion, tilt_torsion_to_R
 
 # Base module import.
 from generate_base import Main
@@ -18,12 +18,11 @@ from generate_base import Main
 
 class Generate(Main):
     # The number of structures.
-    N = 1000000
+    N = 20000000
 
     # Cone parameters.
-    THETA_X = 1.3
-    THETA_Y = 1.1
-    SIGMA_MAX = 0.1 * 2.0 * pi / 360.0
+    THETA_X = 1.1
+    THETA_Y = 1.3
 
     def __init__(self):
         """Model specific setup."""
@@ -46,10 +45,9 @@ class Generate(Main):
 
             # The angles.
             phi, theta, sigma = R_to_tilt_torsion(R_eigen)
-            sigma = wrap_angles(sigma, -pi, pi)
 
-            # Skip the rotation if the torsion angle is violated.
-            if sigma > self.SIGMA_MAX or sigma < -self.SIGMA_MAX:
+            # Skip the rotation if the isotropic cone angle is violated.
+            if theta > self.THETA_Y:
                 continue
 
             # Determine theta_max.
@@ -58,6 +56,12 @@ class Generate(Main):
             # Skip the rotation if the cone angle is violated.
             if theta > theta_max:
                 continue
+
+            # Reconstruct the rotation matrix, in the eigenframe, without sigma.
+            tilt_torsion_to_R(phi, theta, 0.0, R_eigen)
+
+            # Rotate back out of the eigenframe.
+            self.R = dot(self.axes, dot(R_eigen, transpose(self.axes)))
 
             # Rotation is ok, so stop looping.
             break
