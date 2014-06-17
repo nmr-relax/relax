@@ -58,7 +58,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None, num_offsets=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -98,34 +98,54 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @type num_points:           int
     """
 
-    # Repetitive calculations (to speed up calculations).
-    Wa = omega                  # Larmor frequency [s^-1].
-    Wb = omega + dw             # Larmor frequency [s^-1].
-    W = pA*Wa + pB*Wb           # Population-averaged Larmor frequency [s^-1].
-    dA = Wa - offset            # Offset of spin-lock from A.
-    dB = Wb - offset            # Offset of spin-lock from B.
-    d = W - offset              # Offset of spin-lock from population-average.
+    # Extract shape of experiment.
+    NE, NS, NM, NO = num_points.shape
 
-    # Loop over the time points, back calculating the R2eff values.
-    for i in range(num_points):
-        # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-        rr1rho_3d(matrix=matrix, R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields[i], k_AB=k_AB, k_BA=k_BA)
+    # Loop over spins.
+    for si in range(NS):
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
+            # Loop over offsets:
+            for oi in range(num_offsets[0, si, mi]):
 
-        # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-        theta = atan2(spin_lock_fields[i], dA)
-        M0[0] = sin(theta)    # The A state initial X magnetisation.
-        M0[2] = cos(theta)    # The A state initial Z magnetisation.
+                omega_i = omega[0, si, mi, oi, 0]
+                offset_i = offset[0, si, mi, oi, 0]
+                r1_i = r1[0, si, mi, oi, 0]
+                dw_i = dw[0, si, mi, oi, 0]
 
-        # This matrix is a propagator that will evolve the magnetization with the matrix R.
-        Rexpo = matrix_exponential(matrix*relax_time[i])
+                r1rho_prime_i = r1rho_prime[0, si, mi, oi]
+                spin_lock_fields_i = spin_lock_fields[0, si, mi, oi]
+                relax_time_i = relax_time[0, si, mi, oi]
+                inv_relax_time_i = relax_time[0, si, mi, oi]
+                back_calc_i = back_calc[0, si, mi, oi]
+                num_points_i = num_points[0, si, mi, oi]
 
-        # Magnetization evolution.
-        MA = dot(M0, dot(Rexpo, M0))
+                # Repetitive calculations (to speed up calculations).
+                Wa = omega_i                  # Larmor frequency [s^-1].
+                Wb = omega_i + dw_i           # Larmor frequency [s^-1].
+                W = pA*Wa + pB*Wb             # Population-averaged Larmor frequency [s^-1].
+                dA = Wa - offset_i            # Offset of spin-lock from A.
+                dB = Wb - offset_i            # Offset of spin-lock from B.
+                d = W - offset_i              # Offset of spin-lock from population-average.
 
-        # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-        if MA <= 0.0 or isNaN(MA):
-            back_calc[i] = 1e99
-        else:
-            back_calc[i]= -inv_relax_time[i] * log(MA)
+                # Loop over the time points, back calculating the R2eff values.
+                for j in range(num_points_i):
+                    # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+                    rr1rho_3d(matrix=matrix, R1=r1_i, r1rho_prime=r1rho_prime_i[j], pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields_i[j], k_AB=k_AB, k_BA=k_BA)
 
+                    # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+                    theta = atan2(spin_lock_fields_i[j], dA)
+                    M0[0] = sin(theta)    # The A state initial X magnetisation.
+                    M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
+                    # This matrix is a propagator that will evolve the magnetization with the matrix R.
+                    Rexpo = matrix_exponential(matrix*relax_time_i[j])
+
+                    # Magnetization evolution.
+                    MA = dot(M0, dot(Rexpo, M0))
+
+                    # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
+                    if MA <= 0.0 or isNaN(MA):
+                        back_calc[0, si, mi, oi, j] = 1e99
+                    else:
+                        back_calc[0, si, mi, oi, j]= -inv_relax_time_i[j] * log(MA)
