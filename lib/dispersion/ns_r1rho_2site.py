@@ -116,7 +116,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                 r1rho_prime_i = r1rho_prime[0, si, mi, oi]
                 spin_lock_fields_i = spin_lock_fields[0, si, mi, oi]
                 relax_time_i = relax_time[0, si, mi, oi]
-                inv_relax_time_i = relax_time[0, si, mi, oi]
+                inv_relax_time_i = inv_relax_time[0, si, mi, oi]
                 back_calc_i = back_calc[0, si, mi, oi]
                 num_points_i = num_points[0, si, mi, oi]
 
