@@ -525,7 +525,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.22611932575925126)
+        self.check_chi2(0.01497741674116292)
 
 
     def test_cam_pseudo_ellipse_torsionless_pcs(self):
@@ -534,7 +534,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.18751106814778518)
+        self.check_chi2(2.9799363738575403e-05)
 
 
     def test_cam_pseudo_ellipse_torsionless_rdc(self):
@@ -543,7 +543,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(pcs=False)
         self.interpreter.run(script_file=self.cam_path+'pseudo_ellipse_torsionless.py')
-        self.check_chi2(0.038608257611466051)
+        self.check_chi2(0.014947617377424345)
 
 
     def test_cam_rigid(self):
