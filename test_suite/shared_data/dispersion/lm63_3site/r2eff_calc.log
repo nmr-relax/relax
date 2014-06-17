@@ -1,13 +1,13 @@
 
 
 
-                                  relax repository checkout r21156
-                     svn+ssh://bugman@svn.gna.org/svn/relax/branches/relax_disp
+                                  relax repository checkout r24017
+                            svn+ssh://bugman@svn.gna.org/svn/relax/trunk
 
                               Molecular dynamics by NMR data analysis
 
                              Copyright (C) 2001-2006 Edward d'Auvergne
-                         Copyright (C) 2006-2013 the relax development team
+                         Copyright (C) 2006-2014 the relax development team
 
 This is free software which you are welcome to modify and redistribute under the conditions of the
 GNU General Public License (GPL).  This program, including all modules, is licensed under the GPL
@@ -28,7 +28,6 @@ from os import sep
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp
 from data_store import Relax_data_store; ds = Relax_data_store()
-from pipe_control.mol_res_spin import spin_loop
 from status import Status; status = Status()
 
 
@@ -99,10 +98,10 @@ for id, file, cpmg_frq, H_frq in data:
     spectrum.read_intensities(file=file, dir=data_path, spectrum_id=id, int_method='height')
 
     # Set the relaxation dispersion experiment type.
-    relax_disp.exp_type(spectrum_id=id, exp_type='CPMG')
+    relax_disp.exp_type(spectrum_id=id, exp_type='SQ CPMG')
 
     # Set the relaxation dispersion CPMG frequencies.
-    relax_disp.cpmg_frq(spectrum_id=id, cpmg_frq=cpmg_frq)
+    relax_disp.cpmg_setup(spectrum_id=id, cpmg_frq=cpmg_frq)
 
     # Set the NMR field strength of the spectrum.
     spectrometer.frequency(id=id, frq=H_frq)
@@ -134,8 +133,8 @@ relax> spin.create(spin_name='N', spin_num=None, res_name='Trp', res_num=1, mol_
 
 relax> spin.create(spin_name='N', spin_num=None, res_name='Lys', res_num=2, mol_name=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_ref.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_ref.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_ref.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -147,22 +146,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         100000000.0    
 :2@N         20000000.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_reference', exp_type='CPMG')
-Setting the '500_reference' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_reference', cpmg_frq=None)
-Setting the '500_reference' spectrum CPMG frequency None Hz.
+relax> relax_disp.exp_type(spectrum_id='500_reference', exp_type='SQ CPMG')
+The spectrum ID '500_reference' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_reference', cpmg_frq=None, ncyc_even=True)
+The spectrum ID '500_reference' CPMG frequency is set to None Hz.
+The spectrum ID '500_reference' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_reference', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_reference', time=0.1)
 Setting the '500_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_reference', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_66.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_66.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_66.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -174,22 +175,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         2817793.0    
 :2@N         417494.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_66.6666', exp_type='CPMG')
-Setting the '500_66.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_66.6666', cpmg_frq=66.6666)
-Setting the '500_66.6666' spectrum CPMG frequency 66.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_66.6666', exp_type='SQ CPMG')
+The spectrum ID '500_66.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_66.6666', cpmg_frq=66.6666, ncyc_even=True)
+The spectrum ID '500_66.6666' CPMG frequency is set to 66.6666 Hz.
+The spectrum ID '500_66.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_66.6666', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_66.6666', time=0.1)
 Setting the '500_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_66.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_133.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_133.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_133.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -201,22 +204,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         3938879.0    
 :2@N         583598.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_133.3333', exp_type='CPMG')
-Setting the '500_133.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_133.3333', cpmg_frq=133.3333)
-Setting the '500_133.3333' spectrum CPMG frequency 133.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_133.3333', exp_type='SQ CPMG')
+The spectrum ID '500_133.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_133.3333', cpmg_frq=133.3333, ncyc_even=True)
+The spectrum ID '500_133.3333' CPMG frequency is set to 133.3333 Hz.
+The spectrum ID '500_133.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_133.3333', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_133.3333', time=0.1)
 Setting the '500_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_133.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_200.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_200.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_200.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -228,22 +233,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         5421414.0    
 :2@N         803256.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_200.0', exp_type='CPMG')
-Setting the '500_200.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_200.0', cpmg_frq=200.0)
-Setting the '500_200.0' spectrum CPMG frequency 200.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_200.0', exp_type='SQ CPMG')
+The spectrum ID '500_200.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_200.0', cpmg_frq=200.0, ncyc_even=True)
+The spectrum ID '500_200.0' CPMG frequency is set to 200.0 Hz.
+The spectrum ID '500_200.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_200.0', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_200.0', time=0.1)
 Setting the '500_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_200.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_266.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_266.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_266.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -255,22 +262,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         7212891.0    
 :2@N         1068688.0    
 
-relax> relax_disp.exp_type(spectrum_id='500_266.6666', exp_type='CPMG')
-Setting the '500_266.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_266.6666', cpmg_frq=266.6666)
-Setting the '500_266.6666' spectrum CPMG frequency 266.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_266.6666', exp_type='SQ CPMG')
+The spectrum ID '500_266.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_266.6666', cpmg_frq=266.6666, ncyc_even=True)
+The spectrum ID '500_266.6666' CPMG frequency is set to 266.6666 Hz.
+The spectrum ID '500_266.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_266.6666', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_266.6666', time=0.1)
 Setting the '500_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_266.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_333.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_333.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_333.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -282,22 +291,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         9193611.0    
 :2@N         1362158.0    
 
-relax> relax_disp.exp_type(spectrum_id='500_333.3333', exp_type='CPMG')
-Setting the '500_333.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_333.3333', cpmg_frq=333.3333)
-Setting the '500_333.3333' spectrum CPMG frequency 333.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_333.3333', exp_type='SQ CPMG')
+The spectrum ID '500_333.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_333.3333', cpmg_frq=333.3333, ncyc_even=True)
+The spectrum ID '500_333.3333' CPMG frequency is set to 333.3333 Hz.
+The spectrum ID '500_333.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_333.3333', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_333.3333', time=0.1)
 Setting the '500_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_333.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_400.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_400.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_400.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -309,22 +320,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         11228322.0    
 :2@N         1663629.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_400.0', exp_type='CPMG')
-Setting the '500_400.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_400.0', cpmg_frq=400.0)
-Setting the '500_400.0' spectrum CPMG frequency 400.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_400.0', exp_type='SQ CPMG')
+The spectrum ID '500_400.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_400.0', cpmg_frq=400.0, ncyc_even=True)
+The spectrum ID '500_400.0' CPMG frequency is set to 400.0 Hz.
+The spectrum ID '500_400.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_400.0', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_400.0', time=0.1)
 Setting the '500_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_400.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_466.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_466.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_466.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -336,22 +349,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         13204117.0    
 :2@N         1956370.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_466.6666', exp_type='CPMG')
-Setting the '500_466.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_466.6666', cpmg_frq=466.6666)
-Setting the '500_466.6666' spectrum CPMG frequency 466.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_466.6666', exp_type='SQ CPMG')
+The spectrum ID '500_466.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_466.6666', cpmg_frq=466.6666, ncyc_even=True)
+The spectrum ID '500_466.6666' CPMG frequency is set to 466.6666 Hz.
+The spectrum ID '500_466.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_466.6666', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_466.6666', time=0.1)
 Setting the '500_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_466.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_533.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_533.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_533.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -363,22 +378,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         15046060.0    
 :2@N         2229279.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_533.3333', exp_type='CPMG')
-Setting the '500_533.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_533.3333', cpmg_frq=533.3333)
-Setting the '500_533.3333' spectrum CPMG frequency 533.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_533.3333', exp_type='SQ CPMG')
+The spectrum ID '500_533.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_533.3333', cpmg_frq=533.3333, ncyc_even=True)
+The spectrum ID '500_533.3333' CPMG frequency is set to 533.3333 Hz.
+The spectrum ID '500_533.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_533.3333', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_533.3333', time=0.1)
 Setting the '500_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_533.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_600.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_600.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_600.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -390,22 +407,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         16715469.0    
 :2@N         2476624.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_600.0', exp_type='CPMG')
-Setting the '500_600.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_600.0', cpmg_frq=600.0)
-Setting the '500_600.0' spectrum CPMG frequency 600.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_600.0', exp_type='SQ CPMG')
+The spectrum ID '500_600.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_600.0', cpmg_frq=600.0, ncyc_even=True)
+The spectrum ID '500_600.0' CPMG frequency is set to 600.0 Hz.
+The spectrum ID '500_600.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_600.0', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_600.0', time=0.1)
 Setting the '500_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_600.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_666.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_666.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_666.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -417,22 +436,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         18200559.0    
 :2@N         2696661.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_666.6666', exp_type='CPMG')
-Setting the '500_666.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_666.6666', cpmg_frq=666.6666)
-Setting the '500_666.6666' spectrum CPMG frequency 666.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_666.6666', exp_type='SQ CPMG')
+The spectrum ID '500_666.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_666.6666', cpmg_frq=666.6666, ncyc_even=True)
+The spectrum ID '500_666.6666' CPMG frequency is set to 666.6666 Hz.
+The spectrum ID '500_666.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_666.6666', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_666.6666', time=0.1)
 Setting the '500_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_666.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_733.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_733.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_733.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -444,22 +465,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         19506374.0    
 :2@N         2890135.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_733.3333', exp_type='CPMG')
-Setting the '500_733.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_733.3333', cpmg_frq=733.3333)
-Setting the '500_733.3333' spectrum CPMG frequency 733.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_733.3333', exp_type='SQ CPMG')
+The spectrum ID '500_733.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_733.3333', cpmg_frq=733.3333, ncyc_even=True)
+The spectrum ID '500_733.3333' CPMG frequency is set to 733.3333 Hz.
+The spectrum ID '500_733.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_733.3333', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_733.3333', time=0.1)
 Setting the '500_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_733.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_800.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_800.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_800.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -471,22 +494,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         20646900.0    
 :2@N         3059120.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_800.0', exp_type='CPMG')
-Setting the '500_800.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_800.0', cpmg_frq=800.0)
-Setting the '500_800.0' spectrum CPMG frequency 800.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_800.0', exp_type='SQ CPMG')
+The spectrum ID '500_800.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_800.0', cpmg_frq=800.0, ncyc_even=True)
+The spectrum ID '500_800.0' CPMG frequency is set to 800.0 Hz.
+The spectrum ID '500_800.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_800.0', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_800.0', time=0.1)
 Setting the '500_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_800.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_866.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_866.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_866.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -498,22 +523,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         21639859.0    
 :2@N         3206240.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_866.6666', exp_type='CPMG')
-Setting the '500_866.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_866.6666', cpmg_frq=866.6666)
-Setting the '500_866.6666' spectrum CPMG frequency 866.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_866.6666', exp_type='SQ CPMG')
+The spectrum ID '500_866.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_866.6666', cpmg_frq=866.6666, ncyc_even=True)
+The spectrum ID '500_866.6666' CPMG frequency is set to 866.6666 Hz.
+The spectrum ID '500_866.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_866.6666', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_866.6666', time=0.1)
 Setting the '500_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_866.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_933.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_933.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_933.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -525,22 +552,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         22503635.0    
 :2@N         3334220.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_933.3333', exp_type='CPMG')
-Setting the '500_933.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_933.3333', cpmg_frq=933.3333)
-Setting the '500_933.3333' spectrum CPMG frequency 933.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_933.3333', exp_type='SQ CPMG')
+The spectrum ID '500_933.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_933.3333', cpmg_frq=933.3333, ncyc_even=True)
+The spectrum ID '500_933.3333' CPMG frequency is set to 933.3333 Hz.
+The spectrum ID '500_933.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_933.3333', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_933.3333', time=0.1)
 Setting the '500_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_933.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_500MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_1000.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_500MHz_1000.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='500_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_500MHz_1000.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -552,22 +581,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         23255638.0    
 :2@N         3445640.0     
 
-relax> relax_disp.exp_type(spectrum_id='500_1000.0', exp_type='CPMG')
-Setting the '500_1000.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='500_1000.0', cpmg_frq=1000.0)
-Setting the '500_1000.0' spectrum CPMG frequency 1000.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='500_1000.0', exp_type='SQ CPMG')
+The spectrum ID '500_1000.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='500_1000.0', cpmg_frq=1000.0, ncyc_even=True)
+The spectrum ID '500_1000.0' CPMG frequency is set to 1000.0 Hz.
+The spectrum ID '500_1000.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='500_1000.0', frq=500000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='500_1000.0', time=0.1)
 Setting the '500_1000.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='500_1000.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_ref.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_ref.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_ref.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_reference', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_ref.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -579,22 +610,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         150000000.0    
 :2@N         25000000.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_reference', exp_type='CPMG')
-Setting the '800_reference' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_reference', cpmg_frq=None)
-Setting the '800_reference' spectrum CPMG frequency None Hz.
+relax> relax_disp.exp_type(spectrum_id='800_reference', exp_type='SQ CPMG')
+The spectrum ID '800_reference' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_reference', cpmg_frq=None, ncyc_even=True)
+The spectrum ID '800_reference' CPMG frequency is set to None Hz.
+The spectrum ID '800_reference' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_reference', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_reference', time=0.1)
 Setting the '800_reference' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_reference', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_66.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_66.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_66.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_66.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_66.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -606,22 +639,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         104919.0     
 :2@N         12954.0      
 
-relax> relax_disp.exp_type(spectrum_id='800_66.6666', exp_type='CPMG')
-Setting the '800_66.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_66.6666', cpmg_frq=66.6666)
-Setting the '800_66.6666' spectrum CPMG frequency 66.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_66.6666', exp_type='SQ CPMG')
+The spectrum ID '800_66.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_66.6666', cpmg_frq=66.6666, ncyc_even=True)
+The spectrum ID '800_66.6666' CPMG frequency is set to 66.6666 Hz.
+The spectrum ID '800_66.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_66.6666', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_66.6666', time=0.1)
 Setting the '800_66.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_66.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_133.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_133.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_133.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_133.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_133.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -633,22 +668,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         247311.0     
 :2@N         30535.0      
 
-relax> relax_disp.exp_type(spectrum_id='800_133.3333', exp_type='CPMG')
-Setting the '800_133.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_133.3333', cpmg_frq=133.3333)
-Setting the '800_133.3333' spectrum CPMG frequency 133.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_133.3333', exp_type='SQ CPMG')
+The spectrum ID '800_133.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_133.3333', cpmg_frq=133.3333, ncyc_even=True)
+The spectrum ID '800_133.3333' CPMG frequency is set to 133.3333 Hz.
+The spectrum ID '800_133.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_133.3333', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_133.3333', time=0.1)
 Setting the '800_133.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_133.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_200.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_200.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_200.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_200.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_200.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -660,22 +697,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         560297.0     
 :2@N         69179.0      
 
-relax> relax_disp.exp_type(spectrum_id='800_200.0', exp_type='CPMG')
-Setting the '800_200.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_200.0', cpmg_frq=200.0)
-Setting the '800_200.0' spectrum CPMG frequency 200.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_200.0', exp_type='SQ CPMG')
+The spectrum ID '800_200.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_200.0', cpmg_frq=200.0, ncyc_even=True)
+The spectrum ID '800_200.0' CPMG frequency is set to 200.0 Hz.
+The spectrum ID '800_200.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_200.0', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_200.0', time=0.1)
 Setting the '800_200.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_200.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_266.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_266.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_266.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_266.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_266.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -687,22 +726,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         1163725.0    
 :2@N         143684.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_266.6666', exp_type='CPMG')
-Setting the '800_266.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_266.6666', cpmg_frq=266.6666)
-Setting the '800_266.6666' spectrum CPMG frequency 266.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_266.6666', exp_type='SQ CPMG')
+The spectrum ID '800_266.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_266.6666', cpmg_frq=266.6666, ncyc_even=True)
+The spectrum ID '800_266.6666' CPMG frequency is set to 266.6666 Hz.
+The spectrum ID '800_266.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_266.6666', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_266.6666', time=0.1)
 Setting the '800_266.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_266.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_333.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_333.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_333.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_333.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_333.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -714,22 +755,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         2165783.0    
 :2@N         267408.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_333.3333', exp_type='CPMG')
-Setting the '800_333.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_333.3333', cpmg_frq=333.3333)
-Setting the '800_333.3333' spectrum CPMG frequency 333.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_333.3333', exp_type='SQ CPMG')
+The spectrum ID '800_333.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_333.3333', cpmg_frq=333.3333, ncyc_even=True)
+The spectrum ID '800_333.3333' CPMG frequency is set to 333.3333 Hz.
+The spectrum ID '800_333.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_333.3333', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_333.3333', time=0.1)
 Setting the '800_333.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_333.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_400.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_400.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_400.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_400.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_400.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -741,22 +784,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         3613238.0    
 :2@N         446125.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_400.0', exp_type='CPMG')
-Setting the '800_400.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_400.0', cpmg_frq=400.0)
-Setting the '800_400.0' spectrum CPMG frequency 400.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_400.0', exp_type='SQ CPMG')
+The spectrum ID '800_400.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_400.0', cpmg_frq=400.0, ncyc_even=True)
+The spectrum ID '800_400.0' CPMG frequency is set to 400.0 Hz.
+The spectrum ID '800_400.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_400.0', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_400.0', time=0.1)
 Setting the '800_400.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_400.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_466.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_466.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_466.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_466.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_466.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -768,22 +813,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         5471501.0    
 :2@N         675564.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_466.6666', exp_type='CPMG')
-Setting the '800_466.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_466.6666', cpmg_frq=466.6666)
-Setting the '800_466.6666' spectrum CPMG frequency 466.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_466.6666', exp_type='SQ CPMG')
+The spectrum ID '800_466.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_466.6666', cpmg_frq=466.6666, ncyc_even=True)
+The spectrum ID '800_466.6666' CPMG frequency is set to 466.6666 Hz.
+The spectrum ID '800_466.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_466.6666', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_466.6666', time=0.1)
 Setting the '800_466.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_466.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_533.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_533.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_533.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_533.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_533.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -795,22 +842,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         7643511.0    
 :2@N         943742.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_533.3333', exp_type='CPMG')
-Setting the '800_533.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_533.3333', cpmg_frq=533.3333)
-Setting the '800_533.3333' spectrum CPMG frequency 533.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_533.3333', exp_type='SQ CPMG')
+The spectrum ID '800_533.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_533.3333', cpmg_frq=533.3333, ncyc_even=True)
+The spectrum ID '800_533.3333' CPMG frequency is set to 533.3333 Hz.
+The spectrum ID '800_533.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_533.3333', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_533.3333', time=0.1)
 Setting the '800_533.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_533.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_600.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_600.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_600.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_600.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_600.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -822,22 +871,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         10006312.0    
 :2@N         1235476.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_600.0', exp_type='CPMG')
-Setting the '800_600.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_600.0', cpmg_frq=600.0)
-Setting the '800_600.0' spectrum CPMG frequency 600.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_600.0', exp_type='SQ CPMG')
+The spectrum ID '800_600.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_600.0', cpmg_frq=600.0, ncyc_even=True)
+The spectrum ID '800_600.0' CPMG frequency is set to 600.0 Hz.
+The spectrum ID '800_600.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_600.0', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_600.0', time=0.1)
 Setting the '800_600.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_600.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_666.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_666.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_666.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_666.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_666.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -849,22 +900,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         12442494.0    
 :2@N         1536271.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_666.6666', exp_type='CPMG')
-Setting the '800_666.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_666.6666', cpmg_frq=666.6666)
-Setting the '800_666.6666' spectrum CPMG frequency 666.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_666.6666', exp_type='SQ CPMG')
+The spectrum ID '800_666.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_666.6666', cpmg_frq=666.6666, ncyc_even=True)
+The spectrum ID '800_666.6666' CPMG frequency is set to 666.6666 Hz.
+The spectrum ID '800_666.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_666.6666', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_666.6666', time=0.1)
 Setting the '800_666.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_666.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_733.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_733.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_733.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_733.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_733.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -876,22 +929,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         14857390.0    
 :2@N         1834437.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_733.3333', exp_type='CPMG')
-Setting the '800_733.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_733.3333', cpmg_frq=733.3333)
-Setting the '800_733.3333' spectrum CPMG frequency 733.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_733.3333', exp_type='SQ CPMG')
+The spectrum ID '800_733.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_733.3333', cpmg_frq=733.3333, ncyc_even=True)
+The spectrum ID '800_733.3333' CPMG frequency is set to 733.3333 Hz.
+The spectrum ID '800_733.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_733.3333', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_733.3333', time=0.1)
 Setting the '800_733.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_733.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_800.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_800.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_800.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_800.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_800.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -903,22 +958,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         17183791.0    
 :2@N         2121677.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_800.0', exp_type='CPMG')
-Setting the '800_800.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_800.0', cpmg_frq=800.0)
-Setting the '800_800.0' spectrum CPMG frequency 800.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_800.0', exp_type='SQ CPMG')
+The spectrum ID '800_800.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_800.0', cpmg_frq=800.0, ncyc_even=True)
+The spectrum ID '800_800.0' CPMG frequency is set to 800.0 Hz.
+The spectrum ID '800_800.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_800.0', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_800.0', time=0.1)
 Setting the '800_800.0' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_800.0', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_866.6666.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_866.6666.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_866.6666.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_866.6666', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_866.6666.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -930,22 +987,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         19379469.0    
 :2@N         2392777.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_866.6666', exp_type='CPMG')
-Setting the '800_866.6666' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_866.6666', cpmg_frq=866.6666)
-Setting the '800_866.6666' spectrum CPMG frequency 866.6666 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_866.6666', exp_type='SQ CPMG')
+The spectrum ID '800_866.6666' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_866.6666', cpmg_frq=866.6666, ncyc_even=True)
+The spectrum ID '800_866.6666' CPMG frequency is set to 866.6666 Hz.
+The spectrum ID '800_866.6666' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_866.6666', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_866.6666', time=0.1)
 Setting the '800_866.6666' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_866.6666', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_933.3333.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_933.3333.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_933.3333.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_933.3333', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_933.3333.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -957,22 +1016,24 @@ The following intensities have been loaded into the relax data store:
 :1@N         21421871.0    
 :2@N         2644952.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_933.3333', exp_type='CPMG')
-Setting the '800_933.3333' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_933.3333', cpmg_frq=933.3333)
-Setting the '800_933.3333' spectrum CPMG frequency 933.3333 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_933.3333', exp_type='SQ CPMG')
+The spectrum ID '800_933.3333' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_933.3333', cpmg_frq=933.3333, ncyc_even=True)
+The spectrum ID '800_933.3333' CPMG frequency is set to 933.3333 Hz.
+The spectrum ID '800_933.3333' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_933.3333', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_933.3333', time=0.1)
 Setting the '800_933.3333' spectrum relaxation time period to 0.1 s.
 
 relax> spectrum.baseplane_rmsd(error=1000000.0, spectrum_id='800_933.3333', spin_id=None)
 
-relax> spectrum.read_intensities(file='nu_800MHz_1000.0.list', dir='/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
-Opening the file '/data/relax/branches/relax_disp/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_1000.0.list' for reading.
+relax> spectrum.read_intensities(file='nu_800MHz_1000.0.list', dir='/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site', spectrum_id='800_1000.0', dim=1, int_method='height', int_col=None, spin_id_col=None, mol_name_col=None, res_num_col=None, res_name_col=None, spin_num_col=None, spin_name_col=None, sep=None, spin_id=None, ncproc=None)
+Opening the file '/data/relax/relax-trunk/test_suite/shared_data/dispersion/lm63_3site/nu_800MHz_1000.0.list' for reading.
 Sparky formatted data file.
 
 Number of header lines found: 1
@@ -984,14 +1045,16 @@ The following intensities have been loaded into the relax data store:
 :1@N         23302519.0    
 :2@N         2877155.0     
 
-relax> relax_disp.exp_type(spectrum_id='800_1000.0', exp_type='CPMG')
-Setting the '800_1000.0' spectrum tothe CPMG-type experiment.
 
-relax> relax_disp.cpmg_frq(spectrum_id='800_1000.0', cpmg_frq=1000.0)
-Setting the '800_1000.0' spectrum CPMG frequency 1000.0 Hz.
+relax> relax_disp.exp_type(spectrum_id='800_1000.0', exp_type='SQ CPMG')
+The spectrum ID '800_1000.0' is now set to the standard single quantum (SQ) CPMG-type experiment.
+
+relax> relax_disp.cpmg_setup(spectrum_id='800_1000.0', cpmg_frq=1000.0, ncyc_even=True)
+The spectrum ID '800_1000.0' CPMG frequency is set to 1000.0 Hz.
+The spectrum ID '800_1000.0' even number of CPMG blocks flag is set to True.
 
 relax> spectrometer.frequency(id='800_1000.0', frq=800000000.0, units='Hz')
-RelaxWarning: The precise spectrometer frequency should be suppled, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
+RelaxWarning: The precise spectrometer frequency should be supplied, a value such as 500000000 or 5e8 for a 500 MHz machine is not acceptable.  Please see the 'sfrq' parameter in the Varian procpar file or the 'SFO1' parameter in the Bruker acqus file.
 
 relax> relax_disp.relax_time(spectrum_id='800_1000.0', time=0.1)
 Setting the '800_1000.0' spectrum relaxation time period to 0.1 s.
@@ -1015,6 +1078,17 @@ Spectra ID subset ignored.
 = Relaxation dispersion auto-analysis =
 =======================================
 
+
+
+Variable checking
+=================
+
+The dispersion auto-analysis variables are OK.
+
+
+Error analysis
+==============
+
 Skipping the error analysis as it has already been performed.
 
 
@@ -1024,22 +1098,31 @@ Skipping the error analysis as it has already been performed.
 ---------------------
 
 
-relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff', bundle_to='relax_disp')
+relax> pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
 
-relax> pipe.switch(pipe_name='R2eff')
+relax> pipe.switch(pipe_name='R2eff - relax_disp')
 
 relax> relax_disp.select_model(model='R2eff')
-R2eff/R1rho value and error determination.
+The model for determining the R2eff/R1rho values from peak intensities.
 
 relax> calc(verbosity=1)
 Calculating the R2eff/R1rho values for fixed relaxation time period data.
 Spin ':1@N'.
 Spin ':2@N'.
 
-relax> relax_disp.plot_disp_curves(dir='./R2eff', force=True)
+
+Results writing
+===============
+
+
+relax> relax_disp.plot_disp_curves(dir='./R2eff', num_points=1000, extend=500.0, force=True)
 Opening the file './R2eff/disp_1_N.agr' for writing.
 Opening the file './R2eff/disp_2_N.agr' for writing.
 Opening the file './R2eff/grace2images.py' for writing.
+
+relax> relax_disp.write_disp_curves(dir='./R2eff', force=True)
+Opening the file './R2eff/disp_1_N.out' for writing.
+Opening the file './R2eff/disp_2_N.out' for writing.
 
 relax> value.write(param='r2eff', file='r2eff.out', dir='./R2eff', scaling=1.0, comment=None, bc=False, force=True)
 Opening the file './R2eff/r2eff.out' for writing.
