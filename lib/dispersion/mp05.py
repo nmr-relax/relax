@@ -71,25 +71,25 @@ def r1rho_MP05(r1rho_prime=None, omega=None, offset=None, pA=None, dw=None, kex=
 
 
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
-    @type r1rho_prime:          numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r1rho_prime:          numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
-    @type omega:                numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type omega:                numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword offset:            The spin-lock offsets for the data.
-    @type offset:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type offset:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword pA:                The population of state A.
     @type pA:                   float
     @keyword dw:                The chemical exchange difference between states A and B in rad/s.
-    @type dw:                   numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type dw:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword kex:               The kex parameter value (the exchange rate in rad/s).
     @type kex:                  float
     @keyword R1:                The R1 relaxation rate.
-    @type R1:                   numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type R1:                   numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
-    @type spin_lock_fields:     numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type spin_lock_fields:     numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword spin_lock_fields2: The R1rho spin-lock field strengths squared (in rad^2.s^-2).  This is for speed.
-    @type spin_lock_fields2:    numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type spin_lock_fields2:    numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:         The array for holding the back calculated R1rho values.  Each element corresponds to the combination of offset and spin lock field.
-    @type back_calc:            numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:            numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if numer is zero.

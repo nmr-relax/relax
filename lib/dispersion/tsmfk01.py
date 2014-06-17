@@ -78,17 +78,17 @@ def r2eff_TSMFK01(r20a=None, dw=None, dw_orig=None, k_AB=None, tcp=None, back_ca
 
 
     @keyword r20a:          The R20 parameter value of state A (R2 with no exchange).
-    @type r20a:             numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type r20a:             numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw_orig:       The chemical exchange difference between states A and B in ppm. This is only for faster checking of zero value, which result in no exchange.
     @type dw_orig:          numpy float array of rank-1
     @keyword k_AB:          The k_AB parameter value (the forward exchange rate in rad/s).
     @type k_AB:             float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NE][NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NE][NS][NM][NO][ND]
     """
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.

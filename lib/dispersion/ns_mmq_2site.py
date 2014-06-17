@@ -105,31 +105,31 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy float array of rank [NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
-    @type dwH:              numpy float array of rank [NS][[NM][NO][ND]
+    @type dwH:              numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        numpy float array of rank [NS][[NM][NO][ND]
+    @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       numpy int array of rank [NS][[NM][NO][ND]
+    @type num_points:       numpy int array of rank [NS][NM][NO][ND]
     @keyword power:         The matrix exponential power array.
-    @type power:            numpy int array of rank [NS][[NM][NO][ND]
+    @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
     # Extract shape of experiment.
@@ -254,31 +254,31 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @keyword m2:            A complex numpy matrix to be populated.
     @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NS][[NM][NO][ND]
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
     @keyword dw:            The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
-    @type dw:               numpy float array of rank [NS][[NM][NO][ND]
+    @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           Unused - this is simply to match the r2eff_ns_mmq_2site_mq() function arguments.
-    @type dwH:              numpy float array of rank [NS][[NM][NO][ND]
+    @type dwH:              numpy float array of rank [NS][NM][NO][ND]
     @keyword k_AB:          The rate of exchange from site A to B (rad/s).
     @type k_AB:             float
     @keyword k_BA:          The rate of exchange from site B to A (rad/s).
     @type k_BA:             float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
-    @type inv_tcpmg:        numpy float array of rank [NS][[NM][NO][ND]
+    @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NS][[NM][NO][ND]
+    @type tcp:              numpy float array of rank [NS][NM][NO][ND]
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
-    @type back_calc:        numpy float array of rank [NS][[NM][NO][ND]
+    @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     @keyword num_points:    The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
-    @type num_points:       numpy int array of rank [NS][[NM][NO]
+    @type num_points:       numpy int array of rank [NS][NM][NO]
     @keyword power:         The matrix exponential power array.
-    @type power:            numpy int array of rank [NS][[NM][NO][ND]
+    @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
 
 
