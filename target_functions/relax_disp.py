@@ -1560,20 +1560,16 @@ class Dispersion:
             # Back calculate the R2eff values for each experiment type.
             self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20, R20B=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, k_AB=k_AB, k_BA=k_BA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
-            # Clean the data for all values, which is left over at the end of arrays.
-            self.back_calc[ei] = self.back_calc[ei]*self.disp_struct[ei]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
-            # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-            if self.has_missing:
-                # Replace with values.
-                mask_replace_blank_ei = masked_equal(self.missing, 1.0)
-                self.back_calc[mask_replace_blank_ei.mask] = self.values[mask_replace_blank_ei.mask]
-
-            # Calculate and return the chi-squared value.
-            chi2_sum += chi2_rankN(self.values[ei], self.back_calc[ei], self.errors[ei])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
     def func_ns_mmq_3site(self, params):
