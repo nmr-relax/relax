@@ -5340,7 +5340,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin135S.pA, 0.836591714049569, 4)
         self.assertAlmostEqual(spin135S.dw, 0.583003004605869, 4)
         self.assertAlmostEqual(spin135S.dwH, 0.0361441894065963, 4)
-        self.assertAlmostEqual(spin135S.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin135S.kex/100, 241.806464344233/100, 4)
         self.assertAlmostEqual(spin135S.chi2, 12.4224060116473, 4)
 
         # Checks for residue :135F.
@@ -5349,7 +5349,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin135F.pA, 0.836591714049569, 4)
         self.assertAlmostEqual(spin135F.dw, 0.805849748711916, 4)
         self.assertAlmostEqual(spin135F.dwH, 0.0215791669142752, 4)
-        self.assertAlmostEqual(spin135F.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin135F.kex/100, 241.806464344233/100, 4)
         self.assertAlmostEqual(spin135F.chi2, 12.4224060116473, 4)
 
         # Checks for residue :137S.
@@ -5358,7 +5358,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin137S.pA, 0.836591714049569, 4)
         self.assertAlmostEqual(spin137S.dw, 0.688107406812537, 4)
         self.assertAlmostEqual(spin137S.dwH, 0.034446357344577, 4)
-        self.assertAlmostEqual(spin137S.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin137S.kex/100, 241.806464344233/100, 4)
         self.assertAlmostEqual(spin137S.chi2, 12.4224060116473, 4)
 
         # Checks for residue :137F.
@@ -5367,7 +5367,7 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin137F.pA, 0.836591714049569, 4)
         self.assertAlmostEqual(spin137F.dw, 0.94978325541294, 4)
         self.assertAlmostEqual(spin137F.dwH, 1.5189362257653e-07, 4)
-        self.assertAlmostEqual(spin137F.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin137F.kex/100, 241.806464344233/100, 4)
         self.assertAlmostEqual(spin137F.chi2, 12.4224060116473, 4)
 
 
