@@ -58,7 +58,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None, num_offsets=None):
+def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -106,7 +106,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
             # Loop over offsets:
-            for oi in range(num_offsets[0, si, mi]):
+            for oi in range(NO):
 
                 omega_i = omega[0, si, mi, oi, 0]
                 offset_i = offset[0, si, mi, oi, 0]
