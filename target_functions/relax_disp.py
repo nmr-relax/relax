@@ -130,18 +130,18 @@ class Dispersion:
         @type frqs:                 rank-3 list of floats
         @keyword frqs_H:            The proton spin Larmor frequencies for the MMQ-type models (in MHz*2pi to speed up the ppm to rad/s conversion).  The dimensions are {Ei, Si, Mi}.
         @type frqs_H:               rank-3 list of floats
-        @keyword cpmg_frqs:         The CPMG frequencies in Hertz.  This will be ignored for R1rho experiments.  The dimensions are {Ei, Mi}.
-        @type cpmg_frqs:            rank-2 list of floats
-        @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz.  This will be ignored for CPMG experiments.  The dimensions are {Ei, Mi}.
-        @type spin_lock_nu1:        rank-2 list of floats
+        @keyword cpmg_frqs:         The CPMG frequencies in Hertz.  This will be ignored for R1rho experiments.  The dimensions are {Ei, Mi, Oi}.
+        @type cpmg_frqs:            rank-3 list of floats
+        @keyword spin_lock_nu1:     The spin-lock field strengths in Hertz.  This will be ignored for CPMG experiments.  The dimensions are {Ei, Mi, Oi}.
+        @type spin_lock_nu1:        rank-3 list of floats
         @keyword chemical_shifts:   The chemical shifts in rad/s.  This is only used for off-resonance R1rho models.  The ppm values are not used to save computation time, therefore they must be converted to rad/s by the calling code.  The dimensions are {Ei, Si, Mi}.
         @type chemical_shifts:      rank-3 list of floats
         @keyword offset:            The structure of spin-lock or hard pulse offsets in rad/s.  This is only currently used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi, Oi}.
         @type offset:               rank-4 list of floats
         @keyword tilt_angles:       The spin-lock rotating frame tilt angle.  This is only used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi, Oi, Di}.
         @type tilt_angles:          rank-5 list of floats
-        @keyword r1:                The R1 relaxation rates.  This is only used for off-resonance R1rho models.  The dimensions are {Ei, Si, Mi}.
-        @type r1:                   rank-3 list of floats
+        @keyword r1:                The R1 relaxation rates.  This is only used for off-resonance R1rho models.  The dimensions are {Si, Mi}.
+        @type r1:                   rank-2 list of floats
         @keyword relax_times:       The experiment specific fixed time period for relaxation (in seconds).  The dimensions are {Ei, Mi}.
         @type relax_times:          rank-2 list of floats
         @keyword scaling_matrix:    The square and diagonal scaling matrix.
