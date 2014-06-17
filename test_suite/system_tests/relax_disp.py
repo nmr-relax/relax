@@ -1287,11 +1287,11 @@ class Relax_disp(SystemTestCase):
 
                     ## Make test on parameters.
                     if mo_param == 'dw':
-                        self.assertAlmostEqual(set_val/10, min_val/10, 6)
+                        self.assertAlmostEqual(set_val/10, min_val/10, 5)
                     elif mo_param == 'kex':
                         self.assertAlmostEqual(set_val/1000, min_val/1000, 5)
                     elif mo_param == 'pA':
-                        self.assertAlmostEqual(set_val, min_val, 7)
+                        self.assertAlmostEqual(set_val, min_val, 6)
 
 
     def test_cpmg_synthetic_ns3d_to_cr72_noise_cluster(self):
@@ -2232,23 +2232,23 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g %20.15g" % ("dw", spin4.dw, spin70.dw, spin71.dw))
         print("%-20s %20.15g %20.15g %20.15g" % ("kex", spin4.kex, spin70.kex, spin71.kex))
         print("%-20s %20.15g %20.15g %20.15g\n" % ("chi2", spin4.chi2, spin70.chi2, spin71.chi2))
-        self.assertAlmostEqual(spin4.r2[r20_key1], 1.60462456409508, 2)
-        self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221781206148, 3)
-        self.assertAlmostEqual(spin4.pA, 0.899911303159742, 3)
-        self.assertAlmostEqual(spin4.dw, 0.000048303116437, 3)
-        self.assertAlmostEqual(spin4.kex/10000, 0.0796851577904277/10000, 3)
-        self.assertAlmostEqual(spin4.chi2, 26.7356693257612, 3)
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.97235130701478, 3)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 9.40988386796136, 3)
-        self.assertAlmostEqual(spin70.pA, 0.989856745034836, 3)
-        self.assertAlmostEqual(spin70.dw, 5.60878828496508, 3)
-        self.assertAlmostEqual(spin70.kex/10000, 1752.93345983946/10000, 3)
-        self.assertAlmostEqual(spin70.chi2, 53.8382172686916, 3)
-        self.assertAlmostEqual(spin71.r2[r20_key1], 4.98111647969012, 3)
-        self.assertAlmostEqual(spin71.pA, 0.996608013844177, 3)
-        self.assertAlmostEqual(spin71.dw, 4.34425685338434, 3)
-        self.assertAlmostEqual(spin71.kex/10000, 1937.21776309767/10000, 3)
-        self.assertAlmostEqual(spin71.chi2, 5.51703749012473, 3)
+        self.assertAlmostEqual(spin4.r2[r20_key1], 1.60463650370664, 2)
+        self.assertAlmostEqual(spin4.r2[r20_key2], 1.63221675941434, 3)
+        self.assertAlmostEqual(spin4.pA, 0.818979078699935, 3)
+        self.assertAlmostEqual(spin4.dw, 5.07483389476542e-14, 3)
+        self.assertAlmostEqual(spin4.kex/10000, 2.29004732365492e-12/10000, 3)
+        self.assertAlmostEqual(spin4.chi2, 26.7356711142038, 3)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.97268077496405, 3)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 9.41028133407727, 3)
+        self.assertAlmostEqual(spin70.pA, 0.989856641885939, 3)
+        self.assertAlmostEqual(spin70.dw, 5.60889911049405, 3)
+        self.assertAlmostEqual(spin70.kex/10000, 1752.62025618632/10000, 3)
+        self.assertAlmostEqual(spin70.chi2, 53.8382196964083, 3)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 4.98123328466942, 3)
+        self.assertAlmostEqual(spin71.pA, 0.996607425484157, 3)
+        self.assertAlmostEqual(spin71.dw, 4.34346257383825, 3)
+        self.assertAlmostEqual(spin71.kex/10000, 1936.73197158804/10000, 3)
+        self.assertAlmostEqual(spin71.chi2, 5.51703791653689, 3)
 
 
     def test_hansen_cpmg_data_to_cr72(self):
@@ -2292,19 +2292,19 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.97260604007474, 4)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 9.41009302654463, 2)
-        self.assertAlmostEqual(spin70.pA, 0.989856764756131, 4)
-        self.assertAlmostEqual(spin70.dw, 5.60887354423638, 3)
-        self.assertAlmostEqual(spin70.kex/1000, 1752.75852303464/1000, 3)
-        self.assertAlmostEqual(spin70.chi2, 53.8382124791236, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.9724581325007, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 9.40968331038162, 2)
+        self.assertAlmostEqual(spin70.pA, 0.989856656702431, 4)
+        self.assertAlmostEqual(spin70.dw, 5.60885879594746, 3)
+        self.assertAlmostEqual(spin70.kex/1000, 1752.91052702273/1000, 3)
+        self.assertAlmostEqual(spin70.chi2, 53.8382133597495, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.00310788169096, 4)
-        self.assertAlmostEqual(spin71.pA, 0.985946406482083, 4)
-        self.assertAlmostEqual(spin71.dw, 2.00673221077749, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 2480.52477627298/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 15.6595392846911, 4)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.0030740940524, 4)
+        self.assertAlmostEqual(spin71.pA, 0.985941082507823, 4)
+        self.assertAlmostEqual(spin71.dw, 2.00640384113696, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2480.79614442041/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.6595388312451, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -2360,22 +2360,22 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2a[r20_key1], 6.69755822995605, 4)
-        self.assertAlmostEqual(spin70.r2b[r20_key1], 2.75294308690228, 4)
-        self.assertAlmostEqual(spin70.r2a[r20_key2], 8.18393516578432, 4)
-        self.assertAlmostEqual(spin70.r2b[r20_key2], 97.3047470071814, 4)
-        self.assertAlmostEqual(spin70.pA, 0.988929729034413, 4)
-        self.assertAlmostEqual(spin70.dw, 5.51938354518713, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1892.82682092974/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 48.5815698897158, 4)
+        self.assertAlmostEqual(spin70.r2a[r20_key1], 6.87485258365614, 4)
+        self.assertAlmostEqual(spin70.r2b[r20_key1], 1.26075839074614, 4)
+        self.assertAlmostEqual(spin70.r2a[r20_key2], 8.79580446260797, 4)
+        self.assertAlmostEqual(spin70.r2b[r20_key2], 51.188411562843, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989384178573802, 4)
+        self.assertAlmostEqual(spin70.dw, 5.54738203723682, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1831.4566463179/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 50.450410782403, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2a[r20_key1], 4.79839795614044, 4)
-        self.assertAlmostEqual(spin71.r2b[r20_key1], 12.8793124032989, 4)
-        self.assertAlmostEqual(spin71.pA, 0.978971448838756, 4)
-        self.assertAlmostEqual(spin71.dw, 1.67873004594096, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 2527.80893069607/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 14.3394771268074, 4)
+        self.assertAlmostEqual(spin71.r2a[r20_key1], 5.04185695754972, 4)
+        self.assertAlmostEqual(spin71.r2b[r20_key1], 1.62857899941921, 4)
+        self.assertAlmostEqual(spin71.pA, 0.988832866751676, 4)
+        self.assertAlmostEqual(spin71.dw, 2.24905251856265, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2397.64122642946/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.8586492923672, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -2481,18 +2481,17 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.74362294539099)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406797067481)
-        self.assertAlmostEqual(spin70.phi_ex, 0.312733013751449)
-        self.assertAlmostEqual(spin70.kex/1000, 4723.09897146338/1000)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.7436229263957)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 6.57406788826655)
+        self.assertAlmostEqual(spin70.phi_ex, 0.31273301746411)
+        self.assertAlmostEqual(spin70.kex/1000, 4723.09901154387/1000)
         self.assertAlmostEqual(spin70.chi2, 363.534044873483)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657712558)
-        self.assertAlmostEqual(spin71.phi_ex, 0.0553787828347638)
-        self.assertAlmostEqual(spin71.kex/1000, 2781.72293906248/1000)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 5.00776657729728)
+        self.assertAlmostEqual(spin71.phi_ex, 0.0553787825650613)
+        self.assertAlmostEqual(spin71.kex/1000, 2781.72292994154/1000)
         self.assertAlmostEqual(spin71.chi2, 17.0776399916287)
-
 
 
     def test_hansen_cpmg_data_to_ns_cpmg_2site_3D(self):
@@ -2674,20 +2673,20 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin70.chi2, spin71.chi2))
 
         # Checks for residue :70.
-        self.assertAlmostEqual(spin70.r2[r20_key1], 6.9580924599737, 4)
-        self.assertAlmostEqual(spin70.r2[r20_key2], 9.39653925942454, 4)
-        self.assertAlmostEqual(spin70.pA, 0.989701162762885, 4)
-        self.assertAlmostEqual(spin70.dw, 5.67331932250604, 4)
-        self.assertAlmostEqual(spin70.kex/1000, 1713.56202177775/1000, 4)
-        self.assertAlmostEqual(spin70.chi2, 52.510685225092, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key1], 6.95813330991529, 4)
+        self.assertAlmostEqual(spin70.r2[r20_key2], 9.39663480561524, 4)
+        self.assertAlmostEqual(spin70.pA, 0.989700843879574, 4)
+        self.assertAlmostEqual(spin70.dw, 5.67315878825691, 4)
+        self.assertAlmostEqual(spin70.kex/1000, 1713.56110716632/1000, 4)
+        self.assertAlmostEqual(spin70.chi2, 52.5106879242812, 4)
 
         # Checks for residue :71.
-        self.assertAlmostEqual(spin71.r2[r20_key1], 4.99888477245306, 4)
-        self.assertAlmostEqual(spin71.r2[r20_key2], 6.89804393936759, 4)
-        self.assertAlmostEqual(spin71.pA, 0.986705757536079, 4)
-        self.assertAlmostEqual(spin71.dw, 2.09219403018313, 4)
-        self.assertAlmostEqual(spin71.kex/1000, 2438.48401194464/1000, 4)
-        self.assertAlmostEqual(spin71.chi2, 15.1644881118593, 4)
+        self.assertAlmostEqual(spin71.r2[r20_key1], 4.99881666793312, 4)
+        self.assertAlmostEqual(spin71.r2[r20_key2], 6.89817482453042, 4)
+        self.assertAlmostEqual(spin71.pA, 0.986712911453639, 4)
+        self.assertAlmostEqual(spin71.dw, 2.09273069372236, 4)
+        self.assertAlmostEqual(spin71.kex/1000, 2438.20525930405/1000, 4)
+        self.assertAlmostEqual(spin71.chi2, 15.1644913030633, 4)
 
         # Test the conversion to k_AB from kex and pA.
         self.assertEqual(spin70.k_AB, spin70.kex * (1.0 - spin70.pA))
@@ -5336,40 +5335,40 @@ class Relax_disp(SystemTestCase):
         print("        spin137F.dwH = %s" % spin137F.dwH)
 
         # Checks for residue :135S.
-        self.assertAlmostEqual(spin135S.r2[r20_key1], 28.2499549832749, 4)
-        self.assertAlmostEqual(spin135S.r2[r20_key2], 31.7529931145939, 4)
-        self.assertAlmostEqual(spin135S.pA, 0.836602053942836, 4)
-        self.assertAlmostEqual(spin135S.dw, 0.582996164517237, 4)
-        self.assertAlmostEqual(spin135S.dwH, 0.0361431023785737, 4)
-        self.assertAlmostEqual(spin135S.kex, 241.827943268269, 4)
-        self.assertAlmostEqual(spin135S.chi2, 12.4224061774664, 4)
+        self.assertAlmostEqual(spin135S.r2[r20_key1], 28.2493445347425, 4)
+        self.assertAlmostEqual(spin135S.r2[r20_key2], 31.7517352342937, 4)
+        self.assertAlmostEqual(spin135S.pA, 0.836591714049569, 4)
+        self.assertAlmostEqual(spin135S.dw, 0.583003004605869, 4)
+        self.assertAlmostEqual(spin135S.dwH, 0.0361441894065963, 4)
+        self.assertAlmostEqual(spin135S.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin135S.chi2, 12.4224060116473, 4)
 
         # Checks for residue :135F.
-        self.assertAlmostEqual(spin135F.r2[r20_key1], 42.7201353164699, 4)
-        self.assertAlmostEqual(spin135F.r2[r20_key2], 57.3182694767754, 4)
-        self.assertAlmostEqual(spin135F.pA, 0.836602053942836, 4)
-        self.assertAlmostEqual(spin135F.dw, 0.805844579818815, 4)
-        self.assertAlmostEqual(spin135F.dwH, 0.0215772589360951, 4)
-        self.assertAlmostEqual(spin135F.kex, 241.827943268269, 4)
-        self.assertAlmostEqual(spin135F.chi2, 12.4224061774664, 4)
+        self.assertAlmostEqual(spin135F.r2[r20_key1], 42.7201844426839, 4)
+        self.assertAlmostEqual(spin135F.r2[r20_key2], 57.3178718548898, 4)
+        self.assertAlmostEqual(spin135F.pA, 0.836591714049569, 4)
+        self.assertAlmostEqual(spin135F.dw, 0.805849748711916, 4)
+        self.assertAlmostEqual(spin135F.dwH, 0.0215791669142752, 4)
+        self.assertAlmostEqual(spin135F.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin135F.chi2, 12.4224060116473, 4)
 
         # Checks for residue :137S.
-        self.assertAlmostEqual(spin137S.r2[r20_key1], 26.0130900829802, 4)
-        self.assertAlmostEqual(spin137S.r2[r20_key2], 30.5756150883564, 4)
-        self.assertAlmostEqual(spin137S.pA, 0.836602053942836, 4)
-        self.assertAlmostEqual(spin137S.dw, 0.688110098029141, 4)
-        self.assertAlmostEqual(spin137S.dwH, 0.0344479518787365, 4)
-        self.assertAlmostEqual(spin137S.kex, 241.827943268269, 4)
-        self.assertAlmostEqual(spin137S.chi2, 12.4224061774664, 4)
+        self.assertAlmostEqual(spin137S.r2[r20_key1], 26.013412509919, 4)
+        self.assertAlmostEqual(spin137S.r2[r20_key2], 30.5758092335097, 4)
+        self.assertAlmostEqual(spin137S.pA, 0.836591714049569, 4)
+        self.assertAlmostEqual(spin137S.dw, 0.688107406812537, 4)
+        self.assertAlmostEqual(spin137S.dwH, 0.034446357344577, 4)
+        self.assertAlmostEqual(spin137S.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin137S.chi2, 12.4224060116473, 4)
 
         # Checks for residue :137F.
-        self.assertAlmostEqual(spin137F.r2[r20_key1], 46.6966999976701, 4)
-        self.assertAlmostEqual(spin137F.r2[r20_key2], 58.6021572404496, 4)
-        self.assertAlmostEqual(spin137F.pA, 0.836602053942836, 4)
-        self.assertAlmostEqual(spin137F.dw, 0.949766944294449, 4)
-        self.assertAlmostEqual(spin137F.dwH, 1.60128740101484e-07, 4)
-        self.assertAlmostEqual(spin137F.kex, 241.827943268269, 4)
-        self.assertAlmostEqual(spin137F.chi2, 12.4224061774664, 4)
+        self.assertAlmostEqual(spin137F.r2[r20_key1], 46.696935090697, 4)
+        self.assertAlmostEqual(spin137F.r2[r20_key2], 58.6023842513446, 4)
+        self.assertAlmostEqual(spin137F.pA, 0.836591714049569, 4)
+        self.assertAlmostEqual(spin137F.dw, 0.94978325541294, 4)
+        self.assertAlmostEqual(spin137F.dwH, 1.5189362257653e-07, 4)
+        self.assertAlmostEqual(spin137F.kex, 241.806464344233, 4)
+        self.assertAlmostEqual(spin137F.chi2, 12.4224060116473, 4)
 
 
     def test_sprangers_data_to_ns_mmq_2site(self, model=None):
@@ -5547,12 +5546,12 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin1.chi2, 2.99182130153514, 4)
 
         # Checks for residue :2.
-        self.assertAlmostEqual(spin2.r2[r20_key1], 10.1334196530849, 4)
-        self.assertAlmostEqual(spin2.r2[r20_key2], 16.140167863407, 4)
-        self.assertAlmostEqual(spin2.pA, 0.829988381197468, 4)
-        self.assertAlmostEqual(spin2.dw, 9.5657894936005, 4)
-        self.assertAlmostEqual(spin2.kex/1000, 1404.76852145933/1000, 4)
-        self.assertAlmostEqual(spin2.chi2, 0.000150052743893402, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key1], 10.2099357790203, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 16.2137648697873, 4)
+        self.assertAlmostEqual(spin2.pA, 0.836488681031685, 4)
+        self.assertAlmostEqual(spin2.dw, 9.5505714779503, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1454.45726998929/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 0.000402231563481261, 4)
 
 
     def test_tp02_data_to_mp05(self):
@@ -5565,18 +5564,15 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_off_res_tp02.py')
 
-        # The original TP02 parameters.
-        #r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
-        #pA = 0.7654321
-        #kex = 1234.56789
-        #delta_omega = [7.0, 9.0]
+        # Switch back to the data pipe for the optimisation.
+        self.interpreter.pipe.switch('MP05 - relax_disp')
 
         # The equivalent MP05 parameters.
-        r1rho_prime = [[10.0058087306952, 15.0058071785643], [11.9997883441526, 17.9972824143268]]
-        pA = [0.775054986621315, 0.806128964050712]
-        kex = [1235.20228577117, 1220.23684410068]
-        delta_omega = [7.08193971314044, 9.69856821121164]
-        chi2 = [0.0370400968687155, 8.28321387676908e-06]
+        r1rho_prime = [[10.0058086343329, 15.005806870124], [12.0766320470785, 18.0767503536277]]
+        pA = [0.775055484521586, 0.500000000036595]
+        kex = [1235.20361276079, 2378.31403454691]
+        delta_omega = [7.08194146569694, 5.4083562844306]
+        chi2 = [0.0370400968727768, 0.182141732163934]
 
         # Alias the spins.
         spin1 = cdp.mol[0].res[0].spin[0]
@@ -5596,8 +5592,7 @@ class Relax_disp(SystemTestCase):
         print("%-20s %20.15g %20.15g" % ("kex", spin1.kex, spin2.kex))
         print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
 
-        # Switch to the 'MP05' model data pipe, then check for each spin.
-        self.interpreter.pipe.switch('MP05 - relax_disp')
+        # Check each spin.
         spin_index = 0
         for spin, spin_id in spin_loop(return_id=True):
             # Printout.
@@ -5625,18 +5620,15 @@ class Relax_disp(SystemTestCase):
         # Execute the script.
         self.interpreter.run(script_file=status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_disp'+sep+'r1rho_off_res_tp02.py')
 
-        # The original TP02 parameters.
-        #r1rho_prime = [[10.0, 15.0], [12.0, 18.0]]
-        #pA = 0.7654321
-        #kex = 1234.56789
-        #delta_omega = [7.0, 9.0]
+        # Switch back to the data pipe for the optimisation.
+        self.interpreter.pipe.switch('TAP03 - relax_disp')
 
         # The equivalent TAP03 parameters.
-        r1rho_prime = [[10.0058156951248, 15.0058184739705], [11.9997721585529, 17.9972521618894]]
-        pA = [0.775042773953145, 0.80618481966515]
-        kex = [1235.20914100608, 1220.44317542746]
-        delta_omega = [7.08176850835834, 9.69883920692148]
-        chi2 = [0.0371366837334911, 8.45422574594191e-06]
+        r1rho_prime = [[10.0058156589442, 15.005818505006], [12.0766046472748, 18.076648462452]]
+        pA = [0.775042569092891, 0.500000000229685]
+        kex = [1235.20852748765, 2379.47085580169]
+        delta_omega = [7.08176806468445, 5.40708372863538]
+        chi2 = [0.0371366837083293, 0.182212857256044]
 
         # Alias the spins.
         spin1 = cdp.mol[0].res[0].spin[0]
