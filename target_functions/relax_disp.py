@@ -1070,7 +1070,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc, num_points=self.num_disp_points)
+        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
