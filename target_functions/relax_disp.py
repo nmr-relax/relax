@@ -234,6 +234,8 @@ class Dispersion:
         self.dwH_AB_struct = deepcopy(numpy_array_zeros)
         self.dwH_AC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
+        self.phi_ex_B_struct = deepcopy(numpy_array_zeros)
+        self.phi_ex_C_struct = deepcopy(numpy_array_zeros)
 
         # Structure of values, errors and missing.
         self.values = deepcopy(numpy_array_zeros)
@@ -1060,34 +1062,26 @@ class Dispersion:
         quart_kB = kB / 4.0
         quart_kC = kC / 4.0
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
+        multiply( multiply.outer( rex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
+        multiply( multiply.outer( rex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
 
-        # Loop over the spins.
-        for si in range(self.num_spins):
-            # Loop over the spectrometer frequencies.
-            for mi in range(self.num_frq):
-                # The R20 index.
-                r20_index = mi + si*self.num_frq
+        # Reshape R20 to per experiment, spin and frequency.
+        self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-                # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-                rex_B_scaled = rex_B[si] * self.frqs_squared[0, si, mi, 0, 0]
-                rex_C_scaled = rex_C[si] * self.frqs_squared[0, si, mi, 0, 0]
+        # Back calculate the R2eff values.
+        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc, num_points=self.num_disp_points)
 
-                # Back calculate the R2eff values.
-                r2eff_LM63_3site(r20=R20[r20_index], rex_B=rex_B_scaled, rex_C=rex_C_scaled, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs[0, si, mi, 0], back_calc=self.back_calc[0, si, mi, 0], num_points=self.num_disp_points[0, si, mi, 0])
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
-                # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                for di in range(self.num_disp_points[0, si, mi, 0]):
-                    if self.missing[0, si, mi, 0, di]:
-                        self.back_calc[0, si, mi, 0, di] = self.values[0, si, mi, 0, di]
-
-                # Calculate and return the chi-squared value.
-                chi2_sum += chi2(self.values[0, si, mi, 0], self.back_calc[0, si, mi, 0], self.errors[0, si, mi, 0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
-
+        return chi2_rankN(self.values, self.back_calc, self.errors)
 
     def func_LM63(self, params):
         """Target function for the Luz and Meiboom (1963) fast 2-site exchange model.
