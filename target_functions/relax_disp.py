@@ -1279,9 +1279,6 @@ class Dispersion:
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
-        # Initialise.
-        chi2_sum = 0.0
-
         # Loop over the experiment types.
         for ei in range(self.num_exp):
 
@@ -1309,20 +1306,16 @@ class Dispersion:
             # Back calculate the R2eff values.
             r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
 
-            # Clean the data for all values, which is left over at the end of arrays.
-            self.back_calc[ei] = self.back_calc[ei]*self.disp_struct[ei]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
-            # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-            if self.has_missing:
-                # Replace with values.
-                mask_replace_blank_ei = masked_equal(self.missing[ei], 1.0)
-                self.back_calc[ei][mask_replace_blank_ei.mask] = self.values[ei][mask_replace_blank_ei.mask]
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
-            # Calculate and return the chi-squared value.
-            chi2_sum += chi2_rankN(self.values[ei], self.back_calc[ei], self.errors[ei])
-
-        # Return the total chi-squared value.
-        return chi2_sum
+        ## Calculate the chi-squared statistic.
+        return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
     def func_NOREX(self, params):
