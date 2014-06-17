@@ -225,9 +225,14 @@ class Dispersion:
         self.r20_struct = deepcopy(numpy_array_zeros)
         self.r20a_struct = deepcopy(numpy_array_zeros)
         self.r20b_struct = deepcopy(numpy_array_zeros)
+        self.r20c_struct = deepcopy(numpy_array_zeros)
         # Structure of dw. The full and the outer dimensions structures.
         self.dw_struct = deepcopy(numpy_array_zeros)
         self.dwH_struct = deepcopy(numpy_array_zeros)
+        self.dw_AB_struct = deepcopy(numpy_array_zeros)
+        self.dw_AC_struct = deepcopy(numpy_array_zeros)
+        self.dwH_AB_struct = deepcopy(numpy_array_zeros)
+        self.dwH_AC_struct = deepcopy(numpy_array_zeros)
         self.phi_ex_struct = deepcopy(numpy_array_zeros)
 
         # Structure of values, errors and missing.
@@ -682,63 +687,67 @@ class Dispersion:
         self.M0[1] = pB
         self.M0[2] = pC
 
-        # Initialise.
-        chi2_sum = 0.0
+        # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
+        multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
+        multiply( multiply.outer( dw_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AC_struct )
+        multiply( multiply.outer( dwH_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AB_struct )
+        multiply( multiply.outer( dwH_AC.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_AC_struct )
+
+        # Reshape R20A and R20B to per experiment, spin and frequency.
+        self.r20a_struct[:] = multiply.outer( R20A.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+        self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
+        self.r20c_struct[:] = multiply.outer( R20C.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Loop over the experiment types.
         for ei in range(self.num_exp):
-            # Loop over the spins.
-            for si in range(self.num_spins):
-                # Loop over the spectrometer frequencies.
-                for mi in range(self.num_frq):
-                    # The R20 index.
-                    r20_index = mi + ei*self.num_frq + si*self.num_frq*self.num_exp
 
-                    # Convert dw from ppm to rad/s.
-                    dw_AB_frq = dw_AB[si] * self.frqs[ei, si, mi, 0, 0]
-                    dw_AC_frq = dw_AC[si] * self.frqs[ei, si, mi, 0, 0]
-                    dwH_AB_frq = dwH_AB[si] * self.frqs_H[ei, si, mi, 0, 0]
-                    dwH_AC_frq = dwH_AC[si] * self.frqs_H[ei, si, mi, 0, 0]
+            r20a = self.r20a_struct[ei]
+            r20b = self.r20b_struct[ei]
+            r20c = self.r20b_struct[ei]
+            dw_AB_frq = self.dw_AB_struct[ei]
+            dw_AC_frq = self.dw_AC_struct[ei]
+            dwH_AB_frq = self.dwH_AB_struct[ei]
+            dwH_AC_frq = self.dwH_AC_struct[ei]
 
-                    # Alias the dw frequency combinations.
-                    aliased_dwH_AB = 0.0
-                    aliased_dwH_AC = 0.0
-                    if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
-                        aliased_dw_AB = dw_AB_frq
-                        aliased_dw_AC = dw_AC_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
-                        aliased_dw_AB = dwH_AB_frq
-                        aliased_dw_AC = dwH_AC_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
-                        aliased_dw_AB = dw_AB_frq + dwH_AB_frq
-                        aliased_dw_AC = dw_AC_frq + dwH_AC_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
-                        aliased_dw_AB = dw_AB_frq - dwH_AB_frq
-                        aliased_dw_AC = dw_AC_frq - dwH_AC_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
-                        aliased_dw_AB = dw_AB_frq
-                        aliased_dw_AC = dw_AC_frq
-                        aliased_dwH_AB = dwH_AB_frq
-                        aliased_dwH_AC = dwH_AC_frq
-                    elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
-                        aliased_dw_AB = dwH_AB_frq
-                        aliased_dw_AC = dwH_AC_frq
-                        aliased_dwH_AB = dw_AB_frq
-                        aliased_dwH_AC = dw_AC_frq
+            # Alias the dw frequency combinations.
+            aliased_dwH_AB = 0.0 * self.dwH_AB_struct[ei]
+            aliased_dwH_AC = 0.0 * self.dwH_AC_struct[ei]
+            if self.exp_types[ei] == EXP_TYPE_CPMG_SQ:
+                aliased_dw_AB = dw_AB_frq
+                aliased_dw_AC = dw_AC_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_SQ:
+                aliased_dw_AB = dwH_AB_frq
+                aliased_dw_AC = dwH_AC_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_DQ:
+                aliased_dw_AB = dw_AB_frq + dwH_AB_frq
+                aliased_dw_AC = dw_AC_frq + dwH_AC_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_ZQ:
+                aliased_dw_AB = dw_AB_frq - dwH_AB_frq
+                aliased_dw_AC = dw_AC_frq - dwH_AC_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_MQ:
+                aliased_dw_AB = dw_AB_frq
+                aliased_dw_AC = dw_AC_frq
+                aliased_dwH_AB = dwH_AB_frq
+                aliased_dwH_AC = dwH_AC_frq
+            elif self.exp_types[ei] == EXP_TYPE_CPMG_PROTON_MQ:
+                aliased_dw_AB = dwH_AB_frq
+                aliased_dw_AC = dwH_AC_frq
+                aliased_dwH_AB = dw_AB_frq
+                aliased_dwH_AC = dw_AC_frq
 
-                    # Back calculate the R2eff values for each experiment type.
-                    self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=R20A[r20_index], R20B=R20B[r20_index], R20C=R20C[r20_index], pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[ei, si, mi, 0], tcp=self.tau_cpmg[ei, si, mi, 0], back_calc=self.back_calc[ei, si, mi, 0], num_points=self.num_disp_points[ei, si, mi, 0], power=self.power[ei, si, mi, 0])
+            # Back calculate the R2eff values for each experiment type.
+            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
-                    # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
-                    for di in range(self.num_disp_points[ei, si, mi, 0]):
-                        if self.missing[ei, si, mi, 0, di]:
-                            self.back_calc[ei, si, mi, 0, di] = self.values[ei, si, mi, 0, di]
+        # Clean the data for all values, which is left over at the end of arrays.
+        self.back_calc = self.back_calc*self.disp_struct
 
-                    # Calculate and return the chi-squared value.
-                    chi2_sum += chi2(self.values[ei, si, mi, 0], self.back_calc[ei, si, mi, 0], self.errors[ei, si, mi, 0])
+        ## For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
+        if self.has_missing:
+            # Replace with values.
+            self.back_calc[self.mask_replace_blank.mask] = self.values[self.mask_replace_blank.mask]
 
         # Return the total chi-squared value.
-        return chi2_sum
+        return chi2_rankN(self.values, self.back_calc, self.errors)
 
 
     def calc_ns_r1rho_3site_chi2(self, r1rho_prime=None, dw_AB=None, dw_BC=None, pA=None, pB=None, kex_AB=None, kex_BC=None, kex_AC=None):
