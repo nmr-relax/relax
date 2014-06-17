@@ -263,26 +263,26 @@ class Dispersion:
                 for mi in range(self.NM):
                     # Fill the frequency.
                     frq = frqs[ei][si][mi]
-                    self.frqs[ei, si, mi][:] = frq
-                    self.frqs_squared[ei, si, mi][:] = frq**2
+                    self.frqs[ei, si, mi, :] = frq
+                    self.frqs_squared[ei, si, mi, :] = frq**2
                     frq_H = frqs_H[ei][si][mi]
-                    self.frqs_H[ei, si, mi][:] = frq_H
+                    self.frqs_H[ei, si, mi, :] = frq_H
 
                     # Fill the relaxation time.
                     relax_time = relax_times[ei, mi]
-                    self.relax_times[ei, si, mi][:] = relax_time
+                    self.relax_times[ei, si, mi, :] = relax_time
 
                     # Fill r1.
                     r1_l = r1[si][mi]
-                    self.r1[ei, si, mi][:] = r1_l
+                    self.r1[ei, si, mi, :] = r1_l
 
                     # Fill chemical shift.
                     chemical_shift = chemical_shifts[ei][si][mi]
-                    self.chemical_shifts[ei, si, mi][:] = chemical_shift
+                    self.chemical_shifts[ei, si, mi, :] = chemical_shift
 
                     # The inverted relaxation delay.
                     if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-                        self.inv_relax_times[ei, si, mi][:] = 1.0 / relax_time
+                        self.inv_relax_times[ei, si, mi, :] = 1.0 / relax_time
 
                     # The number of offset data points.
                     if len(offset[ei][si][mi]):
@@ -295,7 +295,7 @@ class Dispersion:
                         if cpmg_frqs != None and len(cpmg_frqs[ei][mi][oi]):
                             cpmg_frqs_list = cpmg_frqs[ei][mi][oi]
                             num_disp_points = len(cpmg_frqs_list)
-                            self.cpmg_frqs[ei, si, mi, oi][:num_disp_points] = cpmg_frqs_list
+                            self.cpmg_frqs[ei, si, mi, oi, :num_disp_points] = cpmg_frqs_list
 
                             for di in range(num_disp_points):
                                 cpmg_frq = cpmg_frqs[ei][mi][oi][di]
@@ -322,9 +322,9 @@ class Dispersion:
                         self.num_disp_points[ei, si, mi, oi] = num_disp_points
 
                         # Get the values and errors.
-                        self.values[ei, si, mi, oi][:num_disp_points] = values[ei][si][mi][oi]
-                        self.errors[ei, si, mi, oi][:num_disp_points] = errors[ei][si][mi][oi]
-                        self.disp_struct[ei, si, mi, oi][:num_disp_points] = ones(num_disp_points)
+                        self.values[ei, si, mi, oi, :num_disp_points] = values[ei][si][mi][oi]
+                        self.errors[ei, si, mi, oi, :num_disp_points] = errors[ei][si][mi][oi]
+                        self.disp_struct[ei, si, mi, oi, :num_disp_points] = ones(num_disp_points)
 
                         # Loop over dispersion points.
                         for di in range(num_disp_points):
@@ -790,7 +790,7 @@ class Dispersion:
                 dw_AC_frq = dw_AC[si] * self.frqs[0, si, mi, 0, 0]
 
                 # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si, mi]):
+                for oi in range(self.num_offsets[0, si, mi]):
                     # Back calculate the R2eff values for each experiment type.
                     ns_r1rho_3site(M0=self.M0, matrix=self.matrix, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0, si, mi, oi, 0], offset=self.offset[0, si, mi, oi, 0], r1=self.r1[0, si, mi, oi, 0], pA=pA, pB=pB, pC=pC, dw_AB=dw_AB_frq, dw_AC=dw_AC_frq, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, spin_lock_fields=self.spin_lock_omega1[0, si, mi, oi], relax_time=self.relax_times[0, si, mi, oi], inv_relax_time=self.inv_relax_times[0, si, mi, oi], back_calc=self.back_calc[0, si, mi, oi], num_points=self.num_disp_points[0, si, mi, oi])
 
@@ -1079,8 +1079,8 @@ class Dispersion:
 
                 # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
                 for di in range(self.num_disp_points[0, si, mi, 0]):
-                    if self.missing[0, si, mi, 0][di]:
-                        self.back_calc[0, si, mi, 0][di] = self.values[0, si, mi, 0][di]
+                    if self.missing[0, si, mi, 0, di]:
+                        self.back_calc[0, si, mi, 0, di] = self.values[0, si, mi, 0, di]
 
                 # Calculate and return the chi-squared value.
                 chi2_sum += chi2(self.values[0, si, mi, 0], self.back_calc[0, si, mi, 0], self.errors[0, si, mi, 0])
@@ -1660,7 +1660,7 @@ class Dispersion:
                 dw_frq = dw[si] * self.frqs[0, si, mi, 0, 0]
 
                 # Loop over the offsets.
-                for oi in range(self.num_offsets[0][si, mi]):
+                for oi in range(self.num_offsets[0, si, mi]):
                     # Back calculate the R2eff values.
                     ns_r1rho_2site(M0=self.M0, matrix=self.matrix, r1rho_prime=r1rho_prime[r20_index], omega=self.chemical_shifts[0, si, mi, oi, 0], offset=self.offset[0, si, mi, oi, 0], r1=self.r1[0, si, mi, oi, 0], pA=pA, pB=pB, dw=dw_frq, k_AB=k_AB, k_BA=k_BA, spin_lock_fields=self.spin_lock_omega1[0, si, mi, oi], relax_time=self.relax_times[0, si, mi, oi], inv_relax_time=self.inv_relax_times[0, si, mi, oi], back_calc=self.back_calc[0, si, mi, oi], num_points=self.num_disp_points[0, si, mi, oi])
 
