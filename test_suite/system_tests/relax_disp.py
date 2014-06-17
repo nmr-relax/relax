@@ -3765,6 +3765,70 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(res61L.k_AB, 10.55, 0)
 
 
+    def test_lm63_3site_synthetic(self):
+        """Test the 'LM63 3-site' dispersion model using the pure noise-free synthetic data."""
+
+        # The path to the data files.
+        data_path = status.install_path + sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'lm63_3site'
+
+        # Load the state file.
+        self.interpreter.reset()
+        self.interpreter.state.load(data_path+sep+'r2eff_values')
+
+        # A new data pipe.
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='LM63 3-site', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='LM63 3-site')
+
+        # Set up the model data.
+        self.interpreter.relax_disp.select_model(model='LM63 3-site')
+        self.interpreter.value.copy(pipe_from='R2eff', pipe_to='LM63 3-site', param='r2eff')
+        self.interpreter.spin.isotope('15N')
+
+        # Alias the spins.
+        spin1 = return_spin(":1")
+        spin2 = return_spin(":2")
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_CPMG_SQ, frq=800e6)
+
+        # Manually set the parameter values.
+        spin1.r2 = {r20_key1: 12.0, r20_key2: 12.0}
+        spin1.phi_ex_B = 0.1
+        spin1.phi_ex_C = 0.5
+        spin1.kB = 1500.0
+        spin1.kC = 2500.0
+        spin2.r2 = {r20_key1: 15.0, r20_key2: 15.0}
+        spin2.phi_ex_B = 0.1
+        spin2.phi_ex_C = 0.5
+        spin2.kB = 1500.0
+        spin2.kC = 2500.0
+
+        # Low precision optimisation.
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
+
+        # Printout.
+        print("\n\nOptimised parameters:\n")
+        print("%-20s %-20s %-20s" % ("Parameter", "Value (:1)", "Value (:2)"))
+        print("%-20s %20.15g %20.15g" % ("R2 (500 MHz)", spin1.r2[r20_key1], spin2.r2[r20_key1]))
+        print("%-20s %20.15g %20.15g" % ("R2 (800 MHz)", spin1.r2[r20_key2], spin2.r2[r20_key2]))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_B", spin1.phi_ex_B, spin2.phi_ex_B))
+        print("%-20s %20.15g %20.15g" % ("phi_ex_C", spin1.phi_ex_C, spin2.phi_ex_C))
+        print("%-20s %20.15g %20.15g" % ("kB", spin1.kB, spin2.kB))
+        print("%-20s %20.15g %20.15g" % ("kC", spin1.kC, spin2.kC))
+        print("%-20s %20.15g %20.15g\n" % ("chi2", spin1.chi2, spin2.chi2))
+
+        # Monte Carlo simulations.
+        self.interpreter.monte_carlo.setup(number=3)
+        self.interpreter.self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-2, grad_tol=None, max_iter=10, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.monte_carlo.error_analysis()
+
+        # Save the results.
+        self.interpreter.results.write(file='devnull', compress_type=1, force=True)
+
+
     def test_m61_data_to_m61(self):
         """Test the relaxation dispersion 'M61' model curve fitting to fixed time synthetic data."""
 
