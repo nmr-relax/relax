@@ -1566,8 +1566,8 @@ class Dispersion:
             # For all missing data points, set the back-calculated value to the measured values so that it has no effect on the chi-squared value.
             if self.has_missing:
                 # Replace with values.
-                mask_replace_blank_ei = masked_equal(self.missing[ei], 1.0)
-                self.back_calc[ei][mask_replace_blank_ei.mask] = self.values[ei][mask_replace_blank_ei.mask]
+                mask_replace_blank_ei = masked_equal(self.missing, 1.0)
+                self.back_calc[mask_replace_blank_ei.mask] = self.values[mask_replace_blank_ei.mask]
 
             # Calculate and return the chi-squared value.
             chi2_sum += chi2_rankN(self.values[ei], self.back_calc[ei], self.errors[ei])
