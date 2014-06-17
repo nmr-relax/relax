@@ -104,5 +104,5 @@ def r2eff_LM63_3site(r20=None, rex_B=None, rex_C=None, quart_kB=None, quart_kC=N
         # The full formula.
         else:
             back_calc[i] = r20
-            back_calc[i] += rex_B * (1.0 - cpmg_frqs[i] * tanh(quart_kB * cpmg_frqs[i]) / quart_kB)
-            back_calc[i] += rex_C * (1.0 - cpmg_frqs[i] * tanh(quart_kC * cpmg_frqs[i]) / quart_kC)
+            back_calc[i] += rex_B * (1.0 - cpmg_frqs[i] * tanh(quart_kB / cpmg_frqs[i]) / quart_kB)
+            back_calc[i] += rex_C * (1.0 - cpmg_frqs[i] * tanh(quart_kC / cpmg_frqs[i]) / quart_kC)
