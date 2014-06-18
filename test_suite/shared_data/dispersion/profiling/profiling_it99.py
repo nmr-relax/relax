@@ -55,7 +55,7 @@ sys.path.reverse()
 from lib.physical_constants import g1H, g15N
 from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_IT99, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
 
 
 # Alter setup.
@@ -110,7 +110,7 @@ class Profile(Dispersion):
     Class Profile inherits the Dispersion container class object.
     """
 
-    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, tex=None, spins_params=None):
         """
         Special method __init__() is called first (acts as Constructor).
         It brings in data from outside the class like the variable num_spins.
@@ -168,7 +168,7 @@ class Profile(Dispersion):
             self.error.append([1.0]*len(cpmg_point))
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, tex=tex, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
         values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets = self.return_r2eff_arrays()
@@ -292,7 +292,7 @@ class Profile(Dispersion):
         return values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, tex=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -333,6 +333,8 @@ class Profile(Dispersion):
                 value = pA
             elif param_name == 'kex':
                 value = kex
+            elif param_name == 'tex':
+                value = tex
 
             # Add to the vector.
             param_vector.append(value)
@@ -387,6 +389,8 @@ class Profile(Dispersion):
                     yield 'pA', 0, 0
                 elif param == 'kex':
                     yield 'kex', 0, 0
+                elif param == 'tex':
+                    yield 'tex', 0, 0
 
 
     def calc(self, params):
@@ -399,11 +403,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_CR72(params)
+        chi2 = self.model.func_IT99(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_CR72, iter=None):
+def single(num_spins=1, model=MODEL_IT99, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -417,7 +421,7 @@ def single(num_spins=1, model=MODEL_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -427,7 +431,7 @@ def single(num_spins=1, model=MODEL_CR72, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_CR72, iter=None):
+def cluster(num_spins=2, model=MODEL_IT99, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -441,7 +445,7 @@ def cluster(num_spins=100, model=MODEL_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
