@@ -765,16 +765,6 @@ class Dispersion:
         """
 
         # Once off parameter conversions.
-        pC = 1.0 - pA - pB
-        pA_pB = pA + pB
-        pA_pC = pA + pC
-        pB_pC = pB + pC
-        k_BA = pA * kex_AB / pA_pB
-        k_AB = pB * kex_AB / pA_pB
-        k_CB = pB * kex_BC / pB_pC
-        k_BC = pC * kex_BC / pB_pC
-        k_CA = pA * kex_AC / pA_pC
-        k_AC = pC * kex_AC / pA_pC
         dw_AC = dw_AB + dw_BC
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
@@ -785,7 +775,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values for each experiment type.
-        ns_r1rho_3site(M0=self.M0, matrix=self.matrix, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, pC=pC, dw_AB=self.dw_AB_struct, dw_AC=self.dw_AC_struct, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_3site(M0=self.M0, matrix=self.matrix, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, pB=pB, dw_AB=self.dw_AB_struct, dw_AC=self.dw_AC_struct, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

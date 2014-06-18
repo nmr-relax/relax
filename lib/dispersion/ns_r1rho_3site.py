@@ -65,7 +65,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
 
-def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -87,24 +87,16 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @type pA:                   float
     @keyword pB:                The population of state B.
     @type pB:                   float
-    @keyword pC:                The population of state C.
-    @type pC:                   float
     @keyword dw_AB:             The chemical exchange difference between states A and B in rad/s.
     @type dw_AB:                numpy float array of rank [NS][NM][NO][ND]
     @keyword dw_AC:             The chemical exchange difference between states A and C in rad/s.
     @type dw_AC:                numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:              The rate of exchange from site A to B (rad/s).
-    @type k_AB:                 float
-    @keyword k_BA:              The rate of exchange from site B to A (rad/s).
-    @type k_BA:                 float
-    @keyword k_BC:              The rate of exchange from site B to C (rad/s).
-    @type k_BC:                 float
-    @keyword k_CB:              The rate of exchange from site C to B (rad/s).
-    @type k_CB:                 float
-    @keyword k_AC:              The rate of exchange from site A to C (rad/s).
-    @type k_AC:                 float
-    @keyword k_CA:              The rate of exchange from site C to A (rad/s).
-    @type k_CA:                 float
+    @keyword kex_AB:            The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
+    @type kex_AB:               float
+    @keyword kex_BC:            The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
+    @type kex_BC:               float
+    @keyword kex_AC:            The exchange rate between sites B and C for 3-site exchange with kex_BC = k_BC + k_CB (rad.s^-1)
+    @type kex_AC:               float
     @keyword spin_lock_fields:  The R1rho spin-lock field strengths (in rad.s^-1).
     @type spin_lock_fields:     numpy float array of rank [NS][NM][NO][ND]
     @keyword relax_time:        The total relaxation time period for each spin-lock field strength (in seconds).
@@ -116,6 +108,18 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     @keyword num_points:        The number of points on the dispersion curve, equal to the length of the tcp and back_calc arguments.
     @type num_points:           numpy int array of rank [NS][NM][NO]
     """
+
+    # Once off parameter conversions.
+    pC = 1.0 - pA - pB
+    pA_pB = pA + pB
+    pA_pC = pA + pC
+    pB_pC = pB + pC
+    k_BA = pA * kex_AB / pA_pB
+    k_AB = pB * kex_AB / pA_pB
+    k_CB = pB * kex_BC / pB_pC
+    k_BC = pC * kex_BC / pB_pC
+    k_CA = pA * kex_AC / pA_pC
+    k_AC = pC * kex_AC / pA_pC
 
     # Extract shape of experiment.
     NE, NS, NM, NO = num_points.shape
