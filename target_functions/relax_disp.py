@@ -998,7 +998,7 @@ class Dispersion:
         R20 = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
-        tex = params[self.end_index[2]]
+        tex = params[self.end_index[1]+1]
 
         # Once off parameter conversions.
         pB = 1.0 - pA
