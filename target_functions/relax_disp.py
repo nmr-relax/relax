@@ -677,23 +677,8 @@ class Dispersion:
         """
 
         # Once off parameter conversions.
-        pC = 1.0 - pA - pB
-        pA_pB = pA + pB
-        pA_pC = pA + pC
-        pB_pC = pB + pC
-        k_BA = pA * kex_AB / pA_pB
-        k_AB = pB * kex_AB / pA_pB
-        k_CB = pB * kex_BC / pB_pC
-        k_BC = pC * kex_BC / pB_pC
-        k_CA = pA * kex_AC / pA_pC
-        k_AC = pC * kex_AC / pA_pC
         dw_AC = dw_AB + dw_BC
         dwH_AC = dwH_AB + dwH_BC
-
-        # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-        self.M0[0] = pA
-        self.M0[1] = pB
-        self.M0[2] = pC
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw_AB.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_AB_struct )
@@ -744,7 +729,7 @@ class Dispersion:
                 aliased_dwH_AC = dw_AC_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, pC=pC, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20a, R20B=r20b, R20C=r20c, pA=pA, pB=pB, dw_AB=aliased_dw_AB, dw_AC=aliased_dw_AC, dwH_AB=aliased_dwH_AB, dwH_AC=aliased_dwH_AC, kex_AB=kex_AB, kex_BC=kex_BC, kex_AC=kex_AC, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

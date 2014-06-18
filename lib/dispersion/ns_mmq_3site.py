@@ -110,7 +110,7 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw
     matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
 
 
-def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -142,8 +142,6 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
-    @keyword pC:            The population of state C.
-    @type pC:               float
     @keyword dw_AB:         The chemical exchange difference between states A and B in rad/s.
     @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
     @keyword dw_AC:         The chemical exchange difference between states A and C in rad/s.
@@ -152,18 +150,12 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     @type dwH_AB:           numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH_AC:        The proton chemical exchange difference between states A and C in rad/s.
     @type dwH_AC:           numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
-    @keyword k_BC:          The rate of exchange from site B to C (rad/s).
-    @type k_BC:             float
-    @keyword k_CB:          The rate of exchange from site C to B (rad/s).
-    @type k_CB:             float
-    @keyword k_AC:          The rate of exchange from site A to C (rad/s).
-    @type k_AC:             float
-    @keyword k_CA:          The rate of exchange from site C to A (rad/s).
-    @type k_CA:             float
+    @keyword kex_AB:        The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
+    @type kex_AB:           float
+    @keyword kex_BC:        The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
+    @type kex_BC:           float
+    @keyword kex_AC:        The exchange rate between sites B and C for 3-site exchange with kex_BC = k_BC + k_CB (rad.s^-1)
+    @type kex_AC:           float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        float
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -175,6 +167,23 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+
+    # Once off parameter conversions.
+    pC = 1.0 - pA - pB
+    pA_pB = pA + pB
+    pA_pC = pA + pC
+    pB_pC = pB + pC
+    k_BA = pA * kex_AB / pA_pB
+    k_AB = pB * kex_AB / pA_pB
+    k_CB = pB * kex_BC / pB_pC
+    k_BC = pC * kex_BC / pB_pC
+    k_CA = pA * kex_AC / pA_pC
+    k_AC = pC * kex_AC / pA_pC
+
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0[0] = pA
+    M0[1] = pB
+    M0[2] = pC
 
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
@@ -283,7 +292,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
                         back_calc[si, mi, oi, i]= -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)
 
 
-def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -311,8 +320,6 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @type pA:               float
     @keyword pB:            The population of state B.
     @type pB:               float
-    @keyword pC:            The population of state C.
-    @type pC:               float
     @keyword dw_AB:         The combined chemical exchange difference between states A and B in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
     @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
     @keyword dw_AC:         The combined chemical exchange difference between states A and C in rad/s.  It should be set to dwH for 1H SQ data, dw for heteronuclear SQ data, dwH-dw for ZQ data, and dwH+dw for DQ data.
@@ -321,10 +328,12 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @type dwH_AB:           numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH_AC:        Unused - this is simply to match the r2eff_mmq_3site_mq() function arguments.
     @type dwH_AC:           numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
+    @keyword kex_AB:        The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
+    @type kex_AB:           float
+    @keyword kex_BC:        The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
+    @type kex_BC:           float
+    @keyword kex_AC:        The exchange rate between sites B and C for 3-site exchange with kex_BC = k_BC + k_CB (rad.s^-1)
+    @type kex_AC:           float
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
     @type inv_tcpmg:        numpy float array of rank [NS][NM][NO][ND]
     @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
@@ -336,6 +345,23 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @keyword power:         The matrix exponential power array.
     @type power:            numpy int array of rank [NS][NM][NO][ND]
     """
+
+    # Once off parameter conversions.
+    pC = 1.0 - pA - pB
+    pA_pB = pA + pB
+    pA_pC = pA + pC
+    pB_pC = pB + pC
+    k_BA = pA * kex_AB / pA_pB
+    k_AB = pB * kex_AB / pA_pB
+    k_CB = pB * kex_BC / pB_pC
+    k_BC = pC * kex_BC / pB_pC
+    k_CA = pA * kex_AC / pA_pC
+    k_AC = pC * kex_AC / pA_pC
+
+    # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
+    M0[0] = pA
+    M0[1] = pB
+    M0[2] = pC
 
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
