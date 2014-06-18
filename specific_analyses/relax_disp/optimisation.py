@@ -192,7 +192,7 @@ def back_calc_r2eff(spin=None, spin_id=None, cpmg_frqs=None, spin_lock_nu1=None,
         spin.chi2 = chi2
 
     # Return the structure.
-    return model.back_calc
+    return model.get_back_calc()
 
 
 def calculate_r2eff():
