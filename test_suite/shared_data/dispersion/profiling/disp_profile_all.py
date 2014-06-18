@@ -48,7 +48,11 @@ models = [
     'B14',
     'NS CPMG 2-site expanded',
     'NS CPMG 2-site 3D',
+    'M61',
     'DPL94',
+    'TP02',
+    'TAP03',
+    'MP05',
     'NS R1rho 2-site'
 ]
 
@@ -59,7 +63,11 @@ scripts = [
     'profiling_b14.py',
     'profiling_ns_cpmg_2site_expanded.py',
     'profiling_ns_cpmg_2site_3D.py',
+    'profiling_m61.py',
     'profiling_dpl94.py',
+    'profiling_tp02.py',
+    'profiling_tap03.py',
+    'profiling_mp05.py',
     'profiling_ns_r1rho_2site.py'
 ]
 
@@ -70,6 +78,10 @@ scaling_factor = [
     1.0,
     1.0,
     10.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
     1.0,
     10.0
 ]
