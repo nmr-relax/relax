@@ -442,7 +442,7 @@ def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -466,7 +466,7 @@ def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
@@ -477,38 +477,3 @@ def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
 # Execute main function.
 if __name__ == "__main__":
     main()
-
-def test_reshape():
-    C1 = Profile(num_spins=1, model=MODEL_NS_CPMG_2SITE_EXPANDED, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
-    end_index = C1.model.end_index
-    #print("end_index:", end_index)
-    num_spins = C1.model.num_spins
-    #print("num_spins:", num_spins)
-    num_frq = C1.model.num_frq
-    #print("num_frq:", num_frq)
-    params = C1.params
-    #print("params", params)
-
-    R20 = params[:end_index[1]].reshape(num_spins*2, num_frq)
-    R20A = R20[::2].flatten()
-    R20B = R20[1::2].flatten()
-    dw = params[end_index[1]:end_index[2]]
-    pA = params[end_index[2]]
-    kex = params[end_index[2]+1]
-    print("R20A", R20A, len(R20A))
-    print("R20B", R20B, len(R20B))
-    print("dw", dw, len(dw))
-    print("dw", pA)
-    print("kex", kex)
-
-    for si in range(num_spins):
-        for mi in range(num_frq):
-            r20_index = mi + si*num_frq
-            r20a=R20A[r20_index]
-            r20b=R20B[r20_index]
-            print("r20a", r20a, "r20b", r20b)
-
-    model = C1.calc(params)
-    print(model)
-
-#test_reshape()
