@@ -51,6 +51,9 @@ More information on the MMQ CR72 model can be found in the:
 from numpy import arccosh, cos, cosh, isfinite, fabs, log, min, max, sin, sqrt, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
+# Repetitive calculations (to speed up calculations).
+eta_scale = 2.0**(-3.0/2.0)
+
 
 def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """The CR72 model extended to MMQ CPMG data.
@@ -130,7 +133,6 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
     Dneg = 0.5 * (-1.0 + D_part)
 
     # Partial eta+/- values.
-    eta_scale = 2.0**(-3.0/2.0)
     etapos_part = eta_scale * sqrt(Psi + sqrt_psi2_zeta2)
     etaneg_part = eta_scale * sqrt(-Psi + sqrt_psi2_zeta2)
 
