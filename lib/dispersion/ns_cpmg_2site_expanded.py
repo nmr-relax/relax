@@ -286,8 +286,7 @@ def r2eff_ns_cpmg_2site_expanded(r20=None, pA=None, dw=None, dw_orig=None, kex=N
     k_BA = pA * kex
     k_AB = pB * kex
 
-
-    # Repeditive calculations.
+    # Repetitive calculations.
     half_tcp = 0.5 * tcp
     k_AB_plus_k_BA = k_AB + k_BA
     k_BA_minus_k_AB = k_BA - k_AB
