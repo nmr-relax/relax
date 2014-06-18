@@ -275,7 +275,7 @@ class Dispersion:
                     frq = frqs[ei][si][mi]
                     self.frqs[ei, si, mi, :] = frq
                     self.frqs_squared[ei, si, mi, :] = frq**2
-                    if frq_H != None:
+                    if frqs_H != None:
                         frq_H = frqs_H[ei][si][mi]
                         self.frqs_H[ei, si, mi, :] = frq_H
 
