@@ -6,6 +6,7 @@
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
