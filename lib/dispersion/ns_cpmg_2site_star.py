@@ -142,8 +142,8 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
             # Extract the values from the higher dimensional arrays.
-            R2A_si_mi=r20a[0, si, mi, 0, 0]
-            R2B_si_mi=r20b[0, si, mi, 0, 0]
+            R2A_si_mi = r20a[0, si, mi, 0, 0]
+            R2B_si_mi = r20b[0, si, mi, 0, 0]
             dw_si_mi = dw[0, si, mi, 0, 0]
             num_points_si_mi = int(num_points[0, si, mi, 0])
 

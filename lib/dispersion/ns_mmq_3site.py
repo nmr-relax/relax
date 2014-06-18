@@ -199,10 +199,10 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
                 r20b_i = R20B[si, mi, oi, 0]
                 r20c_i = R20C[si, mi, oi, 0]
 
-                dw_AB_i=dw_AB[si, mi, oi, 0]
-                dw_AC_i=dw_AC[si, mi, oi, 0]
-                dwH_AB_i=dwH_AB[si, mi, oi, 0]
-                dwH_AC_i=dwH_AC[si, mi, oi, 0]
+                dw_AB_i = dw_AB[si, mi, oi, 0]
+                dw_AC_i = dw_AC[si, mi, oi, 0]
+                dwH_AB_i =d wH_AB[si, mi, oi, 0]
+                dwH_AC_i = dwH_AC[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
@@ -377,10 +377,10 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
                 r20b_i = R20B[si, mi, oi, 0]
                 r20c_i = R20C[si, mi, oi, 0]
 
-                dw_AB_i=dw_AB[si, mi, oi, 0]
-                dw_AC_i=dw_AC[si, mi, oi, 0]
-                dwH_AB_i=dwH_AB[si, mi, oi, 0]
-                dwH_AC_i=dwH_AC[si, mi, oi, 0]
+                dw_AB_i = dw_AB[si, mi, oi, 0]
+                dw_AC_i = dw_AC[si, mi, oi, 0]
+                dwH_AB_i = dwH_AB[si, mi, oi, 0]
+                dwH_AC_i = dwH_AC[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
