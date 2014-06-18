@@ -994,7 +994,7 @@ class Dispersion:
         R20 = params[:self.end_index[0]]
         dw = params[self.end_index[0]:self.end_index[1]]
         pA = params[self.end_index[1]]
-        tex = params[self.end_index[2]]
+        tex = params[self.end_index[1]+1]
 
         # Convert dw from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
