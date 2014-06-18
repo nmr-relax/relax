@@ -440,9 +440,11 @@ def single(num_spins=1, model=MODEL_DPL94, iter=None):
     # Instantiate class
     C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
 
-    # Repeat the function call, to simulate minimisation.
-    for i in xrange(iter):
-        chi2 = C1.calc(C1.params)
+    # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
+    for spin_index in xrange(100):
+        # Repeat the function call, to simulate minimisation.
+        for i in xrange(iter):
+            chi2 = C1.calc(C1.params)
     print("chi2 single:", chi2)
 
 
