@@ -40,7 +40,8 @@ models = [
     'CR72',
     'TSMFK01',
     'B14',
-    'NS CPMG 2-site expanded'
+    'NS CPMG 2-site expanded',
+    'NS CPMG 2-site 3D'
 ]
 
 # The current scripts.
@@ -48,7 +49,17 @@ scripts = [
     'profiling_cr72.py',
     'profiling_tsmfk01.py',
     'profiling_b14.py',
-    'profiling_ns_cpmg_2site_expanded.py'
+    'profiling_ns_cpmg_2site_expanded.py',
+    'profiling_ns_cpmg_2site_3D.py'
+]
+
+# Multiplication factors (to scale for different nr_iter values).
+scaling_factor = [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    10.0
 ]
 
 # Path to relax 3.2.2, or any other version.
@@ -140,25 +151,28 @@ speed_up = {}
 speed_up_cluster = {}
 
 # Loop over the models.
-for model in models:
-    # The averages.
-    ave_new[model] = average(timings_new[model][0])
-    ave_new_cluster[model] = average(timings_new[model][1])
-    ave_alt[model] = average(timings_alt[model][0])
-    ave_alt_cluster[model] = average(timings_alt[model][1])
+for i in range(len(models)):
+    # Alias.
+    model = models[i]
+
+    # The averages (scaled for different nr_iter).
+    ave_new[model] = average(timings_new[model][0]) * scaling_factor[i]
+    ave_new_cluster[model] = average(timings_new[model][1]) * scaling_factor[i]
+    ave_alt[model] = average(timings_alt[model][0]) * scaling_factor[i]
+    ave_alt_cluster[model] = average(timings_alt[model][1]) * scaling_factor[i]
 
     # The SD.
-    sd_new[model] = std(timings_new[model][0])
-    sd_new_cluster[model] = std(timings_new[model][1])
-    sd_alt[model] = std(timings_alt[model][0])
-    sd_alt_cluster[model] = std(timings_alt[model][1])
+    sd_new[model] = std(timings_new[model][0]) * scaling_factor[i]
+    sd_new_cluster[model] = std(timings_new[model][1]) * scaling_factor[i]
+    sd_alt[model] = std(timings_alt[model][0]) * scaling_factor[i]
+    sd_alt_cluster[model] = std(timings_alt[model][1]) * scaling_factor[i]
 
     # The speed up.
     speed_up[model] = ave_alt[model] / ave_new[model]
     speed_up_cluster[model] = ave_alt_cluster[model] / ave_new_cluster[model]
 
 # Final printout.
-print("\n\nSingle spin analysis:")
+print("\n\n100 single spins analysis:")
 for model in models:
     print("%-10s:  %.3f+/-%.3f -> %.3f+/-%.3f, %.3fx faster." % (model, ave_alt[model], sd_alt[model], ave_new[model], sd_new[model], speed_up[model]))
 print("\nCluster of 100 spins analysis:")
