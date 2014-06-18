@@ -58,7 +58,7 @@ class Relax_disp(SystemTestCase):
                 "test_bug_21344_sparse_time_spinlock_acquired_r1rho_fail_relax_disp",
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
-                "test_r1rho_kjaergaard",
+                "test_r1rho_kjaergaard_auto",
                 "test_value_write_calc_rotating_frame_params_auto_analysis"
             ]
 
@@ -4224,10 +4224,12 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(cdp.mol[0].res[0].spin[0].chi2, 0.030959849811015544, 3)
 
 
-    def test_r1rho_kjaergaard(self):
+    def test_r1rho_kjaergaard_auto(self):
         """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
         This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
+
+        This uses the automatic analysis.
 
         """
 
