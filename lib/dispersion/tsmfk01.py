@@ -1,6 +1,5 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2009 Sebastien Morin                                          #
 # Copyright (C) 2013-2014 Edward d'Auvergne                                   #
 # Copyright (C) 2013 Troels E. Linnet                                         #
 #                                                                             #
