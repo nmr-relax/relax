@@ -201,7 +201,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
 
                 dw_AB_i = dw_AB[si, mi, oi, 0]
                 dw_AC_i = dw_AC[si, mi, oi, 0]
-                dwH_AB_i =d wH_AB[si, mi, oi, 0]
+                dwH_AB_i = dwH_AB[si, mi, oi, 0]
                 dwH_AC_i = dwH_AC[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
 
