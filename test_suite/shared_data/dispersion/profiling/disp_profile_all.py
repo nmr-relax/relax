@@ -158,7 +158,7 @@ for model in models:
 # Final printout.
 print("\n\nSingle spin analysis:")
 for model in models:
-    print("%-10s:  %.3f+/-%.3f -> %.3f+/-%.3f, %.3fx faster." % (model, ave_new[model], sd_new[model], ave_alt[model], sd_alt[model], speed_up[model]))
+    print("%-10s:  %.3f+/-%.3f -> %.3f+/-%.3f, %.3fx faster." % (model, ave_alt[model], sd_alt[model], ave_new[model], sd_new[model], speed_up[model]))
 print("\nCluster of 100 spins analysis:")
 for model in models:
-    print("%-10s:  %.3f+/-%.3f -> %.3f+/-%.3f, %.3fx faster." % (model, ave_new_cluster[model], sd_new_cluster[model], ave_alt_cluster[model], sd_alt_cluster[model], speed_up_cluster[model]))
+    print("%-10s:  %.3f+/-%.3f -> %.3f+/-%.3f, %.3fx faster." % (model, ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model]))
