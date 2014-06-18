@@ -130,7 +130,7 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
+                # Extract parameters from array.
                 omega_i = omega[0, si, mi, oi, 0]
                 offset_i = offset[0, si, mi, oi, 0]
                 r1_i = r1[0, si, mi, oi, 0]

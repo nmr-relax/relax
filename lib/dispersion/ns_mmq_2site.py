@@ -301,7 +301,7 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
+                # Extract parameters from array.
                 r20a_i = R20A[si, mi, oi, 0]
                 r20b_i = R20B[si, mi, oi, 0]
                 dw_i = dw[si, mi, oi, 0]
