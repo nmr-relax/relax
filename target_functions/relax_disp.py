@@ -284,12 +284,14 @@ class Dispersion:
                     self.relax_times[ei, si, mi, :] = relax_time
 
                     # Fill r1.
-                    r1_l = r1[si][mi]
-                    self.r1[ei, si, mi, :] = r1_l
+                    if r1 != None:
+                        r1_l = r1[si][mi]
+                        self.r1[ei, si, mi, :] = r1_l
 
                     # Fill chemical shift.
-                    chemical_shift = chemical_shifts[ei][si][mi]
-                    self.chemical_shifts[ei, si, mi, :] = chemical_shift
+                    if chemical_shifts != None:
+                        chemical_shift = chemical_shifts[ei][si][mi]
+                        self.chemical_shifts[ei, si, mi, :] = chemical_shift
 
                     # The inverted relaxation delay.
                     if model in [MODEL_B14, MODEL_B14_FULL, MODEL_MMQ_CR72, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
