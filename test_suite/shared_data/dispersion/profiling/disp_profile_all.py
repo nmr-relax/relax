@@ -25,11 +25,17 @@
 
 # Python module imports.
 from numpy import average, float64, std, zeros
-from os import sep
+from os import pardir, path, sep
 from re import search
 from shutil import copyfile
 from subprocess import PIPE, Popen
 import sys
+
+# Modify the system path to add the base directory of the current relax version.
+sys.path.append(path.join(pardir, pardir, pardir, pardir))
+
+# relax module imports.
+import version
 
 
 # The number of iterations to run each script for the statistics.
@@ -68,6 +74,11 @@ alt_path = '/data/relax/tags/3.2.2'
 # The Python executable name.
 python = 'python'
 
+
+# First a printout of the relax version.
+sys.stdout.write("\n\nCurrent relax version:  ")
+sys.stdout.write(version.version_full())
+sys.stdout.write("\n\n")
 
 # Copy the current scripts to the base directory of the alternative relax version.
 for script in scripts:
