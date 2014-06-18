@@ -31,6 +31,13 @@ import pstats
 import sys
 import tempfile
 
+# Python 3 support.
+try:
+    import __builtin__
+except ImportError:
+    import builtins
+    builtins.xrange = builtins.range
+
 # Add to system path, according to 
 if len(sys.argv) == 1:
     path_to_base = path.join(getcwd(), '..', '..', '..', '..')
