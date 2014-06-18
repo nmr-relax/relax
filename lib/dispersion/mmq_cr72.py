@@ -52,7 +52,7 @@ from numpy import arccosh, cos, cosh, isfinite, fabs, log, min, max, sin, sqrt, 
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 
-def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB=None, k_BA=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None):
+def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=None, inv_tcpmg=None, tcp=None, back_calc=None):
     """The CR72 model extended to MMQ CPMG data.
 
     This function calculates and stores the R2eff values.
@@ -62,18 +62,12 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @type r20:              numpy float array of rank [NS][NM][NO][ND]
     @keyword pA:            The population of state A.
     @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword dwH:           The proton chemical exchange difference between states A and B in rad/s.
     @type dwH:              numpy float array of rank [NS][NM][NO][ND]
     @keyword kex:           The kex parameter value (the exchange rate in rad/s).
     @type kex:              float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
     @keyword cpmg_frqs:     The CPMG nu1 frequencies.
     @type cpmg_frqs:        numpy float array of rank [NS][NM][NO][ND]
     @keyword inv_tcpmg:     The inverse of the total duration of the CPMG element (in inverse seconds).
@@ -83,6 +77,11 @@ def r2eff_mmq_cr72(r20=None, pA=None, pB=None, dw=None, dwH=None, kex=None, k_AB
     @keyword back_calc:     The array for holding the back calculated R2eff values.  Each element corresponds to one of the CPMG nu1 frequencies.
     @type back_calc:        numpy float array of rank [NS][NM][NO][ND]
     """
+
+    # Once off parameter conversions.
+    pB = 1.0 - pA
+    k_BA = pA * kex
+    k_AB = pB * kex
 
     # Flag to tell if values should be replaced if max_etapos in cosh function is violated.
     t_dw_dw_H_zero = False

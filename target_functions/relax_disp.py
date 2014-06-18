@@ -1261,11 +1261,6 @@ class Dispersion:
         pA = params[self.end_index[2]]
         kex = params[self.end_index[2]+1]
 
-        # Once off parameter conversions.
-        pB = 1.0 - pA
-        k_BA = pA * kex
-        k_AB = pB * kex
-
         # Convert dw and dwH from ppm to rad/s. Use the out argument, to pass directly to structure.
         multiply( multiply.outer( dw.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs, out=self.dw_struct )
         multiply( multiply.outer( dwH.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_H, out=self.dwH_struct )
@@ -1298,7 +1293,7 @@ class Dispersion:
                 aliased_dwH = dw_frq
 
             # Back calculate the R2eff values.
-            r2eff_mmq_cr72(r20=r20, pA=pA, pB=pB, dw=aliased_dw, dwH=aliased_dwH, kex=kex, k_AB=k_AB, k_BA=k_BA, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
+            r2eff_mmq_cr72(r20=r20, pA=pA, dw=aliased_dw, dwH=aliased_dwH, kex=kex, cpmg_frqs=self.cpmg_frqs[ei], inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
