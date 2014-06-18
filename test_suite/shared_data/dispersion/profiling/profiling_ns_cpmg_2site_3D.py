@@ -400,11 +400,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_ns_cpmg_2site_3D_full(params)
+        chi2 = self.model.func_ns_cpmg_2site_3D(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
+def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -418,7 +418,7 @@ def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -428,7 +428,7 @@ def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_3D, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -442,7 +442,7 @@ def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
