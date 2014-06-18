@@ -1,0 +1,231 @@
+
+
+Execution iteration 1
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.176    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.132    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.484    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.004    0.000   48.169    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.026    0.000    0.351    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.023    0.000    0.167    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.286    0.002   16.896    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.008    0.000    0.381    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    5.059    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.734    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   72.784    0.073 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 2
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.172    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.113    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.479    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   48.074    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.026    0.000    0.360    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.174    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.311    0.002   17.008    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.377    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    5.031    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.751    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   73.208    0.073 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 3
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.175    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.130    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.482    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.004    0.000   48.292    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.011    0.000    0.080    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.352    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.171    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.338    0.002   17.034    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.008    0.000    0.407    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.011    0.000    5.165    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.746    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   74.533    0.075 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 4
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.175    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.113    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.485    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.004    0.000   48.481    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.026    0.000    0.354    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.176    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.428    0.002   17.816    0.018 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.008    0.000    0.386    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    5.060    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.754    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   73.604    0.074 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 5
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.173    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.138    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.472    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.347    0.047 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.349    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.023    0.000    0.166    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.356    0.002   16.936    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.008    0.000    0.380    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.010    0.000    5.053    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.737    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   73.326    0.073 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 6
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.171    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.101    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.476    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.721    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.023    0.000    0.167    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.281    0.002   16.894    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.377    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    5.018    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.751    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   73.805    0.074 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 7
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.173    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.100    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.478    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.374    0.047 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.347    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.167    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.284    0.002   16.692    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.380    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    4.948    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.729    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.003    0.000   72.269    0.072 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 8
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.170    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.090    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.484    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.712    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.072    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.348    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.166    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.268    0.002   16.644    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.373    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    5.021    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.716    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.003    0.000   72.276    0.072 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 9
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.171    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.095    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.485    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.684    0.048 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.010    0.000    0.071    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.025    0.000    0.349    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.023    0.000    0.166    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.270    0.002   16.700    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.375    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    4.975    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.721    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.003    0.000   72.364    0.072 relax_disp.py:854(func_B14_full)
+
+
+Execution iteration 10
+
+$ python profiling_cr72.py
+     1000    0.007    0.000    0.172    0.000 relax_disp.py:938(func_CR72_full)
+     1000    0.008    0.000    1.099    0.001 relax_disp.py:938(func_CR72_full)
+$ python /data/relax/tags/3.2.1/profiling_cr72.py /data/relax/tags/3.2.1
+     1000    0.002    0.000    0.481    0.000 relax_disp.py:907(func_CR72_full)
+     1000    0.003    0.000   47.367    0.047 relax_disp.py:907(func_CR72_full)
+$ python profiling_tsmfk01.py
+     1000    0.011    0.000    0.076    0.000 relax_disp.py:1803(func_TSMFK01)
+     1000    0.027    0.000    0.369    0.000 relax_disp.py:1803(func_TSMFK01)
+$ python /data/relax/tags/3.2.1/profiling_tsmfk01.py /data/relax/tags/3.2.1
+     1000    0.024    0.000    0.170    0.000 relax_disp.py:1892(func_TSMFK01)
+     1000    2.450    0.002   17.105    0.017 relax_disp.py:1892(func_TSMFK01)
+$ python profiling_b14.py
+     1000    0.007    0.000    0.376    0.000 relax_disp.py:884(func_B14_full)
+     1000    0.009    0.000    4.978    0.005 relax_disp.py:884(func_B14_full)
+$ python /data/relax/tags/3.2.1/profiling_b14.py /data/relax/tags/3.2.1
+     1000    0.003    0.000    0.738    0.001 relax_disp.py:854(func_B14_full)
+     1000    0.004    0.000   73.557    0.074 relax_disp.py:854(func_B14_full)
+
+
+Single spin analysis:
+CR72      :  0.481+/-0.004 -> 0.173+/-0.002, 2.781x faster.
+TSMFK01   :  0.169+/-0.003 -> 0.073+/-0.003, 2.318x faster.
+B14       :  0.738+/-0.012 -> 0.381+/-0.009, 1.935x faster.
+
+Cluster of 100 spins analysis:
+CR72      :  47.822+/-0.389 -> 1.111+/-0.016, 43.040x faster.
+TSMFK01   :  16.973+/-0.318 -> 0.353+/-0.007, 48.135x faster.
+B14       :  73.173+/-0.710 -> 5.031+/-0.058, 14.545x faster.
