@@ -3,6 +3,7 @@
 ###############################################################################
 #                                                                             #
 # Copyright (C) 2014 Troels E. Linnet                                         #
+# Copyright (C) 2014 Edward d'Auvergne                                        #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -45,7 +46,6 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from lib.dispersion.b14 import r2eff_B14
 from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
@@ -281,10 +281,6 @@ class Profile(Dispersion):
                     r20a=R20A[r20_index]
                     r20b=R20B[r20_index]
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
-
-                    # Initialise call to function.
-                    #r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, dw=dw_frq, kex=kex, k_AB=None, k_BA=None, cpmg_frqs=array(cpmg_frqs[ei][mi][oi]), back_calc=back_calc, num_points=len(back_calc))
-                    r2eff_B14(r20a=r20a, r20b=r20b, pA=pA, pB=pB, dw=dw_frq, dw_orig=dw_frq, kex=kex, k_AB=k_AB, k_BA=k_BA, ncyc=array(self.ncycs[mi]), inv_tcpmg=self.inv_relax_times[mi], tcp=array(self.tau_cpmg_list[mi]), back_calc=back_calc, num_points=len(back_calc))
 
                     for oi in range(len(self.offset)):
                         for di in range(len(self.points[mi])):
