@@ -424,7 +424,7 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_ns_cpmg_2site_3D(params)
+        chi2 = self.model.func_ns_cpmg_2site_3D_full(params)
         return chi2
 
 
