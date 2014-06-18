@@ -400,11 +400,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_ns_cpmg_2site_3D_full(params)
+        chi2 = self.model.func_ns_cpmg_2site_star_full(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
+def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_STAR_FULL, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -428,7 +428,7 @@ def single(num_spins=1, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_3D_FULL, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_STAR_FULL, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
