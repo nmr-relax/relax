@@ -111,7 +111,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
         back_calc[:] = r20a
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw_orig)) == 0.0:
         t_dw_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)

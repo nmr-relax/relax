@@ -118,7 +118,7 @@ def r2eff_LM63_3site(r20=None, phi_ex_B=None, phi_ex_C=None, kB=None, kC=None, c
     if t_quart_kB_zero and t_quart_kC_zero:
         t_quart_kB_kC_zero = True
 
-    # Test if rex is zero. Wait for replacement, since this is spin specific.
+    # Test if rex is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(rex_B)) == 0.0 and min(fabs(rex_C)) == 0.0:
         t_rex_zero = True
         mask_rex_B_zero = masked_where(rex_B == 0.0, rex_B)

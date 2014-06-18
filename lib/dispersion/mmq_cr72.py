@@ -95,7 +95,7 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
         back_calc[:] = r20
         return
 
-    # Test if dw is zero. Wait for replacement, since this is spin specific.
+    # Test if dw and dwH is zero. Create a mask for the affected spins to replace these with R20 at the end of the calculationWait for replacement, since this is spin specific.
     if min(fabs(dw)) == 0.0 and min(fabs(dwH)) == 0.0:
         t_dw_dw_H_zero = True
         mask_dw_zero = masked_where(dw == 0.0, dw)
