@@ -43,11 +43,11 @@ N = 10
 
 # The models.
 models = [
-    'CR72',
+    'CR72 full',
     'TSMFK01',
-    'B14',
+    'B14 full',
     'NS CPMG 2-site expanded',
-    'NS CPMG 2-site 3D',
+    'NS CPMG 2-site 3D full',
     'M61',
     'DPL94',
     'TP02',
