@@ -63,7 +63,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_M61, MO
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1000
+        nr_iter = 10
 
         # Print statistics.
         verbose = True
@@ -523,11 +523,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_DPL94(params)
+        chi2 = self.model.func_TAP03(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_DPL94, iter=None):
+def single(num_spins=1, model=MODEL_TAP03, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -541,7 +541,7 @@ def single(num_spins=1, model=MODEL_DPL94, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=1.0, pA=0.9, kex=5000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -551,7 +551,7 @@ def single(num_spins=1, model=MODEL_DPL94, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_DPL94, iter=None):
+def cluster(num_spins=100, model=MODEL_TAP03, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -565,7 +565,7 @@ def cluster(num_spins=100, model=MODEL_DPL94, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, phi_ex=1.0, kex=5000.0, spins_params=['r2', 'phi_ex', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=1.0, pA=0.9, kex=5000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
