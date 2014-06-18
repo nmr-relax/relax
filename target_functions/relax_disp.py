@@ -1062,21 +1062,15 @@ class Dispersion:
         kB = params[self.end_index[2]]
         kC = params[self.end_index[2]+1]
 
-        # Once off parameter conversions.
-        rex_B = phi_ex_B / kB
-        rex_C = phi_ex_C / kC
-        quart_kB = kB / 4.0
-        quart_kC = kC / 4.0
-
         # Convert phi_ex (or rex) from ppm^2 to (rad/s)^2.
-        multiply( multiply.outer( rex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
-        multiply( multiply.outer( rex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
+        multiply( multiply.outer( phi_ex_B.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_B_struct )
+        multiply( multiply.outer( phi_ex_C.reshape(1, self.NS), self.nm_no_nd_ones ), self.frqs_squared, out=self.phi_ex_C_struct )
 
         # Reshape R20 to per experiment, spin and frequency.
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_LM63_3site(r20=self.r20_struct, rex_B=self.phi_ex_B_struct, rex_C=self.phi_ex_C_struct, quart_kB=quart_kB, quart_kC=quart_kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
+        r2eff_LM63_3site(r20=self.r20_struct, phi_ex_B=self.phi_ex_B_struct, phi_ex_C=self.phi_ex_C_struct, kB=kB, kC=kC, cpmg_frqs=self.cpmg_frqs, back_calc=self.back_calc)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
