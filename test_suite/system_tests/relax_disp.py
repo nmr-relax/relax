@@ -59,6 +59,7 @@ class Relax_disp(SystemTestCase):
                 "test_exp_fit",
                 "test_m61_exp_data_to_m61",
                 "test_r1rho_kjaergaard_auto",
+                "test_r1rho_kjaergaard_man",
                 "test_value_write_calc_rotating_frame_params_auto_analysis"
             ]
 
@@ -4367,174 +4368,223 @@ class Relax_disp(SystemTestCase):
         OPT_MAX_ITERATIONS = 1000
         relax_disp.Relax_disp.opt_max_iterations = OPT_MAX_ITERATIONS
 
-        analysis_mode = "auto"
         result_dir_name = ds.tmpdir
 
-        if analysis_mode == "auto":
-            # Make all spins free
-            for curspin in cluster_ids:
-                self.interpreter.relax_disp.cluster('free spins', curspin)
-                # Shut them down
-                self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
+        # Make all spins free
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
 
-            # Select only a subset of spins for global fitting
-            #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
+        # Select only a subset of spins for global fitting
+        #self.interpreter.select.spin(spin_id=':41@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':41@N')
 
-            #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
+        #self.interpreter.select.spin(spin_id=':40@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':40@N')
 
-            self.interpreter.select.spin(spin_id=':52@N', change_all=False)
-            #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
-            # Run the analysis.
-            relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
+        # Run the analysis.
+        relax_disp.Relax_disp(pipe_name=ds.pipe_name, pipe_bundle=ds.pipe_bundle, results_dir=result_dir_name, models=MODELS, grid_inc=GRID_INC, mc_sim_num=MC_NUM, modsel=MODSEL)
 
-            # Check the kex value of residue 52
-            #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
+        # Check the kex value of residue 52
+        #self.assertAlmostEqual(cdp.mol[0].res[41].spin[0].kex, ds.ref[':52@N'][6])
 
-        ###########
-        elif analysis_mode == "man":
-            for curspin in cluster_ids:
-                self.interpreter.relax_disp.cluster('free spins', curspin)
 
-            # Do the analysis manual
-            self.interpreter.spectrum.error_analysis(subset=['46_0_35_0', '48_0_35_4', '47_0_35_10', '49_0_35_20', '36_0_39_0', '39_0_39_4', '37_0_39_10', '40_0_39_20', '38_0_39_40', '41_0_41_0', '44_0_41_4', '42_0_41_10', '45_0_41_20', '43_0_41_40', '31_0_43_0', '34_0_43_4', '32_0_43_10', '35_0_43_20', '33_0_43_40', '1_0_46_0', '4_0_46_4', '2_0_46_10', '5_0_46_20', '3_0_46_40', '60_0_48_0', '63_0_48_4', '61_0_48_10', '62_0_48_14', '64_0_48_20', '11_500_46_0', '14_500_46_4', '12_500_46_10', '15_500_46_20', '13_500_46_40', '50_1000_41_0', '53_1000_41_4', '51_1000_41_10', '54_1000_41_20', '52_1000_41_40', '21_1000_46_0', '24_1000_46_4', '22_1000_46_10', '25_1000_46_20', '23_1000_46_40', '65_1000_48_0', '68_1000_48_4', '66_1000_48_10', '67_1000_48_14', '69_1000_48_20', '55_2000_41_0', '58_2000_41_4', '56_2000_41_10', '59_2000_41_20', '57_2000_41_40', '6_2000_46_0', '9_2000_46_4', '7_2000_46_10', '10_2000_46_20', '8_2000_46_40', '16_5000_46_0', '19_5000_46_4', '17_5000_46_10', '20_5000_46_20', '18_5000_46_40', '26_10000_46_0', '29_10000_46_4', '27_10000_46_10', '30_10000_46_20', '28_10000_46_40'])
+    def test_r1rho_kjaergaard_man(self):
+        """Optimisation of the Kjaergaard et al., 2013 Off-resonance R1rho relaxation dispersion experiments using the 'DPL' model.
 
-            ##- The 'R2eff' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
-            self.interpreter.relax_disp.select_model(model='R2eff')
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        This uses the data from Kjaergaard's paper at U{DOI: 10.1021/bi4001062<http://dx.doi.org/10.1021/bi4001062>}.
 
-            self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.setup(number=MC_NUM)
-            self.interpreter.monte_carlo.create_data(method='back_calc')
-            self.interpreter.monte_carlo.initial_values()
+        This uses the manual analysis.
 
-            self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.error_analysis()
+        """
 
-            # Write results
-            #self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=True)
-            #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True)
-            #self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.value.write(param='i0', file='i0.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', spin_id=None, plot_data='value', file='i0.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        # Cluster residues
+        cluster_ids = [
+        ":13@N",
+        ":15@N",
+        ":16@N",
+        ":25@N",
+        ":26@N",
+        ":28@N",
+        ":39@N",
+        ":40@N",
+        ":41@N",
+        ":43@N",
+        ":44@N",
+        ":45@N",
+        ":49@N",
+        ":52@N",
+        ":53@N"]
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', compress_type=1, force=True)
 
-            ##- The 'No Rex' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='No Rex - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
-            self.interpreter.relax_disp.select_model(model='No Rex')
-            self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Load the data.
+        self.setup_r1rho_kjaergaard(cluster_ids=cluster_ids)
 
-            self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True, norm=False)
+        # The grid search size (the number of increments per dimension).
+        GRID_INC = 4
 
-            ## Save results as state
-            self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', compress_type=1, force=True)
+        # The number of Monte Carlo simulations to be used for error analysis at the end of the analysis.
+        MC_NUM = 3
 
-            ##- The 'DPL94' model -
-            self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='DPL94 - relax_disp', bundle_to='relax_disp')
-            self.interpreter.pipe.switch(pipe_name='DPL94 - relax_disp')
-            self.interpreter.relax_disp.select_model(model='DPL94')
-            self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
-            self.interpreter.relax_disp.insignificance(level=1.0)
-            self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+        # Execute the auto-analysis (fast).
+        # Standard parameters are: func_tol=1e-25, grad_tol=None, max_iter=10000000,
+        OPT_FUNC_TOL = 1e-1
+        OPT_MAX_ITERATIONS = 1000
 
-            self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
+        result_dir_name = ds.tmpdir
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True)
-            #self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        # Make all spins free, and select a subset.
+        for curspin in cluster_ids:
+            self.interpreter.relax_disp.cluster('free spins', curspin)
+            # Shut them down
+            self.interpreter.deselect.spin(spin_id=curspin, change_all=False)
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', compress_type=1, force=True)
+        self.interpreter.select.spin(spin_id=':52@N', change_all=False)
+        #self.interpreter.relax_disp.cluster('model_cluster', ':52@N')
 
-            ##- The 'final' model -
-            self.interpreter.model_selection(method='AIC', modsel_pipe='final - relax_disp', bundle='relax_disp', pipes=['No Rex - relax_disp', 'DPL94 - relax_disp'])
-            self.interpreter.monte_carlo.setup(number=MC_NUM)
-            self.interpreter.monte_carlo.create_data(method='back_calc')
-            self.interpreter.monte_carlo.initial_values()
+        # Do the analysis manual
+        self.interpreter.spectrum.error_analysis(subset=['46_0_35_0', '48_0_35_4', '47_0_35_10', '49_0_35_20', '36_0_39_0', '39_0_39_4', '37_0_39_10', '40_0_39_20', '38_0_39_40', '41_0_41_0', '44_0_41_4', '42_0_41_10', '45_0_41_20', '43_0_41_40', '31_0_43_0', '34_0_43_4', '32_0_43_10', '35_0_43_20', '33_0_43_40', '1_0_46_0', '4_0_46_4', '2_0_46_10', '5_0_46_20', '3_0_46_40', '60_0_48_0', '63_0_48_4', '61_0_48_10', '62_0_48_14', '64_0_48_20', '11_500_46_0', '14_500_46_4', '12_500_46_10', '15_500_46_20', '13_500_46_40', '50_1000_41_0', '53_1000_41_4', '51_1000_41_10', '54_1000_41_20', '52_1000_41_40', '21_1000_46_0', '24_1000_46_4', '22_1000_46_10', '25_1000_46_20', '23_1000_46_40', '65_1000_48_0', '68_1000_48_4', '66_1000_48_10', '67_1000_48_14', '69_1000_48_20', '55_2000_41_0', '58_2000_41_4', '56_2000_41_10', '59_2000_41_20', '57_2000_41_40', '6_2000_46_0', '9_2000_46_4', '7_2000_46_10', '10_2000_46_20', '8_2000_46_40', '16_5000_46_0', '19_5000_46_4', '17_5000_46_10', '20_5000_46_20', '18_5000_46_40', '26_10000_46_0', '29_10000_46_4', '27_10000_46_10', '30_10000_46_20', '28_10000_46_40'])
 
-            self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
-            self.interpreter.eliminate(function=None, args=None)
-            self.interpreter.monte_carlo.error_analysis()
+        ##- The 'R2eff' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='R2eff - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='R2eff - relax_disp')
+        self.interpreter.relax_disp.select_model(model='R2eff')
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
 
-            ## Write results
-            #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', num_points=1000, extend=500.0, force=True)
-            #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True)
-            #self.interpreter.value.write(param='model', file='model.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='pA', file='pA.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='pB', file='pB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='dw', file='dw.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='dwH', file='dwH.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', spin_id=None, plot_data='value', file='dwH.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='kB', file='kB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='kC', file='kC.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
-            #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.setup(number=MC_NUM)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
 
-            # Test of new parameters to write out.
-            self.interpreter.value.write(param='theta', file='theta.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
-            #self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
-            #self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'theta'))
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.error_analysis()
 
-            ## Save results as state
-            #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
-            ## Save all results in all pipes in state
-            #self.interpreter.state.save(state='final_state', dir=result_dir_name+sep+'resultsR1', compress_type=1, force=True)
+        # Write results
+        #self.interpreter.relax_disp.plot_exp_curves(file='intensities.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.relax_disp.plot_exp_curves(file='intensities_norm.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=True)
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True)
+        #self.interpreter.value.write(param='r2eff', file='r2eff.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='r2eff', spin_id=None, plot_data='value', file='r2eff.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.value.write(param='i0', file='i0.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='i0', spin_id=None, plot_data='value', file='i0.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', force=True, norm=False)
 
-            # Assert the file existence of the written value files
-            self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'phi_ex.out', F_OK))
-            self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'kex.out', F_OK))
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'R2eff', compress_type=1, force=True)
+
+        ##- The 'No Rex' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='No Rex - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='No Rex - relax_disp')
+        self.interpreter.relax_disp.select_model(model='No Rex')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='No Rex - relax_disp', param='r2eff')
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', force=True, norm=False)
+
+        ## Save results as state
+        self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'No Rex', compress_type=1, force=True)
+
+        ##- The 'DPL94' model -
+        self.interpreter.pipe.copy(pipe_from='base pipe', pipe_to='DPL94 - relax_disp', bundle_to='relax_disp')
+        self.interpreter.pipe.switch(pipe_name='DPL94 - relax_disp')
+        self.interpreter.relax_disp.select_model(model='DPL94')
+        self.interpreter.value.copy(pipe_from='R2eff - relax_disp', pipe_to='DPL94 - relax_disp', param='r2eff')
+        self.interpreter.relax_disp.insignificance(level=1.0)
+        self.interpreter.grid_search(lower=None, upper=None, inc=GRID_INC, constraints=True, verbosity=1)
+
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True)
+        #self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', force=True, norm=False)
+
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'DPL94', compress_type=1, force=True)
+
+        ##- The 'final' model -
+        self.interpreter.model_selection(method='AIC', modsel_pipe='final - relax_disp', bundle='relax_disp', pipes=['No Rex - relax_disp', 'DPL94 - relax_disp'])
+        self.interpreter.monte_carlo.setup(number=MC_NUM)
+        self.interpreter.monte_carlo.create_data(method='back_calc')
+        self.interpreter.monte_carlo.initial_values()
+
+        self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=OPT_FUNC_TOL, grad_tol=None, max_iter=OPT_MAX_ITERATIONS, constraints=True, scaling=True, verbosity=1)
+        self.interpreter.eliminate(function=None, args=None)
+        self.interpreter.monte_carlo.error_analysis()
+
+        ## Write results
+        #self.interpreter.relax_disp.plot_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', num_points=1000, extend=500.0, force=True)
+        #self.interpreter.relax_disp.write_disp_curves(dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True)
+        #self.interpreter.value.write(param='model', file='model.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='pA', file='pA.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='pB', file='pB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pA', spin_id=None, plot_data='value', file='pA.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='pB', spin_id=None, plot_data='value', file='pB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        self.interpreter.value.write(param='phi_ex', file='phi_ex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex', spin_id=None, plot_data='value', file='phi_ex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='phi_ex_B', file='phi_ex_B.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='phi_ex_C', file='phi_ex_C.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_B', spin_id=None, plot_data='value', file='phi_ex_B.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='phi_ex_C', spin_id=None, plot_data='value', file='phi_ex_C.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='dw', file='dw.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dw', spin_id=None, plot_data='value', file='dw.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='dwH', file='dwH.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='dwH', spin_id=None, plot_data='value', file='dwH.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        self.interpreter.value.write(param='kex', file='kex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='tex', file='tex.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kex', spin_id=None, plot_data='value', file='kex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='tex', spin_id=None, plot_data='value', file='tex.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='k_AB', file='k_AB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='k_AB', spin_id=None, plot_data='value', file='k_AB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='kB', file='kB.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='kC', file='kC.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kB', spin_id=None, plot_data='value', file='kB.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='kC', spin_id=None, plot_data='value', file='kC.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+        #self.interpreter.value.write(param='chi2', file='chi2.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.grace.write(x_data_type='res_num', y_data_type='chi2', spin_id=None, plot_data='value', file='chi2.agr', dir=result_dir_name+sep+'resultsR1'+sep+'final', force=True, norm=False)
+
+        # Test of new parameters to write out.
+        self.interpreter.value.write(param='theta', file='theta.out', dir=result_dir_name+sep+'resultsR1'+sep+'final', scaling=1.0, comment=None, bc=False, force=True)
+        #self.interpreter.value.write(param='theta', file='theta.out', dir='~', scaling=1.0, comment=None, bc=False, force=True)
+        #self.assert_(hasattr(cdp.mol[0].res[7].spin[0], 'theta'))
+
+        ## Save results as state
+        #self.interpreter.results.write(file='results', dir=result_dir_name+sep+'resultsR1'+sep+'final', compress_type=1, force=True)
+        ## Save all results in all pipes in state
+        #self.interpreter.state.save(state='final_state', dir=result_dir_name+sep+'resultsR1', compress_type=1, force=True)
+
+        # Assert the file existence of the written value files
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'phi_ex.out', F_OK))
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'kex.out', F_OK))
+        self.assert_(access(result_dir_name+sep+'resultsR1'+sep+'final'+sep+'theta.out', F_OK))
 
 
     def test_r2eff_read(self):
