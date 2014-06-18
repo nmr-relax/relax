@@ -62,7 +62,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_F
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 100
+        nr_iter = 10
 
         # Print statistics.
         verbose = True

@@ -47,7 +47,9 @@ models = [
     'TSMFK01',
     'B14',
     'NS CPMG 2-site expanded',
-    'NS CPMG 2-site 3D'
+    'NS CPMG 2-site 3D',
+    'DPL94',
+    'NS R1rho 2-site'
 ]
 
 # The current scripts.
@@ -56,7 +58,9 @@ scripts = [
     'profiling_tsmfk01.py',
     'profiling_b14.py',
     'profiling_ns_cpmg_2site_expanded.py',
-    'profiling_ns_cpmg_2site_3D.py'
+    'profiling_ns_cpmg_2site_3D.py',
+    'profiling_dpl94.py',
+    'profiling_ns_r1rho_2site.py'
 ]
 
 # Multiplication factors (to scale for different nr_iter values).
@@ -64,6 +68,8 @@ scaling_factor = [
     1.0,
     1.0,
     1.0,
+    1.0,
+    10.0,
     1.0,
     10.0
 ]

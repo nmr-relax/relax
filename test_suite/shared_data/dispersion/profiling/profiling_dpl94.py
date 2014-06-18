@@ -63,7 +63,7 @@ from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_M61, MO
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 1000
+        nr_iter = 100
 
         # Print statistics.
         verbose = True
