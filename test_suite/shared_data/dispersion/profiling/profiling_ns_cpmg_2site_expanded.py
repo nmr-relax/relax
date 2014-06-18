@@ -184,23 +184,6 @@ class Profile(Dispersion):
         @rtype:         lists of numpy float arrays, lists of numpy float arrays, lists of numpy float arrays, numpy rank-2 int array
         """
 
-        # Unpack the parameter values.
-        # Initialise the post spin parameter indices.
-        end_index = []
-        # The spin and frequency dependent R2 parameters.
-        end_index.append(len(self.exp_type) * self.num_spins * len(self.fields))
-        if self.model in [MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            end_index.append(2 * len(self.exp_type) * self.num_spins * len(self.fields))
-        # The spin and dependent parameters (phi_ex, dw, padw2).
-        end_index.append(end_index[-1] + self.num_spins)
-
-        # Unpack the parameter values.
-        R20 = self.params[:end_index[1]].reshape(self.num_spins*2, len(self.fields))
-        R20A = R20[::2].flatten()
-        R20B = R20[1::2].flatten()
-        dw = self.params[end_index[1]:end_index[2]]
-        pA = self.params[end_index[2]]
-        kex = self.params[end_index[2]+1]
 
         # Initialise the data structures for the target function.
         exp_types = []
@@ -273,12 +256,7 @@ class Profile(Dispersion):
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
 
                     # Calculate how the value should be, so chi2 gets zero.
-                    # The R20 index.
-                    r20_index = mi + si*len(self.fields)
-                    # Convert dw from ppm to rad/s.
-                    dw_frq = dw[si] * frqs[ei][si][mi]
-                    r20a=R20A[r20_index]
-                    r20b=R20B[r20_index]
+
                     back_calc = array([0.0]*len(cpmg_frqs[ei][mi][oi]))
 
                     for oi in range(len(self.offset)):
@@ -466,7 +444,7 @@ def cluster(num_spins=100, model=MODEL_NS_CPMG_2SITE_EXPANDED, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=5000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
