@@ -275,8 +275,9 @@ class Dispersion:
                     frq = frqs[ei][si][mi]
                     self.frqs[ei, si, mi, :] = frq
                     self.frqs_squared[ei, si, mi, :] = frq**2
-                    frq_H = frqs_H[ei][si][mi]
-                    self.frqs_H[ei, si, mi, :] = frq_H
+                    if frq_H != None:
+                        frq_H = frqs_H[ei][si][mi]
+                        self.frqs_H[ei, si, mi, :] = frq_H
 
                     # Fill the relaxation time.
                     relax_time = relax_times[ei, mi]
