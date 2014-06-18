@@ -39,14 +39,16 @@ N = 10
 models = [
     'CR72',
     'TSMFK01',
-    'B14'
+    'B14',
+    'NS CPMG 2-site expanded'
 ]
 
 # The current scripts.
 scripts = [
     'profiling_cr72.py',
     'profiling_tsmfk01.py',
-    'profiling_b14.py'
+    'profiling_b14.py',
+    'profiling_ns_cpmg_2site_expanded.py'
 ]
 
 # Path to relax 3.2.2, or any other version.
