@@ -462,3 +462,134 @@ def rr1rho_3d(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None,
     matrix[3, 0] = k_AB
     matrix[4, 1] = k_AB
     matrix[5, 2] = k_AB
+
+
+def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None):
+    """Definition of the multidimensional 3D exchange matrix, of rank [NE][NS][NM][NO][ND][6][6].
+
+    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+
+
+    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
+    @type R1:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
+    @type r1rho_prime:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:            The population of state A.
+    @type pA:               float
+    @keyword pB:            The population of state B.
+    @type pB:               float
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NS][NM][NO][ND]
+    @keyword omega:         The chemical shift for the spin in rad/s.
+    @type omega:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword offset:        The spin-lock offsets for the data.
+    @type offset:           numpy float array of rank [NS][NM][NO][ND]
+    @keyword w1:            The spin-lock field strength in rad/s.
+    @type w1:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    @return:                The relaxation matrix.
+    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][6][6]
+    """
+
+    # Wa: The chemical shift offset of state A from the spin-lock. Larmor frequency [s^-1].
+    Wa = omega
+    # Wb: The chemical shift offset of state A from the spin-lock. Larmor frequency [s^-1].
+    Wb = omega + dw
+
+    # Population-averaged Larmor frequency [s^-1].
+    W = pA*Wa + pB*Wb
+
+    # Offset of spin-lock from A.
+    dA = Wa - offset
+
+    # Offset of spin-lock from B.
+    dB = Wb - offset
+
+    # Offset of spin-lock from population-average.
+    d = W - offset
+
+    wA=dA
+    wB=dB
+
+
+    m_r1rho_prime = array([
+        [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_wA = array([
+        [0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_wB = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_w1 = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0], ])
+
+    m_k_AB = array([
+        [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0], ])
+
+    m_k_BA = array([
+        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        [0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+
+    m_R1 = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+
+    # Multiply and expand.
+    mat_r1rho_prime = multiply.outer( r1rho_prime, m_r1rho_prime )
+
+    mat_wA = multiply.outer( wA, m_wA )
+    mat_wB = multiply.outer( wB, m_wB )
+
+    mat_w1 = multiply.outer( w1, m_w1 )
+
+    mat_k_AB = multiply.outer( k_AB, m_k_AB )
+    mat_k_BA = multiply.outer( k_BA, m_k_BA )
+
+    mat_R1 = multiply.outer( R1, m_R1 )
+
+    # Collect matrix.
+    matrix = (mat_r1rho_prime + mat_wA + mat_wB
+        + mat_w1 + mat_k_AB + mat_k_BA
+        + mat_R1)
+
+    # Return the matrix.
+    return matrix
