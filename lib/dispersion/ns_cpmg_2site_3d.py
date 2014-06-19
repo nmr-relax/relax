@@ -157,7 +157,6 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
-                tcp_si_mi_di = tcp[0, si, mi, 0, di]
                 inv_tcpmg_si_mi_di = inv_tcpmg[0, si, mi, 0, di]
                 power_si_mi_di = int(power[0, si, mi, 0, di])
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
@@ -166,8 +165,6 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 Mint_i = Mint_mat[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                Rexpo_i = Rexpo_mat[0, si, mi, 0, di]
-                r180x_i = r180x_mat[0, si, mi, 0, di]
                 evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
 
                 # Loop over the CPMG elements, propagating the magnetisation.
