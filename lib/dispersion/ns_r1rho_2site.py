@@ -104,7 +104,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     NE, NS, NM, NO = num_points.shape
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    R_mat = rr1rho_3d_rankN(R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, dw=dw, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA)
+    R_mat = rr1rho_3d_rankN(R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, dw=dw, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, relax_time=relax_time)
 
     # Loop over spins.
     for si in range(NS):
@@ -138,9 +138,12 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
                     rr1rho_3d(matrix=matrix, R1=r1_i, r1rho_prime=r1rho_prime_i[j], pA=pA, pB=pB, wA=dA, wB=dB, w1=spin_lock_fields_i[j], k_AB=k_AB, k_BA=k_BA)
 
+                    matrix_time = matrix*relax_time_i[j]
+
                     R_mat_i = R_mat[0, si, mi, oi, j]
-                    diff = matrix - R_mat_i
-                    if sum(diff) != 0.0:
+                    diff = matrix_time - R_mat_i
+                    if abs(sum(diff)) > 1.0e-13:
+                        print sum(diff)
                         import sys
                         sys.exit()
 
@@ -151,7 +154,7 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                     M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
                     # This matrix is a propagator that will evolve the magnetization with the matrix R.
-                    Rexpo = matrix_exponential(matrix*relax_time_i[j])
+                    Rexpo = matrix_exponential(matrix_time)
 
                     # Magnetization evolution.
                     MA = dot(M0, dot(Rexpo, M0))
