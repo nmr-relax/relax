@@ -464,7 +464,7 @@ def rr1rho_3d(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA=None,
     matrix[5, 2] = k_AB
 
 
-def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None):
+def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, relax_time=None):
     """Definition of the multidimensional 3D exchange matrix, of rank [NE][NS][NM][NO][ND][6][6].
 
     This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
@@ -492,6 +492,8 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
     @type k_BA:             float
     @keyword k_BA:          The reverse exchange rate from state B to state A.
     @type k_BA:             float
+    @keyword relax_time:    The total relaxation time period for each spin-lock field strength (in seconds).
+    @type relax_time:       numpy float array of rank [NS][NM][NO][ND]
     @return:                The relaxation matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][6][6]
     """
@@ -574,17 +576,17 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
 
     # Multiply and expand.
-    mat_r1rho_prime = multiply.outer( r1rho_prime, m_r1rho_prime )
+    mat_r1rho_prime = multiply.outer( r1rho_prime * relax_time, m_r1rho_prime )
 
-    mat_wA = multiply.outer( wA, m_wA )
-    mat_wB = multiply.outer( wB, m_wB )
+    mat_wA = multiply.outer( wA * relax_time, m_wA )
+    mat_wB = multiply.outer( wB * relax_time, m_wB )
 
-    mat_w1 = multiply.outer( w1, m_w1 )
+    mat_w1 = multiply.outer( w1 * relax_time, m_w1 )
 
-    mat_k_AB = multiply.outer( k_AB, m_k_AB )
-    mat_k_BA = multiply.outer( k_BA, m_k_BA )
+    mat_k_AB = multiply.outer( k_AB * relax_time, m_k_AB )
+    mat_k_BA = multiply.outer( k_BA * relax_time, m_k_BA )
 
-    mat_R1 = multiply.outer( R1, m_R1 )
+    mat_R1 = multiply.outer( R1 * relax_time, m_R1 )
 
     # Collect matrix.
     matrix = (mat_r1rho_prime + mat_wA + mat_wB
