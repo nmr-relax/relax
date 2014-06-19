@@ -60,10 +60,12 @@ def matrix_exponential(A):
 def matrix_exponential_rankN(A):
     """Calculate the exact matrix exponential using the eigenvalue decomposition approach, for higher dimensional data.
 
+    Here X is the Row and Column length, of the outer square matrix.
+
     @param A:   The square matrix to calculate the matrix exponential of.
-    @type A:    numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    @type A:    numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     @return:    The matrix exponential.  This will have the same dimensionality as the A matrix.
-    @rtype:     numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    @rtype:     numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     """
 
     NE, NS, NM, NO, ND, Row, Col = A.shape
@@ -76,16 +78,16 @@ def matrix_exponential_rankN(A):
 
     # W: The eigenvalues, each repeated according to its multiplicity.
     # The eigenvalues are not necessarily ordered.
-    # The resulting array will be always be of complex type. Shape [NE][NS][NM][NO][ND][7]
+    # The resulting array will be always be of complex type. Shape [NE][NS][NM][NO][ND][X]
     # V: The normalized (unit 'length') eigenvectors, such that the column v[:,i]
-    # is the eigenvector corresponding to the eigenvalue w[i]. Shape [NE][NS][NM][NO][ND][7][7]
+    # is the eigenvector corresponding to the eigenvalue w[i]. Shape [NE][NS][NM][NO][ND][X][X]
 
-    # Calculate the exponential of all elements in the input array. Shape [NE][NS][NM][NO][ND][7]
+    # Calculate the exponential of all elements in the input array. Shape [NE][NS][NM][NO][ND][X]
     # Add one axis, to allow for broadcasting multiplication.
     W_exp = exp(W).reshape(NE, NS, NM, NO, ND, Row, 1)
 
-    # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][7][7]
-    eye_mat = tile(eye(7)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
+    # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][X][X]
+    eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
     # Transform it to a diagonal matrix, with elements from vector down the diagonal.
     W_exp_diag = multiply(W_exp, eye_mat )
