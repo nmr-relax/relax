@@ -131,6 +131,25 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
+    # Holds the Rexpo.
+    Rexpo_mat = R_mat * 0.0
+    # Loop over the spins
+    for si in range(NS):
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
+            # Extract number of points.
+            num_points_si_mi = int(num_points[0, si, mi, 0])
+
+            # Loop over the time points, back calculating the R2eff values.
+            for di in range(num_points_si_mi):
+
+                # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
+                R_mat_i = R_mat[0, si, mi, 0, di]
+
+                # Store the Rexpo.  Is it not possible to find the matrix exponential of higher dimensional data?
+                Rexpo = matrix_exponential(R_mat_i)
+                Rexpo_mat[0, si, mi, 0, di] = Rexpo
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -150,9 +169,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 Mint = M0
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                R_mat_i = R_mat[0, si, mi, 0, di]
-
-                Rexpo = matrix_exponential(R_mat_i)
+                Rexpo = Rexpo_mat[0, si, mi, 0, di]
 
                 # The essential evolution matrix.
                 # This is the first round.
