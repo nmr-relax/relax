@@ -59,7 +59,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 
 
-def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -67,8 +67,6 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
 
     @keyword M0:                This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     @type M0:                   numpy float64, rank-1, 7D array
-    @keyword matrix:            A numpy array to be populated to create the evolution matrix.
-    @type matrix:               numpy rank-2, 6D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          numpy float array of rank [NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
@@ -115,31 +113,17 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-                # Extract parameters from array.
-                omega_i = omega[0, si, mi, oi, 0]
-                offset_i = offset[0, si, mi, oi, 0]
-                r1_i = r1[0, si, mi, oi, 0]
-                dw_i = dw[0, si, mi, oi, 0]
-
-                r1rho_prime_i = r1rho_prime[0, si, mi, oi]
-                spin_lock_fields_i = spin_lock_fields[0, si, mi, oi]
-                relax_time_i = relax_time[0, si, mi, oi]
-                inv_relax_time_i = inv_relax_time[0, si, mi, oi]
-                back_calc_i = back_calc[0, si, mi, oi]
+                # Extract number of points.
                 num_points_i = num_points[0, si, mi, oi]
 
                 # Repetitive calculations (to speed up calculations).
-                Wa = omega_i                  # Larmor frequency [s^-1].
-                Wb = omega_i + dw_i           # Larmor frequency [s^-1].
-                W = pA*Wa + pB*Wb             # Population-averaged Larmor frequency [s^-1].
-                dA = Wa - offset_i            # Offset of spin-lock from A.
-                dB = Wb - offset_i            # Offset of spin-lock from B.
-                d = W - offset_i              # Offset of spin-lock from population-average.
+                # Offset of spin-lock from A.
+                dA = omega[0, si, mi, oi, 0] - offset[0, si, mi, oi, 0]
 
                 # Loop over the time points, back calculating the R2eff values.
                 for j in range(num_points_i):
                     # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-                    theta = atan2(spin_lock_fields_i[j], dA)
+                    theta = atan2(spin_lock_fields[0, si, mi, oi, j], dA)
                     M0[0] = sin(theta)    # The A state initial X magnetisation.
                     M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
@@ -147,10 +131,11 @@ def ns_r1rho_2site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                     Rexpo_i = Rexpo_mat[0, si, mi, oi, j]
 
                     # Magnetization evolution.
-                    MA = dot(M0, dot(Rexpo_i, M0))
+                    MA = dot(Rexpo_i, M0)
+                    MA = dot(M0, MA)
 
                     # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     if MA <= 0.0 or isNaN(MA):
                         back_calc[0, si, mi, oi, j] = 1e99
                     else:
-                        back_calc[0, si, mi, oi, j]= -inv_relax_time_i[j] * log(MA)
+                        back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA)
