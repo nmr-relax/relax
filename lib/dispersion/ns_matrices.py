@@ -31,7 +31,7 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 
 # Python module imports.
 from math import cos, sin, pi
-from numpy import array, float64, matrix
+from numpy import array, float64, matrix, multiply
 
 
 def r180x_2d(flip=pi):
@@ -158,6 +158,166 @@ def rcpmg_3d(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, 
 
     # Return the matrix.
     return temp
+
+
+def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """Definition of the 3D exchange matrix, for rank [NE][NS][NM][NO][ND][7][7].
+
+    @keyword R1A:   The longitudinal, spin-lattice relaxation rate for state A.
+    @type R1A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R1B:   The longitudinal, spin-lattice relaxation rate for state B.
+    @type R1B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:    The population of state A.
+    @type pA:       float
+    @keyword pB:    The population of state B.
+    @type pB:       float
+    @keyword dw:    The chemical exchange difference between states A and B in rad/s.
+    @type dw:       numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
+    @keyword tcp:   The tau_CPMG times (1 / 4.nu1).
+    @type tcp:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:        The relaxation matrix.
+    @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    """
+
+    # The omega frequencies for states A and B (state A is assumed to be at zero frequency).
+    wA = 0.0
+    wB = dw
+
+    r10a_tcp = R1A * tcp
+    r10b_tcp = R1B * tcp
+    r20a_tcp = R2A * tcp
+    r20b_tcp = R2B * tcp
+    pA_tcp = pA * tcp
+    pB_tcp = pB * tcp
+    dw_tcp = dw * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    wA_tcp = wA * tcp
+    wB_tcp = wB * tcp
+
+    # Create the matrix.
+    m_r10a = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_pA = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_r10b = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+
+    m_pB = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_r20a = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_r20b = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_k_AB = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, -1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], ])
+
+    m_k_BA = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
+        [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+
+    m_wA = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    m_wB = array([
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+
+    # Multiply and expand.
+    m_r10a_tcp = multiply.outer( r10a_tcp, m_r10a )
+    m_pA_tcp = multiply.outer( pA_tcp, m_pA )
+
+    m_r10b_tcp = multiply.outer( r10b_tcp, m_r10b )
+    m_pB_tcp = multiply.outer( pB_tcp, m_pB )
+
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    m_wA_tcp = multiply.outer( wA_tcp, m_wA )
+    m_wB_tcp = multiply.outer( wB_tcp, m_wB )
+
+    # Collect matrix.
+    c_mat = (m_r10a_tcp * m_pA_tcp + m_r10b_tcp * m_pB_tcp
+        + m_r20a_tcp + m_r20b_tcp
+        + m_k_AB_tcp + m_k_BA_tcp
+        + m_wA_tcp + m_wB_tcp )
+
+    # Return the matrix.
+    return c_mat
 
 
 def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
