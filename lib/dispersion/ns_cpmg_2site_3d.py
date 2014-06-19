@@ -55,7 +55,7 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import asarray, dot, fabs, isfinite, log, min, sum, tile
+from numpy import asarray, dot, fabs, isfinite, log, min, newaxis, sum, tile
 from numpy.ma import fix_invalid, masked_where
 
 
@@ -134,32 +134,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
     Rexpo_mat = matrix_exponential_rankN(R_mat)
 
-    # Loop over the spins
-    for si in range(NS):
-        # Loop over the spectrometer frequencies.
-        for mi in range(NM):
-            # Extract number of points.
-            num_points_si_mi = int(num_points[0, si, mi, 0])
-
-            # Loop over the time points, back calculating the R2eff values.
-            for di in range(num_points_si_mi):
-
-                # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                R_mat_i = R_mat[0, si, mi, 0, di]
-
-                # Store the Rexpo.  Is it not possible to find the matrix exponential of higher dimensional data?
-                Rexpo = matrix_exponential(R_mat_i)
-                Rexpo_t = Rexpo_mat[0, si, mi, 0, di]
-
-                diff = Rexpo - Rexpo_t
-                if abs(sum(diff)) > 1e-15:
-                    print abs(sum(diff))
-                    import sys
-                    sys.exit()
-
     # Initial magnetisation.
-    Mint_mat =  tile(M0[None, None, None, None, None, :, None], (NE, NS, NM, NO, ND, 1, 1) )
-    r180x_mat = tile(r180x[None, None, None, None, None, :, :], (NE, NS, NM, NO, ND, 1, 1) )
+    # Expand axis, and tile up to dimensions.
+    Mint_mat =  tile(M0[newaxis, newaxis, newaxis, newaxis, newaxis, :, newaxis], (NE, NS, NM, NO, ND, 1, 1) )
+    r180x_mat = tile(r180x[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
     # Loop over the spins
     for si in range(NS):
@@ -180,13 +158,13 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 Mint = Mint_mat[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                Rexpo = Rexpo_mat[0, si, mi, 0, di]
+                Rexpo_i = Rexpo_mat[0, si, mi, 0, di]
                 r180x_i = r180x_mat[0, si, mi, 0, di]
 
                 # The essential evolution matrix.
                 # This is the first round.
-                evolution_matrix = dot(Rexpo, r180x_i)
-                evolution_matrix = dot(evolution_matrix, Rexpo)
+                evolution_matrix = dot(Rexpo_i, r180x_i)
+                evolution_matrix = dot(evolution_matrix, Rexpo_i)
                 # The second round.
                 evolution_matrix = dot(evolution_matrix, evolution_matrix )
 
