@@ -60,7 +60,7 @@ from numpy.ma import fix_invalid, masked_where
 
 
 # relax module imports.
-from lib.dispersion.ns_matrices import rcpmg_3d
+from lib.dispersion.ns_matrices import rcpmg_3d, rcpmg_3d_rankN
 from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
@@ -128,6 +128,8 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
     NE, NS, NM, NO, ND = back_calc.shape
 
+    R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -154,7 +156,22 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 Mint = M0
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                Rexpo = matrix_exponential(R*tcp_si_mi_di)
+                R_tcp = R*tcp_si_mi_di
+                R_mat_i = R_mat[0, si, mi, 0, di]
+
+                # Test if they are equal.
+                diff = R_tcp - R_mat_i
+                if abs(sum(diff)) > 1.e-14:
+                    import sys
+                    print "oh no"
+                    print R_tcp
+                    print R_mat_i
+                    print diff
+                    print abs(sum(diff))
+                    print si, mi, di
+                    sys.exit()
+
+                Rexpo = matrix_exponential(R_tcp)
 
                 # The essential evolution matrix.
                 # This is the first round.
