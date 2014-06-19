@@ -62,7 +62,7 @@ from numpy.ma import fix_invalid, masked_where
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d, rcpmg_3d_rankN
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 
 
 def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -131,8 +131,9 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
-    # Holds the Rexpo.
-    Rexpo_mat = R_mat * 0.0
+    # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
+    Rexpo_mat = matrix_exponential_rankN(R_mat)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -148,14 +149,17 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
 
                 # Store the Rexpo.  Is it not possible to find the matrix exponential of higher dimensional data?
                 Rexpo = matrix_exponential(R_mat_i)
-                Rexpo_mat[0, si, mi, 0, di] = Rexpo
+                Rexpo_t = Rexpo_mat[0, si, mi, 0, di]
+
+                diff = Rexpo - Rexpo_t
+                if abs(sum(diff)) > 1e-15:
+                    print abs(sum(diff))
+                    import sys
+                    sys.exit()
 
     # Initial magnetisation.
     Mint_mat =  tile(M0[None, None, None, None, None, :, None], (NE, NS, NM, NO, ND, 1, 1) )
     r180x_mat = tile(r180x[None, None, None, None, None, :, :], (NE, NS, NM, NO, ND, 1, 1) )
-    #print Mint.shape
-    #print r180x_mat.shape
-    #print Rexpo_mat.shape
 
     # Loop over the spins
     for si in range(NS):
