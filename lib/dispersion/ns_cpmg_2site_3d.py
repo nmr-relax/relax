@@ -55,7 +55,7 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import asarray, dot, fabs, isfinite, log, min, newaxis, sum, tile
+from numpy import asarray, dot, fabs, einsum, isfinite, log, min, newaxis, sum, tile
 from numpy.ma import fix_invalid, masked_where
 
 
@@ -139,6 +139,14 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     Mint_mat =  tile(M0[newaxis, newaxis, newaxis, newaxis, newaxis, :, newaxis], (NE, NS, NM, NO, ND, 1, 1) )
     r180x_mat = tile(r180x[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
+    # The the essential evolution matrix.
+    # This is a dot product of the outer [7][7] matrix of the Rexpo_mat and r180x_mat matrixes, which
+    # have the shape [NE][NS][NM][NO][ND][7][7].
+    # This can be achieved by using numpy einsum, and where ellipsis notation will use the last axis.
+    evolution_matrix_mat = einsum('...ij,...jk', Rexpo_mat, r180x_mat)
+    evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, Rexpo_mat)
+    evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, evolution_matrix_mat)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -160,13 +168,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 Rexpo_i = Rexpo_mat[0, si, mi, 0, di]
                 r180x_i = r180x_mat[0, si, mi, 0, di]
-
-                # The essential evolution matrix.
-                # This is the first round.
-                evolution_matrix_i = dot(Rexpo_i, r180x_i)
-                evolution_matrix_i = dot(evolution_matrix_i, Rexpo_i)
-                # The second round.
-                evolution_matrix_i = dot(evolution_matrix_i, evolution_matrix_i )
+                evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di):
