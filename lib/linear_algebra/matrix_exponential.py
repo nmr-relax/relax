@@ -23,7 +23,7 @@
 """Module for the calculation of the matrix exponential."""
 
 # Python module imports.
-from numpy import array, diag, dot, exp
+from numpy import array, any, diag, dot, einsum, eye, exp, iscomplex, newaxis, multiply, tile
 from numpy.linalg import eig, inv
 
 # relax module imports.
@@ -47,6 +47,59 @@ def matrix_exponential(A):
 
     # Calculate the exact exponential.
     eA = dot(dot(V, diag(exp(W))), inv(V))
+
+    # Return the complex matrix.
+    if complex_flag:
+        return array(eA)
+
+    # Return only the real part.
+    else:
+        return array(eA.real)
+
+
+def matrix_exponential_rankN(A):
+    """Calculate the exact matrix exponential using the eigenvalue decomposition approach, for higher dimensional data.
+
+    @param A:   The square matrix to calculate the matrix exponential of.
+    @type A:    numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    @return:    The matrix exponential.  This will have the same dimensionality as the A matrix.
+    @rtype:     numpy float array of rank [NE][NS][NM][NO][ND][7][7]
+    """
+
+    NE, NS, NM, NO, ND, Row, Col = A.shape
+
+    # Is the original matrix real?
+    complex_flag = any(iscomplex(A))
+
+    # The eigenvalue decomposition.
+    W, V = eig(A)
+
+    # W: The eigenvalues, each repeated according to its multiplicity.
+    # The eigenvalues are not necessarily ordered.
+    # The resulting array will be always be of complex type. Shape [NE][NS][NM][NO][ND][7]
+    # V: The normalized (unit 'length') eigenvectors, such that the column v[:,i]
+    # is the eigenvector corresponding to the eigenvalue w[i]. Shape [NE][NS][NM][NO][ND][7][7]
+
+    # Calculate the exponential of all elements in the input array. Shape [NE][NS][NM][NO][ND][7]
+    # Add one axis, to allow for broadcasting multiplication.
+    W_exp = exp(W).reshape(NE, NS, NM, NO, ND, Row, 1)
+
+    # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][7][7]
+    eye_mat = tile(eye(7)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
+
+    # Transform it to a diagonal matrix, with elements from vector down the diagonal.
+    W_exp_diag = multiply(W_exp, eye_mat )
+
+    # Make dot products for higher dimension.
+    # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
+    # to extend the multi-dimensional slice to all dimensions.
+    dot_V_W = einsum('...ij,...jk', V, W_exp_diag)
+
+    # Compute the (multiplicative) inverse of a matrix.
+    inv_V = inv(V)
+
+    # Calculate the exact exponential.
+    eA = einsum('...ij,...jk', dot_V_W, inv_V)
 
     # Return the complex matrix.
     if complex_flag:
