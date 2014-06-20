@@ -125,12 +125,6 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
     k_BA = pA * kex
     k_AB = pB * kex
 
-    # Set up the matrix that contains the exchange terms between the two states A and B.
-    Rex[0, 0] = -k_AB
-    Rex[0, 1] = k_BA
-    Rex[1, 0] = k_AB
-    Rex[1, 1] = -k_BA
-
     # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     M0[0] = pA
     M0[1] = pB
