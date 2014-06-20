@@ -55,7 +55,7 @@ from numpy import array, conj, complex64, dot, float64, log, multiply, sum
 
 # relax module imports.
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
@@ -212,8 +212,22 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     NS, NM, NO = num_points.shape
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
+    # D+ matrix component.
     m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    # Z- matrix component.
     m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    # The M1 and M2 matrices.
+    # Equivalent to D+.
+    M1_mat = matrix_exponential_rankN(m1_mat)
+    # Equivalent to Z-.
+    M2_mat = matrix_exponential_rankN(m2_mat)
+
+    # The complex conjugates M1* and M2*
+    # Equivalent to D+*.
+    M1_mat_star = conj(M1_mat)
+    # Equivalent to Z-*.
+    M2_mat_star = conj(M2_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -221,51 +235,29 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                dw_i = dw[si, mi, oi, 0]
-                dwH_i = dwH[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i, R20B=r20b_i, dw=-dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)     # D+ matrix component.
-                populate_matrix(matrix=m2, R20A=r20a_i, R20B=r20b_i, dw=dw_i - dwH_i, k_AB=k_AB, k_BA=k_BA)    # Z- matrix component.
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    m1_mat_i = m1_mat[si, mi, oi, i]
-                    m2_mat_i = m2_mat[si, mi, oi, i]
-
-                    diff_m1 = abs(sum(m1*tcp[si, mi, oi, i] - m1_mat_i))
-                    if diff_m1 > 1.0e-06:
-                        print diff_m1
-                        print m1*tcp[si, mi, oi, i]
-                        print m1_mat_i
-                        print asd
-
-                    diff_m2 = abs(sum(m2*tcp[si, mi, oi, i] - m2_mat_i))
-                    if diff_m2 > 1.0e-06:
-                        print diff_m2
-                        print m2*tcp[si, mi, oi, i]
-                        print m2_mat_i
-                        print asd
-
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1_mat_i)    # Equivalent to D+.
-                    M2 = matrix_exponential(m2_mat_i)    # Equivalent to Z-.
+                    # Equivalent to D+.
+                    M1_i = M1_mat[0, si, mi, oi, i]
+                    # Equivalent to Z-.
+                    M2_i = M1_mat[0, si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
-                    M1_star = conj(M1)    # Equivalent to D+*.
-                    M2_star = conj(M2)    # Equivalent to Z-*.
+                    # Equivalent to D+*.
+                    M1_star_i = M1_mat_star[0, si, mi, oi, i]
+                    # Equivalent to Z-*.
+                    M2_star_i = M1_mat_star[0, si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
-                    M1_M2 = dot(M1, M2)
-                    M2_M1 = dot(M2, M1)
+                    M1_M2 = dot(M1_i, M2_i)
+                    M2_M1 = dot(M2_i, M1_i)
                     M1_M2_M2_M1 = dot(M1_M2, M2_M1)
                     M2_M1_M1_M2 = dot(M2_M1, M1_M2)
-                    M1_M2_star = dot(M1_star, M2_star)
-                    M2_M1_star = dot(M2_star, M1_star)
+                    M1_M2_star = dot(M1_star_i, M2_star_i)
+                    M2_M1_star = dot(M2_star_i, M1_star_i)
                     M1_M2_M2_M1_star = dot(M1_M2_star, M2_M1_star)
                     M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
