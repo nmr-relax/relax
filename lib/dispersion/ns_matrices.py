@@ -321,17 +321,13 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
     return c_mat
 
 
-def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+def rcpmg_star_rankN(R2A=None, R2B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
     """Definition of the exchange matrix, for rank [NE][NS][NM][NO][ND][2][2].
 
     @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
     @type R2A:      numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
     @type R2B:      numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword pA:    The population of state A.
-    @type pA:       float
-    @keyword pB:    The population of state B.
-    @type pB:       float
     @keyword dw:    The chemical exchange difference between states A and B in rad/s.
     @type dw:       numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword k_AB:  The forward exchange rate from state A to state B.
