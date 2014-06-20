@@ -386,8 +386,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     NS, NM, NO = num_points.shape
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
 
     # The A+/- matrices.
     A_pos_mat = matrix_exponential_rankN(m1_mat).astype(complex64)
@@ -407,11 +407,6 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
                     # The A+/- matrices.
                     A_pos_i = A_pos_mat[si, mi, oi, i]
                     A_neg_i = A_neg_mat[si, mi, oi, i]
-
-                    #m1_mat_i = m1_mat[si, mi, oi, i]
-                    #m2_mat_i = m2_mat[si, mi, oi, i]
-                    #A_pos_i = matrix_exponential(m1_mat_i)
-                    #A_neg_i = matrix_exponential(m2_mat_i)
 
                     # The evolution for one n.
                     evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
