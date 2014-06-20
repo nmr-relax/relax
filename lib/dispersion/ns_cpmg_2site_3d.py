@@ -134,16 +134,11 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
     Rexpo_mat = matrix_exponential_rankN(R_mat)
 
-    # Initial magnetisation.
-    # Expand axis, and tile up to dimensions.
-    Mint_mat =  tile(M0[newaxis, newaxis, newaxis, newaxis, newaxis, :, newaxis], (NE, NS, NM, NO, ND, 1, 1) )
-    r180x_mat = tile(r180x[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
-
     # The the essential evolution matrix.
-    # This is a dot product of the outer [7][7] matrix of the Rexpo_mat and r180x_mat matrixes, which
-    # have the shape [NE][NS][NM][NO][ND][7][7].
+    # This is a dot product of the outer [7][7] matrix of the Rexpo_mat and r180x matrixes, which
+    # have the shape [NE][NS][NM][NO][ND][7][7] and [7][7].
     # This can be achieved by using numpy einsum, and where ellipsis notation will use the last axis.
-    evolution_matrix_mat = einsum('...ij,...jk', Rexpo_mat, r180x_mat)
+    evolution_matrix_mat = einsum('...ij,...jk', Rexpo_mat, r180x)
     evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, Rexpo_mat)
     evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, evolution_matrix_mat)
 
@@ -162,7 +157,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # Initial magnetisation.
-                Mint_i = Mint_mat[0, si, mi, 0, di]
+                Mint_i = M0
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
@@ -172,7 +167,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                     Mint_i = dot(evolution_matrix_i, Mint_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint_i[1][0] / pA
+                Mx = Mint_i[1] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = r20a_si_mi_di
                 else:
