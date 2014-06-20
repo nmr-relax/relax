@@ -65,7 +65,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 
 
-def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_BC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -87,8 +87,8 @@ def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     @type pB:                   float
     @keyword dw_AB:             The chemical exchange difference between states A and B in rad/s.
     @type dw_AB:                numpy float array of rank [NS][NM][NO][ND]
-    @keyword dw_AC:             The chemical exchange difference between states A and C in rad/s.
-    @type dw_AC:                numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_BC:             The chemical exchange difference between states B and C in rad/s.
+    @type dw_BC:                numpy float array of rank [NS][NM][NO][ND]
     @keyword kex_AB:            The exchange rate between sites A and B for 3-site exchange with kex_AB = k_AB + k_BA (rad.s^-1)
     @type kex_AB:               float
     @keyword kex_BC:            The exchange rate between sites A and C for 3-site exchange with kex_AC = k_AC + k_CA (rad.s^-1)
@@ -108,6 +108,7 @@ def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     """
 
     # Once off parameter conversions.
+    dw_AC = dw_AB + dw_BC
     pC = 1.0 - pA - pB
     pA_pB = pA + pB
     pA_pC = pA + pC
