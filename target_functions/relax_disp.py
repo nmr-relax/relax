@@ -1506,7 +1506,7 @@ class Dispersion:
                 aliased_dwH = dw_frq
 
             # Back calculate the R2eff values for each experiment type.
-            self.r2eff_ns_mmq[ei](M0=self.M0, m1=self.m1, m2=self.m2, R20A=r20, R20B=r20, pA=pA, dw=aliased_dw, dwH=aliased_dwH, kex=kex, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
+            self.r2eff_ns_mmq[ei](M0=self.M0, R20A=r20, R20B=r20, pA=pA, dw=aliased_dw, dwH=aliased_dwH, kex=kex, inv_tcpmg=self.inv_relax_times[ei], tcp=self.tau_cpmg[ei], back_calc=self.back_calc[ei], num_points=self.num_disp_points[ei], power=self.power[ei])
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

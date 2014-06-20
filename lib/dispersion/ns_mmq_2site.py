@@ -60,7 +60,7 @@ from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exp
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -243,10 +243,6 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     @type M0:               numpy float64, rank-1, 7D array
     @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
     @type F_vector:         numpy rank-1, 2D float64 array
-    @keyword m1:            A complex numpy matrix to be populated.
-    @type m1:               numpy rank-2, 2D complex64 array
-    @keyword m2:            A complex numpy matrix to be populated.
-    @type m2:               numpy rank-2, 2D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
