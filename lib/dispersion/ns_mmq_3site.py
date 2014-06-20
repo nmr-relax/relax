@@ -57,11 +57,11 @@ More information on the NS MMQ 3-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, float64, log
+from numpy import array, conj, dot, float64, log, sum
 
 # relax module imports.
 from lib.float import isNaN
-from lib.dispersion.ns_matrices import rmmq_3site
+from lib.dispersion.ns_matrices import rmmq_3site, rmmq_3site_rankN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.linear_algebra.matrix_power import square_matrix_power
 
@@ -144,6 +144,12 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
 
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    # D+ matrix component.
+    m1_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB - dwH_AB, dw_AC=-dw_AC - dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
+    # Z- matrix component.
+    m2_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB - dwH_AB, dw_AC=dw_AC - dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -167,6 +173,20 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
+                    m1_mat_i = m1_mat[si, mi, oi, i]
+                    diff_m1 = m1*tcp[si, mi, oi, i] - m1_mat_i
+                    if abs(sum(diff_m1)) > 1e-5:
+                        print abs(sum(diff_m1))
+                        print diff_m1
+                        print asd
+
+                    m2_mat_i = m2_mat[si, mi, oi, i]
+                    diff_m2 = m2*tcp[si, mi, oi, i] - m2_mat_i
+                    if abs(sum(diff_m2)) > 1e-5:
+                        print abs(sum(diff_m2))
+                        print diff_m2
+                        print asd                    
+                                                            
                     # The M1 and M2 matrices.
                     M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
                     M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
