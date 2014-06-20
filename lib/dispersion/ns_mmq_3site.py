@@ -337,8 +337,8 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     m2_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB, dw_AC=-dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
-    A_neg_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+    A_pos_mat = matrix_exponential_rankN(m1_mat)
+    A_neg_mat = matrix_exponential_rankN(m2_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -356,7 +356,7 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
                     A_neg_i = A_neg_mat[si, mi, oi, i]
 
                     # The evolution for one n.
-                    evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+                    evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
 
                     # The full evolution.
                     evol = square_matrix_power(evol_block, power[si, mi, oi, i])
