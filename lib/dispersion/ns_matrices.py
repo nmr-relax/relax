@@ -31,7 +31,7 @@ These are for the numerical solutions to the Bloch-McConnell equations for relax
 
 # Python module imports.
 from math import cos, sin, pi
-from numpy import array, float64, matrix, multiply
+from numpy import add, array, conj, complex64, float64, matrix, multiply
 
 
 def r180x_2d(flip=pi):
@@ -318,6 +318,105 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
 
     # Return the matrix.
     return c_mat
+
+
+def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """Definition of the exchange matrix, for rank [NE][NS][NM][NO][ND][2][2].
+
+    @keyword R2A:   The transverse, spin-spin relaxation rate for state A.
+    @type R2A:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R2B:   The transverse, spin-spin relaxation rate for state B.
+    @type R2B:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword pA:    The population of state A.
+    @type pA:       float
+    @keyword pB:    The population of state B.
+    @type pB:       float
+    @keyword dw:    The chemical exchange difference between states A and B in rad/s.
+    @type dw:       numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:  The forward exchange rate from state A to state B.
+    @type k_AB:     float
+    @keyword k_BA:  The reverse exchange rate from state B to state A.
+    @type k_BA:     float
+    @keyword tcp:   The tau_CPMG times (1 / 4.nu1).
+    @type tcp:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:        The relaxation matrix R and complex conjugate cR2.
+    @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][2][2]
+    """
+
+    # Pre-multiply with tcp.
+    r20a_tcp = R2A * tcp
+    r20b_tcp = R2B * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    # Complex dw.
+    dw_tcp_C = dw * tcp * -1j
+
+    # Create matrix for collection of Rr matrix.
+    # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
+    #Rr[0, 0] = -R2A_si_mi
+    #Rr[1, 1] = -R2B_si_mi
+
+    m_r20a = array([
+        [-1.0, 0.0],
+        [0.0, 0.0],], complex64)
+
+    m_r20b = array([
+        [0.0, 0.0],
+        [0.0, -1.0],], complex64)
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    # Collect Rr matrix.
+    Rr_mat = (m_r20a_tcp + m_r20b_tcp)
+
+    # Create matrix for collection of Rex.
+    # Set up the matrix that contains the exchange terms between the two states A and B.
+    #Rex[0, 0] = -k_AB
+    #Rex[0, 1] = k_BA
+    #Rex[1, 0] = k_AB
+    #Rex[1, 1] = -k_BA
+
+    m_k_AB = array([
+        [-1.0, 0.0],
+        [1.0, 0.0],], complex64)
+
+    m_k_BA = array([
+        [0.0, 1.0],
+        [0.0, -1.0],], complex64)
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    # Collect Rex matrix.
+    Rex_mat = (m_k_AB_tcp + m_k_BA_tcp)
+
+    # Create the matrix for RCS.
+    # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).  The chemical shift for state A is assumed to be zero.
+    #RCS[1, 1] = complex(0.0, -dw_si_mi)
+
+    m_dw = array([
+        [0.0, 0.0],
+        [0.0, 1.0],], complex64)
+
+    # Multiply and expand.
+    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
+
+    # Collect RCS matrix.
+    RCS_mat = m_dw_tcp_C
+
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat = add(Rr_mat, Rex_mat)
+    R_mat = add(R_mat, RCS_mat)
+
+    # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
+    cR2_mat = conj(R_mat) * 2.0
+
+    # Return the matrixes.
+    return R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat
+
 
 
 def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
