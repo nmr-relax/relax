@@ -62,7 +62,7 @@ from numpy import array, conj, dot, float64, log, sum
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.ns_matrices import rmmq_3site, rmmq_3site_rankN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
@@ -150,6 +150,16 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     # Z- matrix component.
     m2_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB - dwH_AB, dw_AC=dw_AC - dwH_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
 
+    # The M1 and M2 matrices.
+    # Equivalent to D+.
+    M1_mat = matrix_exponential_rankN(m1_mat)
+    # Equivalent to Z-.
+    M2_mat = matrix_exponential_rankN(m2_mat)
+
+    # The complex conjugates M1* and M2*
+    M1_star_mat = conj(M1_mat)
+    M2_star_mat = conj(M2_mat)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -162,20 +172,24 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1_mat[si, mi, oi, i])    # Equivalent to D+.
-                    M2 = matrix_exponential(m2_mat[si, mi, oi, i])    # Equivalent to Z-.
+                    # Equivalent to D+.
+                    M1_i = M1_mat[si, mi, oi, i]
+                    # Equivalent to Z-.
+                    M2_i = M2_mat[si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
-                    M1_star = conj(M1)    # Equivalent to D+*.
-                    M2_star = conj(M2)    # Equivalent to Z-*.
+                    # Equivalent to D+*.
+                    M1_star_i = M1_star_mat[si, mi, oi, i]
+                    # Equivalent to Z-*.
+                    M2_star_i = M2_star_mat[si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
-                    M1_M2 = dot(M1, M2)
-                    M2_M1 = dot(M2, M1)
+                    M1_M2 = dot(M1_i, M2_i)
+                    M2_M1 = dot(M2_i, M1_i)
                     M1_M2_M2_M1 = dot(M1_M2, M2_M1)
                     M2_M1_M1_M2 = dot(M2_M1, M1_M2)
-                    M1_M2_star = dot(M1_star, M2_star)
-                    M2_M1_star = dot(M2_star, M1_star)
+                    M1_M2_star = dot(M1_star_i, M2_star_i)
+                    M2_M1_star = dot(M2_star_i, M1_star_i)
                     M1_M2_M2_M1_star = dot(M1_M2_star, M2_M1_star)
                     M2_M1_M1_M2_star = dot(M2_M1_star, M1_M2_star)
 
