@@ -241,15 +241,15 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                 for i in range(num_points_i):
                     # The M1 and M2 matrices.
                     # Equivalent to D+.
-                    M1_i = M1_mat[0, si, mi, oi, i]
+                    M1_i = M1_mat[si, mi, oi, i]
                     # Equivalent to Z-.
-                    M2_i = M1_mat[0, si, mi, oi, i]
+                    M2_i = M1_mat[si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
                     # Equivalent to D+*.
-                    M1_star_i = M1_mat_star[0, si, mi, oi, i]
+                    M1_star_i = M1_mat_star[si, mi, oi, i]
                     # Equivalent to Z-*.
-                    M2_star_i = M1_mat_star[0, si, mi, oi, i]
+                    M2_star_i = M1_mat_star[si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
                     M1_M2 = dot(M1_i, M2_i)

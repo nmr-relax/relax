@@ -97,7 +97,7 @@ def matrix_exponential_rankN(A):
 
     # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][X][X]
     if NE == None:
-        eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
+        eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
     else:
         eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
