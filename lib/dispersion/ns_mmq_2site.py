@@ -51,7 +51,7 @@ More information on the NS MMQ 2-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, float64, log
+from numpy import array, conj, complex64, dot, float64, log, multiply, sum
 
 # relax module imports.
 from lib.float import isNaN
@@ -81,6 +81,76 @@ def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=
     matrix[0, 1] = k_BA
     matrix[1, 0] = k_AB
     matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+
+def populate_matrix_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """The Bloch-McConnell matrix for 2-site exchange, for rank [NE][NS][NM][NO][ND][2][2].
+
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The relaxation matrix.
+    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
+    """
+
+    # Pre-multiply with tcp.
+    r20a_tcp = R20A * tcp
+    r20b_tcp = R20B * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    # Complex dw.
+    dw_tcp_C = dw * tcp * 1j
+
+    # Fill in the elements.
+    #matrix[0, 0] = -k_AB - R20A
+    #matrix[0, 1] = k_BA
+    #matrix[1, 0] = k_AB
+    #matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+    m_r20a = array([
+        [-1.0, 0.0],
+        [0.0, 0.0],], complex64)
+
+    m_r20b = array([
+        [0.0, 0.0],
+        [0.0, -1.0],], complex64)
+
+    m_k_AB = array([
+        [-1.0, 0.0],
+        [1.0, 0.0],], complex64)
+
+    m_k_BA = array([
+        [0.0, 1.0],
+        [0.0, -1.0],], complex64)
+
+    m_dw = array([
+        [0.0, 0.0],
+        [0.0, 1.0],], complex64)
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    # Multiply and expand.
+    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
+
+    # Collect matrix.
+    matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
+
+    return matrix
 
 
 def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -141,6 +211,10 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
 
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -160,6 +234,23 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
+                    m1_mat_i = m1_mat[si, mi, oi, i]
+                    m2_mat_i = m2_mat[si, mi, oi, i]
+
+                    diff_m1 = abs(sum(m1*tcp[si, mi, oi, i] - m1_mat_i))
+                    if diff_m1 > 1.0e-06:
+                        print diff_m1
+                        print m1*tcp[si, mi, oi, i]
+                        print m1_mat_i
+                        print asd
+
+                    diff_m2 = abs(sum(m2*tcp[si, mi, oi, i] - m2_mat_i))
+                    if diff_m2 > 1.0e-06:
+                        print diff_m2
+                        print m2*tcp[si, mi, oi, i]
+                        print m2_mat_i
+                        print asd
+
                     # The M1 and M2 matrices.
                     M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
                     M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
