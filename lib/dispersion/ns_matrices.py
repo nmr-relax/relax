@@ -754,7 +754,7 @@ def rr1rho_3d_2site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, wA
     matrix[5, 2] = k_AB
 
 
-def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, relax_time=None):
+def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, relax_time=None):
     """Definition of the multidimensional 3D exchange matrix, of rank [NE][NS][NM][NO][ND][6][6].
 
     This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
@@ -764,10 +764,6 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, 
     @type R1:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
     @type r1rho_prime:      numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword pA:            The population of state A.
-    @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
     @type dw:               numpy float array of rank [NS][NM][NO][ND]
     @keyword omega:         The chemical shift for the spin in rad/s.
@@ -794,7 +790,7 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, 
     Wb = omega + dw
 
     # Population-averaged Larmor frequency [s^-1].
-    W = pA*Wa + pB*Wb
+    #W = pA*Wa + pB*Wb
 
     # Offset of spin-lock from A.
     dA = Wa - offset
@@ -803,7 +799,7 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, 
     dB = Wb - offset
 
     # Offset of spin-lock from population-average.
-    d = W - offset
+    #d = W - offset
 
     # Alias to original parameter name.
     wA=dA
