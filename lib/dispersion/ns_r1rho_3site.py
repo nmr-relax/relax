@@ -65,7 +65,7 @@ from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 
 
-def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
+def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for R1rho data.
 
     This function calculates and stores the R1rho values.
@@ -73,8 +73,6 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
 
     @keyword M0:                This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
     @type M0:                   numpy float64, rank-1, 7D array
-    @keyword matrix:            A numpy array to be populated to create the evolution matrix.
-    @type matrix:               numpy rank-2, 9D float64 array
     @keyword r1rho_prime:       The R1rho_prime parameter value (R1rho with no exchange).
     @type r1rho_prime:          numpy float array of rank [NS][NM][NO][ND]
     @keyword omega:             The chemical shift for the spin in rad/s.
