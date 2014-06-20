@@ -5,6 +5,7 @@
 # Copyright (C) 2013 Mathilde Lescanne                                        #
 # Copyright (C) 2013 Dominique Marion                                         #
 # Copyright (C) 2013 Edward d'Auvergne                                        #
+# Copyright (C) 2014 Troels E. Linnet                                         #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -211,7 +212,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_pA = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -220,7 +221,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_r10b = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -229,7 +230,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+        [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0]])
 
     m_pB = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -238,7 +239,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [2.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_r20a = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -247,7 +248,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_r20b = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -256,7 +257,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_k_AB = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -265,7 +266,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0]])
 
     m_k_BA = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -274,7 +275,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         [0.0, 0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0]])
 
     m_wA = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -283,7 +284,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_wB = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -292,7 +293,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ])
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     # Multiply and expand.
     m_r10a_tcp = multiply.outer( r10a_tcp, m_r10a )
@@ -358,11 +359,11 @@ def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k
 
     m_r20a = array([
         [-1.0, 0.0],
-        [0.0, 0.0],], complex64)
+        [0.0, 0.0]])
 
     m_r20b = array([
         [0.0, 0.0],
-        [0.0, -1.0],], complex64)
+        [0.0, -1.0]])
 
     # Multiply and expand.
     m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
@@ -380,11 +381,11 @@ def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k
 
     m_k_AB = array([
         [-1.0, 0.0],
-        [1.0, 0.0],], complex64)
+        [1.0, 0.0]])
 
     m_k_BA = array([
         [0.0, 1.0],
-        [0.0, -1.0],], complex64)
+        [0.0, -1.0]])
 
     # Multiply and expand.
     m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
@@ -399,7 +400,7 @@ def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k
 
     m_dw = array([
         [0.0, 0.0],
-        [0.0, 1.0],], complex64)
+        [0.0, 1.0]])
 
     # Multiply and expand.
     m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
@@ -477,23 +478,23 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
 
     m_r20a = array([
         [-1.0, 0.0],
-        [0.0, 0.0],])
+        [0.0, 0.0]])
 
     m_r20b = array([
         [0.0, 0.0],
-        [0.0, -1.0],])
+        [0.0, -1.0]])
 
     m_k_AB = array([
         [-1.0, 0.0],
-        [1.0, 0.0],])
+        [1.0, 0.0]])
 
     m_k_BA = array([
         [0.0, 1.0],
-        [0.0, -1.0],])
+        [0.0, -1.0]])
 
     m_dw = array([
         [0.0, 0.0],
-        [0.0, 1.0],])
+        [0.0, 1.0]])
 
     # Multiply and expand.
     m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
@@ -707,9 +708,9 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
     # Offset of spin-lock from population-average.
     d = W - offset
 
+    # Alias to original parameter name.
     wA=dA
     wB=dB
-
 
     m_r1rho_prime = array([
         [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -717,7 +718,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_wA = array([
         [0.0, -1.0, 0.0, 0.0, 0.0, 0.0],
@@ -725,7 +726,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_wB = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -733,7 +734,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
         [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
     m_w1 = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -741,7 +742,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
-        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 1.0, 0.0]])
 
     m_k_AB = array([
         [-1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -749,7 +750,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
         [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0], ], float64)
+        [0.0, 0.0, 1.0, 0.0, 0.0, 0.0]])
 
     m_k_BA = array([
         [0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
@@ -757,7 +758,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, 0.0, 0.0, 0.0, 1.0],
         [0.0, 0.0, 0.0, -1.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, -1.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0]])
 
     m_R1 = array([
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -765,7 +766,7 @@ def rr1rho_3d_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, dw=None, omega=
         [0.0, 0.0, -1.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0], ], float64)
+        [0.0, 0.0, 0.0, 0.0, 0.0, -1.0]])
 
     # Multiply and expand.
     mat_r1rho_prime = multiply.outer( r1rho_prime * relax_time, m_r1rho_prime )
