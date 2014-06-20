@@ -765,11 +765,11 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
     @type r1rho_prime:      numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword dw:            The chemical exchange difference between states A and B in rad/s.
-    @type dw:               numpy float array of rank [NS][NM][NO][ND]
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword omega:         The chemical shift for the spin in rad/s.
-    @type omega:            numpy float array of rank [NS][NM][NO][ND]
+    @type omega:            numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword offset:        The spin-lock offsets for the data.
-    @type offset:           numpy float array of rank [NS][NM][NO][ND]
+    @type offset:           numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword w1:            The spin-lock field strength in rad/s.
     @type w1:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword k_AB:          The forward exchange rate from state A to state B.
@@ -779,7 +779,7 @@ def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset
     @keyword k_BA:          The reverse exchange rate from state B to state A.
     @type k_BA:             float
     @keyword relax_time:    The total relaxation time period for each spin-lock field strength (in seconds).
-    @type relax_time:       numpy float array of rank [NS][NM][NO][ND]
+    @type relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
     @return:                The relaxation matrix.
     @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][6][6]
     """
