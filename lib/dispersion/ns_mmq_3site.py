@@ -157,39 +157,13 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
             # Loop over offsets:
             for oi in range(NO):
                 # Extract parameters from array.
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                r20c_i = R20C[si, mi, oi, 0]
-
-                dw_AB_i = dw_AB[si, mi, oi, 0]
-                dw_AC_i = dw_AC[si, mi, oi, 0]
-                dwH_AB_i = dwH_AB[si, mi, oi, 0]
-                dwH_AC_i = dwH_AC[si, mi, oi, 0]
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                rmmq_3site(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i - dwH_AB_i, dw_AC=-dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
-                rmmq_3site(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i - dwH_AB_i, dw_AC=dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    m1_mat_i = m1_mat[si, mi, oi, i]
-                    diff_m1 = m1*tcp[si, mi, oi, i] - m1_mat_i
-                    if abs(sum(diff_m1)) > 1e-5:
-                        print abs(sum(diff_m1))
-                        print diff_m1
-                        print asd
-
-                    m2_mat_i = m2_mat[si, mi, oi, i]
-                    diff_m2 = m2*tcp[si, mi, oi, i] - m2_mat_i
-                    if abs(sum(diff_m2)) > 1e-5:
-                        print abs(sum(diff_m2))
-                        print diff_m2
-                        print asd                    
-                                                            
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
-                    M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
+                    M1 = matrix_exponential(m1_mat[si, mi, oi, i])    # Equivalent to D+.
+                    M2 = matrix_exponential(m2_mat[si, mi, oi, i])    # Equivalent to Z-.
 
                     # The complex conjugates M1* and M2*
                     M1_star = conj(M1)    # Equivalent to D+*.
