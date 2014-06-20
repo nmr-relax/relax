@@ -213,9 +213,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
     # D+ matrix component.
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
     # Z- matrix component.
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
@@ -239,24 +239,17 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    m1_mat_i = m1_mat[si, mi, oi, i]
-                    m2_mat_i = m2_mat[si, mi, oi, i]
-
                     # The M1 and M2 matrices.
                     # Equivalent to D+.
-                    #M1_i = M1_mat[si, mi, oi, i]
-                    M1_i = matrix_exponential(m1_mat_i)    # Equivalent to D+.
+                    M1_i = M1_mat[si, mi, oi, i]
                     # Equivalent to Z-.
-                    #M2_i = M1_mat[si, mi, oi, i]
-                    M2_i = matrix_exponential(m2_mat_i)    # Equivalent to Z-.
+                    M2_i = M1_mat[si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
                     # Equivalent to D+*.
-                    #M1_star_i = M1_mat_star[si, mi, oi, i]
-                    M1_star_i = conj(M1_i)    # Equivalent to D+*.
+                    M1_star_i = M1_mat_star[si, mi, oi, i]
                     # Equivalent to Z-*.
-                    #M2_star_i = M2_mat_star[si, mi, oi, i]
-                    M2_star_i = conj(M2_i)    # Equivalent to Z-*.
+                    M2_star_i = M2_mat_star[si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
                     M1_M2 = dot(M1_i, M2_i)
