@@ -252,8 +252,8 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
                         print asd
 
                     # The M1 and M2 matrices.
-                    M1 = matrix_exponential(m1*tcp[si, mi, oi, i])    # Equivalent to D+.
-                    M2 = matrix_exponential(m2*tcp[si, mi, oi, i])    # Equivalent to Z-.
+                    M1 = matrix_exponential(m1_mat_i)    # Equivalent to D+.
+                    M2 = matrix_exponential(m2_mat_i)    # Equivalent to Z-.
 
                     # The complex conjugates M1* and M2*
                     M1_star = conj(M1)    # Equivalent to D+*.
