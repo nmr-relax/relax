@@ -378,30 +378,31 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
 
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
+    # The A+/- matrices.
+    A_pos_mat = matrix_exponential_rankN(m1_mat)
+    A_neg_mat = matrix_exponential_rankN(m2_mat)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-                # Extract parameters from array.
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                dw_i = dw[si, mi, oi, 0]
+                # Extract number of points.
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i , R20B=r20b_i, dw=dw_i, k_AB=k_AB, k_BA=k_BA)
-                populate_matrix(matrix=m2, R20A=r20a_i , R20B=r20b_i, dw=-dw_i, k_AB=k_AB, k_BA=k_BA)
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # The A+/- matrices.
-                    A_pos = matrix_exponential(m1*tcp[si, mi, oi, i])
-                    A_neg = matrix_exponential(m2*tcp[si, mi, oi, i])
+                    A_pos_i = A_pos_mat[si, mi, oi, i]
+                    A_neg_i = A_neg_mat[si, mi, oi, i]
 
                     # The evolution for one n.
-                    evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
+                    evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
 
                     # The full evolution.
                     evol = square_matrix_power(evol_block, power[si, mi, oi, i])
