@@ -176,6 +176,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 R_tcp = R*tcp_si_mi_di
                 R_mat_i = R_mat[0, si, mi, 0, di]
+                cR2_mat_i = cR2_mat[0, si, mi, 0, di]
 
                 # Insert check
                 diff = R_tcp.real -R_mat_i.real
@@ -199,7 +200,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                     print tcp_si_mi_di - tcp[0, si, mi, 0, di]
                     print asd
 
-                eR_tcp = matrix_exponential(R_tcp)
+                eR_tcp = matrix_exponential(R_mat_i)
 
                 # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
                 prop_2 = dot(dot(eR_tcp, matrix_exponential(cR2*tcp_si_mi_di)), eR_tcp)
