@@ -118,19 +118,19 @@ def populate_matrix_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, t
 
     m_r20a = array([
         [-1.0, 0.0],
-        [0.0, 0.0],], complex64)
+        [0.0, 0.0],], float64)
 
     m_r20b = array([
         [0.0, 0.0],
-        [0.0, -1.0],], complex64)
+        [0.0, -1.0],], float64)
 
     m_k_AB = array([
         [-1.0, 0.0],
-        [1.0, 0.0],], complex64)
+        [1.0, 0.0],], float64)
 
     m_k_BA = array([
         [0.0, 1.0],
-        [0.0, -1.0],], complex64)
+        [0.0, -1.0],], float64)
 
     m_dw = array([
         [0.0, 0.0],
@@ -219,9 +219,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
-    M1_mat = matrix_exponential_rankN(m1_mat)
+    M1_mat = matrix_exponential_rankN(m1_mat).astype(complex64)
     # Equivalent to Z-.
-    M2_mat = matrix_exponential_rankN(m2_mat)
+    M2_mat = matrix_exponential_rankN(m2_mat).astype(complex64)
 
     # The complex conjugates M1* and M2*
     # Equivalent to D+*.
@@ -390,8 +390,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential_rankN(m1_mat)
-    A_neg_mat = matrix_exponential_rankN(m2_mat)
+    A_pos_mat = matrix_exponential_rankN(m1_mat).astype(complex64)
+    A_neg_mat = matrix_exponential_rankN(m2_mat).astype(complex64)
 
     # Loop over spins.
     for si in range(NS):
@@ -407,6 +407,11 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
                     # The A+/- matrices.
                     A_pos_i = A_pos_mat[si, mi, oi, i]
                     A_neg_i = A_neg_mat[si, mi, oi, i]
+
+                    #m1_mat_i = m1_mat[si, mi, oi, i]
+                    #m2_mat_i = m2_mat[si, mi, oi, i]
+                    #A_pos_i = matrix_exponential(m1_mat_i)
+                    #A_neg_i = matrix_exponential(m2_mat_i)
 
                     # The evolution for one n.
                     evol_block = dot(A_pos_i, dot(A_neg_i, dot(A_neg_i, A_pos_i)))
