@@ -330,32 +330,30 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     # Extract shape of experiment.
     NS, NM, NO = num_points.shape
 
+    # Populate the m1 and m2 matrices (only once per function call for speed).
+    # D+ matrix component.
+    m1_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=dw_AB, dw_AC=dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
+    # Z- matrix component.
+    m2_mat = rmmq_3site_rankN(R20A=R20A, R20B=R20B, R20C=R20C, dw_AB=-dw_AB, dw_AC=-dw_AC, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, tcp=tcp)
+
+    # The A+/- matrices.
+    A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
+    A_neg_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
             # Loop over offsets:
             for oi in range(NO):
-
-                r20a_i = R20A[si, mi, oi, 0]
-                r20b_i = R20B[si, mi, oi, 0]
-                r20c_i = R20C[si, mi, oi, 0]
-
-                dw_AB_i = dw_AB[si, mi, oi, 0]
-                dw_AC_i = dw_AC[si, mi, oi, 0]
-                dwH_AB_i = dwH_AB[si, mi, oi, 0]
-                dwH_AC_i = dwH_AC[si, mi, oi, 0]
+                # Extract parameters from array.
                 num_points_i = num_points[si, mi, oi]
-
-                # Populate the m1 and m2 matrices (only once per function call for speed).
-                rmmq_3site(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i, dw_AC=dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
-                rmmq_3site(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i, dw_AC=-dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # The A+/- matrices.
-                    A_pos = matrix_exponential(m1*tcp[si, mi, oi, i])
-                    A_neg = matrix_exponential(m2*tcp[si, mi, oi, i])
+                    A_pos_i = A_pos_mat[si, mi, oi, i]
+                    A_neg_i = A_neg_mat[si, mi, oi, i]
 
                     # The evolution for one n.
                     evol_block = dot(A_pos, dot(A_neg, dot(A_neg, A_pos)))
