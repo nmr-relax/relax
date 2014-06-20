@@ -134,48 +134,22 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
             # Loop over offsets:
             for oi in range(NO):
                 # Extract parameters from array.
-                omega_i = omega[0, si, mi, oi, 0]
-                offset_i = offset[0, si, mi, oi, 0]
-                r1_i = r1[0, si, mi, oi, 0]
-                dw_AB_i = dw_AB[0, si, mi, oi, 0]
-                dw_AC_i = dw_AC[0, si, mi, oi, 0]
-
-                r1rho_prime_i = r1rho_prime[0, si, mi, oi]
-                spin_lock_fields_i = spin_lock_fields[0, si, mi, oi]
-                relax_time_i = relax_time[0, si, mi, oi]
-                inv_relax_time_i = inv_relax_time[0, si, mi, oi]
-                back_calc_i = back_calc[0, si, mi, oi]
                 num_points_i = num_points[0, si, mi, oi]
-
-                # Repetitive calculations (to speed up calculations).
-                Wa = omega_i                # Larmor frequency for state A [s^-1].
-                Wb = omega_i + dw_AB_i      # Larmor frequency for state B [s^-1].
-                Wc = omega_i + dw_AC_i      # Larmor frequency for state C [s^-1].
-                W = pA*Wa + pB*Wb + pC*Wc   # Population-averaged Larmor frequency [s^-1].
-                dA = Wa - offset_i          # Offset of spin-lock from A.
-                dB = Wb - offset_i          # Offset of spin-lock from B.
-                dC = Wc - offset_i          # Offset of spin-lock from C.
-                d = W - offset_i            # Offset of spin-lock from population-average.
 
                 # Loop over the time points, back calculating the R2eff values.
                 for j in range(num_points_i):
-                    # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-                    rr1rho_3d_3site(matrix=matrix, R1=r1_i, r1rho_prime=r1rho_prime_i[j], pA=pA, pB=pB, pC=pC, wA=dA, wB=dB, wC=dC, w1=spin_lock_fields_i[j], k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
-
-                    R_mat_i = R_mat[0, si, mi, oi]
-                    diff = matrix*relax_time_i[j] - R_mat_i
-                    if abs(sum(diff)) > 1e-12:
-                        print abs(sum(diff))
-                        print asd
-                                        
+                    # Offset of spin-lock from A.
+                    dA = omega[0, si, mi, oi, j] - offset[0, si, mi, oi, j]
 
                     # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-                    theta = atan2(spin_lock_fields_i[j], dA)
+                    theta = atan2(spin_lock_fields[0, si, mi, oi, j], dA)
                     M0[0] = sin(theta)    # The A state initial X magnetisation.
                     M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
+                    R_mat_j = R_mat[0, si, mi, oi, j]
+
                     # This matrix is a propagator that will evolve the magnetization with the matrix R.
-                    Rexpo = matrix_exponential(matrix*relax_time_i[j])
+                    Rexpo = matrix_exponential(R_mat_j)
 
                     # Magnetization evolution.
                     MA = dot(M0, dot(Rexpo, M0))
@@ -184,4 +158,4 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                     if MA <= 0.0 or isNaN(MA):
                         back_calc[0, si, mi, oi, j] = 1e99
                     else:
-                        back_calc[0, si, mi, oi, j]= -inv_relax_time_i[j] * log(MA)
+                        back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA)
