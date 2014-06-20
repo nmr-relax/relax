@@ -207,7 +207,8 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 ecR2_tcp = ecR2_mat[0, si, mi, 0, di]
 
                 # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
-                prop_2 = dot(dot(eR_tcp, ecR2_tcp), eR_tcp)
+                prop_2 = dot(eR_tcp, ecR2_tcp)
+                prop_2 = dot(prop_2, eR_tcp)
 
                 # Now create the total propagator that will evolve the magnetization under the CPMG train, i.e. it applies the above tau-180-tau-tau-180-tau so many times as required for the CPMG frequency under consideration.
                 prop_total = square_matrix_power(prop_2, power_si_mi_di)
