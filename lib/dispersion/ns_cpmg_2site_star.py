@@ -142,6 +142,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
     R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat = rcpmg_star_rankN(R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     eR_mat = matrix_exponential_rankN(R_mat)
+    ecR2_mat = matrix_exponential_rankN(cR2_mat)
 
     # Loop over the spins
     for si in range(NS):
@@ -203,7 +204,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                     print asd
 
                 eR_tcp = eR_mat[0, si, mi, 0, di]
-                ecR2_tcp = matrix_exponential(cR2_mat_i)
+                ecR2_tcp = ecR2_mat[0, si, mi, 0, di]
 
                 # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
                 prop_2 = dot(dot(eR_tcp, ecR2_tcp), eR_tcp)
