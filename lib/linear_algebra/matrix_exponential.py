@@ -68,7 +68,13 @@ def matrix_exponential_rankN(A):
     @rtype:     numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     """
 
-    NE, NS, NM, NO, ND, Row, Col = A.shape
+    # Set initial to None.
+    NE, NS, NM, NO, ND, Row, Col = None, None, None, None, None, None, None
+
+    if len(A.shape) == 7:
+        NE, NS, NM, NO, ND, Row, Col = A.shape
+    elif len(A.shape) == 6:
+        NS, NM, NO, ND, Row, Col = A.shape
 
     # Is the original matrix real?
     complex_flag = any(iscomplex(A))
@@ -84,10 +90,16 @@ def matrix_exponential_rankN(A):
 
     # Calculate the exponential of all elements in the input array. Shape [NE][NS][NM][NO][ND][X]
     # Add one axis, to allow for broadcasting multiplication.
-    W_exp = exp(W).reshape(NE, NS, NM, NO, ND, Row, 1)
+    if NE == None:
+        W_exp = exp(W).reshape(NS, NM, NO, ND, Row, 1)
+    else:
+        W_exp = exp(W).reshape(NE, NS, NM, NO, ND, Row, 1)
 
     # Make a eye matrix, with Shape [NE][NS][NM][NO][ND][X][X]
-    eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
+    if NE == None:
+        eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NS, NM, NO, ND, 1, 1) )
+    else:
+        eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
     # Transform it to a diagonal matrix, with elements from vector down the diagonal.
     W_exp_diag = multiply(W_exp, eye_mat )
