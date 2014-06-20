@@ -62,6 +62,7 @@ from numpy.ma import fix_invalid, masked_where
 
 # relax module imports.
 from lib.float import isNaN
+from lib.dispersion.ns_matrices import rcpmg_star_rankN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.linear_algebra.matrix_power import square_matrix_power
 
@@ -137,6 +138,9 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
     # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
     NE, NS, NM, NO, ND = back_calc.shape
 
+    # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat = rcpmg_star_rankN(R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -170,7 +174,32 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                eR_tcp = matrix_exponential(R*tcp_si_mi_di)
+                R_tcp = R*tcp_si_mi_di
+                R_mat_i = R_mat[0, si, mi, 0, di]
+
+                # Insert check
+                diff = R_tcp.real -R_mat_i.real
+                if sum(diff) > 1.0e-5:
+                    print sum(diff)
+                    print "Rr_mat"
+                    print Rr*tcp_si_mi_di
+                    print Rr_mat[0, si, mi, 0, di]
+                    print "RCS_mat"
+                    print RCS*tcp_si_mi_di
+                    print RCS_mat[0, si, mi, 0, di]
+                    print "Rex_mat"
+                    print Rex*tcp_si_mi_di
+                    print Rex_mat[0, si, mi, 0, di]
+                    print "R_mat"
+                    print R*tcp_si_mi_di
+                    print R_mat[0, si, mi, 0, di]
+                    print "cR2_mat"
+                    print cR2*tcp_si_mi_di
+                    print cR2_mat[0, si, mi, 0, di]
+                    print tcp_si_mi_di - tcp[0, si, mi, 0, di]
+                    print asd
+
+                eR_tcp = matrix_exponential(R_tcp)
 
                 # This is the propagator for an element of [delay tcp; 180 deg pulse; 2 times delay tcp; 180 deg pulse; delay tau], i.e. for 2 times tau-180-tau.
                 prop_2 = dot(dot(eR_tcp, matrix_exponential(cR2*tcp_si_mi_di)), eR_tcp)
