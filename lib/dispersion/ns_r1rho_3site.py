@@ -124,7 +124,7 @@ def ns_r1rho_3site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     NE, NS, NM, NO = num_points.shape
 
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-    R_mat = rr1rho_3d_3site_rankN(R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, pC=pC, dw_AB=dw_AB, dw_AC=dw_AC, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, relax_time=relax_time)
+    R_mat = rr1rho_3d_3site_rankN(R1=r1, r1rho_prime=r1rho_prime, omega=omega, offset=offset, dw_AB=dw_AB, dw_AC=dw_AC, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, relax_time=relax_time)
 
     # This matrix is a propagator that will evolve the magnetization with the matrix R.
     Rexpo_mat = matrix_exponential_rankN(R_mat)

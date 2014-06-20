@@ -972,19 +972,13 @@ def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC
     matrix[8, 5] = k_BC
 
 
-def rr1rho_3d_3site_rankN(R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, dw_AB=None, dw_AC=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, relax_time=None):
+def rr1rho_3d_3site_rankN(R1=None, r1rho_prime=None, dw_AB=None, dw_AC=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, relax_time=None):
     """Definition of the 3D exchange matrix.
 
     @keyword R1:            The longitudinal, spin-lattice relaxation rate.
     @type R1:               numpy float array of rank [NE][NS][NM][NO][ND]
     @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
     @type r1rho_prime:      numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword pA:            The population of state A.
-    @type pA:               float
-    @keyword pB:            The population of state B.
-    @type pB:               float
-    @keyword pC:            The population of state C.
-    @type pC:               float
     @keyword omega:         The chemical shift for the spin in rad/s.
     @type omega:            numpy float array of rank [NS][NM][NO][ND]
     @keyword offset:        The spin-lock offsets for the data.
