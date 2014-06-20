@@ -61,53 +61,9 @@ from numpy import array, conj, dot, float64, log
 
 # relax module imports.
 from lib.float import isNaN
+from lib.dispersion.ns_matrices import rmmq_3site
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.linear_algebra.matrix_power import square_matrix_power
-
-
-def populate_matrix(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
-    """The Bloch-McConnell matrix for 3-site exchange.
-
-    @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 3D complex64 array
-    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
-    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
-    @keyword R20C:          The transverse, spin-spin relaxation rate for state C.
-    @type R20C:             numpy float array of rank [NS][NM][NO][ND]
-    @keyword dw_AB:         The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
-    @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
-    @keyword dw_AC:         The combined chemical exchange difference parameters between states A and C in rad/s.  This can be any combination of dw and dwH.
-    @type dw_AC:            numpy float array of rank [NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
-    @keyword k_BC:          The rate of exchange from site B to C (rad/s).
-    @type k_BC:             float
-    @keyword k_CB:          The rate of exchange from site C to B (rad/s).
-    @type k_CB:             float
-    @keyword k_AC:          The rate of exchange from site A to C (rad/s).
-    @type k_AC:             float
-    @keyword k_CA:          The rate of exchange from site C to A (rad/s).
-    @type k_CA:             float
-    """
-
-    # The first row.
-    matrix[0, 0] = -k_AB - k_AC - R20A
-    matrix[0, 1] = k_BA
-    matrix[0, 2] = k_CA
-
-    # The second row.
-    matrix[1, 0] = k_AB
-    matrix[1, 1] = -k_BA - k_BC + 1.j*dw_AB - R20B
-    matrix[1, 2] = k_CB
-
-    # The third row.
-    matrix[2, 0] = k_AC
-    matrix[2, 1] = k_BC
-    matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
 
 
 def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -206,8 +162,8 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
                 num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i - dwH_AB_i, dw_AC=-dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
-                populate_matrix(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i - dwH_AB_i, dw_AC=dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
+                rmmq_3site(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i - dwH_AB_i, dw_AC=-dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)     # D+ matrix component.
+                rmmq_3site(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i - dwH_AB_i, dw_AC=dw_AC_i - dwH_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)    # Z- matrix component.
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
@@ -384,8 +340,8 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
                 num_points_i = num_points[si, mi, oi]
 
                 # Populate the m1 and m2 matrices (only once per function call for speed).
-                populate_matrix(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i, dw_AC=dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
-                populate_matrix(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i, dw_AC=-dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+                rmmq_3site(matrix=m1, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=dw_AB_i, dw_AC=dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+                rmmq_3site(matrix=m2, R20A=r20a_i, R20B=r20b_i, R20C=r20c_i, dw_AB=-dw_AB_i, dw_AC=-dw_AC_i, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):

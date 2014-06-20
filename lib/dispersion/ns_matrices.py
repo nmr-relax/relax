@@ -513,6 +513,51 @@ def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=No
     return matrix
 
 
+def rmmq_3site(matrix=None, R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
+    """The Bloch-McConnell matrix for 3-site exchange.
+
+    @keyword matrix:        The matrix to populate.
+    @type matrix:           numpy rank-2, 3D complex64 array
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword R20C:          The transverse, spin-spin relaxation rate for state C.
+    @type R20C:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_AB:         The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_AC:         The combined chemical exchange difference parameters between states A and C in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AC:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword k_BC:          The rate of exchange from site B to C (rad/s).
+    @type k_BC:             float
+    @keyword k_CB:          The rate of exchange from site C to B (rad/s).
+    @type k_CB:             float
+    @keyword k_AC:          The rate of exchange from site A to C (rad/s).
+    @type k_AC:             float
+    @keyword k_CA:          The rate of exchange from site C to A (rad/s).
+    @type k_CA:             float
+    """
+
+    # The first row.
+    matrix[0, 0] = -k_AB - k_AC - R20A
+    matrix[0, 1] = k_BA
+    matrix[0, 2] = k_CA
+
+    # The second row.
+    matrix[1, 0] = k_AB
+    matrix[1, 1] = -k_BA - k_BC + 1.j*dw_AB - R20B
+    matrix[1, 2] = k_CB
+
+    # The third row.
+    matrix[2, 0] = k_AC
+    matrix[2, 1] = k_BC
+    matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
+
+
 def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
     """Definition of the 3D exchange matrix.
 
