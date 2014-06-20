@@ -418,6 +418,99 @@ def rcpmg_star_rankN(R2A=None, R2B=None, pA=None, pB=None, dw=None, k_AB=None, k
     return R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat
 
 
+def rmmq_2site(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None):
+    """The Bloch-McConnell matrix for 2-site exchange.
+
+    @keyword matrix:        The matrix to populate.
+    @type matrix:           numpy rank-2, 2D complex64 array
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             float
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             float
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw:               float
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    """
+
+    # Fill in the elements.
+    matrix[0, 0] = -k_AB - R20A
+    matrix[0, 1] = k_BA
+    matrix[1, 0] = k_AB
+    matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+
+def rmmq_2site_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
+    """The Bloch-McConnell matrix for 2-site exchange, for rank [NE][NS][NM][NO][ND][2][2].
+
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The relaxation matrix.
+    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
+    """
+
+    # Pre-multiply with tcp.
+    r20a_tcp = R20A * tcp
+    r20b_tcp = R20B * tcp
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    # Complex dw.
+    dw_tcp_C = dw * tcp * 1j
+
+    # Fill in the elements.
+    #matrix[0, 0] = -k_AB - R20A
+    #matrix[0, 1] = k_BA
+    #matrix[1, 0] = k_AB
+    #matrix[1, 1] = -k_BA + 1.j*dw - R20B
+
+    m_r20a = array([
+        [-1.0, 0.0],
+        [0.0, 0.0],])
+
+    m_r20b = array([
+        [0.0, 0.0],
+        [0.0, -1.0],])
+
+    m_k_AB = array([
+        [-1.0, 0.0],
+        [1.0, 0.0],])
+
+    m_k_BA = array([
+        [0.0, 1.0],
+        [0.0, -1.0],])
+
+    m_dw = array([
+        [0.0, 0.0],
+        [0.0, 1.0],])
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+
+    # Multiply and expand.
+    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
+
+    # Collect matrix.
+    matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
+    
+    return matrix
+
 
 def rr1rho_3d_3site(matrix=None, R1=None, r1rho_prime=None, pA=None, pB=None, pC=None, wA=None, wB=None, wC=None, w1=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None):
     """Definition of the 3D exchange matrix.
