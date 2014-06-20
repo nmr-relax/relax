@@ -66,7 +66,7 @@ from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exp
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
-def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for MQ data.
 
     The notation used here comes from:
@@ -84,10 +84,6 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
     @type M0:               numpy float64, rank-1, 7D array
     @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
     @type F_vector:         numpy rank-1, 3D float64 array
-    @keyword m1:            A complex numpy matrix to be populated.
-    @type m1:               numpy rank-2, 3D complex64 array
-    @keyword m2:            A complex numpy matrix to be populated.
-    @type m2:               numpy rank-2, 3D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
@@ -256,7 +252,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, 
                         back_calc[si, mi, oi, i]= -inv_tcpmg[si, mi, oi, i] * log(Mx / pA)
 
 
-def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=None, m2=None, R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 3-site numerical solution to the Bloch-McConnell equation for SQ, ZQ, and DQ data.
 
     The notation used here comes from:
@@ -270,10 +266,6 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), m1=
     @type M0:               numpy float64, rank-1, 7D array
     @keyword F_vector:      The observable magnitisation vector.  This defaults to [1, 0] for X observable magnitisation.
     @type F_vector:         numpy rank-1, 3D float64 array
-    @keyword m1:            A complex numpy matrix to be populated.
-    @type m1:               numpy rank-2, 3D complex64 array
-    @keyword m2:            A complex numpy matrix to be populated.
-    @type m2:               numpy rank-2, 3D complex64 array
     @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
     @type R20A:             numpy float array of rank [NS][NM][NO][ND]
     @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
