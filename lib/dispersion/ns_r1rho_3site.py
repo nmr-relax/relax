@@ -62,7 +62,7 @@ from numpy import dot, sum
 # relax module imports.
 from lib.dispersion.ns_matrices import rr1rho_3d_3site, rr1rho_3d_3site_rankN
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential
+from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 
 
 def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, pB=None, dw_AB=None, dw_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
@@ -127,6 +127,9 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R_mat = rr1rho_3d_3site_rankN(R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, pC=pC, dw_AB=dw_AB, dw_AC=dw_AC, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, relax_time=relax_time)
 
+    # This matrix is a propagator that will evolve the magnetization with the matrix R.
+    Rexpo_mat = matrix_exponential_rankN(R_mat)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -146,13 +149,11 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                     M0[0] = sin(theta)    # The A state initial X magnetisation.
                     M0[2] = cos(theta)    # The A state initial Z magnetisation.
 
-                    R_mat_j = R_mat[0, si, mi, oi, j]
-
                     # This matrix is a propagator that will evolve the magnetization with the matrix R.
-                    Rexpo = matrix_exponential(R_mat_j)
+                    Rexpo_j = Rexpo_mat[0, si, mi, oi, j]
 
                     # Magnetization evolution.
-                    MA = dot(M0, dot(Rexpo, M0))
+                    MA = dot(M0, dot(Rexpo_j, M0))
 
                     # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     if MA <= 0.0 or isNaN(MA):
