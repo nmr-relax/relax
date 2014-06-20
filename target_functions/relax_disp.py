@@ -391,20 +391,6 @@ class Dispersion:
             self.end_index.append(self.end_index[-1] + self.num_spins)
             self.end_index.append(self.end_index[-1] + self.num_spins)
 
-        # Set up the matrices for the numerical solutions.
-        if model in [MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-            self.Rr = zeros((2, 2), complex64)
-
-            # The matrix that contains the exchange terms between the two states A and B.
-            self.Rex = zeros((2, 2), complex64)
-
-            # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).
-            self.RCS = zeros((2, 2), complex64)
-
-            # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-            self.R = zeros((2, 2), complex64)
-
         # Pi-pulse propagators.
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
             self.r180x = r180x_3d()
@@ -421,18 +407,6 @@ class Dispersion:
             self.M0 = zeros(6, float64)
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
-
-        # Special storage matrices for the multi-quantum CPMG N-site numerical models.
-        if model == MODEL_NS_MMQ_2SITE:
-            self.m1 = zeros((2, 2), complex64)
-            self.m2 = zeros((2, 2), complex64)
-        elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.m1 = zeros((3, 3), complex64)
-            self.m2 = zeros((3, 3), complex64)
-        elif model == MODEL_NS_R1RHO_2SITE:
-            self.matrix = zeros((6, 6), float64)
-        elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.matrix = zeros((9, 9), float64)
 
         # Set up the model.
         if model == MODEL_NOREX:
