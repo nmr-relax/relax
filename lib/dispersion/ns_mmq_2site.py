@@ -55,102 +55,9 @@ from numpy import array, conj, complex64, dot, float64, log, multiply, sum
 
 # relax module imports.
 from lib.float import isNaN
+from lib.dispersion.ns_matrices import rmmq_2site_rankN
 from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
 from lib.linear_algebra.matrix_power import square_matrix_power
-
-
-def populate_matrix(matrix=None, R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None):
-    """The Bloch-McConnell matrix for 2-site exchange.
-
-    @keyword matrix:        The matrix to populate.
-    @type matrix:           numpy rank-2, 2D complex64 array
-    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             float
-    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             float
-    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
-    @type dw:               float
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
-    """
-
-    # Fill in the elements.
-    matrix[0, 0] = -k_AB - R20A
-    matrix[0, 1] = k_BA
-    matrix[1, 0] = k_AB
-    matrix[1, 1] = -k_BA + 1.j*dw - R20B
-
-
-def populate_matrix_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, tcp=None):
-    """The Bloch-McConnell matrix for 2-site exchange, for rank [NE][NS][NM][NO][ND][2][2].
-
-    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
-    @type R20A:             numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
-    @type R20B:             numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword dw:            The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
-    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
-    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
-    @type k_AB:             float
-    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
-    @type k_BA:             float
-    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
-    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
-    @return:                The relaxation matrix.
-    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][2][2]
-    """
-
-    # Pre-multiply with tcp.
-    r20a_tcp = R20A * tcp
-    r20b_tcp = R20B * tcp
-    k_AB_tcp = k_AB * tcp
-    k_BA_tcp = k_BA * tcp
-    # Complex dw.
-    dw_tcp_C = dw * tcp * 1j
-
-    # Fill in the elements.
-    #matrix[0, 0] = -k_AB - R20A
-    #matrix[0, 1] = k_BA
-    #matrix[1, 0] = k_AB
-    #matrix[1, 1] = -k_BA + 1.j*dw - R20B
-
-    m_r20a = array([
-        [-1.0, 0.0],
-        [0.0, 0.0],])
-
-    m_r20b = array([
-        [0.0, 0.0],
-        [0.0, -1.0],])
-
-    m_k_AB = array([
-        [-1.0, 0.0],
-        [1.0, 0.0],])
-
-    m_k_BA = array([
-        [0.0, 1.0],
-        [0.0, -1.0],])
-
-    m_dw = array([
-        [0.0, 0.0],
-        [0.0, 1.0],])
-
-    # Multiply and expand.
-    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
-    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
-
-    # Multiply and expand.
-    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
-    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
-
-    # Multiply and expand.
-    m_dw_tcp_C = multiply.outer( dw_tcp_C, m_dw )
-
-    # Collect matrix.
-    matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
-    
-    return matrix
 
 
 def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=None, R20A=None, R20B=None, pA=None, dw=None, dwH=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
@@ -213,9 +120,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
     # D+ matrix component.
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m1_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     # Z- matrix component.
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
@@ -377,8 +284,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     NS, NM, NO = num_points.shape
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m1_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
     A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
