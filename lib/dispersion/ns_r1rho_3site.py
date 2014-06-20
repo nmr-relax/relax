@@ -57,10 +57,10 @@ More information on the NS R1rho 3-site model can be found in the:
 
 # Python module imports.
 from math import atan2, cos, log, sin
-from numpy import dot
+from numpy import dot, sum
 
 # relax module imports.
-from lib.dispersion.ns_matrices import rr1rho_3d_3site
+from lib.dispersion.ns_matrices import rr1rho_3d_3site, rr1rho_3d_3site_rankN
 from lib.float import isNaN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 
@@ -124,6 +124,9 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
     # Extract shape of experiment.
     NE, NS, NM, NO = num_points.shape
 
+    # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
+    R_mat = rr1rho_3d_3site_rankN(R1=r1, r1rho_prime=r1rho_prime, pA=pA, pB=pB, pC=pC, dw_AB=dw_AB, dw_AC=dw_AC, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA, relax_time=relax_time)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -158,6 +161,13 @@ def ns_r1rho_3site(M0=None, matrix=None, r1rho_prime=None, omega=None, offset=No
                 for j in range(num_points_i):
                     # The matrix that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
                     rr1rho_3d_3site(matrix=matrix, R1=r1_i, r1rho_prime=r1rho_prime_i[j], pA=pA, pB=pB, pC=pC, wA=dA, wB=dB, wC=dC, w1=spin_lock_fields_i[j], k_AB=k_AB, k_BA=k_BA, k_BC=k_BC, k_CB=k_CB, k_AC=k_AC, k_CA=k_CA)
+
+                    R_mat_i = R_mat[0, si, mi, oi]
+                    diff = matrix*relax_time_i[j] - R_mat_i
+                    if abs(sum(diff)) > 1e-12:
+                        print abs(sum(diff))
+                        print asd
+                                        
 
                     # The following lines rotate the magnetization previous to spin-lock into the weff frame.
                     theta = atan2(spin_lock_fields_i[j], dA)
