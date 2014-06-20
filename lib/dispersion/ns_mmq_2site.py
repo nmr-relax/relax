@@ -118,23 +118,23 @@ def populate_matrix_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, t
 
     m_r20a = array([
         [-1.0, 0.0],
-        [0.0, 0.0],], float64)
+        [0.0, 0.0],])
 
     m_r20b = array([
         [0.0, 0.0],
-        [0.0, -1.0],], float64)
+        [0.0, -1.0],])
 
     m_k_AB = array([
         [-1.0, 0.0],
-        [1.0, 0.0],], float64)
+        [1.0, 0.0],])
 
     m_k_BA = array([
         [0.0, 1.0],
-        [0.0, -1.0],], float64)
+        [0.0, -1.0],])
 
     m_dw = array([
         [0.0, 0.0],
-        [0.0, 1.0],], complex64)
+        [0.0, 1.0],])
 
     # Multiply and expand.
     m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
@@ -149,7 +149,7 @@ def populate_matrix_rankN(R20A=None, R20B=None, dw=None, k_AB=None, k_BA=None, t
 
     # Collect matrix.
     matrix = (m_r20a_tcp + m_r20b_tcp + m_k_AB_tcp + m_k_BA_tcp + m_dw_tcp_C)
-
+    
     return matrix
 
 
@@ -213,15 +213,19 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
     # D+ matrix component.
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     # Z- matrix component.
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw - dwH, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
-    M1_mat = matrix_exponential_rankN(m1_mat).astype(complex64)
+    M1_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
     # Equivalent to Z-.
-    M2_mat = matrix_exponential_rankN(m2_mat).astype(complex64)
+    M2_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+
+    # The complex conjugates M1* and M2*
+    M1_star_mat = conj(M1_mat)
+    M2_star_mat = conj(M2_mat)
 
     # Loop over spins.
     for si in range(NS):
@@ -233,22 +237,17 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), m1=None, m2=
 
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
-                    m1_mat_i = m1_mat[si, mi, oi, i]
-                    m2_mat_i = m2_mat[si, mi, oi, i]
-
                     # The M1 and M2 matrices.
                     # Equivalent to D+.
-                    #M1_i = M1_mat[si, mi, oi, i]
-                    M1_i = matrix_exponential(m1_mat_i)    # Equivalent to D+.
+                    M1_i = M1_mat[si, mi, oi, i]
                     # Equivalent to Z-.
-                    #M2_i = M1_mat[si, mi, oi, i]
-                    M2_i = matrix_exponential(m2_mat_i)    # Equivalent to Z-.
+                    M2_i = M2_mat[si, mi, oi, i]
 
                     # The complex conjugates M1* and M2*
                     # Equivalent to D+*.
-                    M1_star_i = conj(M1_i)    # Equivalent to D+*.
+                    M1_star_i = M1_star_mat[si, mi, oi, i]
                     # Equivalent to Z-*.
-                    M2_star_i = conj(M2_i)    # Equivalent to Z-*.
+                    M2_star_i = M2_star_mat[si, mi, oi, i]
 
                     # Repetitive dot products (minimised for speed).
                     M1_M2 = dot(M1_i, M2_i)
@@ -378,12 +377,12 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), m1=Non
     NS, NM, NO = num_points.shape
 
     # Populate the m1 and m2 matrices (only once per function call for speed).
-    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
-    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp).astype(complex64)
+    m1_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
+    m2_mat = populate_matrix_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential_rankN(m1_mat).astype(complex64)
-    A_neg_mat = matrix_exponential_rankN(m2_mat).astype(complex64)
+    A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
+    A_neg_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
 
     # Loop over spins.
     for si in range(NS):
