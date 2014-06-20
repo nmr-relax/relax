@@ -1244,18 +1244,18 @@ class Relax_disp(SystemTestCase):
         ds.insignificance = 0.0
 
         # The grid search size (the number of increments per dimension).
-        ds.GRID_INC = 8
+        ds.GRID_INC = None
 
         # The do clustering.
         ds.do_cluster = True
 
         # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
         # The default value is 1e-25.
-        ds.set_func_tol = 1e-8
+        ds.set_func_tol = 1e-1
 
         # The maximum number of iterations.
         # The default value is 1e7.
-        ds.set_max_iter = 10000
+        ds.set_max_iter = 1000
 
         # The verbosity level.
         ds.verbosity = 1
@@ -1390,18 +1390,18 @@ class Relax_disp(SystemTestCase):
         ds.insignificance = 0.0
 
         # The grid search size (the number of increments per dimension).
-        ds.GRID_INC = 8
+        ds.GRID_INC = None
 
         # The do clustering.
         ds.do_cluster = True
 
         # The function tolerance.  This is used to terminate minimisation once the function value between iterations is less than the tolerance.
         # The default value is 1e-25.
-        ds.set_func_tol = 1e-8
+        ds.set_func_tol = 1e-1
 
         # The maximum number of iterations.
         # The default value is 1e7.
-        ds.set_max_iter = 10000
+        ds.set_max_iter = 1000
 
         # The verbosity level.
         ds.verbosity = 1
