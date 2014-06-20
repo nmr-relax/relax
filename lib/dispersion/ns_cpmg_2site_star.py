@@ -149,60 +149,14 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
         # Loop over the spectrometer frequencies.
         for mi in range(NM):
             # Extract the values from the higher dimensional arrays.
-            R2A_si_mi = r20a[0, si, mi, 0, 0]
-            R2B_si_mi = r20b[0, si, mi, 0, 0]
-            dw_si_mi = dw[0, si, mi, 0, 0]
             num_points_si_mi = int(num_points[0, si, mi, 0])
-
-            # The matrix that contains only the R2 relaxation terms ("Redfield relaxation", i.e. non-exchange broadening).
-            Rr[0, 0] = -R2A_si_mi
-            Rr[1, 1] = -R2B_si_mi
-
-            # The matrix that contains the chemical shift evolution.  It works here only with X magnetization, and the complex notation allows to evolve in the transverse plane (x, y).  The chemical shift for state A is assumed to be zero.
-            RCS[1, 1] = complex(0.0, -dw_si_mi)
-
-            # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
-            R = add(Rr, Rex)
-            R = add(R, RCS)
-
-            # This is the complex conjugate of the above.  It allows the chemical shift to run in the other direction, i.e. it is used to evolve the shift after a 180 deg pulse.  The factor of 2 is to minimise the number of multiplications for the prop_2 matrix calculation.
-            cR2 = conj(R) * 2.0
 
             # Loop over the time points, back calculating the R2eff values.
             for di in range(num_points_si_mi):
                 # Extract the values from the higher dimensional arrays.
-                tcp_si_mi_di = tcp[0, si, mi, 0, di]
-                inv_tcpmg_si_mi_di = inv_tcpmg[0, si, mi, 0, di]
                 power_si_mi_di = int(power[0, si, mi, 0, di])
-                r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                R_tcp = R*tcp_si_mi_di
-                R_mat_i = R_mat[0, si, mi, 0, di]
-                cR2_mat_i = cR2_mat[0, si, mi, 0, di]
-
-                # Insert check
-                diff = R_tcp.real -R_mat_i.real
-                if sum(diff) > 1.0e-5:
-                    print sum(diff)
-                    print "Rr_mat"
-                    print Rr*tcp_si_mi_di
-                    print Rr_mat[0, si, mi, 0, di]
-                    print "RCS_mat"
-                    print RCS*tcp_si_mi_di
-                    print RCS_mat[0, si, mi, 0, di]
-                    print "Rex_mat"
-                    print Rex*tcp_si_mi_di
-                    print Rex_mat[0, si, mi, 0, di]
-                    print "R_mat"
-                    print R*tcp_si_mi_di
-                    print R_mat[0, si, mi, 0, di]
-                    print "cR2_mat"
-                    print cR2*tcp_si_mi_di
-                    print cR2_mat[0, si, mi, 0, di]
-                    print tcp_si_mi_di - tcp[0, si, mi, 0, di]
-                    print asd
-
                 eR_tcp = eR_mat[0, si, mi, 0, di]
                 ecR2_tcp = ecR2_mat[0, si, mi, 0, di]
 
@@ -221,7 +175,7 @@ def r2eff_ns_cpmg_2site_star(Rr=None, Rex=None, RCS=None, R=None, M0=None, r20a=
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = 1e99
                 else:
-                    back_calc[0, si, mi, 0, di]= -inv_tcpmg_si_mi_di * log(Mx)
+                    back_calc[0, si, mi, 0, di]= -inv_tcpmg[0, si, mi, 0, di] * log(Mx)
 
     # Replace data in array.
     # If dw is zero.
