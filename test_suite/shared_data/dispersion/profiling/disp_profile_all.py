@@ -24,7 +24,7 @@
 # Python script for obtaining profiling statistics for multiple models between the current and an alternative version of relax.
 
 # Python module imports.
-from numpy import average, float64, std, zeros
+from numpy import average, arange, array, asarray, count_nonzero, float64, std, zeros
 from os import pardir, path, sep
 from re import search
 from shutil import copyfile
@@ -187,8 +187,55 @@ for i in range(len(models)):
     speed_up[model] = ave_alt[model] / ave_new[model]
     speed_up_cluster[model] = ave_alt_cluster[model] / ave_new_cluster[model]
 
+# Print background for analysis
+fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
+relax_times = fields / (100 * 100. *1E6 )
+cpmg_points = []
+cpmg_points_nr = 0
+
+spin_lock_offsets = range(10)
+spin_lock_fields = [431.0, 651.2, 800.5, 984.0, 1341.11]
+r1rho_points = []
+r1rho_points_nr = 0
+
+for i in range(len(fields)):
+    ncyc = arange(2, 1000. * relax_times[i], 4)
+    cpmg_point = ncyc / relax_times[i]
+    cpmg_points_nr += len(cpmg_point)
+    cpmg_points.append(cpmg_point)
+    for j in range(len(spin_lock_offsets)):
+        spin_lock_fields_oi = spin_lock_fields
+        r1rho_points_nr += len(spin_lock_fields_oi)
+
+# To nearest 10
+cpmg_points_nr_near = int(round(cpmg_points_nr, -1))
+cpmg_points_nr_near_per_frq = cpmg_points_nr_near / len(fields)
+
+r1rho_points_nr_near = int(round(r1rho_points_nr, -1))
+r1rho_points_nr_near_per_frq = r1rho_points_nr_near / len(fields)
+
+print cpmg_points_nr_near, cpmg_points_nr_near_per_frq
+print("""
+##########################
+#Background for analysis:#
+##########################
+
+For CPMG statistics:
+--------------------
+%i fields, with each %i nr of cpmg points.
+Total number of dispersion points per spin is: %i
+
+For R1rho experiments:
+----------------------
+%i fields, with each %i nr of spin lock offsets, where each offset has been measured at %i different spin lock fields.
+Per field, there is %i dispersion points.
+Total number of dispersion points per spin is: %i
+
+"""%(len(fields), cpmg_points_nr_near_per_frq, cpmg_points_nr_near,
+len(fields), len(spin_lock_offsets), len(spin_lock_fields), r1rho_points_nr_near_per_frq, r1rho_points_nr_near ))
+
 # Final printout.
-print("\n\n100 single spins analysis:")
+print("\n100 single spins analysis:")
 for i in range(len(models)):
     # Alias.
     model, script, iter, scaling_factor = models[i]
