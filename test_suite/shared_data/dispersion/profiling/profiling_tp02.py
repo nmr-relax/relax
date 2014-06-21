@@ -395,6 +395,7 @@ class Profile(Dispersion):
             for si in range(self.num_spins):
                 for mi in range(len(self.fields)):
                     for oi in range(len(self.spin_lock_offsets)):
+                        spin_lock_nu1[ei][mi][oi] = array(spin_lock_nu1[ei][mi][oi], float64)
                         values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                         errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)

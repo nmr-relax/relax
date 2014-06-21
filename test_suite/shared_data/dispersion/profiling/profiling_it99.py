@@ -86,6 +86,8 @@ def main():
             s_stats.print_stats()
 
     if True:
+        # Clustering is broken in 3.2.2, so just one spin.
+
         # Calc for cluster.
         c_filename = tempfile.NamedTemporaryFile(delete=False).name
         # Profile for a cluster of 100 spins.
@@ -284,6 +286,7 @@ class Profile(Dispersion):
             for si in range(self.num_spins):
                 for mi in range(len(self.fields)):
                     for oi in range(len(self.offset)):
+                        cpmg_frqs[ei][mi][oi] = array(cpmg_frqs[ei][mi][oi], float64)
                         values[ei][si][mi][oi] = array(values[ei][si][mi][oi], float64)
                         errors[ei][si][mi][oi] = array(errors[ei][si][mi][oi], float64)
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
@@ -431,7 +434,7 @@ def single(num_spins=1, model=MODEL_IT99, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=2, model=MODEL_IT99, iter=None):
+def cluster(num_spins=1, model=MODEL_IT99, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -443,6 +446,8 @@ def cluster(num_spins=2, model=MODEL_IT99, iter=None):
     @return:                Chi2 value.
     @rtype:                 float
     """
+
+    # Clustering is broken in 3.2.2, so just one spin.
 
     # Instantiate class
     C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, tex=1/1000.0, spins_params=['r2', 'dw', 'pA', 'tex'])
