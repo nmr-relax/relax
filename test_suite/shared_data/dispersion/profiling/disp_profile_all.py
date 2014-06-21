@@ -41,53 +41,34 @@ import version
 # The number of iterations to run each script for the statistics.
 N = 10
 
-# The models.
+# The models / The current scripts. / Iterations / Multiplication factors (to scale for different nr_iter values).
 models = [
-    'CR72 full',
-    'TSMFK01',
-    'B14 full',
-    'NS CPMG 2-site expanded',
-    'NS CPMG 2-site 3D full',
-    'M61',
-    'DPL94',
-    'TP02',
-    'TAP03',
-    'MP05',
-    'NS R1rho 2-site'
-]
-
-# The current scripts.
-scripts = [
-    'profiling_cr72.py',
-    'profiling_tsmfk01.py',
-    'profiling_b14.py',
-    'profiling_ns_cpmg_2site_expanded.py',
-    'profiling_ns_cpmg_2site_3D.py',
-    'profiling_m61.py',
-    'profiling_dpl94.py',
-    'profiling_tp02.py',
-    'profiling_tap03.py',
-    'profiling_mp05.py',
-    'profiling_ns_r1rho_2site.py'
-]
-
-# Multiplication factors (to scale for different nr_iter values).
-scaling_factor = [
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    10.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    1.0,
-    10.0
+    ['No Rex', 'profiling_norex.py', 100, 1],
+    ['LM63', 'profiling_lm63.py', 100, 1],
+    ['CR72', 'profiling_cr72.py', 100, 1],
+    ['CR72 full', 'profiling_cr72_full.py', 100, 1],
+    ['IT99',  'profiling_it99.py', 100, 1],
+    ['TSMFK01', 'profiling_tsmfk01.py', 100, 1],
+    ['B14', 'profiling_b14.py', 100, 1],
+    ['B14 full', 'profiling_b14_full.py', 100, 1],
+    ['NS CPMG 2-site 3D', 'profiling_ns_cpmg_2site_3D.py', 10, 10],
+    ['NS CPMG 2-site 3D full', 'profiling_ns_cpmg_2site_3D_full.py', 10, 10],
+    ['NS CPMG 2-site expanded', 'profiling_ns_cpmg_2site_expanded.py', 100, 1],
+    ['NS CPMG 2-site star', 'profiling_ns_cpmg_2site_star.py', 10, 10],
+    ['NS CPMG 2-site star full', 'profiling_ns_cpmg_2site_star_full.py', 10, 10],
+    ['M61', 'profiling_m61.py', 100, 1],
+    ['DPL94', 'profiling_dpl94.py', 100, 1],
+    ['TP02', 'profiling_tp02.py', 100, 1],
+    ['TAP03', 'profiling_tap03.py', 100, 1],
+    ['MP05', 'profiling_mp05.py', 100, 1],
+    ['NS R1rho 2-site', 'profiling_ns_r1rho_2site.py', 10, 10],
 ]
 
 # Path to relax 3.2.2, or any other version.
-alt_path = '/data/relax/tags/3.2.2'
+if len(sys.argv) == 1:
+    alt_path = '/data/relax/tags/3.2.2'
+else:
+    alt_path = sys.argv[1]
 
 # The Python executable name.
 python = 'python'
@@ -99,13 +80,18 @@ sys.stdout.write(version.version_full())
 sys.stdout.write("\n\n")
 
 # Copy the current scripts to the base directory of the alternative relax version.
-for script in scripts:
+for i in range(len(models)):
+    # Alias.
+    model, script, iter, scaling_factor = models[i]
+    print("Copying: model=%s script=%s iterations=%s scale=%s"%(model, script, iter, scaling_factor))
     copyfile(script, alt_path+sep+script)
 
 # Initialise structures for the timing statistics.
 timings_new = {}
 timings_alt = {}
-for model in models:
+for i in range(len(models)):
+    # Alias.
+    model, script, iter, scaling_factor = models[i]
     timings_new[model] = zeros((2, N), float64)
     timings_alt[model] = zeros((2, N), float64)
 timings = [timings_new, timings_alt]
@@ -117,10 +103,11 @@ for exec_iter in range(N):
 
     # Loop over each model.
     for i in range(len(models)):
+        model, script, iter, scaling_factor = models[i]
         # The commands to run.
         cmds = [
-            "%s %s" % (python, scripts[i]),
-            "%s %s %s" % (python, alt_path+sep+scripts[i], alt_path),
+            "%s %s" % (python, script),
+            "%s %s %s" % (python, alt_path+sep+script, alt_path),
         ]
 
         # Loop over the commands.
@@ -162,7 +149,7 @@ for exec_iter in range(N):
                 row = line.split()
 
                 # The timing.
-                timings[cmd_index][models[i]][index, exec_iter] = float(row[3])
+                timings[cmd_index][model][index, exec_iter] = float(row[3])
 
                 # Increment the index.
                 index += 1
@@ -182,19 +169,19 @@ speed_up_cluster = {}
 # Loop over the models.
 for i in range(len(models)):
     # Alias.
-    model = models[i]
+    model, script, iter, scaling_factor = models[i]
 
     # The averages (scaled for different nr_iter).
-    ave_new[model] = average(timings_new[model][0]) * scaling_factor[i]
-    ave_new_cluster[model] = average(timings_new[model][1]) * scaling_factor[i]
-    ave_alt[model] = average(timings_alt[model][0]) * scaling_factor[i]
-    ave_alt_cluster[model] = average(timings_alt[model][1]) * scaling_factor[i]
+    ave_new[model] = average(timings_new[model][0]) * scaling_factor
+    ave_new_cluster[model] = average(timings_new[model][1]) * scaling_factor
+    ave_alt[model] = average(timings_alt[model][0]) * scaling_factor
+    ave_alt_cluster[model] = average(timings_alt[model][1]) * scaling_factor
 
     # The SD.
-    sd_new[model] = std(timings_new[model][0]) * scaling_factor[i]
-    sd_new_cluster[model] = std(timings_new[model][1]) * scaling_factor[i]
-    sd_alt[model] = std(timings_alt[model][0]) * scaling_factor[i]
-    sd_alt_cluster[model] = std(timings_alt[model][1]) * scaling_factor[i]
+    sd_new[model] = std(timings_new[model][0]) * scaling_factor
+    sd_new_cluster[model] = std(timings_new[model][1]) * scaling_factor
+    sd_alt[model] = std(timings_alt[model][0]) * scaling_factor
+    sd_alt_cluster[model] = std(timings_alt[model][1]) * scaling_factor
 
     # The speed up.
     speed_up[model] = ave_alt[model] / ave_new[model]
@@ -202,8 +189,17 @@ for i in range(len(models)):
 
 # Final printout.
 print("\n\n100 single spins analysis:")
-for model in models:
+for i in range(len(models)):
+    # Alias.
+    model, script, iter, scaling_factor = models[i]
     print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster." % (model+':', ave_alt[model], sd_alt[model], ave_new[model], sd_new[model], speed_up[model]))
+
 print("\nCluster of 100 spins analysis:")
-for model in models:
-    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster." % (model+':', ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model]))
+for i in range(len(models)):
+    # Alias.
+    model, script, iter, scaling_factor = models[i]
+    if model == 'IT99':
+        comment = "IT99: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.:"
+    else:
+        comment = ""
+    print("%-25s  %7.3f+/-%.3f -> %7.3f+/-%.3f, %7.3fx faster. %s" % (model+':', ave_alt_cluster[model], sd_alt_cluster[model], ave_new_cluster[model], sd_new_cluster[model], speed_up_cluster[model], comment) )
