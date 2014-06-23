@@ -27,7 +27,7 @@ from unittest import TestCase
 # relax module imports.
 from lib.dispersion.ns_matrices import rcpmg_3d_rankN, rmmq_2site_rankN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
-from lib.dispersion.matrix_exponential import matrix_exponential_rankN
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x, matrix_exponential_rank_NS_NM_NO_ND_x_x
 from status import Status; status = Status()
 
 
@@ -104,7 +104,7 @@ class Test_matrix_exponential(TestCase):
         R_mat = rcpmg_3d_rankN(R1A=r10a, R1B=r10b, R2A=r20a, R2B=r20b, pA=pA, pB=pB, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-        Rexpo_mat = matrix_exponential_rankN(R_mat)
+        Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
     
         # Loop over the spins
         for si in range(NS):
@@ -146,8 +146,8 @@ class Test_matrix_exponential(TestCase):
         m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # The A+/- matrices.
-        A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
-        A_neg_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+        A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+        A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
     
         # Loop over spins.
         for si in range(NS):
@@ -202,8 +202,8 @@ class Test_matrix_exponential(TestCase):
         m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
     
         # The A+/- matrices.
-        A_pos_mat = matrix_exponential_rankN(m1_mat)
-        A_neg_mat = matrix_exponential_rankN(m2_mat)
+        A_pos_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat)
+        A_neg_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat)
     
         # Loop over spins.
         for si in range(NS):

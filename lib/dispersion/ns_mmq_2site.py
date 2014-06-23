@@ -56,7 +56,7 @@ from numpy import array, conj, complex64, dot, float64, log, multiply, sum
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.ns_matrices import rmmq_2site_rankN
-from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
@@ -122,9 +122,9 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
 
     # The M1 and M2 matrices.
     # Equivalent to D+.
-    M1_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
+    M1_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
     # Equivalent to Z-.
-    M2_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+    M2_mat = matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
 
     # The complex conjugates M1* and M2*
     M1_star_mat = conj(M1_mat)
@@ -280,8 +280,8 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
     m2_mat = rmmq_2site_rankN(R20A=R20A, R20B=R20B, dw=-dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
     # The A+/- matrices.
-    A_pos_mat = matrix_exponential_rankN(m1_mat, dtype=complex64)
-    A_neg_mat = matrix_exponential_rankN(m2_mat, dtype=complex64)
+    A_pos_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m1_mat, dtype=complex64)
+    A_neg_mat =  matrix_exponential_rank_NS_NM_NO_ND_x_x(m2_mat, dtype=complex64)
 
     # Loop over spins.
     for si in range(NS):

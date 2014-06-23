@@ -56,7 +56,7 @@ from numpy import dot, sum
 # relax module imports.
 from lib.dispersion.ns_matrices import rr1rho_3d_2site_rankN
 from lib.float import isNaN
-from lib.linear_algebra.matrix_exponential import matrix_exponential, matrix_exponential_rankN
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
 
 
 def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
@@ -105,7 +105,7 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     R_mat = rr1rho_3d_2site_rankN(R1=r1, r1rho_prime=r1rho_prime, dw=dw, omega=omega, offset=offset, w1=spin_lock_fields, k_AB=k_AB, k_BA=k_BA, relax_time=relax_time)
 
     # This matrix is a propagator that will evolve the magnetization with the matrix R.
-    Rexpo_mat = matrix_exponential_rankN(R_mat)
+    Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
 
     # Loop over spins.
     for si in range(NS):

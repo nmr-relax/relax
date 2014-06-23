@@ -63,7 +63,7 @@ from numpy.ma import fix_invalid, masked_where
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.ns_matrices import rcpmg_star_rankN
-from lib.linear_algebra.matrix_exponential import matrix_exponential_rankN
+from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
 from lib.linear_algebra.matrix_power import square_matrix_power
 
 
@@ -127,8 +127,8 @@ def r2eff_ns_cpmg_2site_star(M0=None, r20a=None, r20b=None, pA=None, dw=None, dw
     # The matrix R that contains all the contributions to the evolution, i.e. relaxation, exchange and chemical shift evolution.
     R_mat, cR2_mat, Rr_mat, Rex_mat, RCS_mat = rcpmg_star_rankN(R2A=r20a, R2B=r20b, dw=dw, k_AB=k_AB, k_BA=k_BA, tcp=tcp)
 
-    eR_mat = matrix_exponential_rankN(R_mat)
-    ecR2_mat = matrix_exponential_rankN(cR2_mat)
+    eR_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
+    ecR2_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(cR2_mat)
 
     # Loop over the spins
     for si in range(NS):
