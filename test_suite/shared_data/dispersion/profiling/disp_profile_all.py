@@ -21,7 +21,20 @@
 #                                                                             #
 ###############################################################################
 
-# Python script for obtaining profiling statistics for multiple models between the current and an alternative version of relax.
+"""Python script for obtaining profiling statistics for multiple models between the current and an alternative version of relax.
+
+There are 3 ways to use this script.  The first is to modify the path1 and path2 variables in this script, where path1 is the newer relax version, and then run it as:
+
+$ ./disp_profile_all.py
+
+The second is to run this by supplying the path of the alternate relax version:
+
+$ ./disp_profile_all.py /data/relax/tags/3.2.1
+
+The final way is to supply the path for both relax versions, where the first argument is the newer version of relax:
+
+$ ./disp_profile_all.py /data/relax/tags/3.2.2 /data/relax/tags/3.2.1
+"""
 
 # Python module imports.
 from numpy import average, arange, array, asarray, count_nonzero, float64, std, zeros
@@ -64,11 +77,14 @@ models = [
     ['NS R1rho 2-site', 'profiling_ns_r1rho_2site.py', 10, 10],
 ]
 
-# Path to relax 3.2.2, or any other version.
-if len(sys.argv) == 1:
-    alt_path = '/data/relax/tags/3.2.2'
-else:
-    alt_path = sys.argv[1]
+# Paths to the two relax versions.
+path1 = '.'
+path2 = '/data/relax/tags/3.2.2'
+if len(sys.argv) == 3:
+    path1 = sys.argv[1]
+    path2 = sys.argv[2]
+elif len(sys.argv) == 2:
+    path2 = sys.argv[1]
 
 # The Python executable name.
 python = 'python'
@@ -83,8 +99,15 @@ sys.stdout.write("\n\n")
 for i in range(len(models)):
     # Alias.
     model, script, iter, scaling_factor = models[i]
-    print("Copying: model=%s script=%s iterations=%s scale=%s"%(model, script, iter, scaling_factor))
-    copyfile(script, alt_path+sep+script)
+
+    # Copy to the first path.
+    if path1 != '.':
+        print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path1, model, script, iter, scaling_factor))
+        copyfile(script, path1+sep+script)
+
+    # Copy to the second path.
+    print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path2, model, script, iter, scaling_factor))
+    copyfile(script, path2+sep+script)
 
 # Initialise structures for the timing statistics.
 timings_new = {}
@@ -105,10 +128,12 @@ for exec_iter in range(N):
     for i in range(len(models)):
         model, script, iter, scaling_factor = models[i]
         # The commands to run.
-        cmds = [
-            "%s %s" % (python, script),
-            "%s %s %s" % (python, alt_path+sep+script, alt_path),
-        ]
+        cmds = []
+        if path1 == '.':
+            cmds.append("%s %s" % (python, script))
+        else:
+            cmds.append("%s %s %s" % (python, path1+sep+script, path1))
+        cmds.append("%s %s %s" % (python, path2+sep+script, path2))
 
         # Loop over the commands.
         for cmd_index in range(2):
