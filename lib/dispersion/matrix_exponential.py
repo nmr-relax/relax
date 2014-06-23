@@ -57,15 +57,17 @@ def matrix_exponential(A):
         return array(eA.real)
 
 
-def matrix_exponential_rankN(A):
+def matrix_exponential_rankN(A, dtype=None):
     """Calculate the exact matrix exponential using the eigenvalue decomposition approach, for higher dimensional data.
 
     Here X is the Row and Column length, of the outer square matrix.
 
-    @param A:   The square matrix to calculate the matrix exponential of.
-    @type A:    numpy float array of rank [NE][NS][NM][NO][ND][X][X]
-    @return:    The matrix exponential.  This will have the same dimensionality as the A matrix.
-    @rtype:     numpy float array of rank [NE][NS][NM][NO][ND][X][X]
+    @param A:       The square matrix to calculate the matrix exponential of.
+    @type A:        numpy float array of rank [NE][NS][NM][NO][ND][X][X]
+    @param dtype:   If provided, forces the calculation to use the data type specified.
+    @type type:     data-type, optional
+    @return:        The matrix exponential.  This will have the same dimensionality as the A matrix.
+    @rtype:         numpy float array of rank [NE][NS][NM][NO][ND][X][X]
     """
 
     # Set initial to None.
@@ -75,6 +77,15 @@ def matrix_exponential_rankN(A):
         NE, NS, NM, NO, ND, Row, Col = A.shape
     elif len(A.shape) == 6:
         NS, NM, NO, ND, Row, Col = A.shape
+
+    # Convert dtype, if specified.
+    if dtype != None:
+        dtype_mat = A.dtype
+
+        # If the dtype is different from the input.
+        if dtype_mat != dtype:
+            # This needs to be made as a copy.
+            A = A.astype(dtype)
 
     # Is the original matrix real?
     complex_flag = any(iscomplex(A))
@@ -102,7 +113,11 @@ def matrix_exponential_rankN(A):
         eye_mat = tile(eye(Row)[newaxis, newaxis, newaxis, newaxis, newaxis, ...], (NE, NS, NM, NO, ND, 1, 1) )
 
     # Transform it to a diagonal matrix, with elements from vector down the diagonal.
-    W_exp_diag = multiply(W_exp, eye_mat )
+    # Use the dtype, if specified.
+    if dtype != None:
+        W_exp_diag = multiply(W_exp, eye_mat, dtype=dtype )
+    else:
+        W_exp_diag = multiply(W_exp, eye_mat)
 
     # Make dot products for higher dimension.
     # "...", the Ellipsis notation, is designed to mean to insert as many full slices (:)
