@@ -117,7 +117,7 @@ for i in range(len(models)):
     model, script, iter, scaling_factor = models[i]
 
     # Copy to the first path.
-    if current:
+    if not current:
         print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path1, model, script, iter, scaling_factor))
         copyfile(script, path1+sep+script)
 
