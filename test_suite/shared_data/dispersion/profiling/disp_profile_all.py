@@ -38,7 +38,7 @@ $ ./disp_profile_all.py /data/relax/tags/3.2.2 /data/relax/tags/3.2.1
 """
 
 # Python module imports.
-from numpy import average, arange, array, asarray, count_nonzero, float64, std, zeros
+from numpy import average, arange, array, float64, std, zeros
 from os import pardir, path, sep
 from re import search
 from shutil import copyfile

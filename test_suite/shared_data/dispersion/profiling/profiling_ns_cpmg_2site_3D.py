@@ -25,8 +25,7 @@
 # Python module imports.
 import cProfile
 from os import getcwd, path
-from numpy import array, arange, asarray, int32, float64, ones, pi, zeros
-import numpy as np
+from numpy import array, arange, int32, float64, pi
 import pstats
 import sys
 import tempfile
@@ -53,9 +52,8 @@ sys.path.reverse()
 
 # relax module imports.
 from lib.physical_constants import g1H, g15N
-from target_functions.chi2 import chi2
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_B14_FULL, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL
+from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_NS_CPMG_2SITE_3D
 
 
 # Alter setup.
