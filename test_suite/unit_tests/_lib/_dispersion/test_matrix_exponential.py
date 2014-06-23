@@ -25,7 +25,8 @@ from numpy import complex64, complex128, dot, einsum, load, sum
 from unittest import TestCase
 
 # relax module imports.
-from lib.dispersion.ns_matrices import rcpmg_3d_rankN, rmmq_2site_rankN
+from lib.dispersion.ns_cpmg_2site_3d import rcpmg_3d_rankN
+from lib.dispersion.ns_mmq_2site import rmmq_2site_rankN
 from lib.linear_algebra.matrix_exponential import matrix_exponential
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x, matrix_exponential_rank_NS_NM_NO_ND_x_x
 from status import Status; status = Status()

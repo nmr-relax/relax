@@ -57,13 +57,157 @@ More information on the NS MMQ 3-site model can be found in the:
 
 # Python module imports.
 from math import floor
-from numpy import array, conj, dot, float64, log, sum
+from numpy import array, conj, dot, float64, log, multiply, sum
 
 # relax module imports.
 from lib.float import isNaN
-from lib.dispersion.ns_matrices import rmmq_3site_rankN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
 from lib.linear_algebra.matrix_power import square_matrix_power
+
+# Repetitive calculations (to speed up calculations).
+# R20.
+m_r20a = array([
+    [-1, 0,  0],
+    [ 0,  0,  0],
+    [ 0,  0,  0]], float64)
+
+m_r20b = array([
+    [ 0,  0,  0],
+    [ 0, -1,  0],
+    [ 0,  0,  0]], float64)
+
+m_r20c = array([
+    [ 0,  0,  0],
+    [ 0,  0,  0],
+    [ 0,  0, -1]], float64)
+
+# dw.
+m_dw_AB = array([
+    [ 0,  0,  0],
+    [ 0,  1,  0],
+    [ 0,  0,  0]], float64)
+
+m_dw_AC = array([
+    [ 0,  0,  0],
+    [ 0,  0,  0],
+    [ 0,  0,  1]], float64)
+
+# k_x.
+m_k_AB = array([
+    [-1, 0,  0],
+    [ 1, 0,  0],
+    [ 0, 0,  0]], float64)
+
+m_k_BA = array([
+    [ 0,  1, 0],
+    [ 0, -1, 0],
+    [ 0, 0,  0]], float64)
+
+m_k_BC = array([
+    [ 0,  0,  0],
+    [ 0, -1,  0],
+    [ 0,  1,  0]], float64)
+
+m_k_CB = array([
+    [ 0,  0,  0],
+    [ 0,  0,  1],
+    [ 0,  0, -1]], float64)
+
+m_k_AC = array([
+    [-1, 0,  0],
+    [ 0, 0,  0],
+    [ 1, 0,  0]], float64)
+
+m_k_CA = array([
+    [ 0,  0,  1],
+    [ 0,  0,  0],
+    [ 0,  0, -1]], float64)
+
+
+def rmmq_3site_rankN(R20A=None, R20B=None, R20C=None, dw_AB=None, dw_AC=None, k_AB=None, k_BA=None, k_BC=None, k_CB=None, k_AC=None, k_CA=None, tcp=None):
+    """The Bloch-McConnell matrix for 3-site exchange.
+
+    @keyword R20A:          The transverse, spin-spin relaxation rate for state A.
+    @type R20A:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword R20B:          The transverse, spin-spin relaxation rate for state B.
+    @type R20B:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword R20C:          The transverse, spin-spin relaxation rate for state C.
+    @type R20C:             numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_AB:         The combined chemical exchange difference parameters between states A and B in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AB:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword dw_AC:         The combined chemical exchange difference parameters between states A and C in rad/s.  This can be any combination of dw and dwH.
+    @type dw_AC:            numpy float array of rank [NS][NM][NO][ND]
+    @keyword k_AB:          The rate of exchange from site A to B (rad/s).
+    @type k_AB:             float
+    @keyword k_BA:          The rate of exchange from site B to A (rad/s).
+    @type k_BA:             float
+    @keyword k_BC:          The rate of exchange from site B to C (rad/s).
+    @type k_BC:             float
+    @keyword k_CB:          The rate of exchange from site C to B (rad/s).
+    @type k_CB:             float
+    @keyword k_AC:          The rate of exchange from site A to C (rad/s).
+    @type k_AC:             float
+    @keyword k_CA:          The rate of exchange from site C to A (rad/s).
+    @type k_CA:             float
+    @keyword tcp:           The tau_CPMG times (1 / 4.nu1).
+    @type tcp:              numpy float array of rank [NE][NS][NM][NO][ND]
+    """
+
+    # The first row.
+    #matrix[0, 0] = -k_AB - k_AC - R20A
+    #matrix[0, 1] = k_BA
+    #matrix[0, 2] = k_CA
+
+    # The second row.
+    #matrix[1, 0] = k_AB
+    #matrix[1, 1] = -k_BA - k_BC + 1.j*dw_AB - R20B
+    #matrix[1, 2] = k_CB
+
+    # The third row.
+    #matrix[2, 0] = k_AC
+    #matrix[2, 1] = k_BC
+    #matrix[2, 2] = -k_CB - k_CA + 1.j*dw_AC - R20C
+
+    # Pre-multiply with tcp.
+    r20a_tcp = R20A * tcp
+    r20b_tcp = R20B * tcp
+    r20c_tcp = R20C * tcp
+
+    # Complex dw.
+    dw_AB_C_tcp = dw_AB * tcp * 1j
+    dw_AC_C_tcp = dw_AC * tcp * 1j
+
+    k_AB_tcp = k_AB * tcp
+    k_BA_tcp = k_BA * tcp
+    k_BC_tcp = k_BC * tcp
+    k_CB_tcp = k_CB * tcp
+    k_AC_tcp = k_AC * tcp
+    k_CA_tcp = k_CA * tcp
+
+    # Multiply and expand.
+    m_r20a_tcp = multiply.outer( r20a_tcp, m_r20a )
+    m_r20b_tcp = multiply.outer( r20b_tcp, m_r20b )
+    m_r20c_tcp = multiply.outer( r20c_tcp, m_r20c )
+
+    # Multiply and expand.
+    m_dw_AB_C_tcp = multiply.outer( dw_AB_C_tcp, m_dw_AB )
+    m_dw_AC_C_tcp = multiply.outer( dw_AC_C_tcp, m_dw_AC )
+
+    # Multiply and expand.
+    m_k_AB_tcp = multiply.outer( k_AB_tcp, m_k_AB )
+    m_k_BA_tcp = multiply.outer( k_BA_tcp, m_k_BA )
+    m_k_BC_tcp = multiply.outer( k_BC_tcp, m_k_BC )
+    m_k_CB_tcp = multiply.outer( k_CB_tcp, m_k_CB )
+    m_k_AC_tcp = multiply.outer( k_AC_tcp, m_k_AC )
+    m_k_CA_tcp = multiply.outer( k_CA_tcp, m_k_CA )
+
+    # Collect matrix.
+    matrix = (m_r20a_tcp + m_r20b_tcp + m_r20c_tcp
+            + m_dw_AB_C_tcp + m_dw_AC_C_tcp
+            + m_k_AB_tcp + m_k_BA_tcp + m_k_BC_tcp
+            + m_k_CB_tcp + m_k_AC_tcp + m_k_CA_tcp)
+    
+    return matrix
 
 
 def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None, R20B=None, R20C=None, pA=None, pB=None, dw_AB=None, dw_AC=None, dwH_AB=None, dwH_AC=None, kex_AB=None, kex_BC=None, kex_AC=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):

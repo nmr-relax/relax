@@ -50,13 +50,142 @@ More information on the NS R1rho 2-site model can be found in the:
 """
 
 # Python module imports.
-from math import atan2, cos, log, sin
-from numpy import dot, sum
+from math import atan2
+from numpy import array, cos, dot, float64, log, multiply, sin, sum
 
 # relax module imports.
-from lib.dispersion.ns_matrices import rr1rho_3d_2site_rankN
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+
+# Repetitive calculations (to speed up calculations).
+m_r1rho_prime = array([
+    [-1,  0,  0,  0,  0,  0],
+    [ 0, -1,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0, -1,  0,  0],
+    [ 0,  0,  0,  0, -1,  0],
+    [ 0,  0,  0,  0,  0,  0]], float64)
+
+m_wA = array([
+    [ 0, -1,  0,  0,  0,  0],
+    [ 1,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0]], float64)
+
+m_wB = array([
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0, -1,  0],
+    [ 0,  0,  0,  1,  0,  0],
+    [ 0,  0,  0,  0,  0,  0]], float64)
+
+m_w1 = array([
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0, -1,  0,  0,  0],
+    [ 0,  1,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0, -1],
+    [ 0,  0,  0,  0,  1,  0]], float64)
+
+m_k_AB = array([
+    [-1,  0,  0,  0,  0,  0],
+    [ 0, -1,  0,  0,  0,  0],
+    [ 0,  0, -1,  0,  0,  0],
+    [ 1,  0,  0,  0,  0,  0],
+    [ 0,  1,  0,  0,  0,  0],
+    [ 0,  0,  1,  0,  0,  0]], float64)
+
+m_k_BA = array([
+    [ 0,  0,  0,  1,  0,  0],
+    [ 0,  0,  0,  0,  1,  0],
+    [ 0,  0,  0,  0,  0,  1],
+    [ 0,  0,  0, -1,  0,  0],
+    [ 0,  0,  0,  0, -1,  0],
+    [ 0,  0,  0,  0,  0, -1]], float64)
+
+m_R1 = array([
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0, -1,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0,  0],
+    [ 0,  0,  0,  0,  0, -1]], float64)
+
+
+def rr1rho_3d_2site_rankN(R1=None, r1rho_prime=None, dw=None, omega=None, offset=None, w1=None, k_AB=None, k_BA=None, relax_time=None):
+    """Definition of the multidimensional 3D exchange matrix, of rank [NE][NS][NM][NO][ND][6][6].
+
+    This code originates from the funNumrho.m file from the Skrynikov & Tollinger code (the sim_all.tar file https://gna.org/support/download.php?file_id=18404 attached to https://gna.org/task/?7712#comment5).
+
+
+    @keyword R1:            The longitudinal, spin-lattice relaxation rate.
+    @type R1:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword r1rho_prime:   The R1rho transverse, spin-spin relaxation rate in the absence of exchange.
+    @type r1rho_prime:      numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword dw:            The chemical exchange difference between states A and B in rad/s.
+    @type dw:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword omega:         The chemical shift for the spin in rad/s.
+    @type omega:            numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword offset:        The spin-lock offsets for the data.
+    @type offset:           numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword w1:            The spin-lock field strength in rad/s.
+    @type w1:               numpy float array of rank [NE][NS][NM][NO][ND]
+    @keyword k_AB:          The forward exchange rate from state A to state B.
+    @type k_AB:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    @keyword k_BA:          The reverse exchange rate from state B to state A.
+    @type k_BA:             float
+    @keyword relax_time:    The total relaxation time period for each spin-lock field strength (in seconds).
+    @type relax_time:       numpy float array of rank [NE][NS][NM][NO][ND]
+    @return:                The relaxation matrix.
+    @rtype:                 numpy float array of rank [NE][NS][NM][NO][ND][6][6]
+    """
+
+    # Wa: The chemical shift offset of state A from the spin-lock. Larmor frequency [s^-1].
+    Wa = omega
+    # Wb: The chemical shift offset of state A from the spin-lock. Larmor frequency [s^-1].
+    Wb = omega + dw
+
+    # Population-averaged Larmor frequency [s^-1].
+    #W = pA*Wa + pB*Wb
+
+    # Offset of spin-lock from A.
+    dA = Wa - offset
+
+    # Offset of spin-lock from B.
+    dB = Wb - offset
+
+    # Offset of spin-lock from population-average.
+    #d = W - offset
+
+    # Alias to original parameter name.
+    wA=dA
+    wB=dB
+
+    # Multiply and expand.
+    mat_r1rho_prime = multiply.outer( r1rho_prime * relax_time, m_r1rho_prime )
+
+    mat_wA = multiply.outer( wA * relax_time, m_wA )
+    mat_wB = multiply.outer( wB * relax_time, m_wB )
+
+    mat_w1 = multiply.outer( w1 * relax_time, m_w1 )
+
+    mat_k_AB = multiply.outer( k_AB * relax_time, m_k_AB )
+    mat_k_BA = multiply.outer( k_BA * relax_time, m_k_BA )
+
+    mat_R1 = multiply.outer( R1 * relax_time, m_R1 )
+
+    # Collect matrix.
+    matrix = (mat_r1rho_prime + mat_wA + mat_wB
+        + mat_w1 + mat_k_AB + mat_k_BA
+        + mat_R1)
+
+    # Return the matrix.
+    return matrix
 
 
 def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, pA=None, dw=None, kex=None, spin_lock_fields=None, relax_time=None, inv_relax_time=None, back_calc=None, num_points=None):
