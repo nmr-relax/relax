@@ -100,7 +100,7 @@ for iter, path in data:
     sys.stdout.write("\n%s relax version:  " % iter)
 
     # The command to obtain the version.
-    cmd = "cd %s; %s -c \"import version; print(version.version_full())\"" % (path, python)
+    cmd = "cd %s; ./relax -v" % path
     pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
 
     # Close the pipe.
