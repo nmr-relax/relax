@@ -37,6 +37,7 @@ __all__ = [
     'ns_cpmg_2site_expanded',
     'ns_cpmg_2site_star',
     'ns_matrices',
+    'matrix_exponential',
     'ns_mmq_2site',
     'ns_mmq_3site',
     'ns_r1rho_2site',
