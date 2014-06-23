@@ -36,6 +36,10 @@
 # Dependency checks.
 import dep_check
 
+# Eliminate the ^[[?1034h escape code being produced on Linux systems by the import of the readline module.
+import os
+os.environ['TERM'] = ''
+
 # Set up the Python 2 and 3 work-arounds.
 import lib.compat
 
