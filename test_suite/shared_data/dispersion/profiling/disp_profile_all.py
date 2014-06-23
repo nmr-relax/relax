@@ -45,12 +45,6 @@ from shutil import copyfile
 from subprocess import PIPE, Popen
 import sys
 
-# Modify the system path to add the base directory of the current relax version.
-sys.path.append(path.join(pardir, pardir, pardir, pardir))
-
-# relax module imports.
-import version
-
 
 # The number of iterations to run each script for the statistics.
 N = 10
@@ -86,14 +80,35 @@ if len(sys.argv) == 3:
     path2 = sys.argv[2]
 elif len(sys.argv) == 2:
     path2 = sys.argv[1]
+current = False
+if path1 == '.':
+    current = True
+    path1 = path.join(pardir, pardir, pardir, pardir)
 
 # The Python executable name.
 python = 'python'
 
 
-# First a printout of the relax version.
-sys.stdout.write("\n\nCurrent relax version:  ")
-sys.stdout.write(version.version_full())
+# First a printout of the relax versions.
+data = [
+    ['1st', path1],
+    ['2nd', path2]
+]
+sys.stdout.write("\n\n")
+for iter, path in data:
+    # Intro text.
+    sys.stdout.write("\n%s relax version:  " % iter)
+
+    # The command to obtain the version.
+    cmd = "cd %s; %s -c \"import version; print(version.version_full())\"" % (path, python)
+    pipe = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=PIPE, close_fds=False)
+
+    # Close the pipe.
+    pipe.stdin.close()
+
+    # Write out the output.
+    for line in pipe.stdout.readlines():
+        sys.stdout.write(line[:-1])
 sys.stdout.write("\n\n")
 
 # Copy the current scripts to the base directory of the alternative relax version.
@@ -102,7 +117,7 @@ for i in range(len(models)):
     model, script, iter, scaling_factor = models[i]
 
     # Copy to the first path.
-    if path1 != '.':
+    if current:
         print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path1, model, script, iter, scaling_factor))
         copyfile(script, path1+sep+script)
 
@@ -130,7 +145,7 @@ for exec_iter in range(N):
         model, script, iter, scaling_factor = models[i]
         # The commands to run.
         cmds = []
-        if path1 == '.':
+        if current:
             cmds.append("%s %s" % (python, script))
         else:
             cmds.append("%s %s %s" % (python, path1+sep+script, path1))
