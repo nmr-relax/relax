@@ -40,7 +40,7 @@ class Test_matrix_exponential(TestCase):
         # Default parameter values.
         self.data = status.install_path+sep+'test_suite'+sep+'shared_data'+sep+'dispersion'+sep+'unit_tests'+sep+'lib'+sep+'dispersion'+sep+'matrix_exponential'
 
-    def return_data(self, fname):
+    def return_data_ns_cpmg_2site_3d(self, fname):
         """Return the data structures from the data path."""
 
         r180x = load(fname+"_r180x"+".npy")
@@ -71,7 +71,7 @@ class Test_matrix_exponential(TestCase):
         """Test the matrix_exponential_rankN() function for higher dimensional data, and compare to matrix_exponential.  This uses the data from systemtest Relax_disp.test_hansen_cpmg_data_to_ns_cpmg_2site_3D."""
 
         fname = self.data + sep+ "test_hansen_cpmg_data_to_ns_cpmg_2site_3D"
-        r180x, M0, r10a, r10b, r20a, r20b, pA, dw, dw_orig, kex, inv_tcpmg, tcp, num_points, power, back_calc, pB, k_BA, k_AB = self.return_data(fname)
+        r180x, M0, r10a, r10b, r20a, r20b, pA, dw, dw_orig, kex, inv_tcpmg, tcp, num_points, power, back_calc, pB, k_BA, k_AB = self.return_data_ns_cpmg_2site_3d(fname)
 
         # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
         NE, NS, NM, NO, ND = back_calc.shape
