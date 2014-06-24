@@ -75,7 +75,7 @@ def compile_2nd_matrix_double_rotor(matrix, Rx2_eigen, smax, smaxb):
     return rotate_daeg(matrix, Rx2_eigen)
 
 
-def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
+def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, c=None, full_in_ref_frame=None, r_pivot_atom=None, r_pivot_atom_rev=None, r_ln_pivot=None, r_inter_pivot=None, A=None, R_eigen=None, RT_eigen=None, Ri_prime=None, Ri2_prime=None, pcs_theta=None, pcs_theta_err=None, missing_pcs=None):
     """The averaged PCS value via numerical integration for the double rotor frame order model.
 
     @keyword points:            The Sobol points in the torsion-tilt angle space.
@@ -102,8 +102,10 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
     @type R_eigen:              numpy rank-2, 3D array
     @keyword RT_eigen:          The transpose of the eigenframe rotation matrix (for faster calculations).
     @type RT_eigen:             numpy rank-2, 3D array
-    @keyword Ri_prime:          The array of pre-calculated rotation matrices for the in-frame double rotor motion, used to calculate the PCS for each state i in the numerical integration.
+    @keyword Ri_prime:          The array of pre-calculated rotation matrices for the in-frame double rotor motion for the 1st mode of motion, used to calculate the PCS for each state i in the numerical integration.
     @type Ri_prime:             numpy rank-3, array of 3D arrays
+    @keyword Ri2_prime:         The array of pre-calculated rotation matrices for the in-frame double rotor motion for the 2nd mode of motion, used to calculate the PCS for each state i in the numerical integration.
+    @type Ri2_prime:            numpy rank-3, array of 3D arrays
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
     @keyword pcs_theta_err:     The storage structure for the back-calculated PCS errors.
@@ -119,6 +121,8 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
     # Fast frame shift.
     Ri = dot(R_eigen, tensordot(Ri_prime, RT_eigen, axes=1))
     Ri = swapaxes(Ri, 0, 1)
+    Ri2 = dot(R_eigen, tensordot(Ri2_prime, RT_eigen, axes=1))
+    Ri2 = swapaxes(Ri2, 0, 1)
 
     # Unpack the points.
     sigma, sigma2 = swapaxes(points, 0, 1)
@@ -129,9 +133,11 @@ def pcs_numeric_int_double_rotor(points=None, sigma_max=None, sigma_max_2=None, 
         # Outside of the distribution, so skip the point.
         if abs(sigma[i]) > sigma_max:
             continue
+        if abs(sigma2[i]) > sigma_max_2:
+            continue
 
         # Calculate the PCSs for this state.
-        pcs_pivot_motion_double_rotor(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri[i], Ri2=Ri[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
+        pcs_pivot_motion_double_rotor(full_in_ref_frame=full_in_ref_frame, r_pivot_atom=r_pivot_atom, r_pivot_atom_rev=r_pivot_atom_rev, r_ln_pivot=r_ln_pivot, r_inter_pivot=r_inter_pivot, A=A, Ri=Ri[i], Ri2=Ri2[i], pcs_theta=pcs_theta, pcs_theta_err=pcs_theta_err, missing_pcs=missing_pcs)
 
         # Increment the number of points.
         num += 1
@@ -170,9 +176,9 @@ def pcs_pivot_motion_double_rotor(full_in_ref_frame=None, r_pivot_atom=None, r_p
     @type r_inter_pivot:        numpy rank-1, 3D array
     @keyword A:                 The full alignment tensor of the non-moving domain.
     @type A:                    numpy rank-2, 3D array
-    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i for the first mode of motion.
+    @keyword Ri:                The frame-shifted, pre-calculated rotation matrix for state i for the 1st mode of motion.
     @type Ri:                   numpy rank-2, 3D array
-    @keyword Ri2:               The frame-shifted, pre-calculated rotation matrix for state i for the second mode of motion.
+    @keyword Ri2:               The frame-shifted, pre-calculated rotation matrix for state i for the 2nd mode of motion.
     @type Ri2:                  numpy rank-2, 3D array
     @keyword pcs_theta:         The storage structure for the back-calculated PCS values.
     @type pcs_theta:            numpy rank-2 array
@@ -183,7 +189,7 @@ def pcs_pivot_motion_double_rotor(full_in_ref_frame=None, r_pivot_atom=None, r_p
     """
 
     # Rotate the first pivot to atomic position vectors.
-    rot_vect = dot(r_pivot_atom, Ri) + r_ln_pivot
+    rot_vect = dot(r_pivot_atom, Ri)
 
     # Add the inter-pivot vector to obtain the 2nd pivot to atomic position vectors.
     add(r_inter_pivot, rot_vect, rot_vect)
