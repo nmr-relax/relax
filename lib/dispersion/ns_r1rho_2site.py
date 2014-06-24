@@ -50,8 +50,7 @@ More information on the NS R1rho 2-site model can be found in the:
 """
 
 # Python module imports.
-from math import atan2
-from numpy import array, cos, dot, float64, log, multiply, sin, sum
+from numpy import array, cos, dot, einsum, float64, log, multiply, sin, sum
 
 # relax module imports.
 from lib.float import isNaN
@@ -236,6 +235,9 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # This matrix is a propagator that will evolve the magnetization with the matrix R.
     Rexpo_mat = matrix_exponential_rank_NE_NS_NM_NO_ND_x_x(R_mat)
 
+    # Magnetization evolution.
+    Rexpo_M0_mat = einsum('...ij,...jk', Rexpo_mat, M0)
+
     # Loop over spins.
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -245,23 +247,19 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
                 # Extract number of points.
                 num_points_i = num_points[0, si, mi, oi]
 
-                # Repetitive calculations (to speed up calculations).
-                # Offset of spin-lock from A.
-                dA = omega[0, si, mi, oi, 0] - offset[0, si, mi, oi, 0]
-
                 # Loop over the time points, back calculating the R2eff values.
                 for j in range(num_points_i):
-                    # The following lines rotate the magnetization previous to spin-lock into the weff frame.
-                    theta = atan2(spin_lock_fields[0, si, mi, oi, j], dA)
-                    M0[0] = sin(theta)    # The A state initial X magnetisation.
-                    M0[2] = cos(theta)    # The A state initial Z magnetisation.
+                    # Extract the preformed matrix that rotate the magnetization previous to spin-lock into the weff frame.
+                    M0_i= M0[0, si, mi, oi, j, :, 0]
 
                     # This matrix is a propagator that will evolve the magnetization with the matrix R.
                     Rexpo_i = Rexpo_mat[0, si, mi, oi, j]
 
+                    # Extract from the pre-formed Magnetization evolution matrix.
+                    Rexpo_M0_mat_i = Rexpo_M0_mat[0, si, mi, oi, j, :, 0]
+
                     # Magnetization evolution.
-                    MA = dot(Rexpo_i, M0)
-                    MA = dot(M0, MA)
+                    MA = dot(M0_i, Rexpo_M0_mat_i)
 
                     # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     if MA <= 0.0 or isNaN(MA):

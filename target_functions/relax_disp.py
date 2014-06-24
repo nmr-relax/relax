@@ -27,7 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import add, array, asarray, complex64, dot, float64, int16, max, multiply, ones, sqrt, sum, tile, zeros
+from numpy import add, array, arctan2, asarray, cos, complex64, dot, float64, int16, max, multiply, ones, sin, sqrt, sum, tile, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -404,7 +404,17 @@ class Dispersion:
             self.M0 = zeros(7, float64)
             self.M0[0] = 0.5
         if model in [MODEL_NS_R1RHO_2SITE]:
-            self.M0 = zeros(6, float64)
+            # Offset of spin-lock from A.
+            da_mat = self.chemical_shifts - self.offset
+            # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+            theta_mat = arctan2(self.spin_lock_omega1, da_mat)
+            M0_0 = zeros([6, 1], float64)
+            M0_0[0, 0] = 1
+            M0_sin = multiply.outer( sin(theta_mat), M0_0 )
+            M0_2 = zeros([6, 1], float64)
+            M0_2[2, 0] = 1
+            M0_cos = multiply.outer( cos(theta_mat), M0_2 )
+            self.M0 = M0_sin + M0_cos
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
 
