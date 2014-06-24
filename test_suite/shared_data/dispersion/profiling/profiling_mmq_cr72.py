@@ -53,7 +53,7 @@ sys.path.reverse()
 # relax module imports.
 from lib.physical_constants import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_SQ, MODEL_CR72
+from specific_analyses.relax_disp.variables import MODEL_MMQ_CR72, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
 
 
 # Alter setup.
@@ -108,7 +108,7 @@ class Profile(Dispersion):
     Class Profile inherits the Dispersion container class object.
     """
 
-    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def __init__(self, num_spins=1, model=None, r2=None, r2a=None, r2b=None, dw=None, dw_AB=None, dw_BC=None, dwH=None, dwH_AB=None, dwH_BC=None, pA=None, kex=None, kex_AB=None, pB=None, kex_BC=None, kex_AC=None, spins_params=None):
         """
         Special method __init__() is called first (acts as Constructor).
         It brings in data from outside the class like the variable num_spins.
@@ -144,7 +144,8 @@ class Profile(Dispersion):
         #self.fields = array([800. * 1E6])
         #self.fields = array([600. * 1E6, 800. * 1E6])
         self.fields = array([600. * 1E6, 800. * 1E6, 900. * 1E6])
-        self.exp_type = [EXP_TYPE_CPMG_SQ]
+        # EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
+        self.exp_type = [EXP_TYPE_CPMG_MQ]
         self.offset = [0]
 
         # Required data structures.
@@ -166,13 +167,13 @@ class Profile(Dispersion):
             self.error.append([1.0]*len(cpmg_point))
 
         # Assemble param vector.
-        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, pA=pA, kex=kex, spins_params=spins_params)
+        self.params = self.assemble_param_vector(r2=r2, r2a=r2a, r2b=r2b, dw=dw, dw_AB=dw_AB, dw_BC=dw_BC, dwH=dwH, dwH_AB=dwH_AB, dwH_BC=dwH_BC, pA=pA, kex=kex, kex_AB=kex_AB, pB=pB, kex_BC=kex_BC, kex_AC=kex_AC, spins_params=spins_params)
 
         # Make nested list arrays of data. And return them.
-        values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets = self.return_r2eff_arrays()
+        values, errors, cpmg_frqs, missing, frqs, frqs_H, exp_types, relax_times, offsets = self.return_r2eff_arrays()
 
         # Init the Dispersion Class.
-        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=None, cpmg_frqs=cpmg_frqs, spin_lock_nu1=None, chemical_shifts=None, offset=offsets, tilt_angles=None, r1=None, relax_times=relax_times, scaling_matrix=None)
+        self.model = Dispersion(model=self.model, num_params=None, num_spins=self.num_spins, num_frq=len(self.fields), exp_types=exp_types, values=values, errors=errors, missing=missing, frqs=frqs, frqs_H=frqs_H, cpmg_frqs=cpmg_frqs, spin_lock_nu1=None, chemical_shifts=None, offset=offsets, tilt_angles=None, r1=None, relax_times=relax_times, scaling_matrix=None)
 
 
     def return_r2eff_arrays(self):
@@ -248,6 +249,7 @@ class Profile(Dispersion):
 
                     # The Larmor frequency for this spin (and that of an attached proton for the MMQ models) and field strength (in MHz*2pi to speed up the ppm to rad/s conversion).
                     frqs[ei][si][mi] = 2.0 * pi * frq / g1H * g15N * 1e-6
+                    frqs_H[ei][si][mi] = 2.0 * pi * frq * 1e-6
 
                     # Get the cpmg frq.
                     cpmg_frqs[ei][mi][oi] = self.points[mi]
@@ -288,10 +290,10 @@ class Profile(Dispersion):
                         missing[ei][si][mi][oi] = array(missing[ei][si][mi][oi], int32)
 
         # Return the structures.
-        return values, errors, cpmg_frqs, missing, frqs, exp_types, relax_times, offsets
+        return values, errors, cpmg_frqs, missing, frqs, frqs_H, exp_types, relax_times, offsets
 
 
-    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, pA=None, kex=None, spins_params=None):
+    def assemble_param_vector(self, r2=None, r2a=None, r2b=None, dw=None, dw_AB=None, dw_BC=None, dwH=None, dwH_AB=None, dwH_BC=None, pA=None, kex=None, kex_AB=None, pB=None, kex_BC=None, kex_AC=None, spins_params=None):
         """Assemble the dispersion relaxation dispersion curve fitting parameter vector.
 
         @keyword r2:            The transversal relaxation rate.
@@ -328,10 +330,28 @@ class Profile(Dispersion):
                 value = value + mi + spin_index*0.1
             elif param_name == 'dw':
                 value = dw + spin_index
+            elif param_name == 'dw_AB':
+                value = dw_AB + spin_index
+            elif param_name == 'dw_BC':
+                value = dw_BC + spin_index
+            elif param_name == 'dwH':
+                value = dwH + spin_index
+            elif param_name == 'dwH_AB':
+                value = dw_AB + spin_index
+            elif param_name == 'dwH_BC':
+                value = dw_BC + spin_index
             elif param_name == 'pA':
                 value = pA
             elif param_name == 'kex':
                 value = kex
+            elif param_name == 'kex_AB':
+                value = kex_AB
+            elif param_name == 'pB':
+                value = pB
+            elif param_name == 'kex_BC':
+                value = kex_BC
+            elif param_name == 'kex_AC':
+                value = kex_AC
 
             # Add to the vector.
             param_vector.append(value)
@@ -378,6 +398,20 @@ class Profile(Dispersion):
 
             if 'dw' in spins_params:
                 yield 'dw', spin_index, 0
+            if 'dw_AB' in spins_params:
+                yield 'dw_AB', spin_index, 0
+            if 'dw_BC' in spins_params:
+                yield 'dw_BC', spin_index, 0
+
+        # Then a separate block for the proton chemical shift difference parameters for the MQ models (one per spin).
+        for spin_index in range(self.num_spins):
+
+            if 'dwH' in spins_params:
+                yield 'dwH', spin_index, 0
+            if 'dwH_AB' in spins_params:
+                yield 'dwH_AB', spin_index, 0
+            if 'dwH_BC' in spins_params:
+                yield 'dwH_BC', spin_index, 0
 
         # All other parameters (one per spin cluster).
         for param in spins_params:
@@ -386,7 +420,14 @@ class Profile(Dispersion):
                     yield 'pA', 0, 0
                 elif param == 'kex':
                     yield 'kex', 0, 0
-
+                elif param == 'kex_AB':
+                    yield 'kex_AB', 0, 0
+                elif param == 'pB':
+                    yield 'pB', 0, 0
+                elif param == 'kex_BC':
+                    yield 'kex_BC', 0, 0
+                elif param == 'kex_AC':
+                    yield 'kex_AC', 0, 0
 
     def calc(self, params):
         """Calculate chi2 values.
@@ -398,11 +439,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_CR72(params)
+        chi2 = self.model.func_mmq_CR72(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_CR72, iter=None):
+def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -416,7 +457,7 @@ def single(num_spins=1, model=MODEL_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, dwH=0.03, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'dwH', 'pA', 'kex'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -426,7 +467,7 @@ def single(num_spins=1, model=MODEL_CR72, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_CR72, iter=None):
+def cluster(num_spins=100, model=MODEL_MMQ_CR72, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -440,7 +481,7 @@ def cluster(num_spins=100, model=MODEL_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, dwH=0.03, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'dwH', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
