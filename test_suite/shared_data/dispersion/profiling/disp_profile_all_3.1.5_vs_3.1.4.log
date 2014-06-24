@@ -1,0 +1,1228 @@
+
+Hardware information:
+    Machine:                 x86_64
+    Processor:               x86_64
+    Processor name:          Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz
+    Endianness:              little
+    Total RAM size:          32128 Mb
+    Total swap size:         7992 Mb
+
+Operating system information:
+    System:                  Linux
+    Release:                 3.12.21-desktop-2.mga4
+    Version:                 #1 SMP Thu Jun 5 21:33:44 UTC 2014
+    GNU/Linux version:       Mageia 4 Official
+    Distribution:            mandrake 4 Official
+    Full platform string:    Linux-3.12.21-desktop-2.mga4-x86_64-with-mandrake-4-Official
+
+Python information:
+    Architecture:            64bit ELF
+    Python version:          2.7.6
+    Python branch:           
+    Python build:            default, Mar 18 2014 22:18:46
+    Python compiler:         GCC 4.8.2
+    Libc version:            glibc 2.2.5
+    Python implementation:   CPython
+    Python revision:         
+    Python executable:       /usr/bin/python
+    Python flags:            sys.flags(debug=0, py3k_warning=0, division_warning=0, division_new=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, tabcheck=0, verbose=0, unicode=0, bytes_warning=0, hash_randomization=0)
+    Python float info:       sys.float_info(max=1.7976931348623157e+308, max_exp=1024, max_10_exp=308, min=2.2250738585072014e-308, min_exp=-1021, min_10_exp=-307, dig=15, mant_dig=53, epsilon=2.220446049250313e-16, radix=2, rounds=1)
+    Python module path:      ['/data/relax/branches/disp_spin_speed2/test_suite/shared_data/dispersion/profiling', '/usr/lib/python27.zip', '/usr/lib64/python2.7', '/usr/lib64/python2.7/plat-linux2', '/usr/lib64/python2.7/lib-tk', '/usr/lib64/python2.7/lib-old', '/usr/lib64/python2.7/lib-dynload', '/usr/lib64/python2.7/site-packages', '/usr/lib64/python2.7/site-packages/gst-0.10', '/usr/lib64/python2.7/site-packages/gtk-2.0', '/usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode', '/usr/lib/python2.7/site-packages', '../../../..']
+
+Python packages and modules (most are optional):
+
+Name               Installed    Version                    Path                                                           
+minfx              True         1.0.7                      /usr/lib/python2.7/site-packages/minfx                         
+bmrblib            True         1.0.3                      /usr/lib/python2.7/site-packages/bmrblib                       
+numpy              True         1.8.0                      /usr/lib64/python2.7/site-packages/numpy                       
+scipy              True         0.13.0                     /usr/lib64/python2.7/site-packages/scipy                       
+wxPython           True         2.8.12.1 (gtk2-unicode)    /usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode/wx      
+matplotlib         True         1.3.0                      /usr/lib64/python2.7/site-packages/matplotlib                  
+mpi4py             True         1.3.1                      /usr/lib64/python2.7/site-packages/mpi4py                      
+epydoc             True         3.0.1                      /usr/lib/python2.7/site-packages/epydoc                        
+optparse           True         1.5.3                      /usr/lib64/python2.7/optparse.pyc                              
+readline           True                                    /usr/lib64/python2.7/lib-dynload/readline.so                   
+profile            True                                    /usr/lib64/python2.7/profile.pyc                               
+bz2                True                                    /usr/lib64/python2.7/lib-dynload/bz2.so                        
+gzip               True                                    /usr/lib64/python2.7/gzip.pyc                                  
+io                 True                                    /usr/lib64/python2.7/io.pyc                                    
+xml                True         0.8.4 (PyXML)              /usr/lib64/python2.7/site-packages/_xmlplus/__init__.pyc       
+xml.dom.minidom    True                                    /usr/lib64/python2.7/site-packages/_xmlplus/dom/minidom.pyc    
+
+relax information:
+    Version:                 repository checkout r24270 svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+
+relax C modules:
+
+Module                        Compiled    File type                                                                                                                                           Path                                         
+target_functions.relax_fit    True        ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=d27cd98073b12fecc8d43cbac1c42251fcc78ec1, not stripped    ../../../../target_functions/relax_fit.so    
+
+
+
+
+
+New relax version:  relax 3.1.5
+Old relax version:  relax 3.1.4
+
+
+
+
+
+Execution iteration 1
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.324    0.000    0.759    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.325    0.003    0.764    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.324    0.000    0.762    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.331    0.003    0.783    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.290    0.000    2.049    0.000 relax_disp.py:968(func_LM63)
+      100    0.285    0.003    2.054    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.308    0.000    2.095    0.000 relax_disp.py:968(func_LM63)
+      100    0.313    0.003    2.133    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.020    0.000    4.983    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    5.082    0.051 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    4.985    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.999    0.050 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.024    0.000    5.252    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.191    0.052 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    5.011    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.011    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.261    0.000    2.537    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.265    0.000    2.607    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.027    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.243    0.000    1.693    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.237    0.002    1.704    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.244    0.000    1.685    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.236    0.002    1.691    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.690    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   24.149    2.415 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.991    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   24.078    2.408 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.452    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.389    2.339 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.582    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.941    2.394 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.427    0.000   10.799    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.415    0.004   10.762    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.423    0.000   10.824    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.414    0.004   10.605    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.193    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.254    1.825 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.680    0.019 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.277    1.828 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.208    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.405    1.841 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.396    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.469    1.847 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.216    0.000    0.910    0.000 relax_disp.py:1014(func_M61)
+      100    0.231    0.002    0.924    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.213    0.000    0.890    0.000 relax_disp.py:1014(func_M61)
+      100    0.226    0.002    0.951    0.010 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.537    0.000   11.740    0.001 relax_disp.py:814(func_DPL94)
+      100    1.615    0.016   11.873    0.119 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.606    0.000   11.833    0.001 relax_disp.py:814(func_DPL94)
+      100    1.609    0.016   11.622    0.116 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.625    0.000   15.190    0.002 relax_disp.py:1720(func_TP02)
+      100    1.721    0.017   15.365    0.154 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.687    0.000   15.428    0.002 relax_disp.py:1720(func_TP02)
+      100    1.778    0.018   15.618    0.156 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.694    0.000   29.951    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.765    0.018   30.014    0.300 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.726    0.000   30.228    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.835    0.018   30.371    0.304 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.691    0.000   23.659    0.002 relax_disp.py:1107(func_MP05)
+      100    1.760    0.018   23.719    0.237 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.653    0.000   23.406    0.002 relax_disp.py:1107(func_MP05)
+      100    1.797    0.018   23.560    0.236 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.257    0.000   24.341    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.274    0.027   24.217    2.422 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.259    0.000   24.526    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.277    0.028   24.594    2.459 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 2
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.331    0.000    0.779    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.326    0.003    0.772    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.327    0.000    0.776    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.327    0.003    0.777    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.299    0.000    2.089    0.000 relax_disp.py:968(func_LM63)
+      100    0.293    0.003    2.074    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.295    0.000    2.095    0.000 relax_disp.py:968(func_LM63)
+      100    0.285    0.003    2.076    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.020    0.000    4.928    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.911    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    4.925    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.931    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    5.008    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.012    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.022    0.000    4.962    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.973    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.259    0.000    2.562    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.263    0.000    2.607    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.249    0.000    1.731    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.241    0.002    1.707    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.241    0.000    1.666    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.233    0.002    1.669    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.997    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.728    2.373 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.643    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.579    2.358 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.581    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.707    2.371 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.723    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.517    2.352 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.423    0.000   10.785    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.422    0.004   10.747    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.422    0.000   10.767    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.414    0.004   10.680    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.632    0.019 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.697    1.870 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.460    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.471    1.847 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.379    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.334    1.833 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.359    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.346    1.835 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.216    0.000    0.909    0.000 relax_disp.py:1014(func_M61)
+      100    0.205    0.002    0.885    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.210    0.000    0.899    0.000 relax_disp.py:1014(func_M61)
+      100    0.205    0.002    0.891    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.558    0.000   11.668    0.001 relax_disp.py:814(func_DPL94)
+      100    1.642    0.016   11.846    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.513    0.000   11.543    0.001 relax_disp.py:814(func_DPL94)
+      100    1.582    0.016   11.691    0.117 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.675    0.000   15.366    0.002 relax_disp.py:1720(func_TP02)
+      100    1.735    0.017   15.570    0.156 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.647    0.000   15.170    0.002 relax_disp.py:1720(func_TP02)
+      100    1.715    0.017   15.291    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.728    0.000   30.270    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.859    0.019   30.508    0.305 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.744    0.000   30.448    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.810    0.018   30.529    0.305 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.689    0.000   23.629    0.002 relax_disp.py:1107(func_MP05)
+      100    1.780    0.018   23.813    0.238 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.701    0.000   23.626    0.002 relax_disp.py:1107(func_MP05)
+      100    1.810    0.018   23.909    0.239 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.263    0.000   24.681    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.274    0.027   24.419    2.442 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.260    0.000   24.423    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.276    0.028   24.320    2.432 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 3
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.328    0.000    0.771    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.324    0.003    0.766    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.387    0.000    0.902    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.324    0.003    0.764    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.294    0.000    2.054    0.000 relax_disp.py:968(func_LM63)
+      100    0.290    0.003    2.047    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.293    0.000    2.041    0.000 relax_disp.py:968(func_LM63)
+      100    0.288    0.003    2.039    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.020    0.000    4.989    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.893    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.020    0.000    4.889    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.922    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    4.966    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.967    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    5.003    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.993    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.265    0.000    2.625    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.259    0.000    2.543    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.243    0.000    1.684    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.233    0.002    1.683    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.242    0.000    1.665    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.247    0.002    1.741    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.854    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.504    2.350 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   24.149    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   24.255    2.426 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   24.193    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.994    2.399 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.240    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   24.025    2.403 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.430    0.000   10.901    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.437    0.004   10.782    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.438    0.000   11.280    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.420    0.004   10.793    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.346    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.253    1.825 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.251    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.486    1.849 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.316    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.318    1.832 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.481    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.485    1.848 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.205    0.000    0.880    0.000 relax_disp.py:1014(func_M61)
+      100    0.201    0.002    0.875    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.209    0.000    0.898    0.000 relax_disp.py:1014(func_M61)
+      100    0.199    0.002    0.877    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.580    0.000   11.935    0.001 relax_disp.py:814(func_DPL94)
+      100    1.598    0.016   11.740    0.117 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.540    0.000   11.656    0.001 relax_disp.py:814(func_DPL94)
+      100    1.625    0.016   11.839    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.689    0.000   15.377    0.002 relax_disp.py:1720(func_TP02)
+      100    1.801    0.018   15.779    0.158 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.673    0.000   15.327    0.002 relax_disp.py:1720(func_TP02)
+      100    1.740    0.017   15.306    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.645    0.000   29.568    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.778    0.018   29.797    0.298 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.761    0.000   30.181    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.844    0.018   30.989    0.310 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.675    0.000   23.573    0.002 relax_disp.py:1107(func_MP05)
+      100    1.795    0.018   23.813    0.238 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.661    0.000   23.745    0.002 relax_disp.py:1107(func_MP05)
+      100    1.759    0.018   23.797    0.238 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.260    0.000   24.700    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.273    0.027   24.320    2.432 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.260    0.000   24.299    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.281    0.028   24.536    2.454 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 4
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.338    0.000    0.795    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.331    0.003    0.781    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.328    0.000    0.770    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.326    0.003    0.769    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.308    0.000    2.098    0.000 relax_disp.py:968(func_LM63)
+      100    0.301    0.003    2.084    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.300    0.000    2.082    0.000 relax_disp.py:968(func_LM63)
+      100    0.288    0.003    2.051    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.020    0.000    4.972    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    5.073    0.051 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    5.053    0.001 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.947    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    5.013    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.021    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    4.985    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.009    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.263    0.000    2.589    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.260    0.000    2.558    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.241    0.000    1.684    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.237    0.002    1.705    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.244    0.000    1.690    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.235    0.002    1.686    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.697    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.184    2.318 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.336    0.023 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.345    2.335 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.494    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.465    2.347 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.572    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.471    2.347 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.416    0.000   10.705    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.414    0.004   10.692    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.417    0.000   10.807    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.412    0.004   10.811    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.440    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.425    1.842 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.356    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.408    1.841 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.401    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   20.618    2.062 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.402    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.372    1.837 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.214    0.000    0.900    0.000 relax_disp.py:1014(func_M61)
+      100    0.204    0.002    0.884    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.216    0.000    0.904    0.000 relax_disp.py:1014(func_M61)
+      100    0.205    0.002    0.884    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.564    0.000   11.640    0.001 relax_disp.py:814(func_DPL94)
+      100    1.646    0.016   11.785    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.517    0.000   11.534    0.001 relax_disp.py:814(func_DPL94)
+      100    1.615    0.016   11.750    0.117 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.642    0.000   15.244    0.002 relax_disp.py:1720(func_TP02)
+      100    1.682    0.017   15.253    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.629    0.000   15.136    0.002 relax_disp.py:1720(func_TP02)
+      100    1.707    0.017   15.344    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.698    0.000   29.832    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.797    0.018   29.881    0.299 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.736    0.000   30.060    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.814    0.018   29.929    0.299 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.682    0.000   23.403    0.002 relax_disp.py:1107(func_MP05)
+      100    1.768    0.018   23.509    0.235 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.663    0.000   23.268    0.002 relax_disp.py:1107(func_MP05)
+      100    1.774    0.018   23.449    0.234 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.256    0.000   24.289    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.269    0.027   24.030    2.403 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.255    0.000   24.187    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.027   24.217    2.422 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 5
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.328    0.000    0.765    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.328    0.003    0.771    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.327    0.000    0.764    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.328    0.003    0.766    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.293    0.000    2.084    0.000 relax_disp.py:968(func_LM63)
+      100    0.288    0.003    2.074    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.299    0.000    2.078    0.000 relax_disp.py:968(func_LM63)
+      100    0.289    0.003    2.054    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.021    0.000    4.935    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.911    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    4.949    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.954    0.050 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    5.033    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.078    0.051 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    5.041    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.017    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.261    0.000    2.544    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.257    0.000    2.533    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.240    0.000    1.677    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.239    0.002    1.687    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.248    0.000    1.689    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.237    0.002    1.679    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.920    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.781    2.378 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   24.150    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.704    2.370 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   24.317    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   24.088    2.409 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.596    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.550    2.355 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.426    0.000   10.742    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.420    0.004   10.794    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.426    0.000   10.791    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.419    0.004   10.709    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.166    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.348    1.835 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.813    0.019 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.673    1.867 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.359    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.576    1.858 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.372    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.430    1.843 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.212    0.000    0.890    0.000 relax_disp.py:1014(func_M61)
+      100    0.199    0.002    0.867    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.211    0.000    0.901    0.000 relax_disp.py:1014(func_M61)
+      100    0.202    0.002    0.889    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.544    0.000   11.631    0.001 relax_disp.py:814(func_DPL94)
+      100    1.624    0.016   11.751    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.519    0.000   11.533    0.001 relax_disp.py:814(func_DPL94)
+      100    1.575    0.016   11.572    0.116 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.641    0.000   15.126    0.002 relax_disp.py:1720(func_TP02)
+      100    1.657    0.017   15.093    0.151 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.633    0.000   15.117    0.002 relax_disp.py:1720(func_TP02)
+      100    1.683    0.017   15.186    0.152 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.679    0.000   29.624    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.777    0.018   29.957    0.300 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.668    0.000   29.823    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.769    0.018   30.047    0.300 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.722    0.000   23.629    0.002 relax_disp.py:1107(func_MP05)
+      100    1.793    0.018   23.699    0.237 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.646    0.000   23.226    0.002 relax_disp.py:1107(func_MP05)
+      100    1.718    0.017   23.263    0.233 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.264    0.000   24.820    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.278    0.028   24.668    2.467 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.260    0.000   24.428    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.027   24.347    2.435 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 6
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.327    0.000    0.772    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.326    0.003    0.770    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.326    0.000    0.768    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.324    0.003    0.769    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.290    0.000    2.079    0.000 relax_disp.py:968(func_LM63)
+      100    0.285    0.003    2.052    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.294    0.000    2.065    0.000 relax_disp.py:968(func_LM63)
+      100    0.287    0.003    2.046    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.021    0.000    4.933    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.938    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.020    0.000    4.911    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.923    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.023    0.000    5.003    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.986    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    5.035    0.001 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.049    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.260    0.000    2.580    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.257    0.000    2.532    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.247    0.000    1.693    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.235    0.002    1.692    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.245    0.000    1.695    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.234    0.002    1.688    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.886    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.591    2.359 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.316    0.023 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.376    2.338 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.762    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.787    2.379 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.630    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.481    2.348 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.421    0.000   10.658    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.404    0.004   10.503    0.105 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.423    0.000   10.680    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.415    0.004   10.698    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.245    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.215    1.822 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.446    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.609    1.861 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.268    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.270    1.827 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.418    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.660    1.866 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.204    0.000    0.875    0.000 relax_disp.py:1014(func_M61)
+      100    0.200    0.002    0.876    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.211    0.000    0.902    0.000 relax_disp.py:1014(func_M61)
+      100    0.208    0.002    0.898    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.521    0.000   11.578    0.001 relax_disp.py:814(func_DPL94)
+      100    1.617    0.016   11.800    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.528    0.000   11.577    0.001 relax_disp.py:814(func_DPL94)
+      100    1.565    0.016   11.615    0.116 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.688    0.000   15.533    0.002 relax_disp.py:1720(func_TP02)
+      100    1.793    0.018   15.682    0.157 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.615    0.000   15.081    0.002 relax_disp.py:1720(func_TP02)
+      100    1.752    0.018   15.412    0.154 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.713    0.000   30.139    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.786    0.018   30.193    0.302 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.707    0.000   30.114    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.824    0.018   30.553    0.306 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.665    0.000   23.311    0.002 relax_disp.py:1107(func_MP05)
+      100    1.756    0.018   23.442    0.234 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.656    0.000   23.388    0.002 relax_disp.py:1107(func_MP05)
+      100    1.755    0.018   23.583    0.236 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.261    0.000   24.415    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.027   24.341    2.434 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.262    0.000   24.346    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.271    0.027   24.308    2.431 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 7
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.324    0.000    0.763    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.322    0.003    0.761    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.327    0.000    0.762    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.324    0.003    0.758    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.293    0.000    2.056    0.000 relax_disp.py:968(func_LM63)
+      100    0.280    0.003    2.030    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.292    0.000    2.052    0.000 relax_disp.py:968(func_LM63)
+      100    0.286    0.003    2.046    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.021    0.000    4.906    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.920    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    4.881    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.925    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    4.917    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.962    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.022    0.000    4.927    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.949    0.049 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.255    0.000    2.527    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.257    0.000    2.522    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.242    0.000    1.664    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.234    0.002    1.669    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.243    0.000    1.676    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.235    0.002    1.677    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.378    0.023 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.354    2.335 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.543    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.467    2.347 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.938    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.848    2.385 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.353    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.294    2.329 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.426    0.000   10.631    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.409    0.004   10.630    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.416    0.000   10.657    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.402    0.004   10.599    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.181    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.223    1.822 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.307    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.394    1.839 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.799    0.019 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.911    1.891 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.299    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.338    1.834 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.210    0.000    0.889    0.000 relax_disp.py:1014(func_M61)
+      100    0.199    0.002    0.871    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.208    0.000    0.884    0.000 relax_disp.py:1014(func_M61)
+      100    0.199    0.002    0.874    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.528    0.000   11.591    0.001 relax_disp.py:814(func_DPL94)
+      100    1.582    0.016   11.633    0.116 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.508    0.000   11.485    0.001 relax_disp.py:814(func_DPL94)
+      100    1.615    0.016   11.735    0.117 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.681    0.000   15.246    0.002 relax_disp.py:1720(func_TP02)
+      100    1.736    0.017   15.317    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.616    0.000   14.925    0.001 relax_disp.py:1720(func_TP02)
+      100    1.674    0.017   15.034    0.150 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.664    0.000   29.694    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.767    0.018   29.997    0.300 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.692    0.000   29.832    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.782    0.018   29.923    0.299 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.688    0.000   23.445    0.002 relax_disp.py:1107(func_MP05)
+      100    1.751    0.018   23.483    0.235 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.679    0.000   23.433    0.002 relax_disp.py:1107(func_MP05)
+      100    1.749    0.017   23.653    0.237 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.259    0.000   24.216    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.276    0.028   24.082    2.408 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.264    0.000   24.350    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.276    0.028   24.243    2.424 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 8
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.325    0.000    0.765    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.321    0.003    0.762    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.322    0.000    0.765    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.323    0.003    0.767    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.293    0.000    2.060    0.000 relax_disp.py:968(func_LM63)
+      100    0.286    0.003    2.045    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.298    0.000    2.061    0.000 relax_disp.py:968(func_LM63)
+      100    0.290    0.003    2.046    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.021    0.000    4.886    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.901    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.020    0.000    4.890    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.909    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.023    0.000    4.962    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.968    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    4.951    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.964    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.254    0.000    2.540    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.256    0.000    2.552    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.240    0.000    1.667    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.232    0.002    1.671    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.271    0.000    1.813    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.241    0.002    1.669    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   24.437    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   24.529    2.453 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.508    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.455    2.346 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.324    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.328    2.333 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.861    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.599    2.360 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.415    0.000   10.572    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.408    0.004   10.606    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.409    0.000   10.586    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.394    0.004   10.566    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.356    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.450    1.845 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.253    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.398    1.840 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.437    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.352    1.835 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.335    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.431    1.843 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.207    0.000    0.881    0.000 relax_disp.py:1014(func_M61)
+      100    0.212    0.002    0.927    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.209    0.000    0.883    0.000 relax_disp.py:1014(func_M61)
+      100    0.198    0.002    0.869    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.551    0.000   11.710    0.001 relax_disp.py:814(func_DPL94)
+      100    1.616    0.016   11.823    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.521    0.000   11.640    0.001 relax_disp.py:814(func_DPL94)
+      100    1.566    0.016   11.719    0.117 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.633    0.000   15.126    0.002 relax_disp.py:1720(func_TP02)
+      100    1.718    0.017   15.255    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.637    0.000   15.086    0.002 relax_disp.py:1720(func_TP02)
+      100    1.686    0.017   15.193    0.152 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.671    0.000   29.707    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.773    0.018   29.965    0.300 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.669    0.000   30.039    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.753    0.018   29.935    0.299 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.697    0.000   23.377    0.002 relax_disp.py:1107(func_MP05)
+      100    1.754    0.018   23.522    0.235 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.644    0.000   23.120    0.002 relax_disp.py:1107(func_MP05)
+      100    1.701    0.017   23.190    0.232 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.262    0.000   24.328    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.028   24.241    2.424 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.262    0.000   24.421    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.274    0.027   24.275    2.427 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 9
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.327    0.000    0.769    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.328    0.003    0.776    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.326    0.000    0.769    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.325    0.003    0.769    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.292    0.000    2.045    0.000 relax_disp.py:968(func_LM63)
+      100    0.290    0.003    2.051    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.291    0.000    2.062    0.000 relax_disp.py:968(func_LM63)
+      100    0.284    0.003    2.044    0.020 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.020    0.000    4.913    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.893    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.020    0.000    4.895    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.893    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.023    0.000    4.951    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.959    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.022    0.000    4.956    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.967    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.259    0.000    2.566    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.258    0.000    2.541    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.240    0.000    1.690    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.229    0.002    1.691    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.244    0.000    1.698    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.235    0.002    1.705    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.749    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.452    2.345 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.594    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.683    2.368 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.889    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.786    2.379 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.393    0.023 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.405    2.341 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.418    0.000   10.628    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.400    0.004   10.560    0.106 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.422    0.000   10.888    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.407    0.004   10.809    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.485    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.462    1.846 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.272    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.717    1.872 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.660    0.019 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.315    1.832 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.446    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.651    1.865 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.217    0.000    0.923    0.000 relax_disp.py:1014(func_M61)
+      100    0.209    0.002    0.908    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.213    0.000    0.895    0.000 relax_disp.py:1014(func_M61)
+      100    0.202    0.002    0.878    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.567    0.000   11.924    0.001 relax_disp.py:814(func_DPL94)
+      100    1.621    0.016   12.028    0.120 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.524    0.000   11.640    0.001 relax_disp.py:814(func_DPL94)
+      100    1.599    0.016   11.831    0.118 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.594    0.000   15.064    0.002 relax_disp.py:1720(func_TP02)
+      100    1.679    0.017   15.213    0.152 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.658    0.000   15.364    0.002 relax_disp.py:1720(func_TP02)
+      100    1.701    0.017   15.288    0.153 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.727    0.000   29.942    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.811    0.018   30.461    0.305 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.786    0.000   30.579    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.824    0.018   30.117    0.301 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.678    0.000   23.452    0.002 relax_disp.py:1107(func_MP05)
+      100    1.748    0.017   23.538    0.235 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.669    0.000   23.461    0.002 relax_disp.py:1107(func_MP05)
+      100    1.741    0.017   23.578    0.236 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.261    0.000   24.560    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.279    0.028   24.995    2.500 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.260    0.000   24.420    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.027   24.403    2.440 relax_disp.py:1561(func_ns_r1rho_2site)
+
+
+Execution iteration 10
+
+$ python profiling_norex.py /data/relax/tags/3.1.5
+    10000    0.328    0.000    0.769    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.329    0.003    0.776    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_norex.py /data/relax/tags/3.1.4
+    10000    0.329    0.000    0.773    0.000 relax_disp.py:1232(func_NOREX)
+      100    0.329    0.003    0.777    0.008 relax_disp.py:1232(func_NOREX)
+$ python profiling_lm63.py /data/relax/tags/3.1.5
+    10000    0.308    0.000    2.086    0.000 relax_disp.py:968(func_LM63)
+      100    0.297    0.003    2.074    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_lm63.py /data/relax/tags/3.1.4
+    10000    0.298    0.000    2.084    0.000 relax_disp.py:968(func_LM63)
+      100    0.289    0.003    2.074    0.021 relax_disp.py:968(func_LM63)
+$ python profiling_cr72.py /data/relax/tags/3.1.5
+    10000    0.021    0.000    4.968    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.996    0.050 relax_disp.py:761(func_CR72)
+$ python profiling_cr72.py /data/relax/tags/3.1.4
+    10000    0.021    0.000    4.932    0.000 relax_disp.py:761(func_CR72)
+      100    0.000    0.000    4.895    0.049 relax_disp.py:761(func_CR72)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.5
+    10000    0.022    0.000    4.904    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    4.894    0.049 relax_disp.py:787(func_CR72_full)
+$ python profiling_cr72_full.py /data/relax/tags/3.1.4
+    10000    0.023    0.000    4.968    0.000 relax_disp.py:787(func_CR72_full)
+      100    0.000    0.000    5.029    0.050 relax_disp.py:787(func_CR72_full)
+$ python profiling_it99.py /data/relax/tags/3.1.5
+    10000    0.268    0.000    2.646    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.025    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_it99.py /data/relax/tags/3.1.4
+    10000    0.261    0.000    2.519    0.000 relax_disp.py:862(func_IT99)
+      100    0.003    0.000    0.026    0.000 relax_disp.py:862(func_IT99)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.5
+    10000    0.250    0.000    1.741    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.233    0.002    1.680    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_tsmfk01.py /data/relax/tags/3.1.4
+    10000    0.235    0.000    1.650    0.000 relax_disp.py:1772(func_TSMFK01)
+      100    0.237    0.002    1.715    0.017 relax_disp.py:1772(func_TSMFK01)
+$ python profiling_b14.py /data/relax/tags/3.1.5
+$ python profiling_b14.py /data/relax/tags/3.1.4
+$ python profiling_b14_full.py /data/relax/tags/3.1.5
+$ python profiling_b14_full.py /data/relax/tags/3.1.4
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.395    0.023 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.649    2.365 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.799    0.024 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+       10    0.000    0.000   23.875    2.387 relax_disp.py:1278(func_ns_cpmg_2site_3D)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   23.948    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   24.027    2.403 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_3D_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   23.808    0.024 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+       10    0.000    0.000   23.732    2.373 relax_disp.py:1301(func_ns_cpmg_2site_3D_full)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.5
+    10000    0.427    0.000   10.775    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.416    0.004   10.820    0.108 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_expanded.py /data/relax/tags/3.1.4
+    10000    0.420    0.000   10.683    0.001 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+      100    0.410    0.004   10.713    0.107 relax_disp.py:1325(func_ns_cpmg_2site_expanded)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.366    0.018 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.483    1.848 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.519    0.019 relax_disp.py:1377(func_ns_cpmg_2site_star)
+       10    0.000    0.000   18.537    1.854 relax_disp.py:1377(func_ns_cpmg_2site_star)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.5
+     1000    0.003    0.000   18.660    0.019 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.736    1.874 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_ns_cpmg_2site_star_full.py /data/relax/tags/3.1.4
+     1000    0.003    0.000   18.497    0.018 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+       10    0.000    0.000   18.850    1.885 relax_disp.py:1403(func_ns_cpmg_2site_star_full)
+$ python profiling_m61.py /data/relax/tags/3.1.5
+    10000    0.210    0.000    0.894    0.000 relax_disp.py:1014(func_M61)
+      100    0.199    0.002    0.880    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_m61.py /data/relax/tags/3.1.4
+    10000    0.213    0.000    0.906    0.000 relax_disp.py:1014(func_M61)
+      100    0.209    0.002    0.898    0.009 relax_disp.py:1014(func_M61)
+$ python profiling_dpl94.py /data/relax/tags/3.1.5
+    10000    1.525    0.000   11.724    0.001 relax_disp.py:814(func_DPL94)
+      100    1.606    0.016   11.934    0.119 relax_disp.py:814(func_DPL94)
+$ python profiling_dpl94.py /data/relax/tags/3.1.4
+    10000    1.521    0.000   11.659    0.001 relax_disp.py:814(func_DPL94)
+      100    1.620    0.016   11.952    0.120 relax_disp.py:814(func_DPL94)
+$ python profiling_tp02.py /data/relax/tags/3.1.5
+    10000    1.672    0.000   15.343    0.002 relax_disp.py:1720(func_TP02)
+      100    1.724    0.017   15.419    0.154 relax_disp.py:1720(func_TP02)
+$ python profiling_tp02.py /data/relax/tags/3.1.4
+    10000    1.664    0.000   15.208    0.002 relax_disp.py:1720(func_TP02)
+      100    1.759    0.018   15.689    0.157 relax_disp.py:1720(func_TP02)
+$ python profiling_tap03.py /data/relax/tags/3.1.5
+    10000    1.685    0.000   29.916    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.758    0.018   29.818    0.298 relax_disp.py:1668(func_TAP03)
+$ python profiling_tap03.py /data/relax/tags/3.1.4
+    10000    1.668    0.000   29.854    0.003 relax_disp.py:1668(func_TAP03)
+      100    1.772    0.018   30.171    0.302 relax_disp.py:1668(func_TAP03)
+$ python profiling_mp05.py /data/relax/tags/3.1.5
+    10000    1.675    0.000   23.360    0.002 relax_disp.py:1107(func_MP05)
+      100    1.768    0.018   23.519    0.235 relax_disp.py:1107(func_MP05)
+$ python profiling_mp05.py /data/relax/tags/3.1.4
+    10000    1.689    0.000   23.530    0.002 relax_disp.py:1107(func_MP05)
+      100    1.797    0.018   23.864    0.239 relax_disp.py:1107(func_MP05)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.5
+     1000    0.261    0.000   24.575    0.025 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.275    0.027   24.414    2.441 relax_disp.py:1561(func_ns_r1rho_2site)
+$ python profiling_ns_r1rho_2site.py /data/relax/tags/3.1.4
+     1000    0.254    0.000   24.439    0.024 relax_disp.py:1561(func_ns_r1rho_2site)
+       10    0.270    0.027   24.393    2.439 relax_disp.py:1561(func_ns_r1rho_2site)
+60 20
+
+##########################
+#Background for analysis:#
+##########################
+
+For CPMG statistics:
+--------------------
+3 fields, with each 20 nr of cpmg points.
+Total number of dispersion points per spin is: 60
+
+For R1rho experiments:
+----------------------
+3 fields, with each 10 nr of spin lock offsets, where each offset has been measured at 5 different spin lock fields.
+Per field, there is 50 dispersion points.
+Total number of dispersion points per spin is: 150
+
+
+
+100 single spins analysis:
+No Rex:                      0.781+/-0.041 ->   0.771+/-0.010,   1.013x faster.
+LM63:                        2.071+/-0.017 ->   2.070+/-0.018,   1.001x faster.
+CR72:                        4.931+/-0.051 ->   4.941+/-0.033,   0.998x faster.
+CR72 full:                   4.984+/-0.036 ->   5.001+/-0.093,   0.997x faster.
+IT99:                        2.551+/-0.030 ->   2.572+/-0.037,   0.992x faster.
+TSMFK01:                     1.693+/-0.043 ->   1.692+/-0.024,   1.000x faster.
+B14:                         0.000+/-0.000 ->   0.000+/-0.000,     nanx faster.
+B14 full:                    0.000+/-0.000 ->   0.000+/-0.000,     nanx faster.
+NS CPMG 2-site 3D:         237.029+/-2.923 -> 238.003+/-2.893,   0.996x faster.
+NS CPMG 2-site 3D full:    235.758+/-1.887 -> 237.898+/-3.099,   0.991x faster.
+NS CPMG 2-site expanded:    10.796+/-0.183 ->  10.720+/-0.094,   1.007x faster.
+NS CPMG 2-site star:       184.357+/-1.808 -> 183.410+/-1.426,   1.005x faster.
+NS CPMG 2-site star full:  184.005+/-0.594 -> 184.487+/-1.832,   0.997x faster.
+M61:                         0.896+/-0.008 ->   0.895+/-0.015,   1.001x faster.
+DPL94:                      11.610+/-0.094 ->  11.714+/-0.119,   0.991x faster.
+TP02:                       15.184+/-0.144 ->  15.261+/-0.136,   0.995x faster.
+TAP03:                      30.116+/-0.242 ->  29.864+/-0.214,   1.008x faster.
+MP05:                       23.420+/-0.177 ->  23.484+/-0.121,   0.997x faster.
+NS R1rho 2-site:           243.839+/-0.883 -> 244.925+/-1.926,   0.996x faster.
+
+Cluster of 100 spins analysis:
+No Rex:                      0.770+/-0.007 ->   0.770+/-0.006,   1.000x faster. 
+LM63:                        2.061+/-0.027 ->   2.058+/-0.016,   1.001x faster. 
+CR72:                        4.930+/-0.030 ->   4.952+/-0.069,   0.996x faster. 
+CR72 full:                   4.996+/-0.031 ->   5.004+/-0.077,   0.998x faster. 
+IT99:                        0.026+/-0.001 ->   0.026+/-0.000,   1.012x faster. IT99: Cluster of only 1 spin analysis, since v. 3.2.2 had a bug with clustering analysis.:
+TSMFK01:                     1.692+/-0.021 ->   1.689+/-0.013,   1.002x faster. 
+B14:                         0.000+/-0.000 ->   0.000+/-0.000,     nanx faster. 
+B14 full:                    0.000+/-0.000 ->   0.000+/-0.000,     nanx faster. 
+NS CPMG 2-site 3D:         236.817+/-2.896 -> 236.921+/-3.736,   1.000x faster. 
+NS CPMG 2-site 3D full:    236.015+/-2.205 -> 237.419+/-2.557,   0.994x faster. 
+NS CPMG 2-site expanded:    10.698+/-0.084 ->  10.690+/-0.104,   1.001x faster. 
+NS CPMG 2-site star:       184.970+/-1.308 -> 183.810+/-1.448,   1.006x faster. 
+NS CPMG 2-site star full:  185.032+/-1.575 -> 186.835+/-6.752,   0.990x faster. 
+M61:                         0.891+/-0.022 ->   0.890+/-0.021,   1.001x faster. 
+DPL94:                      11.733+/-0.111 ->  11.821+/-0.104,   0.992x faster. 
+TP02:                       15.336+/-0.187 ->  15.395+/-0.208,   0.996x faster. 
+TAP03:                      30.256+/-0.332 ->  30.059+/-0.238,   1.007x faster. 
+MP05:                       23.585+/-0.226 ->  23.606+/-0.133,   0.999x faster. 
+NS R1rho 2-site:           243.636+/-1.159 -> 243.727+/-2.694,   1.000x faster. 
