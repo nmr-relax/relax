@@ -181,4 +181,4 @@ def r2eff_mmq_cr72(r20=None, pA=None, dw=None, dwH=None, kex=None, cpmg_frqs=Non
     # +/- inf (infinity) and nan (not a number).
     if not isfinite(sum(back_calc)):
         # Replaces nan, inf, etc. with fill value.
-        fix_invalid(back_calc, copy=False, fill_value=r20)
+        fix_invalid(back_calc, copy=False, fill_value=1e100)
