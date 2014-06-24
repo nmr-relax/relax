@@ -54,7 +54,7 @@ sys.path.reverse()
 # relax module imports.
 from lib.physical_constants import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR
+from specific_analyses.relax_disp.variables import EXP_TYPE_R1RHO, MODEL_NS_R1RHO_3SITE
 
 
 # Alter setup.
