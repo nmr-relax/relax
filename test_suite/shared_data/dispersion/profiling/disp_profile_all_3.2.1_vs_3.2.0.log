@@ -1,8 +1,70 @@
 
+Hardware information:
+    Machine:                 x86_64
+    Processor:               x86_64
+    Processor name:          Intel(R) Core(TM) i7-3820 CPU @ 3.60GHz
+    Endianness:              little
+    Total RAM size:          32128 Mb
+    Total swap size:         7992 Mb
+
+Operating system information:
+    System:                  Linux
+    Release:                 3.12.21-desktop-2.mga4
+    Version:                 #1 SMP Thu Jun 5 21:33:44 UTC 2014
+    GNU/Linux version:       Mageia 4 Official
+    Distribution:            mandrake 4 Official
+    Full platform string:    Linux-3.12.21-desktop-2.mga4-x86_64-with-mandrake-4-Official
+
+Python information:
+    Architecture:            64bit ELF
+    Python version:          2.7.6
+    Python branch:           
+    Python build:            default, Mar 18 2014 22:18:46
+    Python compiler:         GCC 4.8.2
+    Libc version:            glibc 2.2.5
+    Python implementation:   CPython
+    Python revision:         
+    Python executable:       /usr/bin/python
+    Python flags:            sys.flags(debug=0, py3k_warning=0, division_warning=0, division_new=0, inspect=0, interactive=0, optimize=0, dont_write_bytecode=1, no_user_site=0, no_site=0, ignore_environment=0, tabcheck=0, verbose=0, unicode=0, bytes_warning=0, hash_randomization=0)
+    Python float info:       sys.float_info(max=1.7976931348623157e+308, max_exp=1024, max_10_exp=308, min=2.2250738585072014e-308, min_exp=-1021, min_10_exp=-307, dig=15, mant_dig=53, epsilon=2.220446049250313e-16, radix=2, rounds=1)
+    Python module path:      ['/data/relax/branches/disp_spin_speed2/test_suite/shared_data/dispersion/profiling', '/usr/lib/python27.zip', '/usr/lib64/python2.7', '/usr/lib64/python2.7/plat-linux2', '/usr/lib64/python2.7/lib-tk', '/usr/lib64/python2.7/lib-old', '/usr/lib64/python2.7/lib-dynload', '/usr/lib64/python2.7/site-packages', '/usr/lib64/python2.7/site-packages/gst-0.10', '/usr/lib64/python2.7/site-packages/gtk-2.0', '/usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode', '/usr/lib/python2.7/site-packages', '../../../..']
+
+Python packages and modules (most are optional):
+
+Name               Installed    Version                    Path                                                           
+minfx              True         1.0.7                      /usr/lib/python2.7/site-packages/minfx                         
+bmrblib            True         1.0.3                      /usr/lib/python2.7/site-packages/bmrblib                       
+numpy              True         1.8.0                      /usr/lib64/python2.7/site-packages/numpy                       
+scipy              True         0.13.0                     /usr/lib64/python2.7/site-packages/scipy                       
+wxPython           True         2.8.12.1 (gtk2-unicode)    /usr/lib64/python2.7/site-packages/wx-2.8-gtk2-unicode/wx      
+matplotlib         True         1.3.0                      /usr/lib64/python2.7/site-packages/matplotlib                  
+mpi4py             True         1.3.1                      /usr/lib64/python2.7/site-packages/mpi4py                      
+epydoc             True         3.0.1                      /usr/lib/python2.7/site-packages/epydoc                        
+optparse           True         1.5.3                      /usr/lib64/python2.7/optparse.pyc                              
+readline           True                                    /usr/lib64/python2.7/lib-dynload/readline.so                   
+profile            True                                    /usr/lib64/python2.7/profile.pyc                               
+bz2                True                                    /usr/lib64/python2.7/lib-dynload/bz2.so                        
+gzip               True                                    /usr/lib64/python2.7/gzip.pyc                                  
+io                 True                                    /usr/lib64/python2.7/io.pyc                                    
+xml                True         0.8.4 (PyXML)              /usr/lib64/python2.7/site-packages/_xmlplus/__init__.pyc       
+xml.dom.minidom    True                                    /usr/lib64/python2.7/site-packages/_xmlplus/dom/minidom.pyc    
+
+relax information:
+    Version:                 repository checkout r24264 svn+ssh://bugman@svn.gna.org/svn/relax/branches/disp_spin_speed
+
+relax C modules:
+
+Module                        Compiled    File type                                                                                                                                           Path                                         
+target_functions.relax_fit    True        ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, BuildID[sha1]=d27cd98073b12fecc8d43cbac1c42251fcc78ec1, not stripped    ../../../../target_functions/relax_fit.so    
 
 
-1st relax version:  [?1034h3.2.1
-2nd relax version:  [?1034h3.2.0
+
+
+
+New relax version:  relax 3.2.1
+Old relax version:  relax 3.2.0
+
+
 
 Copying to '/data/relax/tags/3.2.1': model=No Rex script=profiling_norex.py iterations=100 scale=1
 Copying to '/data/relax/tags/3.2.0': model=No Rex script=profiling_norex.py iterations=100 scale=1
