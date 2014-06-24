@@ -24,7 +24,7 @@
 
 """Python script for obtaining profiling statistics for multiple models between the current and an alternative version of relax.
 
-There are 3 ways to use this script.  The first is to modify the path1 and path2 variables in this script, where path1 is the newer relax version, and then run it as:
+There are 3 ways to use this script.  The first is to modify the path_new and path_old variables in this script, where path_new is the newer relax version, and then run it as:
 
 $ ./disp_profile_all.py
 
@@ -44,6 +44,12 @@ from re import search
 from shutil import copyfile
 from subprocess import PIPE, Popen
 import sys
+
+# Modify the system path to add the base directory of the current relax version.
+sys.path.append(path.join(pardir, pardir, pardir, pardir))
+
+# relax module imports.
+import info
 
 
 # The number of iterations to run each script for the statistics.
@@ -73,26 +79,29 @@ models = [
 ]
 
 # Paths to the two relax versions.
-path1 = '.'
-path2 = '/data/relax/tags/3.2.2'
+path_new = '.'
+path_old = '/data/relax/tags/3.2.2'
 if len(sys.argv) == 3:
-    path1 = sys.argv[1]
-    path2 = sys.argv[2]
+    path_new = sys.argv[1]
+    path_old = sys.argv[2]
 elif len(sys.argv) == 2:
-    path2 = sys.argv[1]
+    path_old = sys.argv[1]
 current = False
-if path1 == '.':
+if path_new == '.':
     current = True
-    path1 = path.join(pardir, pardir, pardir, pardir)
+    path_new = path.join(pardir, pardir, pardir, pardir)
 
 # The Python executable name.
 python = 'python'
 
 
-# First a printout of the relax versions.
+# First print out the system information for the record.
+info.print_sys_info()
+
+# Then a printout of the relax versions to be compared.
 data = [
-    ['1st', path1],
-    ['2nd', path2]
+    ['New', path_new],
+    ['Old', path_old]
 ]
 sys.stdout.write("\n\n")
 for iter, path in data:
@@ -109,21 +118,7 @@ for iter, path in data:
     # Write out the output.
     for line in pipe.stdout.readlines():
         sys.stdout.write(line[:-1])
-sys.stdout.write("\n\n")
-
-# Copy the current scripts to the base directory of the alternative relax version.
-for i in range(len(models)):
-    # Alias.
-    model, script, iter, scaling_factor = models[i]
-
-    # Copy to the first path.
-    if not current:
-        print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path1, model, script, iter, scaling_factor))
-        copyfile(script, path1+sep+script)
-
-    # Copy to the second path.
-    print("Copying to '%s': model=%s script=%s iterations=%s scale=%s" % (path2, model, script, iter, scaling_factor))
-    copyfile(script, path2+sep+script)
+sys.stdout.write("\n\n\n\n")
 
 # Initialise structures for the timing statistics.
 timings_new = {}
@@ -148,8 +143,8 @@ for exec_iter in range(N):
         if current:
             cmds.append("%s %s" % (python, script))
         else:
-            cmds.append("%s %s %s" % (python, path1+sep+script, path1))
-        cmds.append("%s %s %s" % (python, path2+sep+script, path2))
+            cmds.append("%s %s %s" % (python, script, path_new))
+        cmds.append("%s %s %s" % (python, script, path_old))
 
         # Loop over the commands.
         for cmd_index in range(2):
