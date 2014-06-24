@@ -24,7 +24,7 @@
 """Module containing the status singleton object."""
 
 # Python module imports.
-from os import F_OK, access
+from os import F_OK, access, getcwd
 from os.path import sep
 import platform
 from re import search
@@ -93,6 +93,10 @@ class Status(object):
 
                 # Return the Mac Resources folder path.
                 return mac_path
+
+        # Maybe the current directory?
+        if access(getcwd() + sep + file_to_find, F_OK):
+            return getcwd()
 
         # Return the first entry of sys.path as a fallback.
         return sys.path[0]
