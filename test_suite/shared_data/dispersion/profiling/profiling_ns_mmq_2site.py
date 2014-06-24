@@ -53,14 +53,14 @@ sys.path.reverse()
 # relax module imports.
 from lib.physical_constants import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import MODEL_MMQ_CR72, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
+from specific_analyses.relax_disp.variables import MODEL_NS_MMQ_2SITE, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
 
 
 # Alter setup.
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 100
+        nr_iter = 10
 
         # Print statistics.
         verbose = True
@@ -439,11 +439,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_mmq_CR72(params)
+        chi2 = self.model.func_ns_mmq_2site(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
+def single(num_spins=1, model=MODEL_NS_MMQ_2SITE, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -467,7 +467,7 @@ def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_MMQ_CR72, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_MMQ_2SITE, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
