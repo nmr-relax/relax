@@ -381,7 +381,7 @@ class Frame_order:
             pivot2 = outer(self.spin_ones_struct, params[:3])
             param_disp = params[3]
             self._translation_vector = params[4:7]
-            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[6:]
+            ave_pos_alpha, ave_pos_beta, ave_pos_gamma, eigen_alpha, eigen_beta, eigen_gamma, sigma_max, sigma_max_2 = params[7:]
         else:
             pivot2 = self.pivot
             param_disp = params[0]
