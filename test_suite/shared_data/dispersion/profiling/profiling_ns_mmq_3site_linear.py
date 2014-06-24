@@ -53,14 +53,14 @@ sys.path.reverse()
 # relax module imports.
 from lib.physical_constants import g1H, g15N
 from target_functions.relax_disp import Dispersion
-from specific_analyses.relax_disp.variables import MODEL_MMQ_CR72, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
+from specific_analyses.relax_disp.variables import MODEL_NS_MMQ_3SITE_LINEAR, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ
 
 
 # Alter setup.
 def main():
     if True:
         # Nr of iterations.
-        nr_iter = 100
+        nr_iter = 10
 
         # Print statistics.
         verbose = True
@@ -337,9 +337,9 @@ class Profile(Dispersion):
             elif param_name == 'dwH':
                 value = dwH + spin_index
             elif param_name == 'dwH_AB':
-                value = dw_AB + spin_index
+                value = dwH_AB + spin_index
             elif param_name == 'dwH_BC':
-                value = dw_BC + spin_index
+                value = dwH_BC + spin_index
             elif param_name == 'pA':
                 value = pA
             elif param_name == 'kex':
@@ -439,11 +439,11 @@ class Profile(Dispersion):
         """
 
         # Return chi2 value.
-        chi2 = self.model.func_mmq_CR72(params)
+        chi2 = self.model.func_ns_mmq_3site_linear(params)
         return chi2
 
 
-def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
+def single(num_spins=1, model=MODEL_NS_MMQ_3SITE_LINEAR, iter=None):
     """Calculate for a single spin.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -457,7 +457,7 @@ def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, dwH=0.03, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'dwH', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw_AB=1.0, dw_BC=2.0, dwH_AB=0.01, dwH_BC=0.02, pA=0.8, kex_AB=5000.0, pB=0.1, kex_BC=3000.0, spins_params=['r2', 'dw_AB', 'dw_BC', 'dwH_AB', 'dwH_BC', 'pA', 'kex_AB', 'pB', 'kex_BC'])
 
     # Loop 100 times for each spin in the clustered analysis (to make the timing numbers equivalent).
     for spin_index in xrange(100):
@@ -467,7 +467,7 @@ def single(num_spins=1, model=MODEL_MMQ_CR72, iter=None):
     print("chi2 single:", chi2)
 
 
-def cluster(num_spins=100, model=MODEL_MMQ_CR72, iter=None):
+def cluster(num_spins=100, model=MODEL_NS_MMQ_3SITE_LINEAR, iter=None):
     """Calculate for a number of clustered spins.
 
     @keyword num_spins:     Number of spins in the cluster.
@@ -481,7 +481,7 @@ def cluster(num_spins=100, model=MODEL_MMQ_CR72, iter=None):
     """
 
     # Instantiate class
-    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw=3.0, dwH=0.03, pA=0.9, kex=1000.0, spins_params=['r2', 'dw', 'dwH', 'pA', 'kex'])
+    C1 = Profile(num_spins=num_spins, model=model, r2=5.0, dw_AB=1.0, dw_BC=2.0, dwH_AB=0.01, dwH_BC=0.02, pA=0.8, kex_AB=5000.0, pB=0.1, kex_BC=3000.0, kex_AC=1000.0, spins_params=['r2', 'dw_AB', 'dw_BC', 'dwH_AB', 'dwH_BC', 'pA', 'kex_AB', 'pB', 'kex_BC'])
 
     # Repeat the function call, to simulate minimisation.
     for i in xrange(iter):
