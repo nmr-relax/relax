@@ -417,6 +417,19 @@ class Dispersion:
             self.M0 = M0_sin + M0_cos
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
+            # Offset of spin-lock from A.
+            da_mat = self.chemical_shifts - self.offset
+            # The following lines rotate the magnetization previous to spin-lock into the weff frame.
+            theta_mat = arctan2(self.spin_lock_omega1, da_mat)
+            M0_0 = zeros([9, 1], float64)
+            M0_0[0, 0] = 1
+            # The A state initial X magnetisation.
+            M0_sin = multiply.outer( sin(theta_mat), M0_0 )
+            M0_2 = zeros([9, 1], float64)
+            M0_2[2, 0] = 1
+            # The A state initial Z magnetisation.
+            M0_cos = multiply.outer( cos(theta_mat), M0_2 )
+            self.M0 = M0_sin + M0_cos
 
         # Set up the model.
         if model == MODEL_NOREX:
