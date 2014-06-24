@@ -130,7 +130,7 @@ def sherekhan_input(spin_id=None, force=False, dir='ShereKhan'):
                         continue
 
                     # Store the data.
-                    lines.append("%20.15g %20.15g %20.15g\n" % (point, spins[i].r2eff[param_key], spins[i].r2eff_err[param_key]))
+                    lines.append("%20.15g %20.13g %20.13g\n" % (point, spins[i].r2eff[param_key], spins[i].r2eff_err[param_key]))
 
                 # No data.
                 if len(lines) == 1:
