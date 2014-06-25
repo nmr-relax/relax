@@ -30,6 +30,7 @@ from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, p
 from numpy.ma import masked_equal
 
 # relax module imports.
+import dep_check
 from lib.dispersion.b14 import r2eff_B14
 from lib.dispersion.cr72 import r2eff_CR72
 from lib.dispersion.dpl94 import r1rho_DPL94
@@ -40,13 +41,7 @@ from lib.dispersion.m61 import r1rho_M61
 from lib.dispersion.m61b import r1rho_M61b
 from lib.dispersion.mp05 import r1rho_MP05
 from lib.dispersion.mmq_cr72 import r2eff_mmq_cr72
-from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
 from lib.dispersion.ns_cpmg_2site_expanded import r2eff_ns_cpmg_2site_expanded
-from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
-from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
-from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
-from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
-from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 from lib.dispersion.ns_matrices import r180x_3d
 from lib.dispersion.tp02 import r1rho_TP02
 from lib.dispersion.tap03 import r1rho_TAP03
@@ -56,6 +51,14 @@ from lib.float import isNaN
 from target_functions.chi2 import chi2, chi2_rankN
 from specific_analyses.relax_disp.variables import EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_MQ, EXP_TYPE_CPMG_PROTON_MQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_ZQ, EXP_TYPE_LIST_CPMG, EXP_TYPE_R1RHO, MODEL_B14, MODEL_B14_FULL, MODEL_CR72, MODEL_CR72_FULL, MODEL_DPL94, MODEL_IT99, MODEL_LIST_CPMG, MODEL_LIST_CPMG_FULL, MODEL_LIST_FULL, MODEL_LIST_MMQ, MODEL_LIST_MQ_CPMG, MODEL_LIST_R1RHO, MODEL_LIST_R1RHO_FULL, MODEL_LM63, MODEL_LM63_3SITE, MODEL_M61, MODEL_M61B, MODEL_MP05, MODEL_MMQ_CR72, MODEL_NOREX, MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_EXPANDED, MODEL_NS_CPMG_2SITE_STAR, MODEL_NS_CPMG_2SITE_STAR_FULL, MODEL_NS_MMQ_2SITE, MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR, MODEL_NS_R1RHO_2SITE, MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR, MODEL_TAP03, MODEL_TP02, MODEL_TSMFK01
 
+# Check if eisum is available for numerical models.
+if dep_check.einsum_module:
+    from lib.dispersion.ns_cpmg_2site_3d import r2eff_ns_cpmg_2site_3D
+    from lib.dispersion.ns_cpmg_2site_star import r2eff_ns_cpmg_2site_star
+    from lib.dispersion.ns_mmq_3site import r2eff_ns_mmq_3site_mq, r2eff_ns_mmq_3site_sq_dq_zq
+    from lib.dispersion.ns_mmq_2site import r2eff_ns_mmq_2site_mq, r2eff_ns_mmq_2site_sq_dq_zq
+    from lib.dispersion.ns_r1rho_2site import ns_r1rho_2site
+    from lib.dispersion.ns_r1rho_3site import ns_r1rho_3site
 
 class Dispersion:
     def __init__(self, model=None, num_params=None, num_spins=None, num_frq=None, exp_types=None, values=None, errors=None, missing=None, frqs=None, frqs_H=None, cpmg_frqs=None, spin_lock_nu1=None, chemical_shifts=None, offset=None, tilt_angles=None, r1=None, relax_times=None, scaling_matrix=None, recalc_tau=True):
