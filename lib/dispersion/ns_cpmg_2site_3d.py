@@ -55,7 +55,7 @@ More information on the NS CPMG 2-site 3D full model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, dot, fabs, float64, einsum, isfinite, log, min, multiply, sum
+from numpy import array, dot, fabs, float64, einsum, isfinite, log, min, multiply, rollaxis, sum, tile
 from numpy.ma import fix_invalid, masked_where
 
 # relax module imports.
@@ -305,6 +305,9 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
     evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, Rexpo_mat)
     evolution_matrix_mat = einsum('...ij,...jk', evolution_matrix_mat, evolution_matrix_mat)
 
+    # Roll axis around.
+    evolution_matrix_T_mat = rollaxis(evolution_matrix_mat, 6, 5)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -320,17 +323,17 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # Initial magnetisation.
-                Mint_i = M0[0, si, mi, 0, di]
+                Mint_T_i = M0_T[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
-                evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
+                evolution_matrix_T_i = evolution_matrix_T_mat[0, si, mi, 0, di]
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di):
-                    Mint_i = dot(evolution_matrix_i, Mint_i)
+                    Mint_T_i = dot(Mint_T_i, evolution_matrix_T_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint_i[1][0] / pA
+                Mx = Mint_T_i[0][1] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = r20a_si_mi_di
                 else:
