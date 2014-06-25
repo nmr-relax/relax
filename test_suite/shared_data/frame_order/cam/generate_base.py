@@ -120,7 +120,7 @@ class Main:
         """Calculate the averaged PCS for all states."""
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % locale.format("%d", self.N, grouping=True))
+        sys.stdout.write("\n\nRotating %s states for the PCS:\n\n" % locale.format("%d", self.N**self.MODES, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -221,7 +221,7 @@ class Main:
             rot_file = open_write_file('rotations', dir=self.save_path, compress_type=1, force=True)
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % locale.format("%d", self.N, grouping=True))
+        sys.stdout.write("\n\nRotating %s states for the RDC:\n\n" % locale.format("%d", self.N**self.MODES, grouping=True))
 
         # Turn off the relax interpreter echoing to allow the progress meter to be shown correctly.
         self.interpreter.off()
@@ -331,7 +331,7 @@ class Main:
         """Generate the distribution of structures."""
 
         # Printout.
-        sys.stdout.write("\n\nRotating %s states to create the PDB distribution:\n\n" % self.N)
+        sys.stdout.write("\n\nRotating %s states to create the PDB distribution:\n\n" % self.N**self.MODES)
 
         # Load N copies of the original C-domain for the distribution.
         for global_index, mode_indices in self._state_loop():
