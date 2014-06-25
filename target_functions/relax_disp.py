@@ -400,8 +400,11 @@ class Dispersion:
         if model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
             self.M0 = zeros(3, float64)
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
-            self.M0 = zeros(7, float64)
-            self.M0[0] = 0.5
+            M0_0 = zeros( [self.NE, self.NS, self.NM, self.NO, self.ND,7, 1], float64)
+            M0_0[:, :, :, :, :, 0, 0] = 0.5
+            self.M0 = M0_0
+            # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+            self.M0_T = rollaxis(self.M0, 6, 5)
         if model in [MODEL_NS_R1RHO_2SITE]:
             # Offset of spin-lock from A.
             da_mat = self.chemical_shifts - self.offset
@@ -596,7 +599,7 @@ class Dispersion:
         self.r20b_struct[:] = multiply.outer( R20B.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
+        r2eff_ns_cpmg_2site_3D(r180x=self.r180x, M0=self.M0, M0_T=self.M0_T, r20a=self.r20a_struct, r20b=self.r20b_struct, pA=pA, dw=self.dw_struct, dw_orig=dw, kex=kex, inv_tcpmg=self.inv_relax_times, tcp=self.tau_cpmg, back_calc=self.back_calc, num_points=self.num_disp_points, power=self.power)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct

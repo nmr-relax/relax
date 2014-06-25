@@ -224,7 +224,7 @@ def rcpmg_3d_rankN(R1A=None, R1B=None, R2A=None, R2B=None, pA=None, pB=None, dw=
     return c_mat
 
 
-def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
+def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r20a=None, r20b=None, pA=None, dw=None, dw_orig=None, kex=None, inv_tcpmg=None, tcp=None, back_calc=None, num_points=None, power=None):
     """The 2-site numerical solution to the Bloch-McConnell equation.
 
     This function calculates and stores the R2eff values.
@@ -233,7 +233,9 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     @keyword r180x:         The X-axis pi-pulse propagator.
     @type r180x:            numpy float64, rank-2, 7D array
     @keyword M0:            This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-    @type M0:               numpy float64, rank-1, 7D array
+    @type M0:               numpy float array of rank [NE][NS][NM][NO][ND][7][1]
+    @keyword M0_T:          This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations, where the outer two axis has been swapped for efficient dot operations.
+    @type M0_T:             numpy float array of rank [NE][NS][NM][NO][ND][1][7]
     @keyword r10a:          The R1 value for state A.
     @type r10a:             float
     @keyword r10b:          The R1 value for state B.
@@ -281,8 +283,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
     k_AB = pB * kex
 
     # This is a vector that contains the initial magnetizations corresponding to the A and B state transverse magnetizations.
-    M0[1] = pA
-    M0[4] = pB
+    M0_T[:, :, :, :, :, 0, 1] = pA
+    M0_T[:, :, :, :, :, 0, 4] = pB
+    M0[:, :, :, :, :, 1, 0] = pA
+    M0[:, :, :, :, :, 4, 0] = pB
 
     # Extract the total numbers of experiments, number of spins, number of magnetic field strength, number of offsets, maximum number of dispersion point.
     NE, NS, NM, NO, ND = back_calc.shape
@@ -316,7 +320,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # Initial magnetisation.
-                Mint_i = M0
+                Mint_i = M0[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 evolution_matrix_i = evolution_matrix_mat[0, si, mi, 0, di]
@@ -326,7 +330,7 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, r10a=0.0, r10b=0.0, r20a=None, r
                     Mint_i = dot(evolution_matrix_i, Mint_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
-                Mx = Mint_i[1] / pA
+                Mx = Mint_i[1][0] / pA
                 if Mx <= 0.0 or isNaN(Mx):
                     back_calc[0, si, mi, 0, di] = r20a_si_mi_di
                 else:
