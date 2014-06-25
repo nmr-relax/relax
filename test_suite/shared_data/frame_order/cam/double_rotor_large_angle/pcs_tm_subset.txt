@@ -1,0 +1,6 @@
+# mol_name    res_num    res_name    spin_num    spin_name    PCSs                    PCS_error               
+C-dom         99         TYR         35          H               0.144453783447192                     0.1    
+C-dom         108        VAL         53          H              0.0835055532995111                     0.1    
+C-dom         114        GLU         65          H              0.0666934988137161                     0.1    
+C-dom         119        GLU         75          H              0.0658207372860921                     0.1    
+C-dom         126        ARG         89          H               0.115257682147443                     0.1    
