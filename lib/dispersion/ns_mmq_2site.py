@@ -223,7 +223,7 @@ def r2eff_ns_mmq_2site_mq(M0=None, F_vector=array([1, 0], float64), R20A=None, R
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # Extract data from array.
-                    power_i = power[si, mi, oi, i]
+                    power_i = int(power[si, mi, oi, i])
                     M1_M2_i = M1_M2_mat[si, mi, oi, i]
                     M1_M2_star_i = M1_M2_star_mat[si, mi, oi, i]
                     M2_M1_i = M2_M1_mat[si, mi, oi, i]
@@ -371,7 +371,7 @@ def r2eff_ns_mmq_2site_sq_dq_zq(M0=None, F_vector=array([1, 0], float64), R20A=N
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # Extract data from array.
-                    power_i = power[si, mi, oi, i]
+                    power_i = int(power[si, mi, oi, i])
                     evol_block_i = evol_block_mat[si, mi, oi, i]
 
                     # The full evolution.
