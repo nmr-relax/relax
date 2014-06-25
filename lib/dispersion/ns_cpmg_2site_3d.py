@@ -62,6 +62,7 @@ from numpy.ma import fix_invalid, masked_where
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
+from lib.linear_algebra.matrix_power import square_matrix_power
 
 # Repetitive calculations (to speed up calculations).
 m_r10a = array([
@@ -332,23 +333,15 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 evolution_matrix_T_i = evolution_matrix_T_mat[0, si, mi, 0, di]
 
-                # If the looping over the number of CPMG elements is given by the index l, and the initial magnetization has
-                # been formed, then the number of times for propagation of magnetization is l = power_si_mi_di-1.
-                # If the magnetization matrix "Mint" has the index Mint_(i,k) and the evolution matrix has the index Evol_(k,j), i=1, k=7, j=7
-                # then the dot product is given by: Sum_{k=1}^{k} Mint_(1,k) * Evol_(k,j) = D_(1, j).
-                # The numpy einsum formula for this would be: einsum('ik,kj -> ij', Mint, Evol)
-                # 
-                # Following evolution will be: Sum_{k=1}^{k} D_(1, j) * Evol_(k,j) = Mint_(1,k) * Evol_(k,j) * Evol_(k,j).
-                # We can then realize, that the evolution matrix can be raised to the power l. Evol^l.
-
                 # Get which power to raise the matrix to.
                 l = power_si_mi_di-1
 
                 # Raise the square evolution matrix to the power l.
                 evolution_matrix_T_pwer_i = matrix_power(evolution_matrix_T_i, l)
+                #evolution_matrix_T_pwer_i = square_matrix_power(evolution_matrix_T_i, l).real
 
-                #Mint_T_i = dot(Mint_T_i, evolution_matrix_T_pwer_i)
-                Mint_T_i = einsum('ik,kj -> ij', Mint_T_i, evolution_matrix_T_pwer_i)
+                Mint_T_i = dot(Mint_T_i, evolution_matrix_T_pwer_i)
+                #Mint_T_i = einsum('ik,kj -> ij', Mint_T_i, evolution_matrix_T_pwer_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                 Mx = Mint_T_i[0][1] / pA
