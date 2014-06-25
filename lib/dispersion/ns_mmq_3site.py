@@ -58,11 +58,11 @@ More information on the NS MMQ 3-site model can be found in the:
 # Python module imports.
 from math import floor
 from numpy import array, conj, dot, einsum, float64, log, multiply, sum
+from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NS_NM_NO_ND_x_x
-from lib.linear_algebra.matrix_power import square_matrix_power
 
 # Repetitive calculations (to speed up calculations).
 # R20.
@@ -324,7 +324,7 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # Extract data from array.
-                    power_i = power[si, mi, oi, i]
+                    power_i = int(power[si, mi, oi, i])
                     M1_M2_i = M1_M2_mat[si, mi, oi, i]
                     M1_M2_star_i = M1_M2_star_mat[si, mi, oi, i]
                     M2_M1_i = M2_M1_mat[si, mi, oi, i]
@@ -354,16 +354,16 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
                         fact = int(floor(power_i / 2))
 
                         # (M1.M2.M2.M1)^(n/2).
-                        A = square_matrix_power(M1_M2_M2_M1_i, fact)
+                        A = matrix_power(M1_M2_M2_M1_i, fact)
 
                         # (M2*.M1*.M1*.M2*)^(n/2).
-                        B = square_matrix_power(M2_M1_M1_M2_star_i, fact)
+                        B = matrix_power(M2_M1_M1_M2_star_i, fact)
 
                         # (M2.M1.M1.M2)^(n/2).
-                        C = square_matrix_power(M2_M1_M1_M2_i, fact)
+                        C = matrix_power(M2_M1_M1_M2_i, fact)
 
                         # (M1*.M2*.M2*.M1*)^(n/2).
-                        D = square_matrix_power(M1_M2_M2_M1_star_i, fact)
+                        D = matrix_power(M1_M2_M2_M1_star_i, fact)
 
                     # Matrices for odd number of CPMG blocks.
                     else:
@@ -371,19 +371,19 @@ def r2eff_ns_mmq_3site_mq(M0=None, F_vector=array([1, 0, 0], float64), R20A=None
                         fact = int(floor((power_i - 1) / 2))
 
                         # (M1.M2.M2.M1)^((n-1)/2).M1.M2.
-                        A = square_matrix_power(M1_M2_M2_M1_i, fact)
+                        A = matrix_power(M1_M2_M2_M1_i, fact)
                         A = dot(A, M1_M2_i)
 
                         # (M1*.M2*.M2*.M1*)^((n-1)/2).M1*.M2*.
-                        B = square_matrix_power(M1_M2_M2_M1_star_i, fact)
+                        B = matrix_power(M1_M2_M2_M1_star_i, fact)
                         B = dot(B, M1_M2_star_i)
 
                         # (M2.M1.M1.M2)^((n-1)/2).M2.M1.
-                        C = square_matrix_power(M2_M1_M1_M2_i, fact)
+                        C = matrix_power(M2_M1_M1_M2_i, fact)
                         C = dot(C, M2_M1_i)
 
                         # (M2*.M1*.M1*.M2*)^((n-1)/2).M2*.M1*.
-                        D = square_matrix_power(M2_M1_M1_M2_star_i, fact)
+                        D = matrix_power(M2_M1_M1_M2_star_i, fact)
                         D = dot(D, M2_M1_star_i)
 
                     # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
@@ -494,11 +494,11 @@ def r2eff_ns_mmq_3site_sq_dq_zq(M0=None, F_vector=array([1, 0, 0], float64), R20
                 # Loop over the time points, back calculating the R2eff values.
                 for i in range(num_points_i):
                     # Extract data from array.
-                    power_i = power[si, mi, oi, i]
+                    power_i = int(power[si, mi, oi, i])
                     evol_block_i = evol_block_mat[si, mi, oi, i]
 
                     # The full evolution.
-                    evol = square_matrix_power(evol_block_i, power_i)
+                    evol = matrix_power(evol_block_i, power_i)
 
                     # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     Mx = dot(F_vector, dot(evol, M0))
