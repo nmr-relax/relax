@@ -50,7 +50,7 @@ More information on the NS R1rho 2-site model can be found in the:
 """
 
 # Python module imports.
-from numpy import array, cos, dot, einsum, float64, log, multiply, sin, sum
+from numpy import array, cos, dot, einsum, float64, log, multiply, rollaxis, sin, sum
 
 # relax module imports.
 from lib.float import isNaN
@@ -238,31 +238,63 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # Magnetization evolution.
     Rexpo_M0_mat = einsum('...ij,...jk', Rexpo_mat, M0)
 
-    # Loop over spins.
-    for si in range(NS):
-        # Loop over the spectrometer frequencies.
-        for mi in range(NM):
-            # Loop over offsets:
-            for oi in range(NO):
-                # Extract number of points.
-                num_points_i = num_points[0, si, mi, oi]
+    # Transpose M0, to prepare for dot operation. Roll the last axis one back.
+    M0_T = rollaxis(M0, 6, 5)
 
-                # Loop over the time points, back calculating the R2eff values.
-                for j in range(num_points_i):
+    if NS != 1:
+        # Magnetization evolution, which include all dimensions.
+        MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)
+
+    # Loop over the spectrometer frequencies.
+    for mi in range(NM):
+        # Loop over offsets:
+        for oi in range(NO):
+            # Extract number of points.
+            num_points_i = num_points[0, 0, mi, oi]
+
+            # Loop over the time points, back calculating the R2eff values.
+            for j in range(num_points_i):
+
+                # If the number of spins are 1, do the fastest method by dot product.  Else do it by einstein summation.
+                if NS == 1:
+                    # Set the spin index for one spin.
+                    si = 0
                     # Extract the preformed matrix that rotate the magnetization previous to spin-lock into the weff frame.
-                    M0_i= M0[0, si, mi, oi, j, :, 0]
-
-                    # This matrix is a propagator that will evolve the magnetization with the matrix R.
-                    Rexpo_i = Rexpo_mat[0, si, mi, oi, j]
+                    M0_i= M0_T[0, si, mi, oi, j]
 
                     # Extract from the pre-formed Magnetization evolution matrix.
-                    Rexpo_M0_mat_i = Rexpo_M0_mat[0, si, mi, oi, j, :, 0]
+                    Rexpo_M0_mat_i = Rexpo_M0_mat[0, si, mi, oi, j]
 
                     # Magnetization evolution.
-                    MA = dot(M0_i, Rexpo_M0_mat_i)
+                    MA = dot(M0_i, Rexpo_M0_mat_i)[0, 0]
 
                     # The next lines calculate the R1rho using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                     if MA <= 0.0 or isNaN(MA):
                         back_calc[0, si, mi, oi, j] = 1e99
                     else:
                         back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA)
+
+                # If there is multiple spin a clustered analysis.
+                else:
+                    # Loop over spins.
+                    for si in range(NS):
+                        # Extract the preformed matrix that rotate the magnetization previous to spin-lock into the weff frame.
+                        M0_i= M0_T[0, si, mi, oi, j]
+
+                        # Extract from the pre-formed Magnetization evolution matrix.
+                        Rexpo_M0_mat_i = Rexpo_M0_mat[0, si, mi, oi, j]
+
+                        # Magnetization evolution.
+                        MA = dot(M0_i, Rexpo_M0_mat_i)[0, 0]
+
+                        MA_mat_i = MA_mat[0, si, mi, oi, j, 0, 0]
+
+                        # Diff
+                        diff = MA - MA_mat_i
+                        if diff != 0.0:
+                            print "oh no"
+
+                        if MA_mat_i <= 0.0 or isNaN(MA_mat_i):
+                            back_calc[0, si, mi, oi, j] = 1e99
+                        else:
+                            back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA_mat_i)
