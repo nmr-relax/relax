@@ -26,8 +26,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from math import pi
-from numpy import add, array, arctan2, asarray, cos, complex64, dot, float64, int16, max, multiply, ones, sin, sqrt, sum, tile, zeros
+from numpy import arctan2, cos, dot, float64, int16, multiply, ones, rollaxis, pi, sin, sum, zeros
 from numpy.ma import masked_equal
 
 # relax module imports.
@@ -415,6 +414,9 @@ class Dispersion:
             M0_2[2, 0] = 1
             M0_cos = multiply.outer( cos(theta_mat), M0_2 )
             self.M0 = M0_sin + M0_cos
+            # Transpose M0, to prepare for dot operation. Roll the last axis one back, corresponds to a transpose for the outer two axis.
+            self.M0_T = rollaxis(self.M0, 6, 5)
+
         if model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
             self.M0 = zeros(9, float64)
             # Offset of spin-lock from A.
@@ -1598,7 +1600,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( r1rho_prime.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Back calculate the R2eff values.
-        ns_r1rho_2site(M0=self.M0, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
+        ns_r1rho_2site(M0=self.M0, M0_T=self.M0_T, r1rho_prime=self.r20_struct, omega=self.chemical_shifts, offset=self.offset, r1=self.r1, pA=pA, dw=self.dw_struct, kex=kex, spin_lock_fields=self.spin_lock_omega1, relax_time=self.relax_times, inv_relax_time=self.inv_relax_times, back_calc=self.back_calc, num_points=self.num_disp_points)
 
         # Clean the data for all values, which is left over at the end of arrays.
         self.back_calc = self.back_calc*self.disp_struct
