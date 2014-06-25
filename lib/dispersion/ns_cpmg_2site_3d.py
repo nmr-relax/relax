@@ -62,7 +62,6 @@ from numpy.ma import fix_invalid, masked_where
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
-from lib.linear_algebra.matrix_power import square_matrix_power
 
 # Repetitive calculations (to speed up calculations).
 m_r10a = array([
@@ -334,14 +333,13 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
                 evolution_matrix_T_i = evolution_matrix_T_mat[0, si, mi, 0, di]
 
                 # Get which power to raise the matrix to.
-                l = power_si_mi_di-1
+                l = int(power_si_mi_di-1)
 
                 # Raise the square evolution matrix to the power l.
-                evolution_matrix_T_pwer_i = matrix_power(evolution_matrix_T_i, l)
-                #evolution_matrix_T_pwer_i = square_matrix_power(evolution_matrix_T_i, l).real
+                evolution_matrix_T_power_i = matrix_power(evolution_matrix_T_i, l)
 
-                Mint_T_i = dot(Mint_T_i, evolution_matrix_T_pwer_i)
-                #Mint_T_i = einsum('ik,kj -> ij', Mint_T_i, evolution_matrix_T_pwer_i)
+                # Evolve the magnetisation.
+                Mint_T_i = dot(Mint_T_i, evolution_matrix_T_power_i)
 
                 # The next lines calculate the R2eff using a two-point approximation, i.e. assuming that the decay is mono-exponential.
                 Mx = Mint_T_i[0][1] / pA
