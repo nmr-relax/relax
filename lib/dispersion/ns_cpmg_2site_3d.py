@@ -308,6 +308,9 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
     # Roll axis around.
     evolution_matrix_T_mat = rollaxis(evolution_matrix_mat, 6, 5)
 
+    # Preform the initial magnetisation.
+    evolution_matrix_T_M0_mat = einsum('...ij,...jk', M0_T, evolution_matrix_T_mat)
+
     # Loop over the spins
     for si in range(NS):
         # Loop over the spectrometer frequencies.
@@ -323,13 +326,10 @@ def r2eff_ns_cpmg_2site_3D(r180x=None, M0=None, M0_T=None, r10a=0.0, r10b=0.0, r
                 r20a_si_mi_di = r20a[0, si, mi, 0, di]
 
                 # Initial magnetisation.
-                Mint_T_i = M0_T[0, si, mi, 0, di]
+                Mint_T_i = evolution_matrix_T_M0_mat[0, si, mi, 0, di]
 
                 # This matrix is a propagator that will evolve the magnetization with the matrix R for a delay tcp.
                 evolution_matrix_T_i = evolution_matrix_T_mat[0, si, mi, 0, di]
-
-                # Do the initial evolution.
-                Mint_T_i = dot(Mint_T_i, evolution_matrix_T_i)
 
                 # Loop over the CPMG elements, propagating the magnetisation.
                 for j in range(power_si_mi_di - 1):
