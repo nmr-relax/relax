@@ -271,6 +271,8 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros((self.num_align, self.num_spins), float64)
+            self.r_pivot_atom = zeros((self.num_spins, 3), float32)
+            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
             self.r_ln_pivot = self.pivot - self.paramag_centre
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
@@ -1153,14 +1155,14 @@ class Frame_order:
         vect = self.atomic_pos - self.ave_pos_pivot
 
         # Rotate then translate the atomic positions, then calculate the pivot to atom vector.
-        self.r_pivot_atom = dot(vect, RT_ave)
+        self.r_pivot_atom[:] = dot(vect, RT_ave)
         add(self.r_pivot_atom, self.ave_pos_pivot, self.r_pivot_atom)
         add(self.r_pivot_atom, self._translation_vector, self.r_pivot_atom)
         subtract(self.r_pivot_atom, pivot, self.r_pivot_atom)
 
         # And the reverse vectors.
         if min(self.full_in_ref_frame) == 0:
-            self.r_pivot_atom_rev = dot(vect, R_ave)
+            self.r_pivot_atom_rev[:] = dot(vect, R_ave)
             add(self.r_pivot_atom_rev, self.ave_pos_pivot, self.r_pivot_atom_rev)
             add(self.r_pivot_atom_rev, self._translation_vector, self.r_pivot_atom_rev)
             subtract(self.r_pivot_atom_rev, pivot, self.r_pivot_atom_rev)
