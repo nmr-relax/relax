@@ -241,22 +241,18 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
     # Transpose M0, to prepare for dot operation. Roll the last axis one back.
     M0_T = rollaxis(M0, 6, 5)
 
-    if NS != 1:
-        # Magnetization evolution, which include all dimensions.
-        MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)
-
-    # Loop over the spectrometer frequencies.
-    for mi in range(NM):
-        # Loop over offsets:
-        for oi in range(NO):
-            # Extract number of points.
-            num_points_i = num_points[0, 0, mi, oi]
-
-            # Loop over the time points, back calculating the R2eff values.
-            for j in range(num_points_i):
-
-                # If the number of spins are 1, do the fastest method by dot product.  Else do it by einstein summation.
-                if NS == 1:
+    if NS == 1:
+        # Loop over the spectrometer frequencies.
+        for mi in range(NM):
+            # Loop over offsets:
+            for oi in range(NO):
+                # Extract number of points.
+                num_points_i = num_points[0, 0, mi, oi]
+    
+                # Loop over the time points, back calculating the R2eff values.
+                for j in range(num_points_i):
+    
+                    # If the number of spins are 1, do the fastest method by dot product.  Else do it by einstein summation.
                     # Set the spin index for one spin.
                     si = 0
                     # Extract the preformed matrix that rotate the magnetization previous to spin-lock into the weff frame.
@@ -274,27 +270,11 @@ def ns_r1rho_2site(M0=None, r1rho_prime=None, omega=None, offset=None, r1=0.0, p
                     else:
                         back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA)
 
-                # If there is multiple spin a clustered analysis.
-                else:
-                    # Loop over spins.
-                    for si in range(NS):
-                        # Extract the preformed matrix that rotate the magnetization previous to spin-lock into the weff frame.
-                        M0_i= M0_T[0, si, mi, oi, j]
+    else:
+        # Magnetization evolution, which include all dimensions.
+        MA_mat = einsum('...ij,...jk', M0_T, Rexpo_M0_mat)[:, :, :, :, :, 0, 0]
 
-                        # Extract from the pre-formed Magnetization evolution matrix.
-                        Rexpo_M0_mat_i = Rexpo_M0_mat[0, si, mi, oi, j]
+        # Do back calculation.
+        back_calc[:] = -inv_relax_time * log(MA_mat)
 
-                        # Magnetization evolution.
-                        MA = dot(M0_i, Rexpo_M0_mat_i)[0, 0]
 
-                        MA_mat_i = MA_mat[0, si, mi, oi, j, 0, 0]
-
-                        # Diff
-                        diff = MA - MA_mat_i
-                        if diff != 0.0:
-                            print "oh no"
-
-                        if MA_mat_i <= 0.0 or isNaN(MA_mat_i):
-                            back_calc[0, si, mi, oi, j] = 1e99
-                        else:
-                            back_calc[0, si, mi, oi, j]= -inv_relax_time[0, si, mi, oi, j] * log(MA_mat_i)
