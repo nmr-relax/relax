@@ -59,11 +59,11 @@ More information on the NS CPMG 2-site star full model can be found in the:
 # Python module imports.
 from numpy import add, array, conj, dot, einsum, fabs, float64, isfinite, log, min, multiply, sum
 from numpy.ma import fix_invalid, masked_where
+from numpy.linalg import matrix_power
 
 # relax module imports.
 from lib.float import isNaN
 from lib.dispersion.matrix_exponential import matrix_exponential_rank_NE_NS_NM_NO_ND_x_x
-from lib.linear_algebra.matrix_power import square_matrix_power
 
 # Repetitive calculations (to speed up calculations).
 m_r20a = array([
@@ -247,7 +247,7 @@ def r2eff_ns_cpmg_2site_star(M0=None, r20a=None, r20b=None, pA=None, dw=None, dw
                 prop_2_i = prop_2_mat[0, si, mi, 0, di]
 
                 # Now create the total propagator that will evolve the magnetization under the CPMG train, i.e. it applies the above tau-180-tau-tau-180-tau so many times as required for the CPMG frequency under consideration.
-                prop_total = square_matrix_power(prop_2_i, power_si_mi_di)
+                prop_total = matrix_power(prop_2_i, power_si_mi_di)
 
                 # Now we apply the above propagator to the initial magnetization vector - resulting in the magnetization that remains after the full CPMG pulse train.  It is called M of t (t is the time after the CPMG train).
                 Moft = dot(prop_total, M0)
