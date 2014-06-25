@@ -179,10 +179,13 @@ class Frame_order:
             self.num_interatom = len(rdcs[0])
 
         # Create multi-dimensional versions of certain structures for faster calculations.
-        self.spin_ones_struct = ones(self.num_spins, float64)
-        self.pivot = outer(self.spin_ones_struct, pivot)
-        self.paramag_centre = outer(self.spin_ones_struct, paramag_centre)
-        self.ave_pos_pivot = outer(self.spin_ones_struct, ave_pos_pivot)
+        if self.pcs_flag:
+            self.spin_ones_struct = ones(self.num_spins, float64)
+            self.pivot = outer(self.spin_ones_struct, pivot)
+            self.paramag_centre = outer(self.spin_ones_struct, paramag_centre)
+            self.ave_pos_pivot = outer(self.spin_ones_struct, ave_pos_pivot)
+        else:
+            self.pivot = array([pivot])
 
         # Set up the alignment data.
         for align_index in range(self.num_align):
