@@ -39,10 +39,10 @@ class Analysis(Base_script):
     # The model parameters.
     AXIS_THETA = 1.494291741547518
     AXIS_PHI = 2.525044022476957
-    CONE_SIGMA_MAX = 10.5 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX = 10.5 / 2.0 / 360.0 * 2.0 * pi
     AXIS_THETA2 = 2.30381499622381
     AXIS_PHI2 = -2.249696457768556
-    CONE_SIGMA_MAX2 = 11.5 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX2 = 11.5 / 2.0 / 360.0 * 2.0 * pi
 
     # The pivot points.
     PIVOT = array([41.739, 6.03, -0.764], float32)
