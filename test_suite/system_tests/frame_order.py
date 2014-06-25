@@ -267,6 +267,33 @@ class Frame_order(SystemTestCase):
         self.check_chi2(0.080669539157379247)
 
 
+    def test_cam_double_rotor_large_angle(self):
+        """Test the double rotor frame order model of CaM."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags()
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.081769384900455433)
+
+
+    def test_cam_double_rotor_large_angle_pcs(self):
+        """Test the double rotor frame order model of CaM (with only PCS data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(rdc=False)
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.00016331682903726827)
+
+
+    def test_cam_double_rotor_large_angle_rdc(self):
+        """Test the double rotor frame order model of CaM (with only RDC data)."""
+
+        # The flags, execute the script, and then check the chi2 value.
+        self.flags(pcs=False)
+        self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
+        self.check_chi2(0.080669539157379247)
+
+
     def test_cam_free_rotor(self):
         """Test the free rotor frame order model of CaM."""
 
