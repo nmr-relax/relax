@@ -1183,6 +1183,19 @@ class Frame_order(SystemTestCase):
         self.space_probe(ref_chi2=chi2, params=['ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'cone_theta_x', 'cone_theta_y'])
 
 
+    def test_rigid_data_to_double_rotor_model(self):
+        """Test the double rotor target function for the data from a rigid test molecule."""
+
+        # Set the model.
+        ds.model = 'double rotor'
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
+
+        # Check the chi2 value.
+        self.assertAlmostEqual(cdp.chi2, 0.01137748706675365, 5)
+
+
     def test_rigid_data_to_free_rotor_model(self):
         """Test the free rotor target function for the data from a rigid test molecule."""
 
