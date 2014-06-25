@@ -731,6 +731,10 @@ class Relax_disp(SystemTestCase):
         spin2.dw = 9.5732624231366
         spin2.kex = 1380.46162655657
 
+        # Test the values when clustering.
+        if clustering:
+            self.interpreter.relax_disp.cluster(cluster_id='all', spin_id=":1-100")
+
         # Low precision optimisation.
         self.interpreter.minimise(min_algor='simplex', line_search=None, hessian_mod=None, hessian_type=None, func_tol=1e-05, grad_tol=None, max_iter=1000, constraints=True, scaling=True, verbosity=1)
 
@@ -6093,6 +6097,37 @@ class Relax_disp(SystemTestCase):
         self.assertAlmostEqual(spin2.dw, 9.5505714779503, 4)
         self.assertAlmostEqual(spin2.kex/1000, 1454.45726998929/1000, 4)
         self.assertAlmostEqual(spin2.chi2, 0.000402231563481261, 4)
+
+
+    def test_tp02_data_to_ns_r1rho_2site_cluster(self, model=None):
+        """Test the relaxation dispersion 'NS R1rho 2-site' model fitting against the 'TP02' test data, when performing clustering."""
+
+        # Setup the data.
+        self.setup_tp02_data_to_ns_r1rho_2site(clustering=True)
+
+        # Alias the spins.
+        spin1 = cdp.mol[0].res[0].spin[0]
+        spin2 = cdp.mol[0].res[1].spin[0]
+
+        # The R20 keys.
+        r20_key1 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=500e6)
+        r20_key2 = generate_r20_key(exp_type=EXP_TYPE_R1RHO, frq=800e6)
+
+        # Checks for residue :1.
+        self.assertAlmostEqual(spin1.r2[r20_key1], 8.48607207881462, 4)
+        self.assertAlmostEqual(spin1.r2[r20_key2], 13.4527609061722, 4)
+        self.assertAlmostEqual(spin1.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin1.dw, 8.86218096536618, 4)
+        self.assertAlmostEqual(spin1.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin1.chi2, 3.09500996065247, 4)
+
+        # Checks for residue :2.
+        self.assertAlmostEqual(spin2.r2[r20_key1], 10.4577906018883, 4)
+        self.assertAlmostEqual(spin2.r2[r20_key2], 16.4455550953792, 4)
+        self.assertAlmostEqual(spin2.pA, 0.863093838784425, 4)
+        self.assertAlmostEqual(spin2.dw, 11.5841168862587, 4)
+        self.assertAlmostEqual(spin2.kex/1000, 1186.22749648299/1000, 4)
+        self.assertAlmostEqual(spin2.chi2, 3.09500996065247, 4)
 
 
     def test_tp02_data_to_mp05(self):
