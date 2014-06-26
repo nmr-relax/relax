@@ -23,10 +23,39 @@
 """Script for optimising the second rotor frame order test model of CaM."""
 
 # Python module imports
-from numpy import array, float32
+from numpy import array, float32, float64, transpose
+from numpy.linalg import norm
 
 # relax module imports.
 from base_script import Base_script
+from lib.geometry.rotations import R_to_euler_zyz
+
+
+def eigen_system():
+    """Recreate the eigensystem parameters."""
+
+    # The centre of masses of each domain (from the system_create.log file).
+    N_COM = array([41.739, 6.03, -0.764], float64)
+    C_COM = array([26.837, -12.379, 28.342], float64)
+
+    # The Z-axis as the inter CoM vector.
+    z_axis = N_COM - C_COM
+    disp = norm(z_axis)
+    z_axis /= disp
+
+    # The eigenframe (partly from the system_create.log file).
+    eigensystem = transpose(array([
+        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
+        [ -7.778375610280605e-01, 6.284649244351433e-01, -7.532653237683726e-04],
+        z_axis
+    ], float64))
+
+    # Convert to Euler angles.
+    a, b, g = R_to_euler_zyz(eigensystem)
+
+    # Return the parameters.
+    return a, b, g, disp
+
 
 
 class Analysis(Base_script):
@@ -37,16 +66,12 @@ class Analysis(Base_script):
     MODEL = 'double rotor'
 
     # The model parameters.
-    AXIS_THETA = 1.494291741547518
-    AXIS_PHI = 2.525044022476957
+    EIGEN_ALPHA, EIGEN_BETA, EIGEN_GAMMA, PIVOT_DISP = eigen_system()
     CONE_SIGMA_MAX = 10.5 / 2.0 / 360.0 * 2.0 * pi
-    AXIS_THETA2 = 2.30381499622381
-    AXIS_PHI2 = -2.249696457768556
-    CONE_SIGMA_MAX2 = 11.5 / 2.0 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX_2 = 11.5 / 2.0 / 360.0 * 2.0 * pi
 
-    # The pivot points.
-    PIVOT = array([41.739, 6.03, -0.764], float32)
-    PIVOT2 = array([26.837, -12.379, 28.342], float32)
+    # The pivot point.
+    PIVOT = array([26.837, -12.379, 28.342], float32)
 
 
 # Execute the analysis.
