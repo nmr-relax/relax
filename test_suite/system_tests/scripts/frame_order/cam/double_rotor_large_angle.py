@@ -60,7 +60,7 @@ def eigen_system():
 
 class Analysis(Base_script):
     # The directory containing the data files.
-    DIRECTORY = 'double_rotor'
+    DIRECTORY = 'double_rotor_large_angle'
 
     # The frame order model.
     MODEL = 'double rotor'
