@@ -182,7 +182,7 @@ class Frame_order(SystemTestCase):
 
         # Minimisation info.
         string = string + "\n"
-        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max']:
+        for param in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z', 'ave_pos_alpha', 'ave_pos_beta', 'ave_pos_gamma', 'eigen_alpha', 'eigen_beta', 'eigen_gamma', 'axis_theta', 'axis_phi', 'cone_theta_x', 'cone_theta_y', 'cone_theta', 'cone_s1', 'cone_sigma_max', 'cone_sigma_max_2']:
             if hasattr(cdp, param):
                 obj = getattr(cdp, param)
                 string = string + "%-15s %30.17g\n" % (param, obj)
