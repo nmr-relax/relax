@@ -63,7 +63,6 @@ try:
     from numpy import einsum
     einsum_module = True
 except ImportError:
-    sys.stderr.write("The dependency 'numpy einsum' has not been installed.  Numerical models in dispersion analysis will not be possible.\n")
     einsum_module = False
 
 # Bmrblib python package check.
