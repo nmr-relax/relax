@@ -181,7 +181,8 @@ class Dispersion:
         # Initialise higher order numpy structures.
         # Define the shape of all the numpy arrays.
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
-        self.NE = len(self.exp_types)
+        self.num_exp = len(self.exp_types)
+        self.NE = self.num_exp
         self.NS = self.num_spins
         self.NM = self.num_frq
 
