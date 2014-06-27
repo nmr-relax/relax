@@ -45,8 +45,99 @@ from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.data import domain_moving
+from specific_analyses.frame_order.data import domain_moving, generate_pivot
 from specific_analyses.frame_order.parameters import update_model
+
+
+def add_rotors(structure=None):
+    """Add all rotor objects for the current frame order model to the structural object.
+
+    @keyword structure: The internal structural object to add the rotor objects to.
+    @type structure:    lib.structure.internal.object.Internal instance
+    """
+
+    # Initialise the list structures for the rotor data.
+    axis = []
+    span = []
+    staggered = []
+    pivot = []
+    rotor_angle = []
+    com = []
+
+    # The pivot points.
+    pivot1 = generate_pivot(order=1)
+    pivot2 = generate_pivot(order=2)
+
+    # The single rotor models.
+    if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
+        # The rotor angle.
+        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            rotor_angle.append(pi)
+        else:
+            rotor_angle.append(cdp.cone_sigma_max)
+
+        # Get the CoM of the entire molecule to use as the centre of the rotor.
+        if cdp.model in ['rotor', 'free rotor']:
+            com.append(pipe_centre_of_mass(verbosity=0))
+        else:
+            com.append(pivot1)
+
+        # Generate the rotor axis.
+        if cdp.model in ['rotor', 'free rotor']:
+            axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com))
+        elif cdp.model in ['iso cone', 'iso cone, free rotor']:
+            axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
+        else:
+            axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
+
+        # The size of the rotor, taking the 30 Angstrom cone representation into account.
+        if cdp.model in ['rotor', 'free rotor']:
+            span.append(20e-10)
+        else:
+            span.append(35e-10)
+
+        # Stagger the propeller blades.
+        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            staggered.append(False)
+        else:
+            staggered.append(True)
+
+        # The pivot.
+        pivot.append(pivot1)
+
+    # The double rotor models.
+    elif cdp.model in ['double rotor']:
+        # Add both rotor angles (the 2nd must come first).
+        rotor_angle.append(cdp.cone_sigma_max_2)
+        rotor_angle.append(cdp.cone_sigma_max)
+
+        # Set the com to the pivot points.
+        com.append(pivot2)
+        com.append(pivot1)
+
+        # Generate the eigenframe of the motion.
+        frame = zeros((3, 3), float64)
+        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+        # Add the x and y axes.
+        axis.append(frame[:,0])
+        axis.append(frame[:,1])
+
+        # The rotor size.
+        span.append(20e-10)
+        span.append(20e-10)
+
+        # Stagger the propeller blades.
+        staggered.append(True)
+        staggered.append(True)
+
+        # The pivot points.
+        pivot.append(pivot2)
+        pivot.append(pivot1)
+
+    # Add each rotor to the structure as a new molecule.
+    for i in range(len(axis)):
+        rotor_pdb(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, force=False):
@@ -149,42 +240,10 @@ def create_geometric_rep(format='PDB', file=None, dir=None, size=30.0, inc=36, f
         model_num = 2
 
     # The pivot point.
-    pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z])
+    pivot = generate_pivot(order=1)
 
-    # The rotor object.
-    if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
-        # The rotor angle.
-        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
-            rotor_angle = pi
-        else:
-            rotor_angle = cdp.cone_sigma_max
-
-        # Get the CoM of the entire molecule to use as the centre of the rotor.
-        com = pivot
-        if cdp.model in ['rotor', 'free rotor']:
-            com = pipe_centre_of_mass(verbosity=0)
-
-        # Generate the rotor axis.
-        if cdp.model in ['rotor', 'free rotor']:
-            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-        elif cdp.model in ['iso cone', 'iso cone, free rotor']:
-            axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
-        else:
-            axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
-
-        # The size of the rotor, taking the 30 Angstrom cone representation into account.
-        if cdp.model in ['rotor', 'free rotor']:
-            span = 20e-10
-        else:
-            span = 35e-10
-
-        # Stagger the propeller blades.
-        staggered = True
-        if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
-            staggered = False
-
-        # Add the rotor object to the structure as a new molecule.
-        rotor_pdb(structure=structure, rotor_angle=rotor_angle, axis=axis, axis_pt=pivot, centre=com, span=span, blade_length=5e-10, staggered=staggered)
+    # Add all rotor objects.
+    add_rotors(structure=structure)
 
     # Create the molecule.
     structure.add_molecule(name='rest')
