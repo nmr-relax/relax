@@ -24,7 +24,7 @@
 
 # Python module imports.
 from numpy.lib.stride_tricks import as_strided
-from numpy import arange, array, asarray, float64, int16, sum, zeros
+from numpy import float64, int16, zeros
 from numpy.linalg import matrix_power
 
 

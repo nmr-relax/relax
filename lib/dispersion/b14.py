@@ -110,7 +110,7 @@ Comparison to CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import any, arccosh, arctan2, array, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
+from numpy import any, arccosh, arctan2, cos, cosh, fabs, isfinite, log, max, min, power, sin, sinh, sqrt, sum
 from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).

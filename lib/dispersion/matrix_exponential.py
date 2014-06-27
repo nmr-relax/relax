@@ -23,12 +23,9 @@
 """Module for the calculation of the matrix exponential, for higher dimensional data."""
 
 # Python module imports.
-from numpy import array, any, dot, einsum, eye, exp, iscomplex, int16, float64, newaxis, multiply, tile, sqrt, zeros
+from numpy import array, any, dot, einsum, eye, exp, iscomplex, int16, newaxis, multiply, tile, sqrt, zeros
 from numpy.lib.stride_tricks import as_strided
 from numpy.linalg import eig, inv
-
-# relax module imports.
-from lib.check_types import is_complex
 
 
 def create_index_rank_NS_NM_NO_ND_x_x(data):

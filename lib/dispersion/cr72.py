@@ -93,8 +93,8 @@ More information on the CR72 full model can be found in the:
 """
 
 # Python module imports.
-from numpy import arccosh, array, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
-from numpy.ma import fix_invalid, masked_greater_equal, masked_less, masked_where
+from numpy import arccosh, cos, cosh, isfinite, fabs, min, max, multiply, sqrt, subtract, sum
+from numpy.ma import fix_invalid, masked_greater_equal, masked_where
 
 # Repetitive calculations (to speed up calculations).
 eta_scale = 2.0**(-3.0/2.0)

@@ -64,7 +64,7 @@ More information on the DPL94 model can be found in the:
 """
 
 # Python module imports.
-from numpy import abs, any, array, cos, isfinite, min, sin, sum
+from numpy import any, cos, isfinite, min, sin, sum
 from numpy.ma import fix_invalid, masked_where
 
 def r1rho_DPL94(r1rho_prime=None, phi_ex=None, kex=None, theta=None, R1=0.0, spin_lock_fields2=None, back_calc=None):
