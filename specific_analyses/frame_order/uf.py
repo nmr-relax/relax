@@ -23,29 +23,14 @@
 """Module for all of the frame order specific user functions."""
 
 # Python module imports.
-from copy import deepcopy
-from math import pi
-from numpy import array, dot, eye, float64, transpose, zeros
-import sys
+from numpy import array, float64
 from warnings import warn
 
 # relax module imports.
 from lib.arg_check import is_float_array
 from lib.errors import RelaxError
-from lib.frame_order.rotor_axis import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
-from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
-from lib.io import open_write_file
-from lib.order import order_parameters
-from lib.structure.cones import Iso_cone, Pseudo_elliptic
-from lib.structure.geometric import generate_vector_residues
-from lib.structure.internal.object import Internal
-from lib.structure.represent.cone import cone
-from lib.structure.represent.rotor import rotor_pdb
-from lib.text.sectioning import subsection
 from lib.warnings import RelaxWarning
 from pipe_control import pipes
-from pipe_control.structure.mass import pipe_centre_of_mass
-from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
 

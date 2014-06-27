@@ -27,11 +27,8 @@ from copy import deepcopy
 from math import pi
 from numpy import array, dot, eye, float64, transpose, zeros
 import sys
-from warnings import warn
 
 # relax module imports.
-from lib.arg_check import is_float_array
-from lib.errors import RelaxError
 from lib.frame_order.rotor_axis import create_rotor_axis_alpha, create_rotor_axis_euler, create_rotor_axis_spherical
 from lib.geometry.rotations import euler_to_R_zyz, two_vect_to_R
 from lib.io import open_write_file
@@ -42,11 +39,8 @@ from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
 from lib.structure.represent.rotor import rotor_pdb
 from lib.text.sectioning import subsection
-from lib.warnings import RelaxWarning
-from pipe_control import pipes
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
-from specific_analyses.frame_order.parameters import update_model
 
 
 def add_rotors(structure=None):
