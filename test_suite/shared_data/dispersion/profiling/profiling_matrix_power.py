@@ -36,12 +36,12 @@ import pstats
 import tempfile
 
 from numpy.lib.stride_tricks import as_strided
-from numpy import arange, array, asarray, int16, sum, zeros
+from numpy import any, arange, array, asarray, int16, sum, zeros
 from numpy.linalg import matrix_power
 
 def main():
     # Nr of iterations.
-    nr_iter = 50
+    nr_iter = 10
 
     # Print statistics.
     verbose = True
@@ -428,19 +428,23 @@ class Profile():
         calc_normal = self.calc_normal(data, power)
 
         # Find the difference to the validated method.
-        diff_normal = calc_normal - self.vali
+        diff_normal_test = calc_normal != self.vali
 
-        if sum(diff_normal) != 0.0:
+        if any(diff_normal_test):
+            diff_normal = calc_normal - self.vali
             print("The normal method is different from the validated data")
+            print(diff_normal)
 
         # Calculate by strided way.
         calc_strided = self.calc_strided(data, power)
 
         # Find the difference to the validated method.
-        diff_strided = calc_strided - self.vali
+        diff_strided_test = calc_strided != self.vali
 
-        if sum(diff_strided) != 0.0:
+        if any(diff_strided_test):
+            diff_strided = calc_strided - self.vali
             print("The strided method is different from the validated data")
+            print(diff_strided )
 
 
 def single_normal(NS=1, iter=None):
