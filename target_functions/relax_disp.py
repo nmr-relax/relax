@@ -194,8 +194,7 @@ class Dispersion:
         # Initialise higher order numpy structures.
         # Define the shape of all the numpy arrays.
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
-        self.num_exp = len(self.exp_types)
-        self.NE = self.num_exp
+        self.NE = len(self.exp_types)
         self.NS = num_spins
         self.NM = self.num_frq
 
@@ -393,9 +392,9 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.num_exp * self.NS * self.num_frq)
+        self.end_index.append(self.NE * self.NS * self.num_frq)
         if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.end_index.append(2 * self.num_exp * self.NS * self.num_frq)
+            self.end_index.append(2 * self.NE * self.NS * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.NS)
@@ -716,7 +715,7 @@ class Dispersion:
         self.r20c_struct[:] = multiply.outer( R20C.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20a = self.r20a_struct[ei]
             r20b = self.r20b_struct[ei]
@@ -816,16 +815,13 @@ class Dispersion:
         For the single experiment type models, the first dimension of the values, errors, and missing data structures will be removed to simplify the target functions.
         """
 
-        # The number of experiments.
-        self.num_exp = len(self.exp_types)
-
         # The MMQ combined data type models.
         if self.model in MODEL_LIST_MMQ:
             # Alias the r2eff functions.
             self.r2eff_ns_mmq = []
 
             # Loop over the experiment types.
-            for ei in range(self.num_exp):
+            for ei in range(self.NE):
                 # SQ, DQ and ZQ data types.
                 if self.exp_types[ei] in [EXP_TYPE_CPMG_SQ, EXP_TYPE_CPMG_PROTON_SQ, EXP_TYPE_CPMG_DQ, EXP_TYPE_CPMG_ZQ]:
                     if self.model == MODEL_NS_MMQ_2SITE:
@@ -1265,7 +1261,7 @@ class Dispersion:
         self.r20_struct[:] = multiply.outer( R20.reshape(self.NE, self.NS, self.NM), self.no_nd_ones )
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
@@ -1503,7 +1499,7 @@ class Dispersion:
         chi2_sum = 0.0
 
         # Loop over the experiment types.
-        for ei in range(self.num_exp):
+        for ei in range(self.NE):
 
             r20 = self.r20_struct[ei]
             dw_frq = self.dw_struct[ei]
