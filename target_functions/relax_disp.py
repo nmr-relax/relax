@@ -184,7 +184,6 @@ class Dispersion:
         # Store the arguments.
         self.model = model
         self.num_params = num_params
-        self.num_spins = num_spins
         self.num_frq = num_frq
         self.exp_types = exp_types
         self.scaling_matrix = scaling_matrix
@@ -197,7 +196,7 @@ class Dispersion:
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
         self.num_exp = len(self.exp_types)
         self.NE = self.num_exp
-        self.NS = self.num_spins
+        self.NS = num_spins
         self.NM = self.num_frq
 
         # The number of offsets points can vary. We need to find the maximum elements in the numpy array list.
@@ -394,21 +393,21 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.num_exp * self.num_spins * self.num_frq)
+        self.end_index.append(self.num_exp * self.NS * self.num_frq)
         if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.end_index.append(2 * self.num_exp * self.num_spins * self.num_frq)
+            self.end_index.append(2 * self.num_exp * self.NS * self.num_frq)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
-        self.end_index.append(self.end_index[-1] + self.num_spins)
+        self.end_index.append(self.end_index[-1] + self.NS)
         if model in [MODEL_IT99, MODEL_LM63_3SITE, MODEL_MMQ_CR72, MODEL_NS_MMQ_2SITE]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
         elif model in [MODEL_NS_R1RHO_3SITE, MODEL_NS_R1RHO_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
         elif model in [MODEL_NS_MMQ_3SITE, MODEL_NS_MMQ_3SITE_LINEAR]:
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
-            self.end_index.append(self.end_index[-1] + self.num_spins)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
+            self.end_index.append(self.end_index[-1] + self.NS)
 
         # Pi-pulse propagators.
         if model in [MODEL_NS_CPMG_2SITE_3D, MODEL_NS_CPMG_2SITE_3D_FULL]:
@@ -895,7 +894,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -949,7 +948,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1372,7 +1371,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1463,7 +1462,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.num_spins*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
