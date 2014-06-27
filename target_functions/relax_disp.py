@@ -184,7 +184,6 @@ class Dispersion:
         # Store the arguments.
         self.model = model
         self.num_params = num_params
-        self.num_frq = num_frq
         self.exp_types = exp_types
         self.scaling_matrix = scaling_matrix
         self.values_orig = values
@@ -196,7 +195,7 @@ class Dispersion:
         # The total numbers of experiments, number of spins, number of magnetic field strength, maximum number of offsets, maximum number of dispersion point.
         self.NE = len(self.exp_types)
         self.NS = num_spins
-        self.NM = self.num_frq
+        self.NM = num_frq
 
         # The number of offsets points can vary. We need to find the maximum elements in the numpy array list.
         max_NO = 1
@@ -392,9 +391,9 @@ class Dispersion:
         self.end_index = []
 
         # The spin and frequency dependent R2 parameters.
-        self.end_index.append(self.NE * self.NS * self.num_frq)
+        self.end_index.append(self.NE * self.NS * self.NM)
         if model in [MODEL_B14_FULL, MODEL_CR72_FULL, MODEL_NS_CPMG_2SITE_3D_FULL, MODEL_NS_CPMG_2SITE_STAR_FULL]:
-            self.end_index.append(2 * self.NE * self.NS * self.num_frq)
+            self.end_index.append(2 * self.NE * self.NS * self.NM)
 
         # The spin and dependent parameters (phi_ex, dw, padw2).
         self.end_index.append(self.end_index[-1] + self.NS)
@@ -890,7 +889,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -944,7 +943,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1367,7 +1366,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
@@ -1458,7 +1457,7 @@ class Dispersion:
             params = dot(params, self.scaling_matrix)
 
         # Unpack the parameter values.
-        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.num_frq)
+        R20 = params[:self.end_index[1]].reshape(self.NS*2, self.NM)
         R20A = R20[::2].flatten()
         R20B = R20[1::2].flatten()
         dw = params[self.end_index[1]:self.end_index[2]]
