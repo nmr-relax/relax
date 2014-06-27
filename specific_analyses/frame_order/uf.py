@@ -46,7 +46,7 @@ from lib.warnings import RelaxWarning
 from pipe_control import pipes
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving
-from specific_analyses.frame_order.geometric import pdb_ave_pos, pdb_distribution, pdb_geometric_rep
+from specific_analyses.frame_order.geometric import create_ave_pos, create_distribution, create_geometric_rep
 from specific_analyses.frame_order.parameters import update_model
 
 
@@ -98,7 +98,7 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
 
     # Create the average position structure.
     if ave_pos_file:
-        pdb_ave_pos(file=ave_pos_file, dir=dir, force=force)
+        create_ave_pos(file=ave_pos_file, dir=dir, force=force)
 
     # Nothing more to do for the rigid model.
     if cdp.model == 'rigid':
@@ -106,11 +106,11 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
 
     # Create the geometric representation.
     if rep_file:
-        pdb_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
+        create_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
 
     # Create the distribution.
     if dist_file:
-        pdb_distribution(file=dist_file, dir=dir, force=force)
+        create_distribution(file=dist_file, dir=dir, force=force)
 
 
 def pivot(pivot=None, order=1, fix=False):

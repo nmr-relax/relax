@@ -49,15 +49,17 @@ from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.parameters import update_model
 
 
-def pdb_ave_pos(file=None, dir=None, force=False):
+def create_ave_pos(format='PDB', file=None, dir=None, force=False):
     """Create a PDB file of the molecule with the moving domains shifted to the average position.
 
-    @keyword file:  The name of the file for the average molecule structure.
-    @type file:     str
-    @keyword dir:   The name of the directory to place the PDB file into.
-    @type dir:      str
-    @keyword force: Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:    bool
+    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:       str
+    @keyword file:      The name of the file for the average molecule structure.
+    @type file:         str
+    @keyword dir:       The name of the directory to place the PDB file into.
+    @type dir:          str
+    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:        bool
     """
 
     # Printout.
@@ -78,42 +80,47 @@ def pdb_ave_pos(file=None, dir=None, force=False):
     # Then translate the moving domain.
     structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
 
-    # Write out the PDB file.
-    file = open_write_file(file_name=file, dir=dir, force=force)
-    structure.write_pdb(file=file)
-    file.close()
+    # Output to PDB format.
+    if format == 'PDB':
+        file = open_write_file(file_name=file, dir=dir, force=force)
+        structure.write_pdb(file=file)
+        file.close()
 
 
-def pdb_distribution(file=None, dir=None, force=False):
+def create_distribution(format='PDB', file=None, dir=None, force=False):
     """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
 
-    @keyword file:  The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type file:     str
-    @keyword dir:   The name of the directory to place the PDB file into.
-    @type dir:      str
-    @keyword force: Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:    bool
+    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:       str
+    @keyword file:      The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+    @type file:         str
+    @keyword dir:       The name of the directory to place the PDB file into.
+    @type dir:          str
+    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:        bool
     """
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.")
 
 
-def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+def create_geometric_rep(format='PDB', file=None, dir=None, size=30.0, inc=36, force=False, neg_cone=True):
     """Create a PDB file containing a geometric object representing the frame order dynamics.
 
-    @keyword file:          The name of the file of the PDB representation of the frame order dynamics to create.
-    @type file:             str
-    @keyword dir:           The name of the directory to place the PDB file into.
-    @type dir:              str
-    @keyword size:          The size of the geometric object in Angstroms.
-    @type size:             float
-    @keyword inc:           The number of increments for the filling of the cone objects.
-    @type inc:              int
-    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:            bool
-    @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.  This is ignored for the rotor models.
-    @type neg_cone:         bool
+    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:       str
+    @keyword file:      The name of the file of the PDB representation of the frame order dynamics to create.
+    @type file:         str
+    @keyword dir:       The name of the directory to place the PDB file into.
+    @type dir:          str
+    @keyword size:      The size of the geometric object in Angstroms.
+    @type size:         float
+    @keyword inc:       The number of increments for the filling of the cone objects.
+    @type inc:          int
+    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:        bool
+    @keyword neg_cone:  A flag which if True will cause the negative cone to be added to the representation.  This is ignored for the rotor models.
+    @type neg_cone:     bool
     """
 
     # Printout.
@@ -330,10 +337,8 @@ def pdb_geometric_rep(file=None, dir=None, size=30.0, inc=36, force=False, neg_c
     # Create the PDB file.
     ######################
 
-    # Print out.
-    print("\nGenerating the PDB file.")
-
-    # Write the file.
-    pdb_file = open_write_file(file, dir, force=force)
-    structure.write_pdb(pdb_file)
-    pdb_file.close()
+    # Output to PDB format.
+    if format == 'PDB':
+        pdb_file = open_write_file(file, dir, force=force)
+        structure.write_pdb(pdb_file)
+        pdb_file.close()
