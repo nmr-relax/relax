@@ -108,8 +108,20 @@ class Dispersion:
             - Ei:  The index for each experiment type.
             - Si:  The index for each spin of the spin cluster.
             - Mi:  The index for each magnetic field strength.
-            - Oi:  The index for each spin-lock offset.  In the case of CPMG-type data, this index is always zero.
+            - Oi:  The index for each spin-lock offset.  In the case of CPMG-type data, this index is currently always zero.
             - Di:  The index for each dispersion point (either the spin-lock field strength or the nu_CPMG frequency).
+
+
+        Counts
+        ======
+
+        The indices in the previous section have a corresponding count:
+
+            - NE:  The total number of experiment types.
+            - NS:  The total number of spins of the spin cluster.
+            - NM:  The total number of magnetic field strengths.
+            - NO:  The total number of spin-lock offsets.
+            - ND:  The total number of dispersion points (either the spin-lock field strength or the nu_CPMG frequency).
 
 
         @keyword model:             The relaxation dispersion model to fit.
