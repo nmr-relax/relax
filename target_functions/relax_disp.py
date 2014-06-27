@@ -110,6 +110,7 @@ class Dispersion:
             - Mi:  The index for each magnetic field strength.
             - Oi:  The index for each spin-lock offset.  In the case of CPMG-type data, this index is currently always zero.
             - Di:  The index for each dispersion point (either the spin-lock field strength or the nu_CPMG frequency).
+            - Ti:  The index for each time point.  This is currently unused but might change in the future.
 
 
         Counts
@@ -122,6 +123,7 @@ class Dispersion:
             - NM:  The total number of magnetic field strengths.
             - NO:  The total number of spin-lock offsets.
             - ND:  The total number of dispersion points (either the spin-lock field strength or the nu_CPMG frequency).
+            - NT:  The total number of time points.  This is currently unused but might change in the future.
 
 
         @keyword model:             The relaxation dispersion model to fit.
