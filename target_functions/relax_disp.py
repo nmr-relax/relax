@@ -339,7 +339,7 @@ class Dispersion:
                                 if recalc_tau:
                                     tau_cpmg = 0.25 * relax_time / power
                                 else:
-                                    tau_cpmg = 0.25 / frq
+                                    tau_cpmg = 0.25 / cpmg_frq
                                 self.tau_cpmg[ei, si, mi, oi, di] = tau_cpmg
 
                         elif spin_lock_nu1 != None and len(spin_lock_nu1[ei][mi][oi]):
