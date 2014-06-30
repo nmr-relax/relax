@@ -46,6 +46,10 @@ Links to the copyright licensing agreements from all authors are:
     - Mathilde Lescanne, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4138},
     - Dominique Marion, U{http://article.gmane.org/gmane.science.nmr.relax.devel/4157}.
 
+
+Code evolution
+--------------
+
 The complex path of the code from the original Maple to relax can be described as:
 
     - p3.analytical (Maple input text file at U{https://gna.org/task/?7712#comment8}),
@@ -53,6 +57,10 @@ The complex path of the code from the original Maple to relax can be described a
     - Manually converted to Matlab by Nikolai (sim_all.tar at U{https://gna.org/task/?7712#comment5})
     - Manually converted to Python by Paul, Mathilde, and Dominique (fitting_main.py at U{https://gna.org/task/?7712#comment1})
     - Converted into Python code for relax (here).
+
+
+Maple p3.analytical script
+--------------------------
 
 For reference, the original Maple script written by Nikolai for the expansion of the equations is::
 
@@ -128,6 +136,9 @@ For reference, the original Maple script written by Nikolai for the expansion of
     
     fortran([intensity=obs1, intensity_ref=obsref], optimized):
 
+
+Matlab sim_all.tar funNikolai.m script
+--------------------------------------
 
 Also for reference, the Matlab code from Nikolai and Martin manually converted from the automatically generated FORTRAN from the previous script into the funNikolai.m file is::
 
