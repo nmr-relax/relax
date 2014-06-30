@@ -230,8 +230,8 @@ len(fields), len(spin_lock_offsets), len(spin_lock_fields), r1rho_points_nr_near
 # Final printout.
 print("\n100 single spins analysis:")
 for model, script, iter, scaling_factor in models:
-    print("%-25s  %7.3f+/-%.3f seconds" % (model+':', ave[model], sd[model]))
+    print("http://wiki.nmr-relax.com/%-25s  %7.3f+/-%.3f seconds" % (model.replace(' ', '_'), ave[model], sd[model]))
 
 print("\nCluster of 100 spins analysis:")
 for model, script, iter, scaling_factor in models:
-    print("%-25s  %7.3f+/-%.3f seconds" % (model+':', ave_cluster[model], sd_cluster[model]))
+    print("http://wiki.nmr-relax.com/%-25s  %7.3f+/-%.3f seconds" % (model.replace(' ', '_'), ave_cluster[model], sd_cluster[model]))
