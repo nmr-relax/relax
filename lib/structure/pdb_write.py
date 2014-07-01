@@ -1504,11 +1504,20 @@ def remark(file, num='', remark=''):
     @type remark:       str
     """
 
-    # The formatted record, splitting across lines if needed.
-    for line in wrap(remark, 68):
-        # The text.
-        text = "%-6s %3s %-68s " % ("REMARK", num, line.upper())
+    # Initialise.
+    lines = []
 
+    # Handle empty lines.
+    if remark == None:
+        lines.append("%-6s %3s %-68s " % ("REMARK", num, ''))
+
+    # The formatted record, splitting across lines if needed.
+    else:
+        for line in wrap(remark, 68):
+            lines.append("%-6s %3s %-68s " % ("REMARK", num, line.upper()))
+
+    # Output all lines.
+    for text in lines:
         # Validate.
         _record_validate(text)
 

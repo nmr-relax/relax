@@ -148,6 +148,30 @@ uf.wizard_size = (700, 400)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
 
 
+# The structure.com user function.
+uf = uf_info.add_uf('structure.com')
+uf.title = "Calculate the centre of mass for all structures."
+uf.title_short = "Centre of mass calculation."
+uf.add_keyarg(
+    name = "model",
+    py_type = "int",
+    desc_short = "model",
+    desc = "The optional structural model number to restrict the calculation of the centre of mass to.",
+    can_be_none = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function will calculate the centre of mass (CoM) for all loaded structures, printing out the position and storing it in the current data pipe.")
+# Prompt examples.
+uf.desc.append(Desc_container("Prompt examples"))
+uf.desc[-1].add_paragraph("To determine the centre of mass of all structure, simply type:")
+uf.desc[-1].add_prompt("relax> structure.com()")
+uf.backend = pipe_control.structure.main.com
+uf.menu_text = "co&m"
+uf.wizard_size = (600, 400)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'structure' + sep + '2JK4.png'
+
+
 # The structure.connect_atom user function.
 uf = uf_info.add_uf('structure.connect_atom')
 uf.title = "Connect two atoms."

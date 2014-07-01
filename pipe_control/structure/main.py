@@ -121,6 +121,20 @@ def connect_atom(index1=None, index2=None):
     cdp.structure.connect_atom(index1=index1, index2=index2)
 
 
+def com(model=None):
+    """Calculate the centre of mass of all structures.
+
+    @keyword model: Only use a specific model.
+    @type model:    int or None
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Calculate and store the centre of mass.
+    cdp.com = pipe_centre_of_mass(model=model)
+
+
 def create_diff_tensor_pdb(scale=1.8e-6, file=None, dir=None, force=False):
     """Create the PDB representation of the diffusion tensor.
 

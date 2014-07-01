@@ -497,14 +497,24 @@ class Diffusion_tensor(SystemTestCase):
         real_data = file.readlines()
         file.close()
 
+        # Strip out all remark lines.
+        new_data_stripped = []
+        for line in new_data:
+            if line[:6] != 'REMARK':
+                new_data_stripped.append(line)
+        real_data_stripped = []
+        for line in real_data:
+            if line[:6] != 'REMARK':
+                real_data_stripped.append(line)
+
         # Check the data.
-        self.assertEqual(len(real_data), len(new_data))
-        for i in range(len(real_data)):
+        self.assertEqual(len(real_data_stripped), len(new_data_stripped))
+        for i in range(len(real_data_stripped)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print(real_data_stripped[i][0:-1])
 
             # Check the line.
-            self.assertEqual(real_data[i], new_data[i])
+            self.assertEqual(real_data_stripped[i], new_data_stripped[i])
 
 
     def test_create_diff_tensor_pdb_sphere(self):
@@ -529,14 +539,24 @@ class Diffusion_tensor(SystemTestCase):
         real_data = file.readlines()
         file.close()
 
+        # Strip out all remark lines.
+        new_data_stripped = []
+        for line in new_data:
+            if line[:6] != 'REMARK':
+                new_data_stripped.append(line)
+        real_data_stripped = []
+        for line in real_data:
+            if line[:6] != 'REMARK':
+                real_data_stripped.append(line)
+
         # Check the data.
-        self.assertEqual(len(real_data), len(new_data))
-        for i in range(len(real_data)):
+        self.assertEqual(len(real_data_stripped), len(new_data_stripped))
+        for i in range(len(real_data_stripped)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print(real_data_stripped[i][0:-1])
 
             # Check the line.
-            self.assertEqual(real_data[i], new_data[i])
+            self.assertEqual(real_data_stripped[i], new_data_stripped[i])
 
 
     def test_create_diff_tensor_pdb_spheroid(self):
@@ -561,14 +581,24 @@ class Diffusion_tensor(SystemTestCase):
         real_data = file.readlines()
         file.close()
 
+        # Strip out all remark lines.
+        new_data_stripped = []
+        for line in new_data:
+            if line[:6] != 'REMARK':
+                new_data_stripped.append(line)
+        real_data_stripped = []
+        for line in real_data:
+            if line[:6] != 'REMARK':
+                real_data_stripped.append(line)
+
         # Check the data.
-        self.assertEqual(len(real_data), len(new_data))
-        for i in range(len(real_data)):
+        self.assertEqual(len(real_data_stripped), len(new_data_stripped))
+        for i in range(len(real_data_stripped)):
             # Print the PDB line, for debugging.
-            print(real_data[i][0:-1])
+            print(real_data_stripped[i][0:-1])
 
             # Check the line.
-            self.assertEqual(real_data[i], new_data[i])
+            self.assertEqual(real_data_stripped[i], new_data_stripped[i])
 
 
     def test_init_ellipsoid_param_types_0(self):
