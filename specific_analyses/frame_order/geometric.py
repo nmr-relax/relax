@@ -227,6 +227,31 @@ def add_cones(structure=None, size=None, inc=None):
         cone(mol=mol_neg, cone_obj=cone_obj, start_res=1, apex=pivot, R=R_neg, inc=inc, distribution='regular', axis_flag=False)
 
 
+def add_pivots(structure=None):
+    """Add the pivots for the current frame order model to the structural object.
+
+    @keyword structure: The internal structural object to add the rotor objects to.
+    @type structure:    lib.structure.internal.object.Internal instance
+    """
+
+    # The pivot point.
+    pivot1 = generate_pivot(order=1)
+    pivot2 = generate_pivot(order=2)
+
+    # Create the molecule.
+    mol_name = 'pivots'
+    structure.add_molecule(name=mol_name)
+
+    # Add the pivots for the double motion models.
+    if cdp.model in ['double rotor']:
+        structure.add_atom(mol_name=mol_name, pdb_record='HETATM', atom_num=1, atom_name='Piv1', res_name='PIV', res_num=1, pos=pivot1, element='C')
+        structure.add_atom(mol_name=mol_name, pdb_record='HETATM', atom_num=2, atom_name='Piv2', res_name='PIV', res_num=1, pos=pivot2, element='C')
+
+    # Add the pivot for the single motion models.
+    else:
+        structure.add_atom(mol_name=mol_name, pdb_record='HETATM', atom_num=1, atom_name='Piv', res_name='PIV', res_num=1, pos=pivot1, element='C')
+
+
 def add_rotors(structure=None):
     """Add all rotor objects for the current frame order model to the structural object.
 
@@ -400,6 +425,9 @@ def create_geometric_rep(format='PDB', file=None, dir=None, size=30.0, inc=36, f
     model = structure.add_model(model=1)
     if cdp.model not in ['rotor', 'free rotor', 'double rotor']:
         model_neg = structure.add_model(model=2)
+
+    # Add the pivots.
+    add_pivots(structure=structure)
 
     # Add all rotor objects.
     add_rotors(structure=structure)

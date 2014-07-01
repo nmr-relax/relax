@@ -381,6 +381,9 @@ def frame_order_geometric(file=None):
     # The object ID.
     id = file_root(file)
 
+    # Set up the pivot points.
+    represent_pivots(id=id)
+
     # Set up the rotor objects.
     represent_rotor_object(id=id)
 
@@ -613,6 +616,30 @@ def represent_cone_object(id=None):
 
     # Set a bit of transparency.
     pymol_obj.exec_cmd("set stick_transparency, 0.3, 'sele'")
+
+    # Remove the selection.
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+def represent_pivots(id=None):
+    """Set up the PyMOL pivot object representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
+
+    # Select the PIV residues.
+    pymol_obj.exec_cmd("select (%s & resn PIV)" % id)
+
+    # Hide the atom.
+    pymol_obj.exec_cmd("hide ('sele')")
+
+    # Label using the atom name.
+    pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
 
     # Remove the selection.
     pymol_obj.exec_cmd("cmd.delete('sele')")
