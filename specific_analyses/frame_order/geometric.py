@@ -175,10 +175,10 @@ def add_cones(structure=None, size=None, inc=None):
     structure.add_molecule(name='cones')
 
     # Alias the molecules.
-    mol = structure.get_molecule('cone', model=1)
+    mol = structure.get_molecule('cones', model=1)
     mol_neg = None
     if structure.num_models() == 2:
-        mol_neg = structure.get_molecule('cone', model=2)
+        mol_neg = structure.get_molecule('cones', model=2)
 
     # The 1st pivot point.
     pivot = generate_pivot(order=1)
