@@ -656,6 +656,11 @@ def represent_rotor_object(id=None):
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
 
+    # First hide everything.
+    pymol_obj.exec_cmd("select %s" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
     # Rotor objects:  Set up the rotor axis.
     pymol_obj.exec_cmd("select (%s & resn RTX)" % id)
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -671,13 +676,15 @@ def represent_rotor_object(id=None):
 
     # Rotor objects:  Set up the propellers.
     pymol_obj.exec_cmd("select (%s & resn RTB)" % id)
-    pymol_obj.exec_cmd("show stick, 'sele'")
-    pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
+    pymol_obj.exec_cmd("show line, 'sele'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+    pymol_obj.exec_cmd("select (%s & resn RTB & name BLD)" % id)
+    pymol_obj.exec_cmd("show spheres, 'sele'")
+    pymol_obj.exec_cmd("set sphere_scale, 0.1, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Rotor objects:  The labels.
     pymol_obj.exec_cmd("select (%s & resn RTL)" % id)
-    pymol_obj.exec_cmd("hide ('sele')")
     pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
