@@ -199,10 +199,13 @@ class Internal:
          | AXS    | Tensor axes                                    |
          | SIM    | Monte Carlo simulation tensor axes             |
          | PIV    | Pivot point                                    |
-         | CON    | Cone object                                    |
          | AVE    | Average vector                                 |
          | RTX    | Axis of the rotor geometric object             |
          | RTB    | Propeller blades of the rotor geometric object |
+         | CON    | Cone object                                    |
+         | CNC    | Apex or centre of the cone geometric object    |
+         | CNX    | Axis of the cone geometric object              |
+         | CNE    | Edge of the cone geometric object              |
          |________|________________________________________________|
 
         For any other residues, no description is returned.
@@ -220,10 +223,13 @@ class Internal:
             "AXS": "Tensor axes",
             "SIM": "Monte Carlo simulation tensor axes",
             "PIV": "Pivot point",
-            "CON": "Cone object",
             "AVE": "Average vector",
             "RTX": "Axis of the rotor geometric object",
-            "RTB": "Propeller blades of the rotor geometric object"
+            "RTB": "Propeller blades of the rotor geometric object",
+            "CON": "Cone object",
+            "CNC": "Apex or centre of the cone geometric object",
+            "CNX": "Axis of the cone geometric object",
+            "CNE": "Edge of the cone geometric object",
         }
 
         # Return the description, if one exists.

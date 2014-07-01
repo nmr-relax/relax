@@ -563,8 +563,8 @@ def represent_cone_axis(id=None):
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
 
-    # Select the AVE, AXE, and SIM residues.
-    pymol_obj.exec_cmd("select (%s & resn AVE,AXE,SIM)" % id)
+    # Select the AVE, CNX, and SIM residues.
+    pymol_obj.exec_cmd("select (%s & resn AVE,CNX,SIM)" % id)
 
     # Show the vector as a stick.
     pymol_obj.exec_cmd("show stick, 'sele'")
@@ -573,7 +573,7 @@ def represent_cone_axis(id=None):
     pymol_obj.exec_cmd("color cyan, 'sele'")
 
     # Select the atom used for labelling.
-    pymol_obj.exec_cmd("select (%s & resn AVE,AXE,SIM and symbol N)" % id)
+    pymol_obj.exec_cmd("select (%s & resn AVE,CNX,SIM and symbol N)" % id)
 
     # Hide the atom.
     pymol_obj.exec_cmd("hide ('sele')")
@@ -596,8 +596,8 @@ def represent_cone_object(id=None):
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
 
-    # Select the CON and EDG residues.
-    pymol_obj.exec_cmd("select (%s & resn CON,EDG)" % id)
+    # Select the CON and CNE residues.
+    pymol_obj.exec_cmd("select (%s & resn CON,CNE)" % id)
 
     # Hide everything.
     pymol_obj.exec_cmd("hide ('sele')")
