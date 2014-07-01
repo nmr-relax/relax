@@ -83,18 +83,18 @@ def rotor_pdb(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=
 
         # The central point.
         mid_point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
-        pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='AX', res_num=1, pos=mid_point, element='PT')
+        pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='RTX', res_num=1, pos=mid_point, element='PT')
 
         # Centre of the propellers.
         prop1 = mid_point + axis_norm * span
         prop1_index = pos_index + 1
-        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=2, pos=prop1, element='O')
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=2, pos=prop1, element='O')
         mol.atom_connect(index1=pos_index, index2=prop1_index)
 
         # Centre of the propellers.
         prop2 = mid_point - axis_norm * span
         prop2_index = pos_index + 2
-        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='PRC', res_num=3, pos=prop2, element='O')
+        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=3, pos=prop2, element='O')
         mol.atom_connect(index1=pos_index, index2=prop2_index)
 
         # Create the rotor propellers.
@@ -147,11 +147,11 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
             blade_origin = centre
 
         # Add an atom for the blage origin.
-        blade_origin_index = mol.atom_add(pdb_record='HETATM', atom_name='BLO', res_name='PRB', res_num=res_num, pos=blade_origin, element='O')
+        blade_origin_index = mol.atom_add(pdb_record='HETATM', atom_name='BLO', res_name='RTB', res_num=res_num, pos=blade_origin, element='O')
 
         # The centre edge point of the blade.
         mid_point = blade_origin + blades[i] * blade_length
-        mid_pt_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=mid_point, element='N')
+        mid_pt_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=mid_point, element='N')
         mol.atom_connect(index1=mid_pt_index, index2=blade_origin_index)
 
         # Build the blade.
@@ -172,13 +172,13 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
 
             # The positive edge.
             pos_point = dot(R, mid_point - blade_origin) + blade_origin
-            pos_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=pos_point, element='N')
+            pos_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=pos_point, element='N')
             mol.atom_connect(index1=pos_index, index2=pos_last_index)
             mol.atom_connect(index1=pos_index, index2=blade_origin_index)
 
             # The negative edge.
             neg_point = dot(transpose(R), mid_point - blade_origin) + blade_origin
-            neg_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='PRB', res_num=res_num, pos=neg_point, element='N')
+            neg_index = mol.atom_add(pdb_record='HETATM', atom_name='BLD', res_name='RTB', res_num=res_num, pos=neg_point, element='N')
             mol.atom_connect(index1=neg_index, index2=neg_last_index)
             mol.atom_connect(index1=neg_index, index2=blade_origin_index)
 

@@ -629,8 +629,8 @@ def represent_rotor_object(id=None):
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
 
-    # Rotor objects:  Set up the rotor axis (the residues AX and PRC).
-    pymol_obj.exec_cmd("select (%s & resn AX,PRC)" % id)
+    # Rotor objects:  Set up the rotor axis.
+    pymol_obj.exec_cmd("select (%s & resn RTX)" % id)
     pymol_obj.exec_cmd("show stick, 'sele'")
     pymol_obj.exec_cmd("color red, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
@@ -643,7 +643,7 @@ def represent_rotor_object(id=None):
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Rotor objects:  Set up the propellers.
-    pymol_obj.exec_cmd("select (%s & resn PRB)" % id)
+    pymol_obj.exec_cmd("select (%s & resn RTB)" % id)
     pymol_obj.exec_cmd("show stick, 'sele'")
     pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
