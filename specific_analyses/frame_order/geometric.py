@@ -202,19 +202,17 @@ def add_cones(structure=None, size=None, inc=None):
     # The inversion matrix.
     inv_mat = -eye(3)
 
-    # The axis.
-    if cdp.model in ['rotor', 'free rotor']:
-        axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-    else:
-        axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
-    print(("Central axis: %s." % axis))
-
     # The rotation matrix (rotation from the z-axis to the cone axis).
-    if cdp.model not in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
-        R = axes
+    R = zeros((3, 3), float64)
+    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, R)
     else:
-        R = zeros((3, 3), float64)
+        if cdp.model in ['rotor', 'free rotor']:
+            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
+        elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
         two_vect_to_R(array([0, 0, 1], float64), axis, R)
+    print(("Rotation matrix:\n%s" % R))
 
     # Average position rotation.
     R_pos = R
