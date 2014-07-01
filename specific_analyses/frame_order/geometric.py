@@ -365,17 +365,19 @@ def add_rotors(structure=None):
         rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
 
 
-def create_ave_pos(format='PDB', file=None, dir=None, force=False):
+def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=False):
     """Create a PDB file of the molecule with the moving domains shifted to the average position.
 
-    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
-    @type format:       str
-    @keyword file:      The name of the file for the average molecule structure.
-    @type file:         str
-    @keyword dir:       The name of the directory to place the PDB file into.
-    @type dir:          str
-    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:        bool
+    @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:           str
+    @keyword file:          The name of the file for the average molecule structure.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:            bool
     """
 
     # Printout.
@@ -398,43 +400,47 @@ def create_ave_pos(format='PDB', file=None, dir=None, force=False):
 
     # Output to PDB format.
     if format == 'PDB':
-        file = open_write_file(file_name=file, dir=dir, force=force)
+        file = open_write_file(file_name=file+'.pdb', dir=dir, compress_type=compress_type, force=force)
         structure.write_pdb(file=file)
         file.close()
 
 
-def create_distribution(format='PDB', file=None, dir=None, force=False):
+def create_distribution(format='PDB', file=None, dir=None, compress_type=0, force=False):
     """Create a PDB file of a distribution of positions coving the full dynamics of the moving domain.
 
-    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
-    @type format:       str
-    @keyword file:      The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type file:         str
-    @keyword dir:       The name of the directory to place the PDB file into.
-    @type dir:          str
-    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:        bool
+    @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:           str
+    @keyword file:          The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:            bool
     """
 
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file of a distribution of positions coving the full dynamics of the moving domain.")
 
 
-def create_geometric_rep(format='PDB', file=None, dir=None, size=30.0, inc=36, force=False):
+def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, size=30.0, inc=36, force=False):
     """Create a PDB file containing a geometric object representing the frame order dynamics.
 
-    @keyword format:    The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
-    @type format:       str
-    @keyword file:      The name of the file of the PDB representation of the frame order dynamics to create.
-    @type file:         str
-    @keyword dir:       The name of the directory to place the PDB file into.
-    @type dir:          str
-    @keyword size:      The size of the geometric object in Angstroms.
-    @type size:         float
-    @keyword inc:       The number of increments for the filling of the cone objects.
-    @type inc:          int
-    @keyword force:     Flag which if set to True will cause any pre-existing file to be overwritten.
-    @type force:        bool
+    @keyword format:        The format for outputting the geometric representation.  Currently only the 'PDB' format is supported.
+    @type format:           str
+    @keyword file:          The name of the file of the PDB representation of the frame order dynamics to create.
+    @type file:             str
+    @keyword dir:           The name of the directory to place the PDB file into.
+    @type dir:              str
+    @keyword compress_type: The compression type.  The integer values correspond to the compression type: 0, no compression; 1, Bzip2 compression; 2, Gzip compression.
+    @type compress_type:    int
+    @keyword size:          The size of the geometric object in Angstroms.
+    @type size:             float
+    @keyword inc:           The number of increments for the filling of the cone objects.
+    @type inc:              int
+    @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
+    @type force:            bool
     """
 
     # Printout.
@@ -463,6 +469,6 @@ def create_geometric_rep(format='PDB', file=None, dir=None, size=30.0, inc=36, f
 
     # Create the PDB file.
     if format == 'PDB':
-        pdb_file = open_write_file(file, dir, force=force)
+        pdb_file = open_write_file(file+'.pdb', dir, compress_type=compress_type, force=force)
         structure.write_pdb(pdb_file)
         pdb_file.close()
