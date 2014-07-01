@@ -675,6 +675,12 @@ def represent_rotor_object(id=None):
     pymol_obj.exec_cmd("set stick_radius, 0.15, 'sele'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
+    # Rotor objects:  The labels.
+    pymol_obj.exec_cmd("select (%s & resn RTL)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
 
 def tensor_pdb(file=None):
     """Display the diffusion tensor geometric structure.

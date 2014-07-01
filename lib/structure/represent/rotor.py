@@ -32,7 +32,7 @@ from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import axis_angle_to_R
 
 
-def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None, span=2e-9, blade_length=5e-10, model=None, staggered=False):
+def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model=None, staggered=False):
     """Create a PDB representation of a rotor motional model.
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
@@ -43,6 +43,8 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None
     @type axis:             numpy rank-1, 3D array
     @keyword axis_pt:       A point lying anywhere on the rotor axis.  This is used to define the position of the axis in 3D space.
     @type axis_pt:          numpy rank-1, 3D array
+    @keyword label:         The optional label for the rotor axis.  If supplied, this cannot be longer than 4 characters due to the PDB format restriction.
+    @type label:            str
     @keyword centre:        The central point of the representation.  If this point is not on the rotor axis, then the closest point on the axis will be used for the centre.
     @type centre:           numpy rank-1, 3D array
     @keyword span:          The distance from the central point to the rotor blades (meters).
@@ -100,6 +102,13 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, centre=None
         # Create the rotor propellers.
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
+
+        # Add atoms for the labels.
+        label_pos1 = mid_point + axis_norm * (span + 2.0)
+        label_pos2 = mid_point - axis_norm * (span + 2.0)
+        res_num = mol.res_num[-1]+1
+        mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos1, element='H')
+        mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos2, element='H')
 
 
 def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):

@@ -202,6 +202,7 @@ class Internal:
          | AVE    | Average vector                                 |
          | RTX    | Axis of the rotor geometric object             |
          | RTB    | Propeller blades of the rotor geometric object |
+         | RTL    | Labels for the rotor geometric object          |
          | CON    | Cone object                                    |
          | CNC    | Apex or centre of the cone geometric object    |
          | CNX    | Axis of the cone geometric object              |
@@ -226,6 +227,7 @@ class Internal:
             "AVE": "Average vector",
             "RTX": "Axis of the rotor geometric object",
             "RTB": "Propeller blades of the rotor geometric object",
+            "RTL": "Labels for the rotor geometric object",
             "CON": "Cone object",
             "CNC": "Apex or centre of the cone geometric object",
             "CNX": "Axis of the cone geometric object",

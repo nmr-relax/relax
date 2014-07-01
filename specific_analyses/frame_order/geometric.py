@@ -266,6 +266,7 @@ def add_rotors(structure=None):
     pivot = []
     rotor_angle = []
     com = []
+    label = []
 
     # The pivot points.
     pivot1 = generate_pivot(order=1)
@@ -308,6 +309,9 @@ def add_rotors(structure=None):
         # The pivot.
         pivot.append(pivot1)
 
+        # The label.
+        label.append('z-ax')
+
     # The double rotor models.
     elif cdp.model in ['double rotor']:
         # Add both rotor angles (the 2nd must come first).
@@ -338,9 +342,13 @@ def add_rotors(structure=None):
         pivot.append(pivot2)
         pivot.append(pivot1)
 
+        # The labels.
+        label.append('x-ax')
+        label.append('y-ax')
+
     # Add each rotor to the structure as a new molecule.
     for i in range(len(axis)):
-        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
+        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, force=False):
