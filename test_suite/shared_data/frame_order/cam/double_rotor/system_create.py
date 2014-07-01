@@ -6,7 +6,7 @@ from numpy.linalg import norm
 
 # relax module imports.
 from lib.geometry.vectors import unit_vector_from_2point
-from lib.structure.represent.rotor import rotor_pdb
+from lib.structure.represent.rotor import rotor
 
 
 # The two CoMs.
@@ -43,8 +43,8 @@ structure.add_atom(atom_name='CC', res_name='SYS', res_num=1, pos=COM_C, element
 structure.connect_atom(index1=0, index2=1)
 
 # Create a PDB representation of the rotors.
-rotor_pdb(structure=cdp.structure, rotor_angle=radians(10.5), axis=axis1, axis_pt=pos1, centre=COM_N, span=2e-9, blade_length=5e-10, staggered=False)
-rotor_pdb(structure=cdp.structure, rotor_angle=radians(11.5), axis=axis2, axis_pt=pos2, centre=COM_C, span=2e-9, blade_length=5e-10, staggered=False)
+rotor(structure=cdp.structure, rotor_angle=radians(10.5), axis=axis1, axis_pt=pos1, centre=COM_N, span=2e-9, blade_length=5e-10, staggered=False)
+rotor(structure=cdp.structure, rotor_angle=radians(11.5), axis=axis2, axis_pt=pos2, centre=COM_C, span=2e-9, blade_length=5e-10, staggered=False)
 
 # Write out the system.
 state.save('system', force=True)

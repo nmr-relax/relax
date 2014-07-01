@@ -37,7 +37,7 @@ from lib.structure.cones import Iso_cone, Pseudo_elliptic
 from lib.structure.geometric import generate_vector_residues
 from lib.structure.internal.object import Internal
 from lib.structure.represent.cone import cone
-from lib.structure.represent.rotor import rotor_pdb
+from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
@@ -340,7 +340,7 @@ def add_rotors(structure=None):
 
     # Add each rotor to the structure as a new molecule.
     for i in range(len(axis)):
-        rotor_pdb(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
+        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], centre=com[i], span=span[i], blade_length=5e-10, staggered=staggered[i])
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, force=False):
