@@ -45,6 +45,17 @@ class Structure(SystemTestCase):
         self.interpreter.pipe.create('mf', 'mf')
 
 
+    def strip_remarks(self, lines):
+        """Strip out all PDB remark lines.
+
+        @param lines:   The list of PDB lines.
+        @type lines:    list of str
+        """
+
+        # Rebuild the list.
+        lines[:] = [x for x in lines if x[:6] != 'REMARK']
+
+
     def test_alt_loc_missing(self):
         """Test that a RelaxError occurs when the alternate location indicator is present but not specified."""
 
@@ -112,10 +123,8 @@ class Structure(SystemTestCase):
         file = DummyFileObject()
         self.interpreter.structure.write_pdb(file=file, force=True)
 
-        # The file contents, as they should be.
+        # The file contents, without remarks, as they should be.
         contents = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
             "MODEL        1                                                                  \n",
             "ATOM      1  N   Pro A   2       1.000   2.000   3.000  1.00  0.00           N  \n",
             "TER       2      Pro A   2                                                      \n",
@@ -130,6 +139,7 @@ class Structure(SystemTestCase):
 
         # Check the created PDB file.
         lines = file.readlines()
+        self.strip_remarks(lines)
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
 
@@ -158,10 +168,8 @@ class Structure(SystemTestCase):
         file = DummyFileObject()
         self.interpreter.structure.write_pdb(file=file, force=True)
 
-        # The file contents, as they should be.
+        # The file contents, without remarks, as they should be.
         contents = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
             "HET    CYN  A 445       1                                                       \n",
             "HET    CYN  B 445       1                                                       \n",
             "HETNAM     CYN UNKNOWN                                                          \n",
@@ -192,6 +200,7 @@ class Structure(SystemTestCase):
 
         # Check the created PDB file.
         lines = file.readlines()
+        self.strip_remarks(lines)
         for i in range(len(lines)):
             self.assertEqual(contents[i], lines[i])
 
@@ -889,10 +898,8 @@ class Structure(SystemTestCase):
         lines = file.readlines()
         file.close()
 
-        # What the contents should be.
+        # What the contents should be, without remarks.
         real_data = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    \n",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         \n",
             "HELIX    1  H1 ILE A   23  GLU A   34  1                                  12    \n",
             "SHEET    1 BET 5 GLY A  10  VAL A  17  0                                        \n",
             "SHEET    2 BET 5 MET A   1  THR A   7 -1                                        \n",
@@ -1170,6 +1177,7 @@ class Structure(SystemTestCase):
         ]
 
         # Check the data.
+        self.strip_remarks(lines)
         for i in range(len(real_data)):
             self.assertEqual(real_data[i], lines[i])
 
@@ -1406,10 +1414,8 @@ class Structure(SystemTestCase):
         file = DummyFileObject()
         self.interpreter.structure.web_of_motion(file=file, models=[1, 2])
 
-        # The result.
+        # The result, without remarks.
         result = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
             "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
@@ -1449,6 +1455,7 @@ class Structure(SystemTestCase):
 
         # Check the created PDB file.
         lines = file.readlines()
+        self.strip_remarks(lines)
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
 
@@ -1464,10 +1471,8 @@ class Structure(SystemTestCase):
         file = DummyFileObject()
         self.interpreter.structure.web_of_motion(file=file, models=[1, 3])
 
-        # The result.
+        # The result, without remarks.
         result = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
             "ATOM      3  H   LEU A   4       8.575  -8.953  27.963  1.00  0.00           H  ",
@@ -1507,6 +1512,7 @@ class Structure(SystemTestCase):
 
         # Check the created PDB file.
         lines = file.readlines()
+        self.strip_remarks(lines)
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
 
@@ -1522,10 +1528,8 @@ class Structure(SystemTestCase):
         file = DummyFileObject()
         self.interpreter.structure.web_of_motion(file=file)
 
-        # The result.
+        # The result, without remarks.
         result = [
-            "REMARK   4 THIS FILE COMPLIES WITH FORMAT V. 3.30, JUL-2011.                    ",
-            "REMARK  40 CREATED BY RELAX (HTTP://WWW.NMR-RELAX.COM).                         ",
             "ATOM      1  N   LEU A   4       9.464  -9.232  27.573  1.00  0.00           N  ",
             "ATOM      2  N   LEU A   4       9.211  -9.425  26.970  1.00  0.00           N  ",
             "ATOM      3  N   LEU A   4       7.761  -6.392  27.161  1.00  0.00           N  ",
@@ -1581,5 +1585,6 @@ class Structure(SystemTestCase):
 
         # Check the created PDB file.
         lines = file.readlines()
+        self.strip_remarks(lines)
         for i in range(len(lines)):
             self.assertEqual(result[i]+'\n', lines[i])
