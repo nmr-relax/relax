@@ -53,7 +53,7 @@ def num_int_pts(num=200000):
     cdp.num_int_pts = num
 
 
-def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False, neg_cone=True):
+def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None, size=30.0, inc=36, force=False):
     """Create 3 different PDB files for representing the frame order dynamics of the system.
 
     @keyword ave_pos_file:  The name of the file for the average molecule structure.
@@ -70,8 +70,6 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
     @type inc:              int
     @keyword force:         Flag which if set to True will cause any pre-existing file to be overwritten.
     @type force:            bool
-    @keyword neg_cone:      A flag which if True will cause the negative cone to be added to the representation.
-    @type neg_cone:         bool
     """
 
     # Check that at least one PDB file name is given.
@@ -91,7 +89,7 @@ def pdb_model(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file=
 
     # Create the geometric representation.
     if rep_file:
-        create_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force, neg_cone=neg_cone)
+        create_geometric_rep(file=rep_file, dir=dir, size=size, inc=inc, force=force)
 
     # Create the distribution.
     if dist_file:
