@@ -107,23 +107,27 @@ def generate_pivot(order=1):
     # Initialise.
     pivot = None
 
-    # The first pivot point.
-    if order == 1:
-        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+    # The double rotor parameterisation.
+    if cdp.model in ['double rotor']:
+        # The 2nd pivot point (the centre of the frame).
+        pivot_2nd = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
 
-    # The 2nd pivot.
-    elif order == 2:
-        # The double rotor parameterisation.
-        if cdp.model in ['double rotor']:
-            # The first pivot.
-            pivot_1st = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
-
+        # Generate the first pivot.
+        if order == 1:
             # The eigenframe.
             frame = zeros((3, 3), float64)
             euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
-            # The 2nd pivot.
-            pivot = pivot_1st + frame[:,2] * cdp.pivot_disp
+            # The 1st pivot.
+            pivot = pivot_2nd + frame[:,2] * cdp.pivot_disp
+
+        # Alias the 2nd pivot.
+        elif order == 2:
+            pivot = pivot_2nd
+
+    # All other models.
+    elif order == 1:
+        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
 
     # Return the pivot.
     return pivot
