@@ -381,6 +381,11 @@ def frame_order_geometric(file=None):
     # The object ID.
     id = file_root(file)
 
+    # First hide everything.
+    pymol_obj.exec_cmd("select %s" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
     # Set up the pivot points.
     represent_pivots(id=id)
 
@@ -655,11 +660,6 @@ def represent_rotor_object(id=None):
     # Sanity check.
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
-
-    # First hide everything.
-    pymol_obj.exec_cmd("select %s" % id)
-    pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Rotor objects:  Set up the rotor axis.
     pymol_obj.exec_cmd("select (%s & resn RTX)" % id)
