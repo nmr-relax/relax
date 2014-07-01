@@ -52,34 +52,30 @@ def add_axes(structure=None, size=None):
     @type size:         float
     """
 
-    # The pivot point.
-    pivot = generate_pivot(order=1)
-
     # Create the molecule.
-    structure.add_molecule(name='axes')
+    mol_name = 'axes'
+    structure.add_molecule(name=mol_name)
+
+    # The pivot points.
+    pivot1 = generate_pivot(order=1)
+    pivot2 = generate_pivot(order=2)
 
     # Alias the molecules.
-    mol = structure.get_molecule('axes', model=1)
+    mol = structure.get_molecule(mol_name, model=1)
     mol_neg = None
     if structure.num_models() == 2:
-        mol_neg = structure.get_molecule('axes', model=2)
+        mol_neg = structure.get_molecule(mol_name, model=2)
 
     # The inversion matrix.
     inv_mat = -eye(3)
 
-    # Add the pivot point.
-    structure.add_atom(mol_name=cdp.model, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='PIV', res_num=1, pos=pivot, element='C')
-
-    # The spherical angles.
-    if cdp.model in ['iso cone', 'free rotor', 'iso cone, torsionless', 'iso cone, free rotor', 'rotor']:
+    # A single z-axis, when no rotor object is present.
+    if cdp.model in ['iso cone, torsionless']:
         # Print out.
         print("\nGenerating the z-axis system.")
 
         # The axis.
-        if cdp.model in ['rotor', 'free rotor']:
-            axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-        else:
-            axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
+        axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
         print(("Central axis: %s." % axis))
 
         # Rotations and inversions.
@@ -96,7 +92,7 @@ def add_axes(structure=None, size=None):
             # Fill the structure.
             for i in range(cdp.sim_number):
                 if cdp.model in ['rotor', 'free rotor']:
-                    axis_sim[i] = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[i], pivot=pivot, point=com)
+                    axis_sim[i] = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[i], pivot=pivot1, point=com)
                 else:
                     axis_sim[i] = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[i], phi=cdp.axis_phi_sim[i])
 
@@ -106,16 +102,32 @@ def add_axes(structure=None, size=None):
 
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
-        res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
+        res_num = generate_vector_residues(mol=mol, vector=axis_pos, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot1, scale=size)
 
         # The negative.
         if mol_neg != None:
-            res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol_neg, vector=axis_neg, atom_name='z-ax', res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot1, scale=size)
+
+    # The z-axis connecting two motional modes.
+    elif cdp.model in ['double rotor']:
+        # Printout.
+        print("\nGenerating the z-axis linking the two pivot points.")
+
+        # The axis.
+        axis = pivot1 - pivot2
+        print(("Interconnecting axis: %s." % axis))
+
+        # Generate the axis vectors.
+        print("\nGenerating the axis vectors.")
+        res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='z-ax', res_name_vect='AXE', res_num=1, origin=pivot2)
 
     # The full axis system.
-    else:
+    elif cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
         # Print out.
         print("\nGenerating the full axis system.")
+
+        # Add the pivot point.
+        structure.add_atom(mol_name=mol_name, pdb_record='HETATM', atom_num=1, atom_name='R', res_name='AXE', res_num=1, pos=pivot1, element='C')
 
         # The axis system.
         axes = zeros((3, 3), float64)
@@ -143,9 +155,13 @@ def add_axes(structure=None, size=None):
                 euler_to_R_zyz(cdp.eigen_alpha_sim[i], cdp.eigen_beta_sim[i], cdp.eigen_gamma_sim[i], axes_sim_neg[i])
                 axes_sim_neg[i] = dot(inv_mat, axes_sim_neg[i])
 
+        # The axes to create.
+        label = ['x', 'y']
+        if cdp.model in ['pseudo-ellipse, torsionless']:
+            label = ['x', 'y', 'z']
+
         # Generate the axis vectors.
         print("\nGenerating the axis vectors.")
-        label = ['x', 'y', 'z']
         for j in range(len(label)):
             # The simulation data.
             axis_sim_pos = None
@@ -155,9 +171,9 @@ def add_axes(structure=None, size=None):
                 axis_sim_neg = axes_sim_neg[:,:, j]
 
             # The vectors.
-            res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot, scale=size)
+            res_num = generate_vector_residues(mol=mol, vector=axes_pos[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_pos, res_num=2, origin=pivot1, scale=size)
             if mol_neg != None:
-                res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot, scale=size)
+                res_num = generate_vector_residues(mol=mol_neg, vector=axes_neg[:, j], atom_name='%s-ax'%label[j], res_name_vect='AXE', sim_vectors=axis_sim_neg, res_num=2, origin=pivot1, scale=size)
 
 
 def add_cones(structure=None, size=None, inc=None):

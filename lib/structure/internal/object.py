@@ -207,6 +207,7 @@ class Internal:
          | CNC    | Apex or centre of the cone geometric object    |
          | CNX    | Axis of the cone geometric object              |
          | CNE    | Edge of the cone geometric object              |
+         | AXE    | The axis geometric object                      |
          |________|________________________________________________|
 
         For any other residues, no description is returned.
@@ -232,6 +233,7 @@ class Internal:
             "CNC": "Apex or centre of the cone geometric object",
             "CNX": "Axis of the cone geometric object",
             "CNE": "Edge of the cone geometric object",
+            "AXE": "The axis geometric object",
         }
 
         # Return the description, if one exists.
