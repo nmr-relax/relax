@@ -104,7 +104,7 @@ class Profile(Dispersion):
         self.ncyc_list = range(2, 2*self.num_points + 1, 2)
         self.relax_time = 0.04
         self.points = array(self.ncyc_list) / self.relax_time
-        self.value = array(range(1,len(self.ncyc_list)+1), float64) * 1.00
+        self.value = array(range(1, len(self.ncyc_list)+1), float64) * 1.00
         self.error = ones(len(self.ncyc_list), float64) * 0.01
 
         # Make nested list arrays of data. And return them.
