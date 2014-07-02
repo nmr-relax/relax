@@ -55,8 +55,6 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "average structure file root",
     desc = "The file root of the 3D structure PDB file for the molecular structure with the moving domains shifted to the average position.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -66,8 +64,6 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "PDB representation file root",
     desc = "The file root of the PDB file for the geometric object representation of the frame order dynamics.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -77,8 +73,6 @@ uf.add_keyarg(
     arg_type = "str",
     desc_short = "distribution file root",
     desc = "The file root of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.",
-    wiz_filesel_wildcard = WILDCARD_STRUCT_PDB_ALL,
-    wiz_filesel_style = FD_SAVE,
     can_be_none = True
 )
 uf.add_keyarg(
@@ -86,7 +80,7 @@ uf.add_keyarg(
     py_type = "str",
     arg_type = "dir",
     desc_short = "directory name",
-    desc = "The directory where the file is to be located.",
+    desc = "The directory where the files are to be located.",
     can_be_none = True
 )
 uf.add_keyarg(
