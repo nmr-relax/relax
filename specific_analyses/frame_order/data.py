@@ -95,13 +95,15 @@ def domain_moving():
         return cdp.domain[id]
 
 
-def generate_pivot(order=1):
+def generate_pivot(order=1, sim_index=None):
     """Create and return the given pivot.
 
-    @keyword order: The pivot number with 1 corresponding to the first pivot, 2 to the second, etc.
-    @type order:    int
-    @return:        The give pivot point.
-    @rtype:         numpy 3D rank-1 float64 array
+    @keyword order:     The pivot number with 1 corresponding to the first pivot, 2 to the second, etc.
+    @type order:        int
+    @keyword sim_index: The optional Monte Carlo simulation index.  If provided, the pivot for the given simulation will be returned instead.
+    @type sim_index:    None or int
+    @return:            The give pivot point.
+    @rtype:             numpy 3D rank-1 float64 array
     """
 
     # Initialise.
@@ -110,16 +112,24 @@ def generate_pivot(order=1):
     # The double rotor parameterisation.
     if cdp.model in ['double rotor']:
         # The 2nd pivot point (the centre of the frame).
-        pivot_2nd = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+        if sim_index != None and hasattr(cdp, 'pivot_x_sim'):
+            pivot_2nd = array([cdp.pivot_x_sim[sim_index], cdp.pivot_y_sim[sim_index], cdp.pivot_z_sim[sim_index]], float64)
+        else:
+            pivot_2nd = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
 
         # Generate the first pivot.
         if order == 1:
             # The eigenframe.
             frame = zeros((3, 3), float64)
-            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+            if sim_index != None and hasattr(cdp, 'pivot_disp_sim'):
+                euler_to_R_zyz(cdp.eigen_alpha_sim[sim_index], cdp.eigen_beta_sim[sim_index], cdp.eigen_gamma_sim[sim_index], frame)
+                pivot_disp = cdp.pivot_disp_sim[sim_index]
+            else:
+                euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+                pivot_disp = cdp.pivot_disp
 
             # The 1st pivot.
-            pivot = pivot_2nd + frame[:, 2] * cdp.pivot_disp
+            pivot = pivot_2nd + frame[:, 2] * pivot_disp
 
         # Alias the 2nd pivot.
         elif order == 2:
@@ -127,7 +137,10 @@ def generate_pivot(order=1):
 
     # All other models.
     elif order == 1:
-        pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
+        if sim_index != None and hasattr(cdp, 'pivot_x_sim'):
+            pivot = array([cdp.pivot_x_sim[sim_index], cdp.pivot_y_sim[sim_index], cdp.pivot_z_sim[sim_index]], float64)
+        else:
+            pivot = array([cdp.pivot_x, cdp.pivot_y, cdp.pivot_z], float64)
 
     # Return the pivot.
     return pivot
