@@ -249,19 +249,6 @@ def norm(x, ord=None, axis=None):
     return numpy.apply_along_axis(numpy.linalg.norm, axis, x)
 
 
-def sorted(data):
-    """Python 2.3 and earlier replacement function for the builtin sorted() function."""
-
-    # Make a copy of the data.
-    new_data = deepcopy(data)
-
-    # Sort.
-    new_data.sort()
-
-    # Return the new data.
-    return new_data
-
-
 
 class Bzip2Fixed(BZ2File):
     """Incredibly nasty hack for bzip2 files support in Python 3.0, 3.1 and 3.2."""
@@ -373,10 +360,6 @@ if PY_VERSION == 2:
     # Switch all range() calls to xrange() for increased speed and memory reduction.
     # This should work as all range() usage for Python 3 in relax must match the old xrange() usage.
     #builtins.range = builtins.xrange
-
-    # The sorted() builtin function for Python 2.3 and earlier.
-    if sys.version_info[1] <= 3:
-        setattr(builtins, 'sorted', sorted)
 
     # The os.devnull object for Python 2.3 and earlier.
     if sys.version_info[1] <= 3:
