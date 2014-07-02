@@ -1140,21 +1140,22 @@ class Internal:
         return self.structural_data[-1]
 
 
-    def add_molecule(self, name=None):
+    def add_molecule(self, model_num=None, name=None):
         """Add a new molecule to the store.
 
-        @keyword name:          The molecule identifier string.
-        @type name:             str
+        @keyword model_num: The optional model to add the molecule to.  If not supplied, the molecule will be added to all models.
+        @type model_num:    None or int
+        @keyword name:      The molecule identifier string.
+        @type name:         str
         """
 
         # Add a model if necessary.
         if len(self.structural_data) == 0:
             self.add_model()
 
-        # Loop over the models.
-        for i in range(len(self.structural_data)):
-            # Add the molecule.
-            self.structural_data[i].mol.add_item(mol_name=name, mol_cont=MolContainer())
+        # Add the molecule to each model.
+        for model in self.model_loop(model=model_num):
+            model.mol.add_item(mol_name=name, mol_cont=MolContainer())
 
 
     def are_bonded(self, atom_id1=None, atom_id2=None):
@@ -1736,13 +1737,15 @@ class Internal:
                     return mol
 
 
-    def has_molecule(self, name=None):
+    def has_molecule(self, model_num=None, name=None):
         """Check if the molecule name exists.
 
-        @param name:    The molecule name.
-        @type name:     str
-        @return:        True if the molecule exists, False otherwise.
-        @rtype:         bool
+        @keyword model_num: The optional model to check.  If not supplied, the molecule will be searched for across all models.
+        @type model_num:    None or int
+        @param name:        The molecule name.
+        @type name:         str
+        @return:            True if the molecule exists, False otherwise.
+        @rtype:             bool
         """
 
         # No models.
@@ -1750,7 +1753,7 @@ class Internal:
             return False
 
         # Loop over the models.
-        for model_cont in self.model_loop():
+        for model_cont in self.model_loop(model=model_num):
             # Loop over the molecules.
             for mol in model_cont.mol:
                 # Matching molecule.
