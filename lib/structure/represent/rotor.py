@@ -32,7 +32,7 @@ from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import axis_angle_to_R
 
 
-def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model=None, staggered=False):
+def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model_num=None, staggered=False):
     """Create a PDB representation of a rotor motional model.
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
@@ -51,8 +51,8 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None,
     @type span:             float
     @keyword blade_length:  The length of the representative rotor blades.
     @type blade_length:     float
-    @keyword model:         The structural model number to add the rotor to.  If not supplied, the same rotor structure will be added to all models.
-    @type model:            int or None
+    @keyword model_num:     The structural model number to add the rotor to.  If not supplied, the same rotor structure will be added to all models.
+    @type model_num:        int or None
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
     """
@@ -68,18 +68,18 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None,
     axis_norm = axis / norm(axis)
 
     # Add a structure (handling up to 3 rotors).
-    if structure.has_molecule(name='rotor') and structure.has_molecule(name='rotor2'):
-        structure.add_molecule(name='rotor3')
+    if structure.has_molecule(model_num=model_num, name='rotor') and structure.has_molecule(model_num=model_num, name='rotor2'):
+        structure.add_molecule(model_num=model_num, name='rotor3')
         mol_name = 'rotor3'
-    elif structure.has_molecule(name='rotor'):
-        structure.add_molecule(name='rotor2')
+    elif structure.has_molecule(model_num=model_num, name='rotor'):
+        structure.add_molecule(model_num=model_num, name='rotor2')
         mol_name = 'rotor2'
     else:
-        structure.add_molecule(name='rotor')
+        structure.add_molecule(model_num=model_num, name='rotor')
         mol_name = 'rotor'
 
     # Loop over the models.
-    for model in structure.model_loop(model):
+    for model in structure.model_loop(model_num):
         # Alias the single molecule from the single model.
         mol = structure.get_molecule(mol_name, model=model.num)
 
