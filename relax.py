@@ -38,7 +38,7 @@ import dep_check
 
 # Eliminate the ^[[?1034h escape code being produced on Linux systems by the import of the readline module.
 import os
-if os.environ['TERM'] == 'xterm':
+if 'TERM' in os.environ and os.environ['TERM'] == 'xterm':
     os.environ['TERM'] = 'linux'
 
 # Set up the Python 2 and 3 work-arounds.
