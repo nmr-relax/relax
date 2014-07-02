@@ -29,6 +29,7 @@ import os
 from os import F_OK, access, curdir, sep
 from os.path import abspath
 from re import search
+from time import asctime
 from warnings import warn
 
 # relax module imports.
@@ -47,6 +48,7 @@ from lib.xml import object_to_xml, xml_to_object
 
 # Module variables.
 CHAIN_ID_LIST = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
+RELAX_VERSION = None
 
 
 class Internal:
@@ -2454,7 +2456,12 @@ class Internal:
         # Write some initial remarks.
         print("REMARK")
         pdb_write.remark(file, num=4, remark="This file complies with format v. 3.30, Jul-2011.")
-        pdb_write.remark(file, num=40, remark="Created by relax (http://www.nmr-relax.com).")
+        pdb_write.remark(file, num=40, remark=None)
+        pdb_write.remark(file, num=40, remark="Created using relax (http://www.nmr-relax.com).")
+        pdb_write.remark(file, num=40, remark=None)
+        if RELAX_VERSION:
+            pdb_write.remark(file, num=40, remark="relax version %s." % RELAX_VERSION)
+        pdb_write.remark(file, num=40, remark="Created on %s." % asctime())
         num_remark = 2
 
         # Determine if model records will be created.

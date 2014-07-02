@@ -37,6 +37,9 @@ import sys
 # numpy.
 try:
     import numpy
+    if float(numpy.version.version[:3]) < 1.6:
+        sys.stderr.write("Version %s of the 'numpy' dependency is not supported, numpy >= 1.6 is required.\n" % numpy.version.version)
+        sys.exit()
 except ImportError:
     sys.stderr.write("The dependency 'numpy' has not been installed.\n")
     sys.exit()

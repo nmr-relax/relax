@@ -33,6 +33,7 @@ if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
 
 # relax module imports.
+import lib.structure.internal.object
 from status import Status; status = Status()
 
 
@@ -116,3 +117,6 @@ def version_full():
 
 # Fetch the repository information, if present.
 repo_information()
+
+# Set the version in the relax internal structural object.
+lib.structure.internal.object.RELAX_VERSION = version_full()
