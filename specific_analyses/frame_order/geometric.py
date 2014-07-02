@@ -341,8 +341,8 @@ def add_rotors(structure=None):
         euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
         # Add the x and y axes.
-        axis.append(frame[:,0])
-        axis.append(frame[:,1])
+        axis.append(frame[:, 0])
+        axis.append(frame[:, 1])
 
         # The rotor size.
         span.append(20e-10)

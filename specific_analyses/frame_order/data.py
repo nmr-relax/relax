@@ -119,7 +119,7 @@ def generate_pivot(order=1):
             euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
             # The 1st pivot.
-            pivot = pivot_2nd + frame[:,2] * cdp.pivot_disp
+            pivot = pivot_2nd + frame[:, 2] * cdp.pivot_disp
 
         # Alias the 2nd pivot.
         elif order == 2:

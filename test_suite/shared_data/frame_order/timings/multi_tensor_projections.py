@@ -38,7 +38,7 @@ def proj3(vect, A, N=1, verb=True):
     d = zeros((len(A), len(vect)), float64)
     for iter in range(N):
         for i in range(len(A)):
-            d[i] = diagonal(tensordot(tensordot(A[i], vect, axes=([0],[1])), vect, axes=([0],[1])))
+            d[i] = diagonal(tensordot(tensordot(A[i], vect, axes=([0], [1])), vect, axes=([0], [1])))
     if verb:
         print("\n3rd projection - per align, diag of double tensordot, no transpose.")
         print("Proj1&2: %s, %s" % (d[0, :2], d[1, :2]))
@@ -48,9 +48,9 @@ def proj4(vect, A, N=1, verb=True):
     d = zeros((len(A), len(vect)), float64)
     for iter in range(N):
         for i in range(len(A)):
-            a = tensordot(A[i], vect, axes=([0],[1]))
+            a = tensordot(A[i], vect, axes=([0], [1]))
             for j in range(len(vect)):
-                d[i, j] = dot(vect[j], a[:,j])
+                d[i, j] = dot(vect[j], a[:, j])
     if verb:
         print("\n4th projection - per align, mixed tensordot() and per-vector dot().")
         print("Proj1&2: %s, %s" % (d[0, :2], d[1, :2]))

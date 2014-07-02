@@ -410,7 +410,7 @@ class Frame_order:
         # Pre-calculate all the necessary vectors.
         if self.pcs_flag:
             # The 1st pivot point (sum of the 2nd pivot and the displacement along the eigenframe z-axis).
-            pivot = pivot2 + param_disp * self.R_eigen[:,2]
+            pivot = pivot2 + param_disp * self.R_eigen[:, 2]
 
             # Calculate the vectors.
             self.calc_vectors(pivot=pivot, pivot2=pivot2, R_ave=self.R_ave, RT_ave=RT_ave)
