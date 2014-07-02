@@ -30,7 +30,7 @@ if dep_check.pymol_module:
     import pymol
 from math import pi
 from numpy import float64, transpose, zeros
-from os import F_OK, access, pardir, sep
+from os import F_OK, access, getcwd, pardir, sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen
@@ -41,6 +41,7 @@ from time import sleep
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
 from lib.geometry.rotations import euler_to_R_zyz, R_to_axis_angle
 from lib.io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
+from lib.structure.files import find_pdb_files
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
 from pipe_control.result_files import add_result_file
@@ -316,87 +317,106 @@ def create_macro(data_type=None, style="classic", colour_start=None, colour_end=
     return commands
 
 
-def frame_order(ave_pos_file="ave_pos.pdb", rep_file="frame_order.pdb", dist_file="domain_distribution.pdb", dir=None):
+def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution", dir=None):
     """Display the frame order results (the geometric object, average position and distribution).
 
-    @keyword ave_pos_file:  The name of the file for the average molecule structure.
-    @type ave_pos_file:     str or None
-    @keyword rep_file:      The name of the file of the PDB representation of the frame order dynamics to create.
-    @type rep_file:         str or None
-    @keyword dist_file:     The name of the file which will contain multiple models spanning the full dynamics distribution of the frame order model.
-    @type dist_file:        str or None
-    @keyword dir:           The name of the directory to place the PDB file into.
-    @type dir:              str or None
+    @keyword ave_pos:   The file root of the average molecule structure.
+    @type ave_pos:      str or None
+    @keyword rep:       The file root of the PDB representation of the frame order dynamics to create.
+    @type rep:          str or None
+    @keyword dist:      The file root which will contain multiple models spanning the full dynamics distribution of the frame order model.
+    @type dist:         str or None
+    @keyword dir:       The name of the directory to place the PDB file into.
+    @type dir:          str or None
     """
 
     # The path.
-    path = ''
+    path = getcwd()
     if dir != None:
         path = dir + sep
 
     # Set up the respective objects.
-    if ave_pos_file:
-        frame_order_ave_pos(file=path+ave_pos_file)
-    if rep_file:
-        frame_order_geometric(file=path+rep_file)
-    if dist_file:
-        frame_order_distribution(file=path+dist_file)
+    if ave_pos:
+        frame_order_ave_pos(root=ave_pos, path=path)
+    if rep:
+        frame_order_geometric(root=rep, path=path)
+    if dist:
+        frame_order_distribution(root=dist, path=path)
 
 
-def frame_order_ave_pos(file=None):
+def frame_order_ave_pos(root=None, path=None):
     """Display the PDB structure for the frame order average domain position.
 
-    @keyword file:  The name of the PDB file containing the frame order average structure.
-    @type file:     str
+    @keyword root:  The file root of the PDB file containing the frame order average structure.
+    @type root:     str
     """
 
-    # Read in the PDB file.
-    pymol_obj.exec_cmd("load " + file)
+    # Find all PDB files.
+    pdb_files = find_pdb_files(path=path, file_root=root)
 
-    # The object ID.
-    id = file_root(file)
+    # Read in the PDB files.
+    print pdb_files
+    for file in pdb_files:
+        pymol_obj.exec_cmd("load " + file)
+
+        # The object ID.
+        id = file_root(file)
 
 
-def frame_order_distribution(file=None):
+def frame_order_distribution(root=None, path=None):
     """Display the PDB structure for the frame order distribution of domain positions.
 
-    @keyword file:  The name of the PDB file containing the frame order distribution of domain positions.
-    @type file:     str
+    @keyword root:  The file root of the PDB file containing the frame order distribution of domain positions.
+    @type root:     str
     """
 
-    # Read in the PDB file.
-    pymol_obj.exec_cmd("load " + file)
+    # Find all PDB files.
+    pdb_files = find_pdb_files(path=path, file_root=root)
+
+    # Read in the PDB files.
+    for file in pdb_files:
+        pymol_obj.exec_cmd("load " + file)
 
 
-def frame_order_geometric(file=None):
+def frame_order_geometric(root=None, path=None):
     """Display the frame order geometric object.
 
-    @keyword file:  The name of the PDB file containing the frame order geometric object.
-    @type file:     str
+    @keyword root:  The file root of the PDB file containing the frame order geometric object.
+    @type root:     str
     """
 
-    # Read in the PDB file.
-    pymol_obj.exec_cmd("load " + file)
+    # Find all PDB files.
+    pdb_files = find_pdb_files(path=path, file_root=root)
+    pdb_files += find_pdb_files(path=path, file_root=root+'_pos')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_neg')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_pos')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_neg')
 
-    # The object ID.
-    id = file_root(file)
+    # Read in the PDB files.
+    for file in pdb_files:
+        # Read in the PDB file.
+        pymol_obj.exec_cmd("load " + file)
 
-    # First hide everything.
-    pymol_obj.exec_cmd("select %s" % id)
-    pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("cmd.delete('sele')")
+        # The object ID.
+        id = file_root(file)
 
-    # Set up the pivot points.
-    represent_pivots(id=id)
+        # First hide everything.
+        pymol_obj.exec_cmd("select %s" % id)
+        pymol_obj.exec_cmd("hide ('sele')")
+        pymol_obj.exec_cmd("cmd.delete('sele')")
 
-    # Set up the rotor objects.
-    represent_rotor_object(id=id)
+        # Set up the pivot points.
+        represent_pivots(id=id)
 
-    # Set up the cone axis.
-    represent_cone_axis(id=id)
+        # Set up the rotor objects.
+        represent_rotor_object(id=id)
 
-    # Set up the cone object.
-    represent_cone_object(id=id)
+        # Set up the cone axis.
+        represent_cone_axis(id=id)
+
+        # Set up the cone object.
+        represent_cone_object(id=id)
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
