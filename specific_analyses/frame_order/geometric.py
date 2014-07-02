@@ -302,7 +302,7 @@ def add_rotors(structure=None):
 
         # Generate the rotor axis.
         if cdp.model in ['rotor', 'free rotor']:
-            axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com))
+            axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[-1]))
         elif cdp.model in ['iso cone', 'iso cone, free rotor']:
             axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
         else:
