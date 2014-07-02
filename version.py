@@ -37,7 +37,7 @@ import lib.structure.internal.object
 from status import Status; status = Status()
 
 
-version = "repository checkout"
+version = "3.2.3"
 repo_revision = None
 repo_url = None
 
