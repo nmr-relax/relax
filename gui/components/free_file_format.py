@@ -675,8 +675,8 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         @type event:    wx event
         """
 
-        # Destroy the window.
-        self.Destroy()
+        # Close the window.
+        self.Close()
 
 
     def reset(self, event):
@@ -700,5 +700,5 @@ class Free_file_format_window(wx.Dialog, Wiz_page):
         # Execute the base class method.
         self._element.save(event)
 
-        # Destroy the window.
-        self.Destroy()
+        # Close the window.
+        self.Close()
