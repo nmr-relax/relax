@@ -113,7 +113,7 @@ else:
 # Numpy.
 import numpy
 try:
-    numpy.linalg.norm(numpy.ones((3,3)), axis=1)
+    numpy.linalg.norm(numpy.ones((3, 3)), axis=1)
     numpy_norm_axis = True
 except:
     numpy_norm_axis = False
