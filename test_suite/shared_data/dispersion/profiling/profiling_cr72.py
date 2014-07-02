@@ -101,10 +101,10 @@ class Profile(Dispersion):
 
         # Required data structures.
         self.num_points = num_points
-        self.ncyc_list = range(2, 2*self.num_points + 1, 2)
+        self.ncyc_list = list(range(2, 2*self.num_points + 1, 2))
         self.relax_time = 0.04
         self.points = array(self.ncyc_list) / self.relax_time
-        self.value = array(range(1, len(self.ncyc_list)+1), float64) * 1.00
+        self.value = array(list(range(1, len(self.ncyc_list)+1)), float64) * 1.00
         self.error = ones(len(self.ncyc_list), float64) * 0.01
 
         # Make nested list arrays of data. And return them.
@@ -354,7 +354,7 @@ def single(num_spins=1, num_points=20, model=MODEL_CR72_FULL, iter=None):
     params = C1.assemble_param_vector(r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
-    for i in xrange(iter):
+    for i in range(iter):
         chi2 = C1.calc(params)
 
 
@@ -380,7 +380,7 @@ def cluster(num_spins=100, num_points=20, model=MODEL_CR72_FULL, iter=None):
     params = C1.assemble_param_vector(r2a=5.0, r2b=10.0, dw=3.0, pA=0.9, kex=1000.0, spins_params=['r2a', 'r2b', 'dw', 'pA', 'kex'])
 
     # Repeat the function call, to simulate minimisation.
-    for i in xrange(iter):
+    for i in range(iter):
         chi2 = C1.calc(params)
 
 

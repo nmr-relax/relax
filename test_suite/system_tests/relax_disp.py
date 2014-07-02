@@ -4691,7 +4691,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0, 1)
+        select_spin_index = list(range(0, 1))
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
@@ -4840,7 +4840,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0, 1)
+        select_spin_index = list(range(0, 1))
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Define replicated
@@ -4923,7 +4923,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0, 2)
+        select_spin_index = list(range(0, 2))
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
@@ -5091,7 +5091,7 @@ class Relax_disp(SystemTestCase):
         pipe_name = 'base pipe'
         pipe_type = 'relax_disp'
         pipe_name_r2eff = "%s_R2eff"%(pipe_name)
-        select_spin_index = range(0, 2)
+        select_spin_index = list(range(0, 2))
         self.setup_sod1wt_t25(pipe_name=pipe_name, pipe_type=pipe_type, pipe_name_r2eff=pipe_name_r2eff, select_spin_index=select_spin_index)
 
         # Generate r20 key.
