@@ -44,11 +44,11 @@ from lib.structure.internal.models import ModelList
 from lib.structure.internal.molecules import MolContainer
 from lib.warnings import RelaxWarning
 from lib.xml import object_to_xml, xml_to_object
-from version import version_full
 
 
 # Module variables.
 CHAIN_ID_LIST = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz'
+RELAX_VERSION = None
 
 
 class Internal:
@@ -2459,7 +2459,8 @@ class Internal:
         pdb_write.remark(file, num=40, remark=None)
         pdb_write.remark(file, num=40, remark="Created using relax (http://www.nmr-relax.com).")
         pdb_write.remark(file, num=40, remark=None)
-        pdb_write.remark(file, num=40, remark="relax version %s." % version_full())
+        if RELAX_VERSION:
+            pdb_write.remark(file, num=40, remark="relax version %s." % RELAX_VERSION)
         pdb_write.remark(file, num=40, remark="Created on %s." % asctime())
         num_remark = 2
 
