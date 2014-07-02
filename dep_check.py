@@ -88,7 +88,7 @@ except ImportError:
 try:
     import os
     if os.environ['TERM'] == 'xterm':
-        os.environ['TERM'] = ''
+        os.environ['TERM'] = 'linux'
     import readline
     readline_module = True
 except ImportError:
