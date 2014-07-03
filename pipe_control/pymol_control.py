@@ -359,7 +359,6 @@ def frame_order_ave_pos(root=None, path=None):
     pdb_files += find_pdb_files(path=path, file_root=root+'_sim')
 
     # Read in the PDB files.
-    print pdb_files
     for file in pdb_files:
         pymol_obj.exec_cmd("load " + file)
 
