@@ -66,6 +66,8 @@ class ModelList(list):
 
         @keyword model_num: The model number.
         @type model_num:    int
+        @return:            The model container.
+        @rtype:             ModelContainer instance
         """
 
         # If no model data exists, replace the empty first model with this model (just a renumbering).
@@ -83,6 +85,9 @@ class ModelList(list):
 
         # Update the current model list.
         self.current_models.append(model_num)
+
+        # Return the model container.
+        return self[-1]
 
 
     def is_empty(self):

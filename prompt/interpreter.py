@@ -264,7 +264,10 @@ class Interpreter:
         if dep_check.readline_module:
             readline.set_completer(Tab_completion(name_space=locals()).finish)
             readline.set_completer_delims(' \t\n`~!@#$%^&*()=+{}\\|;:",<>/?')
-            readline.parse_and_bind("tab: complete")
+            if 'libedit' in readline.__doc__:
+                readline.parse_and_bind("bind ^I rl_complete")
+            else:
+                readline.parse_and_bind("tab: complete")
 
         # Execute the script file if given.
         if script_file and not status.prompt:

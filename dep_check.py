@@ -104,8 +104,8 @@ except ImportError:
 # Readline module (avoiding the damned ^[[?1034h escape code on Linux systems).
 try:
     import os
-    if os.environ['TERM'] == 'xterm':
-        os.environ['TERM'] = ''
+    if 'TERM' in os.environ and os.environ['TERM'] == 'xterm':
+        os.environ['TERM'] = 'linux'
     import readline
     readline_module = True
 except ImportError:

@@ -1108,7 +1108,7 @@ class Internal:
     def add_model(self, model=None, coords_from=None):
         """Add a new model to the store.
 
-        The new model will be constructured with the structural information from the other models currently present.  The coords_from argument allows the atomic positions to be taken from a certain model.  If this argument is not set, then the atomic positions from the first model will be used.
+        The new model will be constructed with the structural information from the other models currently present.  The coords_from argument allows the atomic positions to be taken from a certain model.  If this argument is not set, then the atomic positions from the first model will be used.
 
         @keyword model:         The number of the model to create.
         @type model:            int or None
@@ -1125,16 +1125,19 @@ class Internal:
                     raise RelaxError("The model '%s' already exists." % model)
 
         # Add a new model.
-        self.structural_data.add_item(model_num=model)
+        model = self.structural_data.add_item(model_num=model)
 
         # The model to duplicate.
         if coords_from == None:
-            coords_from = self.structural_data[0].num
+            model_from = self.structural_data[0]
+        else:
+            for i in range(len(self.structural_data)):
+                if self.structural_data[i].num == coords_from:
+                    model_from = self.structural_data[i]
+                    break
 
-        # Construct the structural data for the model from the other models.
-        for mol_name, res_num, res_name, atom_num, atom_name, element, pos in self.atom_loop(model_num=coords_from, mol_name_flag=True, res_num_flag=True, res_name_flag=True, atom_num_flag=True, atom_name_flag=True, element_flag=True, pos_flag=True):
-            # Add the atom.
-            self.add_atom(mol_name=mol_name, atom_name=atom_name, res_name=res_name, res_num=res_num, pos=pos, element=element, atom_num=atom_num)
+        # Duplicate all data from the MolList object down.
+        model.mol = deepcopy(model_from.mol)
 
         # Return the model.
         return self.structural_data[-1]
@@ -2279,6 +2282,35 @@ class Internal:
                     mol.x[i] = pos[0]
                     mol.y[i] = pos[1]
                     mol.z[i] = pos[2]
+
+
+    def set_model(self, model_orig=None, model_new=None):
+        """Set or reset the model number.
+        @keyword model_orig:    The original model number.  Leave as None if no models are currently present.
+        @type model_orig:       None or int
+        @keyword model_new:     The new model number to set the model to.
+        @type model_new:        int
+        """
+
+        # Check.
+        if model_orig == None and self.num_models() != 1:
+            raise RelaxError("If the original model number is not supplied, only one model in the current structural object is allowed, but %s were found." % self.num_models())
+
+        # Set the single model number.
+        if model_orig == None:
+            self.structural_data[0].num = model_new
+            return
+
+        # Find the model and set the number.
+        set = False
+        for i in range(len(self.structural_data)):
+            if model_orig == self.structural_data[i].num:
+                self.structural_data[i].num = model_new
+                set = True
+
+        # Sanity check.
+        if not set:
+            raise RelaxError("The original model number %s could not be found in the structural object." % model_orig)
 
 
     def target_mol_name(self, set=None, target=None, index=None, mol_num=None, file=None):
