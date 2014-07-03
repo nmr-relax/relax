@@ -335,6 +335,9 @@ def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution"
     if dir != None:
         path = dir + sep
 
+    # First disable everything, so that the original domain positions and structures and previous frame order results are not shown by default.
+    pymol_obj.exec_cmd("disable all")
+
     # Set up the respective objects.
     if ave_pos:
         frame_order_ave_pos(root=ave_pos, path=path)
@@ -362,6 +365,9 @@ def frame_order_ave_pos(root=None, path=None):
 
         # The object ID.
         id = file_root(file)
+
+    # Disable the MC simulation representation - the user can find this out for themselves.
+    pymol_obj.exec_cmd("disable %s_sim" % root)
 
 
 def frame_order_distribution(root=None, path=None):
@@ -418,6 +424,11 @@ def frame_order_geometric(root=None, path=None):
 
         # Set up the cone object.
         represent_cone_object(id=id)
+
+    # Disable the MC simulation representation - the user can find this out for themselves.
+    pymol_obj.exec_cmd("disable %s_sim" % root)
+    pymol_obj.exec_cmd("disable %s_sim_pos" % root)
+    pymol_obj.exec_cmd("disable %s_sim_neg" % root)
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
