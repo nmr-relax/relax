@@ -446,26 +446,70 @@ def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=Fal
     # Printout.
     subsection(file=sys.stdout, text="Creating a PDB file with the moving domains shifted to the average position.")
 
-    # Make a copy of the structural object (so as to preserve the original structure).
-    structure = deepcopy(cdp.structure)
+    # Initialise.
+    titles = []
+    sims = []
+    file_root = []
+    models = []
 
-    # First rotate the moving domain to the average position.
-    R = zeros((3, 3), float64)
-    if hasattr(cdp, 'ave_pos_alpha'):
-        euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-    else:
-        euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
-    origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-    structure.rotate(R=R, origin=origin, atom_id=domain_moving())
+    # The real average position.
+    titles.append("real average position")
+    sims.append(False)
+    file_root.append(file)
+    models.append([None])
 
-    # Then translate the moving domain.
-    structure.translate(T=[cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z], atom_id=domain_moving())
+    # The positive MC simulation representation.
+    if hasattr(cdp, 'sim_number'):
+        titles.append("MC simulation representation")
+        sims.append(True)
+        file_root.append("%s_sim" % file)
+        models.append([i+1 for i in range(cdp.sim_number)])
 
-    # Output to PDB format.
-    if format == 'PDB':
-        file = open_write_file(file_name=file+'.pdb', dir=dir, compress_type=compress_type, force=force)
-        structure.write_pdb(file=file)
-        file.close()
+    # Loop over each representation and add the contents.
+    for i in range(len(titles)):
+        # Printout.
+        subsubsection(file=sys.stdout, text="Creating the %s." % titles[i])
+
+        # Make a copy of the structural object (so as to preserve the original structure).
+        structure = deepcopy(cdp.structure)
+
+        # Loop over each model.
+        for j in range(len(models[i])):
+            # Create or set the models, if needed.
+            if models[i][j] == 1:
+                structure.set_model(model_new=1)
+            elif models[i][j] != None:
+                structure.add_model(model=models[i][j])
+
+        # Loop over each model.
+        for j in range(len(models[i])):
+            # First rotate the moving domain to the average position.
+            R = zeros((3, 3), float64)
+            if hasattr(cdp, 'ave_pos_alpha'):
+                if sims[i]:
+                    euler_to_R_zyz(cdp.ave_pos_alpha_sim[j], cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
+                else:
+                    euler_to_R_zyz(cdp.ave_pos_alpha, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+            else:
+                if sims[i]:
+                    euler_to_R_zyz(0.0, cdp.ave_pos_beta_sim[j], cdp.ave_pos_gamma_sim[j], R)
+                else:
+                    euler_to_R_zyz(0.0, cdp.ave_pos_beta, cdp.ave_pos_gamma, R)
+            origin = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
+            structure.rotate(R=R, origin=origin, model=models[i][j], atom_id=domain_moving())
+
+            # Then translate the moving domain.
+            if sims[i]:
+                T = [cdp.ave_pos_x_sim[j], cdp.ave_pos_y_sim[j], cdp.ave_pos_z_sim[j]]
+            else:
+                T = [cdp.ave_pos_x, cdp.ave_pos_y, cdp.ave_pos_z]
+            structure.translate(T=T, model=models[i][j], atom_id=domain_moving())
+
+        # Output to PDB format.
+        if format == 'PDB':
+            pdb_file = open_write_file(file_name=file_root[i]+'.pdb', dir=dir, compress_type=compress_type, force=force)
+            structure.write_pdb(file=pdb_file)
+            pdb_file.close()
 
 
 def create_distribution(format='PDB', file=None, dir=None, compress_type=0, force=False):
