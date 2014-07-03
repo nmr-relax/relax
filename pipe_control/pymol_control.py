@@ -346,6 +346,10 @@ def frame_order(ave_pos="ave_pos", rep="frame_order", dist="domain_distribution"
     if dist:
         frame_order_distribution(root=dist, path=path)
 
+    # Centre all objects and zoom.
+    pymol_obj.exec_cmd("center animate=3")
+    pymol_obj.exec_cmd("zoom animate=3")
+
 
 def frame_order_ave_pos(root=None, path=None):
     """Display the PDB structure for the frame order average domain position.
