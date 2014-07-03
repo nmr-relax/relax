@@ -43,6 +43,16 @@ The swig command will build the Scipy part requining the umfpack_*.h files, and 
 
 
 
+# Nose.
+
+This is needed for numpy and scipy testing via the numpy.test() and scipy.test() functions.  Download the latest version from https://pypi.python.org/pypi/nose, unpack it and type:
+
+$ ~/bin/python2.7 setup.py install
+
+Do not use pip or easy_install!
+
+
+
 # Mpi4py.
 
 The deployment target platform, SDK root, and the architectures need to be set explicitly with environmental variables:
@@ -53,7 +63,9 @@ $ export ARCHFLAGS='-arch i386 -arch x86_64 -arch ppc'
 
 This is probably because mpicc is dumber than gcc!  Make sure that there is no 'build' directory prior to compilation.  Finally, run:
 
-$ ~/bin/python2.7 setup.py install
+$ PATH=/usr/bin/:$PATH ~/bin/python2.7 setup.py install
+
+The PATH change is required here just in case the non-framework Fink mpicc compiler is installed.
 
 
 
@@ -98,7 +110,7 @@ make $* \
 
 
 
-# wxPython 2.9.
+# wxPython >= 2.9.
 
 Download and unpack the latest source release.  In the base directory, type:
 
@@ -109,11 +121,11 @@ $ ~/bin/python2.7 build-wxpython.py --build_dir=../bld --osx_cocoa --mac_univers
 
 # SCons.
 
-Download and unpack the latest 2.x.x release, then type:
+Download and unpack the latest release, then type:
 
 $ ~/bin/python2.7 setup.py install
 $ cd ~/bin
-$ ln -s /Users/edward/Library/Frameworks/Python.framework/Versions/2.7/bin/scons-2.x.x scons
+$ ln -s /Users/edward/Library/Frameworks/Python.framework/Versions/2.7/bin/scons scons
 
 Then edit the scons file and change the top of the file from:
 
@@ -130,8 +142,17 @@ To:
 #
 
 
+
 # Py2app.
 
 This is needed to create the universal binary DMG distribution file.  Download the latest version from https://pypi.python.org/pypi/py2app/.  Then open it and:
+
+$ ~/bin/python2.7 setup.py install
+
+
+
+# Matplotlib.
+
+This might be used more in relax in the future.  Download the latest version and then:
 
 $ ~/bin/python2.7 setup.py install
