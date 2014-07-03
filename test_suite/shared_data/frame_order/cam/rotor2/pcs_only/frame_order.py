@@ -100,8 +100,6 @@ minimise('simplex', constraints=False)
 frame_order.pdb_model(force=True)
 
 # PyMOL.
-pymol.view()
-pymol.command('show spheres')
 pymol.cone_pdb('frame_order.pdb')
 
 # Save the state.
