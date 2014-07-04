@@ -416,6 +416,9 @@ def frame_order_geometric(root=None, path=None):
         pymol_obj.exec_cmd("hide ('sele')")
         pymol_obj.exec_cmd("cmd.delete('sele')")
 
+        # Set up the titles.
+        represent_titles(id=id)
+
         # Set up the pivot points.
         represent_pivots(id=id)
 
@@ -682,6 +685,48 @@ def represent_pivots(id=None):
     pymol_obj.exec_cmd("cmd.label(\"sele\",\"name\")")
 
     # Remove the selection.
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+
+def represent_titles(id=None):
+    """Set up the PyMOL title object representation.
+
+    @keyword id:    The PyMOL object ID.
+    @type id:       str
+    """
+
+    # Sanity check.
+    if id == None:
+        raise RelaxError("The PyMOL object ID must be supplied.")
+
+    # Frame order positive representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name p)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Positive representation'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order negative representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name n)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Negative representation'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim positive representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name p-mc)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Positive MC sim representation'")
+    pymol_obj.exec_cmd("cmd.delete('sele')")
+
+    # Frame order MC sim negative representation.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name n-mc)" % id)
+    pymol_obj.exec_cmd("hide ('sele')")
+    pymol_obj.exec_cmd("label 'sele', 'Negative MC sim representation'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 

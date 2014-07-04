@@ -296,6 +296,97 @@ def add_pivots(structure=None, sims=False):
         mols[i].atom_add(atom_num=atom_nums[i], atom_name=atom_names[i], res_name='PIV', res_num=1, pos=pivots[i], element='C', pdb_record='HETATM')
 
 
+def add_titles(structure=None, representation=None, displacement=40.0, sims=False):
+    """Add atoms to be used for the titles for the frame order geometric objects.
+
+    @keyword structure:         The internal structural object to add the rotor objects to.
+    @type structure:            lib.structure.internal.object.Internal instance
+    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @type representation:       None or str
+    @keyword displacement:      The distance away from the pivot point, in Angstrom, to place the title.  The simulation title will be shifted by a few extra Angstrom to avoid clashes.
+    @type displacement:         float
+    @keyword sims:              A flag which if True will add the Monte Carlo simulation pivots to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
+    @type sims:                 bool
+    """
+
+    # The title atom names.
+    atom_name = None
+    if representation == None and sims:
+        atom_name = 'mc'
+    elif representation == 'pos':
+        if sims:
+            atom_name = 'p-mc'
+        else:
+            atom_name = 'p'
+    elif representation == 'neg':
+        if sims:
+            atom_name = 'n-mc'
+        else:
+            atom_name = 'n'
+
+    # Nothing to do.
+    if atom_name == None:
+        return
+
+    # Avoid name overlaps.
+    if sims:
+        displacement += 3
+
+    # Create the molecule.
+    mol_name = 'titles'
+    structure.add_molecule(name=mol_name)
+
+    # The transformation matrix (identity matrix or inversion matrix).
+    if representation == 'neg':
+        T = -eye(3)
+    else:
+        T = eye(3)
+
+    # The pivot points.
+    pivot1 = generate_pivot(order=1)
+    pivot2 = generate_pivot(order=2)
+
+    # The models to loop over.
+    model_nums = [None]
+    sim_indices = [None]
+    if sims:
+        model_nums = [i+1 for i in range(cdp.sim_number)]
+        sim_indices = list(range(cdp.sim_number))
+
+    # Loop over the models.
+    for i in range(len(model_nums)):
+        # Alias the molecule.
+        mol = structure.get_molecule(mol_name, model=model_nums[i])
+
+        # The single rotor models.
+        if cdp.model not in ['double rotor']:
+            # Generate the rotor axis.
+            if cdp.model in ['rotor', 'free rotor']:
+                axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i])
+            elif cdp.model in ['iso cone', 'iso cone, free rotor']:
+                axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
+            else:
+                axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
+
+        # The double rotor models.
+        else:
+            # Generate the eigenframe of the motion.
+            frame = zeros((3, 3), float64)
+            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+
+            # Add the z axis.
+            axis = frame[:, 2]
+
+        # Transform the central axis.
+        axis = dot(T, axis)
+
+        # The label position.
+        pos = pivot1 + displacement*axis
+
+        # Add the atom.
+        mol.atom_add(atom_name=atom_name, res_name='TLE', res_num=1, pos=pos, element='Ti', pdb_record='HETATM')
+
+
 def add_rotors(structure=None, sims=False):
     """Add all rotor objects for the current frame order model to the structural object.
 
@@ -626,6 +717,9 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
         # Add the cone objects.
         if cdp.model not in ['rotor', 'free rotor', 'double rotor']:
             add_cones(structure=structures[i], representation=representation[i], size=size, inc=inc, sims=sims[i])
+
+        # Add atoms for creating titles.
+        add_titles(structure=structures[i], representation=representation[i], sims=sims[i])
 
         # Create the PDB file.
         if format == 'PDB':
