@@ -27,6 +27,7 @@ __all__ = [
     'api',
     'checks',
     'data',
+    'geometric',
     'optimisation',
     'parameter_object',
     'parameters',
