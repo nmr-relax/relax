@@ -362,8 +362,8 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
         if cdp.model not in ['double rotor']:
             # Generate the rotor axis.
             if cdp.model in ['rotor', 'free rotor']:
-                axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i])
-            elif cdp.model in ['iso cone', 'iso cone, free rotor']:
+                axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=pipe_centre_of_mass(verbosity=0))
+            elif cdp.model in ['iso cone', 'iso cone, free rotor', 'iso cone, torsionless']:
                 axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
             else:
                 axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
