@@ -387,13 +387,15 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
         mol.atom_add(atom_name=atom_name, res_name='TLE', res_num=1, pos=pos, element='Ti', pdb_record='HETATM')
 
 
-def add_rotors(structure=None, sims=False):
+def add_rotors(structure=None, representation=None, sims=False):
     """Add all rotor objects for the current frame order model to the structural object.
 
-    @keyword structure: The internal structural object to add the rotor objects to.
-    @type structure:    lib.structure.internal.object.Internal instance
-    @keyword sims:      A flag which if True will add the Monte Carlo simulation rotors to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
-    @type sims:         bool
+    @keyword structure:         The internal structural object to add the rotor objects to.
+    @type structure:            lib.structure.internal.object.Internal instance
+    @keyword representation:    The representation to create.  If this is set to None, the rotor will be dumbbell shaped with propellers at both ends.  If set to 'A' or 'B', only half of the rotor will be shown.
+    @type representation:       None or str
+    @keyword sims:              A flag which if True will add the Monte Carlo simulation rotors to the structural object.  There must be one model for each Monte Carlo simulation already present in the structural object.
+    @type sims:                 bool
     """
 
     # Initialise the list structures for the rotor data.
@@ -405,6 +407,17 @@ def add_rotors(structure=None, sims=False):
     com = []
     label = []
     models = []
+
+    # The half-rotor flag.
+    half_rotor = True
+    if representation == None:
+        half_rotor = False
+
+    # The transformation matrix (identity matrix or inversion matrix).
+    if representation == 'B':
+        T = -eye(3)
+    else:
+        T = eye(3)
 
     # The models to loop over.
     model_nums = [None]
@@ -516,7 +529,7 @@ def add_rotors(structure=None, sims=False):
 
     # Add each rotor to the structure as a new molecule.
     for i in range(len(axis)):
-        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=axis[i], axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i])
+        rotor(structure=structure, rotor_angle=rotor_angle[i], axis=dot(T, axis[i]), axis_pt=pivot[i], label=label[i], centre=com[i], span=span[i], blade_length=5e-10, model_num=models[i], staggered=staggered[i], half_rotor=half_rotor)
 
 
 def create_ave_pos(format='PDB', file=None, dir=None, compress_type=0, force=False):
@@ -709,7 +722,7 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
         add_pivots(structure=structures[i], sims=sims[i])
 
         # Add all rotor objects.
-        add_rotors(structure=structures[i], sims=sims[i])
+        add_rotors(structure=structures[i], representation=representation[i], sims=sims[i])
 
         # Add the axis systems.
         add_axes(structure=structures[i], representation=representation[i], size=size, sims=sims[i])

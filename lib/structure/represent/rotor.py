@@ -32,7 +32,7 @@ from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import axis_angle_to_R
 
 
-def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model_num=None, staggered=False):
+def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None, centre=None, span=2e-9, blade_length=5e-10, model_num=None, staggered=False, half_rotor=False):
     """Create a PDB representation of a rotor motional model.
 
     @keyword structure:     The internal structural object instance to add the rotor to as a molecule.
@@ -55,6 +55,8 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None,
     @type model_num:        int or None
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
+    @keyword half_rotor:    A flag which if True will cause only the positive half of the rotor to be created.
+    @type half_rotor:       bool
     """
 
     # Convert the arguments to numpy arrays, radians and Angstrom.
@@ -87,28 +89,31 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None,
         mid_point = closest_point_ax(line_pt=axis_pt, axis=axis, point=centre)
         pos_index = mol.atom_add(pdb_record='HETATM', atom_name='CTR', res_name='RTX', res_num=1, pos=mid_point, element='PT')
 
-        # Centre of the propellers.
+        # Centre of the propellers, positive half.
         prop1 = mid_point + axis_norm * span
         prop1_index = pos_index + 1
         mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=2, pos=prop1, element='O')
         mol.atom_connect(index1=pos_index, index2=prop1_index)
 
-        # Centre of the propellers.
-        prop2 = mid_point - axis_norm * span
-        prop2_index = pos_index + 2
-        mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=3, pos=prop2, element='O')
-        mol.atom_connect(index1=pos_index, index2=prop2_index)
+        # Centre of the propellers, negative half.
+        if not half_rotor:
+            prop2 = mid_point - axis_norm * span
+            prop2_index = pos_index + 2
+            mol.atom_add(pdb_record='HETATM', atom_name='PRP', res_name='RTX', res_num=3, pos=prop2, element='O')
+            mol.atom_connect(index1=pos_index, index2=prop2_index)
 
         # Create the rotor propellers.
         rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop1, axis=axis, blade_length=blade_length, staggered=staggered)
-        rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
+        if not half_rotor:
+            rotor_propellers(mol=mol, rotor_angle=rotor_angle, centre=prop2, axis=-axis, blade_length=blade_length, staggered=staggered)
 
         # Add atoms for the labels.
-        label_pos1 = mid_point + axis_norm * (span + 2.0)
-        label_pos2 = mid_point - axis_norm * (span + 2.0)
         res_num = mol.res_num[-1]+1
+        label_pos1 = mid_point + axis_norm * (span + 2.0)
         mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos1, element='H')
-        mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos2, element='H')
+        if not half_rotor:
+            label_pos2 = mid_point - axis_norm * (span + 2.0)
+            mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos2, element='H')
 
 
 def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):
