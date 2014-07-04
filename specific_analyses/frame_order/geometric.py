@@ -438,10 +438,10 @@ def add_rotors(structure=None, representation=None, sims=False):
             if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
                 rotor_angle.append(pi)
             else:
-                if sim_indices[i] == None:
-                    rotor_angle.append(cdp.cone_sigma_max)
-                else:
+                if sims:
                     rotor_angle.append(cdp.cone_sigma_max_sim[sim_indices[i]])
+                else:
+                    rotor_angle.append(cdp.cone_sigma_max)
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
             if cdp.model in ['rotor', 'free rotor']:
@@ -451,11 +451,20 @@ def add_rotors(structure=None, representation=None, sims=False):
 
             # Generate the rotor axis.
             if cdp.model in ['rotor', 'free rotor']:
-                axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i]))
+                if sims:
+                    axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_indices[i]], pivot=pivot1, point=com[i]))
+                else:
+                    axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i]))
             elif cdp.model in ['iso cone', 'iso cone, free rotor']:
-                axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
+                if sims:
+                    axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_indices[i]], phi=cdp.axis_phi_sim[sim_indices[i]]))
+                else:
+                    axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi))
             else:
-                axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
+                if sims:
+                    axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha_sim[sim_indices[i]], beta=cdp.eigen_beta_sim[sim_indices[i]], gamma=cdp.eigen_gamma_sim[sim_indices[i]]))
+                else:
+                    axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
 
             # The size of the rotor, taking the 30 Angstrom cone representation into account.
             if cdp.model in ['rotor', 'free rotor']:
@@ -484,12 +493,12 @@ def add_rotors(structure=None, representation=None, sims=False):
         # The double rotor models.
         elif cdp.model in ['double rotor']:
             # Add both rotor angles (the 2nd must come first).
-            if sim_indices[i] == None:
-                rotor_angle.append(cdp.cone_sigma_max_2)
-                rotor_angle.append(cdp.cone_sigma_max)
-            else:
+            if sims:
                 rotor_angle.append(cdp.cone_sigma_max_2_sim[sim_indices[i]])
                 rotor_angle.append(cdp.cone_sigma_max_sim[sim_indices[i]])
+            else:
+                rotor_angle.append(cdp.cone_sigma_max_2)
+                rotor_angle.append(cdp.cone_sigma_max)
 
             # Set the com to the pivot points.
             com.append(pivot2)
@@ -497,7 +506,10 @@ def add_rotors(structure=None, representation=None, sims=False):
 
             # Generate the eigenframe of the motion.
             frame = zeros((3, 3), float64)
-            euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
+            if sims:
+                euler_to_R_zyz(cdp.eigen_alpha_sim[sim_indices[i]], cdp.eigen_beta_sim[sim_indices[i]], cdp.eigen_gamma_sim[sim_indices[i]], frame)
+            else:
+                euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, frame)
 
             # Add the x and y axes.
             axis.append(frame[:, 0])
