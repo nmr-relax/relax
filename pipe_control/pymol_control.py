@@ -397,11 +397,11 @@ def frame_order_geometric(root=None, path=None):
 
     # Find all PDB files.
     pdb_files = find_pdb_files(path=path, file_root=root)
-    pdb_files += find_pdb_files(path=path, file_root=root+'_pos')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_neg')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_A')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_B')
     pdb_files += find_pdb_files(path=path, file_root=root+'_sim')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_pos')
-    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_neg')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_A')
+    pdb_files += find_pdb_files(path=path, file_root=root+'_sim_B')
 
     # Read in the PDB files.
     for file in pdb_files:
@@ -433,8 +433,8 @@ def frame_order_geometric(root=None, path=None):
 
     # Disable the MC simulation representation - the user can find this out for themselves.
     pymol_obj.exec_cmd("disable %s_sim" % root)
-    pymol_obj.exec_cmd("disable %s_sim_pos" % root)
-    pymol_obj.exec_cmd("disable %s_sim_neg" % root)
+    pymol_obj.exec_cmd("disable %s_sim_A" % root)
+    pymol_obj.exec_cmd("disable %s_sim_B" % root)
 
 
 def macro_apply(data_type=None, style="classic", colour_start_name=None, colour_start_rgb=None, colour_end_name=None, colour_end_rgb=None, colour_list=None):
@@ -699,16 +699,16 @@ def represent_titles(id=None):
     if id == None:
         raise RelaxError("The PyMOL object ID must be supplied.")
 
-    # Frame order positive representation.
-    pymol_obj.exec_cmd("select (%s & resn TLE & name p)" % id)
+    # Frame order representation A.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name a)" % id)
     pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("label 'sele', 'Positive representation'")
+    pymol_obj.exec_cmd("label 'sele', 'Representation A'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
-    # Frame order negative representation.
-    pymol_obj.exec_cmd("select (%s & resn TLE & name n)" % id)
+    # Frame order representation B.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name b)" % id)
     pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("label 'sele', 'Negative representation'")
+    pymol_obj.exec_cmd("label 'sele', 'Representation B'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
     # Frame order MC sim representation.
@@ -717,16 +717,16 @@ def represent_titles(id=None):
     pymol_obj.exec_cmd("label 'sele', 'MC sim representation'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
-    # Frame order MC sim positive representation.
-    pymol_obj.exec_cmd("select (%s & resn TLE & name p-mc)" % id)
+    # Frame order MC sim representation A.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc-a)" % id)
     pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("label 'sele', 'Positive MC sim representation'")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation A'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
-    # Frame order MC sim negative representation.
-    pymol_obj.exec_cmd("select (%s & resn TLE & name n-mc)" % id)
+    # Frame order MC sim representation B.
+    pymol_obj.exec_cmd("select (%s & resn TLE & name mc-b)" % id)
     pymol_obj.exec_cmd("hide ('sele')")
-    pymol_obj.exec_cmd("label 'sele', 'Negative MC sim representation'")
+    pymol_obj.exec_cmd("label 'sele', 'MC sim representation B'")
     pymol_obj.exec_cmd("cmd.delete('sele')")
 
 

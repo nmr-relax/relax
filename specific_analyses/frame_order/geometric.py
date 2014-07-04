@@ -48,7 +48,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
-    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @keyword representation:    The representation to create.  If this is set to None or 'A', the standard representation will be created.  If set to 'B', the axis system will be inverted.
     @type representation:       None or str
     @keyword size:              The size of the geometric object in Angstroms.
     @type size:                 float
@@ -61,7 +61,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
     structure.add_molecule(name=mol_name)
 
     # The transformation matrix (identity matrix or inversion matrix).
-    if representation == 'neg':
+    if representation == 'B':
         T = -eye(3)
     else:
         T = eye(3)
@@ -149,7 +149,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
-    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @keyword representation:    The representation to create.  If this is set to None or 'A', the standard representation will be created.  If set to 'B', the axis system will be inverted.
     @type representation:       str
     @keyword size:              The size of the geometric object in Angstroms.
     @type size:                 float
@@ -163,7 +163,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
     structure.add_molecule(name='cones')
 
     # The transformation matrix (identity matrix or inversion matrix).
-    if representation == 'neg':
+    if representation == 'B':
         T = -eye(3)
     else:
         T = eye(3)
@@ -301,7 +301,7 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
 
     @keyword structure:         The internal structural object to add the rotor objects to.
     @type structure:            lib.structure.internal.object.Internal instance
-    @keyword representation:    The representation to create.  If this is set to None or 'pos', the standard representation will be created.  If set to 'neg', the axis system will be inverted.
+    @keyword representation:    The representation to title.
     @type representation:       None or str
     @keyword displacement:      The distance away from the pivot point, in Angstrom, to place the title.  The simulation title will be shifted by a few extra Angstrom to avoid clashes.
     @type displacement:         float
@@ -313,16 +313,16 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
     atom_name = None
     if representation == None and sims:
         atom_name = 'mc'
-    elif representation == 'pos':
+    elif representation == 'A':
         if sims:
-            atom_name = 'p-mc'
+            atom_name = 'mc-a'
         else:
-            atom_name = 'p'
-    elif representation == 'neg':
+            atom_name = 'a'
+    elif representation == 'B':
         if sims:
-            atom_name = 'n-mc'
+            atom_name = 'mc-b'
         else:
-            atom_name = 'n'
+            atom_name = 'b'
 
     # Nothing to do.
     if atom_name == None:
@@ -337,7 +337,7 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
     structure.add_molecule(name=mol_name)
 
     # The transformation matrix (identity matrix or inversion matrix).
-    if representation == 'neg':
+    if representation == 'B':
         T = -eye(3)
     else:
         T = eye(3)
@@ -656,43 +656,43 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
     if cdp.model in ['rotor', 'free rotor', 'double rotor']:
         sym = False
 
-    # The positive representation.
-    titles.append("positive representation")
+    # The standard representation.
+    titles.append("Representation A")
     structures.append(Internal())
     if sym:
-        representation.append('pos')
-        file_root.append("%s_pos" % file)
+        representation.append('A')
+        file_root.append("%s_A" % file)
     else:
         representation.append(None)
         file_root.append(file)
     sims.append(False)
 
-    # The negative (inverted) representation.
+    # The inverted representation.
     if sym:
-        titles.append("negative representation")
+        titles.append("Representation A")
         structures.append(Internal())
-        representation.append('neg')
-        file_root.append("%s_neg" % file)
+        representation.append('B')
+        file_root.append("%s_B" % file)
         sims.append(False)
 
-    # The positive MC simulation representation.
+    # The standard MC simulation representation.
     if hasattr(cdp, 'sim_number'):
-        titles.append("positive MC simulation representation")
+        titles.append("MC simulation representation A")
         structures.append(Internal())
         if sym:
-            representation.append('pos')
-            file_root.append("%s_sim_pos" % file)
+            representation.append('A')
+            file_root.append("%s_sim_A" % file)
         else:
             representation.append(None)
             file_root.append("%s_sim" % file)
         sims.append(True)
 
-    # The negative MC simulation representation.
+    # The inverted MC simulation representation.
     if hasattr(cdp, 'sim_number') and sym:
-        titles.append("negative MC simulation representation")
+        titles.append("MC simulation representation B")
         structures.append(Internal())
-        representation.append('neg')
-        file_root.append("%s_sim_neg" % file)
+        representation.append('B')
+        file_root.append("%s_sim_B" % file)
         sims.append(True)
 
     # Loop over each structure and add the contents.
