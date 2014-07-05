@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
-from numpy import add, array, dot, float32, float64, ones, outer, subtract, transpose, uint8, zeros
+from numpy import add, array, dot, float64, ones, outer, subtract, transpose, uint8, zeros
 from numpy.linalg import norm
 
 # relax module imports.
@@ -274,8 +274,8 @@ class Frame_order:
             self.paramag_unit_vect = zeros(atomic_pos.shape, float64)
             self.paramag_dist = zeros(self.num_spins, float64)
             self.pcs_const = zeros((self.num_align, self.num_spins), float64)
-            self.r_pivot_atom = zeros((self.num_spins, 3), float32)
-            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float32)
+            self.r_pivot_atom = zeros((self.num_spins, 3), float64)
+            self.r_pivot_atom_rev = zeros((self.num_spins, 3), float64)
             self.r_ln_pivot = self.pivot - self.paramag_centre
 
             # Set up the paramagnetic constant (without the interatomic distance and in Angstrom units).
@@ -1191,7 +1191,7 @@ class Frame_order:
         m = len(dims)
 
         # Initialise.
-        self.sobol_angles = zeros((n, m), float32)
+        self.sobol_angles = zeros((n, m), float64)
         self.Ri_prime = zeros((n, 3, 3), float64)
         self.Ri2_prime = zeros((n, 3, 3), float64)
 
