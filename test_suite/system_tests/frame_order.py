@@ -243,7 +243,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.082814499083005949)
+        self.check_chi2(0.082433008378229589)
 
 
     def test_cam_double_rotor_pcs(self):
@@ -252,7 +252,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor.py')
-        self.check_chi2(0.0030004452535101396)
+        self.check_chi2(0.0026189545487338103)
 
 
     def test_cam_double_rotor_rdc(self):
@@ -270,7 +270,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags()
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.047332316807645894)
+        self.check_chi2(0.0478785034706493)
 
 
     def test_cam_double_rotor_large_angle_pcs(self):
@@ -279,7 +279,7 @@ class Frame_order(SystemTestCase):
         # The flags, execute the script, and then check the chi2 value.
         self.flags(rdc=False)
         self.interpreter.run(script_file=self.cam_path+'double_rotor_large_angle.py')
-        self.check_chi2(0.0033862617225179567)
+        self.check_chi2(0.0039324483855213569)
 
 
     def test_cam_double_rotor_large_angle_rdc(self):
