@@ -67,11 +67,11 @@ class Analysis(Base_script):
 
     # The model parameters.
     EIGEN_ALPHA, EIGEN_BETA, EIGEN_GAMMA, PIVOT_DISP = eigen_system()
-    CONE_SIGMA_MAX = 10.5 / 2.0 / 360.0 * 2.0 * pi
-    CONE_SIGMA_MAX_2 = 11.5 / 2.0 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX = 11.5 / 2.0 / 360.0 * 2.0 * pi
+    CONE_SIGMA_MAX_2 = 10.5 / 2.0 / 360.0 * 2.0 * pi
 
     # The pivot point.
-    PIVOT = array([26.837, -12.379, 28.342], float32)
+    PIVOT = array([41.739, 6.03, -0.764], float32)
 
 
 # Execute the analysis.
