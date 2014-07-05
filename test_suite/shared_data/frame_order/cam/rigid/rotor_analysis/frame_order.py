@@ -95,12 +95,18 @@ calc()
 # Create the PDB representation of the true state.
 frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None, compress_type=2, force=True)
 
+# Save the state.
+state.save('frame_order_true', force=True)
+
 # Optimise.
 #grid_search(inc=3)
 minimise('simplex')
 
 # Store the result.
 frame_order.pdb_model(ave_pos='ave_pos_fixed_piv', rep='frame_order_fixed_piv', dist=None, compress_type=2, force=True)
+
+# Save the state.
+state.save('frame_order_fixed_piv', force=True)
 
 # Optimise the pivot and model.
 frame_order.pivot(pivot, fix=False)
