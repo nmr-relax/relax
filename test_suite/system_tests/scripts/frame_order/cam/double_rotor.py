@@ -39,14 +39,14 @@ def eigen_system():
     C_COM = array([26.837, -12.379, 28.342], float64)
 
     # The Z-axis as the inter CoM vector.
-    z_axis = N_COM - C_COM
+    z_axis = C_COM - N_COM
     disp = norm(z_axis)
     z_axis /= disp
 
     # The eigenframe (partly from the system_create.log file).
     eigensystem = transpose(array([
-        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         [ -7.778375610280605e-01, 6.284649244351433e-01, -7.532653237683726e-04],
+        [-0.487095774865268, -0.60362450312215, -0.63116968030708 ],
         z_axis
     ], float64))
 
