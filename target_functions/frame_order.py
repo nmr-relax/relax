@@ -1231,9 +1231,9 @@ class Frame_order:
                 c_sigma = cos(sigma)
                 s_sigma = sin(sigma)
                 self.Ri_prime[i, 0, 0] =  c_sigma
-                self.Ri_prime[i, 0, 2] = -s_sigma
+                self.Ri_prime[i, 0, 2] =  s_sigma
                 self.Ri_prime[i, 1, 1] = 1.0
-                self.Ri_prime[i, 2, 0] =  s_sigma
+                self.Ri_prime[i, 2, 0] = -s_sigma
                 self.Ri_prime[i, 2, 2] =  c_sigma
 
                 # The 2nd rotation about the x-axis.
