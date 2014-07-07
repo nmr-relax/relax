@@ -389,6 +389,12 @@ class Frame_order(API_base, API_common):
                 lower = val - 10.0
                 upper = val + 10.0
 
+            # The pivot displacement.
+            if cdp.params[i] == 'pivot_disp':
+                val = getattr(cdp, cdp.params[i])
+                lower = 0.0
+                upper = 50.0
+
             # Average domain position translation (in a +/- 5 Angstrom box).
             if cdp.params[i] in ['ave_pos_x', 'ave_pos_y', 'ave_pos_z']:
                 lower = -50
