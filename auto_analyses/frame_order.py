@@ -566,8 +566,6 @@ class Frame_order_analysis:
 
         # The script contents.
         script.write("# PyMOL visualisation.\n")
-        script.write("pymol.view()\n")
-        script.write("pymol.command('show spheres')\n")
         script.write("pymol.frame_order()\n")
 
         # Close the file.
