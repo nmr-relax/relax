@@ -56,8 +56,8 @@ class Base_script:
 
     # The model parameters.
     PIVOT_DISP = None
-    AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -20.859750185691549,   -2.450606987447843,   -2.191854570352916]
-    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [   5.623468683852550,    0.435439748282942,    5.081265879629926]
+    AVE_POS_X, AVE_POS_Y, AVE_POS_Z = [ -21.269217407269576,   -3.122610661328414,   -2.400652421655998]
+    AVE_POS_ALPHA, AVE_POS_BETA, AVE_POS_GAMMA = [5.623469076122531, 0.435439405668396, 5.081265529106499]
     AXIS_THETA = None
     AXIS_PHI = None
     AXIS_ALPHA = None
@@ -258,8 +258,8 @@ class Base_script:
         self._execute_uf(uf_name='script', file=BASE_PATH + 'tensors.py')
 
         # Define the domains.
-        self._execute_uf(uf_name='domain', id='N', spin_id=":1-78")
-        self._execute_uf(uf_name='domain', id='C', spin_id=":80-148")
+        self._execute_uf(uf_name='domain', id='N', spin_id="#N-dom")
+        self._execute_uf(uf_name='domain', id='C', spin_id="#C-dom")
 
         # The tensor domains and reductions.
         full = ['Dy N-dom', 'Tb N-dom', 'Tm N-dom', 'Er N-dom']
