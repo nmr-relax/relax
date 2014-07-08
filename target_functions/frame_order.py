@@ -26,13 +26,13 @@
 from copy import deepcopy
 from math import acos, cos, pi, sin, sqrt
 from numpy import add, array, dot, float64, ones, outer, subtract, transpose, uint8, zeros
-from numpy.linalg import norm
 
 # relax module imports.
 from extern.sobol.sobol_lib import i4_sobol_generate
 from lib.alignment.alignment_tensor import to_5D, to_tensor
 from lib.alignment.pcs import pcs_tensor
 from lib.alignment.rdc import rdc_tensor
+from lib.compat import norm
 from lib.errors import RelaxError
 from lib.float import isNaN
 from lib.frame_order.double_rotor import compile_2nd_matrix_double_rotor, pcs_numeric_int_double_rotor

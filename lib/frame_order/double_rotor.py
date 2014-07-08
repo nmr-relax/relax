@@ -25,9 +25,9 @@
 # Python module imports.
 from math import pi, sqrt
 from numpy import add, divide, dot, inner, multiply, sinc, swapaxes, tensordot, transpose
-from numpy.linalg import norm
 
 # relax module imports.
+from lib.compat import norm
 from lib.frame_order.matrix_ops import rotate_daeg
 
 
