@@ -116,8 +116,11 @@ def rotor(structure=None, rotor_angle=None, axis=None, axis_pt=True, label=None,
             mol.atom_add(pdb_record='HETATM', atom_name=label, res_name='RTL', res_num=res_num, pos=label_pos2, element='H')
 
 
-def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, staggered=False):
+def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_length=5.0, step_angle=2.0, staggered=False):
     """Create a PDB representation of a rotor motional model.
+
+    This function will create a fixed number of atoms, placing the propeller blade steps outside of the rotor angle on the edge.  This is to allow for model support whereby the rotor angle between models can be different but the atomic count and connectivity must be the same in all models.
+
 
     @keyword mol:           The internal structural object molecule container to add the atoms to.
     @type mol:              MolContainer instance
@@ -129,12 +132,15 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
     @type axis:             numpy rank-1, 3D array
     @keyword blade_length:  The length of the representative rotor blades in Angstrom.
     @type blade_length:     float
+    @keyword step_angle:    The angle between propeller blades, in degrees.
+    @type step_angle:       float
     @keyword staggered:     A flag which if True will cause the rotor blades to be staggered.  This is used to avoid blade overlap.
     @type staggered:        bool
     """
 
     # Init.
-    step_angle = 2.0 / 360.0 * 2.0 * pi
+    step_angle = step_angle / 360.0 * 2.0 * pi
+    step_num = int(pi / step_angle)
     R = zeros((3, 3), float64)
     res_num = mol.last_residue() + 1
 
@@ -172,11 +178,11 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
         angle = 0.0
         pos_last_index = mid_pt_index
         neg_last_index = mid_pt_index
-        while True:
+        for j in range(step_num):
             # Increase the angle.
             angle += step_angle
 
-            # The edge rotation.
+            # The edge rotation (place all points outside of the rotor angle on the edge).
             if angle > rotor_angle:
                 axis_angle_to_R(axis, rotor_angle, R)
 
@@ -199,10 +205,6 @@ def rotor_propellers(mol=None, rotor_angle=None, centre=None, axis=None, blade_l
             # Update the indices.
             pos_last_index = pos_index
             neg_last_index = neg_index
-
-            # Finish.
-            if angle > rotor_angle:
-                break
 
         # Increment the residue number.
         res_num += 1
