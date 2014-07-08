@@ -74,9 +74,6 @@ frame_order.pivot(pivot, fix=True)
 # Set the paramagnetic centre.
 paramag.centre(pos=[35.934, 12.194, -4.206])
 
-# The optimisation settings.
-frame_order.num_int_pts(num=5000)
-
 # Check the minimum.
 value.set(param='ave_pos_x', val=AVE_POS_X)
 value.set(param='ave_pos_y', val=AVE_POS_Y)
@@ -93,7 +90,7 @@ frame_order.pdb_model(ave_pos='ave_pos_true', rep='frame_order_true', dist=None,
 state.save('frame_order_true', force=True)
 
 # Optimise.
-#grid_search(inc=3)
+grid_search(inc=11)
 minimise('simplex')
 
 # Store the result.
