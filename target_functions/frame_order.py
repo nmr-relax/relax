@@ -1011,10 +1011,6 @@ class Frame_order:
         # Pre-transpose matrices for faster calculations.
         RT_ave = transpose(self.R_ave)
 
-        # Pre-calculate all the necessary vectors.
-        if self.pcs_flag:
-            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
-
         # Initial chi-squared (or SSE) value.
         chi2_sum = 0.0
 
@@ -1033,6 +1029,17 @@ class Frame_order:
 
         # PCS.
         if self.pcs_flag:
+            # Pre-calculate all the necessary vectors.
+            self.calc_vectors(pivot=self.pivot, R_ave=self.R_ave, RT_ave=RT_ave)
+            r_ln_atom = self.r_ln_pivot + self.r_pivot_atom
+            if min(self.full_in_ref_frame) == 0:
+                r_ln_atom_rev = self.r_ln_pivot + self.r_pivot_atom_rev
+
+            # The vector length (to the inverse 5th power).
+            length = 1.0 / norm(r_ln_atom, axis=1)**5
+            if min(self.full_in_ref_frame) == 0:
+                length_rev = 1.0 / norm(r_ln_atom, axis=1)**5
+
             # Loop over each alignment.
             for align_index in range(self.num_align):
                 # Loop over the PCSs.
@@ -1041,14 +1048,14 @@ class Frame_order:
                     if not self.missing_pcs[align_index, j]:
                         # Forwards and reverse rotations.
                         if self.full_in_ref_frame[align_index]:
-                            r_pivot_atom = self.r_pivot_atom[j]
+                            r_ln_atom_i = r_ln_atom[j]
+                            length_i = length[j]
                         else:
-                            r_pivot_atom = self.r_pivot_atom_rev[j]
+                            r_ln_atom_i = r_ln_atom_rev[j]
+                            length_i = length_rev[j]
 
                         # The PCS calculation.
-                        vect = self.r_ln_pivot[0] + r_pivot_atom
-                        length = norm(vect)
-                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] / length**5, vect, self.A_3D[align_index])
+                        self.pcs_theta[align_index, j] = pcs_tensor(self.pcs_const[align_index, j] * length_i, r_ln_atom_i, self.A_3D[align_index])
 
                 # Calculate and sum the single alignment chi-squared value (for the PCS).
                 chi2_sum = chi2_sum + chi2(self.pcs[align_index], self.pcs_theta[align_index], self.pcs_error[align_index])
