@@ -97,7 +97,6 @@ class Frame_order(SystemTestCase):
             'test_cam_rotor2_pcs',
             'test_cam_rotor2_rdc'
         ]
-        blacklist = []
 
         # Skip the blacklisted tests.
         if skip_tests and methodName in blacklist:
