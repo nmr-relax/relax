@@ -25,3 +25,15 @@
 # relax module imports.
 from lib.errors import RelaxError
 
+
+def check_pivot():
+    """Check that the pivot point has been set.
+
+    @raises RelaxError: If the pivot point has not been set.
+    """
+
+    # Check for the pivot_x parameter.
+    if not hasattr(cdp, 'pivot_x'):
+        raise RelaxError("The pivot point has not been set, please use the frame_order.pivot user function to define the point.")
+
+
