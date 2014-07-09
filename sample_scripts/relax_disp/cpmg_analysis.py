@@ -23,7 +23,7 @@
 
 
 # Python module imports.
-from os import pardir, sep
+from os import sep
 
 # relax module imports.
 from auto_analyses.relax_disp import Relax_disp

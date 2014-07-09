@@ -487,6 +487,10 @@ class MolContainer:
         @rtype:     int
         """
 
+        # No residues yet.
+        if not len(self.res_num):
+            return 0
+
         # Return the number.
         return self.res_num[-1]
 

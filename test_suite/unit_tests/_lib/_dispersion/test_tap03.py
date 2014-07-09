@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import arctan2, array, cos, float64, int16, pi, sin, ones, zeros
+from numpy import arctan2, array, cos, float64, pi, sin, ones, zeros
 from unittest import TestCase
 
 # relax module imports.

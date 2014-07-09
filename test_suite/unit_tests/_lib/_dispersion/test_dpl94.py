@@ -21,7 +21,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, cos, float64, int16, pi, sin, zeros
+from numpy import array, cos, float64, pi, sin, zeros
 from unittest import TestCase
 
 # relax module imports.

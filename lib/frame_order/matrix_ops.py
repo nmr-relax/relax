@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, sin
-from numpy import dot, inner, sqrt, transpose
+from numpy import dot, transpose
 
 # relax module imports.
 from lib.compat import norm

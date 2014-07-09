@@ -47,7 +47,6 @@ except ImportError:
     gzip_module = False
     message = sys.exc_info()[1]
     gzip_module_message = message.args[0]
-from copy import deepcopy
 try:
     import io
     io_module = True

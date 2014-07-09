@@ -28,8 +28,6 @@ import dep_check
 # Python module imports.
 if dep_check.pymol_module:
     import pymol
-from math import pi
-from numpy import float64, transpose, zeros
 from os import F_OK, access, pardir, sep
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
@@ -39,7 +37,6 @@ from time import sleep
 
 # relax module imports.
 from lib.errors import RelaxError, RelaxNoPdbError, RelaxNoSequenceError
-from lib.geometry.rotations import euler_to_R_zyz, R_to_axis_angle
 from lib.io import delete, file_root, get_file_path, open_read_file, open_write_file, test_binary
 from pipe_control import pipes
 from pipe_control.mol_res_spin import exists_mol_res_spin_data
