@@ -92,7 +92,7 @@ value.set(val=1.0471975511965976, param='cone_sigma_max', index=0, spin_id=None,
 model, param_vector, scaling_matrix = target_fn_setup(sim_index=None, verbosity=1)
 
 # Make repeated function calls.
-N = 200
+N = 500
 print("Function calls.")
 for i in range(N):
     print(i)
