@@ -31,5 +31,6 @@ __all__ = [
     'optimisation',
     'parameter_object',
     'parameters',
-    'uf'
+    'uf',
+    'variables'
 ]
