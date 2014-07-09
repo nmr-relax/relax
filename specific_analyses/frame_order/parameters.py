@@ -28,6 +28,7 @@ from numpy import array, float64, identity, zeros
 
 # relax module imports.
 from specific_analyses.frame_order.data import pivot_fixed
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_ROTOR
 
 
 def assemble_param_vector(sim_index=None):
@@ -215,7 +216,7 @@ def update_model():
         cdp.params.append('pivot_z')
 
     # The 2nd pivot point parameters - the minimum inter rotor axis distance.
-    if cdp.model in ['double rotor']:
+    if cdp.model in [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('pivot_disp')
 
     # The average domain position translation parameters.
@@ -224,43 +225,43 @@ def update_model():
     cdp.params.append('ave_pos_z')
 
     # The tensor rotation, or average domain position.
-    if cdp.model not in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+    if cdp.model not in MODEL_LIST_FREE_ROTORS:
         cdp.params.append('ave_pos_alpha')
     cdp.params.append('ave_pos_beta')
     cdp.params.append('ave_pos_gamma')
 
     # Frame order eigenframe - the full frame.
-    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor', 'double rotor']:
+    if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE + [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('eigen_alpha')
         cdp.params.append('eigen_beta')
         cdp.params.append('eigen_gamma')
 
     # Frame order eigenframe - the isotropic cone axis.
-    if cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+    if cdp.model in MODEL_LIST_ISO_CONE:
         cdp.params.append('axis_theta')
         cdp.params.append('axis_phi')
 
     # Frame order eigenframe - the rotor axis alpha angle.
-    if cdp.model in ['rotor', 'free rotor']:
+    if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
         cdp.params.append('axis_alpha')
 
     # Cone parameters - pseudo-elliptic cone parameters.
-    if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+    if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
         cdp.params.append('cone_theta_x')
         cdp.params.append('cone_theta_y')
 
     # Cone parameters - single isotropic angle or order parameter.
-    if cdp.model in ['iso cone', 'iso cone, torsionless']:
+    if cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_TORSIONLESS]:
         cdp.params.append('cone_theta')
-    if cdp.model in ['iso cone, free rotor']:
+    if cdp.model in [MODEL_ISO_CONE_FREE_ROTOR]:
         cdp.params.append('cone_s1')
 
     # Cone parameters - torsion angle.
-    if cdp.model in ['double rotor', 'rotor', 'iso cone', 'pseudo-ellipse']:
+    if cdp.model in [MODEL_DOUBLE_ROTOR, MODEL_ROTOR, MODEL_ISO_CONE, MODEL_PSEUDO_ELLIPSE]:
         cdp.params.append('cone_sigma_max')
 
     # Cone parameters - 2nd torsion angle.
-    if cdp.model in ['double rotor']:
+    if cdp.model in [MODEL_DOUBLE_ROTOR]:
         cdp.params.append('cone_sigma_max_2')
 
     # Initialise the parameters in the current data pipe.

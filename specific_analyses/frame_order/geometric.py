@@ -41,6 +41,7 @@ from lib.structure.represent.rotor import rotor
 from lib.text.sectioning import subsection, subsubsection
 from pipe_control.structure.mass import pipe_centre_of_mass
 from specific_analyses.frame_order.data import domain_moving, generate_pivot
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_LIST_FREE_ROTORS, MODEL_LIST_ISO_CONE, MODEL_LIST_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_ROTOR
 
 
 def add_axes(structure=None, representation=None, size=None, sims=False):
@@ -83,7 +84,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # A single z-axis, when no rotor object is present.
-        if cdp.model in ['iso cone, torsionless']:
+        if cdp.model in [MODEL_ISO_CONE_TORSIONLESS]:
             # Print out.
             print("\nGenerating the z-axis system.")
 
@@ -102,7 +103,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
             res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='z-ax', res_name_vect='AXE', res_num=2, origin=pivot1, scale=size)
 
         # The z-axis connecting two motional modes.
-        elif cdp.model in ['double rotor']:
+        elif cdp.model in [MODEL_DOUBLE_ROTOR]:
             # Printout.
             print("\nGenerating the z-axis linking the two pivot points.")
 
@@ -115,7 +116,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
             res_num = generate_vector_residues(mol=mol, vector=axis, atom_name='z-ax', res_name_vect='AXE', res_num=1, origin=pivot2)
 
         # The full axis system.
-        elif cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        elif cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             # Print out.
             print("\nGenerating the full axis system.")
 
@@ -135,7 +136,7 @@ def add_axes(structure=None, representation=None, size=None, sims=False):
 
             # The axes to create.
             label = ['x', 'y']
-            if cdp.model in ['pseudo-ellipse, torsionless']:
+            if cdp.model in [MODEL_PSEUDO_ELLIPSE_TORSIONLESS]:
                 label = ['x', 'y', 'z']
 
             # Generate the axis vectors.
@@ -185,18 +186,18 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
 
         # The rotation matrix (rotation from the z-axis to the cone axis).
         R = zeros((3, 3), float64)
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             if sims:
                 euler_to_R_zyz(cdp.eigen_alpha_sim[sim_indices[i]], cdp.eigen_beta_sim[sim_indices[i]], cdp.eigen_gamma_sim[sim_indices[i]], R)
             else:
                 euler_to_R_zyz(cdp.eigen_alpha, cdp.eigen_beta, cdp.eigen_gamma, R)
         else:
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 if sims:
                     axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_indices[i]], pivot=pivot, point=com)
                 else:
                     axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot, point=com)
-            elif cdp.model in ['iso cone', 'iso cone, torsionless', 'iso cone, free rotor']:
+            elif cdp.model in MODEL_LIST_ISO_CONE:
                 if sims:
                     axis = create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_indices[i]], phi=cdp.axis_phi_sim[sim_indices[i]])
                 else:
@@ -208,7 +209,7 @@ def add_cones(structure=None, representation=None, size=None, inc=None, sims=Fal
         R = dot(T, R)
 
         # The pseudo-ellipse cone object.
-        if cdp.model in ['pseudo-ellipse', 'pseudo-ellipse, torsionless', 'pseudo-ellipse, free rotor']:
+        if cdp.model in MODEL_LIST_PSEUDO_ELLIPSE:
             if sims:
                 cone_obj = Pseudo_elliptic(cdp.cone_theta_x_sim[sim_indices[i]], cdp.cone_theta_y_sim[sim_indices[i]])
             else:
@@ -271,7 +272,7 @@ def add_pivots(structure=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # Add the pivots for the double motion models.
-        if cdp.model in ['double rotor']:
+        if cdp.model in [MODEL_DOUBLE_ROTOR]:
             # The 1st pivot.
             mols.append(mol)
             pivots.append(pivot1)
@@ -359,11 +360,11 @@ def add_titles(structure=None, representation=None, displacement=40.0, sims=Fals
         mol = structure.get_molecule(mol_name, model=model_nums[i])
 
         # The single rotor models.
-        if cdp.model not in ['double rotor']:
+        if cdp.model not in [MODEL_DOUBLE_ROTOR]:
             # Generate the rotor axis.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 axis = create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=pipe_centre_of_mass(verbosity=0))
-            elif cdp.model in ['iso cone', 'iso cone, free rotor', 'iso cone, torsionless']:
+            elif cdp.model in MODEL_LIST_ISO_CONE:
                 axis = create_rotor_axis_spherical(theta=cdp.axis_theta, phi=cdp.axis_phi)
             else:
                 axis = create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma)
@@ -433,9 +434,9 @@ def add_rotors(structure=None, representation=None, sims=False):
         pivot2 = generate_pivot(order=2, sim_index=sim_indices[i])
 
         # The single rotor models.
-        if cdp.model in ['rotor', 'free rotor', 'iso cone', 'iso cone, free rotor', 'pseudo-ellipse', 'pseudo-ellipse, free rotor']:
+        if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR]:
             # The rotor angle.
-            if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            if cdp.model in MODEL_LIST_FREE_ROTORS:
                 rotor_angle.append(pi)
             else:
                 if sims:
@@ -444,18 +445,18 @@ def add_rotors(structure=None, representation=None, sims=False):
                     rotor_angle.append(cdp.cone_sigma_max)
 
             # Get the CoM of the entire molecule to use as the centre of the rotor.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 com.append(pipe_centre_of_mass(verbosity=0))
             else:
                 com.append(pivot1)
 
             # Generate the rotor axis.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 if sims:
                     axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha_sim[sim_indices[i]], pivot=pivot1, point=com[i]))
                 else:
                     axis.append(create_rotor_axis_alpha(alpha=cdp.axis_alpha, pivot=pivot1, point=com[i]))
-            elif cdp.model in ['iso cone', 'iso cone, free rotor']:
+            elif cdp.model in [MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR]:
                 if sims:
                     axis.append(create_rotor_axis_spherical(theta=cdp.axis_theta_sim[sim_indices[i]], phi=cdp.axis_phi_sim[sim_indices[i]]))
                 else:
@@ -467,13 +468,13 @@ def add_rotors(structure=None, representation=None, sims=False):
                     axis.append(create_rotor_axis_euler(alpha=cdp.eigen_alpha, beta=cdp.eigen_beta, gamma=cdp.eigen_gamma))
 
             # The size of the rotor, taking the 30 Angstrom cone representation into account.
-            if cdp.model in ['rotor', 'free rotor']:
+            if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
                 span.append(20e-10)
             else:
                 span.append(35e-10)
 
             # Stagger the propeller blades.
-            if cdp.model in ['free rotor', 'iso cone, free rotor', 'pseudo-ellipse, free rotor']:
+            if cdp.model in MODEL_LIST_FREE_ROTORS:
                 staggered.append(False)
             else:
                 staggered.append(True)
@@ -491,7 +492,7 @@ def add_rotors(structure=None, representation=None, sims=False):
                 models.append(None)
 
         # The double rotor models.
-        elif cdp.model in ['double rotor']:
+        elif cdp.model in [MODEL_DOUBLE_ROTOR]:
             # Add both rotor angles (the 2nd must come first).
             if sims:
                 rotor_angle.append(cdp.cone_sigma_max_2_sim[sim_indices[i]])
@@ -678,7 +679,7 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
 
     # Symmetry for inverted representations?
     sym = True
-    if cdp.model in ['rotor', 'free rotor', 'double rotor']:
+    if cdp.model in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_DOUBLE_ROTOR]:
         sym = False
 
     # The standard representation.
@@ -740,7 +741,7 @@ def create_geometric_rep(format='PDB', file=None, dir=None, compress_type=0, siz
         add_axes(structure=structures[i], representation=representation[i], size=size, sims=sims[i])
 
         # Add the cone objects.
-        if cdp.model not in ['rotor', 'free rotor', 'double rotor']:
+        if cdp.model not in [MODEL_ROTOR, MODEL_FREE_ROTOR, MODEL_DOUBLE_ROTOR]:
             add_cones(structure=structures[i], representation=representation[i], size=size, inc=inc, sims=sims[i])
 
         # Add atoms for creating titles.

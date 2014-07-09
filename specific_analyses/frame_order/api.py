@@ -44,6 +44,7 @@ from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
 from specific_analyses.frame_order.parameters import assemble_param_vector, assemble_scaling_matrix, linear_constraints, param_num, update_model
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 
 
 class Frame_order(API_base, API_common):
@@ -742,7 +743,7 @@ class Frame_order(API_base, API_common):
             inc = inc + 1
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor' and inc == index:
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR and inc == index:
             setattr(cdp, 'cone_theta_err', error)
 
 
@@ -770,7 +771,7 @@ class Frame_order(API_base, API_common):
         model_params = deepcopy(cdp.params)
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor':
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR:
             param_names.append('cone_theta')
             model_params.append('cone_theta')
 
@@ -908,7 +909,7 @@ class Frame_order(API_base, API_common):
             inc = inc + 1
 
         # Add some additional parameters.
-        if cdp.model == 'iso cone, free rotor' and inc == index:
+        if cdp.model == MODEL_ISO_CONE_FREE_ROTOR and inc == index:
             return getattr(cdp, 'cone_theta_sim')
 
 

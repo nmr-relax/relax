@@ -30,6 +30,7 @@ from lib.errors import RelaxError
 from lib.geometry.rotations import euler_to_R_zyz
 from pipe_control.interatomic import interatomic_loop
 from pipe_control.mol_res_spin import spin_loop
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_RIGID
 
 
 def base_data_types():
@@ -110,7 +111,7 @@ def generate_pivot(order=1, sim_index=None):
     pivot = None
 
     # The double rotor parameterisation.
-    if cdp.model in ['double rotor']:
+    if cdp.model in [MODEL_DOUBLE_ROTOR]:
         # The 2nd pivot point (the centre of the frame).
         if sim_index != None and hasattr(cdp, 'pivot_x_sim'):
             pivot_2nd = array([cdp.pivot_x_sim[sim_index], cdp.pivot_y_sim[sim_index], cdp.pivot_z_sim[sim_index]], float64)
@@ -154,7 +155,7 @@ def pivot_fixed():
     """
 
     # A pivot point is not supported by the model.
-    if cdp.model in ['rigid']:
+    if cdp.model in [MODEL_RIGID]:
         return True
 
     # The PCS is loaded.
