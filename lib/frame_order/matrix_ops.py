@@ -23,7 +23,7 @@
 """Module for the handling of Frame Order."""
 
 # Python module imports.
-from numpy import dot, inner, sqrt, transpose
+from numpy import dot, transpose
 
 # relax module imports.
 from lib.compat import norm

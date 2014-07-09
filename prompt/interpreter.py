@@ -30,7 +30,7 @@ import dep_check
 from code import InteractiveConsole
 from lib import ansi
 from math import pi
-from os import chdir, getcwd, path
+from os import getcwd, path
 from pydoc import pager
 from re import search
 if dep_check.readline_module:

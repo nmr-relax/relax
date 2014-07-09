@@ -25,7 +25,6 @@
 
 # Python module imports.
 from math import ceil, sqrt
-from re import search
 
 # This script is used to batch convert the Grace *.agr files into graphics files using the Grace
 # program itself.

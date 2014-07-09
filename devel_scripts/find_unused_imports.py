@@ -23,7 +23,6 @@ for root, dirs, files in walk(getcwd()):
 
         # Full path to the file.
         path = root + sep + file
-        sys.stdout.write("File %s :\n" % path)
 
         # The command.
         cmd = 'pylint %s' % path
@@ -35,6 +34,13 @@ for root, dirs, files in walk(getcwd()):
         pipe.stdin.close()
 
         # Only display the import information.
+        title_flag = True
         for line in pipe.stdout.readlines():
             if search("Unused import", line):
+                # First write out the file name, once.
+                if title_flag:
+                    sys.stdout.write("File %s :\n" % path)
+                    title_flag = False
+
+                # Then the unused import line.
                 sys.stdout.write("    %s\n" % line[:-1])

@@ -23,7 +23,6 @@
 """Module containing a set of special GUI elements to be used in the relax wizards."""
 
 # Python module imports.
-import sys
 import wx
 import wx.lib.mixins.listctrl
 

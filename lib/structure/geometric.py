@@ -20,8 +20,8 @@
 ###############################################################################
 
 # Python module imports.
-from math import cos, pi, sin
-from numpy import arccos, array, dot, eye, float64, zeros
+from math import cos, sin
+from numpy import array, dot, eye, float64, zeros
 
 # relax module imports.
 from lib.structure.angles import angles_regular, angles_uniform

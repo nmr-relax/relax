@@ -24,7 +24,7 @@
 
 
 # Python module imports.
-from numpy import float64, array, median, zeros
+from numpy import float64, array, zeros
 from time import asctime, localtime
 
 # relax module imports.

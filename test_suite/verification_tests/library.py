@@ -24,7 +24,7 @@
 
 # Python module imports.
 from os import sep
-from shutil import copytree, rmtree
+from shutil import copytree
 from subprocess import PIPE, Popen
 import sys
 from tempfile import mkdtemp

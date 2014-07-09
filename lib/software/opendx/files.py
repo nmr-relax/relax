@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -22,9 +22,6 @@
 # Module docstring.
 """Module for generating OpenDX files."""
 
-
-# Python module imports.
-from numpy import ceil, median
 
 # relax module imports.
 from lib.io import open_write_file
