@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from numpy import array, float64, int16, pi, zeros
+from numpy import array, float64, pi, zeros
 from unittest import TestCase
 
 # relax module imports.

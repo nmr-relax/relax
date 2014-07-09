@@ -27,7 +27,6 @@ import dep_check
 
 # Python module imports.
 from os import F_OK, access, sep
-from re import search
 PIPE, Popen = None, None
 if dep_check.subprocess_module:
     from subprocess import PIPE, Popen

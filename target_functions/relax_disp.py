@@ -27,7 +27,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import complex64, dot, float64, int16, sqrt, zeros
+from numpy import complex64, dot, float64, int16, zeros
 
 # relax module imports.
 from lib.dispersion.b14 import r2eff_B14

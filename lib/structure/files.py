@@ -24,7 +24,6 @@
 
 # Python module imports.
 from os import F_OK, access, sep
-from re import search
 
 
 def find_pdb_files(path=None, file_root=None):
