@@ -40,6 +40,7 @@ from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control.rdc import check_rdcs
 from specific_analyses.api_base import API_base
 from specific_analyses.api_common import API_common
+from specific_analyses.frame_order.checks import check_pivot
 from specific_analyses.frame_order.data import domain_moving
 from specific_analyses.frame_order.optimisation import grid_row, store_bc_data, target_fn_setup, unpack_opt_results
 from specific_analyses.frame_order.parameter_object import Frame_order_params
@@ -349,6 +350,9 @@ class Frame_order(API_base, API_common):
         # Test if the Frame Order model has been set up.
         if not hasattr(cdp, 'model'):
             raise RelaxNoModelError('Frame Order')
+
+        # Test if the pivot has been set.
+        check_pivot()
 
         # Parameter scaling.
         scaling_matrix = assemble_scaling_matrix(scaling=True)
