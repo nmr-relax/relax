@@ -85,7 +85,7 @@ value.set(val=-0.6109933365884923, param='axis_alpha', index=0, spin_id=None, er
 model, param_vector, scaling_matrix = target_fn_setup(sim_index=None, verbosity=1)
 
 # Make repeated function calls.
-N = 200
+N = 100
 print("Function calls.")
 for i in range(N):
     print(i)
