@@ -79,11 +79,6 @@ def assemble_scaling_matrix(scaling=True):
     if not scaling:
         return scaling_matrix
 
-    # The pivot point.
-    if not pivot_fixed():
-        for i in range(3):
-            scaling_matrix[i, i] = 1e2
-
     # Return the matrix.
     return scaling_matrix
 
