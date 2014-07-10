@@ -21,7 +21,7 @@
 
 # Python module imports.
 from copy import deepcopy
-from numpy import array, arange, asarray, int32, float64, max, ones, pi, zeros
+from numpy import array, arange, int32, float64, max, ones, pi
 from unittest import TestCase
 
 # relax module imports.

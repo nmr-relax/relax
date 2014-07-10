@@ -35,10 +35,9 @@ $ ./disp_profile_single.py /data/relax/tags/3.2.1
 
 # Python module imports.
 from numpy import average, arange, array, float64, std, zeros
-from os import pardir, sep
+from os import pardir
 from os.path import join
 from re import search
-from shutil import copyfile
 from subprocess import PIPE, Popen
 import sys
 
