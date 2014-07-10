@@ -284,6 +284,7 @@ class Frame_order:
                 self.pcs_const[align_index] = pcs_constant(self.temp[align_index], self.frq[align_index], 1.0) * 1e30
 
         # PCS function, gradient, and Hessian matrices.
+        self.pcs_theta = None
         if self.pcs_flag:
             self.pcs_theta = zeros((self.num_align, self.num_spins), float64)
             self.pcs_theta_err = zeros((self.num_align, self.num_spins), float64)
@@ -291,6 +292,7 @@ class Frame_order:
             self.d2pcs_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_spins), float64)
 
         # RDC function, gradient, and Hessian matrices.
+        self.rdc_theta = None
         if self.rdc_flag:
             self.rdc_theta = zeros((self.num_align, self.num_interatom), float64)
             self.drdc_theta = zeros((self.total_num_params, self.num_align, self.num_interatom), float64)
