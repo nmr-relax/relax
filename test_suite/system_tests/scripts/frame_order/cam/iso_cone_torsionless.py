@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE_TORSIONLESS
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'iso_cone_torsionless'
-    MODEL = 'iso cone, torsionless'
+    MODEL = MODEL_ISO_CONE_TORSIONLESS
     AXIS_THETA = 0.9600799785953431
     AXIS_PHI = 4.0322755062196229
     CONE_THETA = 1.3

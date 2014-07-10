@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_ROTOR
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'rotor_2_state'
-    MODEL = 'rotor'
+    MODEL = MODEL_ROTOR
     AXIS_THETA = 0.52344988559983696152
     AXIS_PHI = 0.89068285262982982431
     CONE_SIGMA_MAX = 10.0 / 360.0 * 2.0 * pi

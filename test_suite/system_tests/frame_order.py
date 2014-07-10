@@ -30,6 +30,7 @@ from tempfile import mkdtemp
 from data_store import Relax_data_store; ds = Relax_data_store()
 import dep_check
 from status import Status; status = Status()
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from test_suite.system_tests.base_classes import SystemTestCase
 
 
@@ -1211,7 +1212,7 @@ class Frame_order(SystemTestCase):
         """Test the double rotor target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'double rotor'
+        ds.model = MODEL_DOUBLE_ROTOR
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1224,7 +1225,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'free rotor'
+        ds.model = MODEL_FREE_ROTOR
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1237,7 +1238,7 @@ class Frame_order(SystemTestCase):
         """Test the iso cone target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'iso cone'
+        ds.model = MODEL_ISO_CONE
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1250,7 +1251,7 @@ class Frame_order(SystemTestCase):
         """Test the iso cone, free rotor target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'iso cone, free rotor'
+        ds.model = MODEL_ISO_CONE_FREE_ROTOR
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1263,7 +1264,7 @@ class Frame_order(SystemTestCase):
         """Test the iso cone, torsionless target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'iso cone, torsionless'
+        ds.model = MODEL_ISO_CONE_TORSIONLESS
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1276,7 +1277,7 @@ class Frame_order(SystemTestCase):
         """Test the rigid target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'rigid'
+        ds.model = MODEL_RIGID
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1289,7 +1290,7 @@ class Frame_order(SystemTestCase):
         """Test the rotor target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'rotor'
+        ds.model = MODEL_ROTOR
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1302,7 +1303,7 @@ class Frame_order(SystemTestCase):
         """Test the pseudo-ellipse target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'pseudo-ellipse'
+        ds.model = MODEL_PSEUDO_ELLIPSE
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')
@@ -1315,7 +1316,7 @@ class Frame_order(SystemTestCase):
         """Test the pseudo-ellipse, torsionless target function for the data from a rigid test molecule."""
 
         # Set the model.
-        ds.model = 'pseudo-ellipse, torsionless'
+        ds.model = MODEL_PSEUDO_ELLIPSE_TORSIONLESS
 
         # Execute the script.
         self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'frame_order'+sep+'rigid_test.py')

@@ -25,13 +25,14 @@
 # relax module imports.
 from base_script import Base_script
 from lib.order.order_parameters import iso_cone_theta_to_S
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE_FREE_ROTOR
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'iso_cone_free_rotor2'
-    MODEL = 'iso cone, free rotor'
+    MODEL = MODEL_ISO_CONE_FREE_ROTOR
     AVE_POS_X = -13.9092836985788
     AVE_POS_Y = -0.36893728819422167
     AVE_POS_Z = 2.8352640418129806

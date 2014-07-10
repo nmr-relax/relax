@@ -33,6 +33,7 @@ from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
+from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from status import Status; status = Status()
 
 
@@ -84,7 +85,7 @@ class Base_script:
         """Execute the frame order analysis."""
 
         # Parameter conversions.
-        if self.MODEL in ['rotor', 'free rotor']:
+        if self.MODEL in [MODEL_ROTOR, MODEL_FREE_ROTOR]:
             self.convert_rotor(theta=self.AXIS_THETA, phi=self.AXIS_PHI, pivot=self.PIVOT, com=self.COM)
             self.AXIS_THETA = None
             self.AXIS_PHI = None

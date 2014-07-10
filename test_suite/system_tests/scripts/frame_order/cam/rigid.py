@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_RIGID
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'rigid'
-    MODEL = 'rigid'
+    MODEL = MODEL_RIGID
     CONE = False
 
 

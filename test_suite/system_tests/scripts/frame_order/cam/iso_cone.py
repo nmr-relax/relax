@@ -24,13 +24,14 @@
 
 # relax module imports.
 from base_script import Base_script
+from specific_analyses.frame_order.variables import MODEL_ISO_CONE
 
 
 class Analysis(Base_script):
 
     # Set up some class variables.
     DIRECTORY = 'iso_cone'
-    MODEL = 'iso cone'
+    MODEL = MODEL_ISO_CONE
     AXIS_THETA = 0.96007997859534299767
     AXIS_PHI = 4.03227550621962294031
     CONE_THETA = 0.6

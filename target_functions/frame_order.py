@@ -51,6 +51,7 @@ from lib.geometry.rotations import euler_to_R_zyz, tilt_torsion_to_R, two_vect_t
 from lib.linear_algebra.kronecker_product import kron_prod
 from lib.order import order_parameters
 from lib.physical_constants import pcs_constant
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from target_functions.chi2 import chi2
 
 
@@ -296,33 +297,33 @@ class Frame_order:
             self.d2rdc_theta = zeros((self.total_num_params, self.total_num_params, self.num_align, self.num_interatom), float64)
 
         # The Sobol' sequence data and target function aliases (quasi-random integration).
-        if model == 'pseudo-ellipse':
+        if model == MODEL_PSEUDO_ELLIPSE:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse
-        elif model == 'pseudo-ellipse, torsionless':
+        elif model == MODEL_PSEUDO_ELLIPSE_TORSIONLESS:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
             self.func = self.func_pseudo_ellipse_torsionless
-        elif model == 'pseudo-ellipse, free rotor':
+        elif model == MODEL_PSEUDO_ELLIPSE_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_pseudo_ellipse_free_rotor
-        elif model == 'iso cone':
+        elif model == MODEL_ISO_CONE:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone
-        elif model == 'iso cone, torsionless':
+        elif model == MODEL_ISO_CONE_TORSIONLESS:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi'])
             self.func = self.func_iso_cone_torsionless
-        elif model == 'iso cone, free rotor':
+        elif model == MODEL_ISO_CONE_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['theta', 'phi', 'sigma'])
             self.func = self.func_iso_cone_free_rotor
-        elif model == 'rotor':
+        elif model == MODEL_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
             self.func = self.func_rotor
-        elif model == 'rigid':
+        elif model == MODEL_RIGID:
             self.func = self.func_rigid
-        elif model == 'free rotor':
+        elif model == MODEL_FREE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma'])
             self.func = self.func_free_rotor
-        elif model == 'double rotor':
+        elif model == MODEL_DOUBLE_ROTOR:
             self.create_sobol_data(n=self.num_int_pts, dims=['sigma', 'sigma2'])
             self.func = self.func_double_rotor
 

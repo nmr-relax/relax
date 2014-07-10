@@ -29,6 +29,7 @@ from numpy.linalg import norm
 # relax module imports.
 from base_script import Base_script
 from lib.geometry.rotations import R_to_euler_zyz
+from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR
 
 
 def eigen_system():
@@ -63,7 +64,7 @@ class Analysis(Base_script):
     DIRECTORY = 'double_rotor_large_angle'
 
     # The frame order model.
-    MODEL = 'double rotor'
+    MODEL = MODEL_DOUBLE_ROTOR
 
     # The model parameters.
     EIGEN_ALPHA, EIGEN_BETA, EIGEN_GAMMA, PIVOT_DISP = eigen_system()
