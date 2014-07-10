@@ -765,10 +765,6 @@ class Disp_minimise_command(Slave_command):
             for i in range(len(param_vector)):
                 print("%-20s %25.15f" % (self.param_names[i], param_vector[i]*self.scaling_matrix[i, i]))
 
-        # Printout.
-        if self.sim_index != None:
-            print("Simulation %s, cluster %s" % (self.sim_index+1, self.spin_ids))
-
         # Create the result command object to send back to the master.
         processor.return_object(Disp_result_command(processor=processor, memo_id=self.memo_id, param_vector=param_vector, chi2=chi2, iter_count=iter_count, f_count=f_count, g_count=g_count, h_count=h_count, warning=warning, missing=self.missing, back_calc=model.back_calc, completed=False))
 
@@ -834,6 +830,10 @@ class Disp_result_command(Result_command):
         @param memo:        The dispersion memo.  This holds a lot of the data and objects needed for processing the results from the slave.
         @type memo:         memo
         """
+
+        # Printout.
+        if memo.sim_index != None:
+            print("Simulation %s, cluster %s" % (memo.sim_index+1, memo.spin_ids))
 
         # Scaling.
         if memo.scaling_matrix != None:
