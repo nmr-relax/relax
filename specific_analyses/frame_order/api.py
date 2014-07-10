@@ -595,7 +595,8 @@ class Frame_order(API_base, API_common):
         if A != None and len(A) == 0:
             if verbosity:
                 warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
-            constraints = False
+            A = None
+            b = None
 
             # Pop out the log barrier algorithm.
             if min_algor == 'Log barrier':
