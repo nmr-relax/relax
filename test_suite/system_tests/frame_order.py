@@ -296,7 +296,7 @@ class Frame_order(SystemTestCase):
         """Test the free rotor frame order model of CaM."""
 
         # The flags, execute the script, and then check the chi2 value.
-        self.flags()
+        self.flags(opt=True)
         self.interpreter.run(script_file=self.cam_path+'free_rotor.py')
         self.check_chi2(0.048992338400504688)
 
