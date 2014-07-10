@@ -20,7 +20,7 @@
 ###############################################################################
 
 # Python module imports.
-from math import cos, pi, sin
+from math import cos, sin
 from numpy import array, dot, eye, float64, zeros
 
 # relax module imports.

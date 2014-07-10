@@ -25,7 +25,7 @@
 # Python module imports.
 from copy import deepcopy
 from math import pi
-from numpy import array, dot, eye, float64, transpose, zeros
+from numpy import array, dot, eye, float64, zeros
 import sys
 
 # relax module imports.

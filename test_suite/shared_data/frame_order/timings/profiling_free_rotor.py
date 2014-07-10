@@ -8,7 +8,7 @@ To profile, set the profiling flag in the 'relax' file.
 """
 
 # Python module imports.
-from numpy import array, float64
+from numpy import array
 
 # relax module imports.
 from specific_analyses.frame_order.optimisation import target_fn_setup

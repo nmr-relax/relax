@@ -25,7 +25,7 @@
 # Python module imports.
 import locale
 from math import pi
-from numpy import array, cross, dot, eye, float32, float64, inner, tensordot, transpose, zeros
+from numpy import array, cross, dot, eye, float64, tensordot, transpose, zeros
 from lib.compat import norm
 from os import getcwd, sep
 import sys

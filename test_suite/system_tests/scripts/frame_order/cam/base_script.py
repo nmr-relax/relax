@@ -23,7 +23,7 @@
 """Base script for the optimisation of the rigid frame order test models."""
 
 # Python module imports.
-from numpy import array, cross, float32, float64, transpose, zeros
+from numpy import array, cross, float32, float64, zeros
 from numpy.linalg import norm
 from os import F_OK, access, sep
 
@@ -31,7 +31,6 @@ from os import F_OK, access, sep
 from data_store import Relax_data_store; ds = Relax_data_store()
 from lib.geometry.coord_transform import spherical_to_cartesian
 from lib.geometry.lines import closest_point_ax
-from lib.geometry.rotations import euler_to_R_zyz, reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
 from specific_analyses.frame_order.variables import MODEL_FREE_ROTOR, MODEL_ROTOR
 from status import Status; status = Status()

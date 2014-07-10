@@ -23,8 +23,8 @@
 """Module for the double rotor frame order model."""
 
 # Python module imports.
-from math import pi, sqrt
-from numpy import add, divide, dot, inner, multiply, sinc, swapaxes, tensordot, transpose
+from math import pi
+from numpy import add, divide, dot, multiply, sinc, swapaxes, tensordot
 
 # relax module imports.
 from lib.compat import norm

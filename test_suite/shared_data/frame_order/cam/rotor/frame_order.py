@@ -8,7 +8,6 @@ from numpy.linalg import norm
 from lib.frame_order.rotor_axis import create_rotor_axis_alpha
 from lib.geometry.lines import closest_point_ax
 from lib.geometry.coord_transform import spherical_to_cartesian
-from lib.geometry.rotations import reverse_euler_zyz
 from lib.geometry.vectors import vector_angle
 from pipe_control.structure.mass import pipe_centre_of_mass
 

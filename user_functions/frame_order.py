@@ -22,20 +22,12 @@
 # Module docstring.
 """The frame_order user function definitions."""
 
-# Python module imports.
-import dep_check
-if dep_check.wx_module:
-    from wx import FD_SAVE
-else:
-    FD_SAVE = -1
-
 # relax module imports.
 from graphics import WIZARD_IMAGE_PATH
 from specific_analyses.frame_order.uf import num_int_pts, pdb_model, pivot, ref_domain, select_model
 from specific_analyses.frame_order.variables import MODEL_DOUBLE_ROTOR, MODEL_FREE_ROTOR, MODEL_ISO_CONE, MODEL_ISO_CONE_FREE_ROTOR, MODEL_ISO_CONE_TORSIONLESS, MODEL_PSEUDO_ELLIPSE, MODEL_PSEUDO_ELLIPSE_FREE_ROTOR, MODEL_PSEUDO_ELLIPSE_TORSIONLESS, MODEL_RIGID, MODEL_ROTOR
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
-from user_functions.wildcards import WILDCARD_STRUCT_PDB_ALL
 
 
 # The user function class.

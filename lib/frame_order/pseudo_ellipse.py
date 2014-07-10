@@ -24,7 +24,7 @@
 
 # Python module imports.
 from math import cos, pi, sin, sqrt
-from numpy import divide, dot, eye, float64, multiply, repeat, sinc, swapaxes, tensordot, tile
+from numpy import divide, dot, eye, float64, multiply, sinc, swapaxes, tensordot
 from numpy import cos as np_cos
 from numpy import sin as np_sin
 from numpy import sqrt as np_sqrt

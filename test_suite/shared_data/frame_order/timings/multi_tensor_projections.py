@@ -1,16 +1,11 @@
 # Python module imports.
 from numpy import *
-from numpy.linalg import norm
 from os import pardir, sep
 import sys
-from time import sleep
 from timeit import timeit
 
 # Modify the system path.
 sys.path.append(pardir+sep+pardir+sep+pardir+sep+pardir+sep)
-
-# relax module imports.
-from lib.geometry.rotations import euler_to_R_zyz
 
 
 def proj1(vect, A, N=1, verb=True):

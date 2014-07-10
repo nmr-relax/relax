@@ -5,11 +5,10 @@ import sys
 sys.path.append('..')
 
 # Python module imports.
-from math import cos, pi, sin, sqrt
+from math import cos, sin, sqrt
 from numpy import dot, transpose
 
 # relax module imports.
-from lib.geometry.angles import wrap_angles
 from lib.geometry.rotations import R_random_hypersphere, R_to_tilt_torsion, tilt_torsion_to_R
 
 # Base module import.
