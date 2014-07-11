@@ -678,8 +678,6 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
 
     # The centre of mass of the moving domain - to use as the centroid for the average domain position rotation.
     ave_pos_pivot = pipe_centre_of_mass(atom_id=domain_moving(), verbosity=0)
-    if verbosity:
-        print("The average domain rotation centroid, taken as the CoM of all spins loaded for the moving domain, is at:\n    %s" % list(ave_pos_pivot))
 
     # The centre of mass, for use in the rotor models.
     com = None
@@ -688,21 +686,21 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
         com = pipe_centre_of_mass(verbosity=0)
         com = array(com, float64)
 
-        # Printout.
-        if verbosity:
-            print("The centre of mass reference coordinate for the rotor models is at:\n    %s" % list(com))
-
-    # Print outs.
-    if sim_index == None:
+    # Information printout.
+    if verbosity and sim_index == None:
+        sys.stdout.write("The average domain rotation centroid, taken as the CoM of the atoms defined as the moving domain, is:\n    %s\n" % list(ave_pos_pivot))
+        if com != None:
+            sys.stdout.write("The centre of mass reference coordinate for the rotor models is:\n    %s\n" % list(com))
         if cdp.model != MODEL_RIGID:
-            sys.stdout.write("Numerical integration via the quasi-random Sobol' sequence.\n")
-            sys.stdout.write("Number of integration points: %s\n" % cdp.num_int_pts)
+            sys.stdout.write("Numerical integration:  Quasi-random Sobol' sequence.\n")
+            sys.stdout.write("Number of integration points:  %s\n" % cdp.num_int_pts)
         base_data = []
         if rdcs != None and len(rdcs):
             base_data.append("RDCs")
         if pcs != None and len(pcs):
             base_data.append("PCSs")
         sys.stdout.write("Base data: %s\n" % repr(base_data))
+        sys.stdout.write("\n")
 
     # Return the data.
     return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
