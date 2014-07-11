@@ -706,11 +706,23 @@ def target_fn_setup(sim_index=None, verbosity=1, scaling=True):
     return param_vector, full_tensors, full_in_ref_frame, rdcs, rdc_err, rdc_weight, rdc_vect, rdc_const, pcs, pcs_err, pcs_weight, atomic_pos, temp, frq, paramag_centre, com, ave_pos_pivot, pivot, pivot_opt
 
 
-def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=None):
+def unpack_opt_results(param_vector=None, func=None, iter_count=None, f_count=None, g_count=None, h_count=None, warning=None, scaling=False, scaling_matrix=None, sim_index=None):
     """Unpack and store the Frame Order optimisation results.
 
-    @param results:             The results tuple returned by the minfx generic_minimise() function.
-    @type results:              tuple
+    @keyword param_vector:      The model-free parameter vector.
+    @type param_vector:         numpy array
+    @keyword func:              The optimised chi-squared value.
+    @type func:                 float
+    @keyword iter_count:        The number of optimisation steps required to find the minimum.
+    @type iter_count:           int
+    @keyword f_count:           The function count.
+    @type f_count:              int
+    @keyword g_count:           The gradient count.
+    @type g_count:              int
+    @keyword h_count:           The Hessian count.
+    @type h_count:              int
+    @keyword warning:           Any optimisation warnings.
+    @type warning:              str or None
     @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
     @type scaling:              bool
     @keyword scaling_matrix:    The scaling matrix.
@@ -718,15 +730,6 @@ def unpack_opt_results(results, scaling=False, scaling_matrix=None, sim_index=No
     @keyword sim_index:         The index of the simulation to optimise.  This should be None for normal optimisation.
     @type sim_index:            None or int
      """
-
-    # Disassemble the results.
-    if len(results) == 4:    # Grid search.
-        param_vector, func, iter_count, warning = results
-        f_count = iter_count
-        g_count = 0.0
-        h_count = 0.0
-    else:
-        param_vector, func, iter_count, f_count, g_count, h_count, warning = results
 
     # Catch infinite chi-squared values.
     if isInf(func):
@@ -1010,8 +1013,32 @@ class Frame_order_result_command(Result_command):
         if memo.sim_index != None:
             print("Simulation %i" % (memo.sim_index+1))
 
+        # Disassemble the results.
+        if len(self.results) == 4:    # Grid search.
+            param_vector, func, iter_count, warning = self.results
+            f_count = iter_count
+            g_count = 0.0
+            h_count = 0.0
+        else:
+            param_vector, func, iter_count, f_count, g_count, h_count, warning = self.results
+
+        # Check if the chi-squared value is lower - required for a parallelised grid search to work.
+        if memo.sim_index == None:
+            if hasattr(cdp, 'chi2') and cdp.chi2 != None:
+                # No improvement, so exit the function.
+                if func > cdp.chi2:
+                    print("Discarding the optimisation results, the optimised chi-squared value is higher than the current value (%s > %s)." % (func, cdp.chi2))
+                    return
+
+                # New minimum.
+                print("Storing the optimisation results, the optimised chi-squared value is lower than the current value (%s < %s)." % (func, cdp.chi2))
+
+            # Just print something to avoid user confusion in parallelised grid searches.
+            else:
+                print("Storing the optimisation results, no optimised values currently exist.")
+
         # Unpack the results.
-        unpack_opt_results(self.results, memo.scaling, memo.scaling_matrix, memo.sim_index)
+        unpack_opt_results(param_vector, func, iter_count, f_count, g_count, h_count, warning, memo.scaling, memo.scaling_matrix, memo.sim_index)
 
         # Store the back-calculated data.
         store_bc_data(A_5D_bc=self.A_5D_bc, pcs_theta=self.pcs_theta, rdc_theta=self.rdc_theta)
