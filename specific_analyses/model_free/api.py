@@ -1366,7 +1366,7 @@ class Model_free(API_base, API_common):
                 print("Parallelised diffusion tensor grid search.")
 
                 # Loop over each grid subdivision.
-                for subdivision in grid_split(divisions=processor.processor_size(), lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc):
+                for subdivision in grid_split(divisions=processor.processor_size(), lower=opt_params.lower, upper=opt_params.upper, inc=opt_params.inc, verbosity=verbosity):
                     # Set the points.
                     opt_params.subdivision = subdivision
 
