@@ -518,7 +518,7 @@ class Frame_order(API_base, API_common):
 
         # Loop over each grid subdivision, with all points violating constraints being eliminated.
         verbosity_init = True
-        for subdivision in grid_split_array(divisions=processor.processor_size(), points=pts, A=A, b=b):
+        for subdivision in grid_split_array(divisions=processor.processor_size(), points=pts, A=A, b=b, verbosity=verbosity):
             # Set up the memo for storage on the master.
             memo = Frame_order_memo(sim_index=sim_index, scaling=True, scaling_matrix=scaling_matrix)
 
