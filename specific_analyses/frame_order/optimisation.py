@@ -886,19 +886,18 @@ class Frame_order_minimise_command(Slave_command):
         # Linear constraints.
         self.A, self.b = None, None
         if constraints:
+            # Obtain the constraints.
             self.A, self.b = linear_constraints(scaling_matrix=scaling_matrix)
 
-        # Constraint flag set but no constraints present.
-        if self.A != None and len(self.A) == 0:
-            if verbosity:
-                warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
-            self.A = None
-            self.b = None
+            # Constraint flag set but no constraints present.
+            if self.A == None:
+                if verbosity:
+                    warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
 
-            # Pop out the log barrier algorithm.
-            if self.min_algor == 'Log barrier':
-                self.min_algor = self.min_options[0]
-                self.min_options = self.min_options[1:]
+                # Pop out the log barrier algorithm.
+                if self.min_algor == 'Log barrier':
+                    self.min_algor = self.min_options[0]
+                    self.min_options = self.min_options[1:]
 
 
     def run(self, processor, completed):

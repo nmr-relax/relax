@@ -180,6 +180,11 @@ def linear_constraints(scaling_matrix=None):
     A = array(A, float64)
     b = array(b, float64)
 
+    # No constraints are present.
+    if len(A) == 0:
+        A = None
+        b = None
+
     # Return the constraint objects.
     return A, b
 
