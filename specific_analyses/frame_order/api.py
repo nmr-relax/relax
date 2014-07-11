@@ -27,6 +27,7 @@ from copy import deepcopy
 from math import pi
 from minfx.grid import grid_split_array
 from numpy import array, dot, float64, zeros
+from random import shuffle
 from warnings import warn
 
 # relax module imports.
@@ -508,13 +509,18 @@ class Frame_order(API_base, API_common):
                     warn(RelaxWarning("The '%s' model parameters are not constrained, turning the linear constraint algorithm off." % cdp.model))
                 constraints = False
 
-
-        # Printout.
-        print("Parallelised grid search.")
-
         # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
         processor_box = Processor_box() 
         processor = processor_box.processor
+
+        # Set up for multi-processor execution.
+        if processor.processor_size() > 1:
+            # Printout.
+            print("Parallelised grid search.")
+            print("Randomising the grid points to equalise the time required for each grid subdivision.\n")
+
+            # Randomise the points.
+            shuffle(pts)
 
         # Loop over each grid subdivision, with all points violating constraints being eliminated.
         verbosity_init = True
