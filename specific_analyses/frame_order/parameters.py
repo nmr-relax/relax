@@ -261,5 +261,5 @@ def update_model():
 
     # Initialise the parameters in the current data pipe.
     for param in cdp.params:
-        if not hasattr(cdp, param):
+        if not param in ['pivot_x', 'pivot_y', 'pivot_z'] and not hasattr(cdp, param):
             setattr(cdp, param, 0.0)
