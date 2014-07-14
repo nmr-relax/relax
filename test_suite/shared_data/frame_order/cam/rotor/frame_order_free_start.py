@@ -30,7 +30,7 @@ for i in range(len(ln)):
     rdc.read(align_id=ln[i], file='rdc_%s.txt'%ln[i], spin_id1_col=1, spin_id2_col=2, data_col=3, error_col=4)
 
     # The PCS.
-    pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+    pcs.read(align_id=ln[i], file='pcs_%s_subset.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
 
     # The temperature and field strength.
     spectrometer.temperature(id=ln[i], temp=303)
@@ -79,22 +79,33 @@ value.set(param='ave_pos_gamma', val=AVE_POS_GAMMA)
 frame_order.pivot([ 34.721619683345111,  -2.63891199102997 ,  12.941974078087899], fix=False)
 
 # Grid search (low quality for speed).
-frame_order.num_int_pts(num=100)
-grid_search(inc=[11, 11, 11, None, None, None, None, None, None, 11, 11])
+frame_order.num_int_pts(num=500)
+grid_search(inc=[21, 21, 21, None, None, None, None, None, None, 21, 21])
 
 # Iterative optimisation with increasing precision.
-num_int_pts = [1000, 10000, 50000]
-func_tol = [1e-2, 1e-3, 1e-4]
+num_int_pts = [500, 1000]
+func_tol = [1e-2, 1e-3]
 for i in range(len(num_int_pts)):
     frame_order.num_int_pts(num=num_int_pts[i])
     minimise('simplex', func_tol=func_tol[i])
 
-# Test Monte Carlo simulations (at low quality for speed).
-frame_order.num_int_pts(num=100)
-monte_carlo.setup(number=5)
+# Load the full PCS data set.
+for i in range(len(ln)):
+    pcs.read(align_id=ln[i], file='pcs_%s.txt'%ln[i], mol_name_col=1, res_num_col=2, spin_name_col=5, data_col=6, error_col=7)
+
+# Iterative optimisation with increasing precision.
+num_int_pts = [500, 1000, 10000, 100000]
+func_tol = [1e-2, 1e-3, 5e-3, 1e-4]
+for i in range(len(num_int_pts)):
+    frame_order.num_int_pts(num=num_int_pts[i])
+    minimise('simplex', func_tol=func_tol[i])
+
+# Test Monte Carlo simulations.
+frame_order.num_int_pts(num=10000)
+monte_carlo.setup(number=200)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', func_tol=1e-2)
+minimise('simplex', func_tol=1e-4)
 eliminate()
 monte_carlo.error_analysis()
 
