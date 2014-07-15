@@ -54,6 +54,6 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This user function will display the current time which can be useful for timing long calculations by having time information in any saved log files.")
 uf.backend = print_time
 uf.menu_text = "&time"
-uf.gui_icon = "oxygen.actions.help-about"
+uf.gui_icon = "oxygen.actions.chronometer"
 uf.wizard_size = (700, 400)
 uf.wizard_apply_button = False
