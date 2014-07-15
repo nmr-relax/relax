@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2011-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2011-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -24,6 +24,7 @@
 
 # relax module imports.
 from info import print_sys_info
+from lib.timing import print_time
 from user_functions.data import Uf_info; uf_info = Uf_info()
 from user_functions.objects import Desc_container
 
@@ -38,6 +39,21 @@ uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will display all of the relax, Python, python package and hardware information currently being used by relax.  This is useful for seeing if all packages are up to date and if the correct software versions are being used.  It is also very useful information for reporting relax bugs.")
 uf.backend = print_sys_info
 uf.menu_text = "s&ys_info"
+uf.gui_icon = "oxygen.actions.help-about"
+uf.wizard_size = (700, 400)
+uf.wizard_apply_button = False
+
+
+# The time user function.
+uf = uf_info.add_uf('time')
+uf.title = "Display the current time."
+uf.title_short = "Current time."
+uf.display = True
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function will display the current time which can be useful for timing long calculations by having time information in any saved log files.")
+uf.backend = print_time
+uf.menu_text = "&time"
 uf.gui_icon = "oxygen.actions.help-about"
 uf.wizard_size = (700, 400)
 uf.wizard_apply_button = False
