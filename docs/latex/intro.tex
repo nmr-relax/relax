@@ -226,13 +226,13 @@ Probably the most important detail is that functions in Python require brackets 
 For example
 
 \begin{lstlisting}[numbers=none]
-relax> minimise()
+relax> minimise.execute()
 \end{lstlisting}
 
 will commence minimisation\index{optimisation} however
 
 \begin{lstlisting}[numbers=none]
-relax> minimise
+relax> minimise.execute
 \end{lstlisting}
 
 will do nothing.
@@ -553,10 +553,10 @@ value.set(-172 * 1e-6, 'csa')
 model_free.select_model(model=name)
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 
 # Minimise.
-minimise('newton')
+minimise.execute('newton')
 
 # Finish.
 results.write(file='results', force=True)

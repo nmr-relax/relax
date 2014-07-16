@@ -114,7 +114,7 @@ structure.load_spins(spin_id='@N')
 cdp.mol[0].name = None
 
 # Minimise.
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 
 # Print out.
 print("\n\nResults\n")

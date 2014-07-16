@@ -86,18 +86,18 @@ value.set(param='eigen_beta', val=0.96007997859534311)
 value.set(param='eigen_gamma', val=4.0322755062196229)
 value.set(param='cone_theta_x', val=1.3)
 value.set(param='cone_theta_y', val=1.1)
-calc()
+minimise.calculate()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-#grid_search(inc=5)
-minimise('simplex', constraints=False)
+#minimise.grid_search(inc=5)
+minimise.execute('simplex', constraints=False)
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 eliminate()
 monte_carlo.error_analysis()
 

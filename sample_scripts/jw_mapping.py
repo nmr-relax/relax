@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -50,12 +50,12 @@ value.set(val=-172 * 1e-6, param='csa')
 jw_mapping.set_frq(frq=600.0 * 1e6)
 
 # Reduced spectral density mapping.
-calc()
+minimise.calculate()
 
 # Monte Carlo simulations (well, bootstrapping as this is a calculation and not a fit!).
 monte_carlo.setup(number=500)
 monte_carlo.create_data()
-calc()
+minimise.calculate()
 monte_carlo.error_analysis()
 
 # Create grace files.

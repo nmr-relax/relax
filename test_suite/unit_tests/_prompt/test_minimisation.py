@@ -28,7 +28,6 @@ from lib.errors import RelaxError, RelaxBoolError, RelaxIntError, RelaxIntListIn
 from test_suite.unit_tests.minimisation_testing_base import Minimisation_base_class
 
 # Unit test imports.
-from test_suite.unit_tests._prompt.container import Container
 from test_suite.unit_tests._prompt.data_types import DATA_TYPES
 
 
@@ -46,15 +45,12 @@ class Test_minimisation(Minimisation_base_class, TestCase):
         self.interpreter.populate_self()
         self.interpreter.on(verbose=False)
 
-        # Place the user functions into a container.
-        self.minimisation_fns = Container()
-        self.minimisation_fns.calc = self.interpreter.calc
-        self.minimisation_fns.grid_search = self.interpreter.grid_search
-        self.minimisation_fns.minimise = self.interpreter.minimise
+        # Alias the user function class.
+        self.minimisation_fns = self.interpreter.minimise
 
 
     def test_calc_argfail_verbosity(self):
-        """The verbosity arg test of the calc() user function."""
+        """The verbosity arg test of the minimise.calculate() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -63,11 +59,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.calc, verbosity=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.calculate, verbosity=data[1])
 
 
     def test_grid_search_argfail_lower(self):
-        """The lower arg test of the grid_search() user function."""
+        """The lower arg test of the minimise.grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -80,7 +76,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_upper(self):
-        """The upper arg test of the grid_search() user function."""
+        """The upper arg test of the minimise.grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -93,7 +89,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_inc(self):
-        """The inc arg test of the grid_search() user function."""
+        """The inc arg test of the minimise.grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -106,7 +102,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_constraints(self):
-        """The constraints arg test of the grid_search() user function."""
+        """The constraints arg test of the minimise.grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -119,7 +115,7 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_grid_search_argfail_verbosity(self):
-        """The verbosity arg test of the grid_search() user function."""
+        """The verbosity arg test of the minimise.grid_search() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -132,16 +128,16 @@ class Test_minimisation(Minimisation_base_class, TestCase):
 
 
     def test_minimise_argfail_bad_keyword(self):
-        """The test of a bad keyword argument in the minimise() user function."""
+        """The test of a bad keyword argument in the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
             # The argument test.
-            self.assertRaises(RelaxError, self.minimisation_fns.minimise, 'Newton', step_tol=data[1])
+            self.assertRaises(RelaxError, self.minimisation_fns.execute, 'Newton', step_tol=data[1])
 
 
     def test_minimise_argfail_min_algor(self):
-        """The min_algor arg test of the minimise() user function."""
+        """The min_algor arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -150,11 +146,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxStrError, self.minimisation_fns.minimise, data[1])
+            self.assertRaises(RelaxStrError, self.minimisation_fns.execute, data[1])
 
 
     def test_minimise_argfail_line_search(self):
-        """The line_search arg test of the minimise() user function."""
+        """The line_search arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -163,11 +159,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', line_search=data[1])
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', line_search=data[1])
 
 
     def test_minimise_argfail_hessian_mod(self):
-        """The hessian_mod arg test of the minimise() user function."""
+        """The hessian_mod arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -176,11 +172,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', hessian_mod=data[1])
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', hessian_mod=data[1])
 
 
     def test_minimise_argfail_hessian_type(self):
-        """The hessian_type arg test of the minimise() user function."""
+        """The hessian_type arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -189,11 +185,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.minimise, 'Newton', hessian_type=data[1])
+            self.assertRaises(RelaxNoneStrError, self.minimisation_fns.execute, 'Newton', hessian_type=data[1])
 
 
     def test_minimise_argfail_func_tol(self):
-        """The func_tol arg test of the minimise() user function."""
+        """The func_tol arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -202,11 +198,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNumError, self.minimisation_fns.minimise, 'Newton', func_tol=data[1])
+            self.assertRaises(RelaxNumError, self.minimisation_fns.execute, 'Newton', func_tol=data[1])
 
 
     def test_minimise_argfail_grad_tol(self):
-        """The grad_tol arg test of the minimise() user function."""
+        """The grad_tol arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -215,11 +211,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxNoneNumError, self.minimisation_fns.minimise, 'Newton', grad_tol=data[1])
+            self.assertRaises(RelaxNoneNumError, self.minimisation_fns.execute, 'Newton', grad_tol=data[1])
 
 
     def test_minimise_argfail_max_iter(self):
-        """The max_iter arg test of the minimise() user function."""
+        """The max_iter arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -228,11 +224,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', max_iter=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.execute, 'Newton', max_iter=data[1])
 
 
     def test_minimise_argfail_constraints(self):
-        """The constraints arg test of the minimise() user function."""
+        """The constraints arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -241,11 +237,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.minimisation_fns.minimise, 'Newton', constraints=data[1])
+            self.assertRaises(RelaxBoolError, self.minimisation_fns.execute, 'Newton', constraints=data[1])
 
 
     def test_minimise_argfail_scaling(self):
-        """The scaling arg test of the minimise() user function."""
+        """The scaling arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -254,11 +250,11 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxBoolError, self.minimisation_fns.minimise, 'Newton', scaling=data[1])
+            self.assertRaises(RelaxBoolError, self.minimisation_fns.execute, 'Newton', scaling=data[1])
 
 
     def test_minimise_argfail_verbosity(self):
-        """The verbosity arg test of the minimise() user function."""
+        """The verbosity arg test of the minimise.execute() user function."""
 
         # Loop over the data types.
         for data in DATA_TYPES:
@@ -267,6 +263,6 @@ class Test_minimisation(Minimisation_base_class, TestCase):
                 continue
 
             # The argument test.
-            self.assertRaises(RelaxIntError, self.minimisation_fns.minimise, 'Newton', verbosity=data[1])
+            self.assertRaises(RelaxIntError, self.minimisation_fns.execute, 'Newton', verbosity=data[1])
 
 

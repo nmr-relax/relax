@@ -44,7 +44,7 @@ self._execute_uf(uf_name='interatom.unit_vectors', ave=False)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='newton')
+self._execute_uf(uf_name='minimise.execute', min_algor='newton')
 
 # Show the tensors.
 self._execute_uf(uf_name='align_tensor.display')

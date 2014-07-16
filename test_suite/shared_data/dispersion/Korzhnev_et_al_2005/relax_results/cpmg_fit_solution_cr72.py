@@ -148,7 +148,7 @@ spin_N.dw = 4.413451295385187
 spin_N.dwH = -0.271799433880579
 
 # Calculate.
-calc()
+minimise.calculate()
 
 # Plot the dispersion curves.
 relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)

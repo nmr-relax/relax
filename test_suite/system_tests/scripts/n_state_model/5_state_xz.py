@@ -72,7 +72,7 @@ for i in range(5):
 #self._execute_uf(uf_name='value.set')
 
 # Minimise.
-self._execute_uf('simplex', constraints=False, uf_name='minimise', max_iter=1000)
+self._execute_uf('simplex', constraints=False, uf_name='minimise.execute', max_iter=1000)
 
 # Centre of mass analysis.
 self._execute_uf(uf_name='n_state_model.CoM', pivot_point=[0.0, 0.0, 0.0], centre=[0.0, 0.0, 1.0])

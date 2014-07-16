@@ -101,13 +101,13 @@ for iter in range(2):
 relax_fit.select_model('exp')
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 
 # Minimise.
 from guppy import hpy
 file = open('guppy_log', 'w')
 for i in range(10000):
-    minimise('simplex', constraints=False)
+    minimise.execute('simplex', constraints=False)
     if not i % 100:
         file.write("Iteration %i\n" % i)
         file.write("Reference counts:\n%s\n\n" % sys.gettotalrefcount())

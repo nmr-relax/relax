@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -75,17 +75,17 @@ model_free.select_model(model=name)
 #fix('all_res')
 
 # Grid search.
-grid_search(inc=11)
+minimise.grid_search(inc=11)
 #value.set()
 
 # Minimise.
-minimise('newton')
+minimise.execute('newton')
 
 # Monte Carlo simulations.
 #monte_carlo.setup(number=100)
 #monte_carlo.create_data()
 #monte_carlo.initial_values()
-#minimise('newton')
+#minimise.execute('newton')
 #eliminate()
 #monte_carlo.error_analysis()
 

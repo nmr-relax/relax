@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -86,16 +86,16 @@ spectrum.error_analysis()
 relax_fit.select_model('exp')
 
 # Grid search.
-grid_search(inc=3)
+minimise.grid_search(inc=3)
 
 # Minimise.
-minimise('simplex', scaling=False, constraints=False)
+minimise.execute('simplex', scaling=False, constraints=False)
 
 # Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', scaling=False, constraints=False)
+minimise.execute('simplex', scaling=False, constraints=False)
 monte_carlo.error_analysis()
 
 # Save the relaxation rates.

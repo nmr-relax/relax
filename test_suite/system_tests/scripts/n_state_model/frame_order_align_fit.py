@@ -80,7 +80,7 @@ self._execute_uf(uf_name='pcs.copy', pipe_from='orig', align_id='Dy')
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='newton', constraints=True)
+self._execute_uf(uf_name='minimise.execute', min_algor='newton', constraints=True)
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)

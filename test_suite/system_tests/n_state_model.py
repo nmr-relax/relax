@@ -380,7 +380,7 @@ class N_state_model(SystemTestCase):
                 self.interpreter.monte_carlo.setup(number=3)
                 self.interpreter.monte_carlo.create_data()
                 self.interpreter.monte_carlo.initial_values()
-                self.interpreter.minimise('simplex', constraints=False, max_iter=5)
+                self.interpreter.minimise.execute('simplex', constraints=False, max_iter=5)
                 self.interpreter.monte_carlo.error_analysis()
 
             # Back-calc so next round can check if values change.
@@ -583,7 +583,7 @@ class N_state_model(SystemTestCase):
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('newton', constraints=False)
+        self.interpreter.minimise.execute('newton', constraints=False)
         self.interpreter.monte_carlo.error_analysis()
 
         # Activate the optimisation of the paramagnetic centre position and try again.
@@ -591,7 +591,7 @@ class N_state_model(SystemTestCase):
         self.interpreter.monte_carlo.setup(number=3)
         self.interpreter.monte_carlo.create_data()
         self.interpreter.monte_carlo.initial_values()
-        self.interpreter.minimise('bfgs', constraints=False, max_iter=100)
+        self.interpreter.minimise.execute('bfgs', constraints=False, max_iter=100)
         self.interpreter.monte_carlo.error_analysis()
 
 

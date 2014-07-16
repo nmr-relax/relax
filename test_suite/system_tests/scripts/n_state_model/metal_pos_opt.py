@@ -78,7 +78,7 @@ for i in range(len(align_list)):
     self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 
     # Calculate.
-    self._execute_uf(uf_name='calc')
+    self._execute_uf(uf_name='minimise.calculate')
 
     # Check that the chi2 is zero!
     if cdp.chi2 > 1e-15:
@@ -86,7 +86,7 @@ for i in range(len(align_list)):
         raise RelaxError("The chi2 value must be zero here!")
 
     # Minimisation.
-    self._execute_uf('newton', constraints=False, max_iter=500, uf_name='minimise')
+    self._execute_uf('newton', constraints=False, max_iter=500, uf_name='minimise.execute')
 
     # Fix the tensor.
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i])
@@ -99,7 +99,7 @@ print("##############################\n\n\n")
 
 # Exact position check.
 self._execute_uf(uf_name='paramag.centre', fix=False)
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 print("Chi2: %s" % cdp.chi2)
 if cdp.chi2 > 1e-15:
     raise RelaxError("The chi2 value must be zero here!")
@@ -110,7 +110,7 @@ print("Original position: [%.3f, %.3f, %.3f]" % (cdp.paramagnetic_centre[0], cdp
 x_orig, y_orig, z_orig = cdp.paramagnetic_centre
 cdp.paramagnetic_centre[0] = cdp.paramagnetic_centre[0] + 0.02
 print("Shifted position:  [%.3f, %.3f, %.3f]\n" % (cdp.paramagnetic_centre[0], cdp.paramagnetic_centre[1], cdp.paramagnetic_centre[2]))
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 print("Chi2: %.15f" % cdp.chi2)
 if cdp.chi2 < 1e-15:
     raise RelaxError("The chi2 value cannot be zero here!")
@@ -118,21 +118,21 @@ if cdp.chi2 < 1e-15:
 # Optimise the Ln3+ position.
 x, y, z = cdp.paramagnetic_centre
 self._execute_uf(uf_name='n_state_model.select_model', model='population')
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 print("Chi2: %.15f" % cdp.chi2)
 chi2 = cdp.chi2
 if cdp.chi2 < 1e-15:
     raise RelaxError("The chi2 value cannot be zero here!")
 self._execute_uf(uf_name='paramag.centre', fix=True)
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 print("Chi2: %.15f" % cdp.chi2)
 if abs(cdp.chi2 - chi2) > 1e-10:
     print("%.15g" % abs(cdp.chi2 - chi2))
     raise RelaxError("The chi2 value must match the previous value of %.15f." % chi2)
 self._execute_uf(uf_name='n_state_model.select_model', model='fixed')
 self._execute_uf(uf_name='paramag.centre', fix=False)
-self._execute_uf(uf_name='calc')
-self._execute_uf('bfgs', constraints=False, max_iter=500, uf_name='minimise', verbosity=1)
+self._execute_uf(uf_name='minimise.calculate')
+self._execute_uf('bfgs', constraints=False, max_iter=500, uf_name='minimise.execute', verbosity=1)
 
 # Check that the metal moved.
 print("\nOriginal position: [%.3f, %.3f, %.3f]" % (x, y, z))
@@ -152,7 +152,7 @@ print("#######################\n\n\n")
 self._execute_uf(uf_name='paramag.centre', fix=True)
 for i in range(len(align_list)):
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i], fixed=False)
-    self._execute_uf('newton', constraints=False, max_iter=500, uf_name='minimise')
+    self._execute_uf('newton', constraints=False, max_iter=500, uf_name='minimise.execute')
     self._execute_uf(uf_name='align_tensor.fix', id=align_list[i], fixed=True)
 
 # Print out.
@@ -164,7 +164,7 @@ print("#######################\n\n\n")
 # Optimise everything.
 self._execute_uf(uf_name='align_tensor.fix', fixed=False)
 self._execute_uf(uf_name='paramag.centre', fix=False)
-self._execute_uf('bfgs', constraints=False, max_iter=50, uf_name='minimise')
+self._execute_uf('bfgs', constraints=False, max_iter=50, uf_name='minimise.execute')
 
 # Monte Carlo simulations.
 if SIMS:
@@ -175,7 +175,7 @@ if SIMS:
     self._execute_uf(uf_name='monte_carlo.setup', number=3)
     self._execute_uf(uf_name='monte_carlo.create_data', method='direct')
     self._execute_uf(uf_name='monte_carlo.initial_values')
-    self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise')
+    self._execute_uf('bfgs', constraints=False, max_iter=5, uf_name='minimise.execute')
     self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Write out a results file.

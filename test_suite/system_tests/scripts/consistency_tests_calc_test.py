@@ -48,4 +48,4 @@ self._execute_uf(uf_name='value.set', val=13 * 1e-9, param='tc')
 self._execute_uf(uf_name='consistency_tests.set_frq', frq=600.0 * 1e6)
 
 # Try the reduced spectral density mapping.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')

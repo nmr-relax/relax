@@ -84,22 +84,22 @@ value.set(param='ave_pos_gamma', val=3.8013235235956007)
 value.set(param='axis_theta', val=0.9600799785953431)
 value.set(param='axis_phi', val=4.0322755062196229)
 value.set(param='cone_sigma_max', val=30.0 / 360.0 * 2.0 * pi)
-calc()
+minimise.calculate()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-grid_search(inc=3)
-minimise('simplex', constraints=False)
+minimise.grid_search(inc=3)
+minimise.execute('simplex', constraints=False)
 
 # Optimise the pivot and model.
 #frame_order.pivot(pivot, fix=False)
-#minimise('simplex', constraints=False)
+#minimise.execute('simplex', constraints=False)
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 eliminate()
 monte_carlo.error_analysis()
 

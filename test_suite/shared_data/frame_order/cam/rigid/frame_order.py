@@ -81,18 +81,18 @@ frame_order.quad_int(flag=False)
 value.set(param='ave_pos_alpha', val=4.3434999280669997)
 value.set(param='ave_pos_beta', val=0.43544332764249905)
 value.set(param='ave_pos_gamma', val=3.8013235235956007)
-calc()
+minimise.calculate()
 print("\nchi2: %s" % repr(cdp.chi2))
 
 # Optimise.
-grid_search(inc=3)
-minimise('simplex', constraints=False)
+minimise.grid_search(inc=3)
+minimise.execute('simplex', constraints=False)
 
 # Test Monte Carlo simulations.
 monte_carlo.setup(number=5)
 monte_carlo.create_data()
 monte_carlo.initial_values()
-minimise('simplex', constraints=False)
+minimise.execute('simplex', constraints=False)
 eliminate()
 monte_carlo.error_analysis()
 

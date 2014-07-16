@@ -99,7 +99,7 @@ self._execute_uf(uf_name='align_tensor.init', tensor=align_list[2], params=( 2.3
 self._execute_uf(uf_name='align_tensor.init', tensor=align_list[3], params=(-2.62495279588228071048e-04,  7.35617367964106275147e-04,  6.39754192258981332648e-05,  6.27880171180572523460e-05,  2.01197582457700226708e-04), align_id=align_list[3], param_types=2)
 
 # Calculation.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 print("Chi2: %s" % cdp.chi2)
 if abs(cdp.chi2) > 1e-15:
     raise RelaxError("The chi2 at the solution is not zero!")
@@ -112,7 +112,7 @@ if abs(cdp.chi2) > 1e-15:
 self._execute_uf(uf_name='value.set', val=0.6005, param='probs', index=1)
 
 # Minimisation.
-self._execute_uf(uf_name='minimise', min_algor='bfgs', max_iter=500)
+self._execute_uf(uf_name='minimise.execute', min_algor='bfgs', max_iter=500)
 
 # Write out a results file.
 self._execute_uf(uf_name='results.write', file='devnull', force=True)

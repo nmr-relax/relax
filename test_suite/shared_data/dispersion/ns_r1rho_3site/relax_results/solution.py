@@ -115,12 +115,12 @@ spin.dw_AC =  7.985070582500403
 spin.dw_BC = spin.dw_AC - spin.dw_AB
 
 # Calculate.
-calc()
+minimise.calculate()
 print("%-40s %20.15f" % ("relax chi2:", spin.chi2))
 print("%-40s %20.15f" % ("cpmg_fit chi2 (no PEAK_SHIFT):", 227.384628173721239))
 
 # Minimisation.
-#minimise('simplex', constraints=True)
+#minimise.execute('simplex', constraints=True)
 
 # Plot the dispersion curves.
 relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)

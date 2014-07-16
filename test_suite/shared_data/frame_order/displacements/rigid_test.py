@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -153,7 +153,7 @@ for model in ['rigid', 'free rotor', 'rotor', 'iso cone, torsionless', 'iso cone
     frame_order.select_model(model=model)
 
     # Calculate the chi2 value.
-    calc()
+    minimise.calculate()
 
     # Attempt to mimimise.
-    #minimise('simplex', constraints=False)
+    #minimise.execute('simplex', constraints=False)

@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2003-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2003-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -29,8 +29,15 @@ from user_functions.data import Uf_info, Uf_tables; uf_info = Uf_info(); uf_tabl
 from user_functions.objects import Desc_container
 
 
-# The calc user function.
-uf = uf_info.add_uf('calc')
+# The user function class.
+uf_class = uf_info.add_class('minimise')
+uf_class.title = "Class for setting parameter values."
+uf_class.menu_text = "&minimise"
+uf_class.gui_icon = "relax.rosenbrock"
+
+
+# The minimise.calculate user function.
+uf = uf_info.add_uf('minimise.calculate')
 uf.title = "Calculate the function value."
 uf.title_short = "Function value calculation."
 uf.display = True
@@ -45,13 +52,13 @@ uf.add_keyarg(
 uf.desc.append(Desc_container())
 uf.desc[-1].add_paragraph("This will call the target function for the analysis type associated with the current data pipe using the current parameter values.  This can be used to find, for example, the chi-squared value for different parameter values.")
 uf.backend = minimise.calc
-uf.menu_text = "&calc"
-uf.gui_icon = "relax.minimise"
+uf.menu_text = "&calculate"
+uf.gui_icon = "oxygen.categories.applications-education"
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
-# The grid_search user function.
-uf = uf_info.add_uf('grid_search')
+# The minimise.grid_search user function.
+uf = uf_info.add_uf('minimise.grid_search')
 uf.title = "Perform a grid search."
 uf.title_short = "Grid search."
 uf.display = True
@@ -102,10 +109,11 @@ uf.backend = minimise.grid_search
 uf.menu_text = "&grid_search"
 uf.gui_icon = "relax.grid_search"
 uf.wizard_size = (800, 500)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
-# The minimise user function.
-uf = uf_info.add_uf('minimise')
+# The minimise.execute user function.
+uf = uf_info.add_uf('minimise.execute')
 uf.title = "Perform an optimisation."
 uf.title_short = "Minimisation."
 uf.display = True
@@ -343,22 +351,22 @@ uf.desc[-1].add_paragraph("For Newton minimisation, the default line search algo
 # Prompt examples.
 uf.desc.append(Desc_container("Prompt examples"))
 uf.desc[-1].add_paragraph("To apply Newton minimisation together with the GMW81 Hessian modification algorithm, the More and Thuente line search algorithm, a function tolerance of 1e-25, no gradient tolerance, a maximum of 10,000,000 iterations, constraints turned on to limit parameter values, and have normal printout, type any combination of:")
-uf.desc[-1].add_prompt("relax> minimise('newton')")
-uf.desc[-1].add_prompt("relax> minimise('Newton')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'mt')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'gmw', 'mt')")
-uf.desc[-1].add_prompt("relax> minimise('newton', 'mt', 'gmw')")
-uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25)")
-uf.desc[-1].add_prompt("relax> minimise('newton', func_tol=1e-25, grad_tol=None)")
-uf.desc[-1].add_prompt("relax> minimise('newton', max_iter=1e7)")
-uf.desc[-1].add_prompt("relax> minimise('newton', constraints=True, max_iter=1e7)")
-uf.desc[-1].add_prompt("relax> minimise('newton', verbosity=1)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton')")
+uf.desc[-1].add_prompt("relax> minimise.execute('Newton')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'gmw', 'mt')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', 'mt', 'gmw')")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', func_tol=1e-25)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', func_tol=1e-25, grad_tol=None)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', constraints=True, max_iter=1e7)")
+uf.desc[-1].add_prompt("relax> minimise.execute('newton', verbosity=1)")
 uf.desc[-1].add_paragraph("To use constrained Simplex minimisation with a maximum of 5000 iterations, type:")
-uf.desc[-1].add_prompt("relax> minimise('simplex', constraints=True, max_iter=5000)")
+uf.desc[-1].add_prompt("relax> minimise.execute('simplex', constraints=True, max_iter=5000)")
 uf.backend = minimise.minimise
-uf.menu_text = "&minimise"
-uf.gui_icon = "relax.minimise"
+uf.menu_text = "&execute"
+uf.gui_icon = "relax.rosenbrock"
 uf.wizard_height_desc = 300
 uf.wizard_size = (1000, 750)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'

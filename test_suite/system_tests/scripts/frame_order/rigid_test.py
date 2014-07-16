@@ -1,6 +1,6 @@
 ###############################################################################
 #                                                                             #
-# Copyright (C) 2004-2013 Edward d'Auvergne                                   #
+# Copyright (C) 2004-2014 Edward d'Auvergne                                   #
 #                                                                             #
 # This file is part of the program relax (http://www.nmr-relax.com).          #
 #                                                                             #
@@ -157,4 +157,4 @@ if not hasattr(ds, 'model'):
 self._execute_uf(uf_name='frame_order.select_model', model=ds.model)
 
 # Calculate the chi2 value.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')

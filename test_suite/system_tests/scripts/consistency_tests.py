@@ -42,12 +42,12 @@ self._execute_uf(uf_name='value.set', val=13 * 1e-9, param='tc')
 self._execute_uf(uf_name='consistency_tests.set_frq', frq=600.0 * 1e6)
 
 # Consistency tests.
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 
 # Monte Carlo simulations.
 self._execute_uf(uf_name='monte_carlo.setup', number=5)
 self._execute_uf(uf_name='monte_carlo.create_data')
-self._execute_uf(uf_name='calc')
+self._execute_uf(uf_name='minimise.calculate')
 self._execute_uf(uf_name='monte_carlo.error_analysis')
 
 # Create grace files.

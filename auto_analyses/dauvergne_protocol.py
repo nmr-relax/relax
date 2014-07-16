@@ -621,8 +621,8 @@ class dAuvergne_protocol:
 
                     # Minimise just the diffusion tensor.
                     self.interpreter.fix('all_spins')
-                    self.interpreter.grid_search(inc=inc)
-                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
+                    self.interpreter.minimise.grid_search(inc=inc)
+                    self.interpreter.minimise.execute(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
                     # Write the results.
                     self.interpreter.results.write(file='results', dir=self.base_dir, force=True)
@@ -646,7 +646,7 @@ class dAuvergne_protocol:
                     self.interpreter.fix('all', fixed=False)
 
                     # Minimise all parameters.
-                    self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
+                    self.interpreter.minimise.execute(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
                     # Write the results.
                     dir = self.base_dir + 'opt'
@@ -739,7 +739,7 @@ class dAuvergne_protocol:
             self.interpreter.monte_carlo.setup(number=self.mc_sim_num)
             self.interpreter.monte_carlo.create_data()
             self.interpreter.monte_carlo.initial_values()
-            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
+            self.interpreter.minimise.execute(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
             self.interpreter.eliminate()
             self.interpreter.monte_carlo.error_analysis()
 
@@ -821,8 +821,8 @@ class dAuvergne_protocol:
             self.interpreter.model_free.select_model(model=models[i])
 
             # Minimise.
-            self.interpreter.grid_search(inc=self.grid_inc)
-            self.interpreter.minimise(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
+            self.interpreter.minimise.grid_search(inc=self.grid_inc)
+            self.interpreter.minimise.execute(self.min_algor, func_tol=self.opt_func_tol, max_iter=self.opt_max_iterations)
 
             # Model elimination.
             self.interpreter.eliminate()

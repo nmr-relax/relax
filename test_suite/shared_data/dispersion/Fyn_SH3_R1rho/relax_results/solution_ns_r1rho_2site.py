@@ -93,13 +93,13 @@ spin_N.ri_data['600MHz'] = 1.613234983209703
 spin_N.ri_data['800MHz'] = 2.876934088364565
 
 # Calculate.
-calc()
+minimise.calculate()
 print("%-40s %20.15f" % ("relax chi2:", spin_N.chi2))
 print("%-40s %20.15f" % ("cpmg_fit chi2 (corrections turned off):", 436.970448079015682))
 
 # Minimisation.
-grid_search(inc=7)
-minimise('simplex', constraints=True)
+minimise.grid_search(inc=7)
+minimise.execute('simplex', constraints=True)
 
 # Plot the dispersion curves.
 relax_disp.plot_disp_curves(dir='.', num_points=100, extend=0, force=True)
