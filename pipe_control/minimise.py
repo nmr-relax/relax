@@ -234,8 +234,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 def reset_min_stats(data_pipe=None, spin=None):
     """Function for resetting the minimisation statistics.
 
-    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This
-                        defaults to the current data pipe.
+    @param data_pipe:   The name of the data pipe to reset the minimisation statisics of.  This defaults to the current data pipe.
     @type data_pipe:    str
     @param spin:        The spin data container if spin specific data is to be reset.
     @type spin:         SpinContainer
