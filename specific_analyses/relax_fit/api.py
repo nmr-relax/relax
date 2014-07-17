@@ -136,6 +136,37 @@ class Relax_fit(API_base, API_common):
                 setattr(data_cont, name, init_data)
 
 
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Simply return the two parameter names.
+        return ['rx', 'i0']
+
+
+    def get_param_values(self, model_info=None, sim_index=None):
+        """Return a vector of parameter values.
+
+        @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() method.
+        @type model_info:       SpinContainer instance, str
+        @keyword sim_index:     The optional Monte Carlo simulation index.
+        @type sim_index:        int
+        @return:                The vector of parameter values.
+        @rtype:                 list of str
+        """
+
+        # Unpack the data.
+        spin, spin_id = model_info
+
+        # Return the vector.
+        return assemble_param_vector(spin=spin, sim_index=sim_index)
+
+
     def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
         """The exponential curve fitting grid search method.
 
