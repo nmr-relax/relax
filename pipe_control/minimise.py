@@ -34,8 +34,7 @@ from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 def calc(verbosity=1):
     """Function for calculating the function value.
 
-    @param verbosity:   The amount of information to print.  The higher the value, the greater
-                        the verbosity.
+    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
 
@@ -86,21 +85,15 @@ def calc(verbosity=1):
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
-    @param lower:       The lower bounds of the grid search which must be equal to the number of
-                        parameters in the model.
+    @param lower:       The lower bounds of the grid search which must be equal to the number of parameters in the model.
     @type lower:        array of numbers
-    @param upper:       The upper bounds of the grid search which must be equal to the number of
-                        parameters in the model.
+    @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
     @type upper:        array of numbers
-    @param inc:         The increments for each dimension of the space for the grid search.  The
-                        number of elements in the array must equal to the number of parameters in
-                        the model.
+    @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
     @type inc:          array of int
-    @param constraints: If True, constraints are applied during the grid search (elinating parts of
-                        the grid).  If False, no constraints are used.
+    @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
     @type constraints:  bool
-    @param verbosity:   The amount of information to print.  The higher the value, the greater
-                        the verbosity.
+    @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
     @type verbosity:    int
     """
 
