@@ -339,16 +339,16 @@ class Jw_mapping(API_base, API_common):
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to set the errors for.
         @type index:        int
         @param error:       The error value.
         @type error:        float
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Return J(0) sim data.
         if index == 0:
@@ -366,16 +366,16 @@ class Jw_mapping(API_base, API_common):
     def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         @return:            The array of simulation parameter values.
         @rtype:             list of float
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Skip deselected spins.
         if not spin.select:
@@ -397,14 +397,14 @@ class Jw_mapping(API_base, API_common):
     def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags.
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   SpinContainer instance
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
 
-        # Alias.
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Multiple spins.
         return spin.select_sim

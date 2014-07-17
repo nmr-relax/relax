@@ -90,23 +90,26 @@ class API_common:
         """
 
 
-    def _data_init_spin(self, data_cont, sim=False):
+    def _data_init_spin(self, model_info, sim=False):
         """Initialise data structures (spin system specific).
 
-        @param data_cont:   The spin container.
-        @type data_cont:    SpinContainer instance
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
         @type sim:          bool
         """
 
+        # Unpack the data.
+        spin, spin_id = model_info
+
         # Loop over the parameters.
         for name in self._PARAMS.loop(set='params', scope='spin', error_names=False, sim_names=sim):
             # Not a parameter of the model.
-            if name not in data_cont.params:
+            if name not in spin.params:
                 continue
 
             # The value already exists.
-            if hasattr(data_cont, name):
+            if hasattr(spin, name):
                 continue
 
             # The default value.
@@ -119,7 +122,7 @@ class API_common:
                 value = None
 
             # Set the value.
-            setattr(data_cont, name, value)
+            setattr(spin, name, value)
 
 
     def _deselect_global(self, model_info, sim_index=None):
@@ -480,18 +483,16 @@ class API_common:
     def _set_error_spin(self, model_info, index, error):
         """Set the parameter errors (spin system specific).
 
-        @param model_info:  The spin container originating from model_loop().
-        @type model_info:   unknown
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to set the errors for.
         @type index:        int
         @param error:       The error value.
         @type error:        float
         """
 
-        # The spin container.
-        if not isinstance(model_info, SpinContainer):
-            raise RelaxError("The model information argument is not a spin container.")
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Parameter increment counter.
         inc = 0
@@ -613,16 +614,14 @@ class API_common:
     def _set_selected_sim_spin(self, model_info, select_sim):
         """Set the simulation selection flag (spin system specific).
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
         """
 
-        # The spin container.
-        if not isinstance(model_info, SpinContainer):
-            raise RelaxError("The model information argument is not a spin container.")
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Set the array.
         spin.select_sim = deepcopy(select_sim)
@@ -740,18 +739,16 @@ class API_common:
     def _sim_return_chi2_spin(self, model_info, index=None):
         """Return the simulation chi-squared values (spin system specific).
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @keyword index:     The optional simulation index.
         @type index:        int
         @return:            The list of simulation chi-squared values.  If the index is supplied, only a single value will be returned.
         @rtype:             list of float or float
         """
 
-        # The spin container.
-        if not isinstance(model_info, SpinContainer):
-            raise RelaxError("The model information argument is not a spin container.")
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Index.
         if index != None:
@@ -765,18 +762,16 @@ class API_common:
     def _sim_return_param_spin(self, model_info, index):
         """Return the array of simulation parameter values (spin system specific).
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
         @return:            The array of simulation parameter values.
         @rtype:             list of float
         """
 
-        # The spin container.
-        if not isinstance(model_info, SpinContainer):
-            raise RelaxError("The model information argument is not a spin container.")
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Parameter increment counter.
         inc = 0
@@ -811,16 +806,14 @@ class API_common:
     def _sim_return_selected_spin(self, model_info):
         """Return the array of selected simulation flags (spin system specific).
 
-        @param model_info:  The model information originating from model_loop().
-        @type model_info:   unknown
+        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @type model_info:   SpinContainer instance, str
         @return:            The array of selected simulation flags.
         @rtype:             list of int
         """
 
-        # The spin container.
-        if not isinstance(model_info, SpinContainer):
-            raise RelaxError("The model information argument is not a spin container.")
-        spin = model_info
+        # Unpack the data.
+        spin, spin_id = model_info
 
         # Return the array.
         return spin.select_sim
