@@ -488,6 +488,17 @@ class API_base(object):
         raise RelaxImplementError('overfit_deselect')
 
 
+    def print_model_title(self, model_info=None):
+        """Print out the model title.
+
+        @keyword model_info:    The model information from model_info().
+        @type model_info:       int
+        """
+
+        # Not implemented.
+        raise RelaxImplementError('print_model_title')
+
+
     def pymol_macro(self, data_type, style=None, colour_start=None, colour_end=None, colour_list=None, spin_id=None):
         """Create and return an array of PyMOL macros.
 
