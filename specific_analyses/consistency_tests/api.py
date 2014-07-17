@@ -348,7 +348,7 @@ class Consistency_tests(API_base, API_common):
     def set_error(self, model_info, index, error):
         """Set the parameter errors.
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to set the errors for.
         @type index:        int
@@ -375,7 +375,7 @@ class Consistency_tests(API_base, API_common):
     def sim_return_param(self, model_info, index):
         """Return the array of simulation parameter values.
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
@@ -406,7 +406,7 @@ class Consistency_tests(API_base, API_common):
     def sim_return_selected(self, model_info):
         """Return the array of selected simulation flags.
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @return:            The array of selected simulation flags.
         @rtype:             list of int

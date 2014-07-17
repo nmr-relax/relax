@@ -93,7 +93,7 @@ class API_common:
     def _data_init_spin(self, model_info, sim=False):
         """Initialise data structures (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @keyword sim:       The Monte Carlo simulation flag, which if true will initialise the simulation data structure.
         @type sim:          bool
@@ -483,7 +483,7 @@ class API_common:
     def _set_error_spin(self, model_info, index, error):
         """Set the parameter errors (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to set the errors for.
         @type index:        int
@@ -614,7 +614,7 @@ class API_common:
     def _set_selected_sim_spin(self, model_info, select_sim):
         """Set the simulation selection flag (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @param select_sim:  The selection flag for the simulations.
         @type select_sim:   bool
@@ -739,7 +739,7 @@ class API_common:
     def _sim_return_chi2_spin(self, model_info, index=None):
         """Return the simulation chi-squared values (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @keyword index:     The optional simulation index.
         @type index:        int
@@ -762,7 +762,7 @@ class API_common:
     def _sim_return_param_spin(self, model_info, index):
         """Return the array of simulation parameter values (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @param index:       The index of the parameter to return the array of values for.
         @type index:        int
@@ -806,7 +806,7 @@ class API_common:
     def _sim_return_selected_spin(self, model_info):
         """Return the array of selected simulation flags (spin system specific).
 
-        @param model_info:  The spin container and the spin ID string from the _model_info_spin() method.
+        @param model_info:  The spin container and the spin ID string from the _model_loop_spin() method.
         @type model_info:   SpinContainer instance, str
         @return:            The array of selected simulation flags.
         @rtype:             list of int
