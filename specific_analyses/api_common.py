@@ -24,11 +24,13 @@
 
 # Python module imports.
 from copy import deepcopy
+import sys
 
 # relax module imports.
 from data_store.mol_res_spin import SpinContainer
 import lib.arg_check
 from lib.errors import RelaxError, RelaxNoSequenceError
+from lib.text.sectioning import subsection
 from pipe_control.mol_res_spin import count_spins, exists_mol_res_spin_data, return_spin, spin_loop
 
 
@@ -297,6 +299,19 @@ class API_common:
 
     def _overfit_deselect_dummy(self, data_check=True, verbose=True):
         """Dummy method, normally for deselecting spins with insufficient data for minimisation."""
+
+
+    def _print_model_title_spin(self, model_info=None):
+        """Default method for when the model_info() method simply loops over spins.
+
+        @keyword model_info:    The model information from model_info().
+        @type model_info:       int
+        """
+
+        # The printout.
+        spin_id = model_info[1]
+        text = "The spin %s" % spin_id
+        subsection(file=sys.stdout, text=text, prespace=2)
 
 
     def _return_no_conversion_factor(self, param):
