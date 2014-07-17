@@ -147,7 +147,7 @@ uf.desc[-1].add_item_list_element("3", "3rd level zoom.  This will activate the 
 uf.desc[-1].add_paragraph("For all zoom levels, except for 0, the grid will be centred at the current parameter values.")
 uf.backend = minimise.grid_zoom
 uf.menu_text = "&grid_zoom"
-uf.gui_icon = "relax.grid_search"
+uf.gui_icon = "oxygen.actions.zoom-in"
 uf.wizard_height_desc = 500
 uf.wizard_size = (900, 600)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
