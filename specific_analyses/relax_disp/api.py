@@ -27,11 +27,13 @@
 # Python module imports.
 from copy import deepcopy
 from re import search
+import sys
 from types import MethodType
 
 # relax module imports.
 from lib.arg_check import is_list, is_str_list
 from lib.errors import RelaxError, RelaxImplementError
+from lib.text.sectioning import subsection
 from multi import Processor_box
 from pipe_control import pipes, sequence
 from pipe_control.mol_res_spin import check_mol_res_spin_data, return_spin, spin_loop
@@ -761,6 +763,17 @@ class Relax_disp(API_base, API_common):
                 print("No R2eff data could be found, deselecting the '%s' spin." % spin_id)
                 spin.select = False
                 continue
+
+
+    def print_model_title(self, model_info=None):
+        """Print out the model title.
+
+        @keyword model_info:    The model information from model_info().
+        @type model_info:       int
+        """
+
+        # The printout.
+        subsection(file=sys.stdout, text="The spin block %s"%model_info, prespace=2)
 
 
     def return_data(self, data_id=None):
