@@ -148,6 +148,33 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     processor.run_queue()
 
 
+def grid_zoom(level=0):
+    """Store the grid zoom level.
+
+    The zoom level can be one of:
+
+        0:  No zooming - setting this value will deactivate the zooming grid search.
+        1:  1st level zoom.  This will activate the first zoom level.  For the frame order parameters, excluding the pivot point, this will halve the grid upper and lower bound values and center the grid at the current parameter values.
+        2:  2nd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by a quarter (1/2^2).
+        3:  3rd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by an eighth (1/2^3).
+
+
+    @keyword level: The zoom level.
+    @type level:    int
+    """
+
+    # Test if the current data pipe exists.
+    pipes.test()
+
+    # Check the value.
+    allowed = [0, 1, 2, 3]
+    if level not in allowed:
+        raise RelaxError("The grid zoom level of '%s' is not valid, it must be one of %s." % (level, allowed))
+
+    # Store the values.
+    cdp.grid_zoom_level = level
+
+
 def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=None, func_tol=None, grad_tol=None, max_iter=None, constraints=True, scaling=True, verbosity=1, sim_index=None):
     """Minimisation function.
 

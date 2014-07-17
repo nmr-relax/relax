@@ -112,6 +112,47 @@ uf.wizard_size = (800, 500)
 uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
 
 
+# The minimise.grid_zoom user function.
+uf = uf_info.add_uf('minimise.grid_zoom')
+uf.title = "Change the zoom level for the grid search."
+uf.title_short = "Zooming grid search level."
+uf.add_keyarg(
+    name = "level",
+    default = 0,
+    py_type = "int",
+    desc_short = "zoom level",
+    desc = "The zooming grid search level.",
+    wiz_element_type = "combo",
+    wiz_combo_choices = [
+        "No zooming",
+        "1st level zoom",
+        "2nd level zoom",
+        "3rd level zoom"
+    ],
+    wiz_combo_data = [
+        0,
+        1,
+        2,
+        3
+    ],
+    wiz_read_only = True
+)
+# Description.
+uf.desc.append(Desc_container())
+uf.desc[-1].add_paragraph("This user function activates or deactivates a zooming grid search.  The zooming grid search level can be one of:")
+uf.desc[-1].add_item_list_element("0", "No zooming - setting this value will deactivate the zooming grid search.")
+uf.desc[-1].add_item_list_element("1", "1st level zoom.  This will activate the first zoom level.  For the frame order parameters, excluding the pivot point, this will halve the grid upper and lower bound values and center the grid at the current parameter values.")
+uf.desc[-1].add_item_list_element("2", "2nd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by a quarter (1/2^2).")
+uf.desc[-1].add_item_list_element("3", "3rd level zoom.  This will activate the second zoom level.  For the frame order parameters, excluding the pivot point, this will zoom the grid upper and lower bound values by an eighth (1/2^3).")
+uf.desc[-1].add_paragraph("For all zoom levels, except for 0, the grid will be centred at the current parameter values.")
+uf.backend = minimise.grid_zoom
+uf.menu_text = "&grid_zoom"
+uf.gui_icon = "relax.grid_search"
+uf.wizard_height_desc = 500
+uf.wizard_size = (900, 600)
+uf.wizard_image = WIZARD_IMAGE_PATH + 'minimise.png'
+
+
 # The minimise.execute user function.
 uf = uf_info.add_uf('minimise.execute')
 uf.title = "Perform an optimisation."
