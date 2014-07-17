@@ -51,6 +51,7 @@ class Jw_mapping(API_base, API_common):
         self.base_data_loop = self._base_data_loop_spin
         self.create_mc_data = self._create_mc_relax_data
         self.model_loop = self._model_loop_spin
+        self.print_model_title = self._print_model_title_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_error = self._return_error_relax_data
         self.return_value = self._return_value_general

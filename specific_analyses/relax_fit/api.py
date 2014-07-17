@@ -58,6 +58,7 @@ class Relax_fit(API_base, API_common):
         # Place methods into the API.
         self.base_data_loop = self._base_data_loop_spin
         self.model_loop = self._model_loop_spin
+        self.print_model_title = self._print_model_title_spin
         self.return_conversion_factor = self._return_no_conversion_factor
         self.return_value = self._return_value_general
         self.set_error = self._set_error_spin
