@@ -227,21 +227,21 @@ class API_common:
     def _model_loop_spin(self):
         """Default generator method for looping over the models, where each spin has a separate model.
 
-        In this case only a single model per spin system is assumed.  Hence the yielded data is the spin container object.
+        In this case only a single model per spin system is assumed.  The yielded data is the spin container object.  The spin ID string is also yielded to allow the corresponding spin container to be identified.
 
 
-        @return:    The spin container.
-        @rtype:     SpinContainer instance
+        @return:    The spin container and the spin ID string.
+        @rtype:     SpinContainer instance, str
         """
 
         # Loop over the sequence.
-        for spin in spin_loop():
+        for spin, spin_id in spin_loop(return_id=True):
             # Skip deselected spins.
             if not spin.select:
                 continue
 
-            # Yield the spin container.
-            yield spin
+            # Yield the spin container and ID.
+            yield spin, spin_id
 
 
     def _model_loop_single_global(self):
