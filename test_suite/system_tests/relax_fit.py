@@ -242,3 +242,12 @@ class Relax_fit(SystemTestCase):
             if hasattr(orig_spin, 'peak_intensity'):
                 for id in dp_new.spectrum_ids:
                     self.assertEqual(orig_spin.peak_intensity[id], new_spin.peak_intensity[id])
+
+
+    def test_zooming_grid_search(self):
+        """Test the relaxation curve fitting C modules."""
+
+        # Execute the script.
+        self.script_exec(status.install_path + sep+'test_suite'+sep+'system_tests'+sep+'scripts'+sep+'relax_fit_zooming_grid.py')
+
+        # Check the curve-fitting results.
