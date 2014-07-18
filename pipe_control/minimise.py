@@ -26,7 +26,7 @@
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
-from specific_analyses.api import return_api
+from specific_analyses.api import return_api, return_parameter_object
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
 
@@ -82,6 +82,51 @@ def calc(verbosity=1):
     processor.run_queue()
 
 
+def grid_bounds(lower=None, upper=None):
+    """Determine the per-model grid bounds, allowing for the zooming grid search.
+
+    @keyword lower:     The lower bounds of the grid search which must be equal to the number of parameters in the model.
+    @type lower:        array of numbers
+    @keyword upper:     The upper bounds of the grid search which must be equal to the number of parameters in the model.
+    @type upper:        array of numbers
+    @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
+    @rtype:             tuple of 2 lists of lists of float
+    """
+
+    # The specific analysis API object and parameter object.
+    api = return_api()
+    param_object = return_parameter_object()
+
+    # Initialise.
+    model_lower = []
+    model_upper = []
+
+    # Loop over the models.
+    for model_info in api.model_loop():
+        # The lower and upper bounds have been supplied by the user, so use those unmodified instead.
+        if lower != None or upper != None:
+            model_lower.append(lower)
+            model_upper.append(upper)
+            continue
+
+        # Print out the model title.
+        api.print_model_title(model_info)
+
+        # Get the parameter names and current values.
+        names = api.get_param_names(model_info)
+        values = api.get_param_values(model_info)
+
+        # Build the bounds.
+        model_lower.append([])
+        model_upper.append([])
+        for i in range(len(names)):
+            model_lower[-1].append(param_object.grid_lower(names[i], model_info=model_info))
+            model_upper[-1].append(param_object.grid_upper(names[i], model_info=model_info))
+
+    # Return the bounds.
+    return model_lower, model_upper
+
+
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
@@ -103,6 +148,9 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # The specific analysis API object.
     api = return_api()
 
+    # Determine the model specific grid bounds, and allow for the zooming grid search.
+    model_lower, model_upper = grid_bounds(lower, upper)
+
     # Deselect spins lacking data:
     api.overfit_deselect()
 
@@ -121,7 +169,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 status.mc_number = i
 
             # Optimisation.
-            api.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+            api.grid_search(lower=model_lower, upper=model_upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -135,7 +183,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
 
     # Grid search.
     else:
-        api.grid_search(lower=lower, upper=upper, inc=inc, constraints=constraints, verbosity=verbosity)
+        api.grid_search(lower=model_lower, upper=model_upper, inc=inc, constraints=constraints, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
