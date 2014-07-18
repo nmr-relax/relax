@@ -89,11 +89,11 @@ def calc(verbosity=1):
     # The specific analysis API object.
     api = return_api()
 
-    # Create the scaling matrix.
-    scaling_matrix = assemble_scaling_matrix()
-
     # Deselect spins lacking data:
     api.overfit_deselect()
+
+    # Create the scaling matrix.
+    scaling_matrix = assemble_scaling_matrix()
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
@@ -151,14 +151,14 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # The specific analysis API object.
     api = return_api()
 
+    # Deselect models lacking data:
+    api.overfit_deselect()
+
     # Determine the model specific grid bounds, and allow for the zooming grid search, and check the inc argument.
     model_lower, model_upper, model_inc = grid_setup(lower, upper, inc)
 
     # Create the scaling matrix.
     scaling_matrix = assemble_scaling_matrix()
-
-    # Deselect spins lacking data:
-    api.overfit_deselect()
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
@@ -360,11 +360,11 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
         min_options.append(hessian_type)
     min_options = tuple(min_options)
 
-    # Create the scaling matrix.
-    scaling_matrix = assemble_scaling_matrix(scaling)
-
     # Deselect spins lacking data:
     api.overfit_deselect()
+
+    # Create the scaling matrix.
+    scaling_matrix = assemble_scaling_matrix(scaling)
 
     # Get the Processor box singleton (it contains the Processor instance) and alias the Processor.
     processor_box = Processor_box() 
