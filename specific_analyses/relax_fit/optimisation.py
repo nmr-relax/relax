@@ -29,7 +29,7 @@ from re import search
 # relax module imports.
 from dep_check import C_module_exp_fn
 from lib.errors import RelaxError, RelaxLenError
-from specific_analyses.relax_fit.parameters import assemble_param_vector, assemble_scaling_matrix
+from specific_analyses.relax_fit.parameters import assemble_param_vector
 
 # C modules.
 if C_module_exp_fn:
@@ -50,9 +50,6 @@ def back_calc(spin=None, relax_time_id=None):
     # Create the initial parameter vector.
     param_vector = assemble_param_vector(spin=spin)
 
-    # Create a scaling matrix.
-    scaling_matrix = assemble_scaling_matrix(spin=spin, scaling=False)
-
     # The keys.
     keys = list(spin.peak_intensity.keys())
 
@@ -65,10 +62,10 @@ def back_calc(spin=None, relax_time_id=None):
         errors.append(spin.peak_intensity_err[key])
         times.append(cdp.relax_times[key])
 
-    # The scaling matrix in a diagonalised list form.
+    # A fake scaling matrix in a diagonalised list form.
     scaling_list = []
-    for i in range(len(scaling_matrix)):
-        scaling_list.append(scaling_matrix[i, i])
+    for i in range(len(param_vector)):
+        scaling_list.append(1.0)
 
     # Initialise the relaxation fit functions.
     setup(num_params=len(spin.params), num_times=len(cdp.relax_times), values=values, sd=errors, relax_times=times, scaling_matrix=scaling_list)
@@ -111,90 +108,3 @@ def d2func_wrapper(params):
 
     The currently does nothing.
     """
-
-
-def grid_search_setup(spin=None, param_vector=None, lower=None, upper=None, inc=None, scaling_matrix=None):
-    """The grid search setup function.
-
-    @keyword spin:              The spin data container.
-    @type spin:                 SpinContainer instance
-    @keyword param_vector:      The parameter vector.
-    @type param_vector:         numpy array
-    @keyword lower:             The lower bounds of the grid search which must be equal to the
-                                number of parameters in the model.  This optional argument is
-                                only used when doing a grid search.
-    @type lower:                array of numbers
-    @keyword upper:             The upper bounds of the grid search which must be equal to the
-                                number of parameters in the model.  This optional argument is
-                                only used when doing a grid search.
-    @type upper:                array of numbers
-    @keyword inc:               The increments for each dimension of the space for the grid
-                                search.  The number of elements in the array must equal to the
-                                number of parameters in the model.  This argument is only used
-                                when doing a grid search.
-    @type inc:                  array of int
-    @keyword scaling_matrix:    The scaling matrix.
-    @type scaling_matrix:       numpy diagonal matrix
-    @return:                    A tuple of the grid size and the minimisation options.  For the
-                                minimisation options, the first dimension corresponds to the
-                                model parameter.  The second dimension is a list of the number
-                                of increments, the lower bound, and upper bound.
-    @rtype:                     (int, list of lists [int, float, float])
-    """
-
-    # The length of the parameter array.
-    n = len(param_vector)
-
-    # Make sure that the length of the parameter array is > 0.
-    if n == 0:
-        raise RelaxError("Cannot run a grid search on a model with zero parameters.")
-
-    # Lower bounds.
-    if lower != None and len(lower) != n:
-        raise RelaxLenError('lower bounds', n)
-
-    # Upper bounds.
-    if upper != None and len(upper) != n:
-        raise RelaxLenError('upper bounds', n)
-
-    # Increments.
-    if isinstance(inc, list) and len(inc) != n:
-        raise RelaxLenError('increment', n)
-    elif isinstance(inc, int):
-        inc = [inc]*n
-
-    # Set up the default bounds.
-    if not lower:
-        # Init.
-        lower = []
-        upper = []
-
-        # Loop over the parameters.
-        for i in range(n):
-            # Relaxation rate (from 0 to 20 s^-1).
-            if spin.params[i] == 'rx':
-                lower.append(0.0)
-                upper.append(20.0)
-
-            # Intensity
-            elif search('^i', spin.params[i]):
-                # Find the ID of the first time point.
-                min_time = min(cdp.relax_times.values())
-                for key in list(cdp.relax_times.keys()):
-                    if cdp.relax_times[key] == min_time:
-                        id = key
-                        break
-
-                # Defaults.
-                lower.append(0.0)
-                upper.append(average(spin.peak_intensity[id]))
-
-    # Diagonal scaling of minimisation options.
-    lower_new = []
-    upper_new = []
-    for i in range(n):
-        lower_new.append(lower[i] / scaling_matrix[i, i])
-        upper_new.append(upper[i] / scaling_matrix[i, i])
-
-    # Return the minimisation options.
-    return inc, lower_new, upper_new

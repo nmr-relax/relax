@@ -77,39 +77,6 @@ def assemble_param_vector(spin=None, sim_index=None):
     return array(param_vector, float64)
 
 
-def assemble_scaling_matrix(spin=None, scaling=True):
-    """Create and return the scaling matrix.
-
-    @keyword spin:          The spin data container.
-    @type spin:             SpinContainer instance
-    @keyword scaling:       A flag which if false will cause the identity matrix to be returned.
-    @type scaling:          bool
-    @return:                The diagonal and square scaling matrix.
-    @rtype:                 numpy diagonal matrix
-    """
-
-    # Initialise.
-    scaling_matrix = identity(len(spin.params), float64)
-    i = 0
-
-    # No diagonal scaling.
-    if not scaling:
-        return scaling_matrix
-
-    # Loop over the parameters.
-    for i in range(len(spin.params)):
-        # Relaxation rate.
-        if spin.params[i] == 'rx':
-            pass
-
-        # Intensity scaling.
-        elif search('^i', spin.params[i]):
-            scaling_matrix[i, i] = round_to_next_order(max(spin.peak_intensity.values()))
-
-    # Return the scaling matrix.
-    return scaling_matrix
-
-
 def disassemble_param_vector(param_vector=None, spin=None, sim_index=None):
     """Disassemble the parameter vector.
 

@@ -22,8 +22,85 @@
 # Module docstring.
 """The module for the relaxation curve fitting parameter list object."""
 
+# Python module imports.
+from numpy import average
+
 # relax module imports.
+from lib.mathematics import round_to_next_order
 from specific_analyses.parameter_object import Param_list
+
+
+def i_scaling(model_info):
+    """Determine the scaling factor for the peak intensities.
+
+    This is for the scaling of the I0 and Iinf parameters during optimisation.  The maximum intensity will be used to scale all values.
+
+
+    @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() specific API method.
+    @type model_info:       SpinContainer instance, str
+    @return:                The average peak intensity of the first time point.
+    @rtype:                 float
+    """
+
+    # Unpack the data.
+    spin, spin_id = model_info
+
+    # The scaling factor as the maximum intensity.
+    return round_to_next_order(max(spin.peak_intensity.values()))
+
+
+def i0(model_info):
+    """Find the average intensity of the first time point.
+
+    This is for the grid search upper bound for the I0 parameter.
+
+
+    @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() specific API method.
+    @type model_info:       SpinContainer instance, str
+    @return:                The average peak intensity of the first time point.
+    @rtype:                 float
+    """
+
+    # Unpack the data.
+    spin, spin_id = model_info
+
+    # Find the ID of the first time point.
+    min_time = min(cdp.relax_times.values())
+    for key in list(cdp.relax_times.keys()):
+        if cdp.relax_times[key] == min_time:
+            id = key
+            break
+
+    # Return the averaged value.
+    return average(spin.peak_intensity[id])
+
+
+def iinf(model_info):
+    """Find the average intensity of the last time point.
+
+    This is for the grid search upper bound for the Iinf parameter.
+
+
+    @keyword model_info:    The spin container and the spin ID string from the _model_loop_spin() specific API method.
+    @type model_info:       SpinContainer instance, str
+    @return:                The average peak intensity of the last time point.
+    @rtype:                 float
+    """
+
+    # Unpack the data.
+    spin, spin_id = model_info
+
+    # Find the ID of the last time point.
+    max_time = max(cdp.relax_times.values())
+    for key in list(cdp.relax_times.keys()):
+        if cdp.relax_times[key] == max_time:
+            id = key
+            break
+
+    # Return the averaged value.
+    return average(spin.peak_intensity[id])
+
+
 
 
 class Relax_fit_params(Param_list):
@@ -51,9 +128,48 @@ class Relax_fit_params(Param_list):
         self._add_model_info(model_flag=False)
 
         # Add the model parameters.
-        self._add('rx', scope='spin', default=8.0, desc='Either the R1 or R2 relaxation rate', set='params', py_type=float, grace_string='\\qR\\sx\\Q', err=True, sim=True)
-        self._add('i0', scope='spin', default=10000.0, desc='The initial intensity', py_type=float, set='params', grace_string='\\qI\\s0\\Q', err=True, sim=True)
-        self._add('iinf', scope='spin', default=0.0, desc='The intensity at infinity', py_type=float, set='params', grace_string='\\qI\\sinf\\Q', err=True, sim=True)
+        self._add(
+            'rx',
+            scope = 'spin',
+            default = 8.0,
+            desc = 'Either the R1 or R2 relaxation rate',
+            set = 'params',
+            py_type = float,
+            scaling = 1.0,
+            grid_lower = 0.0,
+            grid_upper = 20.0,
+            grace_string = '\\qR\\sx\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'i0',
+            scope = 'spin',
+            default = 10000.0,
+            desc = 'The initial intensity',
+            py_type = float,
+            set = 'params',
+            scaling = i_scaling,
+            grid_lower = 0.0,
+            grid_upper = i0,
+            grace_string = '\\qI\\s0\\Q',
+            err = True,
+            sim = True
+        )
+        self._add(
+            'iinf',
+            scope = 'spin',
+            default = 0.0,
+            desc = 'The intensity at infinity',
+            py_type = float,
+            set = 'params',
+            scaling = i_scaling,
+            grid_lower = 0.0,
+            grid_upper = iinf,
+            grace_string = '\\qI\\sinf\\Q',
+            err = True,
+            sim = True
+        )
 
         # Add the minimisation data.
         self._add_min_data(min_stats_global=False, min_stats_spin=True)
