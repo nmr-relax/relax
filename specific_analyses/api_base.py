@@ -104,15 +104,17 @@ class API_base(object):
         raise RelaxImplementError('bmrb_write')
 
 
-    def calculate(self, spin_id=None, verbosity=1, sim_index=None):
+    def calculate(self, spin_id=None, scaling_matrix=None, verbosity=1, sim_index=None):
         """Calculate the chi-squared value.
 
-        @keyword spin_id:   The spin identification string.
-        @type spin_id:      None or str
-        @keyword verbosity: The amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:    int
-        @keyword sim_index: The optional MC simulation index.
-        @type sim_index:    None or int
+        @keyword spin_id:           The spin ID string.
+        @type spin_id:              None or str
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The optional MC simulation index.
+        @type sim_index:            None or int
         """
 
         # Not implemented.
@@ -293,21 +295,23 @@ class API_base(object):
         raise RelaxImplementError('get_param_values')
 
 
-    def grid_search(self, lower=None, upper=None, inc=None, constraints=True, verbosity=1, sim_index=None):
+    def grid_search(self, lower=None, upper=None, inc=None, scaling_matrix=None, constraints=True, verbosity=1, sim_index=None):
         """Grid search method.
 
-        @keyword lower:         The lower bounds of the grid search which must be equal to the number of parameters in the model.
-        @type lower:            array of numbers
-        @keyword upper:         The upper bounds of the grid search which must be equal to the number of parameters in the model.
-        @type upper:            array of numbers
-        @keyword inc:           The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-        @type inc:              array of int
-        @keyword constraints:   If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
-        @type constraints:      bool
-        @keyword verbosity:     A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
-        @type verbosity:        int
-        @keyword sim_index:     The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
-        @type sim_index:        int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.
+        @type lower:                list of lists of floats
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.
+        @type upper:                list of lists of floats
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
+        @type inc:                  list of lists of int
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
+        @keyword constraints:       If True, constraints are applied during the grid search (eliminating parts of the grid).  If False, no constraints are used.
+        @type constraints:          bool
+        @keyword verbosity:         A flag specifying the amount of information to print.  The higher the value, the greater the verbosity.
+        @type verbosity:            int
+        @keyword sim_index:         The index of the simulation to apply the grid search to.  If None, the normal model is optimised.
+        @type sim_index:            int
         """
 
         # Not implemented.
@@ -353,7 +357,7 @@ class API_base(object):
         raise RelaxImplementError('map_bounds')
 
 
-    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling=True, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
+    def minimise(self, min_algor=None, min_options=None, func_tol=None, grad_tol=None, max_iterations=None, constraints=False, scaling_matrix=None, verbosity=0, sim_index=None, lower=None, upper=None, inc=None):
         """Minimisation method.
 
         @keyword min_algor:         The minimisation algorithm to use.
@@ -368,18 +372,18 @@ class API_base(object):
         @type max_iterations:       int
         @keyword constraints:       If True, constraints are used during optimisation.
         @type constraints:          bool
-        @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
-        @type scaling:              bool
+        @keyword scaling_matrix:    The per-model list of diagonal and square scaling matrices.
+        @type scaling_matrix:       list of numpy rank-2, float64 array or list of None
         @keyword verbosity:         The amount of information to print.  The higher the value, the greater the verbosity.
         @type verbosity:            int
         @keyword sim_index:         The index of the simulation to optimise.  This should be None if normal optimisation is desired.
         @type sim_index:            None or int
-        @keyword lower:             The lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type lower:                array of numbers
-        @keyword upper:             The upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
-        @type upper:                array of numbers
-        @keyword inc:               The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
-        @type inc:                  array of int
+        @keyword lower:             The per-model lower bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type lower:                list of lists of float
+        @keyword upper:             The per-model upper bounds of the grid search which must be equal to the number of parameters in the model.  This optional argument is only used when doing a grid search.
+        @type upper:                list of lists of float
+        @keyword inc:               The per-model increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.  This argument is only used when doing a grid search.
+        @type inc:                  list of lists of int
         """
 
         # Not implemented.

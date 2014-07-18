@@ -22,6 +22,9 @@
 # Module docstring.
 """Module for model minimisation/optimisation."""
 
+# Python module imports.
+from numpy import float64, identity
+
 # relax module imports.
 from lib.errors import RelaxError, RelaxIntListIntError, RelaxLenError
 from multi import Processor_box
@@ -30,6 +33,47 @@ from pipe_control import pipes
 from specific_analyses.api import return_api, return_parameter_object
 from status import Status; status = Status()
 from user_functions.data import Uf_tables; uf_tables = Uf_tables()
+
+
+def assemble_scaling_matrix(scaling=True):
+    """Create and return the per-model scaling matrices.
+
+    @keyword scaling:           If True, diagonal scaling is enabled during optimisation to allow the problem to be better conditioned.
+    @type scaling:              bool
+    @return:                    The list of diagonal and square scaling matrices.
+    @rtype:                     list of numpy rank-2, float64 array or list of None
+    """
+
+    # The specific analysis API object and parameter object.
+    api = return_api()
+    param_object = return_parameter_object()
+
+    # Initialise.
+    scaling_matrix = []
+
+    # Loop over the models.
+    for model_info in api.model_loop():
+        # No diagonal scaling.
+        if not scaling:
+            scaling_matrix.append(None)
+            continue
+
+        # Get the parameter names.
+        names = api.get_param_names(model_info)
+
+        # The parameter number.
+        n = len(names)
+
+        # Initialise.
+        scaling_matrix.append(identity(n, float64))
+        i = 0
+
+        # Update the diagonal with the parameter specific scaling factor.
+        for i in range(n):
+            scaling_matrix[-1][i, i] = param_object.scaling(names[i], model_info=model_info)
+
+    # Return the matrix.
+    return scaling_matrix
 
 
 def calc(verbosity=1):
@@ -44,6 +88,9 @@ def calc(verbosity=1):
 
     # The specific analysis API object.
     api = return_api()
+
+    # Create the scaling matrix.
+    scaling_matrix = assemble_scaling_matrix()
 
     # Deselect spins lacking data:
     api.overfit_deselect()
@@ -63,7 +110,7 @@ def calc(verbosity=1):
                 status.mc_number = i
 
             # Calculation.
-            api.calculate(verbosity=verbosity-1, sim_index=i)
+            api.calculate(verbosity=verbosity-1, sim_index=i, scaling_matrix=scaling_matrix)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -77,7 +124,7 @@ def calc(verbosity=1):
 
     # Minimisation.
     else:
-        api.calculate(verbosity=verbosity)
+        api.calculate(verbosity=verbosity, scaling_matrix=scaling_matrix)
 
     # Execute any queued commands.
     processor.run_queue()
@@ -107,6 +154,9 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # Determine the model specific grid bounds, and allow for the zooming grid search, and check the inc argument.
     model_lower, model_upper, model_inc = grid_setup(lower, upper, inc)
 
+    # Create the scaling matrix.
+    scaling_matrix = assemble_scaling_matrix()
+
     # Deselect spins lacking data:
     api.overfit_deselect()
 
@@ -125,7 +175,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 status.mc_number = i
 
             # Optimisation.
-            api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+            api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -139,7 +189,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
 
     # Grid search.
     else:
-        api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, constraints=constraints, verbosity=verbosity)
+        api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, scaling_matrix=scaling_matrix, constraints=constraints, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
@@ -310,6 +360,9 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
         min_options.append(hessian_type)
     min_options = tuple(min_options)
 
+    # Create the scaling matrix.
+    scaling_matrix = assemble_scaling_matrix(scaling)
+
     # Deselect spins lacking data:
     api.overfit_deselect()
 
@@ -319,7 +372,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Single Monte Carlo simulation.
     if sim_index != None:
-        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity, sim_index=sim_index)
+        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity, sim_index=sim_index)
 
     # Monte Carlo simulation minimisation.
     elif hasattr(cdp, 'sim_state') and cdp.sim_state == 1:
@@ -331,7 +384,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
                 status.mc_number = i
 
             # Optimisation.
-            api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity-1, sim_index=i)
+            api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -345,7 +398,7 @@ def minimise(min_algor=None, line_search=None, hessian_mod=None, hessian_type=No
 
     # Standard minimisation.
     else:
-        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling=scaling, verbosity=verbosity)
+        api.minimise(min_algor=min_algor, min_options=min_options, func_tol=func_tol, grad_tol=grad_tol, max_iterations=max_iter, constraints=constraints, scaling_matrix=scaling_matrix, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
