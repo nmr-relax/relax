@@ -703,7 +703,7 @@ class Param_list(object):
         self.check_param(name)
 
         # Function.
-        if isinstance(self._conv_factor[name], FunctionType) or isinstance(self._conv_factor[name], MethodType):
+        if isinstance(self._units[name], FunctionType) or isinstance(self._units[name], MethodType):
             return self._units[name]()
 
         # Return the value.
