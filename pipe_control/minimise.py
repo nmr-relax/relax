@@ -23,6 +23,7 @@
 """Module for model minimisation/optimisation."""
 
 # relax module imports.
+from lib.errors import RelaxError, RelaxIntListIntError, RelaxLenError
 from multi import Processor_box
 from pipe_control.mol_res_spin import return_spin, spin_loop
 from pipe_control import pipes
@@ -82,51 +83,6 @@ def calc(verbosity=1):
     processor.run_queue()
 
 
-def grid_bounds(lower=None, upper=None):
-    """Determine the per-model grid bounds, allowing for the zooming grid search.
-
-    @keyword lower:     The lower bounds of the grid search which must be equal to the number of parameters in the model.
-    @type lower:        array of numbers
-    @keyword upper:     The upper bounds of the grid search which must be equal to the number of parameters in the model.
-    @type upper:        array of numbers
-    @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
-    @rtype:             tuple of 2 lists of lists of float
-    """
-
-    # The specific analysis API object and parameter object.
-    api = return_api()
-    param_object = return_parameter_object()
-
-    # Initialise.
-    model_lower = []
-    model_upper = []
-
-    # Loop over the models.
-    for model_info in api.model_loop():
-        # The lower and upper bounds have been supplied by the user, so use those unmodified instead.
-        if lower != None or upper != None:
-            model_lower.append(lower)
-            model_upper.append(upper)
-            continue
-
-        # Print out the model title.
-        api.print_model_title(model_info)
-
-        # Get the parameter names and current values.
-        names = api.get_param_names(model_info)
-        values = api.get_param_values(model_info)
-
-        # Build the bounds.
-        model_lower.append([])
-        model_upper.append([])
-        for i in range(len(names)):
-            model_lower[-1].append(param_object.grid_lower(names[i], model_info=model_info))
-            model_upper[-1].append(param_object.grid_upper(names[i], model_info=model_info))
-
-    # Return the bounds.
-    return model_lower, model_upper
-
-
 def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1):
     """The grid search function.
 
@@ -135,7 +91,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     @param upper:       The upper bounds of the grid search which must be equal to the number of parameters in the model.
     @type upper:        array of numbers
     @param inc:         The increments for each dimension of the space for the grid search.  The number of elements in the array must equal to the number of parameters in the model.
-    @type inc:          array of int
+    @type inc:          int or list of int
     @param constraints: If True, constraints are applied during the grid search (elinating parts of the grid).  If False, no constraints are used.
     @type constraints:  bool
     @param verbosity:   The amount of information to print.  The higher the value, the greater the verbosity.
@@ -148,8 +104,8 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
     # The specific analysis API object.
     api = return_api()
 
-    # Determine the model specific grid bounds, and allow for the zooming grid search.
-    model_lower, model_upper = grid_bounds(lower, upper)
+    # Determine the model specific grid bounds, and allow for the zooming grid search, and check the inc argument.
+    model_lower, model_upper, model_inc = grid_setup(lower, upper, inc)
 
     # Deselect spins lacking data:
     api.overfit_deselect()
@@ -169,7 +125,7 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
                 status.mc_number = i
 
             # Optimisation.
-            api.grid_search(lower=model_lower, upper=model_upper, inc=inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
+            api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, constraints=constraints, verbosity=verbosity-1, sim_index=i)
 
             # Print out.
             if verbosity and not processor.is_queued():
@@ -183,10 +139,99 @@ def grid_search(lower=None, upper=None, inc=None, constraints=True, verbosity=1)
 
     # Grid search.
     else:
-        api.grid_search(lower=model_lower, upper=model_upper, inc=inc, constraints=constraints, verbosity=verbosity)
+        api.grid_search(lower=model_lower, upper=model_upper, inc=model_inc, constraints=constraints, verbosity=verbosity)
 
     # Execute any queued commands.
     processor.run_queue()
+
+
+def grid_setup(lower=None, upper=None, inc=None):
+    """Determine the per-model grid bounds, allowing for the zooming grid search.
+
+    @keyword lower:     The user supplied lower bounds of the grid search which must be equal to the number of parameters in the model.
+    @type lower:        list of numbers
+    @keyword upper:     The user supplied upper bounds of the grid search which must be equal to the number of parameters in the model.
+    @type upper:        list of numbers
+    @keyword inc:       The user supplied grid search increments.
+    @type inc:          int or list of int
+    @return:            The per-model grid upper and lower bounds.  The first dimension of each structure corresponds to the model, the second the model parameters.
+    @rtype:             tuple of lists of lists of float, lists of lists of float, list of lists of int
+    """
+
+    # The specific analysis API object and parameter object.
+    api = return_api()
+    param_object = return_parameter_object()
+
+    # Initialise.
+    model_lower = []
+    model_upper = []
+    model_inc = []
+
+    # Loop over the models.
+    for model_info in api.model_loop():
+        # Get the parameter names and current values.
+        names = api.get_param_names(model_info)
+        values = api.get_param_values(model_info)
+
+        # The parameter number.
+        n = len(names)
+
+        # Make sure that the length of the parameter array is > 0.
+        if n == 0:
+            raise RelaxError("Cannot run a grid search on a model with zero parameters.")
+
+        # Check the user supplied increments.
+        if isinstance(inc, list) and len(inc) != n:
+            raise RelaxLenError('increment', n)
+        if isinstance(inc, list):
+            for i in range(n):
+                if not (isinstance(inc[i], int) or inc[i] == None):
+                    raise RelaxIntListIntError('increment', inc)
+        elif not isinstance(inc, int):
+            raise RelaxIntListIntError('increment', inc)
+
+        # Convert to the model increment list.
+        if isinstance(inc, int):
+            model_inc.append([inc]*n)
+        else:
+            model_inc.append(inc)
+
+        # The lower and upper bounds have been supplied by the user, so use those unmodified instead.
+        if lower != None or upper != None:
+            # Check that the user supplied bound lengths are ok.
+            if len(lower) != n:
+                raise RelaxLenError('lower bounds', n)
+            if len(upper) != n:
+                raise RelaxLenError('upper bounds', n)
+
+            # Append the values.
+            model_lower.append(lower)
+            model_upper.append(upper)
+
+            # Skip the rest of the loop.
+            continue
+
+        # Print out the model title.
+        api.print_model_title(model_info)
+
+        # Build the bounds.
+        model_lower.append([])
+        model_upper.append([])
+        for i in range(n):
+            # Obtain the bounds.
+            lower_i = param_object.grid_lower(names[i], model_info=model_info)
+            upper_i = param_object.grid_upper(names[i], model_info=model_info)
+
+            # Scale the bounds.
+            lower_i /= param_object.scaling(names[i], model_info=model_info)
+            upper_i /= param_object.scaling(names[i], model_info=model_info)
+
+            # Append.
+            model_lower[-1].append(lower_i)
+            model_upper[-1].append(upper_i)
+
+    # Return the bounds.
+    return model_lower, model_upper, model_inc
 
 
 def grid_zoom(level=0):
