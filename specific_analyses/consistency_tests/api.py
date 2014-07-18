@@ -246,6 +246,19 @@ class Consistency_tests(API_base, API_common):
                 setattr(data_cont, name, None)
 
 
+    def get_param_names(self, model_info=None):
+        """Return a vector of parameter names.
+
+        @keyword model_info:    The model information from model_loop().
+        @type model_info:       unknown
+        @return:                The vector of parameter names.
+        @rtype:                 list of str
+        """
+
+        # Return the fixed list.
+        return ['j0', 'f_eta', 'f_r2']
+
+
     def overfit_deselect(self, data_check=True, verbose=True):
         """Deselect spins which have insufficient data to support calculation.
 
